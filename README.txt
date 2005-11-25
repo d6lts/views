@@ -91,22 +91,33 @@ TODO
 *  Add changed field to prevent multiple admins from saving views simultaneously
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
+*  Optional [MORE] link in blocks that are also page views.
+
 *  Extend table field info: Let admin change header name. 
+*  Allow tables to be click-sorted.
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
-*  Add special handling for non-field data, such as new comments, node changed.
+
+*  Allow breadcrumb trail to be specified.
+
 *  Re-factor sorting info so that it goes into the table data and is assembled,
    rather than being hard-coded as it is now.
-*  Allow tables to be click-sorted.
-*  Actually implement the _block and _menu hooks so that views can expose them.
-*  Optional [MORE] link in blocks that are also page views.
+
 *  The edit/add form could be prettier.
+
 *  Fix themeing to allow each view to be its own theme, if desired. Make sure 
    the support functions exist.
-*  Allow breadcrumb trail to be specified.
+
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
+
 *  Allow a NOT in the and/or algorithm.
+
 *  Expose an API so modules can provide table and sorting and special
    field-handling information.
+*  Add special handling for non-field data, such as new comments, node changed.
+
+TO DONE
+
+*  Actually implement the _block and _menu hooks so that views can expose them.
 
 

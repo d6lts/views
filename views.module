@@ -182,41 +182,67 @@ function _views_construct_fields($table_data, $titles = false) {
 function views_help($section) {
   switch ($section) {
     case 'admin/modules#description':
-      return t('The nodequery module creates customized views of node lists.');
+      return t('The views module creates customized views of node lists.');
   }
 }
 
 function views_perm() {
-  return array('administer nodequery');
+  return array('administer views');
 }
 
 function views_menu($may_cache) {
   $items = array();
 
   if ($may_cache) {
-    $items[] = array('path' => 'admin/nodequery', 
-      'title' => t('nodequery'),
+    $items[] = array('path' => 'admin/views', 
+      'title' => t('views'),
       'callback' => 'views_admin_page',
-      'access' => user_access('administer nodequery'),
+      'access' => user_access('administer views'),
       'type' => MENU_NORMAL_ITEM);
-    $items[] = array('path' => 'admin/nodequery/add', 
+    $items[] = array('path' => 'admin/views/add', 
       'title' => t('add view'),
       'callback' => 'views_admin_add_page',
-      'access' => user_access('administer nodequery'),
+      'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/nodequery/edit', 
+    $items[] = array('path' => 'admin/views/edit', 
       'title' => t('edit view'),
       'callback' => 'views_admin_edit_page',
-      'access' => user_access('administer nodequery'),
+      'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'nodequery', 
+    $items[] = array('path' => 'views', 
       'title' => t('add view'),
       'callback' => 'views_view_page',
       'access' => user_access('access content'),
       'type' => MENU_CALLBACK);
+    $result = db_query("SELECT name, title FROM {view_view} WHERE url = 3");
+
+    while ($view = db_fetch_object($result)) {
+      $items[] = array('path' => "views/$view->name",
+        'title' => $view->title,
+        'callback' => 'views_view_page',
+        'callback arguments' => array($view->name),
+        'access' => user_access('access content'),
+        'type' => MENU_NORMAL_ITEM);
+    }
   }
 
   return $items;
+}
+
+
+function views_block($op = 'list', $delta = 0) {
+  $block = array();
+  if ($op == 'list') {
+    $result = db_query("SELECT vid, title FROM {view_view} WHERE block = 1");
+    while ($view = db_fetch_object($result)) {
+      $block[$view->vid]['info'] = $view->title;
+    }
+    return $block;
+  }
+  else if ($op == 'view') {
+    // Only display this block when the user is browsing a book:
+    return views_view_block($delta);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -226,12 +252,12 @@ function views_menu($may_cache) {
 function views_admin_page() {
   $numViews = 25;
 
-  drupal_set_title("Administer Nodequery Views");
+  drupal_set_title("Administer views Views");
 
   $result = pager_query("SELECT vid, name, title FROM {view_view} ORDER BY name", $numViews);
   while ($view = db_fetch_object($result)) {
-    $url = "nodequery/$view->name";
-    $items[] = array($view->title, l($url, $url), l('edit', "admin/nodequery/edit/$view->vid"));
+    $url = "views/$view->name";
+    $items[] = array($view->title, l($url, $url), l('edit', "admin/views/edit/$view->vid"));
   }
 
   if ($items) {
@@ -241,7 +267,7 @@ function views_admin_page() {
   else {
     $output .= "<p>No views have currently been defined.</p>";
   }
-  $output .= l('Add a view', 'admin/nodequery/add');
+  $output .= l('Add a view', 'admin/views/add');
   print theme('page', $output);
 }
 
@@ -254,12 +280,13 @@ function views_admin_add_page($template = '') {
   $op = $_POST['op'];
 
   if ($op == 'Cancel')
-    return drupal_goto('admin/nodequery');
+    return drupal_goto('admin/views');
   else if ($op == 'Save') {
     if (_views_view_validate($view)) {
       _views_save_view($view);
+      menu_rebuild();
       drupal_set_message("View successfully added.");
-      return drupal_goto('admin/nodequery');
+      return drupal_goto('admin/views');
     }
   }
   else if (!$op)
@@ -280,12 +307,13 @@ function views_admin_edit_page($vid = '') {
   $op = $_POST['op'];
 
   if ($op == 'Cancel')
-    return drupal_goto('admin/nodequery');
+    return drupal_goto('admin/views');
   else if ($op == 'Save') {
     if (_views_view_validate($view)) {
       _views_save_view($view);
+      menu_rebuild();
       drupal_set_message("View successfully saved .");
-      return drupal_goto('admin/nodequery');
+      return drupal_goto('admin/views');
     }
   }
   else if ($op == 'Delete') {
@@ -293,7 +321,7 @@ function views_admin_edit_page($vid = '') {
   }
   else if ($op == 'Really Delete') {
     _views_delete_view($view);
-    drupal_goto('admin/nodequery');
+    drupal_goto('admin/views');
   }
 
   drupal_set_title(t('Edit View %n', array('%n' => $view->name)));
@@ -363,7 +391,7 @@ function _views_view_form($view, $op = '') {
 
 //  $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
-  $group = form_textfield(t('Name'), 'name', $view->name, 20, 32, t('The name of the view. The URL of the view will be nodequery/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'), NULL, true);
+  $group = form_textfield(t('Name'), 'name', $view->name, 20, 32, t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'), NULL, true);
   $group .= form_select(t('List Type'), 'type', $view->type, _views_types(), t('How the nodes should be displayed to the user.'));
   $group .= form_textfield(t('Title'), 'title', $view->title, 60, 255, t('The title of the view will be shown at the top of the view. May be blank if not using a block.'));
   $group .= form_textarea(t('Header'), 'header', $view->header, 60, 6, t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'));
@@ -410,7 +438,7 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_group(t('Current Arguments'), $arggroup);
 
-  $arggroup = form_select(t('Argument'), 'addargument][type', NULL, _views_arguments(), t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "nodequery/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments..'));
+  $arggroup = form_select(t('Argument'), 'addargument][type', NULL, _views_arguments(), t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments..'));
   $arggroup .= form_select(t('Argument Default'), 'addargument][argdefault', NULL, _views_arguments_default(), t('If argument 1 was specified, what action to take if the argument is not given.'));
   $arggroup .= form_submit('Add Argument');
   $group .= form_group(t('Add an Argument'), $arggroup);
@@ -566,7 +594,7 @@ function views_view_page() {
     return drupal_not_found();
 
   if ($view->url == 1)
-    return drupal_notFound();
+    return drupal_not_found();
 
   // Done before theming so theme can change it if it wants.
   drupal_set_title($view->title);
@@ -575,13 +603,13 @@ function views_view_page() {
   print theme('page', $output);
 }
 
-function views_view_block($view) {
-  $view = _views_load_view($viewname);
+function views_view_block($vid) {
+  $view = _views_load_view($vid);
 
   if (!$view || !$view->block)
     return NULL;
 
-  $block['content'] = views_view('page', $view, $args);
+  $block['content'] = views_view('block', $view, $args);
   $block['subject'] = $view->title;
   return $block;
 }
@@ -784,6 +812,7 @@ function _views_build_summary(&$query, $view, $level) {
     case 1: // => t("Node Type"), 
       $query->add_field("type");
       $query->add_groupby("n.type");
+      $field = "n.type";
       break;
     case 2: // => t("User ID"), 
       $query->add_table('users', true);
@@ -1316,21 +1345,21 @@ function views_get_summary_link($argtype, $viewname, $item)
 {
   switch ($argtype) {
     case 1: // => t("Node Type"), 
-      return l($item->type, "nodequery/$viewname/$item->type");
+      return l($item->type, "views/$viewname/$item->type");
     case 2: // => t("User ID"), 
-      return l($item->name, "nodequery/$viewname/$item->uid");
+      return l($item->name, "views/$viewname/$item->uid");
     case 3: // => t("Taxonomy Term ID"),
-      return l($item->name, "nodequery/$viewname/$item->tid");
+      return l($item->name, "views/$viewname/$item->tid");
     case 4: // => t("Year"),
-      return l($item->year, "nodequery/$viewname/$item->year");
+      return l($item->year, "views/$viewname/$item->year");
     case 5: // => t("Month (1-12)"),
-      return l(format_date($item->created, 'custom', 'F'), "nodequery/$viewname/$item->name");
+      return l(format_date($item->created, 'custom', 'F'), "views/$viewname/$item->name");
     case 6: // => t("Week (1-53)"),
-      return l("Week $item->name", "nodequery/$viewname/$item->name");
+      return l("Week $item->name", "views/$viewname/$item->name");
     case 7: // => t("Month + Year (CCYYMM)")
-      return l(format_date($item->created, 'custom', 'F, Y'), "nodequery/$viewname/$item->name");
+      return l(format_date($item->created, 'custom', 'F, Y'), "views/$viewname/$item->name");
     case 8: // => t("Full Date (CCYYMMDD)")
-      return l(format_date($item->created, 'custom', 'F j, Y'), "nodequery/$viewname/$item->name");
+      return l(format_date($item->created, 'custom', 'F j, Y'), "views/$viewname/$item->name");
       break;
   }
 }
@@ -1338,7 +1367,7 @@ function views_get_summary_link($argtype, $viewname, $item)
 function theme_views_view($view, $type, $nodes) {
 
   if ($view->header)
-    $output = "<div id='nodequery-header'>$view->header</div>\n";
+    $output = "<div id='views-header'>$view->header</div>\n";
 
   switch ($view->type) {
     case 1: // => t("Title List"), 
@@ -1358,7 +1387,7 @@ function theme_views_view($view, $type, $nodes) {
   if ($type == 'view' && $view->use_pager)
     $output .= theme('pager', NULL, $view->nodes_per_page);
   
-  return "<div class='nodequery' id='$view->name'>$output</div>\n";
+  return "<div class='views' id='$view->name'>$output</div>\n";
 }
 
 function theme_views_summary($view, $type, $level, $nodes) {
@@ -1371,7 +1400,7 @@ function theme_views_summary($view, $type, $level, $nodes) {
   if ($type == 'view' && $view->use_pager)
     $output .= theme('pager', NULL, $view->nodes_per_page);
   
-  return "<div class='nodequery' id='$view->name'>$output</div>";
+  return "<div class='views' id='$view->name'>$output</div>";
   
 }
 ?>
