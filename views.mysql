@@ -1,0 +1,73 @@
+create table if not exists view_view (
+  vid int(10) unsigned NOT NULL default '0',
+  name varchar(32) NOT NULL UNIQUE,
+  title varchar(255),
+  header longtext,
+  header_format int(4) NOT NULL,
+  use_pager int(1),
+  nodes_per_page int(2), -- yes, no more than 99
+  nodes_per_block int(2), -- yes, no more than 99
+  block_display_header int(1),
+  type int(2),
+  block int(1),
+  url int(2),
+  field longtext,
+  filter_use_nodetypes int(1),
+  filter_nodetypes longtext,
+  filter_published int(1),
+  filter_frontpage int(1),
+  filter_taxonomy_term varchar(255),
+  filter_taxonomy_voc varchar(255),
+  filter_use_author int(1),
+  filter_author_uid int(10) NOT NULL default -1,
+  changed int(11),
+  PRIMARY KEY (vid),
+  KEY (name)
+);
+
+create table if not exists view_sort (
+  vid int(10) unsigned NOT NULL default '0',
+  position int(2),
+  field varchar(255),
+  sortorder varchar(5),
+  tablename varchar(255),
+  KEY (vid)
+);
+
+create table if not exists view_argument (
+  vid int(10) unsigned NOT NULL default '0',
+  type int(2),
+  argdefault varchar(255),
+  position int(2),
+  KEY (vid)
+);
+
+create table if not exists view_tablefield (
+  vid int(10) unsigned NOT NULL default '0',
+  tablename varchar(255),
+  field varchar(255),
+  label varchar(255),
+  position int(2),
+  KEY (vid)
+);
+
+create table if not exists view_breadcrumb (
+  vid int(10) unsigned NOT NULL default '0',
+  title varchar(255),
+  link varchar(255),
+  position int(2),
+  KEY (vid)
+);
+
+create table if not exists view_filter (
+  vid int(10) unsigned NOT NULL default '0',
+  tablename varchar(255),
+  field varchar(255),
+  value longtext,
+  comparison varchar(20),
+  position int(2),
+  KEY (vid)
+);
+  
+
+
