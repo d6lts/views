@@ -1147,28 +1147,28 @@ function _views_load_view($arg) {
     $view->numsorts++;
   }
 
-  $result = db_query("SELECT * FROM view_argument WHERE vid = $view->vid ORDER BY position ASC");
+  $result = db_query("SELECT * FROM {view_argument} WHERE vid = $view->vid ORDER BY position ASC");
 
   $view->argument = array();
   while ($arg = db_fetch_array($result)) {
     $view->argument[] = $arg;
   }
 
-  $result = db_query("SELECT * FROM view_tablefield WHERE vid = $view->vid ORDER BY position ASC");
+  $result = db_query("SELECT * FROM {view_tablefield} WHERE vid = $view->vid ORDER BY position ASC");
 
   $view->tablefield = array();
   while ($arg = db_fetch_array($result)) {
     $view->tablefield[] = $arg;
   }
 
-  $result = db_query("SELECT * FROM view_breadcrumb WHERE vid = $view->vid ORDER BY position ASC");
+  $result = db_query("SELECT * FROM {view_breadcrumb} WHERE vid = $view->vid ORDER BY position ASC");
 
   $view->breadcrumb = array();
   while ($arg = db_fetch_array($result)) {
     $view->breadcrumb[] = $arg;
   }
 
-  $result = db_query("SELECT * FROM view_filter WHERE vid = $view->vid ORDER BY position ASC");
+  $result = db_query("SELECT * FROM {view_filter} WHERE vid = $view->vid ORDER BY position ASC");
 
   $view->filter = array();
   while ($arg = db_fetch_array($result)) {
