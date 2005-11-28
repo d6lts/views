@@ -701,13 +701,7 @@ function views_view($type, $view, $args = array()) {
 
   if ($use_pager) {
     $csql = db_rewrite_sql($query->query(true), 'n', 'numrecs');
-    // DEBUG
-//    $res = db_query($csql);
-//    while ($i = db_fetch_object($res))
-//      $cq[] = $i;
-//    $output .= "<table width=800px><tr><td>$csql<tr><td>" . var_export($cq, true) . "</table>";
-    // end DEBUG
-    $result = pager_query($sql, $view->nodes_per_page, NULL, $csql);
+    $result = pager_query($sql, $view->nodes_per_page, 0, $csql);
   }
 
   else {
@@ -1432,7 +1426,7 @@ function theme_views_view($view, $type, $nodes) {
       break;
   }
 
-  if ($type == 'view' && $view->use_pager) {
+  if ($type == 'page' && $view->use_pager) {
     if ($view->table_header)
       $tbspager = tablesort_pager();
     $output .= theme('pager', NULL, $view->nodes_per_page, 0, $tbspager);
@@ -1448,7 +1442,7 @@ function theme_views_summary($view, $type, $level, $nodes) {
   if ($items)
     $output .= theme('table', array(), $items, array('id' => 'summary'));
   
-  if ($type == 'view' && $view->use_pager)
+  if ($type == 'page' && $view->use_pager)
     $output .= theme('pager', NULL, $view->nodes_per_page);
   
   return "<div class='views' id='$view->name'>$output</div>";

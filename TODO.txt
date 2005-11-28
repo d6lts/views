@@ -1,5 +1,22 @@
 TODO
 
+MAJOR FEATURES
+*  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
+
+*  Expose an API so modules can provide table and sorting and special
+   field-handling information.
+
+*  Try to change hardcoded switch-case statements to callbacks where it
+   makes sense to allow modules to extend functionality.
+
+*  Re-factor sorting info so that it goes into the table data and is assembled,
+   rather than being hard-coded as it is now.
+
+*  Allow breadcrumb trail to be specified.
+
+*  Create on-the-fly filtering too
+
+LESS TIME CONSUMING STUFF
 *  Add changed field to prevent multiple admins from saving views simultaneously
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
@@ -8,24 +25,12 @@ TODO
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
 
-*  Allow breadcrumb trail to be specified.
-
-*  Re-factor sorting info so that it goes into the table data and is assembled,
-   rather than being hard-coded as it is now.
-
 *  The edit/add form could be prettier.
 
 *  Fix themeing to allow each view to be its own theme, if desired. Make sure 
    the support functions exist.
 
-*  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
-
 *  Allow a NOT in the and/or algorithm.
-
-*  Expose an API so modules can provide table and sorting and special
-   field-handling information.
-*  Try to change hardcoded switch-case statements to callbacks where it
-   makes sense to allow modules to extend functionality.
 
 TO DONE
 
