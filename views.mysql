@@ -48,6 +48,8 @@ create table if not exists view_tablefield (
   field varchar(255),
   label varchar(255),
   handler varchar(255),
+  sortable int(1),
+  defaultsort varchar(5),
   position int(2),
   KEY (vid)
 );

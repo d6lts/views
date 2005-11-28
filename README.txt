@@ -87,7 +87,7 @@ something else if a better name comes up) but I've had trouble having the Right
 Name come to me.
 
 
-* Half-assed Changelog:
+* Half-assed Changelog (mostly for schema):
 
 11/27/2005 added field 'handler' to view_tablefield
-
+11/28/2005 added fields 'sortable' and 'defaultsort' to view_tablefield

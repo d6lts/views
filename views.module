@@ -31,8 +31,8 @@ function _views_arguments_default() {
 
 function _views_types() {
   return array(
-    1 => t("Title List"), 
-    2 => t("Table"), 
+    1 => t("List View"), 
+    2 => t("Table View"), 
     3 => t("Teaser List"),
     4 => t("Full Nodes")
   );
@@ -398,7 +398,7 @@ function _views_view_form($view, $op = '') {
 //  $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
   $group = form_textfield(t('Name'), 'name', $view->name, 20, 32, t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'), NULL, true);
-  $group .= form_select(t('List Type'), 'type', $view->type, _views_types(), t('How the nodes should be displayed to the user.'));
+  $group .= form_select(t('View Type'), 'type', $view->type, _views_types(), t('How the nodes should be displayed to the user.'));
   $group .= form_textfield(t('Title'), 'title', $view->title, 60, 255, t('The title of the view will be shown at the top of the view. May be blank if not using a block.'));
   $group .= form_textarea(t('Header'), 'header', $view->header, 60, 6, t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'));
   $group .= filter_form('format', $view->header_format);
@@ -417,7 +417,11 @@ function _views_view_form($view, $op = '') {
 
     $list .= form_textfield(t('Label'), "field][$i][label", $field['label'], 60, 25, t('The name displayed to the user.'));
     if (is_array($fields[$fieldname]['handler'])) {
-        $list .= form_select(t('Handler', array('%n' => $i)), "field][$i][handler", $field['handler'], $fields[$fieldname]['handler']);
+      $list .= form_select(t('Handler', array('%n' => $i)), "field][$i][handler", $field['handler'], $fields[$fieldname]['handler']);
+    }
+    if ($fields[$fieldname]['sortable']) {
+      $list .= form_select(t('Click sortable'), "field][$i][sortable", $field['sortable'], array('0' => t("Not Sortable"), "1" => t("Sortable")));
+      $list .= form_select(t('Default Sorting'), "field][$i][defaultsort", $field['defaultsort'], array('0' => t("None"), "ASC" => t("Sort Ascending"), "DESC" => t("Sort Descending")));
     }
     $list .= form_submit(t("Delete Field %n", array('%n' => $i)));
   }
@@ -658,11 +662,12 @@ function views_view($type, $view, $args = array()) {
 
   if (!$summary) {
     _views_view_build_sorts($query, $view);
-    if ($view->type == 1)
+    if ($view->type == 1 || $view->type == 2) { // list (1) or table (2)
        // Title lists won't load the node, so put the name into this query.
-      $query->add_field('title');
-    else if ($view->type == 2) { // Table
+//      $query->add_field('title');
+//    else if ($view->type == 2) { // Table
       $fields = _views_construct_fields(_views_tables()); 
+
       foreach($view->field as $field) {
         // Some fields are not actually fields but require special handlers
         // to display their data.
@@ -674,6 +679,11 @@ function views_view($type, $view, $args = array()) {
             $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
         }
       }
+      if ($view->type == 2) { // table only
+        $view->table_header = _views_construct_header($view, $fields);
+        $query->set_header($view->table_header);
+      }
+
     }
   }
 
@@ -692,9 +702,9 @@ function views_view($type, $view, $args = array()) {
   if ($use_pager) {
     $csql = db_rewrite_sql($query->query(true), 'n', 'numrecs');
     // DEBUG
-    $res = db_query($csql);
-    while ($i = db_fetch_object($res))
-      $cq[] = $i;
+//    $res = db_query($csql);
+//    while ($i = db_fetch_object($res))
+//      $cq[] = $i;
 //    $output .= "<table width=800px><tr><td>$csql<tr><td>" . var_export($cq, true) . "</table>";
     // end DEBUG
     $result = pager_query($sql, $view->nodes_per_page, NULL, $csql);
@@ -892,6 +902,7 @@ class _views_query {
     $this->field = array("n.nid");
     $this->table_data = _views_tables();
     $this->count_field = "*";
+    $this->header = array();
   }
 
   function add_field($field, $table = 'n', $alias = '') {
@@ -925,7 +936,7 @@ class _views_query {
 
   function add_orderby($field, $order) {
     if (!$this->orderby)
-      $this->orderby = "ORDER BY $field $order";
+      $this->orderby = " $field $order";
     else
       $this->orderby .= ", $field $order";
   }
@@ -949,6 +960,10 @@ class _views_query {
     else
       $this->tables[$table] = $howmany;
     return $this->tables[$table];
+  }
+
+  function set_header($header) {
+    $this->header = $header;
   }
 
 // One of those times where recursion isn't evil. Go me!
@@ -1072,7 +1087,16 @@ class _views_query {
     }
     else
       $fields = "count($this->count_field) as numrecs";
-    return "SELECT $fields FROM {node} n $joins $this->where $groupby $this->orderby";
+
+    if ($this->table_header) {
+      if ($this->orderby)
+        $before = "$this->orderby, ";
+      $orderby = tablesort_sql($this->header, $before);
+    }
+    else if ($this->orderby)
+      $orderby = "ORDER BY $this->orderby";
+
+    return "SELECT $fields FROM {node} n $joins $this->where $groupby $orderby";
   }
 }
 
@@ -1272,7 +1296,7 @@ function _views_save_view($view) {
 
   for ($i = 0; $i < count($view->field); $i++) {
     $arg = $view->field[$i];
-    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[label]', '$arg[handler]', $i)");
+    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[label]', '$arg[handler]', '$arg[sortable]', '$arg[defaultsort]', $i)");
   }
 
   for ($i = 0; $i < count($view->breadcrumb); $i++) {
@@ -1290,14 +1314,6 @@ function _views_save_view($view) {
 // ---------------------------------------------------------------------------
 // Themeable and support
 
-function views_view_list($nodes) {
-  foreach ($nodes as $node) {
-    $items[] = l($node->title, "node/$node->nid");
-  }
-  if ($items)
-    return theme('item_list', $items);
-}
-
 function _views_handle_field($fields, $field, $data) {
 
   $info = $fields[$field['fullname']];
@@ -1312,50 +1328,57 @@ function _views_handle_field($fields, $field, $data) {
   }
 
   return $data->$field['queryname'];
-/*
-  if (is_array($info)) {
-    switch ($info['type']) {
-      case 'string':
-        return $data->$query;
-      case 'number':
-        return intval($data->$query);
-      case 'date':
-        return format_date($data->$query);
-      case 'username':
-        $obj->name = $data->$query;
-        $uidfield = $table . "_"  . $fields[$table . "." . $field]['uid'];
-        $obj->uid = $data->$uidfield;
-        return format_name($obj);
-      case 'nodelink':
-        return l($data->$query, "node/$data->nid");
-      case 'nodetype':
-        return node_invoke($data->$query, 'node_name');
-      default:
-        return $data->$query;
-    }
+}
+
+function _views_construct_header($view, $fields) {
+  foreach($view->field as $field) {
+    $header = array();
+    $info = $fields[$field['fullname']];
+
+    if ($field['label'])
+      $header['data'] = $field['label'];
+    else
+      $header['data'] = $info['name'];
+
+    if ($field['sortable'])
+      $header['field'] = $field['fullname'];
+    if ($field['defaultsort'])
+      $header['sort'] = $field['defaultsort'];
+
+    // Add CSS id to table cell header cell.
+    $header['id'] = "view-field-$field[queryname]";
+    $headers[] = $header;
   }
-*/
+  return $headers;
+}
+
+function views_view_list($view, $nodes) {
+  foreach ($nodes as $node) {
+    foreach ($view->field as $field) {
+      if ($field['label'])
+        $item .= "<div class='label' id='view-field-$field[queryname]'>" . $field['label'] . "</div>";
+      $item .= "<div class = 'data' id='view-field-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
+    }
+    $items[] = "<div id='view-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
+  }
+  if ($items)
+    return theme('item_list', $items);
 }
 
 function views_view_table($view, $nodes) {
   $table_data = _views_tables();
   $fields = _views_construct_fields(_views_tables()); 
 
-  foreach($view->field as $field) {
-    if ($field['label'])
-      $headers[] = $field['label'];
-    else
-      $headlers[] = $fields[$field['fullname']]['name'];
-  }
-  
   foreach ($nodes as $node) {
-    $item = array();
+    $row = array();
     foreach ($view->field as $field) {
-      $item[] = _views_handle_field($fields, $field, $node);
+      $cell['data'] = _views_handle_field($fields, $field, $node);
+      $cell['id'] = "view-field-$field[queryname]";
+      $row[] = $cell;
     }
-    $items[] = $item;
+    $rows[] = $row;
   }
-  return theme('table', $headers, $items);
+  return theme('table', $view->table_header, $rows);
 }
 
 function views_view_nodes($nodes, $teasers = true, $links = true) {
@@ -1392,11 +1415,11 @@ function views_get_summary_link($argtype, $viewname, $item)
 function theme_views_view($view, $type, $nodes) {
 
   if ($view->header)
-    $output = "<div id='views-header'>$view->header</div>\n";
+    $output = "<div id='view-header'>$view->header</div>\n";
 
   switch ($view->type) {
-    case 1: // => t("Title List"), 
-      $output .= views_view_list($nodes);
+    case 1: // => t("List View"), 
+      $output .= views_view_list($view, $nodes);
       break;
     case 2: // => t("Table"), 
       $output .= views_view_table($view, $nodes);
@@ -1409,10 +1432,13 @@ function theme_views_view($view, $type, $nodes) {
       break;
   }
 
-  if ($type == 'view' && $view->use_pager)
-    $output .= theme('pager', NULL, $view->nodes_per_page);
-  
-  return "<div class='views' id='$view->name'>$output</div>\n";
+  if ($type == 'view' && $view->use_pager) {
+    if ($view->table_header)
+      $tbspager = tablesort_pager();
+    $output .= theme('pager', NULL, $view->nodes_per_page, 0, $tbspager);
+  }
+
+  return "<div class='views' id='view-$view->name'>$output</div>\n";
 }
 
 function theme_views_summary($view, $type, $level, $nodes) {

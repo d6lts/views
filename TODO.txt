@@ -1,8 +1,3 @@
-TODO:
-
-Generic sort criteria
-Generic filter criteria
-
 TODO
 
 *  Add changed field to prevent multiple admins from saving views simultaneously
@@ -10,8 +5,6 @@ TODO
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
 
-*  Extend table field info: Let admin change header name. 
-*  Allow tables to be click-sorted.
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
 
@@ -31,8 +24,19 @@ TODO
 
 *  Expose an API so modules can provide table and sorting and special
    field-handling information.
+*  Try to change hardcoded switch-case statements to callbacks where it
+   makes sense to allow modules to extend functionality.
 
 TO DONE
 
 *  Actually implement the _block and _menu hooks so that views can expose them.
 *  Add special handling for non-field data, such as new comments, node changed.
+*  Extend table field info: Let admin change header name. 
+*  Allow tables to be click-sorted.
+*  Each table field and header should have CSS tag.
+*  Modify title list to be "List View" and allow the table fields; but instead
+   of viewing as a table, it uses a list, with each field in <div> tags allowing
+   styling by CSS. Heck, allow ordered/unordered list as an option.
+
+
+
