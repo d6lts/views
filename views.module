@@ -1299,7 +1299,7 @@ function _views_handle_field($fields, $table, $field, $query, $data) {
         $obj->uid = $data->$uidfield;
         return format_name($obj);
       case 'nodelink':
-        return l($data->$query, "node/$data[nid]");
+        return l($data->$query, "node/$data->nid");
       case 'nodetype':
         return node_invoke($data->$query, 'node_name');
       default:
