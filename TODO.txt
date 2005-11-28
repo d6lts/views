@@ -31,8 +31,8 @@ TODO
 
 *  Expose an API so modules can provide table and sorting and special
    field-handling information.
-*  Add special handling for non-field data, such as new comments, node changed.
 
 TO DONE
 
 *  Actually implement the _block and _menu hooks so that views can expose them.
+*  Add special handling for non-field data, such as new comments, node changed.

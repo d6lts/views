@@ -97,12 +97,12 @@ function _views_tables() {
     ),
     "fields" => array(
 //    "vid",
-      "name" => array('name' => "Taxonomy Term", 'type' => 'string', 'sortable' => true),
-      "description" => array('name' => "Taxonomy Term Description", 'type' => 'string', 'sortable' => false),
-//      "weight" => array('name' => "Taxonomy Term Weight", 'type' => 'string', 'sortable' => true),
+      "name" => array('name' => "Taxonomy Term", 'sortable' => true),
+      "description" => array('name' => "Taxonomy Term Description", 'sortable' => false),
+//      "weight" => array('name' => "Taxonomy Term Weight", 'sortable' => true),
     ),
     "sorts" => array(
-      "weight" => array(name => "Taxonomy Weight", fields => array('weight', 'name'))
+      "weight" => array('name' => "Taxonomy Weight", 'fields' => array('weight', 'name'))
     )
   );
 
@@ -119,10 +119,9 @@ function _views_tables() {
       ), 
     ),
     "fields" => array(
-      "last_comment_timestamp" => array('name' => "Last Comment Time", 'type' => 'date', 'sortable' => true),
-      "last_comment_name" => array('name' => "Last Comment Author", 'type' => 'username', 'sortable' => true, 'uid' => "last_comment_uid", 'addlfields' => array("last_comment_uid")),
-//      "last_comment_uid" => array('name' => "Last Comment Author UID", 'type' => 'string', 'sortable' => true),
-      "comment_count" => array('name' => "Comment Count", 'type' => 'number', 'sortable' => true),
+      "last_comment_timestamp" => array('name' => "Last Comment Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
+      "last_comment_name" => array('name' => "Last Comment Author", 'handler' => 'views_handler_username', 'sortable' => true, 'uid' => "last_comment_uid", 'addlfields' => array("last_comment_uid")),
+      "comment_count" => array('name' => "Comment Count", 'sortable' => true, 'handler' => array("views_handler_int" => "Normal", "views_handler_comments_with_new" => "With New Count")),
     )
   );
 
@@ -139,7 +138,7 @@ function _views_tables() {
       ), 
     ),
     "fields" => array(
-      "name" => array('name' => "Author Name", 'type' => 'username', 'sortable' => true, 'uid' => "uid", 'addlfields' => array("uid")),
+      "name" => array('name' => "Author Name", 'handler' => 'views_handler_username', 'sortable' => true, 'uid' => "uid", 'addlfields' => array("uid")),
     )
   );
   return $tables;
@@ -147,10 +146,10 @@ function _views_tables() {
 
 function _views_node_fields() {
   return array(
-    "n.title" => array('name' => "Node Title", 'type' => 'nodelink', 'sortable' => true),
-    "n.created" => array('name' => "Node Created Time", 'type' => 'date', 'sortable' => true),
-    "n.changed" => array('name' => "Node Updated Time", 'type' => 'date', 'sortable' => true),
-    "n.type" => array('name' => "Node Type", 'type' => 'nodetype', 'sortable' => true),
+    "n.title" => array('name' => "Node Title", 'handler' => array('views_handler_nodelink' => 'Normal', 'views_handler_nodelink_with_mark' => "With updated mark"), 'sortable' => true, 'addlfields' => array('changed') ),
+    "n.created" => array('name' => "Node Created Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
+    "n.changed" => array('name' => "Node Updated Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
+    "n.type" => array('name' => "Node Type", 'handler' => 'views_handler_nodetype', 'sortable' => true),
   );
 }
 
@@ -374,8 +373,17 @@ function _views_view_form($view, $op = '') {
 //    $view->argumentdefault = array_values($view->argumentdefault); // reindex
   }
 
+  $fields = _views_construct_fields(_views_tables());
+  $fieldnames = _views_construct_fields(_views_tables(), true); // for selecting
+
   if ($op == "Add Field") {
-    $view->field[] = $view->addfield;
+    $fieldbits = explode('.', $view->addfield);
+
+    $newfield['fullname'] = $view->addfield;
+    $newfield['tablename'] = $fieldbits[0];
+    $newfield['field'] = $fieldbits[1];
+    $newfield['label'] = $fieldnames[$view->addfield];
+    $view->field[] = $newfield;
   }
 
   if (substr($op, 0, 12) == "Delete Field") {
@@ -385,8 +393,6 @@ function _views_view_form($view, $op = '') {
   }
 
   
-  $fields = _views_construct_fields(_views_tables(), true); // just titles
-
   $form = form_hidden('vid', $view->vid);
 
 //  $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
@@ -401,17 +407,25 @@ function _views_view_form($view, $op = '') {
 
   $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
   $list = "";
-  $i = 0;
-  foreach ($view->field as $field) {
-    $form .= form_hidden("field][$i", $field);
-    $list .= "<li> " . $fields[$field] . " &nbsp;";
+  foreach ($view->field as $i => $field) {
+    $fieldname = $field['fullname']; // combined table & fieldname
+  
+    $list .= "<li> " . $fields[$fieldname]['name'] . " &nbsp;";
+    $form .= form_hidden("field][$i][fullname", $field['fullname']);
+    $form .= form_hidden("field][$i][tablename", $field['tablename']);
+    $form .= form_hidden("field][$i][field", $field['field']);
+
+    $list .= form_textfield(t('Label'), "field][$i][label", $field['label'], 60, 25, t('The name displayed to the user.'));
+    if (is_array($fields[$fieldname]['handler'])) {
+        $list .= form_select(t('Handler', array('%n' => $i)), "field][$i][handler", $field['handler'], $fields[$fieldname]['handler']);
+    }
     $list .= form_submit(t("Delete Field %n", array('%n' => $i)));
-    $i++;
   }
   if ($list) 
     $group .= "<ol>$list</ol>";
 
-  $group .= form_select(t('Add a Field'), 'addfield', NULL, $fields);
+
+  $group .= form_select(t('Add a Field'), 'addfield', NULL, $fieldnames);
   $group .= form_submit(t("Add Field"));
   $form .= form_group(t('Table'), $group);
 
@@ -650,12 +664,14 @@ function views_view($type, $view, $args = array()) {
     else if ($view->type == 2) { // Table
       $fields = _views_construct_fields(_views_tables()); 
       foreach($view->field as $field) {
-        $info = explode('.', $field); // $table, $field
-        $query->add_field($info[1], $info[0], "$info[0]_$info[1]");
+        // Some fields are not actually fields but require special handlers
+        // to display their data.
+        if (!$field['notafield'])
+          $query->add_field($field['field'], $field['tablename'], $field['queryname']);
         // special handling
-        if (is_array($fields[$field]['addlfields'])) {
-          foreach($fields[$field]['addlfields'] as $name) 
-            $query->add_field($name, $info[0], "$info[0]_$name");
+        if (is_array($fields[$field['fullname']]['addlfields'])) {
+          foreach($fields[$field['fullname']]['addlfields'] as $name) 
+            $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
         }
       }
     }
@@ -1130,12 +1146,11 @@ function _views_load_view($arg) {
     $view->argumentdefault = explode(', ', $view->argumentdefault);
   else
     $view->argumentdefault = array();
-*/
   if ($view->field)
     $view->field = explode(', ', $view->field);
   else
     $view->field = array();
-
+*/
   
   // load the sorting criteria too.
   $result = db_query("SELECT * FROM {view_sort} vs WHERE vid = $view->vid ORDER BY position ASC");
@@ -1156,9 +1171,11 @@ function _views_load_view($arg) {
 
   $result = db_query("SELECT * FROM {view_tablefield} WHERE vid = $view->vid ORDER BY position ASC");
 
-  $view->tablefield = array();
+  $view->field = array();
   while ($arg = db_fetch_array($result)) {
-    $view->tablefield[] = $arg;
+    $arg['fullname'] = "$arg[tablename].$arg[field]";
+    $arg['queryname'] = "$arg[tablename]_$arg[field]";
+    $view->field[] = $arg;
   }
 
   $result = db_query("SELECT * FROM {view_breadcrumb} WHERE vid = $view->vid ORDER BY position ASC");
@@ -1197,13 +1214,12 @@ function _views_save_view($view) {
     $view->argumentdefault = implode(', ', $view->argumentdefault);
   else
     $view->argumentdefault = '';
-*/
 
   if (is_array($view->field))
     $view->field = implode(', ', $view->field);
   else
     $view->field = '';
-
+*/
 
 
   $fields = _views_view_fields();
@@ -1254,9 +1270,9 @@ function _views_save_view($view) {
     db_query("INSERT INTO {view_argument} (vid, type, argdefault, position) VALUES ($view->vid, $arg[type], $arg[argdefault], $i)");
   }
 
-  for ($i = 0; $i < count($view->tablefield); $i++) {
-    $arg = $view->tablefield[$i];
-    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, position) VALUES ($view->vid, $arg[tablename], $arg[field], $arg[label], $i)");
+  for ($i = 0; $i < count($view->field); $i++) {
+    $arg = $view->field[$i];
+    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[label]', '$arg[handler]', $i)");
   }
 
   for ($i = 0; $i < count($view->breadcrumb); $i++) {
@@ -1282,9 +1298,21 @@ function views_view_list($nodes) {
     return theme('item_list', $items);
 }
 
-function _views_handle_field($fields, $table, $field, $query, $data) {
-  $info = $fields[$table . "." . $field];
-//  return var_export($data, true);
+function _views_handle_field($fields, $field, $data) {
+
+  $info = $fields[$field['fullname']];
+
+  if ($field['handler'] && function_exists($field['handler'])) {
+    return $field['handler']($info, $field, $data->$field['queryname'], $data);
+  }
+
+
+  if ($info['handler'] && is_string($info['handler']) && function_exists($info['handler'])) {
+    return $info['handler']($info, $field, $data->$field['queryname'], $data);
+  }
+
+  return $data->$field['queryname'];
+/*
   if (is_array($info)) {
     switch ($info['type']) {
       case 'string':
@@ -1306,27 +1334,24 @@ function _views_handle_field($fields, $table, $field, $query, $data) {
         return $data->$query;
     }
   }
+*/
 }
 
 function views_view_table($view, $nodes) {
   $table_data = _views_tables();
   $fields = _views_construct_fields(_views_tables()); 
 
-  // In the $view->field, it'll be table.field -- but in the query
-  // in order to avoid collisions we named it table_field, so we need
-  // to translate.
-
-  foreach($view->field as $field)
-  {
-    $info = explode('.', $field);
-    $headers[] = $fields[$field]['name'];
-    $dbfields[] = array('table' => $info[0], 'field' => $info[1], 'query' => "$info[0]_$info[1]");
+  foreach($view->field as $field) {
+    if ($field['label'])
+      $headers[] = $field['label'];
+    else
+      $headlers[] = $fields[$field['fullname']]['name'];
   }
   
   foreach ($nodes as $node) {
     $item = array();
-    foreach ($dbfields as $field) {
-      $item[] = _views_handle_field($fields, $field['table'], $field['field'], $field['query'], $node);
+    foreach ($view->field as $field) {
+      $item[] = _views_handle_field($fields, $field, $node);
     }
     $items[] = $item;
   }
@@ -1402,5 +1427,54 @@ function theme_views_summary($view, $type, $level, $nodes) {
   
   return "<div class='views' id='$view->name'>$output</div>";
   
+}
+
+// ---------------------------------------------------------------------------
+// Field handlers
+
+function views_handler_date($fieldinfo, $fielddata, $value, $data) {
+  return format_date($value);
+}
+
+function views_handler_since($fieldinfo, $fielddata, $value, $data) {
+  return format_interval(time() - $value);
+}
+
+function views_handler_int($fieldinfo, $fielddata, $value, $data) {
+  return intval($value);
+}
+
+function views_handler_string($fieldinfo, $fielddata, $value, $data) {
+  return $value;
+}
+
+function views_handler_username($fieldinfo, $fielddata, $value, $data) {
+  $obj->name = $value;
+  $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
+  $obj->uid = $data->$uidfield;
+  return format_name($obj);
+}
+
+function views_handler_nodelink($fieldinfo, $fielddata, $value, $data) {
+  return l($value, "node/$data->nid");
+}
+
+function views_handler_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
+  return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->n_changed))
+;
+}
+
+
+function views_handler_nodetype($fieldinfo, $fielddata, $value, $data) {
+  return node_invoke($value, 'node_name');
+}
+
+function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
+  $comments = intval($value);
+  if (module_exist('comment') && $comments && $new = comment_num_new($data->nid)) {
+    $comments .= '<br />';
+    $comments .= l(t('%num new', array('%num' => $new)), "node/$node->nid", NULL, NULL, 'new');
+  }
+  return $comments;
 }
 ?>

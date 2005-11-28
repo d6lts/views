@@ -87,4 +87,7 @@ something else if a better name comes up) but I've had trouble having the Right
 Name come to me.
 
 
+* Half-assed Changelog:
+
+11/27/2005 added field 'handler' to view_tablefield
 

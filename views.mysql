@@ -47,6 +47,7 @@ create table if not exists view_tablefield (
   tablename varchar(255),
   field varchar(255),
   label varchar(255),
+  handler varchar(255),
   position int(2),
   KEY (vid)
 );
