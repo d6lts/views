@@ -463,6 +463,47 @@ function _views_internal_default_views() {
 
   $views['tracker_tracker2'] = $view;
 
+  $view = new stdClass();
+  $view->name = 'testblock';
+  $view->title = 'Recent Articles';
+  $view->description = 'Test of block override.';
+  $view->use_pager = '1';
+  $view->nodes_per_page = '10';
+  $view->nodes_per_block = '5';
+  $view->type = '1';
+  $view->block = '1';
+  $view->url = '2';
+  $view->field = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'title',
+      'label' => '',
+      'handler' => 'views_handler_field_nodelink',
+    ),
+  );
+  $view->sort = array (
+    array (
+      'field' => 'created',
+      'sortorder' => 'DESC',
+      'tablename' => 'n',
+    ),
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'status',
+      'value' => '1',
+      'operator' => '=',
+    ),
+    array (
+      'tablename' => 'term_node',
+      'field' => 'tid',
+      'value' =>  array ( '11' ),
+      'operator' => 'AND',
+    ),
+  );
+  $views['testblock'] = $view;
+
   return $views;
 }
 
@@ -472,6 +513,7 @@ function _views_get_default_views() {
   if (!$VIEWS_DEFAULT_VIEWS) {
     $VIEWS_DEFAULT_VIEWS = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
     foreach ($VIEWS_DEFAULT_VIEWS as $i => $view) {
+      _views_check_arrays($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
       if (is_array($view->field)) {
         foreach($view->field as $j => $field) {
           $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['fullname'] = "$field[tablename].$field[field]";
@@ -550,9 +592,14 @@ function views_menu($may_cache) {
 function views_block($op = 'list', $delta = 0) {
   $block = array();
   if ($op == 'list') {
-    $result = db_query("SELECT vid, title FROM {view_view} WHERE block = 1");
+    $result = db_query("SELECT vid, title, name FROM {view_view} WHERE block = 1");
     while ($view = db_fetch_object($result)) {
-      $block[$view->vid]['info'] = $view->title;
+      $block[$view->name]['info'] = $view->title;
+    }
+    $dviews = _views_get_default_views();
+    foreach ($dviews as $name => $view) {
+      if (!isset($block[$name]) && $view->block)
+        $block[$name]['info'] = $view->title;
     }
     return $block;
   }
@@ -1046,7 +1093,7 @@ function views_view_page() {
 }
 
 function views_view_block($vid) {
-  $view = _views_load_view($vid);
+  $view = _views_get_view($vid);
 
   if (!$view || !$view->block)
     return NULL;
@@ -1750,6 +1797,7 @@ function _views_construct_header($view, $fields) {
 
 function views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
+    $item = '';
     foreach ($view->field as $field) {
       if ($field['label'])
         $item .= "<div class='view-label' id='view-label-$field[queryname]'>" . $field['label'] . "</div>";

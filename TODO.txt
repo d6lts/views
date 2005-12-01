@@ -4,6 +4,7 @@ MAJOR FEATURES
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
 *  Allow breadcrumb trail to be specified.
 *  4.7 forms API and other 4.7 transition requirements.
+*  XML?
 
 LESS TIME CONSUMING STUFF
 *  Check queries for injection attacks, especially on the URL!
@@ -18,7 +19,8 @@ LESS TIME CONSUMING STUFF
 *  Create a tool to ease creation of default views.
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
-
+*  arguments API
+*  add not-saved reminder to form
 
 TO DONE
 
@@ -49,5 +51,6 @@ TO DONE
 *  Expose an API so modules can provide table and sorting and special
    field-handling information.
 *  allow random selection from a view
+*  provide blocks for default views that request them
 
 
