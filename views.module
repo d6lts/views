@@ -1,12 +1,41 @@
 <?php
 
-// TODO BEFORE RELEASE
-// add changed field to prevent multiple people saving views simultaneously
-// check queries for injection attacks, especially on that input!
-// Check for enabled modules everywhere
-
 // ---------------------------------------------------------------------------
 // Select Box Definitions
+
+function _views_arguments_default() {
+  return array(
+    1 => t('Return Page Not Found'),
+    2 => t('Display All Values'),
+    3 => t('Summary Of Choices')
+   );
+}
+
+function _views_types() {
+  return array(
+    1 => t("List View"), 
+    2 => t("Table View"), 
+    3 => t("Teaser List"),
+    4 => t("Full Nodes"),
+    5 => t("Random Teaser"),
+    6 => t("Random Node")
+  );
+}
+
+function _views_urls() {
+  return array(
+    1 => t("No URL"), 
+    2 => t("URL without Menu Entry"), 
+    3 => t("URL with Menu Entry")
+  );
+}
+
+function _views_sortorders() {
+  return array(
+    "ASC" => t("Ascending"),
+    "DESC" => t("Descending")
+  );
+}
 
 function _views_arguments() {
   $data['name']['nodetype'] = t("Node Type");
@@ -39,134 +68,107 @@ function _views_arguments() {
 // Argument info...
 // OR: arg_handler($op, ...): $op in('filter', 'fields', 'link')
 
-function _views_arguments_default() {
-  return array(
-    1 => t('Return Page Not Found'),
-    2 => t('Display All Values'),
-    3 => t('Summary Of Choices')
-   );
-}
 
-function _views_types() {
-  return array(
-    1 => t("List View"), 
-    2 => t("Table View"), 
-    3 => t("Teaser List"),
-    4 => t("Full Nodes")
-  );
-}
 
-function _views_urls() {
-  return array(
-    1 => t("No URL"), 
-    2 => t("URL without Menu Entry"), 
-    3 => t("URL with Menu Entry")
-  );
-}
+function _views_internal_tables() {
 
-function _views_sortorders() {
-  return array(
-    "ASC" => t("Ascending"),
-    "DESC" => t("Descending")
-  );
-}
-
-function _views_tables() {
-
-  $tables['term_node'] = array(
-    "name" => "term_node", 
-    "provider" => "internal",
-    "join" => array(
-      "left" => array(
-        "table" => "node",
-        "field" => "nid"
-      ), 
-      "right" => array(
-        "field" => "nid"
-      )
-    ),
-    "filters" => array(
-      "tid" => array(
-        'name' => "Taxonomy Term",
-        'list' => "views_handler_filter_tid",
-        'operator' => "views_handler_operator_andor",
-      )
-    )
-  );
-
-  $tables['term_data'] = array(
-    "name" => "term_data", 
-    "provider" => "internal",
-    "join" => array(
-      "left" => array(
-        "table" => "term_node",
-        "field" => "tid"
-      ), 
-      "right" => array(
-        "field" => "tid"
-      ), 
-    ),
-    "fields" => array(
-      "name" => array(
-        'name' => "Taxonomy Term", 
-        'sortable' => true
+  if (module_exist('taxonomy')) {
+    $tables['term_node'] = array(
+      "name" => "term_node", 
+      "provider" => "internal",
+      "join" => array(
+        "left" => array(
+          "table" => "node",
+          "field" => "nid"
+        ), 
+        "right" => array(
+          "field" => "nid"
+        )
       ),
-      "description" => array(
-        'name' => "Taxonomy Term Description", 
-        'sortable' => false
-      ),
-    ),
-    "sorts" => array(
-      "weight" => array(
-        'name' => "Taxonomy Name", 
-        'field' => array('weight', 'name')
+      "filters" => array(
+        "tid" => array(
+          'name' => "Taxonomy Term",
+          'list' => "views_handler_filter_tid",
+          'operator' => "views_handler_operator_andor",
+        )
       )
-    ),
-    "filters" => array(
-      "vid" => array(
-        'name' => "Vocabulary Term",
-        'list' => "views_handler_filter_vid",
-        'operator' => "views_handler_operator_andor",
+    );
+
+    $tables['term_data'] = array(
+      "name" => "term_data", 
+      "provider" => "internal",
+      "join" => array(
+        "left" => array(
+          "table" => "term_node",
+          "field" => "tid"
+        ), 
+        "right" => array(
+          "field" => "tid"
+        ), 
+      ),
+      "fields" => array(
+        "name" => array(
+          'name' => "Taxonomy Term", 
+          'sortable' => true
+        ),
+        "description" => array(
+          'name' => "Taxonomy Term Description", 
+          'sortable' => false
+        ),
+      ),
+      "sorts" => array(
+        "weight" => array(
+          'name' => "Taxonomy Name", 
+          'field' => array('weight', 'name')
+        )
+      ),
+      "filters" => array(
+        "vid" => array(
+          'name' => "Vocabulary Term",
+          'list' => "views_handler_filter_vid",
+          'operator' => "views_handler_operator_andor",
+        )
       )
-    )
-  );
+    );
+  }
 
-  $tables['node_comment_statistics'] = array(
-    "name" => "node_comment_statistics", 
-    "provider" => "internal",
-    "join" => array(
-      "left" => array(
-        "table" => "node",
-        "field" => "nid"
-      ), 
-      "right" => array(
-        "field" => "nid"
-      ), 
-    ),
-    "fields" => array(
-      "last_comment_timestamp" => array(
-        'name' => "Last Comment Time", 
-        'sortable' => true, 
-        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
-       ),
-      "last_comment_name" => array(
-        'name' => "Last Comment Author", 
-        'handler' => 'views_handler_field_username', 
-        'sortable' => true, 
-        'uid' => "last_comment_uid", 
-        'addlfields' => array("last_comment_uid")
+  if (module_exist('comment')) {
+    $tables['node_comment_statistics'] = array(
+      "name" => "node_comment_statistics", 
+      "provider" => "internal",
+      "join" => array(
+        "left" => array(
+          "table" => "node",
+          "field" => "nid"
+        ), 
+        "right" => array(
+          "field" => "nid"
+        ), 
       ),
-      "comment_count" => array(
-        'name' => "Comment Count", 
-        'sortable' => true, 
-        'handler' => array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count")
+      "fields" => array(
+        "last_comment_timestamp" => array(
+          'name' => "Last Comment Time", 
+          'sortable' => true, 
+          'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+         ),
+        "last_comment_name" => array(
+          'name' => "Last Comment Author", 
+          'handler' => 'views_handler_field_username', 
+          'sortable' => true, 
+          'uid' => "last_comment_uid", 
+          'addlfields' => array("last_comment_uid")
+        ),
+        "comment_count" => array(
+          'name' => "Comment Count", 
+          'sortable' => true, 
+          'handler' => array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count")
+        ),
       ),
-    ),
-    "sorts" => array(
-      "last_comment_timestamp" => array('name' => "Last Comment Date")
-    )
-
-  );
+      "sorts" => array(
+        "last_comment_timestamp" => array('name' => "Last Comment Date")
+      )
+    );
+  }
 
   $tables['users'] = array(
     "name" => "users", 
@@ -234,7 +236,73 @@ function _views_tables() {
       ),
     )
   );
+  
+  $tables['n'] = array(
+    "name" => "n", 
+    "provider" => "internal", // won't show up in external list.
+    "fields" => array(
+      "title" => array(
+        'name' => "Node Title", 
+        'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
+        'sortable' => true, 'addlfields' => array('changed') 
+      ),
+      "created" => array(
+        'name' => "Node Created Time", 
+        'sortable' => true, 
+        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+      ),
+      "changed" => array(
+        'name' => "Node Updated Time", 
+        'sortable' => true, 
+        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+      ),
+      "type" => array(
+        'name' => "Node Type", 
+        'handler' => 'views_handler_nodetype', 
+        'sortable' => true
+      ),
+    ),
+    "sorts" => array(
+      "created" => array('name' => "Post Date", 'table' => 'n'),
+      "changed" => array('name' => "Last Changed Date", 'table' => 'n'),
+      "sticky" => array('name' => "Node set to Sticky", 'table' => 'n'),
+      "title" => array('name' => "Node Title", 'table' => 'n')
+    ),
+    "filters" => array(
+      "status" => array(
+        'name' => "Published",
+        'table' => "n",
+        'operator' => array("=" => "Equals"),
+        'list' => "views_handler_operator_yesno",
+        'list-type' => "select"
+      ),
+      "promote" => array(
+        'name' => "Front Page",
+        'table' => "n",
+        'operator' => array("=" => "Equals"),
+        'list' => "views_handler_operator_yesno",
+        'list-type' => "select"
+      ),
+      "type" => array(
+        'name' => "Node Type",
+        'table' => "n",
+        'list' => "views_handler_filter_nodetype",
+        'list-type' => 'checkbox',
+        'operator' => "views_handler_operator_or"
+      ),
+    ),
+
+  );    
   return $tables;
+}
+
+function _views_get_tables() {
+  global $VIEWS_TABLES;
+
+  if (!$VIEWS_TABLES) {
+    $VIEWS_TABLES = array_merge(module_invoke_all('views_tables'), _views_internal_tables());
+  }
+  return $VIEWS_TABLES;
 }
 
 // filters
@@ -246,139 +314,187 @@ function _views_tables() {
 // transform: if here, handler for transforming data.
 // validate: if here, handler for validating data.
 
-function _views_node_filters() {
 
-  return array(
-    "n.status" => array(
-      'name' => "Published",
-      'table' => "n",
-      'operator' => array("=" => "Equals"),
-      'list' => "views_handler_operator_yesno",
-      'list-type' => "select"
-    ),
-    "n.promote" => array(
-      'name' => "Front Page",
-      'table' => "n",
-      'operator' => array("=" => "Equals"),
-      'list' => "views_handler_operator_yesno",
-      'list-type' => "select"
-    ),
-    "n.type" => array(
-      'name' => "Node Type",
-      'table' => "n",
-      'list' => "views_handler_filter_nodetype",
-      'list-type' => 'checkbox',
-      'operator' => "views_handler_operator_or"
-    ),
-  );
-}
+// There may also be a generally better way to organize the data.
 
-function _views_construct_filters($table_data, $titles = false) {
-  $filters = _views_node_filters();
-  if ($titles) {
-    foreach ($filters as $key => $data) {
-      $newfilters[$key] = $data['name'];
-    }
-    $filters = $newfilters;
-  }
-    
+function _views_organize_data() {
+  global $VIEWS_FILTERS;
+  global $VIEWS_FILTERS_TITLES;
+  global $VIEWS_FIELDS;
+  global $VIEWS_FIELDS_TITLES;
+  global $VIEWS_SORTS;
+  global $VIEWS_SORTS_TITLES;
+
+  $table_data = _views_get_tables();
+  
   foreach ($table_data as $name => $table) {
     if (is_array($table['filters'])) {
       foreach($table['filters'] as $filter => $data) {
         $data['table'] = $name;
-        if ($titles)
-          $filters["$table[name].$filter"] = $data['name'];
-        else
-          $filters["$table[name].$filter"] = $data;
+        $VIEWS_FILTERS_TITLES["$table[name].$filter"] = $data['name'];
+        $VIEWS_FILTERS["$table[name].$filter"] = $data;
       }
     }
-  }
-  return $filters;
-}
-
-function _views_node_fields() {
-  return array(
-    "n.title" => array(
-      'name' => "Node Title", 
-      'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
-      'sortable' => true, 'addlfields' => array('changed') 
-    ),
-    "n.created" => array(
-      'name' => "Node Created Time", 
-      'sortable' => true, 
-      'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
-    ),
-    "n.changed" => array(
-      'name' => "Node Updated Time", 
-      'sortable' => true, 
-      'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
-    ),
-    "n.type" => array(
-      'name' => "Node Type", 
-      'handler' => 'views_handler_nodetype', 
-      'sortable' => true
-    ),
-  );
-}
-
-function _views_construct_fields($table_data, $titles = false) {
-  $fields = _views_node_fields();
-  if ($titles) {
-    foreach ($fields as $key => $data) {
-      $newfields[$key] = $data['name'];
-    }
-    $fields = $newfields;
-  }
-    
-  foreach ($table_data as $name => $table) {
     if (is_array($table['fields'])) {
       foreach($table['fields'] as $field => $data) {
         $data['table'] = $name;
-        if ($titles)
-          $fields["$table[name].$field"] = $data['name'];
-        else
-          $fields["$table[name].$field"] = $data;
+        $VIEWS_FIELDS_TITLES["$table[name].$field"] = $data['name'];
+        $VIEWS_FIELDS["$table[name].$field"] = $data;
       }
     }
-  }
-  return $fields;
-}
-
-function _views_node_sorts() {
-	return array(
-		"n.created" => array('name' => "Post Date", 'table' => 'n'),
-		"n.changed" => array('name' => "Last Changed Date", 'table' => 'n'),
-		"n.sticky" => array('name' => "Node set to Sticky", 'table' => 'n'),
-		"n.title" => array('name' => "Node Title", 'table' => 'n')
-	);
-}
-
-function _views_construct_sorts($table_data, $titles = false) {
-  $sorts = _views_node_sorts();
-  if ($titles) {
-    foreach ($sorts as $key => $data) {
-      $newsorts[$key] = $data['name'];
-    }
-    $sorts = $newsorts;
-  }
-    
-  foreach ($table_data as $name => $table) {
     if (is_array($table['sorts'])) {
       foreach($table['sorts'] as $field => $data) {
         $data['table'] = $name;
-        if ($titles)
-          $sorts["$table[name].$field"] = $data['name'];
-        else {
-          $sorts["$table[name].$field"] = $data;
+        $VIEWS_SORTS_TITLES["$table[name].$field"] = $data['name'];
+        $VIEWS_SORTS["$table[name].$field"] = $data;
+      }
+    }
+
+  }
+
+}
+
+function _views_get_filters($titles = false) {
+  global $VIEWS_FILTERS;
+  global $VIEWS_FILTERS_TITLES;
+
+  if (!$VIEWS_FILTERS) {
+    _views_organize_data();
+  }
+
+  if (!$titles)
+    return $VIEWS_FILTERS;
+  else
+    return $VIEWS_FILTERS_TITLES;
+}
+
+function _views_get_fields($titles = false) {
+  global $VIEWS_FIELDS;
+  global $VIEWS_FIELDS_TITLES;
+
+  if (!$VIEWS_FIELDS) {
+    _views_organize_data();
+  }
+
+  if (!$titles)
+    return $VIEWS_FIELDS;
+  else
+    return $VIEWS_FIELDS_TITLES;
+}
+
+function _views_get_sorts($titles = false) {
+  global $VIEWS_SORTS;
+  global $VIEWS_SORTS_TITLES;
+
+  if (!$VIEWS_SORTS) {
+    _views_organize_data();
+  }
+
+  if (!$titles)
+    return $VIEWS_SORTS;
+  else
+    return $VIEWS_SORTS_TITLES;
+}
+
+function _views_internal_default_views() {
+
+  $view = new stdClass();
+  $view->name = 'tracker_tracker2';
+  $view->description = 'Shows all new activity on system.';
+  $view->title = 'recent posts';
+  $view->use_pager = '1';
+  $view->nodes_per_page = '25';
+  $view->nodes_per_block = '10';
+  $view->block_display_header = '0';
+  $view->type = '2';
+  $view->block = '1';
+  $view->url = '3';
+  $view->field = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'type',
+      'label' => 'Type',
+    ),
+    array (
+      'tablename' => 'n',
+      'field' => 'title',
+      'label' => 'Title',
+      'handler' => 'views_handler_field_nodelink_with_mark',
+    ),
+    array (
+      'tablename' => 'users',
+      'field' => 'name',
+      'label' => 'Author',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'comment_count',
+      'label' => 'Replies',
+      'handler' => 'views_handler_comments_with_new',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'label' => 'Last Post',
+      'handler' => 'views_handler_field_since',
+    ),
+  );
+  $view->sort = array (
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'sortorder' => 'DESC',
+    ),
+  );
+  $view->argument = array (
+    array (
+      'type' => 'uid',
+      'argdefault' => '2',
+    ),
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'status',
+      'operator' => '=',
+      'value' => '1',
+    ),
+  );
+
+  $views['tracker_tracker2'] = $view;
+
+  return $views;
+}
+
+function _views_get_default_views() {
+  global $VIEWS_DEFAULT_VIEWS;
+
+  if (!$VIEWS_DEFAULT_VIEWS) {
+    $VIEWS_DEFAULT_VIEWS = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
+    foreach ($VIEWS_DEFAULT_VIEWS as $i => $view) {
+      if (is_array($view->field)) {
+        foreach($view->field as $j => $field) {
+          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['fullname'] = "$field[tablename].$field[field]";
+          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['queryname'] = "$field[tablename]_$field[field]";
+        }
+      }
+      if (is_array($view->filter)) {
+        foreach($view->filter as $j => $filter) {
+          $VIEWS_DEFAULT_VIEWS[$i]->filter[$j]['field'] = "$filter[tablename].$filter[field]";
+        }
+      }
+      if (is_array($view->sort)) {
+        foreach($view->sort as $j => $sort) {
+          $VIEWS_DEFAULT_VIEWS[$i]->sort[$j]['field'] = "$sort[tablename].$sort[field]";
         }
       }
     }
   }
-  return $sorts;
+  return $VIEWS_DEFAULT_VIEWS;
 }
-
 // ---------------------------------------------------------------------------
 // Drupal Hooks
+
 
 function views_help($section) {
   switch ($section) {
@@ -462,13 +578,30 @@ function views_admin_page() {
   }
 
   if ($items) {
-    $output = theme('table', array('View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"));
+    $output = theme('table', array('View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Existing Views");
     $output .= theme('pager', NULL, $numViews);
   }
   else {
     $output .= "<p>No views have currently been defined.</p>";
   }
-  $output .= l('Add a view', 'admin/views/add');
+  $output .= "<br>" . l('Add a view', 'admin/views/add') . "<br>";
+
+  $output .= "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>";
+  $items = array();
+  $dviews = _views_get_default_views();
+
+  foreach ($dviews as $view) {
+    $url = "views/$view->name";
+    $items[] = array($view->title, $view->description, l($url, $url), l('add', "admin/views/add/$view->name"));
+  }
+
+  if ($items) {
+    $output .= theme('table', array('Default View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Default Views");
+//    $output .= theme('pager', 2, $numViews);
+  }
+  else {
+    $output .= "<p>No views have currently been defined.</p>";
+  }
   print theme('page', $output);
 }
 
@@ -490,7 +623,7 @@ function views_admin_add_page($template = '') {
       return drupal_goto('admin/views');
     }
   }
-  else if (!$op)
+  else if (!$op && !$view)
     $view = _views_get_default_view($template);
 
   drupal_set_title(t('Add a View'));
@@ -500,10 +633,14 @@ function views_admin_add_page($template = '') {
 
 function views_admin_edit_page($vid = '') {
   $view = $_POST['edit'];
-  if (is_array($view))
+  if (is_array($view)) {
     $view = array2object($view);
-  else
+  }
+  else {
     $view = _views_load_view($vid);
+  }
+  if (!$view && !$vid)
+    return drupal_goto('admin/views');
 
   $op = $_POST['op'];
 
@@ -533,6 +670,14 @@ function views_admin_edit_page($vid = '') {
 
 // FIXME: Ok, this can be a proper object any day now.
 function _views_get_default_view($template = '') {
+  if ($template) {
+    $dviews = _views_get_default_views();
+    if (isset($dviews[$template])) {
+      $view = $dviews[$template];
+      return $view;
+    }
+  }
+  
   $view->use_pager = 1;
   $view->nodes_per_page = variable_get('default_nodes_main', 10);
   $view->filter_published = 1;
@@ -559,14 +704,13 @@ function _views_view_form($view, $op = '') {
 
   // Compensate for possibly empty arrays that didn't get put into the form:
   _views_check_arrays($view);
-  $tabledata = _views_tables();
-  $fields = _views_construct_fields($tabledata);
-  $fieldnames = _views_construct_fields($tabledata, true); // for selecting
+  $fields = _views_get_fields();
+  $fieldnames = _views_get_fields(true); // for selecting
 
-  $sortnames = _views_construct_sorts($tabledata, true); // for selecting
+  $sortnames = _views_get_sorts(true); // for selecting
 
-  $filters = _views_construct_filters($tabledata);
-  $filternames = _views_construct_filters($tabledata, true);
+  $filters = _views_get_filters();
+  $filternames = _views_get_filters(true);
 
   // Deal with buttons other than submit.
 
@@ -621,6 +765,7 @@ function _views_view_form($view, $op = '') {
     $newfield['tablename'] = $fieldbits[0];
     $newfield['field'] = $fieldbits[1];
     $newfield['label'] = $fieldnames[$view->addfield];
+    $newfield['queryname'] = "$fieldbits[0]_$fieldbits[1]";
     $view->field[] = $newfield;
   }
 
@@ -652,6 +797,7 @@ function _views_view_form($view, $op = '') {
   
     $list .= "<li> " . $fields[$fieldname]['name'] . " &nbsp;";
     $form .= form_hidden("field][$i][fullname", $field['fullname']);
+    $form .= form_hidden("field][$i][queryname", $field['queryname']);
     $form .= form_hidden("field][$i][tablename", $field['tablename']);
     $form .= form_hidden("field][$i][field", $field['field']);
 
@@ -756,32 +902,6 @@ function _views_view_form($view, $op = '') {
     $group = "<p>No filtering Criteria Specified</p>";
   }
 
-/*
-  $group = form_checkbox(t('Filter By Node Types'), 'filter_use_nodetypes', 1, $view->filter_use_nodetypes, t('If checked the list will be limited to the node types checked below.'));
-
-  // Get a list of nodetypes
-  foreach (node_list() as $type) {
-    $node_type = node_invoke($type, 'node_name');
-    $nodes[$type] = $node_type ? $node_type : $type;
-  }
-  $group .= form_checkboxes(t('Types'), 'filter_nodetypes', $view->filter_nodetypes, $nodes, t('A list of node types to filter the query to.'));
-
-  $group = form_group(t('Node Types'), $group);
-
-  $group .= form_checkbox(t('Published Nodes Only'), 'filter_published', 1, $view->filter_published, t('If checked the list will be limited to published nodes. It is recommended that this is checked.'));
-
-  $group .= form_checkbox(t('Front Page Only'), 'filter_frontpage', 1, $view->filter_frontpage, t('If checked the list will be limited to nodes that have been promote to the front page.'));
-
-  $group .= form_textfield(t('Filter to Taxonomy Term'), 'filter_taxonomy_term', $view->filter_taxonomy_term, 60, 255, t('If not blank, filter to taxonomy term as with taxonomy/term. Use "+" for or, "," for and. See taxonomy help for more details.'));
-
-  $group .= form_textfield(t('Filter to Taxonomy Vocabulary'), 'filter_taxonomy_voc', $view->filter_taxonomy_voc, 60, 255, t('If not blank, filter to taxonomy vocabulary similar to taxonomy/term, but with vocabulary IDs. Use "+" for or, "," for and. See taxonomy help for more details.'));
-
-  $group .= form_checkbox(t('Use Author Filter'), 'filter_use_author', 1, $view->filter_use_author, t('If checked the list will be limited to nodes authored by the filtered user.'));
-
-  $group .= form_textfield(t('Filter to Author Name'), 'filter_author_name', $view->filter_author_name, 60, 255, t('If filter checked, filter to nodes posted by a given author. Use -1 for the logged in user (so that a user would see his or her own posts). Leave blank for Anonymous user.'));
-  $group .= form_hidden('filter_author_uid', $view->filter_author_uid);
-
-  */
   $form .= form_group(t('Filters'), $group);
   $group = form_select(t("Filter"), 'addfilter', NULL, $filternames);
   $group .= form_submit(t("Add Filter"));
@@ -828,7 +948,7 @@ function _views_delete_form($view) {
 
 
 function _views_view_validate(&$view) {
-  $filters = _views_construct_filters(_views_tables());
+  $filters = _views_get_filters();
   _views_check_arrays($view);
   
   if ($view->vid) {
@@ -875,42 +995,6 @@ function _views_view_validate(&$view) {
     form_set_error('nodes_per_block', "If being used as a block, Nodes Per Block must be positive.");
     $valid = false;
   }
-/*
-  if ($view->filter_use_nodetypes && empty($view->filter_nodetypes)) {
-    form_set_error('filter_nodetypes', "If Filter Node Types is selected, at least one node type must be checked!");
-    $valid = false;
-  }
-
-  if ($view->filter_use_author) {
-    if ($view->filter_author_name == -1)
-      $view->filter_author_uid = -1;
-
-    if ($view->filter_author_name && $view->filter_author_name != variable_get('anonymous', 'Anonymous')) {
-      // validate that we get a user.
-      $u = user_load(array('name' => $view->filter_author_name));
-      if (!$u->uid) {
-        form_set_error('filter_author_name', "$view->filter_author_name is not a valid user!");
-        $valid = false;
-      }
-      else {
-        $view->filter_author_uid = $u->uid;
-      }
-    }
-    else {
-      $view->filter_author_uid = 0;
-    }
-  }
-
-  if ($view->filter_taxonomy_term && !_views_break_phrase($view->filter_taxonomy_term)) {
-    form_set_error('filter_taxonomy_term', "Unable to parse taxonomy term filter!");
-    $valid = false;
-  }
-
-  if ($view->filter_taxonomy_voc && !_views_break_phrase($view->filter_taxonomy_voc)) {
-    form_set_error('filter_taxonomy_voc', "Unable to parse taxonomy vocabulary filter!");
-    $valid = false;
-  }
-*/
   if ($view->type == 2 && !count($view->field)) { // "Table" 
     form_set_error('addfield', "You must select what fields to display when using type 'Table'!");
     $valid = false;
@@ -923,6 +1007,21 @@ function _views_view_validate(&$view) {
 // ---------------------------------------------------------------------------
 // View Construction
 
+function _views_get_view($viewname) {
+  $view = _views_load_view($viewname);
+  if ($view)
+    return $view;
+
+  if (is_int($viewname))
+    return; // don't bother looking if viewname is an int!
+
+  $dviews = _views_get_default_views();
+
+  if (isset($dviews[$viewname]))
+    return $dviews[$viewname];
+
+}
+
 function views_view_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
@@ -930,7 +1029,7 @@ function views_view_page() {
       $viewname = $next;
     else
       $viewname .= "/$next";
-    if ($view = _views_load_view($viewname))
+    if ($view = _views_get_view($viewname))
       break;
   }
   if (!$view)
@@ -957,17 +1056,13 @@ function views_view_block($vid) {
   return $block;
 }
 
-
-function views_view($type, $view, $args = array()) {
-  global $user;
-
+function _views_build_query(&$view, $args = array()) {
   $query = new _views_query();
 
   // Process static filters
   _views_view_build_filters($query, $view);
   
   // Process arguments.
-//  for ($i = 0; $i < count($view->argument); $i++) {
   foreach ($view->argument as $i => $argument) {
     if ($args[$i]) {
       _views_view_build_arg($query, $args[$i], $argument['type']);
@@ -989,10 +1084,7 @@ function views_view($type, $view, $args = array()) {
   if (!$summary) {
     _views_view_build_sorts($query, $view);
     if ($view->type == 1 || $view->type == 2) { // list (1) or table (2)
-       // Title lists won't load the node, so put the name into this query.
-//      $query->add_field('title');
-//    else if ($view->type == 2) { // Table
-      $fields = _views_construct_fields(_views_tables()); 
+      $fields = _views_get_fields(); 
 
       foreach($view->field as $field) {
         // Some fields are not actually fields but require special handlers
@@ -1009,24 +1101,47 @@ function views_view($type, $view, $args = array()) {
         $view->table_header = _views_construct_header($view, $fields);
         $query->set_header($view->table_header);
       }
-
     }
   }
 
-  $sql = $query->query();
-  
+  $info['sql'] = $query->query();
+  $info['countsql'] = $query->query(true);
+  $info['summary'] = $summary;
+
   // DEBUG
-//  $output = "<pre>" . var_export($view, TRUE) . "</pre>";
+//  print "<pre>" . var_export($view, TRUE) . "</pre>";
 //  $output .= "<pre>" . var_export($args, TRUE) . "</pre>";
 // print "<pre>" . var_export($query, TRUE) . "</pre>";
 //  $output .= "<table width=800px><tr><td>$sql</table>";
 
-  $sql = db_rewrite_sql($sql);
+  return $info;
+
+}
+
+function views_view($type, $view, $args = array()) {
+
+  if ($view->sql) {
+    $info['sql'] = $view->sql;
+    $info['countsql'] = $view->countsql;
+    if ($view->type == 2)  // table only
+      $view->table_header = _views_construct_header($view, $fields);
+  }
+  else {
+    $info = _views_build_query($view, $args);
+  }
+
+  $sql = db_rewrite_sql($info['sql']);
 
   $use_pager = ($type == 'page' && $view->use_pager);
 
-  if ($use_pager) {
-    $csql = db_rewrite_sql($query->query(true), 'n', 'numrecs');
+  if ($view->type == 5 || $view->type == 6) {
+    $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
+    $count = db_result(db_query($csql));
+    $which = rand(0, $count - 1);
+    $result = db_query_range($sql, $which, 1);
+  }
+  else if ($use_pager) {
+    $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
     $result = pager_query($sql, $view->nodes_per_page, 0, $csql);
   }
 
@@ -1043,23 +1158,25 @@ function views_view($type, $view, $args = array()) {
     $items[] = $item;
   }
   // DEBUG
-//  $output .= "<pre>" . var_export($items, true) . "</pre>";
+//  $output = "<pre>" . var_export($items, true) . "</pre>";
 
   if ($summary) {
-    $output = theme("views_summary_$view->name", $view, $type, $level, $items);
-    if (!$output)
-      $output = theme('views_summary', $view, $type, $level, $items);
+    $out .= theme("views_summary_$view->name", $view, $type, $level, $items);
+    if ($out)
+      $output .= $out;
+    else
+      $output .= theme('views_summary', $view, $type, $level, $items);
   }
   else {
-    $output = theme("views_view_$view->name", $view, $type, $items);
+    $output .= theme("views_view_$view->name", $view, $type, $items);
     if (!$output)
-      $output = theme('views_view', $view, $type, $items);
+      $output .= theme('views_view', $view, $type, $items);
 
   }
 
   if ($type == 'page' && $view->use_pager) {
     if ($view->table_header && !$summary)
-      $output .= theme('pager', NULL, $view->nodes_per_page, 0, $tbspager);
+      $output .= theme('pager', NULL, $view->nodes_per_page, 0, tablesort_pager());
     else
       $output .= theme('pager', NULL, $view->nodes_per_page, 0);
   }
@@ -1067,7 +1184,7 @@ function views_view($type, $view, $args = array()) {
 }
 
 function _views_view_build_filters(&$query, $view) {
-  $filters = _views_construct_filters(_views_tables());
+  $filters = _views_get_filters();
 
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
@@ -1113,32 +1230,6 @@ function _views_view_build_filters(&$query, $view) {
     }
   }
 
-/*
-  // Static filters
-  if ($view->filter_published) 
-    $query->add_where("n.status = 1");
-
-  if ($view->filter_frontpage) 
-    $query->add_where("n.promote = 1");
-
-  if ($view->filter_use_author)  {
-    if ($view->filter_author_uid == -1)
-      $uid = $user->uid;
-    else
-      $uid = $view->filter_author_uid;
-   
-    $query->add_where("n.uid = $uid");
-  }
-
-  if ($view->filter_use_nodetypes) 
-    $query->add_where("n.type IN ('" . implode("','", $view->filter_nodetypes) . "')");
-
-  if ($view->filter_taxonomy_term)
-    $query->add_complex_filter('term_node', 'tid', $view->filter_taxonomy_term);
-
-  if ($view->filter_taxonomy_voc)
-    $query->add_complex_filter('term_data', 'vid', $view->filter_taxonomy_voc);
-*/
 }
 
 function _views_view_build_arg(&$query, $arg, $argtype) {
@@ -1152,7 +1243,7 @@ function _views_view_build_arg(&$query, $arg, $argtype) {
 }
 
 function _views_view_build_sorts(&$query, $view) {
-  $sorts = _views_construct_sorts(_views_tables());
+  $sorts = _views_get_sorts();
 
   foreach ($view->sort as $i => $sort) {
     $field = $sorts[$sort['field']]['field'];
@@ -1201,6 +1292,21 @@ function _views_build_summary(&$query, $argtype) {
   $query->add_groupby("$fieldinfo[field]");
   $query->set_count_field("DISTINCT($fieldinfo[field])");
 }
+
+function _views_is_cacheable(&$view) {
+  // views with arguments are immediately not cacheable.
+  if (!empty($view->argument))
+    return false;
+
+  $filters = _views_get_filters();
+
+  foreach ($view->filter as $i => $filter) {
+    if ($filters[$filter['field']]['cacheable'] == 'no') 
+      return false;
+  }
+  return true;
+}
+
 // ---------------------------------------------------------------------------
 // Query construction object
 
@@ -1212,7 +1318,7 @@ class _views_query {
     $this->groupby = "";
     $this->tables = array();
     $this->field = array("n.nid");
-    $this->table_data = _views_tables();
+    $this->table_data = _views_get_tables();
     $this->count_field = "*";
     $this->header = array();
   }
@@ -1264,6 +1370,8 @@ class _views_query {
   }
 
   function ensure_table($table) {
+    if ($table == 'n' || $table == 'node')
+      return;
     if ($this->tables[$table])
       return;
 
@@ -1272,6 +1380,9 @@ class _views_query {
   }
 
   function add_table($table, $ensure_path = false, $howmany = 1) {
+    if ($table == 'n' || $table == 'node')
+      return;
+
     if ($ensure_path) 
       if (!$this->ensure_path($table))
         return false;
@@ -1291,6 +1402,9 @@ class _views_query {
 
 // One of those times where recursion isn't evil. Go me!
   function trace($table, $traced = array()) {
+    if ($table == 'n' || $table == 'node')
+      return true;
+
     $left_table = $this->table_data[$table]['join']['left']['table'];
 
     // Does it end at 'node'?
@@ -1310,6 +1424,8 @@ class _views_query {
   // just put the table in. However, we don't do it until
   // last in case there's a bad loop or something.
   function ensure_path($table, $traced = array(), $add = array()) {
+    if ($table == 'n' || $table == 'node')
+      return true;
     $left_table = $this->table_data[$table]['join']['left']['table'];
 
     // Does it end at 'node'?
@@ -1445,7 +1561,7 @@ function _views_break_phrase($str) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'field', 'type', 'block', 'url', 'changed'/*, 'filter_use_nodetypes', 'filter_nodetypes', 'filter_published', 'filter_frontpage', 'filter_taxonomy_term', 'filter_taxonomy_voc', 'filter_use_author', 'filter_author_uid'*/);
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'field', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
 }
 
 function _views_delete_view($view) {
@@ -1463,25 +1579,10 @@ function _views_load_view($arg) {
     $where = "v.name = '$arg'";
   else
     $where = "v.vid =  $arg";
-
-  $view = db_fetch_object(db_query("SELECT v.*, u.name as filter_author_name FROM {view_view} v INNER JOIN {users} u ON u.uid = v.filter_author_uid WHERE $where"));
+  $view = db_fetch_object(db_query("SELECT v.* as filter_author_name FROM {view_view} v WHERE $where"));
 
   if (!$view->name)
     return NULL;
-
-  if ($view->filter_use_author && !$view->filter_author_name) {
-    if ($view->filter_author_uid == 0)
-      $view->filter_author_name = variable_get('anonymous', 'Anonymous');
-    else if ($view->filter_author_uid == -1)
-      $view->filter_author_name = "-1";
-    else
-      $view->filter_author_name = "Unknown User";
-  }
-
-  if ($view->filter_nodetypes)
-    $view->filter_nodetypes = explode(', ', $view->filter_nodetypes);
-  else
-    $view->filter_nodetypes = array();
 
   // load the sorting criteria too.
   $result = db_query("SELECT * FROM {view_sort} vs WHERE vid = $view->vid ORDER BY position ASC");
@@ -1528,7 +1629,13 @@ function _views_load_view($arg) {
 
 function _views_save_view($view) {
   _views_check_arrays($view);
-  // make all our text fields safe:
+
+  // cache the query
+  if (_views_is_cacheable($view)) {
+    $info = _views_build_query($view);
+    $view->sql = $info['sql'];
+    $view->countsql = $info['countsql'];
+  }
 
   // collapse arrays
   if (is_array($view->filter_nodetypes))
@@ -1655,8 +1762,7 @@ function views_view_list($view, $nodes) {
 }
 
 function views_view_table($view, $nodes) {
-  $table_data = _views_tables();
-  $fields = _views_construct_fields(_views_tables()); 
+  $fields = _views_get_fields(); 
 
   foreach ($nodes as $node) {
     $row = array();
@@ -1692,9 +1798,11 @@ function theme_views_view($view, $type, $nodes) {
       $output .= views_view_table($view, $nodes);
       break;
     case 3: // => t("Teaser List"),
+    case 5: // random taser
       $output .= views_view_nodes($nodes, true);
       break;
     case 4: // => t("Full Nodes")
+    case 6: // random node
       $output .= views_view_nodes($nodes, false);
       break;
   }

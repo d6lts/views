@@ -2,34 +2,23 @@ TODO
 
 MAJOR FEATURES
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
-
-*  Expose an API so modules can provide table and sorting and special
-   field-handling information.
-
 *  Allow breadcrumb trail to be specified.
-
 *  4.7 forms API and other 4.7 transition requirements.
-
-*  query caching
-
-*  default views
 
 LESS TIME CONSUMING STUFF
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
 
+*  break the form up into distinct functions for each section
+
+*  Titles for summary view
+
+*  Document the API
+*  Create a tool to ease creation of default views.
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
 
-*  break the form up into distinct functions for each section
-
-*  redo the $tabledata stuff to generate once and stick it into a well-named
-   global for cacheing (this is a prelude to exposing the API).
-
-*  Titles for summary view
-*  Just put the node information in the full tables section, rather than 3 stupid functions
-*  allow random selection from a view
 
 TO DONE
 
@@ -52,7 +41,13 @@ TO DONE
 *  Allow a NOT in the and/or algorithm.
 *  description field for view
 *  Add changed field to prevent multiple admins from saving views simultaneously
-
-
+*  query caching
+*  redo the $tabledata stuff to generate once and stick it into a well-named
+   global for cacheing (this is a prelude to exposing the API).
+*  Just put the node information in the full tables section, rather than 3 stupid functions
+*  default views
+*  Expose an API so modules can provide table and sorting and special
+   field-handling information.
+*  allow random selection from a view
 
 
