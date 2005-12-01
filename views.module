@@ -3,7 +3,7 @@
 // ---------------------------------------------------------------------------
 // Select Box Definitions
 
-function _views_arguments_default() {
+function _views_get_arguments_default() {
   return array(
     1 => t('Return Page Not Found'),
     2 => t('Display All Values'),
@@ -37,37 +37,35 @@ function _views_sortorders() {
   );
 }
 
-function _views_arguments() {
-  $data['name']['nodetype'] = t("Node Type");
-  $data['handler']['nodetype'] = "views_handler_arg_nodetype";
-
-  $data['name']['uid'] = t("User ID");
-  $data['handler']['uid'] = "views_handler_arg_uid";
-
-  $data['name']['taxid'] = t("Taxonomy Term ID");
-  $data['handler']['taxid'] = "views_handler_arg_taxid";
-
-  $data['name']['year'] = t("Year");
-  $data['handler']['year'] = "views_handler_arg_year";
-
-  $data['name']['month'] = t("Month (1-12)");
-  $data['handler']['month'] = "views_handler_arg_month";
-
-  $data['name']['week'] = t("Week (1-53)");
-  $data['handler']['week'] = "views_handler_arg_week";
-
-  $data['name']['monthyear'] = t("Month + Year (CCYYMM)");
-  $data['handler']['monthyear'] = "views_handler_arg_monthyear";
-
-  $data['name']['fulldate'] = t("Full Date (CCYYMMDD)");
-  $data['handler']['fulldate'] = "views_handler_arg_fulldate";
-  
-  return $data;
+function _views_internal_arguments() {
+  $arguments = array(
+    'nodetype' => array('name' => t("Node Type"), 'handler' => "views_handler_arg_nodetype"),
+    'uid' => array('name' => t("User ID"), 'handler' => "views_handler_arg_uid"),
+    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid"),
+    'year' => array('name' => t("Year"), 'handler' => "views_handler_arg_year"),
+    'month' => array('name' => t("Month (1-12)"), 'handler' => "views_handler_arg_month"),
+    'week' => array('name' => t("Week (1-53)"), 'handler' => "views_handler_arg_week"),
+    'monthyear' => array('name' => t("Month + Year (CCYYMM)"), 'handler' => "views_handler_arg_monthyear"),
+    'fulldate' => array('name' => t("Full Date (CCYYMMDD)"), 'handler' => "views_handler_arg_fulldate"),
+  );
+  return $arguments;
 }
 
 // Argument info...
 // OR: arg_handler($op, ...): $op in('filter', 'fields', 'link')
 
+function _views_get_arguments() {
+  global $VIEWS_ARGUMENTS;
+
+  if (!$VIEWS_ARGUMENTS) {
+    $arguments = array_merge(module_invoke_all('views_arguments'), _views_internal_arguments());
+    foreach ($arguments as $table => $arg) {
+      $VIEWS_ARGUMENTS['name'][$table] = $arg['name'];
+      $VIEWS_ARGUMENTS['handler'][$table] = $arg['handler'];
+    }
+  }
+  return $VIEWS_ARGUMENTS;
+}
 
 
 function _views_internal_tables() {
@@ -184,7 +182,7 @@ function _views_internal_tables() {
     ),
     "fields" => array(
       "name" => array(
-        'name' => "Author Name", 
+        'name' => "Node Author Name", 
         'handler' => 'views_handler_field_username', 
         'sortable' => true, 
         'uid' => "uid", 
@@ -192,22 +190,22 @@ function _views_internal_tables() {
       ),
     ),
     "sorts" => array(
-      "name" => array('name' => "Author Name")
+      "name" => array('name' => "Node Author Name")
     ),
     "filters" => array(
       "uid" => array(
-        'name' => "Author Name",
+        'name' => "Node Author Name",
         'operator' => "views_handler_operator_or",
         'list' => "views_handler_filter_username"
       ),
       "anon" => array(
         'field' => 'uid',
-        'name' => "Author Name is Anonymous",
+        'name' => "Node Author is Anonymous",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_useranon"
       ),
       "currentuid" => array(
-        'name' => "Author Name is Current User",
+        'name' => "Node Author is Current User",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_usercurrent",
         'custom' => "views_handler_filter_usercurrent_custom",
@@ -504,6 +502,72 @@ function _views_internal_default_views() {
   );
   $views['testblock'] = $view;
 
+  $view = new stdClass();
+  $view->name = 'tracker_trackerxxxx';
+  $view->description = 'Shows all new activity on system.';
+  $view->title = 'recent posts';
+  $view->header = '';
+  $view->header_format = '0';
+  $view->type = '2';
+  $view->url = '3';
+  $view->use_pager = '1';
+  $view->nodes_per_page = '25';
+  $view->block = '1';
+  $view->nodes_per_block = '10';
+  $view->block_display_header = '0';
+  $view->sort = array (
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'sortorder' => 'DESC',
+    ),
+  );
+  $view->argument = array (
+    array (
+      'type' => 'uid',
+      'argdefault' => '2',
+    ),
+  );
+  $view->field = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'type',
+      'label' => 'Type',
+    ),
+    array (
+      'tablename' => 'n',
+      'field' => 'title',
+      'label' => 'Title',
+      'handler' => 'views_handler_field_nodelink_with_mark',
+    ),
+    array (
+      'tablename' => 'users',
+      'field' => 'name',
+      'label' => 'Author',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'comment_count',
+      'label' => 'Replies',
+      'handler' => 'views_handler_comments_with_new',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'label' => 'Last Post',
+      'handler' => 'views_handler_field_since',
+    ),
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'status',
+      'operator' => '=',
+      'value' => '1',
+    ),
+  );
+  $views[$view->name] = $view;
+
   return $views;
 }
 
@@ -751,6 +815,11 @@ function _views_view_form($view, $op = '') {
 
   // Compensate for possibly empty arrays that didn't get put into the form:
   _views_check_arrays($view);
+
+  if ($view->working && $view->vid) {
+    drupal_set_message("You have modified this view; changes will not be recorded until you Save the form.");
+  }
+
   $fields = _views_get_fields();
   $fieldnames = _views_get_fields(true); // for selecting
 
@@ -824,6 +893,7 @@ function _views_view_form($view, $op = '') {
 
   $form = form_hidden('vid', $view->vid);
   $form .= form_hidden('changed', $view->changed);
+  $form .= form_hidden('working', true);
 
   // DEBUGGING
 //    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
@@ -879,11 +949,11 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_group(t('Pager'), $urlgroup);
 
-  $arginfo = _views_arguments();
+  $arginfo = _views_get_arguments();
 //  for ($i = 0; $i < count($view->argument); $i++) {
   foreach ($view->argument as $i => $argument) {
     $arggroup .= form_select(t("Argument $i"), "argument][$i][type", $argument['type'], $arginfo['name']);
-    $arggroup .= form_select(t("Argument $i Default"), "argument][$i][argdefault", $argument['argdefault'], _views_arguments_default());
+    $arggroup .= form_select(t("Argument $i Default"), "argument][$i][argdefault", $argument['argdefault'], _views_get_arguments_default());
     $arggroup .= form_submit(t("Delete Argument %n", array('%n' => $i)));
   }
   if (!$arggroup)
@@ -892,7 +962,7 @@ function _views_view_form($view, $op = '') {
   $group .= form_group(t('Current Arguments'), $arggroup);
 
   $arggroup = form_select(t('Argument'), 'addargument][type', NULL, $arginfo['name'], t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments..'));
-  $arggroup .= form_select(t('Argument Default'), 'addargument][argdefault', NULL, _views_arguments_default(), t('If argument 1 was specified, what action to take if the argument is not given.'));
+  $arggroup .= form_select(t('Argument Default'), 'addargument][argdefault', NULL, _views_get_arguments_default(), t('If argument 1 was specified, what action to take if the argument is not given.'));
   $arggroup .= form_submit('Add Argument');
   $group .= form_group(t('Add an Argument'), $arggroup);
   
@@ -1280,7 +1350,7 @@ function _views_view_build_filters(&$query, $view) {
 }
 
 function _views_view_build_arg(&$query, $arg, $argtype) {
-  $arginfo = _views_arguments();
+  $arginfo = _views_get_arguments();
   if (!function_exists($arginfo['handler'][$argtype]))
     return false;
 
@@ -1325,7 +1395,7 @@ function _views_get_timezone() {
 
 function _views_build_summary(&$query, $argtype) {
 
-  $arginfo = _views_arguments();
+  $arginfo = _views_get_arguments();
   if (!function_exists($arginfo['handler'][$argtype]))
     return false;
 
@@ -1608,7 +1678,7 @@ function _views_break_phrase($str) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'field', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
 }
 
 function _views_delete_view($view) {
@@ -1861,7 +1931,7 @@ function theme_views_view($view, $type, $nodes) {
 
 function views_get_summary_link($argtype, $viewname, $item)
 {
-  $arginfo = _views_arguments();
+  $arginfo = _views_get_arguments();
   if (!function_exists($arginfo['handler'][$argtype]))
     return NULL;
 
@@ -2163,5 +2233,83 @@ function views_handler_operator_eqneq() {
 function views_handler_operator_yesno() {
   return array('1' => 'Yes', '0' => 'No');
 }
+
+// ---------------------------------------------------------------------------
+// View creator tool (for module developers)
+
+// TO USE THIS TOOL: Use a PHP snippet or something to call this function!
+
+function views_create_view_code($vid) {
+  $view = _views_load_view($vid);
+  if (!$view)
+    return "View '$vid' not found.";
+
+  $output = "  \$view = new stdClass();\n";
+  $output .= "  \$view->name = '$view->name';\n";
+  $output .= "  \$view->description = '$view->description';\n";
+  $output .= "  \$view->title = '$view->title';\n";
+  $output .= "  \$view->header = '$view->header';\n";
+  $output .= "  \$view->header_format = '$view->header_format';\n";
+  $output .= "  \$view->type = '$view->type';\n";
+  $output .= "  \$view->url = '$view->url';\n";
+  $output .= "  \$view->use_pager = '$view->use_pager';\n";
+  $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
+  $output .= "  \$view->block = '$view->block';\n";
+  $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
+  $output .= "  \$view->block_display_header = '$view->block_display_header';\n";
+
+  $output .= "  \$view->sort = array (\n";
+  foreach ($view->sort as $sort) {
+    $output .= "    array (\n";
+    $fieldbits = explode('.', $sort['field']);
+    $output .= "      'tablename' => '$fieldbits[0]',\n";
+    $output .= "      'field' => '$fieldbits[1]',\n";
+    $output .= "      'sortorder' => '$sort[sortorder]',\n";
+    $output .= "    ),\n";  
+  }
+  $output .= "  );\n";
+
+  $output .= "  \$view->argument = array (\n";
+  foreach ($view->argument as $argument) {
+    $output .= "    array (\n";
+    $output .= "      'type' => '$argument[type]',\n";
+    $output .= "      'argdefault' => '$argument[argdefault]',\n";
+    $output .= "    ),\n";  
+  }
+  $output .= "  );\n";
+    
+  $output .= "  \$view->field = array (\n";
+  foreach ($view->field as $field) {
+    $output .= "    array (\n";
+    $output .= "      'tablename' => '$field[tablename]',\n";
+    $output .= "      'field' => '$field[field]',\n";
+    $output .= "      'label' => '$field[label]',\n";
+    if ($field['handler'])
+      $output .= "      'handler' => '$field[handler]',\n";
+    if ($field['sortable'])
+      $output .= "      'sortable' => '$field[sortable]',\n";
+    if ($field['defaultsort'])
+      $output .= "      'defaultsort' => '$field[defaultsort]',\n";
+    $output .= "    ),\n";  
+  }
+  $output .= "  );\n";
+
+  $output .= "  \$view->filter = array (\n";
+  foreach ($view->filter as $filter) {
+    $output .= "    array (\n";
+    $fieldbits = explode('.', $filter['field']);
+    $output .= "      'tablename' => '$fieldbits[0]',\n";
+    $output .= "      'field' => '$fieldbits[1]',\n";
+    $output .= "      'operator' => '$filter[operator]',\n";
+    $value = var_export($filter['value'], true);
+    $output .= "      'value' => $value,\n";
+    $output .= "    ),\n";  
+  }
+  $output .= "  );\n";
+  $output .= "  \$views[\$view->name] = \$view;\n";
+  // no breadcrumb for now.
+  return $output;
+}
+
 
 ?>

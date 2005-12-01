@@ -7,20 +7,17 @@ MAJOR FEATURES
 *  XML?
 
 LESS TIME CONSUMING STUFF
+// Most of this is now slated for post 4.7 update.
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
-
-*  break the form up into distinct functions for each section
-
-*  Titles for summary view
-
-*  Document the API
-*  Create a tool to ease creation of default views.
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
-*  arguments API
-*  add not-saved reminder to form
+*  break the form up into distinct functions for each section
+*  variable titles for argument queries with summaries
+
+*  Document the API
+*  Write some decent help for the edit view page.
 
 TO DONE
 
@@ -52,5 +49,8 @@ TO DONE
    field-handling information.
 *  allow random selection from a view
 *  provide blocks for default views that request them
+*  arguments API
+*  Create a tool to ease creation of default views.
+*  add not-saved reminder to form
 
 
