@@ -9,17 +9,35 @@
 // Select Box Definitions
 
 function _views_arguments() {
-  return array(
-    1 => t("Node Type"), 
-    2 => t("User ID"), 
-    3 => t("Taxonomy Term ID"),
-    4 => t("Year"),
-    5 => t("Month (1-12)"),
-    6 => t("Week (1-53)"),
-    7 => t("Month + Year (CCYYMM)"),
-    8 => t("Full Date (CCYYMMDD)")
-  );
+  $data['name']['nodetype'] = t("Node Type");
+  $data['handler']['nodetype'] = "views_handler_arg_nodetype";
+
+  $data['name']['uid'] = t("User ID");
+  $data['handler']['uid'] = "views_handler_arg_uid";
+
+  $data['name']['taxid'] = t("Taxonomy Term ID");
+  $data['handler']['taxid'] = "views_handler_arg_taxid";
+
+  $data['name']['year'] = t("Year");
+  $data['handler']['year'] = "views_handler_arg_year";
+
+  $data['name']['month'] = t("Month (1-12)");
+  $data['handler']['month'] = "views_handler_arg_month";
+
+  $data['name']['week'] = t("Week (1-53)");
+  $data['handler']['week'] = "views_handler_arg_week";
+
+  $data['name']['monthyear'] = t("Month + Year (CCYYMM)");
+  $data['handler']['monthyear'] = "views_handler_arg_monthyear";
+
+  $data['name']['fulldate'] = t("Full Date (CCYYMMDD)");
+  $data['handler']['fulldate'] = "views_handler_arg_fulldate";
+  
+  return $data;
 }
+
+// Argument info...
+// OR: arg_handler($op, ...): $op in('filter', 'fields', 'link')
 
 function _views_arguments_default() {
   return array(
@@ -46,16 +64,6 @@ function _views_urls() {
   );
 }
 
-function _views_sortfields() {
-  return array(
-    1 => t("Post Date"),
-    2 => t("Last Changed Date"),
-    3 => t("Last Comment Date"),
-    4 => t("Taxonomy Name"),
-    5 => t("Node Title")
-  );
-}
-
 function _views_sortorders() {
   return array(
     "ASC" => t("Ascending"),
@@ -65,10 +73,9 @@ function _views_sortorders() {
 
 function _views_tables() {
 
-  // 
   $tables['term_node'] = array(
     "name" => "term_node", 
-    "provider" => "internal", // won't show up in external list.
+    "provider" => "internal",
     "join" => array(
       "left" => array(
         "table" => "node",
@@ -76,16 +83,20 @@ function _views_tables() {
       ), 
       "right" => array(
         "field" => "nid"
-      ), 
+      )
     ),
-//    "fields" => array(
-//      "tid"
-//    )
+    "filters" => array(
+      "tid" => array(
+        'name' => "Taxonomy Term",
+        'list' => "views_handler_filter_tid",
+        'operator' => "views_handler_operator_andor",
+      )
+    )
   );
 
   $tables['term_data'] = array(
     "name" => "term_data", 
-    "provider" => "internal", // won't show up in external list.
+    "provider" => "internal",
     "join" => array(
       "left" => array(
         "table" => "term_node",
@@ -96,19 +107,33 @@ function _views_tables() {
       ), 
     ),
     "fields" => array(
-//    "vid",
-      "name" => array('name' => "Taxonomy Term", 'sortable' => true),
-      "description" => array('name' => "Taxonomy Term Description", 'sortable' => false),
-//      "weight" => array('name' => "Taxonomy Term Weight", 'sortable' => true),
+      "name" => array(
+        'name' => "Taxonomy Term", 
+        'sortable' => true
+      ),
+      "description" => array(
+        'name' => "Taxonomy Term Description", 
+        'sortable' => false
+      ),
     ),
     "sorts" => array(
-      "weight" => array('name' => "Taxonomy Weight", 'fields' => array('weight', 'name'))
+      "weight" => array(
+        'name' => "Taxonomy Name", 
+        'field' => array('weight', 'name')
+      )
+    ),
+    "filters" => array(
+      "vid" => array(
+        'name' => "Vocabulary Term",
+        'list' => "views_handler_filter_vid",
+        'operator' => "views_handler_operator_andor",
+      )
     )
   );
 
   $tables['node_comment_statistics'] = array(
     "name" => "node_comment_statistics", 
-    "provider" => "internal", // won't show up in external list.
+    "provider" => "internal",
     "join" => array(
       "left" => array(
         "table" => "node",
@@ -119,10 +144,28 @@ function _views_tables() {
       ), 
     ),
     "fields" => array(
-      "last_comment_timestamp" => array('name' => "Last Comment Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
-      "last_comment_name" => array('name' => "Last Comment Author", 'handler' => 'views_handler_username', 'sortable' => true, 'uid' => "last_comment_uid", 'addlfields' => array("last_comment_uid")),
-      "comment_count" => array('name' => "Comment Count", 'sortable' => true, 'handler' => array("views_handler_int" => "Normal", "views_handler_comments_with_new" => "With New Count")),
+      "last_comment_timestamp" => array(
+        'name' => "Last Comment Time", 
+        'sortable' => true, 
+        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+       ),
+      "last_comment_name" => array(
+        'name' => "Last Comment Author", 
+        'handler' => 'views_handler_field_username', 
+        'sortable' => true, 
+        'uid' => "last_comment_uid", 
+        'addlfields' => array("last_comment_uid")
+      ),
+      "comment_count" => array(
+        'name' => "Comment Count", 
+        'sortable' => true, 
+        'handler' => array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count")
+      ),
+    ),
+    "sorts" => array(
+      "last_comment_timestamp" => array('name' => "Last Comment Date")
     )
+
   );
 
   $tables['users'] = array(
@@ -138,18 +181,143 @@ function _views_tables() {
       ), 
     ),
     "fields" => array(
-      "name" => array('name' => "Author Name", 'handler' => 'views_handler_username', 'sortable' => true, 'uid' => "uid", 'addlfields' => array("uid")),
+      "name" => array(
+        'name' => "Author Name", 
+        'handler' => 'views_handler_field_username', 
+        'sortable' => true, 
+        'uid' => "uid", 
+        'addlfields' => array("uid")
+      ),
+    ),
+    "sorts" => array(
+      "name" => array('name' => "Author Name")
+    ),
+    "filters" => array(
+      "uid" => array(
+        'name' => "Author Name",
+        'operator' => "views_handler_operator_or",
+        'list' => "views_handler_filter_username"
+      ),
+      "anon" => array(
+        'field' => 'uid',
+        'name' => "Author Name is Anonymous",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_useranon"
+      ),
+      "currentuid" => array(
+        'name' => "Author Name is Current User",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_usercurrent",
+        'custom' => "views_handler_filter_usercurrent_custom",
+        'cacheable' => 'no', // for future use.
+      ),
+    )
+  );
+
+  $tables['users_roles'] = array(
+    "name" => "users_role", 
+    "provider" => "internal", // won't show up in external list.
+    "join" => array(
+      "left" => array(
+        "table" => "node",
+        "field" => "uid"
+      ), 
+      "right" => array(
+        "field" => "uid"
+      ), 
+    ),
+    "filters" => array(
+      "rid" => array(
+        'name' => "Author Role",
+        'operator' => "views_handler_operator_andor",
+        'list' => "views_handler_filter_role"
+      ),
     )
   );
   return $tables;
 }
 
+// filters
+// name
+// field (in case the array key is not the field)
+// list: (if array use; otherwise it is a handler)
+// list-type: checkbox, list, select
+// operator: (if array use; otherwise it is a handler)
+// transform: if here, handler for transforming data.
+// validate: if here, handler for validating data.
+
+function _views_node_filters() {
+
+  return array(
+    "n.status" => array(
+      'name' => "Published",
+      'table' => "n",
+      'operator' => array("=" => "Equals"),
+      'list' => "views_handler_operator_yesno",
+      'list-type' => "select"
+    ),
+    "n.promote" => array(
+      'name' => "Front Page",
+      'table' => "n",
+      'operator' => array("=" => "Equals"),
+      'list' => "views_handler_operator_yesno",
+      'list-type' => "select"
+    ),
+    "n.type" => array(
+      'name' => "Node Type",
+      'table' => "n",
+      'list' => "views_handler_filter_nodetype",
+      'list-type' => 'checkbox',
+      'operator' => "views_handler_operator_or"
+    ),
+  );
+}
+
+function _views_construct_filters($table_data, $titles = false) {
+  $filters = _views_node_filters();
+  if ($titles) {
+    foreach ($filters as $key => $data) {
+      $newfilters[$key] = $data['name'];
+    }
+    $filters = $newfilters;
+  }
+    
+  foreach ($table_data as $name => $table) {
+    if (is_array($table['filters'])) {
+      foreach($table['filters'] as $filter => $data) {
+        $data['table'] = $name;
+        if ($titles)
+          $filters["$table[name].$filter"] = $data['name'];
+        else
+          $filters["$table[name].$filter"] = $data;
+      }
+    }
+  }
+  return $filters;
+}
+
 function _views_node_fields() {
   return array(
-    "n.title" => array('name' => "Node Title", 'handler' => array('views_handler_nodelink' => 'Normal', 'views_handler_nodelink_with_mark' => "With updated mark"), 'sortable' => true, 'addlfields' => array('changed') ),
-    "n.created" => array('name' => "Node Created Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
-    "n.changed" => array('name' => "Node Updated Time", 'sortable' => true, 'handler' => array("views_handler_date" => "As Date", "views_handler_since" => "As Time Ago")),
-    "n.type" => array('name' => "Node Type", 'handler' => 'views_handler_nodetype', 'sortable' => true),
+    "n.title" => array(
+      'name' => "Node Title", 
+      'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
+      'sortable' => true, 'addlfields' => array('changed') 
+    ),
+    "n.created" => array(
+      'name' => "Node Created Time", 
+      'sortable' => true, 
+      'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+    ),
+    "n.changed" => array(
+      'name' => "Node Updated Time", 
+      'sortable' => true, 
+      'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+    ),
+    "n.type" => array(
+      'name' => "Node Type", 
+      'handler' => 'views_handler_nodetype', 
+      'sortable' => true
+    ),
   );
 }
 
@@ -162,9 +330,10 @@ function _views_construct_fields($table_data, $titles = false) {
     $fields = $newfields;
   }
     
-  foreach ($table_data as $table) {
+  foreach ($table_data as $name => $table) {
     if (is_array($table['fields'])) {
       foreach($table['fields'] as $field => $data) {
+        $data['table'] = $name;
         if ($titles)
           $fields["$table[name].$field"] = $data['name'];
         else
@@ -173,6 +342,39 @@ function _views_construct_fields($table_data, $titles = false) {
     }
   }
   return $fields;
+}
+
+function _views_node_sorts() {
+	return array(
+		"n.created" => array('name' => "Post Date", 'table' => 'n'),
+		"n.changed" => array('name' => "Last Changed Date", 'table' => 'n'),
+		"n.sticky" => array('name' => "Node set to Sticky", 'table' => 'n'),
+		"n.title" => array('name' => "Node Title", 'table' => 'n')
+	);
+}
+
+function _views_construct_sorts($table_data, $titles = false) {
+  $sorts = _views_node_sorts();
+  if ($titles) {
+    foreach ($sorts as $key => $data) {
+      $newsorts[$key] = $data['name'];
+    }
+    $sorts = $newsorts;
+  }
+    
+  foreach ($table_data as $name => $table) {
+    if (is_array($table['sorts'])) {
+      foreach($table['sorts'] as $field => $data) {
+        $data['table'] = $name;
+        if ($titles)
+          $sorts["$table[name].$field"] = $data['name'];
+        else {
+          $sorts["$table[name].$field"] = $data;
+        }
+      }
+    }
+  }
+  return $sorts;
 }
 
 // ---------------------------------------------------------------------------
@@ -253,14 +455,14 @@ function views_admin_page() {
 
   drupal_set_title("Administer views Views");
 
-  $result = pager_query("SELECT vid, name, title FROM {view_view} ORDER BY name", $numViews);
+  $result = pager_query("SELECT vid, name, description, title FROM {view_view} ORDER BY name", $numViews);
   while ($view = db_fetch_object($result)) {
     $url = "views/$view->name";
-    $items[] = array($view->title, l($url, $url), l('edit', "admin/views/edit/$view->vid"));
+    $items[] = array($view->title, $view->description, l($url, $url), l('edit', "admin/views/edit/$view->vid"));
   }
 
   if ($items) {
-    $output = theme('table', array('View', 'URL', 'Actions'), $items, array("cellpadding" => "4"));
+    $output = theme('table', array('View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"));
     $output .= theme('pager', NULL, $numViews);
   }
   else {
@@ -329,52 +531,88 @@ function views_admin_edit_page($vid = '') {
 
 }
 
+// FIXME: Ok, this can be a proper object any day now.
 function _views_get_default_view($template = '') {
   $view->use_pager = 1;
   $view->nodes_per_page = variable_get('default_nodes_main', 10);
   $view->filter_published = 1;
   $view->url = 2;
   $view->vid = 0;
-  $view->field = array();
+  _views_check_arrays($view);
   return $view;
+}
+
+function _views_check_arrays(&$view) {
+  if (!is_array($view->field))
+    $view->field = array();
+  if (!is_array($view->sort))
+    $view->sort = array();
+  if (!is_array($view->argument))
+    $view->argument = array();
+  if (!is_array($view->breadcrumb))
+    $view->breadcrumb = array();
+  if (!is_array($view->filter))
+    $view->filter = array();
 }
 
 function _views_view_form($view, $op = '') {
 
+  // Compensate for possibly empty arrays that didn't get put into the form:
+  _views_check_arrays($view);
+  $tabledata = _views_tables();
+  $fields = _views_construct_fields($tabledata);
+  $fieldnames = _views_construct_fields($tabledata, true); // for selecting
+
+  $sortnames = _views_construct_sorts($tabledata, true); // for selecting
+
+  $filters = _views_construct_filters($tabledata);
+  $filternames = _views_construct_filters($tabledata, true);
+
   // Deal with buttons other than submit.
 
+  // Add/Delete Filter
+  //----------------
+  if ($op == "Add Filter") {
+    $filter['field'] = $view->addfilter;
+    $view->filter[] = $filter;
+  }
+
+  if (substr($op, 0, 13) == "Delete Filter") {
+    $i = intval(substr($op, 14, 3));
+    unset($view->filter[$i]);
+    $view->filter = array_values($view->filter); // reindex
+  }
+
+  
+  // Add/Delete Sort
+  //----------------
   if ($op == "Add Criteria") {
-    $view->sort[$view->numsorts]['field'] = $view->addcriteria;
-    $view->sort[$view->numsorts]['order'] = $view->addorder;
-    $view->numsorts++;
+    $sort['field'] = $view->addcriteria;
+    $sort['sortorder'] = $view->addorder;
+    $view->sort[] = $sort;
   }
 
   if (substr($op, 0, 15) == "Delete Criteria") {
-    for ($i = intval(substr($op, 16, 3)) + 1; $i < $view->numsorts; $i++)
-    {
-      $view->sort[$i - 1]['field'] = $view->sort[$i]['field'];
-      $view->sort[$i - 1]['order'] = $view->sort[$i]['order'];
-    }
-    unset($view->sort[$view->numsorts]);
-    $view->numsorts--;
+    $i = intval(substr($op, 16, 3));
+    unset($view->sort[$i]);
+    $view->sort = array_values($view->sort); // reindex
   }
 
+  // Add/Delete Argument
+  //--------------------
   if ($op == "Add Argument") {
     $view->argument[] = $view->addargument;
-//    $view->argumentdefault[] = $view->addargumentdefault;
   }
 
   if (substr($op, 0, 15) == "Delete Argument") {
-    $i = intval(substr($op, 16,3 ));
+    $i = intval(substr($op, 16, 3));
     unset($view->argument[$i]);
     $view->argument = array_values($view->argument); // reindex
-
-//    unset($view->argumentdefault[$i]);
-//    $view->argumentdefault = array_values($view->argumentdefault); // reindex
   }
 
-  $fields = _views_construct_fields(_views_tables());
-  $fieldnames = _views_construct_fields(_views_tables(), true); // for selecting
+  // Add/Delete Field
+  //-----------------
+
 
   if ($op == "Add Field") {
     $fieldbits = explode('.', $view->addfield);
@@ -392,12 +630,14 @@ function _views_view_form($view, $op = '') {
     $view->field = array_values($view->field); // reindex
   }
 
-  
   $form = form_hidden('vid', $view->vid);
+  $form .= form_hidden('changed', $view->changed);
 
-//  $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
+  // DEBUGGING
+//    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
   $group = form_textfield(t('Name'), 'name', $view->name, 20, 32, t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'), NULL, true);
+  $group .= form_textfield(t('Description'), 'description', $view->description, 60, 255, t('A description of the view for the admin list.'));
   $group .= form_select(t('View Type'), 'type', $view->type, _views_types(), t('How the nodes should be displayed to the user.'));
   $group .= form_textfield(t('Title'), 'title', $view->title, 60, 255, t('The title of the view will be shown at the top of the view. May be blank if not using a block.'));
   $group .= form_textarea(t('Header'), 'header', $view->header, 60, 6, t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'));
@@ -446,9 +686,11 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_group(t('Pager'), $urlgroup);
 
-  for ($i = 0; $i < count($view->argument); $i++) {
-    $arggroup .= form_select(t("Argument $i"), "argument][$i][type", $view->argument[$i]['type'], _views_arguments());
-    $arggroup .= form_select(t("Argument $i Default"), "argument][$i][argdefault", $view->argument[$i]['argdefault'], _views_arguments_default());
+  $arginfo = _views_arguments();
+//  for ($i = 0; $i < count($view->argument); $i++) {
+  foreach ($view->argument as $i => $argument) {
+    $arggroup .= form_select(t("Argument $i"), "argument][$i][type", $argument['type'], $arginfo['name']);
+    $arggroup .= form_select(t("Argument $i Default"), "argument][$i][argdefault", $argument['argdefault'], _views_arguments_default());
     $arggroup .= form_submit(t("Delete Argument %n", array('%n' => $i)));
   }
   if (!$arggroup)
@@ -456,13 +698,65 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_group(t('Current Arguments'), $arggroup);
 
-  $arggroup = form_select(t('Argument'), 'addargument][type', NULL, _views_arguments(), t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments..'));
+  $arggroup = form_select(t('Argument'), 'addargument][type', NULL, $arginfo['name'], t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments..'));
   $arggroup .= form_select(t('Argument Default'), 'addargument][argdefault', NULL, _views_arguments_default(), t('If argument 1 was specified, what action to take if the argument is not given.'));
   $arggroup .= form_submit('Add Argument');
   $group .= form_group(t('Add an Argument'), $arggroup);
   
   $form .= form_group(t('URL'), $group);
 
+  $group = "";
+
+  foreach ($view->filter as $i => $filter) {
+    $filtername = $filter['field']; // combined table & filtername
+    $filterinfo = $filters[$filtername];
+
+    $fgroup = $filterinfo['name'] . " &nbsp;";
+    $form .= form_hidden("filter][$i][field", $filter['field']);
+
+    // 'operator' is either an array or a handler
+    $operator = $filterinfo['operator'];
+    if (!is_array($operator) && function_exists($filterinfo['operator'])) 
+      $operator = $filterinfo['operator']('operator', $filterinfo);
+
+    $fgroup .= form_select(NULL, "filter][$i][operator", $filter['operator'], $operator);
+
+    if ($filterinfo['list']) {
+      $list = $filterinfo['list'];
+
+      if (!is_array($list) && function_exists($filterinfo['list'])) 
+        $list = $filterinfo['list']('list', $filterinfo);
+
+      $multiple = false;
+      switch($filterinfo['list-type']) {
+        case 'checkbox':
+          $fgroup .= form_checkboxes(t('Value'), "filter][$i][value", $filter['value'], $list);
+          break;
+        case 'list':
+        default:
+          $multiple = true;
+          // no break, fall thru
+        case 'select':
+          $fgroup .= form_select(t('Value'), "filter][$i][value", $filter['value'], $list, NULL, NULL, $multiple);
+          break;
+      }
+    }
+    else {
+      if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
+        $filter['value'] = $filterinfo['transform']('out', $filter['value'], $filterinfo);
+      }
+      $fgroup .= form_textfield(t('Value'), "filter][$i][value", $filter['value'], 20, 255);
+    }
+    $fgroup .= form_submit(t("Delete Filter %n", array('%n' => $i)));
+    $group .= form_group(t('Filter %n', array('%n' => $i)), $fgroup);
+  }
+
+
+  if (!$group) {
+    $group = "<p>No filtering Criteria Specified</p>";
+  }
+
+/*
   $group = form_checkbox(t('Filter By Node Types'), 'filter_use_nodetypes', 1, $view->filter_use_nodetypes, t('If checked the list will be limited to the node types checked below.'));
 
   // Get a list of nodetypes
@@ -476,7 +770,7 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_checkbox(t('Published Nodes Only'), 'filter_published', 1, $view->filter_published, t('If checked the list will be limited to published nodes. It is recommended that this is checked.'));
 
-  $group .= form_checkbox(t('Front Page Only'), 'filter_frontpage', 1, $view->filter_frontpage, t('If checked the list will be limited to nodes that have been promoted to the front page.'));
+  $group .= form_checkbox(t('Front Page Only'), 'filter_frontpage', 1, $view->filter_frontpage, t('If checked the list will be limited to nodes that have been promote to the front page.'));
 
   $group .= form_textfield(t('Filter to Taxonomy Term'), 'filter_taxonomy_term', $view->filter_taxonomy_term, 60, 255, t('If not blank, filter to taxonomy term as with taxonomy/term. Use "+" for or, "," for and. See taxonomy help for more details.'));
 
@@ -486,22 +780,28 @@ function _views_view_form($view, $op = '') {
 
   $group .= form_textfield(t('Filter to Author Name'), 'filter_author_name', $view->filter_author_name, 60, 255, t('If filter checked, filter to nodes posted by a given author. Use -1 for the logged in user (so that a user would see his or her own posts). Leave blank for Anonymous user.'));
   $group .= form_hidden('filter_author_uid', $view->filter_author_uid);
+
+  */
   $form .= form_group(t('Filters'), $group);
+  $group = form_select(t("Filter"), 'addfilter', NULL, $filternames);
+  $group .= form_submit(t("Add Filter"));
+
+  $form .= form_group(t("Add Filter"), $group, t("Use this box to add a new Filter"));
+
 
   $group = "";
-  for ($i = 0; $i < $view->numsorts; $i++) {
-    $group .= form_select(NULL, "sort][$i][field", $view->sort[$i]['field'], _views_sortfields());
-    $group .= form_select(NULL, "sort][$i][order", $view->sort[$i]['order'], _views_sortorders());
+  foreach ($view->sort as $i => $sort) {
+    $group .= form_select(NULL, "sort][$i][field", $sort['field'], $sortnames);
+    $group .= form_select(NULL, "sort][$i][sortorder", $sort['sortorder'], _views_sortorders());
     $group .= form_submit(t("Delete Criteria %n", array('%n' => $i)));
   }
   if (!$group) {
     $group = "<p>No Sorting Criteria Specified</p>";
   }
-  $group .= form_hidden('numsorts', $view->numsorts);
 
   $form .= form_group(t("Sorting Criteria"), $group, t("The order of criteria from top to bottom determines which fields will be sorted first."));
 
-  $group = form_select(t("Criteria"), 'addcriteria', NULL, _views_sortfields());
+  $group = form_select(t("Criteria"), 'addcriteria', NULL, $sortnames);
   $group .= form_select(t("Order"), 'addorder', NULL, _views_sortorders());
   $group .= form_submit(t("Add Criteria"));
 
@@ -528,32 +828,57 @@ function _views_delete_form($view) {
 
 
 function _views_view_validate(&$view) {
+  $filters = _views_construct_filters(_views_tables());
+  _views_check_arrays($view);
+  
+  if ($view->vid) {
+    $changed = db_result(db_query("SELECT changed FROM {view_view} WHERE vid = $view->vid"));
+    if ($changed && $view->changed != $changed) {
+      form_set_error('', "Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!");
+      return false;
+    }
+  }
+
+  $valid = true;
+  foreach ($view->filter as $i => $filter) {
+    $filterinfo = $filters[$filter['field']]; // shortcut
+    if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
+      $filter['value'] = $filterinfo['transform']('in', $filter['value'], $filterinfo);
+    }
+    if ($filterinfo['validate'] && function_exists($filterinfo['validate'])) {
+      if ($rc = $filterinfo['validate']('validate', $filter['value'], $filterinfo)) {
+        $validfilter = false;
+        form_set_error("filter][$i][value]", $rc);
+      }
+    }
+  }
+  
   if ($view->use_block && !$view->title) {
     form_set_error('title', "If being used as a block, title may not be blank.");
-    return false;
+    $valid = false;
   }
 
   if (!$view->name) {
     form_set_error('name', "View name is required.");
-    return false;
+    $valid = false;
   }
 
   // test uniqueness of name
   $vid = db_result(db_query("SELECT vid FROM {view_view} WHERE name='" . db_escape_string($view->name) . "'"));
   if ($vid && $vid != $view->vid) {
     form_set_error('name', "View name already in use.");
-    return false;
+    $valid = false;
   }
 
 
   if ($view->use_block && $view->nodes_per_block < 1) {
     form_set_error('nodes_per_block', "If being used as a block, Nodes Per Block must be positive.");
-    return false;
+    $valid = false;
   }
-
+/*
   if ($view->filter_use_nodetypes && empty($view->filter_nodetypes)) {
     form_set_error('filter_nodetypes', "If Filter Node Types is selected, at least one node type must be checked!");
-    return false;
+    $valid = false;
   }
 
   if ($view->filter_use_author) {
@@ -565,7 +890,7 @@ function _views_view_validate(&$view) {
       $u = user_load(array('name' => $view->filter_author_name));
       if (!$u->uid) {
         form_set_error('filter_author_name', "$view->filter_author_name is not a valid user!");
-        return false;
+        $valid = false;
       }
       else {
         $view->filter_author_uid = $u->uid;
@@ -578,20 +903,20 @@ function _views_view_validate(&$view) {
 
   if ($view->filter_taxonomy_term && !_views_break_phrase($view->filter_taxonomy_term)) {
     form_set_error('filter_taxonomy_term', "Unable to parse taxonomy term filter!");
-    return false;
+    $valid = false;
   }
 
   if ($view->filter_taxonomy_voc && !_views_break_phrase($view->filter_taxonomy_voc)) {
     form_set_error('filter_taxonomy_voc', "Unable to parse taxonomy vocabulary filter!");
-    return false;
+    $valid = false;
   }
-
+*/
   if ($view->type == 2 && !count($view->field)) { // "Table" 
     form_set_error('addfield', "You must select what fields to display when using type 'Table'!");
-    return false;
+    $valid = false;
   }
 
-  return true;
+  return $valid;
 }
 
 
@@ -642,18 +967,19 @@ function views_view($type, $view, $args = array()) {
   _views_view_build_filters($query, $view);
   
   // Process arguments.
-  for ($i = 0; $i < count($view->argument); $i++) {
+//  for ($i = 0; $i < count($view->argument); $i++) {
+  foreach ($view->argument as $i => $argument) {
     if ($args[$i]) {
-      _views_view_build_arg($query, $view, $args[$i], $view->argument[$i]['type']);
+      _views_view_build_arg($query, $args[$i], $argument['type']);
     }
     else { 
       // This is what we do if we expected an arg but we didn't get it.
-      switch ($view->argument[$i]['argdefault']) {
+      switch ($argument['argdefault']) {
         case 1:
           return drupal_not_found();
         case 3:
           $level = $i;
-          _views_build_summary($query, $view, $i);
+          _views_build_summary($query, $argument['type']);
           $summary = true;
           break 2; // switch and for
       } 
@@ -712,25 +1038,88 @@ function views_view($type, $view, $args = array()) {
       $result = db_query($sql);
   }
 
+  $items = array();
   while ($item = db_fetch_object($result)) {
     $items[] = $item;
   }
   // DEBUG
 //  $output .= "<pre>" . var_export($items, true) . "</pre>";
 
-  if ($summary)
-    return theme('views_summary', $view, $type, $level, $items);
-  else
-    return theme('views_view', $view, $type, $items);
+  if ($summary) {
+    $output = theme("views_summary_$view->name", $view, $type, $level, $items);
+    if (!$output)
+      $output = theme('views_summary', $view, $type, $level, $items);
+  }
+  else {
+    $output = theme("views_view_$view->name", $view, $type, $items);
+    if (!$output)
+      $output = theme('views_view', $view, $type, $items);
+
+  }
+
+  if ($type == 'page' && $view->use_pager) {
+    if ($view->table_header && !$summary)
+      $output .= theme('pager', NULL, $view->nodes_per_page, 0, $tbspager);
+    else
+      $output .= theme('pager', NULL, $view->nodes_per_page, 0);
+  }
+  return $output;
 }
 
 function _views_view_build_filters(&$query, $view) {
+  $filters = _views_construct_filters(_views_tables());
+
+  foreach ($view->filter as $i => $filter) {
+    $filterinfo = $filters[$filter['field']]; // shortcut
+    $field = $filterinfo['field'];
+    if (!$field) {
+      $fieldbits = explode('.', $filter['field']);
+      $field = $fieldbits[1];
+    }
+
+    $table = $filterinfo['table'];
+//    $table = 'x';
+
+    if (is_array($filter['value'])) {
+      if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
+        $not = '';
+        if ($filter['operator'] == 'NOR')
+          $not = "NOT";
+        $query->ensure_table($table);
+        $query->add_where("$table.$field $not IN ('" . implode("','", $filter['value']) . "')");
+      }
+      else {
+        $howmany = count($filter['value']);
+        $high_table = $query->add_table($table, true, $howmany);
+        if (!$high_table) // couldn't add the table
+          break;
+
+        $table_num = $high_table - $howmany;
+        foreach ($filter['value'] as $item) {
+          $table_num++;
+          $tn = $query->get_table_name($table, $table_num);
+          $query->add_where("$tn.$field = '$item'");
+        }
+      }
+    }
+    else {
+      if (function_exists($filterinfo['custom'])) {
+        $filterinfo['custom']('custom', $filter, $filterinfo, $query);
+      }
+      else {
+        $query->ensure_table("$table");
+        $query->add_where("$table.$field $filter[operator] '$filter[value]'");
+      }
+    }
+  }
+
+/*
   // Static filters
   if ($view->filter_published) 
     $query->add_where("n.status = 1");
 
   if ($view->filter_frontpage) 
-    $query->add_where("n.promoted = 1");
+    $query->add_where("n.promote = 1");
 
   if ($view->filter_use_author)  {
     if ($view->filter_author_uid == -1)
@@ -749,75 +1138,42 @@ function _views_view_build_filters(&$query, $view) {
 
   if ($view->filter_taxonomy_voc)
     $query->add_complex_filter('term_data', 'vid', $view->filter_taxonomy_voc);
+*/
 }
 
-function _views_view_build_arg(&$query, $view, $arg, $argtype) {
-  global $user;
-  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
-    $timezone = $user->timezone;
-  }
-  else {
-    $timezone = variable_get('date_default_timezone', 0);
-  }
+function _views_view_build_arg(&$query, $arg, $argtype) {
+  $arginfo = _views_arguments();
+  if (!function_exists($arginfo['handler'][$argtype]))
+    return false;
 
-  switch ($argtype) {
-    case 1: // => t("Node Type"), 
-      $query->add_where("n.type = '$arg'");
-      break;
-    case 2: // => t("User ID"), 
-      $uid = intval($arg);
-      $query->add_where("n.uid = $uid");
-      break;
-    case 3: // => t("Taxonomy Term ID"),
-      $query->add_complex_filter('term_node', 'tid', $arg);
-      break;
-    case 4: // => t("Year"),
-      $year = intval($arg);
-      $query->add_where("YEAR(FROM_UNIXTIME(n.created+$timezone)) = $year");
-      break;
-    case 5: // => t("Month (1-12)"),
-      $month = intval($arg);
-      $query->add_where("MONTH(FROM_UNIXTIME(n.created+$timezone)) = $month");
-      break;
-    case 6: // => t("Week (1-53)"),
-      // The 3 makes the week 1-53, the first week of the year has at least 3 days
-      $week = intval($arg);
-      $query->add_where("WEEK(FROM_UNIXTIME(n.created+$timezone), 3) = $week");
-      break;
-    case 7: // => t("Month + Year (CCYYMM)")
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m') = '$arg'");
-      break;
-    case 8: // => t("Full Date (CCYYMMDD)")
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d') = '$arg'");
-      break;
-  }
+  // call the handler
+  $arginfo['handler'][$argtype]('filter', $query, $argtype, $arg);
+  
 }
 
 function _views_view_build_sorts(&$query, $view) {
-  for ($i = 0; $i < $view->numsorts; $i++) {
-    $sort = $view->sort[$i];
-    switch ($sort['field']) {
-      case 1: // => t("Post Date"),
-        $query->add_orderby('n.created', $sort['order']);
-        break;
-      case 2: // => t("Last Changed Date"),
-        $query->add_orderby('n.changed', $sort['order']);
-        break;
-      case 3: // => t("Last Comment Date"),
-        $query->add_complex_sort('node_comment_statistics', 'last_comment_timestamp', $sort['order']);
-        break;
-      case 4: // => t("Taxonomy Name"),
-        $query->add_complex_sort('term_data', 'weight', $sort['order']);
-        $query->add_complex_sort('term_data', 'name', $sort['order']);
-        break;
-      case 5: //  => t("Node Title")
-        $query->add_orderby('n.title', $sort['order']);
-        break;
+  $sorts = _views_construct_sorts(_views_tables());
+
+  foreach ($view->sort as $i => $sort) {
+    $field = $sorts[$sort['field']]['field'];
+    if (!$field) {
+      $fieldbits = explode('.', $sort['field']);
+      $field = $fieldbits[1];
+    }
+
+    $table = $sorts[$sort['field']]['table'];
+    if (is_array($field)) {
+      foreach($field as $f) {
+        $query->add_orderby($table, $f, $sort['sortorder']);
+      }
+    }
+    else {
+      $query->add_orderby($table, $field, $sort['sortorder']);
     }
   }
 }
 
-function _views_build_summary(&$query, $view, $level) {
+function _views_get_timezone() {
   global $user;
   if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
     $timezone = $user->timezone;
@@ -826,62 +1182,24 @@ function _views_build_summary(&$query, $view, $level) {
     $timezone = variable_get('date_default_timezone', 0);
   }
 
+  return $timezone;
+}
+
+function _views_build_summary(&$query, $argtype) {
+
+  $arginfo = _views_arguments();
+  if (!function_exists($arginfo['handler'][$argtype]))
+    return false;
+
   $query->clear_fields();
 
-  switch($view->argument[$level]['type']) {
-    case 1: // => t("Node Type"), 
-      $query->add_field("type");
-      $query->add_groupby("n.type");
-      $field = "n.type";
-      break;
-    case 2: // => t("User ID"), 
-      $query->add_table('users', true);
-      $query->add_field('name', 'users');
-      $query->add_field('uid', 'users');
-      $field = "users.name";
-      break;
-    case 3: // => t("Taxonomy Term ID"),
-      $query->add_table('term_data', true);
-      $query->add_field('name', 'term_data');
-      $query->add_field('weight', 'term_data');
-      $query->add_field('tid', 'term_data');
-      $field = "term_data.name";
-//      $query->add_field('description', 'term_data');
-      $query->add_orderby('term_data.weight', "ASC");
-      $query->add_orderby('term_data.name', "ASC");
-      break;
-    case 4: // => t("Year"),
-      $field = "YEAR(FROM_UNIXTIME(n.created+$timezone))";
-      $fieldname = "year";
-      $query->add_field('created');
-      break;
-    case 5: // => t("Month (1-12)"),
-      $field = "MONTH(FROM_UNIXTIME(n.created+$timezone))";
-      $fieldname = "name";
-      $query->add_field('created');
-      break;
-    case 6: // => t("Week (1-53)"),
-      // The 3 makes the week 1-53, the first week of the year has at least 3 days
-      $field = "WEEK(FROM_UNIXTIME(n.created+$timezone), 3)";
-      $fieldname = "name";
-      $query->add_field('created');
-      break;
-    case 7: // => t("Month + Year (CCYYMMDD)")
-      $field = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m')";
-      $fieldname = "name";
-      $query->add_field('created');
-      break;
-    case 8: // => t("Full Date (CCYYMMDD)")
-      $field = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d')";
-      $fieldname = "name";
-      $query->add_field('created');
-      break;
-  }
-  if ($fieldname)
-    $query->add_field("$field AS $fieldname", '');
+  $fieldinfo = $arginfo['handler'][$argtype]('fields', $query, $argtype);
+
+  if ($fieldinfo['fieldname'])
+    $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
   $query->add_field("count(n.nid) as num_nodes", '');
-  $query->add_groupby("$field");
-  $query->set_count_field("DISTINCT($field)");
+  $query->add_groupby("$fieldinfo[field]");
+  $query->set_count_field("DISTINCT($fieldinfo[field])");
 }
 // ---------------------------------------------------------------------------
 // Query construction object
@@ -928,11 +1246,14 @@ class _views_query {
       $this->where .= " AND " . $clause;
   }
 
-  function add_orderby($field, $order) {
-    if (!$this->orderby)
-      $this->orderby = " $field $order";
-    else
-      $this->orderby .= ", $field $order";
+  function add_orderby($table, $field, $order) {
+    if (!$this->tables[$table])
+      $this->add_table($table, true);
+
+		if ($this->orderby)
+			$this->orderby .= ", ";
+
+		$this->orderby = " $table.$field $order";
   }
 
   function add_groupby($clause) {
@@ -940,6 +1261,14 @@ class _views_query {
       $this->groupby = "GROUP BY " . $clause;
     else
       $this->groupby .= ", " . $clause;
+  }
+
+  function ensure_table($table) {
+    if ($this->tables[$table])
+      return;
+
+    if ($this->ensure_path($table))
+      $this->tables[$table] = 1;
   }
 
   function add_table($table, $ensure_path = false, $howmany = 1) {
@@ -1043,7 +1372,7 @@ class _views_query {
       }
     }
   }
-
+/*
   function add_complex_sort($table, $field, $order) {
     // We don't really care which table we use, so
     // only add if the table's not in there.
@@ -1051,7 +1380,7 @@ class _views_query {
       $this->add_table($table, true);
     $this->add_orderby("$table.$field", $order);
   }
-
+*/
   function query($getcount = false) {
     foreach ($this->tables as $table => $count) {
       foreach (range(1, $count) as $i) {
@@ -1116,7 +1445,7 @@ function _views_break_phrase($str) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'field', 'type', 'block', 'url', 'filter_use_nodetypes', 'filter_nodetypes', 'filter_published', 'filter_frontpage', 'filter_taxonomy_term', 'filter_taxonomy_voc', 'filter_use_author', 'filter_author_uid');
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'field', 'type', 'block', 'url', 'changed'/*, 'filter_use_nodetypes', 'filter_nodetypes', 'filter_published', 'filter_frontpage', 'filter_taxonomy_term', 'filter_taxonomy_voc', 'filter_use_author', 'filter_author_uid'*/);
 }
 
 function _views_delete_view($view) {
@@ -1154,30 +1483,12 @@ function _views_load_view($arg) {
   else
     $view->filter_nodetypes = array();
 
-/*
-  if ($view->argument)
-    $view->argument = explode(', ', $view->argument);
-  else
-    $view->argument = array();
-  
-  if ($view->argumentdefault)
-    $view->argumentdefault = explode(', ', $view->argumentdefault);
-  else
-    $view->argumentdefault = array();
-  if ($view->field)
-    $view->field = explode(', ', $view->field);
-  else
-    $view->field = array();
-*/
-  
   // load the sorting criteria too.
   $result = db_query("SELECT * FROM {view_sort} vs WHERE vid = $view->vid ORDER BY position ASC");
 
-  $view->numsorts = 0;
-  while ($sort = db_fetch_object($result)) {
-    $view->sort[$view->numsorts]['field'] = $sort->field;
-    $view->sort[$view->numsorts]['order'] = $sort->sortorder;
-    $view->numsorts++;
+  $view->sort = array();
+  while ($sort = db_fetch_array($result)) {
+    $view->sort[] = $sort;
   }
 
   $result = db_query("SELECT * FROM {view_argument} WHERE vid = $view->vid ORDER BY position ASC");
@@ -1207,6 +1518,8 @@ function _views_load_view($arg) {
 
   $view->filter = array();
   while ($arg = db_fetch_array($result)) {
+    if ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR')
+      $arg['value'] = explode(',', $arg['value']);
     $view->filter[] = $arg;
   }
 
@@ -1214,6 +1527,7 @@ function _views_load_view($arg) {
 }
 
 function _views_save_view($view) {
+  _views_check_arrays($view);
   // make all our text fields safe:
 
   // collapse arrays
@@ -1222,24 +1536,7 @@ function _views_save_view($view) {
   else
     $view->filter_nodetypes = '';
 
-/*
-  if (is_array($view->argument))
-    $view->argument = implode(', ', $view->argument);
-  else
-    $view->argument = '';
-
-  if (is_array($view->argumentdefault))
-    $view->argumentdefault = implode(', ', $view->argumentdefault);
-  else
-    $view->argumentdefault = '';
-
-  if (is_array($view->field))
-    $view->field = implode(', ', $view->field);
-  else
-    $view->field = '';
-*/
-
-
+  $view->changed = time();
   $fields = _views_view_fields();
   if ($view->vid) {
     // update
@@ -1278,29 +1575,26 @@ function _views_save_view($view) {
     db_query("INSERT INTO {view_view} (". implode(", ", $k) .") VALUES (". implode(", ", $s) .")", $v);
   }
 
-  for ($i = 0; $i < $view->numsorts; $i++) {
-    $sort = $view->sort[$i];
-    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder) VALUES ($view->vid, $i, $sort[field], '$sort[order]')");
+  foreach ($view->sort as $i => $sort) {
+    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder) VALUES ($view->vid, $i, '$sort[field]', '$sort[sortorder]')");
   }
 
-  for ($i = 0; $i < count($view->argument); $i++) {
-    $arg = $view->argument[$i];
-    db_query("INSERT INTO {view_argument} (vid, type, argdefault, position) VALUES ($view->vid, $arg[type], $arg[argdefault], $i)");
+  foreach ($view->argument as $i => $arg) {
+    db_query("INSERT INTO {view_argument} (vid, type, argdefault, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', $i)");
   }
 
-  for ($i = 0; $i < count($view->field); $i++) {
-    $arg = $view->field[$i];
+  foreach ($view->field as $i => $arg) {
     db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[label]', '$arg[handler]', '$arg[sortable]', '$arg[defaultsort]', $i)");
   }
 
-  for ($i = 0; $i < count($view->breadcrumb); $i++) {
-    $arg = $view->breadcrumb[$i];
-    db_query("INSERT INTO {view_breadcrumb} (vid, title, link, position) VALUES ($view->vid, $arg[title], $arg[link], $i)");
+  foreach ($view->breadcrumb as $i => $arg) {
+    db_query("INSERT INTO {view_breadcrumb} (vid, title, link, position) VALUES ($view->vid, '$arg[title]', '$arg[link]', $i)");
   }
 
-  for ($i = 0; $i < count($view->filter); $i++) {
-    $arg = $view->filter[$i];
-    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, comparison, position) VALUES ($view->vid, $arg[tablename], $arg[field], $arg[value], $arg[comparison], $i)");
+  foreach ($view->filter as $i => $arg) {
+    if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR'))
+      $arg['value'] = implode(',', $arg['value']);
+    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[value]', '$arg[operator]', $i)");
   }
 
 }
@@ -1341,6 +1635,7 @@ function _views_construct_header($view, $fields) {
 
     // Add CSS id to table cell header cell.
     $header['id'] = "view-field-$field[queryname]";
+    $header['class'] = "view-cell-header";
     $headers[] = $header;
   }
   return $headers;
@@ -1350,10 +1645,10 @@ function views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
     foreach ($view->field as $field) {
       if ($field['label'])
-        $item .= "<div class='label' id='view-field-$field[queryname]'>" . $field['label'] . "</div>";
-      $item .= "<div class = 'data' id='view-field-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
+        $item .= "<div class='view-label' id='view-label-$field[queryname]'>" . $field['label'] . "</div>";
+      $item .= "<div class='view-field' id='view-data-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
     }
-    $items[] = "<div id='view-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
+    $items[] = "<div class='view-item' id='view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
   if ($items)
     return theme('item_list', $items);
@@ -1367,6 +1662,7 @@ function views_view_table($view, $nodes) {
     $row = array();
     foreach ($view->field as $field) {
       $cell['data'] = _views_handle_field($fields, $field, $node);
+      $cell['class'] = 'view-field';
       $cell['id'] = "view-field-$field[queryname]";
       $row[] = $cell;
     }
@@ -1383,33 +1679,10 @@ function views_view_nodes($nodes, $teasers = true, $links = true) {
   return $output;
 }
 
-function views_get_summary_link($argtype, $viewname, $item)
-{
-  switch ($argtype) {
-    case 1: // => t("Node Type"), 
-      return l($item->type, "views/$viewname/$item->type");
-    case 2: // => t("User ID"), 
-      return l($item->name, "views/$viewname/$item->uid");
-    case 3: // => t("Taxonomy Term ID"),
-      return l($item->name, "views/$viewname/$item->tid");
-    case 4: // => t("Year"),
-      return l($item->year, "views/$viewname/$item->year");
-    case 5: // => t("Month (1-12)"),
-      return l(format_date($item->created, 'custom', 'F'), "views/$viewname/$item->name");
-    case 6: // => t("Week (1-53)"),
-      return l("Week $item->name", "views/$viewname/$item->name");
-    case 7: // => t("Month + Year (CCYYMM)")
-      return l(format_date($item->created, 'custom', 'F, Y'), "views/$viewname/$item->name");
-    case 8: // => t("Full Date (CCYYMMDD)")
-      return l(format_date($item->created, 'custom', 'F j, Y'), "views/$viewname/$item->name");
-      break;
-  }
-}
-
 function theme_views_view($view, $type, $nodes) {
 
   if ($view->header)
-    $output = "<div id='view-header'>$view->header</div>\n";
+    $output = "<div class='view-header' id='view-header-$view->name'>$view->header</div>\n";
 
   switch ($view->type) {
     case 1: // => t("List View"), 
@@ -1426,13 +1699,18 @@ function theme_views_view($view, $type, $nodes) {
       break;
   }
 
-  if ($type == 'page' && $view->use_pager) {
-    if ($view->table_header)
-      $tbspager = tablesort_pager();
-    $output .= theme('pager', NULL, $view->nodes_per_page, 0, $tbspager);
-  }
+  return "<div class='view' id='view-$view->name'>$output</div>\n";
+}
 
-  return "<div class='views' id='view-$view->name'>$output</div>\n";
+
+function views_get_summary_link($argtype, $viewname, $item)
+{
+  $arginfo = _views_arguments();
+  if (!function_exists($arginfo['handler'][$argtype]))
+    return NULL;
+
+  return $arginfo['handler'][$argtype]('link', $item, $argtype, $viewname);
+
 }
 
 function theme_views_summary($view, $type, $level, $nodes) {
@@ -1442,9 +1720,6 @@ function theme_views_summary($view, $type, $level, $nodes) {
   if ($items)
     $output .= theme('table', array(), $items, array('id' => 'summary'));
   
-  if ($type == 'page' && $view->use_pager)
-    $output .= theme('pager', NULL, $view->nodes_per_page);
-  
   return "<div class='views' id='$view->name'>$output</div>";
   
 }
@@ -1452,34 +1727,34 @@ function theme_views_summary($view, $type, $level, $nodes) {
 // ---------------------------------------------------------------------------
 // Field handlers
 
-function views_handler_date($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
   return format_date($value);
 }
 
-function views_handler_since($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
   return format_interval(time() - $value);
 }
 
-function views_handler_int($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
   return intval($value);
 }
 
-function views_handler_string($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_string($fieldinfo, $fielddata, $value, $data) {
   return $value;
 }
 
-function views_handler_username($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
   $obj->name = $value;
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
   $obj->uid = $data->$uidfield;
   return format_name($obj);
 }
 
-function views_handler_nodelink($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
   return l($value, "node/$data->nid");
 }
 
-function views_handler_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
+function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
   return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->n_changed))
 ;
 }
@@ -1497,4 +1772,240 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
   }
   return $comments;
 }
+
+// ---------------------------------------------------------------------------
+// Argument handlers
+
+function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $query->add_field("type");
+      $query->add_groupby("n.type");
+      $fieldinfo['field'] = "n.type";
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $query->add_where("n.type = '$arg'");
+      break;
+    case 'link':
+      return l($query->type, "views/$arg/$query->type");
+  }
+}
+
+function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $query->add_table('users', true);
+      $query->add_field('name', 'users');
+      $query->add_field('uid', 'users');
+      $fieldinfo['field'] = "users.name";
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $uid = intval($arg);
+      $query->add_where("n.uid = $uid");
+      break;
+    case 'link':
+      return l($query->name, "views/$arg/$query->uid");
+  }
+}
+
+function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $query->add_table('term_data', true);
+      $query->add_field('name', 'term_data');
+      $query->add_field('weight', 'term_data');
+      $query->add_field('tid', 'term_data');
+      $fieldinfo['field'] = "term_data.name";
+      $query->add_orderby('term_data', 'weight', "ASC");
+      $query->add_orderby('term_data', 'name', "ASC");
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $query->add_complex_filter('term_node', 'tid', $arg);
+      break;
+    case 'link':
+      return l($query->name, "views/$arg/$query->tid");
+  }
+}
+function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      $fieldinfo['field'] = "YEAR(FROM_UNIXTIME(n.created+$timezone))";
+      $fieldinfo['fieldname'] = "year";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $year = intval($arg);
+      $query->add_where("YEAR(FROM_UNIXTIME(n.created+$timezone)) = $year");
+      break;
+    case 'link':
+      return l($query->year, "views/$arg/$query->year");
+  }
+}
+function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      $fieldinfo['field'] = "MONTH(FROM_UNIXTIME(n.created+$timezone))";
+      $fieldinfo['fieldname'] = "name";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $month = intval($arg);
+      $query->add_where("MONTH(FROM_UNIXTIME(n.created+$timezone)) = $month");
+      break;
+    case 'link':
+      return l(format_date($query->created, 'custom', 'F'), "views/$arg/$query->name");
+  }
+}
+function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      // The 3 makes the week 1-53, the first week of the year has at least 3 days
+      $fieldinfo['field'] = "WEEK(FROM_UNIXTIME(n.created+$timezone), 3)";
+      $fieldinfo['fieldname'] = "name";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      // The 3 makes the week 1-53, the first week of the year has at least 3 days
+      $week = intval($arg);
+      $query->add_where("WEEK(FROM_UNIXTIME(n.created+$timezone), 3) = $week");
+      break;
+    case 'link':
+      return l("Week $query->name", "views/$arg/$query->name");
+  }
+}
+function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m')";
+      $fieldinfo['fieldname'] = "name";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m') = '$arg'");
+      break;
+    case 'link':
+      return l(format_date($query->created, 'custom', 'F, Y'), "views/$arg/$query->name");
+  }
+}
+function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d')";
+      $fieldinfo['fieldname'] = "name";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d') = '$arg'");
+      break;
+    case 'link':
+      return l(format_date($query->created, 'custom', 'F j, Y'), "views/$arg/$query->name");
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Filter handlers
+
+function views_handler_filter_tid() {
+  $tids = array();
+  $result = db_query("SELECT DISTINCT(td.tid), td.name, v.name as vocabname FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid ORDER BY v.weight, v.name, td.weight, td.name");
+  while ($obj = db_fetch_object($result)) {
+    $tids[$obj->tid] = "$obj->vocabname: $obj->name";
+  }
+
+  return $tids;
+
+}
+
+function views_handler_filter_vid() {
+  $vids = array();
+  $result = db_query("SELECT v.vid, v.name FROM {vocabulary} v ORDER BY v.weight, v.name");
+  while ($obj = db_fetch_object($result)) {
+    $vids[$obj->vid] = "$obj->name";
+  }
+  return $vids;
+}
+
+// I worry this will really, really suck for large sites.
+// But then, why would large sites create a filter for one particular user?
+// Better to go with roles.
+function views_handler_filter_username() {
+  $uids = array();
+  $result = db_query("SELECT u.uid, u.name FROM {users} u WHERE uid != 0 ORDER BY u.name");
+  while ($obj = db_fetch_object($result)) {
+    $uids[$obj->uid] = "$obj->name";
+  }
+  return $uids;
+}
+
+function views_handler_filter_useranon() {
+  return array("0" => variable_get('anonymous', 'Anonymous'));
+}
+
+function views_handler_filter_usercurrent() {
+  return array("-1" => t('Currently Logged In User'));
+}
+
+function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
+  global $user;
+  $query->ensure_table("users");
+  $query->add_where("users.uid $filter[operator] '$user->uid'");
+
+}
+
+function views_handler_filter_role() {
+  $rids = array();
+  $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
+  while ($obj = db_fetch_object($result)) {
+    $rids[$obj->rid] = "$obj->name";
+  }
+  return $rids;
+}
+
+function views_handler_filter_nodetype($op) {
+  $nodes = array();
+  foreach (node_list() as $type) {
+    $node_type = node_invoke($type, 'node_name');
+    $nodes[$type] = $node_type ? $node_type : $type;
+  }
+  return $nodes;
+}
+
+
+// ---------------------------------------------------------------------------
+// Operator handlers (for filters)
+
+function views_handler_operator_andor() {
+  return array('AND' => 'Is All Of', 'OR' => 'Is One Of', 'NOR' => "Is None Of");
+}
+
+function views_handler_operator_or() {
+  return array('OR' => 'Is One Of', 'NOR' => "Is None Of");
+}
+
+function views_handler_operator_eqneq() {
+  return array('=' => 'Is Equal To', '!=' => 'Is Not Equal To');
+}
+
+function views_handler_operator_yesno() {
+  return array('1' => 'Yes', '0' => 'No');
+}
+
 ?>

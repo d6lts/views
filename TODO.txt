@@ -6,18 +6,15 @@ MAJOR FEATURES
 *  Expose an API so modules can provide table and sorting and special
    field-handling information.
 
-*  Try to change hardcoded switch-case statements to callbacks where it
-   makes sense to allow modules to extend functionality.
-
-*  Re-factor sorting info so that it goes into the table data and is assembled,
-   rather than being hard-coded as it is now.
-
 *  Allow breadcrumb trail to be specified.
 
-*  Create on-the-fly filtering too
+*  4.7 forms API and other 4.7 transition requirements.
+
+*  query caching
+
+*  default views
 
 LESS TIME CONSUMING STUFF
-*  Add changed field to prevent multiple admins from saving views simultaneously
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
@@ -25,12 +22,14 @@ LESS TIME CONSUMING STUFF
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
 
-*  The edit/add form could be prettier.
+*  break the form up into distinct functions for each section
 
-*  Fix themeing to allow each view to be its own theme, if desired. Make sure 
-   the support functions exist.
+*  redo the $tabledata stuff to generate once and stick it into a well-named
+   global for cacheing (this is a prelude to exposing the API).
 
-*  Allow a NOT in the and/or algorithm.
+*  Titles for summary view
+*  Just put the node information in the full tables section, rather than 3 stupid functions
+*  allow random selection from a view
 
 TO DONE
 
@@ -42,6 +41,18 @@ TO DONE
 *  Modify title list to be "List View" and allow the table fields; but instead
    of viewing as a table, it uses a list, with each field in <div> tags allowing
    styling by CSS. Heck, allow ordered/unordered list as an option.
+*  Fix themeing to allow each view to be its own theme, if desired. Make sure 
+   the support functions exist.
+*  get rid of $view->numsorts
+*  Try to change hardcoded switch-case statements to callbacks where it
+   makes sense to allow modules to extend functionality.
+*  Re-factor sorting info so that it goes into the table data and is assembled,
+   rather than being hard-coded as it is now.
+*  Create on-the-fly filtering too
+*  Allow a NOT in the and/or algorithm.
+*  description field for view
+*  Add changed field to prevent multiple admins from saving views simultaneously
+
 
 
 

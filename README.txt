@@ -86,8 +86,17 @@ The module is currently named 'nodequery'. I'll rename it to 'views' (or
 something else if a better name comes up) but I've had trouble having the Right 
 Name come to me.
 
+database.inc has a minor bug that makes from_unixtime not work:
+
+(line 246 in my version but it's kind of old).
+    $query = preg_replace('|FROM[^[:upper:]/,]+|','\0 '. $join .' ', $query);
+should be
+    $query = preg_replace('|FROM[^[:upper:]_/,]+|','\0 '. $join .' ', $query);
+
 
 * Half-assed Changelog (mostly for schema):
 
 11/27/2005 added field 'handler' to view_tablefield
 11/28/2005 added fields 'sortable' and 'defaultsort' to view_tablefield
+11/28/2005 changed view_argument type from int(2) to varchar(25) for greater flexibility
+11/30/2005 changed filter table and view table significantly. Probably sort table too.
