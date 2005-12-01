@@ -16,8 +16,8 @@ LESS TIME CONSUMING STUFF
 *  break the form up into distinct functions for each section
 *  variable titles for argument queries with summaries
 
-*  Document the API
 *  Write some decent help for the edit view page.
+*  provide more default operator handlers
 
 TO DONE
 
@@ -52,5 +52,6 @@ TO DONE
 *  arguments API
 *  Create a tool to ease creation of default views.
 *  add not-saved reminder to form
+*  Document the API
 
 

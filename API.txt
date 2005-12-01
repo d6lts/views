@@ -1,0 +1,476 @@
+Module Developer's API
+======================
+
+The most important aspect to the Views system is that any module can expose its
+tables to the Views module. It can select which fields can be sorted on, 
+filtered on, and viewed in the table format. It can expose fields to be
+used as URL arguments to a view. And it can define default views which are
+exposed to the admin and may be overridden, modified or otherwise customized.
+
+Hooks and Handlers
+==================
+
+You have to tell Views about your tables using a hook. Views offers 3 hooks:
+    
+    hook_views_tables();
+    hook_views_arguments();
+    hook_views_default_views();
+
+In addition, Views also supports handlers for a number of tasks, making it
+possible to customize the behavior of fields when being used. The handlers
+take various kinds of data, and some of them even allow direct access to
+the query building object. Care must be used to ensure that manipuling that
+object doesn't cause the query builder to write SQL that won't parse!
+
+Exposing your tables
+====================
+
+hook_views_tables() returns an array of tables the module provides. Here
+is an example of this data:
+
+  $tables['users'] = array(
+    "name" => "users", 
+    "join" => array(
+      "left" => array(
+        "table" => "node",
+        "field" => "uid"
+      ), 
+      "right" => array(
+        "field" => "uid"
+      ), 
+    ),
+    "fields" => array(
+      "name" => array(
+        'name' => "Node Author Name", 
+        'handler' => 'views_handler_field_username', 
+        'sortable' => true, 
+        'uid' => "uid", 
+        'addlfields' => array("uid")
+      ),
+    ),
+    "sorts" => array(
+      "name" => array('name' => "Node Author Name")
+    ),
+    "filters" => array(
+      "uid" => array(
+        'name' => "Node Author Name",
+        'operator' => "views_handler_operator_or",
+        'list' => "views_handler_filter_username"
+      ),
+      "anon" => array(
+        'field' => 'uid',
+        'name' => "Node Author is Anonymous",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_useranon"
+      ),
+      "currentuid" => array(
+        'name' => "Node Author is Current User",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_usercurrent",
+        'custom' => "views_handler_filter_usercurrent_custom",
+        'cacheable' => 'no', // for future use.
+      ),
+    )
+  );
+
+The above code, pulled directly from the internal version of the views
+system, exposes the 'users' table to the system.
+
+    "name" => "users", 
+
+        This field should be the name of the table.
+
+    "join" => array(
+
+        The query generator needs to know how this table JOINs to the
+        node table. One limitation of this system is that any table
+        referenced must somehow join to the NODE table, *but it does
+        not have to be direct*. More on this later.
+
+      "left" => array(
+        "table" => "node",
+        "field" => "uid"
+      ), 
+
+        The left side of the join is the table that is closest to the node
+        table. In this case, it is the node table. The field entry tells
+        the query builder which field in the left table will be used for
+        this join.
+
+      "right" => array(
+        "field" => "uid"
+      ), 
+
+        The right side of the join is always the table in question. Only
+        the field needs to be specified. The result will produce SQL
+        "LEFT JOIN {$left['table']} ON $left['table'].$left['field'] = 
+        $table.$right['field']". Approximately.
+        
+    "fields" => array(
+      "name" => array(
+        'name' => "Node Author Name", 
+
+        The 'fields' array tells Views which fields are available to be
+        used in the Table or List views. The 'name' is displayed in the
+        select box during list administration, and should prominently
+        identify which table or module is providing the field. It is also
+        the default label in table view, but that can be overridden.
+
+        'handler' => 'views_handler_field_username', 
+
+        The 'handler' is a function or list of functions that tells the
+        views system how to display the value. If left blank, the value
+        will simply be displayed. In the case of a username, though, 
+        Drupal has a system to make the username a link based on whether
+        or not the viewer has access to that user's profile. This handler
+        transforms the data and returns that result. 'handler' may also
+        be an array, providing a list of handlers. In that case, the admin
+        chooses which handler to use.
+
+        'sortable' => true, 
+
+        This version of 'sortable' only means that the system will allow
+        the viewer to click on the table header to re-sort the table by
+        this field.
+
+        'addlfields' => array("uid")
+
+        'addlfields' tells the views system that another field needs to be
+        in the query for this. Any additional fields are only used by the
+        provided handler.
+
+        'uid' => "uid", 
+
+        This is not a known variable entry by the views system, but is a
+        variable used by the handler; handlers have full access to whatever
+        data is in this array.
+
+      ),
+    ),
+        
+    "sorts" => array(
+      "name" => array('name' => "Node Author Name")
+    ),
+
+        The "sorts" definition provides a list of fields that will be provided
+        to the admin for the ORDER BY clause. In this case, only one field 
+        is provided: The username. This example is slightly confusing. The 
+        first instance of "name" is actually the field to be sorted on. The 
+        second instance of "name" is telling the system what to display to the 
+        admin in the select box.
+        
+     "filters" => array(
+      "uid" => array(
+        'name' => "Node Author Name",
+        'operator' => "views_handler_operator_or",
+        'list' => "views_handler_filter_username"
+      ),
+
+        "filters" are, if you're keeping up with this, what the system can
+        filter the query on. In the case above, the system can filter by 
+        the "uid". "name" is the display name. 'operator' is either an array
+        of operators allowed in the WHERE clause (i.e, '=', '>', etc) OR it
+        is a function, which returns a list of operators. However, if 'list'
+        is true, (in which it is), the 'operator' has a slightly different
+        meaning. It's a list which includes some or all of 'AND', 'OR', and 
+        'NOR'. If 'AND', all selected items in the list must be present
+        (which can only have meaning on things like taxonomy where a node
+        can have more than one). If OR any of the selected items in the list
+        can be present. And NOR will select nodes that have NONE of the selected
+        items in the list.
+
+        The 'list' can either be an array of items, or it can be a handler which
+        returns an array. In the above case, it actually returns an array of all
+        users in the system. 
+
+      "anon" => array(
+        'field' => 'uid',
+        'name' => "Node Author is Anonymous",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_useranon"
+      ),
+
+        If you've followed along so far, hopefully this one makes sense. 
+        Because "anon" isn't really a field, we use 'field' to tell the
+        system what the field really is (uid is already used, above). The
+        handler provides anonymous.
+
+      "currentuid" => array(
+        'name' => "Node Author is Current User",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_usercurrent",
+        'custom' => "views_handler_filter_usercurrent_custom",
+        'cacheable' => 'no',
+      ),
+
+      Similar to above, but a custom handler is required at query run time,
+      because current user changes depending upon who is logged in. Because
+      of that, we also inform the system that if this filter is present,
+      the query SQL may not be cached and must be regenerated whenever the
+      query is run.
+    )
+       
+Additional Notes on Tables
+--------------------------
+        
+Tables don't have to directly link to the node table. For example, the roles 
+table does not have any sort of NID in it, but instead it's a list of roles with 
+the RID as the primary identifier. However, the users_roles table has both a NID 
+an an RID. So on the left side of the join involving the roles table will be 
+users_roles.
+
+The join for the 'roles' table then looks like this:
+
+    "join" => array(
+      "left" => array(
+        "table" => "users_roles",
+        "field" => "rid"
+      ), 
+      "right" => array(
+        "field" => "rid"
+      ), 
+    ),
+
+The join for 'users_roles' looks like this:
+
+    "join" => array(
+      "left" => array(
+        "table" => "node",
+        "field" => "nid"
+      ), 
+      "right" => array(
+        "field" => "nid"
+      ), 
+    ),
+
+'operator' can be a handler or an array, as can list, as shown in this piece
+of code:
+
+    $tables['node_comment_statistics'] = array(
+      "name" => "node_comment_statistics", 
+      "join" => array(
+        "left" => array(
+          "table" => "node",
+          "field" => "nid"
+        ), 
+        "right" => array(
+          "field" => "nid"
+        ), 
+      ),
+      "fields" => array(
+        "last_comment_timestamp" => array(
+          'name' => "Last Comment Time", 
+          'sortable' => true, 
+          'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+         ),
+        "last_comment_name" => array(
+          'name' => "Last Comment Author", 
+          'handler' => 'views_handler_field_username', 
+          'sortable' => true, 
+          'uid' => "last_comment_uid", 
+          'addlfields' => array("last_comment_uid")
+        ),
+        "comment_count" => array(
+          'name' => "Comment Count", 
+          'sortable' => true, 
+          'handler' => array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count")
+        ),
+      ),
+      "sorts" => array(
+        "last_comment_timestamp" => array('name' => "Last Comment Date")
+      )
+    );
+
+Arguments
+=========
+
+hook_views_arguments() returns much less data than hook_views_tables(). In that
+respect it's a little easier. Unfortunately, the handlers are much more complex.
+
+  $arguments = array(
+    'nodetype' => array('name' => t("Node Type"), 'handler' => "views_handler_arg_nodetype"),
+    'uid' => array('name' => t("User ID"), 'handler' => "views_handler_arg_uid"),
+    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid"),
+    'year' => array('name' => t("Year"), 'handler' => "views_handler_arg_year"),
+    'month' => array('name' => t("Month (1-12)"), 'handler' => "views_handler_arg_month"),
+    'week' => array('name' => t("Week (1-53)"), 'handler' => "views_handler_arg_week"),
+    'monthyear' => array('name' => t("Month + Year (CCYYMM)"), 'handler' => "views_handler_arg_monthyear"),
+    'fulldate' => array('name' => t("Full Date (CCYYMMDD)"), 'handler' => "views_handler_arg_fulldate"),
+  );
+
+function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $query->add_field("type");
+      $query->add_groupby("n.type");
+      $fieldinfo['field'] = "n.type";
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $query->add_where("n.type = '$arg'");
+      break;
+    case 'link':
+      return l($query->type, "views/$arg/$query->type");
+  }
+}
+
+There are 3 operations for the handler:
+
+The 'fields' op means that the system wants to know what fields need to be
+added to the query in order to utilize the argument. In the above case,
+the node type is used. (Note that the system calls the 'node' table 'n'. It is
+the only table it does not refer to by full name; this is because of the way
+db_rewrite_sql() works).
+
+The 'filter' op is called when it needs to add the WHERE part of the query while
+in summary mode.
+
+The 'link' op is called only in summary mode. Summary mode is when an argument
+is required but not given by the user. If configured to allow it, the Views
+system will provide a list of possible arguments. In the above case, it
+ran a query to find what node types are available. The 'link' tells it
+how to link to the next level of the view. In the 'link' case, $query isn't
+the query object, but it is a row of results.
+
+Another, more complex example:
+
+function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
+  $timezone = _views_get_timezone();
+
+  switch($op) {
+    case 'fields':
+      $fieldinfo['field'] = "YEAR(FROM_UNIXTIME(n.created+$timezone))";
+      $fieldinfo['fieldname'] = "year";
+      $query->add_field('created');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $year = intval($arg);
+      $query->add_where("YEAR(FROM_UNIXTIME(n.created+$timezone)) = $year");
+      break;
+    case 'link':
+      return l($query->year, "views/$arg/$query->year");
+  }
+}
+
+The 'year' argument can provide a summary of Years available, 1 for every
+year in which nodes appear in the system. To do this it has to play a little 
+magic, since there is no field that matches. The field above is added to
+the query as 'field' AS 'fieldname' so that it knows how to refer to it.
+
+Handlers
+========
+
+An example of a custom handler:
+
+function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
+  global $user;
+  $query->ensure_table("users");
+  $query->add_where("users.uid $filter[operator] '$user->uid'");
+}
+
+$query->ensure_table() makes sure the table (and any tables between it and the node
+table) properly appear in the query. 
+
+Other handlers are, fortunately, much simpler:
+
+function views_handler_operator_andor() {
+  return array('AND' => 'Is All Of', 'OR' => 'Is One Of', 'NOR' => "Is None Of");
+}
+
+function views_handler_filter_role() {
+  $rids = array();
+  $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
+  while ($obj = db_fetch_object($result)) {
+    $rids[$obj->rid] = "$obj->name";
+  }
+  return $rids;
+}
+
+
+Providing Default Views
+=======================
+
+Luckily for you, and me, this part is actually very simple.
+
+Expose your tables in your module. Then, use the interface and construct a
+view. Get it exactly the way you want it.
+
+Then, run this function: views_create_view_code($vid)
+$vid can either be the VID or the name of the view.
+
+Print the results of the function. You should be able to plug that code
+directly into your hook_views_default_tables(). Then just return the $views
+variable.
+
+Example:
+
+  $view = new stdClass();
+  $view->name = 'tracker_trackerxxxx';
+  $view->description = 'Shows all new activity on system.';
+  $view->title = 'recent posts';
+  $view->header = '';
+  $view->header_format = '0';
+  $view->type = '2';
+  $view->url = '3';
+  $view->use_pager = '1';
+  $view->nodes_per_page = '25';
+  $view->block = '1';
+  $view->nodes_per_block = '10';
+  $view->block_display_header = '0';
+  $view->sort = array (
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'sortorder' => 'DESC',
+    ),
+  );
+  $view->argument = array (
+    array (
+      'type' => 'uid',
+      'argdefault' => '2',
+    ),
+  );
+  $view->field = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'type',
+      'label' => 'Type',
+    ),
+    array (
+      'tablename' => 'n',
+      'field' => 'title',
+      'label' => 'Title',
+      'handler' => 'views_handler_field_nodelink_with_mark',
+    ),
+    array (
+      'tablename' => 'users',
+      'field' => 'name',
+      'label' => 'Author',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'comment_count',
+      'label' => 'Replies',
+      'handler' => 'views_handler_comments_with_new',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'label' => 'Last Post',
+      'handler' => 'views_handler_field_since',
+    ),
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'n',
+      'field' => 'status',
+      'operator' => '=',
+      'value' => '1',
+    ),
+  );
+  $views[$view->name] = $view;
+
+The above view is the generated code of the view that (almost) exactly duplicates
+the functionality of http://www.example.com/tracker
+
