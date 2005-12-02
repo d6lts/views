@@ -979,7 +979,6 @@ $form['block-info']['nodes_per_block'] = array(
   '#maxlength' => 2,
   '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
   '#attributes' => NULL,
-  '#required' => true,
 );
 
 $form['block-info']['block_display_header'] = array(
@@ -1563,7 +1562,7 @@ function views_edit_view_validate($form_id, $view) {
     }
   }
 
-  foreach ($view['filter'] as $i => $filter) {
+  if (is_array($view['filter'])) foreach ($view['filter'] as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
     if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
       $filter['value'] = $filterinfo['transform']('in', $filter['value'], $filterinfo);
@@ -2100,10 +2099,10 @@ class _views_query {
     foreach ($this->tables as $table => $count) {
       foreach (range(1, $count) as $i) {
         $tn = $this->get_table_name($table, $i);
-        if ($i != 1)
-          $tnas = " $tn";
-        else
-          $tnas = " $table";
+//        if ($i != 1)
+//          $tnas = " $tn";
+//        else
+//          $tnas = " $table";
 
         $ltable = $this->table_data[$table]['join']['left']['table'];
         $lfield = $this->table_data[$table]['join']['left']['field'];
@@ -2111,7 +2110,7 @@ class _views_query {
         // special case for node table
         if ($ltable == 'node')
           $ltable = 'n'; 
-        $joins .= " LEFT JOIN \{$table}$tnas ON $ltable.$lfield = $tn.$rfield";
+        $joins .= " LEFT JOIN \{$table} $tn ON $ltable.$lfield = $tn.$rfield";
       }
     }
     if (!$getcount) {

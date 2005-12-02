@@ -15,6 +15,9 @@ LESS TIME CONSUMING STUFF
 *  Write some decent help for the edit view page.
 *  provide more default operator handlers
 
+*  Validation needs a thorough going-over.
+*  taxonomy depth
+
 TO DONE
 
 *  Actually implement the _block and _menu hooks so that views can expose them.
