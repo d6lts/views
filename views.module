@@ -1617,19 +1617,18 @@ class _views_query {
   function query($getcount = false) {
     foreach ($this->tables as $table => $count) {
       foreach (range(1, $count) as $i) {
-        $tn = $this->get_table_name($table, $i);
-        if ($i != 1)
-          $tnas = " $tn";
+        if ($i == 1)
+          $tn = $table;
         else
-          $tnas = "";
-
+          $tn = $this->get_table_name($table, $i);
+  
         $ltable = $this->table_data[$table]['join']['left']['table'];
         $lfield = $this->table_data[$table]['join']['left']['field'];
         $rfield = $this->table_data[$table]['join']['right']['field'];
         // special case for node table
         if ($ltable == 'node')
           $ltable = 'n'; 
-        $joins .= " LEFT JOIN {$table}$tnas ON $ltable.$lfield = $tn.$rfield";
+        $joins .= " LEFT JOIN \{$table} $tn ON $ltable.$lfield = $tn.$rfield";
       }
     }
     if (!$getcount) {
