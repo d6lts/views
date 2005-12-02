@@ -3,7 +3,6 @@ TODO
 MAJOR FEATURES
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
 *  Allow breadcrumb trail to be specified.
-*  4.7 forms API and other 4.7 transition requirements.
 *  XML?
 
 LESS TIME CONSUMING STUFF
@@ -11,9 +10,6 @@ LESS TIME CONSUMING STUFF
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
-*  Add 'move up, move down, move to top, move to bottom' buttons to make 
-   re-ordering easier. 
-*  break the form up into distinct functions for each section
 *  variable titles for argument queries with summaries
 
 *  Write some decent help for the edit view page.
@@ -53,5 +49,9 @@ TO DONE
 *  Create a tool to ease creation of default views.
 *  add not-saved reminder to form
 *  Document the API
+*  4.7 forms API and other 4.7 transition requirements.
+*  Add 'move up, move down, move to top, move to bottom' buttons to make 
+   re-ordering easier. 
+*  variable_get on default filter format on forms.
 
 
