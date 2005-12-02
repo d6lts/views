@@ -1445,7 +1445,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no arguments defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Argument Type', 'Default', 'Ops'), $rows);
+  $group .= theme('table', array('Argument Type', 'Default', array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1477,7 +1477,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no filters defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Operator', 'Value', 'Ops'), $rows);
+  $group .= theme('table', array('Field', 'Operator', 'Value', array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1507,7 +1507,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no sort criteria defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Order', 'Ops'), $rows);
+  $group .= theme('table', array('Field', 'Order', array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1705,6 +1705,7 @@ function _views_build_query(&$view, $args = array()) {
   $info['sql'] = $query->query();
   $info['countsql'] = $query->query(true);
   $info['summary'] = $summary;
+  $info['level'] = $level;
 
   // DEBUG
 //  print "<pre>" . var_export($view, TRUE) . "</pre>";
@@ -1758,12 +1759,12 @@ function views_view($type, $view, $args = array()) {
   // DEBUG
 //  $output = "<pre>" . var_export($items, true) . "</pre>";
 
-  if ($summary) {
-    $out .= theme("views_summary_$view->name", $view, $type, $level, $items);
+  if ($info['summary']) {
+    $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items);
     if ($out)
       $output .= $out;
     else
-      $output .= theme('views_summary', $view, $type, $level, $items);
+      $output .= theme('views_summary', $view, $type, $info['level'], $items);
   }
   else {
     $output .= theme("views_view_$view->name", $view, $type, $items);
@@ -1773,7 +1774,7 @@ function views_view($type, $view, $args = array()) {
   }
 
   if ($type == 'page' && $view->use_pager) {
-    if ($view->table_header && !$summary)
+    if ($view->table_header && !$info['summary'])
       $output .= theme('pager', NULL, $view->nodes_per_page, 0, tablesort_pager());
     else
       $output .= theme('pager', NULL, $view->nodes_per_page, 0);
