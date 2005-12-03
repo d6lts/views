@@ -668,7 +668,15 @@ function views_edit_view_execute($form_id, $form) {
   return drupal_goto('admin/views');
 }
 
-function views_admin_add_page($template = '') {
+function views_admin_add_page() {
+  $args = func_get_args();
+  while ($next = array_shift($args)) {
+    if (!$template)
+      $template = $next;
+    else
+      $template .= "/$next";
+  }
+
   $edit = $_POST['edit'];
   $op = $_POST['op'];
 

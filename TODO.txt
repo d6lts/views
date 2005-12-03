@@ -17,6 +17,7 @@ LESS TIME CONSUMING STUFF
 
 *  Validation needs a thorough going-over.
 *  taxonomy depth
+*  Function between views_view_page() and views_view().
 
 TO DONE
 
