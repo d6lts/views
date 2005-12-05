@@ -1871,9 +1871,11 @@ function _views_is_cacheable(&$view) {
       return false;
   }
 
-  foreach ($view->field as $i => field) {
-    if ($field->sortable)
+  foreach ($view->field as $i => $field) {
+    if ($field->sortable) {
       return false;
+    }
+  }
   return true;
 }
 
