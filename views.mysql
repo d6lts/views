@@ -24,6 +24,7 @@ create table if not exists view_sort (
   position int(2),
   field varchar(255),
   sortorder varchar(5),
+  options varchar(255),
   tablename varchar(255),
   KEY (vid)
 );
@@ -62,6 +63,7 @@ create table if not exists view_filter (
   field varchar(255),
   value longtext,
   operator varchar(20),
+  options varchar(255),
   position int(2),
   KEY (vid)
 );

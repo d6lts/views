@@ -3,7 +3,7 @@ TODO
 MAJOR FEATURES
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
 *  Allow breadcrumb trail to be specified.
-*  XML?
+*  XML view?
 
 LESS TIME CONSUMING STUFF
 // Most of this is now slated for post 4.7 update.
@@ -17,7 +17,22 @@ LESS TIME CONSUMING STUFF
 
 *  Validation needs a thorough going-over.
 *  taxonomy depth
-*  Function between views_view_page() and views_view().
+*  option field for filter
+*  option field for sort
+*  Function between views_view_page() and views_view() to make it easy to
+   access a view externally.
+
+*  table data needs a way to document itself.
+
+DEFAULT VIEWS/MODULES TO SUPPORT
+
+*  workflow
+*  taxonomy
+*  node queue
+*  forum
+*  poll
+*  blog
+*  book
 
 TO DONE
 

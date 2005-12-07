@@ -91,6 +91,19 @@ function _views_internal_tables() {
         )
       )
     );
+    $tables['term_hierarchy'] = array(
+      "name" => "term_node", 
+      "provider" => "internal",
+      "join" => array(
+        "left" => array(
+          "table" => "term_node",
+          "field" => "tid"
+        ), 
+        "right" => array(
+          "field" => "tid"
+        )
+      ),
+    );
 
     $tables['term_data'] = array(
       "name" => "term_data", 
@@ -117,7 +130,7 @@ function _views_internal_tables() {
       "sorts" => array(
         "weight" => array(
           'name' => "Taxonomy Name", 
-          'field' => array('weight', 'name')
+          'field' => array('weight', 'name'),
         )
       ),
       "filters" => array(
@@ -285,7 +298,7 @@ function _views_internal_tables() {
         'name' => "Node Type",
         'table' => "n",
         'list' => "views_handler_filter_nodetype",
-        'list-type' => 'checkbox',
+        'list-type' => 'list',
         'operator' => "views_handler_operator_or"
       ),
     ),
@@ -307,7 +320,7 @@ function _views_get_tables() {
 // name
 // field (in case the array key is not the field)
 // list: (if array use; otherwise it is a handler)
-// list-type: checkbox, list, select
+// list-type: list, select
 // operator: (if array use; otherwise it is a handler)
 // transform: if here, handler for transforming data.
 // validate: if here, handler for validating data.
@@ -615,7 +628,7 @@ function views_admin_page() {
   return $output;
 }
 
-function views_edit_view_execute($form_id, $form) {
+function views_edit_view_submit($form_id, $form) {
   $view = array2object($form);
   _views_save_view($view);
   menu_rebuild();
@@ -694,7 +707,7 @@ function views_admin_delete_page($vid = '') {
   );
 }
 
-function views_delete_confirm_execute($formid, $form) {
+function views_delete_confirm_submit($formid, $form) {
   if ($form['confirm']) {
     _views_delete_view(array2object($form));
     drupal_goto('admin/views');
@@ -848,6 +861,7 @@ function _views_view_form($view, $orig, $op = '') {
   $fields = _views_get_fields();
   $fieldnames = _views_get_fields(true); // for selecting
 
+  $sorts = _views_get_sorts(); // for selecting
   $sortnames = _views_get_sorts(true); // for selecting
 
   $filters = _views_get_filters();
@@ -1196,14 +1210,6 @@ $form['add'] = array('#tree' => true);
 
       $multiple = false;
       switch($filterinfo['list-type']) {
-        case 'checkbox':
-          $form['filter'][$i]['value'] = array(
-            '#type' => 'checkboxes',
-//            '#title' => t('Value'),
-            '#default_value' => $filter['value'],
-            '#options' => $list,
-          );
-          break;
         case 'list':
         default:
           $multiple = true;
@@ -1275,6 +1281,8 @@ $form['add'] = array('#tree' => true);
 
   $form['sort'] = array('#tree' => true);
   foreach ($view->sort as $i => $sort) {
+    $sortname = $sort['field']; // combined table & sortname
+    $sortinfo = $sorts[$sortname];
     $form['sort'][$i] = array('#tree' => true);
     $form['sort'][$i]['field'] = array(
       '#type' => 'select',
@@ -1288,6 +1296,39 @@ $form['add'] = array('#tree' => true);
       '#default_value' => $sort['sortorder'],
       '#options' => _views_sortorders(),
     );
+    // option can be either 'string', 'integer', an array or a handler
+    // that must return an array.
+    if (isset($sortinfo['option'])) {
+      if ($sortinfo['option'] == 'string') {
+        $form['sort'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $sort['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else if ($sortinfo['option'] == 'integer') {
+        // same as above for now but should have validate routine
+        $form['sort'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $sort['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else {
+        $list = $sortinfo['option'];
+        if (!is_array($list) && function_exists($sortinfo['option'])) {
+          $list = $sortinfo['option']('sortoption');
+        }
+        $form['sort'][$i]['options'] = array(
+          '#type' => 'select',
+          '#default_value' => $sort['options'],
+          '#options' => $list,
+        );
+        
+      }
+    }
     $form['sort'][$i]['delete'] = array(
       '#type' => 'button',
       '#name' => "edit[sort][$i][op]",
@@ -1464,6 +1505,7 @@ function theme_views_edit_view($form) {
       $rows[] = array(
         form_render($form['sort'][$i]['field']),
         form_render($form['sort'][$i]['sortorder']),
+        form_render($form['sort'][$i]['options']),
         form_render($form['sort'][$i]['delete']),
         form_render($form['sort'][$i]['up']),
         form_render($form['sort'][$i]['down']),
@@ -1474,7 +1516,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no sort criteria defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Order', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array('Field', 'Order', 'Option', array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1511,7 +1553,7 @@ function _views_delete_form($view) {
 */
 
 function views_edit_view_validate($form_id, $view) {
-//  print "<pre>" . var_export($view, true) . "</pre>";
+//  dprint_r(var_export($view, true));
   $filters = _views_get_filters();
   _views_check_arrays($view);
   
@@ -1629,7 +1671,7 @@ function _views_build_query(&$view, $args = array()) {
   
   // Process arguments.
   foreach ($view->argument as $i => $argument) {
-    if ($args[$i]) {
+    if ($args[$i] != NULL && $args[$i] != '') {
       _views_view_build_arg($query, $args[$i], $argument['type']);
     }
     else { 
@@ -1812,20 +1854,20 @@ function _views_view_build_sorts(&$query, $view) {
   $sorts = _views_get_sorts();
 
   foreach ($view->sort as $i => $sort) {
-    $field = $sorts[$sort['field']]['field'];
+    $sortinfo = $sorts[$sort['field']];
+    $field = $sortinfo['field'];
+
     if (!$field) {
       $fieldbits = explode('.', $sort['field']);
       $field = $fieldbits[1];
     }
 
-    $table = $sorts[$sort['field']]['table'];
-    if (is_array($field)) {
-      foreach($field as $f) {
-        $query->add_orderby($table, $f, $sort['sortorder']);
-      }
+    $table = $sortinfo['table'];
+    if (isset($sortinfo['handler']) && function_exists($sortinfo['handler'])) {
+      $sortinfo['handler']('sort', $query, $sortinfo, $sort);
     }
     else {
-      $query->add_orderby($table, $field, $sort['sortorder']);
+      $query->add_orderby_multi($table, $field, $sort['sortorder']);
     }
   }
 }
@@ -1924,14 +1966,40 @@ class _views_query {
       $this->where .= " AND " . $clause;
   }
 
-  function add_orderby($table, $field, $order) {
+  function add_orderby($table, $field, $order, $alias = '') {
+    if (!$alias) {
+      $alias = $table;
+    }
     if (!$this->tables[$table])
       $this->add_table($table, true);
 
 		if ($this->orderby)
 			$this->orderby .= ", ";
 
-		$this->orderby = " $table.$field $order";
+		$this->orderby = " $alias.$field $order";
+  }
+
+  function add_orderby_multi($table, $field, $order, $alias = '') {
+    if (!$alias) {
+      $alias = $table;
+    }
+    if (!$this->tables[$table])
+      $this->add_table($table, true);
+
+    if (is_array($field)) {
+      foreach($field as $f) {
+        if ($this->orderby)
+          $this->orderby .= ", ";
+
+        $this->orderby = " $alias.$f $order";
+      }
+    }
+    else {
+      if ($this->orderby)
+        $this->orderby .= ", ";
+
+      $this->orderby = " $alias.$field $order";
+    }
   }
 
   function add_groupby($clause) {
@@ -2255,7 +2323,7 @@ function _views_save_view($view) {
   }
 
   foreach ($view->sort as $i => $sort) {
-    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder) VALUES ($view->vid, $i, '$sort[field]', '$sort[sortorder]')");
+    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder, options) VALUES ($view->vid, $i, '$sort[field]', '$sort[sortorder]', '$sort[options]')");
   }
 
   foreach ($view->argument as $i => $arg) {
@@ -2488,7 +2556,8 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
       $query->add_where("n.uid = $uid");
       break;
     case 'link':
-      return l($query->name, "views/$arg/$query->uid");
+      $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
+      return l($name, "views/$arg/" . intval($query->uid));
   }
 }
 
@@ -2505,10 +2574,17 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'filter':
-      $query->add_complex_filter('term_node', 'tid', $arg);
+      if ($arg == 0) {
+        $query->ensure_table("term_node");
+        $query->add_where("term_node.tid IS NULL");
+      }
+      else {
+        $query->add_complex_filter('term_node', 'tid', $arg);
+      }
       break;
     case 'link':
-      return l($query->name, "views/$arg/$query->tid");
+      $name = ($query->name ? $query->name : t("Uncategorized"));
+      return l($name, "views/$arg/" . intval($query->tid));
   }
 }
 function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
@@ -2690,6 +2766,46 @@ function views_handler_operator_yesno() {
   return array('1' => 'Yes', '0' => 'No');
 }
 
+// ---------------------------------------------------------------------------
+// Sort handlers
+
+// oh god this code is way uglier than it should be.
+// also it's stupid and doesn't work, but could be useful for the
+// filter so being left in.
+/*
+function views_handler_sort_taxo_depth($op, &$query, $sortinfo, $sort) {
+  $table = "term_hierarchy";
+
+  $query->add_orderby_multi($sort['table'], $sort['field'], $sort['sortorder']);
+
+  if (!$sort['option']) { // 0 or close enough to 0
+     return;
+  }
+
+  $high_table = $query->add_table($table, true, $sort['option']);
+  if (!$high_table) // couldn't add the table
+    return;
+
+  $high_table2 = $query->add_table($sort['table'], true, $sort['option']);
+  if (!$high_table2) // couldn't add the table
+    return;
+
+  $table_num = $high_table - $sort['option'] - 1;
+  $diff = $high_table - $high_table2;
+
+  $oldalias = $sort['table'];
+
+  for ($i = $table_num; $i <= $high_table; $i++) {
+    $alias = $query->get_table_name($table, $i);
+    $alias2 = $query->get_table_name($sort['table'], $i + $diff);
+    $query->add_where("$alias.tid == $oldalias.parent");
+    $query->add_where("$alias2.tid == $alias.tid");
+    $query->add_orderby_multi($sort['table'], $sort['field'], $sort['sortorder'], $alias2, $i);
+    $oldalias = $alias;
+  }
+}
+
+*/
 // ---------------------------------------------------------------------------
 // View creator tool (for module developers)
 
