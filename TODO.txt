@@ -12,16 +12,20 @@ LESS TIME CONSUMING STUFF
 *  Optional [MORE] link in blocks that are also page views.
 *  variable titles for argument queries with summaries
 
-*  Write some decent help for the edit view page.
 *  provide more default operator handlers
 
 *  Validation needs a thorough going-over.
-*  taxonomy depth
-*  option field for filter
-*  option field for sort
+*  The query object is turning into a hash. At the very least, add_table 
+   and the variants on trace, ensure_table, etc, need a thorough going-over
+   to make sure they all make sense. There are unDOUBTedly some bugs in
+   here because I keep confusing them.
+
+*  taxonomy depth (argument)
 *  Function between views_view_page() and views_view() to make it easy to
    access a view externally.
+*  Function that just returns a list of nodes and doesn't theme it at all.
 
+*  Write some decent help for the edit view page.
 *  table data needs a way to document itself.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
@@ -72,5 +76,6 @@ TO DONE
 *  Add 'move up, move down, move to top, move to bottom' buttons to make 
    re-ordering easier. 
 *  variable_get on default filter format on forms.
-
-
+*  option field for filter
+*  option field for sort
+*  taxonomy filter by hierarchy

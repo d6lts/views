@@ -67,7 +67,6 @@ function _views_get_arguments() {
   return $VIEWS_ARGUMENTS;
 }
 
-
 function _views_internal_tables() {
 
   if (module_exist('taxonomy')) {
@@ -87,10 +86,13 @@ function _views_internal_tables() {
         "tid" => array(
           'name' => "Taxonomy Term",
           'list' => "views_handler_filter_tid",
+          'option' => 'string',
           'operator' => "views_handler_operator_andor",
+          'custom' => 'views_handler_filter_tid_custom',
         )
       )
-    );
+    ); 
+
     $tables['term_hierarchy'] = array(
       "name" => "term_node", 
       "provider" => "internal",
@@ -1202,6 +1204,38 @@ $form['add'] = array('#tree' => true);
       '#options' => $operator,
     );
 
+    if (isset($filterinfo['option'])) {
+      if ($filterinfo['option'] == 'string') {
+        $form['filter'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $filter['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else if ($filterinfo['option'] == 'integer') {
+        // same as above for now but should have validate routine
+        $form['filter'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $filter['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else {
+        $list = $filterinfo['option'];
+        if (!is_array($list) && function_exists($filterinfo['option'])) {
+          $list = $filterinfo['option']('filteroption');
+        }
+        $form['filter'][$i]['options'] = array(
+          '#type' => 'select',
+          '#default_value' => $filter['options'],
+          '#options' => $list,
+        );
+        
+      }
+    }
+
     if ($filterinfo['list']) {
       $list = $filterinfo['list'];
 
@@ -1474,6 +1508,7 @@ function theme_views_edit_view($form) {
       $rows[] = array(
         form_render($form['filter'][$i]['name']),
         form_render($form['filter'][$i]['operator']),
+        form_render($form['filter'][$i]['options']),
         form_render($form['filter'][$i]['value']),
         form_render($form['filter'][$i]['delete']),
         form_render($form['filter'][$i]['up']),
@@ -1485,7 +1520,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no filters defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Operator', 'Value', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array('Field', 'Operator', 'Option', 'Value', array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1805,7 +1840,10 @@ function _views_view_build_filters(&$query, $view) {
     $table = $filterinfo['table'];
 //    $table = 'x';
 
-    if (is_array($filter['value'])) {
+    if (function_exists($filterinfo['custom'])) {
+      $filterinfo['custom']('custom', $filter, $filterinfo, $query);
+    }
+    else if (is_array($filter['value'])) {
       if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
         $not = '';
         if ($filter['operator'] == 'NOR')
@@ -1828,13 +1866,8 @@ function _views_view_build_filters(&$query, $view) {
       }
     }
     else {
-      if (function_exists($filterinfo['custom'])) {
-        $filterinfo['custom']('custom', $filter, $filterinfo, $query);
-      }
-      else {
-        $query->ensure_table("$table");
-        $query->add_where("$table.$field $filter[operator] '$filter[value]'");
-      }
+      $query->ensure_table("$table");
+      $query->add_where("$table.$field $filter[operator] '$filter[value]'");
     }
   }
 
@@ -1931,6 +1964,7 @@ class _views_query {
     $this->orderby = "";
     $this->groupby = "";
     $this->tables = array();
+    $this->tablequeue = array();
     $this->field = array("n.nid");
     $this->table_data = _views_get_tables();
     $this->count_field = "*";
@@ -1941,8 +1975,10 @@ class _views_query {
     if ($table) {
       if ($table && $table != 'n') {
         $this->ensure_path($table);
-        if (!$this->tables[$table])
+        if (!$this->tables[$table]) {
           $this->tables[$table] = 1;
+          $this->tablequeue[] = array('table' => $table, 'num' => '1');
+        }
       }
       $table .= ".";
     }
@@ -2015,24 +2051,43 @@ class _views_query {
     if ($this->tables[$table])
       return;
 
-    if ($this->ensure_path($table))
+    if ($this->ensure_path($table)) {
       $this->tables[$table] = 1;
+      $this->tablequeue[] = array('table' => $table, 'num' => '1');
+    }
   }
 
-  function add_table($table, $ensure_path = false, $howmany = 1) {
+  function add_table($table, $ensure_path = false, $howmany = 1, $joininfo = NULL) {
     if ($table == 'n' || $table == 'node')
       return;
 
-    if ($ensure_path) 
-      if (!$this->ensure_path($table))
-        return false;
-      if (!$this->trace($table))
-        return false;
 
-    if (isset($this->tables[$table]))
+    if ($ensure_path) {
+      if (!$this->ensure_path($table)) {
+        return false;
+      }
+    }
+    else if (!$joininfo) {
+      // Don't trace if joininfo was supplied; in that case the sender is responsible
+      // for ensuring a connection can be made.
+      if (!$this->trace($table)) {
+        return false;
+      }
+    }
+    
+    if (isset($this->tables[$table])) {
       $this->tables[$table] += $howmany;
-    else
+    }
+    else {
       $this->tables[$table] = $howmany;
+    }
+
+    for ($i = $this->tables[$table] - $howmany + 1; $i <= $this->tables[$table]; $i++) {
+      if ($joininfo) {
+        $this->joins[$table][$i] = $joininfo;
+      }
+      $this->tablequeue[] = array('table' => $table, 'num' => $i);
+    }
     return $this->tables[$table];
   }
 
@@ -2075,6 +2130,7 @@ class _views_query {
         // Don't use add_table because it'll trace, and we already did that.
         // And we already know anything in $add isn't already in $this->tables
         $this->tables[$table] = 1;
+        $this->tablequeue[] = array('table' => $table, 'num' => '1');
       }
       return true;
     }
@@ -2138,23 +2194,28 @@ class _views_query {
   }
 */
   function query($getcount = false) {
-    foreach ($this->tables as $table => $count) {
-      foreach (range(1, $count) as $i) {
-        $tn = $this->get_table_name($table, $i);
-//        if ($i != 1)
-//          $tnas = " $tn";
-//        else
-//          $tnas = " $table";
+    foreach ($this->tablequeue as $tinfo) {
+      $table = $tinfo['table'];
+      $i = $tinfo['num'];
+      $tn = $this->get_table_name($table, $i);
 
+      if (!$this->joins[$table][$i]) {
         $ltable = $this->table_data[$table]['join']['left']['table'];
         $lfield = $this->table_data[$table]['join']['left']['field'];
         $rfield = $this->table_data[$table]['join']['right']['field'];
-        // special case for node table
-        if ($ltable == 'node')
-          $ltable = 'n'; 
-        $joins .= " LEFT JOIN \{$table} $tn ON $ltable.$lfield = $tn.$rfield";
       }
+      else {
+        $ltable = $this->joins[$table][$i]['ltable'];
+        $lfield = $this->joins[$table][$i]['lfield'];
+        $rfield = $this->joins[$table][$i]['rfield'];
+      }
+
+      // special case for node table
+      if ($ltable == 'node')
+        $ltable = 'n'; 
+      $joins .= " LEFT JOIN \{$table} $tn ON $ltable.$lfield = $tn.$rfield";
     }
+
     if (!$getcount) {
       foreach($this->field as $field) {
         if (!$fields)
@@ -2171,11 +2232,16 @@ class _views_query {
       if ($this->orderby)
         $before = "$this->orderby, ";
       $orderby = tablesort_sql($this->header, $before);
+      if (!$orderby) { // why the hell would tablesort_sql do this anyway?!
+        $orderby = "ORDER BY $this->orderby";
+      }
     }
     else if ($this->orderby)
       $orderby = "ORDER BY $this->orderby";
 
-    return "SELECT $fields FROM {node} n $joins $this->where $groupby $orderby";
+    $query = "SELECT $fields FROM {node} n $joins $this->where $groupby $orderby";
+//    dprint_r($query);
+    return $query;
   }
 }
 
@@ -2341,7 +2407,7 @@ function _views_save_view($view) {
   foreach ($view->filter as $i => $arg) {
     if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR'))
       $arg['value'] = implode(',', $arg['value']);
-    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[value]', '$arg[operator]', $i)");
+    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[value]', '$arg[operator]', '$arg[options]', $i)");
   }
 
 }
@@ -2689,7 +2755,54 @@ function views_handler_filter_tid() {
   }
 
   return $tids;
+}
 
+function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
+  // When filtering via depth, we have to add a chain. If it's an or query
+  // we add 1 chain, but in an and query we actually basically have to add
+  // a 2 dimensional array. 
+
+
+  $query->ensure_table('term_data'); // this is to make sure the base table comes first.
+
+  if ($filter['operator'] == 'OR') {
+    $clause = implode("','", $filter['value']);
+    // base tables
+    $num = $query->add_table('term_node');
+    $tablename = $query->get_table_name('term_node', $num);
+    $where = "$tablename.tid IN ($clause)";
+
+    // for each depth > 0, add the next child in term_hierarchy to the join
+    for ($i = 0; $i < $filter['options']; $i++) {
+      $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+      $thname = $query->get_table_name('term_hierarchy', $thnum);
+      $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+      $tablename = $query->get_table_name('term_data', $num);
+      $where .= " OR $tablename.tid IN ($clause)";
+    }
+    $query->add_where("($where)");
+  }
+  else {
+    if ($filter['operator'] == 'NOR') {
+      $not = "!";
+    }
+    foreach ($filter['value'] as $tid) {
+      // For every term we have to match, add a base table
+      $num = $query->add_table('term_node');
+      $tablename = $query->get_table_name('term_node', $num);
+      $where = "$tablename.tid = '$tid'";
+
+      // for each depth > 0, add the next child in term_hierarchy to the join
+      for ($i = 0; $i < $filter['options']; $i++) {
+        $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+        $thname = $query->get_table_name('term_hierarchy', $thnum);
+        $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+        $tablename = $query->get_table_name('term_data', $num);
+        $where .= " OR $tablename.tid = '$tid'";
+      }
+      $query->add_where("$not($where)");
+    }
+  }
 }
 
 function views_handler_filter_vid() {
@@ -2769,43 +2882,8 @@ function views_handler_operator_yesno() {
 // ---------------------------------------------------------------------------
 // Sort handlers
 
-// oh god this code is way uglier than it should be.
-// also it's stupid and doesn't work, but could be useful for the
-// filter so being left in.
-/*
-function views_handler_sort_taxo_depth($op, &$query, $sortinfo, $sort) {
-  $table = "term_hierarchy";
+// There are no sort handlers.
 
-  $query->add_orderby_multi($sort['table'], $sort['field'], $sort['sortorder']);
-
-  if (!$sort['option']) { // 0 or close enough to 0
-     return;
-  }
-
-  $high_table = $query->add_table($table, true, $sort['option']);
-  if (!$high_table) // couldn't add the table
-    return;
-
-  $high_table2 = $query->add_table($sort['table'], true, $sort['option']);
-  if (!$high_table2) // couldn't add the table
-    return;
-
-  $table_num = $high_table - $sort['option'] - 1;
-  $diff = $high_table - $high_table2;
-
-  $oldalias = $sort['table'];
-
-  for ($i = $table_num; $i <= $high_table; $i++) {
-    $alias = $query->get_table_name($table, $i);
-    $alias2 = $query->get_table_name($sort['table'], $i + $diff);
-    $query->add_where("$alias.tid == $oldalias.parent");
-    $query->add_where("$alias2.tid == $alias.tid");
-    $query->add_orderby_multi($sort['table'], $sort['field'], $sort['sortorder'], $alias2, $i);
-    $oldalias = $alias;
-  }
-}
-
-*/
 // ---------------------------------------------------------------------------
 // View creator tool (for module developers)
 
