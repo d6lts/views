@@ -414,7 +414,8 @@ function _views_internal_default_views() {
   $view = new stdClass();
   $view->name = 'tracker/tracker';
   $view->description = 'Shows all new activity on system.';
-  $view->title = 'recent posts';
+  $view->title = 'recent posts for %1';
+  $view->menu_title = 'recent posts for %i';
   $view->use_pager = '1';
   $view->nodes_per_page = '25';
   $view->nodes_per_block = '10';
@@ -463,6 +464,7 @@ function _views_internal_default_views() {
     array (
       'type' => 'uid',
       'argdefault' => '2',
+      'title' => 'recent posts for all users',
     ),
   );
   $view->filter = array (
@@ -550,11 +552,12 @@ function views_menu($may_cache) {
       'callback' => 'views_view_page',
       'access' => user_access('access content'),
       'type' => MENU_CALLBACK);
-    $result = db_query("SELECT name, title FROM {view_view} WHERE url = 3");
+    $result = db_query("SELECT name, title, menu_title FROM {view_view} WHERE url = 3");
 
     while ($view = db_fetch_object($result)) {
+      $title = ($view->menu_title ? $view->menu_title : $view->title);
       $items[] = array('path' => "views/$view->name",
-        'title' => $view->title,
+        'title' => $title,
         'callback' => 'views_view_page',
         'callback arguments' => array($view->name),
         'access' => user_access('access content'),
@@ -984,6 +987,14 @@ $form['url-info']['url'] = array(
   '#options' => _views_urls(),
   '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
 );
+$form['url-info']['menu_title'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Menu Title'),
+  '#default_value' => $view->menu_title,
+  '#size' => 60,
+  '#maxlength' => 255,
+  '#description' => t('If URL with Menu Entry, this title will be used for the menu; if black Title will be used instead.'),
+);
 $form['url-info']['use_pager'] = array(
   '#type' => 'checkbox',
   '#title' => t('Use Pager'),
@@ -1120,9 +1131,14 @@ $form['add'] = array('#tree' => true);
     );    
     $form['argument'][$i]['argdefault'] = array(
       '#type' => 'select',
-//      '#title' => t("Argument $i Default"),
       '#default_value' => $argument['argdefault'],
       '#options' => _views_get_arguments_default(),
+    );
+    $form['argument'][$i]['title'] = array(
+      '#type' => 'textfield',
+      '#default_value' => $argument['title'],
+      '#size' => 10,
+      '#maxlength' => 255,
     );
     $form['argument'][$i]['delete'] = array(
       '#type' => 'button',
@@ -1168,6 +1184,12 @@ $form['add'] = array('#tree' => true);
     '#default_value' => NULL,
     '#options' => _views_get_arguments_default(),
 //    '#description' => t('What action to take if the argument is not given in URL.'),
+  );
+  $form['add']['argument']['title'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $argument['title'],
+    '#size' => 10,
+    '#maxlength' => 255,
   );
   $form['add']['argbutton'] = array(
     '#type' => 'button',
@@ -1477,6 +1499,7 @@ function theme_views_edit_view($form) {
       $rows[] = array(
         form_render($form['argument'][$i]['type']),
         form_render($form['argument'][$i]['argdefault']),
+        form_render($form['argument'][$i]['title']),
         form_render($form['argument'][$i]['delete']),
         form_render($form['argument'][$i]['up']),
         form_render($form['argument'][$i]['down']),
@@ -1487,17 +1510,18 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no arguments defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Argument Type', 'Default', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
       form_render($form['add']['argument']['type']),
       form_render($form['add']['argument']['argdefault']),
+      form_render($form['add']['argument']['title']),
       form_render($form['add']['argbutton']),
     )
   );
   $group .= "<br/>";
-  $group .= theme('table', array(t('Add Argument'), array('data' => t('Default'), 'colspan' => 3)), $rows);
+  $group .= theme('table', array(t('Add Argument'), t('Default'), array('data' => t('Title'), 'colspan' => 3)), $rows);
   $group .= "<p>Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility.</p>";
   $output .= theme('fieldset', array('#title' => t('Arguments'), '#children' => $group));
   $group = "";
@@ -1679,9 +1703,6 @@ function views_view_page() {
   if ($view->url == 1)
     return drupal_not_found();
 
-  // Done before theming so theme can change it if it wants.
-  drupal_set_title($view->title);
-
   $output = views_view('page', $view, $args);
 //  print theme('page', $output);
   return $output;
@@ -1705,6 +1726,8 @@ function _views_build_query(&$view, $args = array()) {
   _views_view_build_filters($query, $view);
   
   // Process arguments.
+  $view->args = $args; // we'll need these later.
+
   foreach ($view->argument as $i => $argument) {
     if ($args[$i] != NULL && $args[$i] != '') {
       _views_view_build_arg($query, $args[$i], $argument['type']);
@@ -1871,6 +1894,25 @@ function _views_view_build_filters(&$query, $view) {
     }
   }
 
+}
+
+function _views_get_title($view) {
+  $count = count($view->args);
+  if ($count >= count($view->argument)) {
+    $title = $view->title;
+  }
+  else {
+    $title = $view->argument[$count]['title'];
+  }
+  $arginfo = _views_get_arguments();
+  foreach ($view->argument as $i => $arg) {
+    if (function_exists($arginfo['handler'][$arg['type']])) {
+      // call the handler
+      $rep = $arginfo['handler'][$arg['type']]('title', $view->args[$i], $arg['type']);
+      $title = str_replace("%" . ($i + 1), $rep, $title);
+    }
+  }
+  return $title;
 }
 
 function _views_view_build_arg(&$query, $arg, $argtype) {
@@ -2267,7 +2309,7 @@ function _views_break_phrase($str) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'nodes_per_block', 'block_display_header', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
 }
 
 function _views_delete_view($view) {
@@ -2393,7 +2435,7 @@ function _views_save_view($view) {
   }
 
   foreach ($view->argument as $i => $arg) {
-    db_query("INSERT INTO {view_argument} (vid, type, argdefault, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', $i)");
+    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', '$arg[title]', $i)");
   }
 
   foreach ($view->field as $i => $arg) {
@@ -2494,6 +2536,10 @@ function views_view_nodes($nodes, $teasers = true, $links = true) {
 }
 
 function theme_views_view($view, $type, $nodes) {
+
+  if ($type == 'page')
+    // Done before theming so theme can change it if it wants.
+    drupal_set_title(_views_get_title($view));
 
   if ($view->header)
     $output = "<div class='view-header' id='view-header-$view->name'>" . check_markup($view->header, $view->header_format, false) . "</div>\n";
@@ -2605,6 +2651,8 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l($query->type, "views/$arg/$query->type");
+    case 'title':
+      return $query;
   }
 }
 
@@ -2624,6 +2672,9 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
     case 'link':
       $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
       return l($name, "views/$arg/" . intval($query->uid));
+    case 'title':
+      $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
+      return $user->name;
   }
 }
 
@@ -2651,6 +2702,9 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
     case 'link':
       $name = ($query->name ? $query->name : t("Uncategorized"));
       return l($name, "views/$arg/" . intval($query->tid));
+    case 'title':
+      $term = db_fetch_object(db_query("SELECT name FROM {term_data} WHERE tid = '%d'", $query));
+      return $term->name;
   }
 }
 function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
@@ -2669,6 +2723,8 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l($query->year, "views/$arg/$query->year");
+    case 'title':
+      return $query;
   }
 }
 function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
@@ -2687,6 +2743,8 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F'), "views/$arg/$query->name");
+    case 'title':
+      return format_date(strtotime("2005${query}01"), 'custom', 'F');
   }
 }
 function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
@@ -2707,6 +2765,8 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l("Week $query->name", "views/$arg/$query->name");
+    case 'title':
+      return $query;
   }
 }
 function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
@@ -2724,6 +2784,8 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F, Y'), "views/$arg/$query->name");
+    case 'title':
+      return format_date(strtotime("${query}01"), 'custom', 'F, Y');
   }
 }
 function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
@@ -2741,6 +2803,8 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F j, Y'), "views/$arg/$query->name");
+    case 'title':
+      return format_date(strtotime($query), 'custom', 'F j, Y');
   }
 }
 

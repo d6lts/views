@@ -121,3 +121,4 @@ should be
 11/28/2005 changed view_argument type from int(2) to varchar(25) for greater flexibility
 11/30/2005 changed filter table and view table significantly. Probably sort table too.
 12/5/2005 Add option varchar(255) to both sort and filter tables.
+12/7/2005 Add menu_title to view_view and title to view_argument

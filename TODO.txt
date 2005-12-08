@@ -10,7 +10,6 @@ LESS TIME CONSUMING STUFF
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
 *  Optional [MORE] link in blocks that are also page views.
-*  variable titles for argument queries with summaries
 
 *  provide more default operator handlers
 
@@ -79,3 +78,4 @@ TO DONE
 *  option field for filter
 *  option field for sort
 *  taxonomy filter by hierarchy
+*  variable titles for argument queries with summaries (Use %arg# for substitution)

@@ -3,6 +3,7 @@ create table if not exists view_view (
   name varchar(32) NOT NULL UNIQUE,
   description varchar(255),
   title varchar(255),
+  menu_title varchar(255),
   header longtext,
   header_format int(4) NOT NULL,
   use_pager int(1),
@@ -33,6 +34,7 @@ create table if not exists view_argument (
   vid int(10) unsigned NOT NULL default '0',
   type varchar(25),
   argdefault varchar(255),
+  title varchar(255),
   position int(2),
   KEY (vid)
 );
