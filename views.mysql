@@ -35,6 +35,7 @@ create table if not exists view_argument (
   type varchar(25),
   argdefault varchar(255),
   title varchar(255),
+  options varchar(255),
   position int(2),
   KEY (vid)
 );

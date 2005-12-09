@@ -41,7 +41,7 @@ function _views_internal_arguments() {
   $arguments = array(
     'nodetype' => array('name' => t("Node Type"), 'handler' => "views_handler_arg_nodetype"),
     'uid' => array('name' => t("User ID"), 'handler' => "views_handler_arg_uid"),
-    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid"),
+    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid", 'option' => 'string'),
     'year' => array('name' => t("Year"), 'handler' => "views_handler_arg_year"),
     'month' => array('name' => t("Month (1-12)"), 'handler' => "views_handler_arg_month"),
     'week' => array('name' => t("Week (1-53)"), 'handler' => "views_handler_arg_week"),
@@ -54,17 +54,18 @@ function _views_internal_arguments() {
 // Argument info...
 // OR: arg_handler($op, ...): $op in('filter', 'fields', 'link')
 
-function _views_get_arguments() {
+function _views_get_arguments($titles = false) {
   global $VIEWS_ARGUMENTS;
+  global $VIEWS_ARGUMENTS_TITLES;
 
   if (!$VIEWS_ARGUMENTS) {
     $arguments = array_merge(module_invoke_all('views_arguments'), _views_internal_arguments());
-    foreach ($arguments as $table => $arg) {
-      $VIEWS_ARGUMENTS['name'][$table] = $arg['name'];
-      $VIEWS_ARGUMENTS['handler'][$table] = $arg['handler'];
+    foreach ($arguments as $name => $arg) {
+      $VIEWS_ARGUMENTS_TITLES[$name] = $arg['name'];
+      $VIEWS_ARGUMENTS[$name] = $arg;
     }
   }
-  return $VIEWS_ARGUMENTS;
+  return ($titles ? $VIEWS_ARGUMENTS_TITLES : $VIEWS_ARGUMENTS);
 }
 
 function _views_internal_tables() {
@@ -375,10 +376,7 @@ function _views_get_filters($titles = false) {
     _views_organize_data();
   }
 
-  if (!$titles)
-    return $VIEWS_FILTERS;
-  else
-    return $VIEWS_FILTERS_TITLES;
+  return ($titles ? $VIEWS_FILTERS_TITLES : $VIEWS_FILTERS);
 }
 
 function _views_get_fields($titles = false) {
@@ -389,10 +387,7 @@ function _views_get_fields($titles = false) {
     _views_organize_data();
   }
 
-  if (!$titles)
-    return $VIEWS_FIELDS;
-  else
-    return $VIEWS_FIELDS_TITLES;
+  return ($titles ? $VIEWS_FIELDS_TITLES : $VIEWS_FIELDS);
 }
 
 function _views_get_sorts($titles = false) {
@@ -403,10 +398,7 @@ function _views_get_sorts($titles = false) {
     _views_organize_data();
   }
 
-  if (!$titles)
-    return $VIEWS_SORTS;
-  else
-    return $VIEWS_SORTS_TITLES;
+  return ($titles ? $VIEWS_SORTS_TITLES : $VIEWS_SORTS);
 }
 
 function _views_internal_default_views() {
@@ -872,9 +864,9 @@ function _views_view_form($view, $orig, $op = '') {
   $filters = _views_get_filters();
   $filternames = _views_get_filters(true);
 
-  $arginfo = _views_get_arguments();
+  $arguments = _views_get_arguments();
+  $argnames = _views_get_arguments(true);
 
-  
   $form['vid'] = array(
     '#type' => 'value',
     '#value' => $orig->vid,
@@ -1121,13 +1113,14 @@ $form['add'] = array('#tree' => true);
   $form['argument'] = array('#tree' => true);
   
   foreach ($view->argument as $i => $argument) {
+    $arginfo = $arguments[$argument['type']];
     $form['argument'][$i] = array('#tree' => true);
 
     $form['argument'][$i]['type'] = array(
       '#type' => 'select',
 //      '#title' => t("Argument $i"),
       '#default_value' => $argument['type'],
-      '#options' => $arginfo['name'],
+      '#options' => $argnames,
     );    
     $form['argument'][$i]['argdefault'] = array(
       '#type' => 'select',
@@ -1140,6 +1133,37 @@ $form['add'] = array('#tree' => true);
       '#size' => 10,
       '#maxlength' => 255,
     );
+    if (isset($arginfo['option'])) {
+      if ($arginfo['option'] == 'string') {
+        $form['argument'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $argument['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else if ($arginfo['option'] == 'integer') {
+        // same as above for now but should have validate routine
+        $form['argument'][$i]['options'] = array(
+          '#type' => 'textfield',
+          '#default_value' => $argument['options'],
+          '#size' => 10,
+          '#maxlength' => 255,
+        );
+      }
+      else {
+        $list = $arginfo['option'];
+        if (!is_array($list) && function_exists($arginfo['option'])) {
+          $list = $arginfo['option']('option');
+        }
+        $form['argument'][$i]['options'] = array(
+          '#type' => 'select',
+          '#default_value' => $argument['options'],
+          '#options' => $list,
+        );
+        
+      }
+    }
     $form['argument'][$i]['delete'] = array(
       '#type' => 'button',
       '#name' => "edit[argument][$i][op]",
@@ -1175,7 +1199,7 @@ $form['add'] = array('#tree' => true);
     '#type' => 'select',
 //    '#title' => t('Argument'),
     '#default_value' => NULL,
-    '#options' => $arginfo['name'],
+    '#options' => $argnames,
 //    '#description' => t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments, but be careful that they make sense together!'),
   );
   $form['add']['argument']['argdefault'] = array(
@@ -1500,6 +1524,7 @@ function theme_views_edit_view($form) {
         form_render($form['argument'][$i]['type']),
         form_render($form['argument'][$i]['argdefault']),
         form_render($form['argument'][$i]['title']),
+        form_render($form['argument'][$i]['options']),
         form_render($form['argument'][$i]['delete']),
         form_render($form['argument'][$i]['up']),
         form_render($form['argument'][$i]['down']),
@@ -1510,7 +1535,7 @@ function theme_views_edit_view($form) {
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no arguments defined.", 'colspan' => 3));
 
-  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), t('Option'), array(data =>'Ops', colspan=>'6')), $rows);
 
   $rows = array(
     array(
@@ -1730,7 +1755,7 @@ function _views_build_query(&$view, $args = array()) {
 
   foreach ($view->argument as $i => $argument) {
     if ($args[$i] != NULL && $args[$i] != '') {
-      _views_view_build_arg($query, $args[$i], $argument['type']);
+      _views_view_build_arg($query, $args[$i], $argument);
     }
     else { 
       // This is what we do if we expected an arg but we didn't get it.
@@ -1906,22 +1931,23 @@ function _views_get_title($view) {
   }
   $arginfo = _views_get_arguments();
   foreach ($view->argument as $i => $arg) {
-    if (function_exists($arginfo['handler'][$arg['type']])) {
+    $argtype = $arg['type'];
+    if (function_exists($arginfo[$argtype]['handler'])) {
       // call the handler
-      $rep = $arginfo['handler'][$arg['type']]('title', $view->args[$i], $arg['type']);
+      $rep = $arginfo[$argtype]['handler']('title', $view->args[$i], $argtype);
       $title = str_replace("%" . ($i + 1), $rep, $title);
     }
   }
   return $title;
 }
 
-function _views_view_build_arg(&$query, $arg, $argtype) {
+function _views_view_build_arg(&$query, $arg, $argdata) {
   $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo['handler'][$argtype]))
+  if (!function_exists($arginfo[$argdata['type']]['handler']))
     return false;
 
   // call the handler
-  $arginfo['handler'][$argtype]('filter', $query, $argtype, $arg);
+  $arginfo[$argdata['type']]['handler']('filter', $query, $arg, $argdata);
   
 }
 
@@ -1962,12 +1988,12 @@ function _views_get_timezone() {
 function _views_build_summary(&$query, $argtype) {
 
   $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo['handler'][$argtype]))
+  if (!function_exists($arginfo[$argtype]['handler']))
     return false;
 
   $query->clear_fields();
 
-  $fieldinfo = $arginfo['handler'][$argtype]('fields', $query, $argtype);
+  $fieldinfo = $arginfo[$argtype]['handler']('fields', $query, $argtype);
 
   if ($fieldinfo['fieldname'])
     $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
@@ -2305,6 +2331,53 @@ function _views_break_phrase($str) {
   }
 }
 
+function _views_add_taxonomy($op, $value, $depth, &$query) {
+  // When filtering via depth, we have to add a chain. If it's an or query
+  // we add 1 chain, but in an and query we actually basically have to add
+  // a 2 dimensional array. 
+  
+  $query->ensure_table('term_data'); // this is to make sure the base table comes first.
+
+  if ($op == 'OR') {
+    $clause = implode("','", $value);
+    // base tables
+    $num = $query->add_table('term_node');
+    $tablename = $query->get_table_name('term_node', $num);
+    $where = "$tablename.tid IN ($clause)";
+
+    // for each depth > 0, add the next child in term_hierarchy to the join
+    for ($i = 0; $i < $depth; $i++) {
+      $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+      $thname = $query->get_table_name('term_hierarchy', $thnum);
+      $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+      $tablename = $query->get_table_name('term_data', $num);
+      $where .= " OR $tablename.tid IN ($clause)";
+    }
+    $query->add_where("($where)");
+  }
+  else {
+    if ($op == 'NOR') {
+      $not = "!";
+    }
+    foreach ($value as $tid) {
+      // For every term we have to match, add a base table
+      $num = $query->add_table('term_node');
+      $tablename = $query->get_table_name('term_node', $num);
+      $where = "$tablename.tid = '$tid'";
+
+      // for each depth > 0, add the next child in term_hierarchy to the join
+      for ($i = 0; $i < $depth; $i++) {
+        $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+        $thname = $query->get_table_name('term_hierarchy', $thnum);
+        $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+        $tablename = $query->get_table_name('term_data', $num);
+        $where .= " OR $tablename.tid = '$tid'";
+      }
+      $query->add_where("$not($where)");
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Database functions
 
@@ -2435,7 +2508,7 @@ function _views_save_view($view) {
   }
 
   foreach ($view->argument as $i => $arg) {
-    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', '$arg[title]', $i)");
+    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, options, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', '$arg[title]', '$arg[options]', $i)");
   }
 
   foreach ($view->field as $i => $arg) {
@@ -2568,10 +2641,10 @@ function theme_views_view($view, $type, $nodes) {
 function views_get_summary_link($argtype, $viewname, $item)
 {
   $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo['handler'][$argtype]))
+  if (!function_exists($arginfo[$argtype]['handler']))
     return NULL;
 
-  return $arginfo['handler'][$argtype]('link', $item, $argtype, $viewname);
+  return $arginfo[$argtype]['handler']('link', $item, $argtype, $viewname);
 
 }
 
@@ -2691,12 +2764,14 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'filter':
-      if ($arg == 0) {
+      if ($arg == 0) { // untagged only!
         $query->ensure_table("term_node");
         $query->add_where("term_node.tid IS NULL");
       }
       else {
-        $query->add_complex_filter('term_node', 'tid', $arg);
+        $values = _views_break_phrase($argtype);
+        _views_add_taxonomy(strtoupper($values[0]), $values[1], $arg['options'], $query);
+//        $query->add_complex_filter('term_node', 'tid', $arg);
       }
       break;
     case 'link':
@@ -2826,47 +2901,8 @@ function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
   // we add 1 chain, but in an and query we actually basically have to add
   // a 2 dimensional array. 
 
+  _views_add_taxonomy($filter['operator'], $filter['value'], $filter['options'], $query);
 
-  $query->ensure_table('term_data'); // this is to make sure the base table comes first.
-
-  if ($filter['operator'] == 'OR') {
-    $clause = implode("','", $filter['value']);
-    // base tables
-    $num = $query->add_table('term_node');
-    $tablename = $query->get_table_name('term_node', $num);
-    $where = "$tablename.tid IN ($clause)";
-
-    // for each depth > 0, add the next child in term_hierarchy to the join
-    for ($i = 0; $i < $filter['options']; $i++) {
-      $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
-      $thname = $query->get_table_name('term_hierarchy', $thnum);
-      $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
-      $tablename = $query->get_table_name('term_data', $num);
-      $where .= " OR $tablename.tid IN ($clause)";
-    }
-    $query->add_where("($where)");
-  }
-  else {
-    if ($filter['operator'] == 'NOR') {
-      $not = "!";
-    }
-    foreach ($filter['value'] as $tid) {
-      // For every term we have to match, add a base table
-      $num = $query->add_table('term_node');
-      $tablename = $query->get_table_name('term_node', $num);
-      $where = "$tablename.tid = '$tid'";
-
-      // for each depth > 0, add the next child in term_hierarchy to the join
-      for ($i = 0; $i < $filter['options']; $i++) {
-        $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
-        $thname = $query->get_table_name('term_hierarchy', $thnum);
-        $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
-        $tablename = $query->get_table_name('term_data', $num);
-        $where .= " OR $tablename.tid = '$tid'";
-      }
-      $query->add_where("$not($where)");
-    }
-  }
 }
 
 function views_handler_filter_vid() {
@@ -2962,6 +2998,7 @@ function views_create_view_code($vid) {
   $output .= "  \$view->name = '$view->name';\n";
   $output .= "  \$view->description = '$view->description';\n";
   $output .= "  \$view->title = '$view->title';\n";
+  $output .= "  \$view->menu_title = '$view->menu_title';\n";
   $output .= "  \$view->header = '$view->header';\n";
   $output .= "  \$view->header_format = '$view->header_format';\n";
   $output .= "  \$view->type = '$view->type';\n";
@@ -2979,6 +3016,7 @@ function views_create_view_code($vid) {
     $output .= "      'tablename' => '$fieldbits[0]',\n";
     $output .= "      'field' => '$fieldbits[1]',\n";
     $output .= "      'sortorder' => '$sort[sortorder]',\n";
+    $output .= "      'options' => '$sort[options]',\n";
     $output .= "    ),\n";  
   }
   $output .= "  );\n";
@@ -2988,6 +3026,8 @@ function views_create_view_code($vid) {
     $output .= "    array (\n";
     $output .= "      'type' => '$argument[type]',\n";
     $output .= "      'argdefault' => '$argument[argdefault]',\n";
+    $output .= "      'title' => '$argument[title]',\n";
+    $output .= "      'options' => '$argument[options]',\n";
     $output .= "    ),\n";  
   }
   $output .= "  );\n";
@@ -3016,6 +3056,7 @@ function views_create_view_code($vid) {
     $output .= "      'field' => '$fieldbits[1]',\n";
     $output .= "      'operator' => '$filter[operator]',\n";
     $value = var_export($filter['value'], true);
+    $output .= "      'options' => '$filter[options]',\n";
     $output .= "      'value' => $value,\n";
     $output .= "    ),\n";  
   }
