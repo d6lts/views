@@ -967,6 +967,14 @@ $form['block-info']['block_display_header'] = array(
   '#description' => t('If using a view as both a block and URL, display the header in the block?'),
 );
 
+$form['block-info']['block_more'] = array(
+  '#type' => 'checkbox',
+  '#title' => t('[More] Link?'),
+  '#return_value' => 1,
+  '#default_value' => $view->block_more,
+  '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
+);
+
 $form['url-info'] = array(
   '#type' => 'fieldset',
   '#title' => t('URL and Pager'),
@@ -985,7 +993,7 @@ $form['url-info']['menu_title'] = array(
   '#default_value' => $view->menu_title,
   '#size' => 60,
   '#maxlength' => 255,
-  '#description' => t('If URL with Menu Entry, this title will be used for the menu; if black Title will be used instead.'),
+  '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
 );
 $form['url-info']['use_pager'] = array(
   '#type' => 'checkbox',
@@ -1697,7 +1705,9 @@ function views_edit_view_validate($form_id, $view) {
 // ---------------------------------------------------------------------------
 // View Construction
 
-function _views_get_view($viewname) {
+// This function loads a view by name or vid; if not found in db, it looks
+// for a default view by that name.
+function views_get_view($viewname) {
   $view = _views_load_view($viewname);
   if ($view)
     return $view;
@@ -1712,6 +1722,7 @@ function _views_get_view($viewname) {
 
 }
 
+// This views a view by page, and should only be used as a callback.
 function views_view_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
@@ -1719,7 +1730,7 @@ function views_view_page() {
       $viewname = $next;
     else
       $viewname .= "/$next";
-    if ($view = _views_get_view($viewname))
+    if ($view = views_get_view($viewname))
       break;
   }
   if (!$view)
@@ -1728,22 +1739,24 @@ function views_view_page() {
   if ($view->url == 1)
     return drupal_not_found();
 
-  $output = views_view('page', $view, $args);
+  $output = views_build_view('page', $view, $args, $view->use_pager, $view->nodes_per_page);
 //  print theme('page', $output);
   return $output;
 }
 
+// This views a view by block. Can be used as a callback or programmatically.
 function views_view_block($vid) {
-  $view = _views_get_view($vid);
+  $view = views_get_view($vid);
 
   if (!$view || !$view->block)
     return NULL;
 
-  $block['content'] = views_view('block', $view, $args);
+  $block['content'] = views_build_view('block', $view, $args, false, $view->nodes_per_block);
   $block['subject'] = $view->title;
   return $block;
 }
 
+// This builds a query for the view.
 function _views_build_query(&$view, $args = array()) {
   $query = new _views_query();
 
@@ -1799,17 +1812,40 @@ function _views_build_query(&$view, $args = array()) {
   $info['summary'] = $summary;
   $info['level'] = $level;
 
-  // DEBUG
-//  print "<pre>" . var_export($view, TRUE) . "</pre>";
-//  $output .= "<pre>" . var_export($args, TRUE) . "</pre>";
-// print "<pre>" . var_export($query, TRUE) . "</pre>";
-//  $output .= "<table width=800px><tr><td>$sql</table>";
-
   return $info;
 
 }
 
-function views_view($type, $view, $args = array()) {
+// This builds the basic view.
+// $type:
+//    'page' -- Produce output as a page, sent through theme.
+//      The only real difference between this and block is that
+//      a page uses drupal_set_title to change the page title.
+//    'block' -- Produce output as a block, sent through theme.
+//    'embed' -- Use this if you want to embed a view onto another page,
+//      and don't want any block or page specific things to happen to it.
+//    'result' -- return an $info array. The array contains:
+//      sql: The actual query ran.
+//      countsql: The count sql that would be run if limiting was required.
+//      summary: True if an argument was missing and a summary was generated.
+//      level: What level the missing argument was at.
+//      result: Database object you can use db_fetch_object on.
+//    'items' -- return info array as above, except instead of result,
+//      items: An array of objects containing the results of the query.
+// $view:
+//   The actual view object. Use views_get_view() if you only have the name or
+//   vid.
+// $args:
+//   args taken from the URL. Not relevant for many views. Can be null.
+// $use_pager: If set, use a pager. Set this to the pager id you want it
+//   to use if you plan on using multiple pagers on a page. To go with the
+//   default setting, set to $view->use_pager.
+// $limit: Required if $use_pager is set; if $limit is set and $use_pager is
+//   not, this will be the maximum number of records returned. This is ignored
+//   if using a view set to return a random result. To go with the default
+//   setting set to $view->nodes_per_page or $view->nodes_per_block.
+
+function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0) {
 
   if ($view->sql) {
     $info['sql'] = $view->sql;
@@ -1823,8 +1859,6 @@ function views_view($type, $view, $args = array()) {
 
   $sql = db_rewrite_sql($info['sql']);
 
-  $use_pager = ($type == 'page' && $view->use_pager);
-
   if ($view->type == 5 || $view->type == 6) {
     $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
     $count = db_result(db_query($csql));
@@ -1833,15 +1867,16 @@ function views_view($type, $view, $args = array()) {
   }
   else if ($use_pager) {
     $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
-    $result = pager_query($sql, $view->nodes_per_page, 0, $csql);
+    $result = pager_query($sql, $limit, $use_pager, $csql);
   }
 
   else {
-    $limit = ($type == 'page') ? $view->nodes_per_page : $view->nodes_per_block;
-    if ($limit)
-      $result = db_query_range($sql, 0, $limit);
-    else
-      $result = db_query($sql);
+    $result = ($limit ? db_query_range($sql, 0, $limit) : db_query($sql));
+  }
+
+  if ($type == 'result') {
+    $info['result'] = $result;
+    return $info; 
   }
 
   $items = array();
@@ -1849,7 +1884,12 @@ function views_view($type, $view, $args = array()) {
     $items[] = $item;
   }
   // DEBUG
-//  $output = "<pre>" . var_export($items, true) . "</pre>";
+  //  dprint(var_export($items, true));
+
+  if ($type == 'items') {
+    $info['items'] = $items;
+    return $info;
+  }
 
   if ($info['summary']) {
     $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items);
@@ -1862,14 +1902,15 @@ function views_view($type, $view, $args = array()) {
     $output .= theme("views_view_$view->name", $view, $type, $items);
     if (!$output)
       $output .= theme('views_view', $view, $type, $items);
-
   }
 
-  if ($type == 'page' && $view->use_pager) {
-    if ($view->table_header && !$info['summary'])
-      $output .= theme('pager', NULL, $view->nodes_per_page, 0, tablesort_pager());
-    else
-      $output .= theme('pager', NULL, $view->nodes_per_page, 0);
+  if ($use_pager) {
+    if ($view->table_header && !$info['summary']) {
+      $output .= theme('pager', NULL, $limit, $use_pager, tablesort_pager());
+    }
+    else {
+      $output .= theme('pager', NULL, $limit, $use_pager);
+    }
   }
   return $output;
 }
@@ -2382,7 +2423,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'url', 'changed', 'sql', 'countsql');
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'block_more', 'url', 'changed', 'sql', 'countsql');
 }
 
 function _views_delete_view($view) {
@@ -2625,7 +2666,7 @@ function theme_views_view($view, $type, $nodes) {
       $output .= views_view_table($view, $nodes);
       break;
     case 3: // => t("Teaser List"),
-    case 5: // random taser
+    case 5: // random teaser
       $output .= views_view_nodes($nodes, true);
       break;
     case 4: // => t("Full Nodes")
@@ -2634,9 +2675,15 @@ function theme_views_view($view, $type, $nodes) {
       break;
   }
 
+  if ($type == 'block' && $view->block_more && count($nodes) >= $view->nodes_per_block) {
+    $output .= theme('views_more', $view->name); 
+  }
   return "<div class='view' id='view-$view->name'>$output</div>\n";
 }
 
+function theme_views_more($name) {
+  return "<div class='more'>" . l("[More]", "views/$name") . "</div>";
+}
 
 function views_get_summary_link($argtype, $viewname, $item)
 {
@@ -3007,6 +3054,7 @@ function views_create_view_code($vid) {
   $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
   $output .= "  \$view->block = '$view->block';\n";
   $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
+  $output .= "  \$view->block_more = '$view->block_more';\n";
   $output .= "  \$view->block_display_header = '$view->block_display_header';\n";
 
   $output .= "  \$view->sort = array (\n";

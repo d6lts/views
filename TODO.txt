@@ -1,15 +1,25 @@
 TODO
 
 MAJOR FEATURES
+
 *  Create node-views and do replacements on the URLs. /node/NID/view/VIEWNAME
+   ^-- put off for v2.
+
 *  Allow breadcrumb trail to be specified.
+   ^-- Not sure what to do with this.
+
 *  XML view?
+   ^-- put off for v2 or plugin module.
 
 LESS TIME CONSUMING STUFF
 // Most of this is now slated for post 4.7 update.
+
+*  Write some decent help for the edit view page.
+*  table data needs a way to document itself.
+*  View trading interface.
+
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
-*  Optional [MORE] link in blocks that are also page views.
 
 *  provide more default operator handlers
 
@@ -19,12 +29,6 @@ LESS TIME CONSUMING STUFF
    to make sure they all make sense. There are unDOUBTedly some bugs in
    here because I keep confusing them.
 
-*  Function between views_view_page() and views_view() to make it easy to
-   access a view externally.
-*  Function that just returns a list of nodes and doesn't theme it at all.
-
-*  Write some decent help for the edit view page.
-*  table data needs a way to document itself.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 
@@ -79,3 +83,8 @@ TO DONE
 *  taxonomy filter by hierarchy
 *  variable titles for argument queries with summaries (Use %arg# for substitution)
 *  taxonomy depth (argument) Taxonomy Summary View with Depth is basically broken, unlikely to be fixed.
+*  Optional [MORE] link in blocks that are also page views.
+*  Function between views_view_page() and views_view() to make it easy to
+   access a view externally.
+*  Function that just returns a list of nodes and doesn't theme it at all.
+

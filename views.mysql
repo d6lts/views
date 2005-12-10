@@ -12,6 +12,7 @@ create table if not exists view_view (
   block_display_header int(1),
   type int(2),
   block int(1),
+  block_more int(1),
   url int(2),
   sql longtext,
   countsql longtext,

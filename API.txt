@@ -311,6 +311,8 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       return l($query->type, "views/$arg/$query->type");
+    case 'title':
+      return $query;
   }
 }
 
@@ -331,6 +333,11 @@ system will provide a list of possible arguments. In the above case, it
 ran a query to find what node types are available. The 'link' tells it
 how to link to the next level of the view. In the 'link' case, $query isn't
 the query object, but it is a row of results.
+
+The 'title' op is called to deal with title substitution. For example,
+'recent posts for %1' needs to know the name of the user arg 1 happens
+to be. In this case, the argument is passed via the $query parameter. Yea,
+I know. Overloading causes weirdness.
 
 Another, more complex example:
 
