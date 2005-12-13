@@ -2380,7 +2380,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
   $query->ensure_table('term_data'); // this is to make sure the base table comes first.
 
   if ($op == 'OR') {
-    $clause = implode("','", $value);
+    $clause = "'" . implode("','", $value) . "'";
     // base tables
     $num = $query->add_table('term_node');
     $tablename = $query->get_table_name('term_node', $num);
