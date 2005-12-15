@@ -844,6 +844,14 @@ function _views_check_ops(&$view, $op) {
   }
 }
 
+function hook_elements() {
+  $type['imagebutton'] = array('#input' => TRUE, '#name' => 'op', '#button_type' => 'submit', '#form_submitted' => TRUE);
+}
+
+function theme_imagebutton($element) {
+  return '<input type="image" class="form-'. $element['#button_type'] .'" name="'. $element['#name'] .'" value="'. check_plain($element['#value']) .'" '. drupal_attributes($element['#attributes']) ." />\n";
+}
+
 function _views_view_form($view, $orig, $op = '') {
 //  print "<pre>" . var_export($edit, true) . "</pre>";
   if ($view) {
@@ -1082,28 +1090,33 @@ $form['add'] = array('#tree' => true);
       );
     }
     $form['field'][$i]['delete'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
+      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['field'][$i]['up'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['field'][$i]['down'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['field'][$i]['top'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['field'][$i]['bottom'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1174,28 +1187,33 @@ $form['add'] = array('#tree' => true);
       }
     }
     $form['argument'][$i]['delete'] = array(
-      '#type' => 'button',
+      '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
+      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['argument'][$i]['up'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['argument'][$i]['down'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['argument'][$i]['top'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['argument'][$i]['bottom'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1327,28 +1345,33 @@ $form['add'] = array('#tree' => true);
       );
     }
     $form['filter'][$i]['delete'] = array(
-      '#type' => 'button',
+      '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
+      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['filter'][$i]['up'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['filter'][$i]['down'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['filter'][$i]['top'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['filter'][$i]['bottom'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1419,28 +1442,33 @@ $form['add'] = array('#tree' => true);
       }
     }
     $form['sort'][$i]['delete'] = array(
-      '#type' => 'button',
+      '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
+      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['sort'][$i]['up'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['sort'][$i]['down'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['sort'][$i]['top'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['sort'][$i]['bottom'] = array(
-      '#type' => 'submit',
+      '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
+      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
