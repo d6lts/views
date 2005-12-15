@@ -540,7 +540,7 @@ function views_menu($may_cache) {
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'views', 
-      'title' => t('add view'),
+      'title' => t('view'),
       'callback' => 'views_view_page',
       'access' => user_access('access content'),
       'type' => MENU_CALLBACK);
@@ -626,6 +626,7 @@ function views_admin_page() {
 }
 
 function views_edit_view_submit($form_id, $form) {
+//  dprint_r($form);
   $view = array2object($form);
   _views_save_view($view);
   menu_rebuild();
@@ -933,7 +934,7 @@ $form['display']['header'] = array(
   '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
 );
 
-$form['display']['header_format'] = filter_form($view->header_format);
+$form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
 
 
 $form['block-info'] = array(
@@ -1733,11 +1734,15 @@ function views_view_page() {
     if ($view = views_get_view($viewname))
       break;
   }
-  if (!$view)
-    return drupal_not_found();
+  if (!$view) {
+    drupal_not_found();
+    exit;
+  }
 
-  if ($view->url == 1)
-    return drupal_not_found();
+  if ($view->url == 1) {
+    drupal_not_found();
+    exit;
+  }
 
   $output = views_build_view('page', $view, $args, $view->use_pager, $view->nodes_per_page);
 //  print theme('page', $output);
@@ -1774,7 +1779,8 @@ function _views_build_query(&$view, $args = array()) {
       // This is what we do if we expected an arg but we didn't get it.
       switch ($argument['argdefault']) {
         case 1:
-          return drupal_not_found();
+          drupal_not_found();
+          exit;
         case 3:
           $level = $i;
           _views_build_summary($query, $argument['type']);
@@ -1855,6 +1861,9 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   }
   else {
     $info = _views_build_query($view, $args);
+    if ($info['fail']) {
+      return;
+    }
   }
 
   $sql = db_rewrite_sql($info['sql']);
@@ -2341,7 +2350,7 @@ class _views_query {
       if ($this->orderby)
         $before = "$this->orderby, ";
       $orderby = tablesort_sql($this->header, $before);
-      if (!$orderby) { // why the hell would tablesort_sql do this anyway?!
+      if (!$orderby && $this->orderby) { // why the hell would tablesort_sql do this anyway?!
         $orderby = "ORDER BY $this->orderby";
       }
     }
@@ -2441,7 +2450,7 @@ function _views_load_view($arg) {
     $where = "v.name = '$arg'";
   else
     $where = "v.vid =  $arg";
-  $view = db_fetch_object(db_query("SELECT v.* as filter_author_name FROM {view_view} v WHERE $where"));
+  $view = db_fetch_object(db_query("SELECT v.* FROM {view_view} v WHERE $where"));
 
   if (!$view->name)
     return NULL;
@@ -2498,12 +2507,6 @@ function _views_save_view($view) {
     $view->sql = $info['sql'];
     $view->countsql = $info['countsql'];
   }
-
-  // collapse arrays
-  if (is_array($view->filter_nodetypes))
-    $view->filter_nodetypes = implode(', ', $view->filter_nodetypes);
-  else
-    $view->filter_nodetypes = '';
 
   $view->changed = time();
   $fields = _views_view_fields();
@@ -2655,8 +2658,11 @@ function theme_views_view($view, $type, $nodes) {
     // Done before theming so theme can change it if it wants.
     drupal_set_title(_views_get_title($view));
 
-  if ($view->header)
-    $output = "<div class='view-header' id='view-header-$view->name'>" . check_markup($view->header, $view->header_format, false) . "</div>\n";
+  if ($view->header) {
+    $header = check_markup($view->header, $view->header_format, false);
+//    dprint_r($header);
+    $output = "<div class='view-header' id='view-header-$view->name'>$header</div>\n";
+  }
 
   switch ($view->type) {
     case 1: // => t("List View"), 
@@ -2793,6 +2799,9 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
       $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
       return l($name, "views/$arg/" . intval($query->uid));
     case 'title':
+      if (!$query) {
+        return variable_get('anonymous', 'Anonymous');
+      } 
       $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
       return $user->name;
   }
@@ -2825,6 +2834,9 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       $name = ($query->name ? $query->name : t("Uncategorized"));
       return l($name, "views/$arg/" . intval($query->tid));
     case 'title':
+      if (!$query) {
+        return t("Uncategorized");
+      } 
       $term = db_fetch_object(db_query("SELECT name FROM {term_data} WHERE tid = '%d'", $query));
       return $term->name;
   }
@@ -3000,8 +3012,7 @@ function views_handler_filter_role() {
 function views_handler_filter_nodetype($op) {
   $nodes = array();
   foreach (node_get_types() as $type => $name) {
-    $node_type = node_invoke($type, 'node_name');
-    $nodes[$type] = $node_type ? $node_type : $type;
+    $nodes[$type] = $name;
   }
   return $nodes;
 }
