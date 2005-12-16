@@ -41,7 +41,7 @@ function _views_internal_arguments() {
   $arguments = array(
     'nodetype' => array('name' => t("Node Type"), 'handler' => "views_handler_arg_nodetype"),
     'uid' => array('name' => t("User ID"), 'handler' => "views_handler_arg_uid"),
-    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid", 'option' => 'string'),
+    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid", 'option' => 'string', 'help' => "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information."),
     'year' => array('name' => t("Year"), 'handler' => "views_handler_arg_year"),
     'month' => array('name' => t("Month (1-12)"), 'handler' => "views_handler_arg_month"),
     'week' => array('name' => t("Week (1-53)"), 'handler' => "views_handler_arg_week"),
@@ -273,7 +273,8 @@ function _views_internal_tables() {
       "type" => array(
         'name' => "Node Type", 
         'handler' => 'views_handler_nodetype', 
-        'sortable' => true
+        'sortable' => true,
+        'help' => "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)",
       ),
     ),
     "sorts" => array(
@@ -1089,6 +1090,12 @@ $form['add'] = array('#tree' => true);
 //        '#description' => t('Only set one field to default sorting!'),
       );
     }
+    if (isset($fieldinfo['help'])) {
+      $form['field'][$i]['help'] = array(
+        '#type' => 'markup',
+        '#value' => "<div class='description'>" . $fieldinfo['help'] . "</div>",
+      );
+    }
     $form['field'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
@@ -1185,6 +1192,12 @@ $form['add'] = array('#tree' => true);
         );
         
       }
+    }
+    if (isset($arginfo['help'])) {
+      $form['argument'][$i]['help'] = array(
+        '#type' => 'markup',
+        '#value' => $arginfo['help'],
+      );
     }
     $form['argument'][$i]['delete'] = array(
       '#type' => 'imagebutton',
@@ -1344,6 +1357,12 @@ $form['add'] = array('#tree' => true);
         '#maxlength' => 255,
       );
     }
+    if (isset($filterinfo['help'])) {
+      $form['filter'][$i]['help'] = array(
+        '#type' => 'markup',
+        '#value' => $filterinfo['help'],
+      );
+    }
     $form['filter'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
@@ -1441,6 +1460,12 @@ $form['add'] = array('#tree' => true);
         
       }
     }
+    if (isset($sortinfo['help'])) {
+      $form['sort'][$i]['help'] = array(
+        '#type' => 'markup',
+        '#value' => $sortinfo['help'],
+      );
+    }
     $form['sort'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
@@ -1523,7 +1548,7 @@ function theme_views_edit_view($form) {
 
   $rows = array();
   foreach ($form['field'] as $i => $field) {
-    if (is_numeric($i))
+    if (is_numeric($i)) {
       $rows[] = array(
         form_render($form['field'][$i]['name']),
         form_render($form['field'][$i]['label']),
@@ -1536,11 +1561,15 @@ function theme_views_edit_view($form) {
         form_render($form['field'][$i]['top']),
         form_render($form['field'][$i]['bottom']),
       );
+      if (isset($field['help'])) {
+        $rows[] = array(array('data' => form_render($form['field'][$i]['help']), 'colspan' => '10'));
+      }
+    }
   }
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no fields defined.", 'colspan' => 6));
   
-  $group .= theme('table', array('Name', 'Label', 'Handler', 'Sortable', 'Default Sort', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array('Name', 'Label', 'Handler', 'Sortable', 'Default Sort', array('data' =>'Ops', 'colspan' =>'6')), $rows);
 
   $rows = array(
     array(
@@ -1556,7 +1585,7 @@ function theme_views_edit_view($form) {
 
   $rows = array();
   foreach ($form['argument'] as $i => $argument) {
-    if (is_numeric($i))
+    if (is_numeric($i)) {
       $rows[] = array(
         form_render($form['argument'][$i]['type']),
         form_render($form['argument'][$i]['argdefault']),
@@ -1568,11 +1597,15 @@ function theme_views_edit_view($form) {
         form_render($form['argument'][$i]['top']),
         form_render($form['argument'][$i]['bottom']),
       );
+      if (isset($argument['help'])) {
+        $rows[] = array(array('data' => form_render($form['argument'][$i]['help']), 'colspan' => '10'));
+      }
+    }
   }
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no arguments defined.", 'colspan' => 3));
 
-  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), t('Option'), array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), t('Option'), array('data' =>'Ops', 'colspan' =>'6')), $rows);
 
   $rows = array(
     array(
@@ -1590,7 +1623,7 @@ function theme_views_edit_view($form) {
 
   $rows = array();
   foreach ($form['filter'] as $i => $filter) {
-    if (is_numeric($i))
+    if (is_numeric($i)) {
       $rows[] = array(
         form_render($form['filter'][$i]['name']),
         form_render($form['filter'][$i]['operator']),
@@ -1602,11 +1635,15 @@ function theme_views_edit_view($form) {
         form_render($form['filter'][$i]['top']),
         form_render($form['filter'][$i]['bottom']),
       );
+      if (isset($filter['help'])) {
+        $rows[] = array(array('data' => form_render($form['filter'][$i]['help']), 'colspan' => '10'));
+      }
+    }
   }
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no filters defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Operator', 'Option', 'Value', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array('Field', 'Operator', 'Option', 'Value', array('data' =>'Ops', 'colspan' =>'6')), $rows);
 
   $rows = array(
     array(
@@ -1622,7 +1659,7 @@ function theme_views_edit_view($form) {
 
   $rows = array();
   foreach ($form['sort'] as $i => $sort) {
-    if (is_numeric($i))
+    if (is_numeric($i)) {
       $rows[] = array(
         form_render($form['sort'][$i]['field']),
         form_render($form['sort'][$i]['sortorder']),
@@ -1633,11 +1670,15 @@ function theme_views_edit_view($form) {
         form_render($form['sort'][$i]['top']),
         form_render($form['sort'][$i]['bottom']),
       );
+      if (isset($sort['help'])) {
+        $rows[] = array(array('data' => form_render($form['sort'][$i]['help']), 'colspan' => '10'));
+      }
+    }
   }
   if (!$rows)
     $rows[] = array(array('data' => "This view currently has no sort criteria defined.", 'colspan' => 3));
 
-  $group .= theme('table', array('Field', 'Order', 'Option', array(data =>'Ops', colspan=>'6')), $rows);
+  $group .= theme('table', array('Field', 'Order', 'Option', array('data' =>'Ops', 'colspan' =>'6')), $rows);
 
   $rows = array(
     array(
@@ -1785,7 +1826,7 @@ function views_view_block($vid) {
     return NULL;
 
   $block['content'] = views_build_view('block', $view, $args, false, $view->nodes_per_block);
-  $block['subject'] = $view->title;
+  $block['subject'] = _views_get_title($view);
   return $block;
 }
 
@@ -2025,7 +2066,7 @@ function _views_view_build_arg(&$query, $arg, $argdata) {
     return false;
 
   // call the handler
-  $arginfo[$argdata['type']]['handler']('filter', $query, $arg, $argdata);
+  $arginfo[$argdata['type']]['handler']('filter', $query, $argdata, $arg);
   
 }
 
@@ -2535,6 +2576,10 @@ function _views_save_view($view) {
     $view->sql = $info['sql'];
     $view->countsql = $info['countsql'];
   }
+  else {
+    $view->sql = NULL;
+    $view->countsql = NULL;
+  }
 
   $view->changed = time();
   $fields = _views_view_fields();
@@ -2853,8 +2898,8 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
         $query->add_where("term_node.tid IS NULL");
       }
       else {
-        $values = _views_break_phrase($argtype);
-        _views_add_taxonomy(strtoupper($values[0]), $values[1], $arg['options'], $query);
+        $values = _views_break_phrase($arg);
+        _views_add_taxonomy(strtoupper($values[0]), $values[1], $argtype['options'], $query);
 //        $query->add_complex_filter('term_node', 'tid', $arg);
       }
       break;
@@ -3152,6 +3197,3 @@ function views_create_view_code($vid) {
   // no breadcrumb for now.
   return $output;
 }
-
-
-?>
