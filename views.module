@@ -470,8 +470,27 @@ function _views_internal_default_views() {
   );
 
   $views[$view->name] = $view;
-
   return $views;
+}
+
+function _views_sanitize_view(&$view) {
+  _views_check_arrays($view); // so reference works.
+  if (is_array($view->field)) {
+    foreach($view->field as $i => $field) {
+      $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
+      $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
+    }
+  }
+  if (is_array($view->filter)) {
+    foreach($view->filter as $i => $filter) {
+      $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
+    }
+  }
+  if (is_array($view->sort)) {
+    foreach($view->sort as $i => $sort) {
+      $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
+    }
+  }
 }
 
 function _views_get_default_views() {
@@ -480,23 +499,7 @@ function _views_get_default_views() {
   if (!$VIEWS_DEFAULT_VIEWS) {
     $VIEWS_DEFAULT_VIEWS = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
     foreach ($VIEWS_DEFAULT_VIEWS as $i => $view) {
-      _views_check_arrays($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
-      if (is_array($view->field)) {
-        foreach($view->field as $j => $field) {
-          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['fullname'] = "$field[tablename].$field[field]";
-          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['queryname'] = "$field[tablename]_$field[field]";
-        }
-      }
-      if (is_array($view->filter)) {
-        foreach($view->filter as $j => $filter) {
-          $VIEWS_DEFAULT_VIEWS[$i]->filter[$j]['field'] = "$filter[tablename].$filter[field]";
-        }
-      }
-      if (is_array($view->sort)) {
-        foreach($view->sort as $j => $sort) {
-          $VIEWS_DEFAULT_VIEWS[$i]->sort[$j]['field'] = "$sort[tablename].$sort[field]";
-        }
-      }
+      _views_sanitize_view($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
     }
   }
   return $VIEWS_DEFAULT_VIEWS;
@@ -509,6 +512,19 @@ function views_help($section) {
   switch ($section) {
     case 'admin/modules#description':
       return t('The views module creates customized views of node lists.');
+    case 'admin/views/import':
+      return t('This is the import help.');
+    case 'admin/views':
+      return t('This is where you add a view. More text goes here.');
+  }
+  if (!strncmp($section, 'admin/views', 11)) {
+    switch (arg(2)) {
+      case 'add':
+      case 'edit':
+        return t('This is the edit view help.');
+      case 'export':
+        return t('<p>You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location.</p>');
+    }
   }
 }
 
@@ -528,6 +544,16 @@ function views_menu($may_cache) {
     $items[] = array('path' => 'admin/views/add', 
       'title' => t('add view'),
       'callback' => 'views_admin_add_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_CALLBACK);
+    $items[] = array('path' => 'admin/views/import', 
+      'title' => t('import view'),
+      'callback' => 'views_admin_import_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_CALLBACK);
+    $items[] = array('path' => 'admin/views/export', 
+      'title' => t('export view'),
+      'callback' => 'views_admin_export_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/views/edit', 
@@ -589,12 +615,12 @@ function views_block($op = 'list', $delta = 0) {
 function views_admin_page() {
   $numViews = 25;
 
-  drupal_set_title("Administer views Views");
+  drupal_set_title("administer views");
 
   $result = pager_query("SELECT vid, name, description, title FROM {view_view} ORDER BY name", $numViews);
   while ($view = db_fetch_object($result)) {
     $url = "views/$view->name";
-    $items[] = array($view->title, $view->description, l($url, $url), theme_links(array(l('edit', "admin/views/edit/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
+    $items[] = array($view->title, $view->description, l($url, $url), theme_links(array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
   }
 
   if ($items) {
@@ -605,6 +631,7 @@ function views_admin_page() {
     $output .= "<p>No views have currently been defined.</p>";
   }
   $output .= "<br>" . l('Add a view', 'admin/views/add') . "<br>";
+  $output .= "<br>" . l('Import a view', 'admin/views/import') . "<br>";
 
   $output .= "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>";
   $items = array();
@@ -637,6 +664,43 @@ function views_edit_view_submit($form_id, $form) {
     drupal_set_message("View successfully added.");
 
   return drupal_goto('admin/views');
+}
+
+function views_admin_import_page() {
+  $form['view'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Import View Code'),
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Cut and paste the results of an Export View here.'),
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t("Submit"),
+  );
+
+  return drupal_get_form('views_import_view', $form);
+}
+
+function views_import_view_submit($formid, $form) {
+  ob_start();
+  eval($form['view']);
+  ob_end_clean();
+  if ($view) {
+    _views_sanitize_view($view);
+    drupal_set_title(t('Add a View'));
+    $output = _views_view_form(NULL, $view, NULL);
+    print theme('page', $output);
+    exit;
+  }
+  else {
+    drupal_set_message("Unable to get a view out of that.");
+  }
+}
+
+function views_admin_export_page($vid = '') {
+  return "<pre>" . views_create_view_code($vid) . "</pre>";
 }
 
 function views_admin_add_page() {
@@ -885,149 +949,149 @@ function _views_view_form($view, $orig, $op = '') {
     '#type' => 'hidden',
     '#value' => $view->changed,
   );
-//  $form['working'] = array(
-//    '#type' => 'hidden',
-//    '#value' => true,
-//  );
+  //  $form['working'] = array(
+  //    '#type' => 'hidden',
+  //    '#value' => true,
+  //  );
 
-  // DEBUGGING
-//    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
+    // DEBUGGING
+  //    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
-$form['display'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Display'),
-);
+  $form['display'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Display'),
+  );
 
-$form['display']['name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Name'),
-  '#default_value' => $view->name,
-  '#size' => 20,
-  '#maxlength' => 32,
-  '#description' => t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'),
-  '#attributes' => NULL,
-  '#required' => true,
-);
-$form['display']['description'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Description'),
-  '#default_value' => $view->description,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('A description of the view for the admin list.'),
-);
+  $form['display']['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => $view->name,
+    '#size' => 20,
+    '#maxlength' => 32,
+    '#description' => t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'),
+    '#attributes' => NULL,
+    '#required' => true,
+  );
+  $form['display']['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Description'),
+    '#default_value' => $view->description,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('A description of the view for the admin list.'),
+  );
 
-$form['display']['type'] = array(
-  '#type' => 'select',
-  '#title' => t('View Type'),
-  '#default_value' => $view->type,
-  '#options' => _views_types(),
-  '#description' => t('How the nodes should be displayed to the user.'),
-);
+  $form['display']['type'] = array(
+    '#type' => 'select',
+    '#title' => t('View Type'),
+    '#default_value' => $view->type,
+    '#options' => _views_types(),
+    '#description' => t('How the nodes should be displayed to the user.'),
+  );
 
-$form['display']['title'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Title'),
-  '#default_value' => $view->title,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('The title of the view will be shown at the top of the view. May be blank if not using a block.'),
-);
+  $form['display']['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#default_value' => $view->title,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The title of the view will be shown at the top of the view. May be blank if not using a block.'),
+  );
 
-$form['display']['header'] = array(
-  '#type' => 'textarea',
-  '#title' => t('Header'),
-  '#default_value' => $view->header,
-  '#cols' => 60,
-  '#rows' => 6,
-  '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
-);
+  $form['display']['header'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Header'),
+    '#default_value' => $view->header,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
+  );
 
-$form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
+  $form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
 
 
-$form['block-info'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Block'),
-);
+  $form['block-info'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Block'),
+  );
 
-$form['block-info']['block'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Provide Block'),
-  '#return_value' => 1,
-  '#default_value' => $view->block,
-  '#description' => t('If checked this view will be provided as a block. If checked title may not be blank.'),
-);
+  $form['block-info']['block'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Provide Block'),
+    '#return_value' => 1,
+    '#default_value' => $view->block,
+    '#description' => t('If checked this view will be provided as a block. If checked title may not be blank.'),
+  );
 
-$form['block-info']['nodes_per_block'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Nodes per Block'),
-  '#default_value' => $view->nodes_per_block,
-  '#size' => 2,
-  '#maxlength' => 2,
-  '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
-  '#attributes' => NULL,
-);
+  $form['block-info']['nodes_per_block'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Nodes per Block'),
+    '#default_value' => $view->nodes_per_block,
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
+    '#attributes' => NULL,
+  );
 
-$form['block-info']['block_display_header'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Display Header'),
-  '#return_value' => 1,
-  '#default_value' => $view->block_display_header,
-  '#description' => t('If using a view as both a block and URL, display the header in the block?'),
-);
+  $form['block-info']['block_display_header'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display Header'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_display_header,
+    '#description' => t('If using a view as both a block and URL, display the header in the block?'),
+  );
 
-$form['block-info']['block_more'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('[More] Link?'),
-  '#return_value' => 1,
-  '#default_value' => $view->block_more,
-  '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
-);
+  $form['block-info']['block_more'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('[More] Link?'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_more,
+    '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
+  );
 
-$form['url-info'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('URL and Pager'),
-);
+  $form['url-info'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('URL and Pager'),
+  );
 
-$form['url-info']['url'] = array(
-  '#type' => 'select',
-  '#title' => t('URL Type'),
-  '#default_value' => $view->url,
-  '#options' => _views_urls(),
-  '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
-);
-$form['url-info']['menu_title'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Menu Title'),
-  '#default_value' => $view->menu_title,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
-);
-$form['url-info']['use_pager'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Use Pager'),
-  '#return_value' => 1,
-  '#default_value' => $view->use_pager,
-  '#description' => t('If checked this query may be multiple pages. If not checked this query will be one page.'),
-);
-$form['url-info']['nodes_per_page'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Nodes per Page'),
-  '#default_value' => $view->nodes_per_page,
-  '#size' => 2,
-  '#maxlength' => 2,
-  '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
-  '#attributes' => NULL,
-  '#required' => true,
-);
+  $form['url-info']['url'] = array(
+    '#type' => 'select',
+    '#title' => t('URL Type'),
+    '#default_value' => $view->url,
+    '#options' => _views_urls(),
+    '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
+  );
+  $form['url-info']['menu_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Menu Title'),
+    '#default_value' => $view->menu_title,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
+  );
+  $form['url-info']['use_pager'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Pager'),
+    '#return_value' => 1,
+    '#default_value' => $view->use_pager,
+    '#description' => t('If checked this query may be multiple pages. If not checked this query will be one page.'),
+  );
+  $form['url-info']['nodes_per_page'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Nodes per Page'),
+    '#default_value' => $view->nodes_per_page,
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
+    '#attributes' => NULL,
+    '#required' => true,
+  );
 
-$form['add'] = array('#tree' => true);
+  $form['add'] = array('#tree' => true);
 
-// FIXME: Put in theme for markup.
-//  $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
-//  $list = "";
+  // FIXME: Put in theme for markup.
+  //  $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
+  //  $list = "";
   $form['field'] = array('#tree' => true);
 
   foreach ($view->field as $i => $field) {
