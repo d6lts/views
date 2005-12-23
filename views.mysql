@@ -14,8 +14,8 @@ create table if not exists view_view (
   block int(1),
   block_more int(1),
   url int(2),
-  sql longtext,
-  countsql longtext,
+  query longtext,
+  countquery longtext,
   changed int(11),
   PRIMARY KEY (vid),
   KEY (name)

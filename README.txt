@@ -124,3 +124,4 @@ should be
 12/7/2005 Add menu_title to view_view and title to view_argument
 12/8/2005 Added options varchar(255) to view_argument as well.
 12/10/2005 Added block_more int(1) to view_view
+12/21/2005 Renamed 'sql' to 'query' and 'countsql' to 'countquery' for consistency

@@ -3,6 +3,7 @@
 // ---------------------------------------------------------------------------
 // Select Box Definitions
 
+// These should probably have string array keys that are easier to identify.
 function _views_get_arguments_default() {
   return array(
     1 => t('Return Page Not Found'),
@@ -37,23 +38,57 @@ function _views_sortorders() {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Argument definitions.
+
 function _views_internal_arguments() {
   $arguments = array(
-    'nodetype' => array('name' => t("Node Type"), 'handler' => "views_handler_arg_nodetype"),
-    'uid' => array('name' => t("User ID"), 'handler' => "views_handler_arg_uid"),
-    'taxid' => array('name' => t("Taxonomy Term ID"), 'handler' => "views_handler_arg_taxid", 'option' => 'string', 'help' => "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information."),
-    'year' => array('name' => t("Year"), 'handler' => "views_handler_arg_year"),
-    'month' => array('name' => t("Month (1-12)"), 'handler' => "views_handler_arg_month"),
-    'week' => array('name' => t("Week (1-53)"), 'handler' => "views_handler_arg_week"),
-    'monthyear' => array('name' => t("Month + Year (CCYYMM)"), 'handler' => "views_handler_arg_monthyear"),
-    'fulldate' => array('name' => t("Full Date (CCYYMMDD)"), 'handler' => "views_handler_arg_fulldate"),
+    'nodetype' => array(
+      'name' => t("Node Type"), 
+      'handler' => "views_handler_arg_nodetype",
+      'help' => "The node type argument allows users to filter a view by specifying the type of node.",
+    ),
+    'uid' => array(
+      'name' => t("User ID"), 
+      'handler' => "views_handler_arg_uid",
+      'help' => "The User ID argument allows users to filter a view by specifying a user ID.",
+    ),
+    'taxid' => array(
+      'name' => t("Taxonomy Term ID"), 
+      'handler' => "views_handler_arg_taxid", 
+      'option' => 'string', 
+      'help' => "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information.",
+    ),
+    'year' => array(
+      'name' => t("Year"), 
+      'handler' => "views_handler_arg_year",
+      'help' => "This argument allows users to filter by what year the node was posted, in the form of CCYY.",
+    ),
+    'month' => array(
+      'name' => t("Month"), 
+      'handler' => "views_handler_arg_month",
+      'help' => "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument.",
+    ),
+    'week' => array(
+      'name' => t("Week"), 
+      'handler' => "views_handler_arg_week",
+      'help' => "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'year' argument.",
+    ),
+    'monthyear' => array(
+      'name' => t("Month + Year"),
+      'handler' => "views_handler_arg_monthyear",
+      'help' => "This argument combines Month and Year into a single argument, specified in the form CCYYMM.",
+    ),
+    'fulldate' => array(
+      'name' => t("Full Date"), 
+      'handler' => "views_handler_arg_fulldate",
+      'help' => "This argument is a complete date in the form of CCYYMMDD.",
+    ),
   );
   return $arguments;
 }
 
-// Argument info...
-// OR: arg_handler($op, ...): $op in('filter', 'fields', 'link')
-
+// Return the arguments array; construct one if we haven't already.
 function _views_get_arguments($titles = false) {
   global $VIEWS_ARGUMENTS;
   global $VIEWS_ARGUMENTS_TITLES;
@@ -85,11 +120,12 @@ function _views_internal_tables() {
       ),
       "filters" => array(
         "tid" => array(
-          'name' => "Taxonomy Term",
+          'name' => "Taxonomy: Term",
           'list' => "views_handler_filter_tid",
           'option' => 'string',
           'operator' => "views_handler_operator_andor",
           'custom' => 'views_handler_filter_tid_custom',
+          'help' => 'When filtering by taxonomy term you may specify the "depth" as an option. Please see the taxonomy help for more information.',
         )
       )
     ); 
@@ -122,25 +158,29 @@ function _views_internal_tables() {
       ),
       "fields" => array(
         "name" => array(
-          'name' => "Taxonomy Term", 
-          'sortable' => true
+          'name' => "Taxonomy: Term", 
+          'sortable' => true,
+          'help' => "This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter.",
         ),
         "description" => array(
-          'name' => "Taxonomy Term Description", 
-          'sortable' => false
+          'name' => "Taxonomy: Term Description", 
+          'sortable' => false,
+          'help' => 'This will display the description associated with a taxonomy term.',
         ),
       ),
       "sorts" => array(
         "weight" => array(
-          'name' => "Taxonomy Name", 
+          'name' => "Taxonomy: Term Name", 
           'field' => array('weight', 'name'),
+          'help' => "This will sort nodes by taxonomy weight and name, as defined in the category administration.",
         )
       ),
       "filters" => array(
         "vid" => array(
-          'name' => "Vocabulary Term",
+          'name' => "Taxonomy: Vocabulary Name",
           'list' => "views_handler_filter_vid",
           'operator' => "views_handler_operator_andor",
+          'help' => 'This will filter a view to only nodes that contain a term in the associated vocabulary.',
         )
       )
     );
@@ -161,25 +201,32 @@ function _views_internal_tables() {
       ),
       "fields" => array(
         "last_comment_timestamp" => array(
-          'name' => "Last Comment Time", 
+          'name' => "Comment: Last Comment Time", 
           'sortable' => true, 
-          'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+          'handler' => 
+            array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+          'help' => "This will display the last comment time.",
          ),
         "last_comment_name" => array(
-          'name' => "Last Comment Author", 
+          'name' => "Comment: Last Comment Author", 
           'handler' => 'views_handler_field_username', 
           'sortable' => true, 
           'uid' => "last_comment_uid", 
-          'addlfields' => array("last_comment_uid")
+          'addlfields' => array("last_comment_uid"),
+          'help' => "This will display the name of the last user to comment on the post.",
         ),
         "comment_count" => array(
-          'name' => "Comment Count", 
+          'name' => "Comment: Count", 
           'sortable' => true, 
-          'handler' => array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count")
+          'handler' => 
+            array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count"),
+          'help' => "This will display the comment count.",
         ),
       ),
       "sorts" => array(
-        "last_comment_timestamp" => array('name' => "Last Comment Date")
+        "last_comment_timestamp" => array(
+          'name' => "Comment: Last Comment Date",
+          'help' => "This will allow you to sort by the date of the most recent comment on a node.")
       )
     );
   }
@@ -198,34 +245,41 @@ function _views_internal_tables() {
     ),
     "fields" => array(
       "name" => array(
-        'name' => "Node Author Name", 
+        'name' => "Node: Author Name", 
         'handler' => 'views_handler_field_username', 
         'sortable' => true, 
         'uid' => "uid", 
-        'addlfields' => array("uid")
+        'addlfields' => array("uid"),
+        'help' => "This will display the author of the node.",
       ),
     ),
     "sorts" => array(
-      "name" => array('name' => "Node Author Name")
+      "name" => array(
+        'name' => "Node: Author Name",
+        'help' => "This allows you to sort alphabetically by author.",
+      )
     ),
     "filters" => array(
       "uid" => array(
-        'name' => "Node Author Name",
+        'name' => "Node: Author Name",
         'operator' => "views_handler_operator_or",
-        'list' => "views_handler_filter_username"
+        'list' => "views_handler_filter_username",
+        'help' => "This allows you to filter by a particular user. You might not find this useful if you have a lot of users.",
       ),
       "anon" => array(
         'field' => 'uid',
-        'name' => "Node Author is Anonymous",
+        'name' => "Node: Author is Anonymous",
         'operator' => "views_handler_operator_eqneq",
-        'list' => "views_handler_filter_useranon"
+        'list' => "views_handler_filter_useranon",
+        'help' => "This allows you to filter by whether or not the node author is anonymous.",
       ),
       "currentuid" => array(
-        'name' => "Node Author is Current User",
+        'name' => "Node: Author is Current User",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_usercurrent",
         'custom' => "views_handler_filter_usercurrent_custom",
-        'cacheable' => 'no', // for future use.
+        'cacheable' => 'no',
+        'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
       ),
     )
   );
@@ -244,9 +298,10 @@ function _views_internal_tables() {
     ),
     "filters" => array(
       "rid" => array(
-        'name' => "Author Role",
+        'name' => "Role: Author Role",
         'operator' => "views_handler_operator_andor",
-        'list' => "views_handler_filter_role"
+        'list' => "views_handler_filter_role",
+        'help' => "Include the node only if the author is a member of the selected role.",
       ),
     )
   );
@@ -256,54 +311,74 @@ function _views_internal_tables() {
     "provider" => "internal", // won't show up in external list.
     "fields" => array(
       "title" => array(
-        'name' => "Node Title", 
+        'name' => "Node: Title", 
         'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
-        'sortable' => true, 'addlfields' => array('changed') 
+        'sortable' => true, 'addlfields' => array('changed'),
+        'help' => "Display the title of the node.",
       ),
       "created" => array(
-        'name' => "Node Created Time", 
+        'name' => "Node: Created Time", 
         'sortable' => true, 
-        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+        'handler' => 
+          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+        'help' => "Display the post time of the node.",
       ),
       "changed" => array(
-        'name' => "Node Updated Time", 
+        'name' => "Node: Updated Time", 
         'sortable' => true, 
-        'handler' => array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago")
+        'handler' => 
+          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+        'help' => "Display the last time the node was updated.",
       ),
       "type" => array(
-        'name' => "Node Type", 
+        'name' => "Node: Type", 
         'handler' => 'views_handler_nodetype', 
         'sortable' => true,
         'help' => "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)",
       ),
     ),
     "sorts" => array(
-      "created" => array('name' => "Post Date", 'table' => 'n'),
-      "changed" => array('name' => "Last Changed Date", 'table' => 'n'),
-      "sticky" => array('name' => "Node set to Sticky", 'table' => 'n'),
-      "title" => array('name' => "Node Title", 'table' => 'n')
+      "created" => array(
+        'name' => "Node: Created Time", 
+        'help' => "Sort by the submission date of the node.",
+       ),
+      "changed" => array(
+        'name' => "Node: Last Updated Time", 
+        'help' => 'nSort by the last update date of the node.',
+      ),
+      "sticky" => array(
+        'name' => "Node: Sticky",
+        'help' => 'Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top.',
+      ),
+      "title" => array(
+        'name' => "Node: Title", 
+        'help' => 'Sort by the node title, alphabetically',
+      ),
     ),
     "filters" => array(
       "status" => array(
-        'name' => "Published",
+        'name' => "Node: Published",
         'table' => "n",
         'operator' => array("=" => "Equals"),
         'list' => "views_handler_operator_yesno",
-        'list-type' => "select"
+        'list-type' => "select",
+        'help' => "Filter by whether or not the node is published. This is recommended for most Views!",
       ),
       "promote" => array(
-        'name' => "Front Page",
+        'name' => "Node: Front Page",
         'table' => "n",
         'operator' => array("=" => "Equals"),
         'list' => "views_handler_operator_yesno",
-        'list-type' => "select"
+        'list-type' => "select",
+        'help' => "Filter by whether or not the node has been promoted to Front Page.",
       ),
       "type" => array(
-        'name' => "Node Type",
+        'name' => "Node: Type",
         'table' => "n",
         'list' => "views_handler_filter_nodetype",
         'list-type' => 'list',
-        'operator' => "views_handler_operator_or"
+        'operator' => "views_handler_operator_or",
+        'help' => "Include or exclude nodes of the selected types.",
       ),
     ),
 
@@ -319,18 +394,6 @@ function _views_get_tables() {
   }
   return $VIEWS_TABLES;
 }
-
-// filters
-// name
-// field (in case the array key is not the field)
-// list: (if array use; otherwise it is a handler)
-// list-type: list, select
-// operator: (if array use; otherwise it is a handler)
-// transform: if here, handler for transforming data.
-// validate: if here, handler for validating data.
-
-
-// There may also be a generally better way to organize the data.
 
 function _views_organize_data() {
   global $VIEWS_FILTERS;
@@ -402,73 +465,138 @@ function _views_get_sorts($titles = false) {
   return ($titles ? $VIEWS_SORTS_TITLES : $VIEWS_SORTS);
 }
 
+function _views_sanitize_view(&$view) {
+  _views_check_arrays($view); // so reference works.
+  if (is_array($view->field)) {
+    foreach($view->field as $i => $field) {
+      $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
+      $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
+    }
+  }
+  if (is_array($view->filter)) {
+    foreach($view->filter as $i => $filter) {
+      $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
+    }
+  }
+  if (is_array($view->sort)) {
+    foreach($view->sort as $i => $sort) {
+      $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
+    }
+  }
+}
+
 function _views_internal_default_views() {
+  if (module_exist('comment')) {
+    $view = new stdClass();
+    $view->name = 'tracker/tracker';
+    $view->description = 'Shows all new activity on system.';
+    $view->title = 'recent posts for %1';
+    $view->menu_title = 'recent posts';
+    $view->use_pager = '1';
+    $view->nodes_per_page = '25';
+    $view->nodes_per_block = '10';
+    $view->block_display_header = '0';
+    $view->type = '2';
+    $view->block = '1';
+    $view->url = '3';
+    $view->field = array (
+      array (
+        'tablename' => 'n',
+        'field' => 'type',
+        'label' => 'Type',
+      ),
+      array (
+        'tablename' => 'n',
+        'field' => 'title',
+        'label' => 'Title',
+        'handler' => 'views_handler_field_nodelink_with_mark',
+      ),
+      array (
+        'tablename' => 'users',
+        'field' => 'name',
+        'label' => 'Author',
+      ),
+      array (
+        'tablename' => 'node_comment_statistics',
+        'field' => 'comment_count',
+        'label' => 'Replies',
+        'handler' => 'views_handler_comments_with_new',
+      ),
+      array (
+        'tablename' => 'node_comment_statistics',
+        'field' => 'last_comment_timestamp',
+        'label' => 'Last Post',
+        'handler' => 'views_handler_field_since',
+      ),
+    );
+    $view->sort = array (
+      array (
+        'tablename' => 'node_comment_statistics',
+        'field' => 'last_comment_timestamp',
+        'sortorder' => 'DESC',
+      ),
+    );
+    $view->argument = array (
+      array (
+        'type' => 'uid',
+        'argdefault' => '2',
+        'title' => 'recent posts for all users',
+      ),
+    );
+    $view->filter = array (
+      array (
+        'tablename' => 'n',
+        'field' => 'status',
+        'operator' => '=',
+        'value' => '1',
+      ),
+    );
+
+    $views[$view->name] = $view;
+  }
 
   $view = new stdClass();
-  $view->name = 'tracker/tracker';
-  $view->description = 'Shows all new activity on system.';
-  $view->title = 'recent posts for %1';
-  $view->menu_title = 'recent posts';
+  $view->name = 'frontpage';
+  $view->description = 'The basic front page view.';
+  $view->title = '';
+  $view->menu_title = '';
+  $view->header = '';
+  $view->header_format = '1';
+  $view->type = '3';
+  $view->url = '2';
   $view->use_pager = '1';
-  $view->nodes_per_page = '25';
-  $view->nodes_per_block = '10';
+  $view->nodes_per_page = '10';
+  $view->block = '0';
+  $view->nodes_per_block = '0';
+  $view->block_more = '0';
   $view->block_display_header = '0';
-  $view->type = '2';
-  $view->block = '1';
-  $view->url = '3';
-  $view->field = array (
-    array (
-      'tablename' => 'n',
-      'field' => 'type',
-      'label' => 'Type',
-    ),
-    array (
-      'tablename' => 'n',
-      'field' => 'title',
-      'label' => 'Title',
-      'handler' => 'views_handler_field_nodelink_with_mark',
-    ),
-    array (
-      'tablename' => 'users',
-      'field' => 'name',
-      'label' => 'Author',
-    ),
-    array (
-      'tablename' => 'node_comment_statistics',
-      'field' => 'comment_count',
-      'label' => 'Replies',
-      'handler' => 'views_handler_comments_with_new',
-    ),
-    array (
-      'tablename' => 'node_comment_statistics',
-      'field' => 'last_comment_timestamp',
-      'label' => 'Last Post',
-      'handler' => 'views_handler_field_since',
-    ),
-  );
   $view->sort = array (
     array (
-      'tablename' => 'node_comment_statistics',
-      'field' => 'last_comment_timestamp',
+      'tablename' => 'n',
+      'field' => 'sticky',
       'sortorder' => 'DESC',
+      'options' => '',
+    ),
+    array (
+      'tablename' => 'n',
+      'field' => 'created',
+      'sortorder' => 'DESC',
+      'options' => '',
     ),
   );
   $view->argument = array (
-    array (
-      'type' => 'uid',
-      'argdefault' => '2',
-      'title' => 'recent posts for all users',
-    ),
+  );
+  $view->field = array (
   );
   $view->filter = array (
     array (
       'tablename' => 'n',
-      'field' => 'status',
+      'field' => 'promote',
       'operator' => '=',
+      'options' => '',
       'value' => '1',
     ),
   );
-
   $views[$view->name] = $view;
 
   return $views;
@@ -480,27 +608,12 @@ function _views_get_default_views() {
   if (!$VIEWS_DEFAULT_VIEWS) {
     $VIEWS_DEFAULT_VIEWS = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
     foreach ($VIEWS_DEFAULT_VIEWS as $i => $view) {
-      _views_check_arrays($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
-      if (is_array($view->field)) {
-        foreach($view->field as $j => $field) {
-          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['fullname'] = "$field[tablename].$field[field]";
-          $VIEWS_DEFAULT_VIEWS[$i]->field[$j]['queryname'] = "$field[tablename]_$field[field]";
-        }
-      }
-      if (is_array($view->filter)) {
-        foreach($view->filter as $j => $filter) {
-          $VIEWS_DEFAULT_VIEWS[$i]->filter[$j]['field'] = "$filter[tablename].$filter[field]";
-        }
-      }
-      if (is_array($view->sort)) {
-        foreach($view->sort as $j => $sort) {
-          $VIEWS_DEFAULT_VIEWS[$i]->sort[$j]['field'] = "$sort[tablename].$sort[field]";
-        }
-      }
+      _views_sanitize_view($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
     }
   }
   return $VIEWS_DEFAULT_VIEWS;
 }
+
 // ---------------------------------------------------------------------------
 // Drupal Hooks
 
@@ -509,10 +622,23 @@ function views_help($section) {
   switch ($section) {
     case 'admin/modules#description':
       return t('The views module creates customized views of node lists.');
+    case 'admin/views/import':
+      return t('This is the import help.');
+    case 'admin/views':
+      return t('This is where you add a view. More text goes here.');
   }
 }
 
 function views_perm() {
+  if (!strncmp($section, 'admin/views', 11)) {
+    switch (arg(2)) {
+      case 'add':
+      case 'edit':
+        return t('This is the edit view help.');
+      case 'export':
+        return t('<p>You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location.</p>');
+    }
+  }
   return array('administer views');
 }
 
@@ -525,14 +651,30 @@ function views_menu($may_cache) {
       'callback' => 'views_admin_page',
       'access' => user_access('administer views'),
       'type' => MENU_NORMAL_ITEM);
+    $items[] = array('path' => 'admin/views/list', 
+      'title' => t('list'),
+      'callback' => 'views_admin_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_DEFAULT_LOCAL_TASK,
+      'weight' => '-1');
     $items[] = array('path' => 'admin/views/add', 
-      'title' => t('add view'),
+      'title' => t('add'),
       'callback' => 'views_admin_add_page',
       'access' => user_access('administer views'),
-      'type' => MENU_CALLBACK);
+      'type' => MENU_LOCAL_TASK);
     $items[] = array('path' => 'admin/views/edit', 
       'title' => t('edit view'),
       'callback' => 'views_admin_edit_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_CALLBACK);
+    $items[] = array('path' => 'admin/views/import', 
+      'title' => t('import'),
+      'callback' => 'views_admin_import_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_LOCAL_TASK);
+    $items[] = array('path' => 'admin/views/export', 
+      'title' => t('export view'),
+      'callback' => 'views_admin_export_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/views/delete', 
@@ -589,12 +731,12 @@ function views_block($op = 'list', $delta = 0) {
 function views_admin_page() {
   $numViews = 25;
 
-  drupal_set_title("Administer views Views");
+  drupal_set_title("administer views");
 
   $result = pager_query("SELECT vid, name, description, title FROM {view_view} ORDER BY name", $numViews);
   while ($view = db_fetch_object($result)) {
     $url = "views/$view->name";
-    $items[] = array($view->title, $view->description, l($url, $url), theme_links(array(l('edit', "admin/views/edit/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
+    $items[] = array($view->title, $view->description, l($url, $url), theme('links', array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
   }
 
   if ($items) {
@@ -604,7 +746,8 @@ function views_admin_page() {
   else {
     $output .= "<p>No views have currently been defined.</p>";
   }
-  $output .= "<br>" . l('Add a view', 'admin/views/add') . "<br>";
+//  $output .= "<br>" . l('Add a view', 'admin/views/add') . "<br>";
+//  $output .= "<br>" . l('Import a view', 'admin/views/import') . "<br>";
 
   $output .= "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>";
   $items = array();
@@ -637,6 +780,43 @@ function views_edit_view_submit($form_id, $form) {
     drupal_set_message("View successfully added.");
 
   return drupal_goto('admin/views');
+}
+
+function views_admin_import_page() {
+  $form['view'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Import View Code'),
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Cut and paste the results of an Export View here.'),
+  );
+  
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t("Submit"),
+  );
+
+  return drupal_get_form('views_import_view', $form);
+}
+
+function views_import_view_submit($formid, $form) {
+  ob_start();
+  eval($form['view']);
+  ob_end_clean();
+  if ($view) {
+    _views_sanitize_view($view);
+    drupal_set_title(t('Add a View'));
+    $output = _views_view_form(NULL, $view, NULL);
+    print theme('page', $output);
+    exit;
+  }
+  else {
+    drupal_set_message("Unable to get a view out of that.");
+  }
+}
+
+function views_admin_export_page($vid = '') {
+  return "<pre>" . views_create_view_code($vid) . "</pre>";
 }
 
 function views_admin_add_page() {
@@ -885,149 +1065,149 @@ function _views_view_form($view, $orig, $op = '') {
     '#type' => 'hidden',
     '#value' => $view->changed,
   );
-//  $form['working'] = array(
-//    '#type' => 'hidden',
-//    '#value' => true,
-//  );
+  //  $form['working'] = array(
+  //    '#type' => 'hidden',
+  //    '#value' => true,
+  //  );
 
-  // DEBUGGING
-//    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
+    // DEBUGGING
+  //    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
-$form['display'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Display'),
-);
+  $form['display'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Display'),
+  );
 
-$form['display']['name'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Name'),
-  '#default_value' => $view->name,
-  '#size' => 20,
-  '#maxlength' => 32,
-  '#description' => t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'),
-  '#attributes' => NULL,
-  '#required' => true,
-);
-$form['display']['description'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Description'),
-  '#default_value' => $view->description,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('A description of the view for the admin list.'),
-);
+  $form['display']['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Name'),
+    '#default_value' => $view->name,
+    '#size' => 20,
+    '#maxlength' => 32,
+    '#description' => t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'),
+    '#attributes' => NULL,
+    '#required' => true,
+  );
+  $form['display']['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Description'),
+    '#default_value' => $view->description,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('A description of the view for the admin list.'),
+  );
 
-$form['display']['type'] = array(
-  '#type' => 'select',
-  '#title' => t('View Type'),
-  '#default_value' => $view->type,
-  '#options' => _views_types(),
-  '#description' => t('How the nodes should be displayed to the user.'),
-);
+  $form['display']['type'] = array(
+    '#type' => 'select',
+    '#title' => t('View Type'),
+    '#default_value' => $view->type,
+    '#options' => _views_types(),
+    '#description' => t('How the nodes should be displayed to the user.'),
+  );
 
-$form['display']['title'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Title'),
-  '#default_value' => $view->title,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('The title of the view will be shown at the top of the view. May be blank if not using a block.'),
-);
+  $form['display']['title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Title'),
+    '#default_value' => $view->title,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('The title of the view will be shown at the top of the view. May be blank if not using a block.'),
+  );
 
-$form['display']['header'] = array(
-  '#type' => 'textarea',
-  '#title' => t('Header'),
-  '#default_value' => $view->header,
-  '#cols' => 60,
-  '#rows' => 6,
-  '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
-);
+  $form['display']['header'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Header'),
+    '#default_value' => $view->header,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
+  );
 
-$form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
+  $form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
 
 
-$form['block-info'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('Block'),
-);
+  $form['block-info'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Block'),
+  );
 
-$form['block-info']['block'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Provide Block'),
-  '#return_value' => 1,
-  '#default_value' => $view->block,
-  '#description' => t('If checked this view will be provided as a block. If checked title may not be blank.'),
-);
+  $form['block-info']['block'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Provide Block'),
+    '#return_value' => 1,
+    '#default_value' => $view->block,
+    '#description' => t('If checked this view will be provided as a block. If checked title may not be blank.'),
+  );
 
-$form['block-info']['nodes_per_block'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Nodes per Block'),
-  '#default_value' => $view->nodes_per_block,
-  '#size' => 2,
-  '#maxlength' => 2,
-  '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
-  '#attributes' => NULL,
-);
+  $form['block-info']['nodes_per_block'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Nodes per Block'),
+    '#default_value' => $view->nodes_per_block,
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
+    '#attributes' => NULL,
+  );
 
-$form['block-info']['block_display_header'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Display Header'),
-  '#return_value' => 1,
-  '#default_value' => $view->block_display_header,
-  '#description' => t('If using a view as both a block and URL, display the header in the block?'),
-);
+  $form['block-info']['block_display_header'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Display Header'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_display_header,
+    '#description' => t('If using a view as both a block and URL, display the header in the block?'),
+  );
 
-$form['block-info']['block_more'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('[More] Link?'),
-  '#return_value' => 1,
-  '#default_value' => $view->block_more,
-  '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
-);
+  $form['block-info']['block_more'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('[More] Link?'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_more,
+    '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
+  );
 
-$form['url-info'] = array(
-  '#type' => 'fieldset',
-  '#title' => t('URL and Pager'),
-);
+  $form['url-info'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('URL and Pager'),
+  );
 
-$form['url-info']['url'] = array(
-  '#type' => 'select',
-  '#title' => t('URL Type'),
-  '#default_value' => $view->url,
-  '#options' => _views_urls(),
-  '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
-);
-$form['url-info']['menu_title'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Menu Title'),
-  '#default_value' => $view->menu_title,
-  '#size' => 60,
-  '#maxlength' => 255,
-  '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
-);
-$form['url-info']['use_pager'] = array(
-  '#type' => 'checkbox',
-  '#title' => t('Use Pager'),
-  '#return_value' => 1,
-  '#default_value' => $view->use_pager,
-  '#description' => t('If checked this query may be multiple pages. If not checked this query will be one page.'),
-);
-$form['url-info']['nodes_per_page'] = array(
-  '#type' => 'textfield',
-  '#title' => t('Nodes per Page'),
-  '#default_value' => $view->nodes_per_page,
-  '#size' => 2,
-  '#maxlength' => 2,
-  '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
-  '#attributes' => NULL,
-  '#required' => true,
-);
+  $form['url-info']['url'] = array(
+    '#type' => 'select',
+    '#title' => t('URL Type'),
+    '#default_value' => $view->url,
+    '#options' => _views_urls(),
+    '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
+  );
+  $form['url-info']['menu_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Menu Title'),
+    '#default_value' => $view->menu_title,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
+  );
+  $form['url-info']['use_pager'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Pager'),
+    '#return_value' => 1,
+    '#default_value' => $view->use_pager,
+    '#description' => t('If checked this query may be multiple pages. If not checked this query will be one page.'),
+  );
+  $form['url-info']['nodes_per_page'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Nodes per Page'),
+    '#default_value' => $view->nodes_per_page,
+    '#size' => 2,
+    '#maxlength' => 2,
+    '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
+    '#attributes' => NULL,
+    '#required' => true,
+  );
 
-$form['add'] = array('#tree' => true);
+  $form['add'] = array('#tree' => true);
 
-// FIXME: Put in theme for markup.
-//  $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
-//  $list = "";
+  // FIXME: Put in theme for markup.
+  //  $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
+  //  $list = "";
   $form['field'] = array('#tree' => true);
 
   foreach ($view->field as $i => $field) {
@@ -1099,31 +1279,31 @@ $form['add'] = array('#tree' => true);
     $form['field'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['field'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['field'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['field'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['field'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1202,31 +1382,31 @@ $form['add'] = array('#tree' => true);
     $form['argument'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['argument'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['argument'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['argument'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['argument'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1366,31 +1546,31 @@ $form['add'] = array('#tree' => true);
     $form['filter'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['filter'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['filter'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['filter'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['filter'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1469,31 +1649,31 @@ $form['add'] = array('#tree' => true);
     $form['sort'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => 'modules/views/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['sort'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['sort'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['sort'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['sort'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => 'modules/views/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -1882,8 +2062,8 @@ function _views_build_query(&$view, $args = array()) {
     }
   }
 
-  $info['sql'] = $query->query();
-  $info['countsql'] = $query->query(true);
+  $info['query'] = $query->query();
+  $info['countquery'] = $query->query(true);
   $info['summary'] = $summary;
   $info['level'] = $level;
 
@@ -1900,8 +2080,8 @@ function _views_build_query(&$view, $args = array()) {
 //    'embed' -- Use this if you want to embed a view onto another page,
 //      and don't want any block or page specific things to happen to it.
 //    'result' -- return an $info array. The array contains:
-//      sql: The actual query ran.
-//      countsql: The count sql that would be run if limiting was required.
+//      query: The actual query ran.
+//      countquery: The count query that would be run if limiting was required.
 //      summary: True if an argument was missing and a summary was generated.
 //      level: What level the missing argument was at.
 //      result: Database object you can use db_fetch_object on.
@@ -1922,9 +2102,9 @@ function _views_build_query(&$view, $args = array()) {
 
 function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0) {
 
-  if ($view->sql) {
-    $info['sql'] = $view->sql;
-    $info['countsql'] = $view->countsql;
+  if ($view->query) {
+    $info['query'] = $view->query;
+    $info['countquery'] = $view->countquery;
     if ($view->type == 2)  // table only
       $view->table_header = _views_construct_header($view, $fields);
   }
@@ -1935,21 +2115,21 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     }
   }
 
-  $sql = db_rewrite_sql($info['sql']);
+  $query = db_rewrite_sql($info['query']);
 
   if ($view->type == 5 || $view->type == 6) {
-    $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
-    $count = db_result(db_query($csql));
+    $cquery = db_rewrite_sql($info['countquery'], 'n', 'numrecs');
+    $count = db_result(db_query($cquery));
     $which = rand(0, $count - 1);
-    $result = db_query_range($sql, $which, 1);
+    $result = db_query_range($query, $which, 1);
   }
   else if ($use_pager) {
-    $csql = db_rewrite_sql($info['countsql'], 'n', 'numrecs');
-    $result = pager_query($sql, $limit, $use_pager, $csql);
+    $cquery = db_rewrite_sql($info['countquery'], 'n', 'numrecs');
+    $result = pager_query($query, $limit, $use_pager, $cquery);
   }
 
   else {
-    $result = ($limit ? db_query_range($sql, 0, $limit) : db_query($sql));
+    $result = ($limit ? db_query_range($query, 0, $limit) : db_query($query));
   }
 
   if ($type == 'result') {
@@ -2501,7 +2681,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
 // Database functions
 
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'block_more', 'url', 'changed', 'sql', 'countsql');
+  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'block_more', 'url', 'changed', 'query', 'countquery');
 }
 
 function _views_delete_view($view) {
@@ -2573,12 +2753,12 @@ function _views_save_view($view) {
   // cache the query
   if (_views_is_cacheable($view)) {
     $info = _views_build_query($view);
-    $view->sql = $info['sql'];
-    $view->countsql = $info['countsql'];
+    $view->query = $info['query'];
+    $view->countquery = $info['countquery'];
   }
   else {
-    $view->sql = NULL;
-    $view->countsql = NULL;
+    $view->query = NULL;
+    $view->countquery = NULL;
   }
 
   $view->changed = time();

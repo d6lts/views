@@ -15,8 +15,6 @@ LESS TIME CONSUMING STUFF
 // Most of this is now slated for post 4.7 update.
 
 *  Write some decent help for the edit view page.
-*  table data needs a way to document itself.
-*  View trading interface.
 
 *  Check queries for injection attacks, especially on the URL!
 *  Check for enabled modules everywhere
@@ -87,4 +85,6 @@ TO DONE
 *  Function between views_view_page() and views_view() to make it easy to
    access a view externally.
 *  Function that just returns a list of nodes and doesn't theme it at all.
+*  table data needs a way to document itself.
+*  View trading interface.
 
