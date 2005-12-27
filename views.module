@@ -65,6 +65,12 @@ function _views_internal_arguments() {
       'option' => 'string', 
       'help' => "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.",
     ),
+    'nodeletter' => array(
+      'name' => t("Node Title"), 
+      'handler' => "views_handler_arg_nodeletter", 
+      'option' => 'string', 
+      'help' => "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.",
+    ),
     'year' => array(
       'name' => t("Year"), 
       'handler' => "views_handler_arg_year",
@@ -2156,11 +2162,11 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   }
 
   if ($info['summary']) {
-    $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items);
+    $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items, $args);
     if ($out)
       $output .= $out;
     else
-      $output .= theme('views_summary', $view, $type, $info['level'], $items);
+      $output .= theme('views_summary', $view, $type, $info['level'], $items, $args);
   }
   else {
     $output .= theme("views_view_$view->name", $view, $type, $items);
@@ -2950,19 +2956,24 @@ function theme_views_more($name) {
   return "<div class='more'>" . l("[More]", "views/$name") . "</div>";
 }
 
-function views_get_summary_link($argtype, $viewname, $item)
+function views_get_summary_link($argtype, $viewname, $item, $level, $args)
 {
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argtype]['handler']))
     return NULL;
 
-  return $arginfo[$argtype]['handler']('link', $item, $argtype, $viewname);
+  $arg = "views/$viewname";
+  for ($i = 0; $i < $level; $i++) {
+    $arg .= "/$args[$i]";
+  }
+
+  return $arginfo[$argtype]['handler']('link', $item, $argtype, $arg);
 
 }
 
-function theme_views_summary($view, $type, $level, $nodes) {
+function theme_views_summary($view, $type, $level, $nodes, $args) {
   foreach ($nodes as $node) {
-    $items[] = array(views_get_summary_link($view->argument[$level]['type'], $view->name, $node), $node->num_nodes);
+    $items[] = array(views_get_summary_link($view->argument[$level]['type'], $view->name, $node, $level, $args), $node->num_nodes);
   }
   if ($items)
     $output .= theme('table', array(), $items, array('id' => 'summary'));
@@ -3035,7 +3046,7 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       $query->add_where("n.type = '$arg'");
       break;
     case 'link':
-      return l($query->type, "views/$arg/$query->type");
+      return l($query->type, "$arg/$query->type");
     case 'title':
       return $query;
   }
@@ -3056,7 +3067,7 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
-      return l($name, "views/$arg/" . intval($query->uid));
+      return l($name, "$arg/" . intval($query->uid));
     case 'title':
       if (!$query) {
         return variable_get('anonymous', 'Anonymous');
@@ -3091,7 +3102,7 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       break;
     case 'link':
       $name = ($query->name ? $query->name : t("Uncategorized"));
-      return l($name, "views/$arg/" . intval($query->tid));
+      return l($name, "$arg/" . intval($query->tid));
     case 'title':
       if (!$query) {
         return t("Uncategorized");
@@ -3125,7 +3136,32 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       $query->add_where("LEFT(term_data.name, $len) = '$arg'");
       break;
     case 'link':
-      return l(strtoupper($query->letter), "views/$arg/$query->letter");
+      return l(strtoupper($query->letter), "$arg/$query->letter");
+    case 'title':
+      return strtoupper($query);
+  }
+}
+
+function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $len = intval($arg);
+      if ($len <= 0) {
+        $fieldinfo['field'] = "n.title";
+      }
+      else {
+        $fieldinfo['field'] = "LEFT(n.title, $len)";
+      }
+
+      $fieldinfo['fieldname'] = 'letter';
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $len = intval($argtype['options']);
+      $query->add_where("LEFT(n.title, $len) = '$arg'");
+      break;
+    case 'link':
+      return l(strtoupper($query->letter), "$arg/$query->letter");
     case 'title':
       return strtoupper($query);
   }
@@ -3146,7 +3182,7 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
       $query->add_where("YEAR(FROM_UNIXTIME(n.created+$timezone)) = $year");
       break;
     case 'link':
-      return l($query->year, "views/$arg/$query->year");
+      return l($query->year, "$arg/$query->year");
     case 'title':
       return $query;
   }
@@ -3166,7 +3202,7 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
       $query->add_where("MONTH(FROM_UNIXTIME(n.created+$timezone)) = $month");
       break;
     case 'link':
-      return l(format_date($query->created, 'custom', 'F'), "views/$arg/$query->name");
+      return l(format_date($query->created, 'custom', 'F'), "$arg/$query->name");
     case 'title':
       return format_date(strtotime("2005${query}01"), 'custom', 'F');
   }
@@ -3188,7 +3224,7 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
       $query->add_where("WEEK(FROM_UNIXTIME(n.created+$timezone), 3) = $week");
       break;
     case 'link':
-      return l("Week $query->name", "views/$arg/$query->name");
+      return l("Week $query->name", "$arg/$query->name");
     case 'title':
       return $query;
   }
@@ -3207,7 +3243,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m') = '$arg'");
       break;
     case 'link':
-      return l(format_date($query->created, 'custom', 'F, Y'), "views/$arg/$query->name");
+      return l(format_date($query->created, 'custom', 'F, Y'), "$arg/$query->name");
     case 'title':
       return format_date(strtotime("${query}01"), 'custom', 'F, Y');
   }
@@ -3226,7 +3262,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d') = '$arg'");
       break;
     case 'link':
-      return l(format_date($query->created, 'custom', 'F j, Y'), "views/$arg/$query->name");
+      return l(format_date($query->created, 'custom', 'F j, Y'), "$arg/$query->name");
     case 'title':
       return format_date(strtotime($query), 'custom', 'F j, Y');
   }
