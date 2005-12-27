@@ -2652,7 +2652,13 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
   if ($op == 'OR') {
     $clause = "'" . implode("','", $value) . "'";
     // base tables
-    $num = $query->add_table('term_node');
+
+    // Any number of things might have already added a term_node table, but
+    // if they ahve and are filtering on it the query is going to be borken
+    // anyway. If it's been added and unfiltered, and we ignore it, we get
+    // bad results.
+    $num = 1;
+    $query->ensure_table('term_node');
     $tablename = $query->get_table_name('term_node', $num);
     $where = "$tablename.tid IN ($clause)";
 
@@ -2672,7 +2678,8 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
     }
     foreach ($value as $tid) {
       // For every term we have to match, add a base table
-      $num = $query->add_table('term_node');
+      $num = 1;
+      $query->ensure_table('term_node');
       $tablename = $query->get_table_name('term_node', $num);
       $where = "$tablename.tid = '$tid'";
 
@@ -3080,7 +3087,7 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
 function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'fields':
-      $query->add_table('term_data', true);
+      $query->ensure_table('term_data', true);
       $query->add_field('name', 'term_data');
       $query->add_field('weight', 'term_data');
       $query->add_field('tid', 'term_data');
