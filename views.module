@@ -59,6 +59,12 @@ function _views_internal_arguments() {
       'option' => 'string', 
       'help' => "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information.",
     ),
+    'taxletter' => array(
+      'name' => t("Taxonomy Term Name"), 
+      'handler' => "views_handler_arg_taxletter", 
+      'option' => 'string', 
+      'help' => "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.",
+    ),
     'year' => array(
       'name' => t("Year"), 
       'handler' => "views_handler_arg_year",
@@ -2032,7 +2038,7 @@ function _views_build_query(&$view, $args = array()) {
           exit;
         case 3:
           $level = $i;
-          _views_build_summary($query, $argument['type']);
+          _views_build_summary($query, $argument['type'], $argument['options']);
           $summary = true;
           break 2; // switch and for
       } 
@@ -2284,7 +2290,7 @@ function _views_get_timezone() {
   return $timezone;
 }
 
-function _views_build_summary(&$query, $argtype) {
+function _views_build_summary(&$query, $argtype, $option) {
 
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argtype]['handler']))
@@ -2292,7 +2298,7 @@ function _views_build_summary(&$query, $argtype) {
 
   $query->clear_fields();
 
-  $fieldinfo = $arginfo[$argtype]['handler']('fields', $query, $argtype);
+  $fieldinfo = $arginfo[$argtype]['handler']('fields', $query, $argtype, $option);
 
   if ($fieldinfo['fieldname'])
     $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
@@ -3094,6 +3100,37 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       return $term->name;
   }
 }
+
+function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'fields':
+      $query->add_table('term_data', true);
+      $len = intval($arg);
+      if ($len <= 0) {
+        $fieldinfo['field'] = "term_data.name";
+      }
+      else {
+        $fieldinfo['field'] = "LEFT(term_data.name, $len)";
+      }
+
+      $fieldinfo['fieldname'] = 'letter';
+      $query->add_field('tid', 'term_data');
+      $query->add_where('term_data.name IS NOT NULL');
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $len = intval($argtype['options']);
+      $query->add_table('term_data', true);
+
+      $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+      break;
+    case 'link':
+      return l(strtoupper($query->letter), "views/$arg/$query->letter");
+    case 'title':
+      return strtoupper($query);
+  }
+}
+
 function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
