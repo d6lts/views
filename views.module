@@ -795,6 +795,11 @@ function views_edit_view_submit($form_id, $form) {
 }
 
 function views_admin_import_page() {
+  $op = $_POST['op'];
+
+  if ($op == t('Save')) {
+    return views_admin_add_page();
+  }
   $form['view'] = array(
     '#type' => 'textarea',
     '#title' => t('Import View Code'),
