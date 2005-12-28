@@ -1,9 +1,14 @@
 <?php
+// $Id$
 
 // ---------------------------------------------------------------------------
 // Select Box Definitions
 
 // These should probably have string array keys that are easier to identify.
+
+/*
+ * Select box entries for argument defaults.
+ */
 function _views_get_arguments_default() {
   return array(
     1 => t('Return Page Not Found'),
@@ -12,6 +17,9 @@ function _views_get_arguments_default() {
    );
 }
 
+/*
+ * Types of views supported.
+ */
 function _views_types() {
   return array(
     1 => t("List View"), 
@@ -23,6 +31,9 @@ function _views_types() {
   );
 }
 
+/*
+ * Possible URL configurations.
+ */
 function _views_urls() {
   return array(
     1 => t("No URL"), 
@@ -31,6 +42,9 @@ function _views_urls() {
   );
 }
 
+/*
+ * Select box entries for sort ordering.
+ */
 function _views_sortorders() {
   return array(
     "ASC" => t("Ascending"),
@@ -41,6 +55,10 @@ function _views_sortorders() {
 // ---------------------------------------------------------------------------
 // Argument definitions.
 
+/*
+ * All of the arguments that Views supports natively. Some of this may 
+ * eventually be shipped off to the modules that provide this data.
+ */
 function _views_internal_arguments() {
   $arguments = array(
     'nodetype' => array(
@@ -100,7 +118,12 @@ function _views_internal_arguments() {
   return $arguments;
 }
 
-// Return the arguments array; construct one if we haven't already.
+
+/*
+ * Return the arguments array; construct one if we haven't already. The
+ * array is cached in a global, safely named variable so that arguments
+ * are only constructed once per run.
+ */
 function _views_get_arguments($titles = false) {
   global $VIEWS_ARGUMENTS;
   global $VIEWS_ARGUMENTS_TITLES;
@@ -115,6 +138,11 @@ function _views_get_arguments($titles = false) {
   return ($titles ? $VIEWS_ARGUMENTS_TITLES : $VIEWS_ARGUMENTS);
 }
 
+/*
+ * Provides all of the internal table definition that Views supports natively.
+ * This info will probably one day be shipped off to the modules that provide
+ * it.
+ */
 function _views_internal_tables() {
 
   if (module_exist('taxonomy')) {
@@ -366,6 +394,11 @@ function _views_internal_tables() {
         'name' => "Node: Title", 
         'help' => 'Sort by the node title, alphabetically',
       ),
+//      "random" => array(
+//        'name' => "Random",
+//        'handler' => 'views_handler_sort_random',
+//        'help' => "By choosing random, nodes will be ordered completely randomly. This is a good way to choose X random nodes from a group of nodes.",
+//      ),
     ),
     "filters" => array(
       "status" => array(
@@ -398,6 +431,10 @@ function _views_internal_tables() {
   return $tables;
 }
 
+/*
+ * Constructs the full table information array. Caches it into a global array
+ * so that it will only be called once per run.
+ */
 function _views_get_tables() {
   global $VIEWS_TABLES;
 
@@ -407,6 +444,11 @@ function _views_get_tables() {
   return $VIEWS_TABLES;
 }
 
+/*
+ * Restructures the table data slightly so that we can get at information
+ * more readily; sometimes we have the array but not the key, so we re-store
+ * the key into the array so we know where we are looking.
+ */
 function _views_organize_data() {
   global $VIEWS_FILTERS;
   global $VIEWS_FILTERS_TITLES;
@@ -444,6 +486,10 @@ function _views_organize_data() {
 
 }
 
+/*
+ * Gets the filter information; if it doesn't exist, call the function
+ * that constructs all that.
+ */
 function _views_get_filters($titles = false) {
   global $VIEWS_FILTERS;
   global $VIEWS_FILTERS_TITLES;
@@ -455,6 +501,10 @@ function _views_get_filters($titles = false) {
   return ($titles ? $VIEWS_FILTERS_TITLES : $VIEWS_FILTERS);
 }
 
+/*
+ * Gets the field information; if it doesn't exist, call the function
+ * that constructs all that.
+ */
 function _views_get_fields($titles = false) {
   global $VIEWS_FIELDS;
   global $VIEWS_FIELDS_TITLES;
@@ -466,6 +516,10 @@ function _views_get_fields($titles = false) {
   return ($titles ? $VIEWS_FIELDS_TITLES : $VIEWS_FIELDS);
 }
 
+/*
+ * Gets the sort information; if it doesn't exist, call the function
+ * that constructs all that.
+ */
 function _views_get_sorts($titles = false) {
   global $VIEWS_SORTS;
   global $VIEWS_SORTS_TITLES;
@@ -477,6 +531,11 @@ function _views_get_sorts($titles = false) {
   return ($titles ? $VIEWS_SORTS_TITLES : $VIEWS_SORTS);
 }
 
+/*
+ * Ensures that views have legitimate information; a bit more is stored on
+ * the $view object than is in the database, and this isn't necessarily
+ * set when a view is constructed externally.
+ */
 function _views_sanitize_view(&$view) {
   _views_check_arrays($view); // so reference works.
   if (is_array($view->field)) {
@@ -497,6 +556,11 @@ function _views_sanitize_view(&$view) {
   }
 }
 
+/*
+ * Provides internal, default views that can always be used. This area is
+ * a little grey right now -- many of these views should be provided
+ * by other modules, and not always be active.
+ */
 function _views_internal_default_views() {
   if (module_exist('comment')) {
     $view = new stdClass();
@@ -614,6 +678,9 @@ function _views_internal_default_views() {
   return $views;
 }
 
+/*
+ * Build default view information from all modules and cache it.
+ */
 function _views_get_default_views() {
   global $VIEWS_DEFAULT_VIEWS;
 
@@ -630,30 +697,89 @@ function _views_get_default_views() {
 // Drupal Hooks
 
 
+/*
+ * Implementation of hook_help()
+ */
 function views_help($section) {
   switch ($section) {
+    case 'admin/help#views':
+        return _views_help_add();
     case 'admin/modules#description':
       return t('The views module creates customized views of node lists.');
     case 'admin/views/import':
-      return t('This is the import help.');
+      return t('You may import a view by cut-and-pasting the results of an export view. If the import is successful you will be taken to the Add View page with all of the settings of the imported view..');
     case 'admin/views':
-      return t('This is where you add a view. More text goes here.');
+      return t('This screen shows all of the views that are currently defined in your system. The default views are provided by Views and other modules and are automatically available. If a customized view of the same name exists, it will be used in place of a default view.');
   }
-}
-
-function views_perm() {
   if (!strncmp($section, 'admin/views', 11)) {
     switch (arg(2)) {
       case 'add':
       case 'edit':
-        return t('This is the edit view help.');
+        return t("There are many choices to make in editing a view.");
       case 'export':
-        return t('<p>You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location.</p>');
+        return t('You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location.');
     }
   }
+}
+
+/*
+ * Because the add/edit page is kind of complicated.
+ */
+function _views_help_add() {
+  $output = t("<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>");
+  $output .= t("<h3>View Types</h3><dl>\n");
+  $output .= t("<dt><i>List View</i><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).\n");
+  $output .= t("<dt><i>Table View</i><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If the you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.\n");
+  $output .= t("<dt><i>Teaser List</i><dd>A Teaser List will simply present the teaser of each node retrieved.\n");
+  $output .= t("<dt><i>Full Nodes</i><dd>A Teaser List will simply present the full content of each node retrieved.\n");
+  $output .= t("<dt><i>Random Teaser</i><dd>This will show a single random teaser.\n");
+  $output .= t("<dt><i>Random Node</i><dd>This will show a single random node's full view.\n");
+  $output .= "</dl>";
+
+  $output .= t("<h3>Fields</h3>\n");
+  $output .= t("<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n");
+  $fields = _views_get_fields();
+  foreach ($fields as $field) {
+    $output .= "<dt><i>$field[name]</i><dd>$field[help]\n";
+  }
+  $output .= "</dl>\n";
+
+  $output .= t("<h3>Arguments</h3>\n");
+  $output .= t("<p>Arguments can be passed to the View through the URL, in order to create views that are configurable by the user. This is very useful to create views for taxonomy, or to sort by user. When using arguments, substitution is performed on the title. %1 will represent argument 1, %2 will represent argument 2. Each argument has a title field; this title is used if providing a summary view (which can matter because the argument is missing which could result in confusing phrases such as 'view for')</p><dl>\n");
+  $arguments = _views_get_arguments();
+  foreach ($arguments as $argument) {
+    $output .= "<dt><i>$argument[name]</i><dd>$argument[help]\n";
+  }
+  $output .= "</dl>\n";
+
+  $output .= t("<h3>Filters</h3>\n");
+  $output .= t("<p>Views may be filtered to restrict the view on a number of criteria.</p><dl>\n");
+  $filters = _views_get_filters();
+  foreach ($filters as $filter) {
+    $output .= "<dt><i>$filter[name]</i><dd>$filter[help]\n";
+  }
+  $output .= "</dl>\n";
+
+  $output .= t("<h3>Sorting Critera</h3>\n");
+  $output .= t("<p>The result set may be sorted on any of the following criteria.</p><dl>\n");
+  $sorts = _views_get_sorts();
+  foreach ($sorts as $sort) {
+    $output .= "<dt><i>$sort[name]</i><dd>$sort[help]\n";
+  }
+  $output .= "</dl>\n";
+
+  return $output;
+}
+/*
+ * Implementation of hook_perm()
+ */
+function views_perm() {
   return array('administer views');
 }
 
+/*
+ * Implementation of hook_menu()
+ */
 function views_menu($may_cache) {
   $items = array();
 
@@ -716,9 +842,13 @@ function views_menu($may_cache) {
 }
 
 
+/*
+ * Implementation of hook_block()
+ */
 function views_block($op = 'list', $delta = 0) {
   $block = array();
   if ($op == 'list') {
+    // Grab views from the database and provide them as blocks.
     $result = db_query("SELECT vid, title, name FROM {view_view} WHERE block = 1");
     while ($view = db_fetch_object($result)) {
       $block[$view->name]['info'] = $view->title;
@@ -731,7 +861,6 @@ function views_block($op = 'list', $delta = 0) {
     return $block;
   }
   else if ($op == 'view') {
-    // Only display this block when the user is browsing a book:
     return views_view_block($delta);
   }
 }
@@ -739,7 +868,9 @@ function views_block($op = 'list', $delta = 0) {
 // ---------------------------------------------------------------------------
 // Administrative Pages
 
-
+/*
+ * This page lists all system views and provides links to edit them.
+ */
 function views_admin_page() {
   $numViews = 25;
 
@@ -758,8 +889,6 @@ function views_admin_page() {
   else {
     $output .= "<p>No views have currently been defined.</p>";
   }
-//  $output .= "<br>" . l('Add a view', 'admin/views/add') . "<br>";
-//  $output .= "<br>" . l('Import a view', 'admin/views/import') . "<br>";
 
   $output .= "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>";
   $items = array();
@@ -772,15 +901,17 @@ function views_admin_page() {
 
   if ($items) {
     $output .= theme('table', array('Default View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Default Views");
-//    $output .= theme('pager', 2, $numViews);
   }
   else {
     $output .= "<p>No views have currently been defined.</p>";
   }
-//  print theme('page', $output);
+
   return $output;
 }
 
+/*
+ * Handle submit buttons on a view form.
+ */
 function views_edit_view_submit($form_id, $form) {
 //  dprint_r($form);
   $view = array2object($form);
@@ -794,6 +925,9 @@ function views_edit_view_submit($form_id, $form) {
   return drupal_goto('admin/views');
 }
 
+/*
+ * Provide a textarea to paste a view export into.
+ */
 function views_admin_import_page() {
   $op = $_POST['op'];
 
@@ -816,6 +950,9 @@ function views_admin_import_page() {
   return drupal_get_form('views_import_view', $form);
 }
 
+/*
+ * Handle the submit button on importing a view.
+ */
 function views_import_view_submit($formid, $form) {
   ob_start();
   eval($form['view']);
@@ -832,10 +969,17 @@ function views_import_view_submit($formid, $form) {
   }
 }
 
+/*
+ * Export a view for cut & paste.
+ */
 function views_admin_export_page($vid = '') {
+  // FIXME: Change this to a textarea.
   return "<pre>" . views_create_view_code($vid) . "</pre>";
 }
 
+/*
+ * Provide a form to add a view. Allow adding a view from default templates.
+ */
 function views_admin_add_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
@@ -862,6 +1006,9 @@ function views_admin_add_page() {
   return _views_view_form($edit, $view, $op);
 }
 
+/*
+ * Provide a form to edit a view.
+ */
 function views_admin_edit_page($vid = '') {
   $edit = $_POST['edit'];
   $op = $_POST['op'];
@@ -888,6 +1035,9 @@ function views_admin_edit_page($vid = '') {
   return _views_view_form($edit, $view, $op);
 }
 
+/*
+ * Provide a form to confirm deletion of a view.
+ */
 function views_admin_delete_page($vid = '') {
   $view = _views_load_view($vid);
 
@@ -903,6 +1053,9 @@ function views_admin_delete_page($vid = '') {
   );
 }
 
+/*
+ * Handle the submit button to delete a view.
+ */
 function views_delete_confirm_submit($formid, $form) {
   if ($form['confirm']) {
     _views_delete_view(array2object($form));
@@ -910,6 +1063,9 @@ function views_delete_confirm_submit($formid, $form) {
   }
 }
 
+/*
+ * Get an empty view with basic defaults.
+ */
 function _views_get_default_view($template = '') {
   if ($template) {
     $dviews = _views_get_default_views();
@@ -919,7 +1075,7 @@ function _views_get_default_view($template = '') {
     }
   }
   
-  $view = stdClass();
+  $view = new stdClass();
   $view->use_pager = 1;
   $view->nodes_per_page = variable_get('default_nodes_main', 10);
   $view->header_format = variable_get('filter_default_format', 1);
@@ -930,6 +1086,10 @@ function _views_get_default_view($template = '') {
   return $view;
 }
 
+/*
+ * Ensure that all the arrays in a view exist so we don't run into array
+ * operations on a non-array error.
+ */
 function _views_check_arrays(&$view) {
   if (!is_array($view->field))
     $view->field = array();
@@ -943,24 +1103,36 @@ function _views_check_arrays(&$view) {
     $view->filter = array();
 }
 
+/*
+ * Swap two items in an array.
+ */
 function _views_swap(&$arr, $a, $b) {
   $temp = $arr[$a];
   $arr[$a] = $arr[$b];
   $arr[$b] = $temp;
 }
 
+/*
+ * Move an item up in an array.
+ */
 function _views_move_up(&$arr, $i) {
   if ($i <= 0 || $i >= count($arr))
     return; // can't do it.
   _views_swap($arr, $i - 1, $i);
 }
 
+/*
+ * Move an item down in an array.
+ */
 function _views_move_down(&$arr, $i) {
   if ($i >= count($arr) - 1 || $i < 0)
     return; // can't do it.
   _views_swap($arr, $i + 1, $i);
 }
 
+/*
+ * Move an item to the front of an array.
+ */
 function _views_move_top(&$arr, $i) {
   if ($i <= 0 || $i >= count($arr))
     return; // can't do it.
@@ -970,6 +1142,9 @@ function _views_move_top(&$arr, $i) {
   $arr[0] = $temp;
 }
 
+/*
+ * Move an item to the end of an array.
+ */
 function _views_move_bottom(&$arr, $i) {
   $end = count($arr) - 1;
   if ($i >= $end || $i < 0)
@@ -980,6 +1155,10 @@ function _views_move_bottom(&$arr, $i) {
   $arr[$end] = $temp;
 }
 
+/*
+ * Figure out which of the many, many buttons on a form were clicked and
+ * handle it.
+ */
 function _views_check_sub_ops(&$view, $var) {
   foreach ($view->$var as $i => $obj) {
     if (!$obj['op'])
@@ -1013,6 +1192,10 @@ function _views_check_sub_ops(&$view, $var) {
   return false;
 }
 
+/*
+ * Figure out if one of the many, many buttons on a form were clicked, and
+ * handle it.
+ */
 function _views_check_ops(&$view, $op) {
   if (!$op) {
     // Could probably use short circuiting here to make prettier
@@ -1043,6 +1226,9 @@ function _views_check_ops(&$view, $op) {
   }
 }
 
+/*
+ * Custom form element to do our nice images.
+ */
 function hook_elements() {
   $type['imagebutton'] = array('#input' => TRUE, '#name' => 'op', '#button_type' => 'submit', '#form_submitted' => TRUE);
 }
@@ -1051,8 +1237,10 @@ function theme_imagebutton($element) {
   return '<input type="image" class="form-'. $element['#button_type'] .'" name="'. $element['#name'] .'" value="'. check_plain($element['#value']) .'" '. drupal_attributes($element['#attributes']) ." />\n";
 }
 
+/*
+ * Display all the guts of a view in a form for editing.
+ */
 function _views_view_form($view, $orig, $op = '') {
-//  print "<pre>" . var_export($edit, true) . "</pre>";
   if ($view) {
     _views_check_arrays($view); // make sure arrays that might be empty get set
     _views_check_ops($view, $op);
@@ -1083,13 +1271,6 @@ function _views_view_form($view, $orig, $op = '') {
     '#type' => 'hidden',
     '#value' => $view->changed,
   );
-  //  $form['working'] = array(
-  //    '#type' => 'hidden',
-  //    '#value' => true,
-  //  );
-
-    // DEBUGGING
-  //    $form .= "<pre>" . var_export($view, TRUE) . "</pre>";
 
   $form['display'] = array(
     '#type' => 'fieldset',
@@ -1223,9 +1404,6 @@ function _views_view_form($view, $orig, $op = '') {
 
   $form['add'] = array('#tree' => true);
 
-  // FIXME: Put in theme for markup.
-  //  $group = "<p>Fields in this section will appear in the table in this order, only if List Type above is set to Table.</p>\n";
-  //  $list = "";
   $form['field'] = array('#tree' => true);
 
   foreach ($view->field as $i => $field) {
@@ -1257,17 +1435,14 @@ function _views_view_form($view, $orig, $op = '') {
 
     $form['field'][$i]['label'] = array(
       '#type' => 'textfield',
-//      '#title' => t('Label'),
       '#default_value' => $field['label'],
       '#size' => 15,
       '#maxlength' => 25,
-//      '#description' => t('The name displayed to the user.'),
     );
 
     if (is_array($fieldinfo['handler'])) {
       $form['field'][$i]['handler'] = array(
         '#type' => 'select',
-//        '#title' => t('Handler'),
         '#default_value' => $field['handler'],
         '#options' => $fieldinfo['handler'],
       );
@@ -1276,16 +1451,13 @@ function _views_view_form($view, $orig, $op = '') {
     if ($fieldinfo['sortable']) {
       $form['field'][$i]['sortable'] = array(
         '#type' => 'select',
-//        '#title' => t('Click sortable'),
         '#default_value' => $field['sortable'],
         '#options' => array('0' => t("No"), "1" => t("Yes")),
       );
       $form['field'][$i]['defaultsort'] = array(
         '#type' => 'select',
-//        '#title' => t('Default Sorting'),
         '#default_value' => $field['defaultsort'],
         '#options' => array('0' => t("None"), "ASC" => t("Ascending"), "DESC" => t("Descending")),
-//        '#description' => t('Only set one field to default sorting!'),
       );
     }
     if (isset($fieldinfo['help'])) {
@@ -1328,7 +1500,6 @@ function _views_view_form($view, $orig, $op = '') {
 
   $form['add']['field'] = array(
     '#type' => 'select',
-//    '#title' => t('Add a Field'),
     '#default_value' => NULL,
     '#options' => $fieldnames,
   );
@@ -1345,7 +1516,6 @@ function _views_view_form($view, $orig, $op = '') {
 
     $form['argument'][$i]['type'] = array(
       '#type' => 'select',
-//      '#title' => t("Argument $i"),
       '#default_value' => $argument['type'],
       '#options' => $argnames,
     );    
@@ -1428,24 +1598,18 @@ function _views_view_form($view, $orig, $op = '') {
       '#value' => t("Bottom"),
     );
   }
-//  if (!$arggroup) theme should handle this.
-//    $arggroup = "<p>This view does not accept arguments</p>";
 
   $form['add']['argument'] = array('#tree' => true);
 
   $form['add']['argument']['type'] = array(
     '#type' => 'select',
-//    '#title' => t('Argument'),
     '#default_value' => NULL,
     '#options' => $argnames,
-//    '#description' => t('If using a URL and you want it to accept arguments, this is how to parse the argument. For example, "views/VIEWNAME/1" could produce nodes authored by User ID #1 if this field is set to User ID. It can accept multiple, successive arguments, but be careful that they make sense together!'),
   );
   $form['add']['argument']['argdefault'] = array(
     '#type' => 'select',
-//    '#title' => t('Argument Default'),
     '#default_value' => NULL,
     '#options' => _views_get_arguments_default(),
-//    '#description' => t('What action to take if the argument is not given in URL.'),
   );
   $form['add']['argument']['title'] = array(
     '#type' => 'textfield',
@@ -1535,7 +1699,6 @@ function _views_view_form($view, $orig, $op = '') {
         case 'select':
           $form['filter'][$i]['value'] = array(
             '#type' => 'select',
-//            '#title' => t('Value'),
             '#default_value' => $filter['value'],
             '#options' => $list,
             '#multiple' => $multiple,
@@ -1549,7 +1712,6 @@ function _views_view_form($view, $orig, $op = '') {
       }
       $form['filter'][$i]['value'] = array(
         '#type' => 'textfield',
-//        '#title' => t('Value'),
         '#default_value' => $filter['value'],
         '#size' => 20,
         '#maxlength' => 255,
@@ -1593,13 +1755,8 @@ function _views_view_form($view, $orig, $op = '') {
     );
   }
 
-//  if (!$group) {
-//    $group = "<p>No filtering Criteria Specified</p>";
-//  }
-
   $form['add']['filter'] = array(
     '#type' => 'select',
-//    '#title' => t("Filter"),
     '#default_value' => NULL,
     '#options' => $filternames,
   );
@@ -1696,20 +1853,14 @@ function _views_view_form($view, $orig, $op = '') {
     );
   }
 
-//  if (!$group) {
-//    $group = "<p>No Sorting Criteria Specified</p>";
-//  }
-
   $form['add']['sort']['#tree'] = true;
   $form['add']['sort']['field'] = array(
     '#type' => 'select',
-//    '#title' => t("Add Criteria"),
     '#default_value' => NULL,
     '#options' => $sortnames,
   );
   $form['add']['sort']['sortorder'] = array(
     '#type' => 'select',
-//    '#title' => t("Order"),
     '#default_value' => NULL,
     '#options' => _views_sortorders(),
   );
@@ -1735,6 +1886,9 @@ function _views_view_form($view, $orig, $op = '') {
   return drupal_get_form('views_edit_view', $form);
 }
 
+/*
+ * Display the form built by _views_view_form()
+ */
 function theme_views_edit_view($form) {
 //  print "<pre>" . var_export($form, true) . "</pre>";
 
@@ -1895,22 +2049,8 @@ function theme_views_edit_view($form) {
 }
 
 /*
-function _views_delete_form($view) {
-  // FIXME: Use confirm_form() instead of this!!
-  $form['vid'] = array(
-    '#type' => 'value',
-    '#value' => $view->vid,
-  );
-
-  $form['text'] .= array('#value' => "<p>Really delete view '$view->name'?</p>");
-  $form[] = array(
-    '#type' => 'submit',
-    '#value' => 'Really Delete',
-  );
-
-  return drupal_get_form('views_delete_view_form', $form);
-}
-*/
+ * Validate that a view sent via form is OK.
+ */
 
 function views_edit_view_validate($form_id, $view) {
 //  dprint_r(var_export($view, true));
@@ -1973,8 +2113,10 @@ function views_edit_view_validate($form_id, $view) {
 // ---------------------------------------------------------------------------
 // View Construction
 
-// This function loads a view by name or vid; if not found in db, it looks
-// for a default view by that name.
+/*
+ * This function loads a view by name or vid; if not found in db, it looks
+ * for a default view by that name.
+ */
 function views_get_view($viewname) {
   $view = _views_load_view($viewname);
   if ($view)
@@ -1990,7 +2132,9 @@ function views_get_view($viewname) {
 
 }
 
-// This views a view by page, and should only be used as a callback.
+/*
+ * This views a view by page, and should only be used as a callback.
+ */
 function views_view_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
@@ -2012,11 +2156,12 @@ function views_view_page() {
   }
 
   $output = views_build_view('page', $view, $args, $view->use_pager, $view->nodes_per_page);
-//  print theme('page', $output);
   return $output;
 }
 
-// This views a view by block. Can be used as a callback or programmatically.
+/*
+ * This views a view by block. Can be used as a callback or programmatically.
+ */
 function views_view_block($vid) {
   $view = views_get_view($vid);
 
@@ -2028,7 +2173,9 @@ function views_view_block($vid) {
   return $block;
 }
 
-// This builds a query for the view.
+/*
+ * This builds a query for the view.
+ */
 function _views_build_query(&$view, $args = array()) {
   $query = new _views_query();
 
@@ -2088,36 +2235,40 @@ function _views_build_query(&$view, $args = array()) {
   return $info;
 
 }
-
-// This builds the basic view.
-// $type:
-//    'page' -- Produce output as a page, sent through theme.
-//      The only real difference between this and block is that
-//      a page uses drupal_set_title to change the page title.
-//    'block' -- Produce output as a block, sent through theme.
-//    'embed' -- Use this if you want to embed a view onto another page,
-//      and don't want any block or page specific things to happen to it.
-//    'result' -- return an $info array. The array contains:
-//      query: The actual query ran.
-//      countquery: The count query that would be run if limiting was required.
-//      summary: True if an argument was missing and a summary was generated.
-//      level: What level the missing argument was at.
-//      result: Database object you can use db_fetch_object on.
-//    'items' -- return info array as above, except instead of result,
-//      items: An array of objects containing the results of the query.
-// $view:
-//   The actual view object. Use views_get_view() if you only have the name or
-//   vid.
-// $args:
-//   args taken from the URL. Not relevant for many views. Can be null.
-// $use_pager: If set, use a pager. Set this to the pager id you want it
-//   to use if you plan on using multiple pagers on a page. To go with the
-//   default setting, set to $view->use_pager.
-// $limit: Required if $use_pager is set; if $limit is set and $use_pager is
-//   not, this will be the maximum number of records returned. This is ignored
-//   if using a view set to return a random result. To go with the default
-//   setting set to $view->nodes_per_page or $view->nodes_per_block.
-
+/*
+ * This builds the basic view.
+ * @param $type
+ *    'page' -- Produce output as a page, sent through theme.
+ *      The only real difference between this and block is that
+ *      a page uses drupal_set_title to change the page title.
+ *    'block' -- Produce output as a block, sent through theme.
+ *    'embed' -- Use this if you want to embed a view onto another page,
+ *      and don't want any block or page specific things to happen to it.
+ *    'result' -- return an $info array. The array contains:
+ *      query: The actual query ran.
+ *      countquery: The count query that would be run if limiting was required.
+ *      summary: True if an argument was missing and a summary was generated.
+ *      level: What level the missing argument was at.
+ *      result: Database object you can use db_fetch_object on.
+ *    'items' -- return info array as above, except instead of result,
+ *      items: An array of objects containing the results of the query.
+ * @param $view
+ *   The actual view object. Use views_get_view() if you only have the name or
+ *   vid.
+ * @param $args
+ *   args taken from the URL. Not relevant for many views. Can be null.
+ * @param $use_pager
+ *   If set, use a pager. Set this to the pager id you want it
+ *   to use if you plan on using multiple pagers on a page. To go with the
+ *   default setting, set to $view->use_pager.
+ * @param $limit
+ *   Required if $use_pager is set; if $limit is set and $use_pager is
+ *   not, this will be the maximum number of records returned. This is ignored
+ *   if using a view set to return a random result. To go with the default
+ *   setting set to $view->nodes_per_page or $view->nodes_per_block. If
+ *   $use_pager is set and this field is not, you'll get a SQL error. Don't
+ *   do that!
+*/
 function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0) {
 
   if ($view->query) {
@@ -2191,6 +2342,9 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   return $output;
 }
 
+/*
+ * Take all the filters in a view and add them to the query object.
+ */
 function _views_view_build_filters(&$query, $view) {
   $filters = _views_get_filters();
 
@@ -2203,7 +2357,6 @@ function _views_view_build_filters(&$query, $view) {
     }
 
     $table = $filterinfo['table'];
-//    $table = 'x';
 
     if (function_exists($filterinfo['custom'])) {
       $filterinfo['custom']('custom', $filter, $filterinfo, $query);
@@ -2238,6 +2391,9 @@ function _views_view_build_filters(&$query, $view) {
 
 }
 
+/*
+ * Figure out what the title of a view should be.
+ */
 function _views_get_title($view) {
   $count = count($view->args);
   if ($count >= count($view->argument)) {
@@ -2258,6 +2414,9 @@ function _views_get_title($view) {
   return $title;
 }
 
+/*
+ * Add argument data to a view; mostly passes through to handlers.
+ */
 function _views_view_build_arg(&$query, $arg, $argdata) {
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argdata['type']]['handler']))
@@ -2268,6 +2427,9 @@ function _views_view_build_arg(&$query, $arg, $argdata) {
   
 }
 
+/*
+ * Add sorting information from a view to a query.
+ */
 function _views_view_build_sorts(&$query, $view) {
   $sorts = _views_get_sorts();
 
@@ -2290,18 +2452,10 @@ function _views_view_build_sorts(&$query, $view) {
   }
 }
 
-function _views_get_timezone() {
-  global $user;
-  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
-    $timezone = $user->timezone;
-  }
-  else {
-    $timezone = variable_get('date_default_timezone', 0);
-  }
-
-  return $timezone;
-}
-
+/*
+ * Build a summary if an argument was required and is not present. Mostly
+ * this calls handlers.
+ */
 function _views_build_summary(&$query, $argtype, $option) {
 
   $arginfo = _views_get_arguments();
@@ -2310,7 +2464,7 @@ function _views_build_summary(&$query, $argtype, $option) {
 
   $query->clear_fields();
 
-  $fieldinfo = $arginfo[$argtype]['handler']('fields', $query, $argtype, $option);
+  $fieldinfo = $arginfo[$argtype]['handler']('summary', $query, $argtype, $option);
 
   if ($fieldinfo['fieldname'])
     $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
@@ -2319,6 +2473,12 @@ function _views_build_summary(&$query, $argtype, $option) {
   $query->set_count_field("DISTINCT($fieldinfo[field])");
 }
 
+/*
+ * Determine whether or not a view is cacheable. A view is not cacheable if
+ * there is some kind of user input or data required. For example, views
+ * that need to restrict to the 'current' user, or any view that requires
+ * arguments or allow click-sorting are not cacheable.
+ */
 function _views_is_cacheable(&$view) {
   // views with arguments are immediately not cacheable.
   if (!empty($view->argument))
@@ -2344,25 +2504,33 @@ function _views_is_cacheable(&$view) {
 
 class _views_query {
 
+  /*
+   * Create the basic query object and fill with default values.
+   */
   function _views_query() {
     $this->where = "";
     $this->orderby = "";
     $this->groupby = "";
     $this->tables = array();
+    // Joins care about order, so we put our tables in a queue to make sure
+    // the order is correct.
     $this->tablequeue = array();
     $this->field = array("n.nid");
-    $this->table_data = _views_get_tables();
     $this->count_field = "*";
     $this->header = array();
   }
 
+  /*
+   * Add a field to the query table, possibly with an alias. This will 
+   * automatically call ensure_table to make sure the required table
+   * exists, *unless* $table is unset.
+   */
   function add_field($field, $table = 'n', $alias = '') {
     if ($table) {
       if ($table && $table != 'n') {
         $this->ensure_path($table);
         if (!$this->tables[$table]) {
-          $this->tables[$table] = 1;
-          $this->tablequeue[] = array('table' => $table, 'num' => '1');
+          $this->queue_table($table);
         }
       }
       $table .= ".";
@@ -2372,14 +2540,26 @@ class _views_query {
     $this->field[] = "$table$field$a";
   }
 
+  /*
+   * Remove all fields that may've been added; primarily used for summary
+   * mode where we're changing the query because we didn't get data we needed.
+   */
   function clear_fields() {
     $this->field = array();
   }
 
+  /*
+   * Set what field the query will count() on for paging.
+   */
   function set_count_field($field) {
     $this->count_field = $field;
   }
 
+  /*
+   * Add a simple WHERE clause to the query. The caller is responsible for
+   * ensuring that all fields are fully qualified (TABLE.FIELD) and that
+   * the table already exists in the query.
+   */
   function add_where($clause) {
     if (!$this->where)
       $this->where = "WHERE " . $clause;
@@ -2387,6 +2567,11 @@ class _views_query {
       $this->where .= " AND " . $clause;
   }
 
+  /*
+   * Add an ORDER BY clause to the query. It will ensure the table exists
+   * in the query, but it will not ensure the path, so the caller is
+   * responsible!
+   */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias) {
       $alias = $table;
@@ -2400,6 +2585,11 @@ class _views_query {
 		$this->orderby = " $alias.$field $order";
   }
 
+  /*
+   * Add multiple an orderby's. Right now I'm not sure why this function
+   * is separate from add_orderby above; I don't think it needs to
+   * be.
+   */
   function add_orderby_multi($table, $field, $order, $alias = '') {
     if (!$alias) {
       $alias = $table;
@@ -2423,6 +2613,11 @@ class _views_query {
     }
   }
 
+  /*
+   * Add a simple GROUP BY clause to the query. The caller is responsible
+   * for ensuring that the fields are fully qualified and the table is properly
+   * added.
+   */
   function add_groupby($clause) {
     if (!$this->groupby)
       $this->groupby = "GROUP BY " . $clause;
@@ -2430,6 +2625,11 @@ class _views_query {
       $this->groupby .= ", " . $clause;
   }
 
+  /*
+   * This function will ensure a table exists; if it already exists it won't
+   * do anything, but if it doesn't it will add the table. It will ensure a path
+   * leads back to the base table.
+   */
   function ensure_table($table) {
     if ($table == 'n' || $table == 'node')
       return;
@@ -2437,25 +2637,34 @@ class _views_query {
       return;
 
     if ($this->ensure_path($table)) {
-      $this->tables[$table] = 1;
-      $this->tablequeue[] = array('table' => $table, 'num' => '1');
+      $this->queue_table($table);
     }
   }
 
+  /*
+   * This function will add a table to the query.
+   *
+   * @param $table
+   *   The name of the table to add. It needs to exist in the global table
+   *   array.
+   * @param $ensure_path
+   *   If true, it will ensure that a path back to node exists. If false, it
+   *   assumes the caller is already sure about this and does not repeat it.
+   * @param $howmany
+   *   How many instances of the table to add? (Useful for interesting join 
+   *   combos)
+   * @param $joininfo
+   *   In some join configurations this table may actually join back through
+   *   a different method; this is most likely to be used when tracing
+   *   a hierarchy path. (node->parent->parent2->parent3). This parameter
+   *   will specify how this table joins if it is not the default.
+   */
   function add_table($table, $ensure_path = false, $howmany = 1, $joininfo = NULL) {
     if ($table == 'n' || $table == 'node')
       return;
 
-
     if ($ensure_path) {
       if (!$this->ensure_path($table)) {
-        return false;
-      }
-    }
-    else if (!$joininfo) {
-      // Don't trace if joininfo was supplied; in that case the sender is responsible
-      // for ensuring a connection can be made.
-      if (!$this->trace($table)) {
         return false;
       }
     }
@@ -2476,37 +2685,41 @@ class _views_query {
     return $this->tables[$table];
   }
 
+  /*
+   * Add a table to the queue in the specified position. This is a low level
+   * operation and should only be performed after all safety checking has been done.
+   */
+  function queue_table($table) {
+    if (!isset($this->tables[$table])) {
+      $this->tables[$table] = 1;
+    }
+    else {
+      $this->tables[$table]++;
+    }
+    $this->tablequeue[] = array('table' => $table, 'num' => $this->tables[$table]);
+  }
+
+  /*
+   * Set the table header; used for click-sorting because it's needed
+   * info to modify the ORDER BY clause.
+   */
   function set_header($header) {
     $this->header = $header;
   }
 
-// One of those times where recursion isn't evil. Go me!
-  function trace($table, $traced = array()) {
-    if ($table == 'n' || $table == 'node')
-      return true;
-
-    $left_table = $this->table_data[$table]['join']['left']['table'];
-
-    // Does it end at 'node'?
-    if ($left_table == 'node')
-      return true;
-
-    // Have we been this way?
-    if (isset($traced[$left_table]))
-      return false;
-
-    // Keep looking.
-    $traced[$left_table] = 1;
-    return $this->trace($left_table, $traced);
-  }
-
-  // because we're just making sure the linkages are ok,
-  // just put the table in. However, we don't do it until
-  // last in case there's a bad loop or something.
+  /*
+   * Make sure that the specified table can be properly linked to the base
+   * table in the JOINs. This function uses recursion. If the tables
+   * needed to complete the path back to the base table are not in the
+   * query they will be added, but additional copies will NOT be added
+   * if the table is already there.
+   */
   function ensure_path($table, $traced = array(), $add = array()) {
     if ($table == 'n' || $table == 'node')
       return true;
-    $left_table = $this->table_data[$table]['join']['left']['table'];
+    $table_data = _views_get_tables();
+
+    $left_table = $table_data[$table]['join']['left']['table'];
 
     // Does it end at 'node'?
     if ($left_table == 'node') {
@@ -2514,8 +2727,7 @@ class _views_query {
       foreach ($add as $t) {
         // Don't use add_table because it'll trace, and we already did that.
         // And we already know anything in $add isn't already in $this->tables
-        $this->tables[$table] = 1;
-        $this->tablequeue[] = array('table' => $table, 'num' => '1');
+        $this->queue_table($table);
       }
       return true;
     }
@@ -2535,6 +2747,16 @@ class _views_query {
     return $this->ensure_path($left_table, $traced, $add);
   }
 
+  /*
+   * Return the alias of a given table in the JOIN queries. If a table is in
+   * the query multiple times, use this function to figure out what successive
+   * iterations of the table will be named.
+   *
+   * @param $table
+   *   The name of the table in the global table array.
+   * @param $table_num
+   *   The instance number of the table.
+   */
   function get_table_name($table, $table_num) {
     if ($table_num < 2)
       return $table;
@@ -2542,52 +2764,26 @@ class _views_query {
       return $table . $table_num;
   }
 
-  // At this time this handles only numeric arguments.
-  function add_complex_filter($table, $field, $arg) {
-    $res = _views_break_phrase($arg);
-    $cmp = $res[0];
-    $tids = $res[1];
-
-    if ($cmp == 'or') {
-      $table_num = $this->add_table($table, true); // ensure path
-      $tn = $this->get_table_name($table, $table_num);
-      if (!$tn) // couldn't add the table
-        return;
-      $this->add_where("$tn.$field in (" . implode(',', $tids) . ")");
-    }
-    else {
-      $howmany = count($tids);
-      $high_table = $this->add_table($table, true, $howmany);
-      if (!$high_table) // couldn't add the table
-        return;
-
-      $table_num = $high_table - $howmany;
-      foreach ($tids as $tid) {
-        $table_num++;
-        $tn = $this->get_table_name($table, $table_num);
-        $this->add_where("$tn.$field = $tid");
-      }
-    }
-  }
-/*
-  function add_complex_sort($table, $field, $order) {
-    // We don't really care which table we use, so
-    // only add if the table's not in there.
-    if (!$this->tables[$table])
-      $this->add_table($table, true);
-    $this->add_orderby("$table.$field", $order);
-  }
-*/
+  /*
+   * Generate a query and a countquery from all of the information supplied
+   * to the object.
+   *
+   * @param $getcount
+   *   Provide a countquery if this is true, otherwise provide a normal query.
+   */
   function query($getcount = false) {
+//    dprint_r($this);
+    $table_data = _views_get_tables();
+    // Add all the tables to the query via joins. We assume all LEFT joins.
     foreach ($this->tablequeue as $tinfo) {
       $table = $tinfo['table'];
       $i = $tinfo['num'];
       $tn = $this->get_table_name($table, $i);
 
       if (!$this->joins[$table][$i]) {
-        $ltable = $this->table_data[$table]['join']['left']['table'];
-        $lfield = $this->table_data[$table]['join']['left']['field'];
-        $rfield = $this->table_data[$table]['join']['right']['field'];
+        $ltable = $table_data[$table]['join']['left']['table'];
+        $lfield = $table_data[$table]['join']['left']['field'];
+        $rfield = $table_data[$table]['join']['right']['field'];
       }
       else {
         $ltable = $this->joins[$table][$i]['ltable'];
@@ -2602,6 +2798,7 @@ class _views_query {
       $joins .= ' LEFT JOIN {' . $table. "} $tn ON $ltable.$lfield = $tn.$rfield";
     }
 
+    // If it's not a count query, add our fields
     if (!$getcount) {
       foreach($this->field as $field) {
         if (!$fields)
@@ -2635,7 +2832,24 @@ class _views_query {
 // ---------------------------------------------------------------------------
 // Utility
 
-// Cribbed from taxonomy. Only works for numeric arguments.
+/*
+ * Figure out what timezone we're in; needed for some date manipulations.
+ */
+function _views_get_timezone() {
+  global $user;
+  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
+    $timezone = $user->timezone;
+  }
+  else {
+    $timezone = variable_get('date_default_timezone', 0);
+  }
+
+  return $timezone;
+}
+
+/*
+ * Break x,y,z and x+y+z into an array.
+ */
 function _views_break_phrase($str) {
   if (preg_match('/^([0-9]+[+ ])+[0-9]+$/', $str)) {
     // The '+' character in a query string may be parsed as ' '.
@@ -2649,6 +2863,10 @@ function _views_break_phrase($str) {
   }
 }
 
+/*
+ * Add a where clause based on taxonomy. This is a pretty exciting piece of
+ * code because the clause and the JOINs are a bit complicated.
+ */
 function _views_add_taxonomy($op, $value, $depth, &$query) {
   // When filtering via depth, we have to add a chain. If it's an or query
   // we add 1 chain, but in an and query we actually basically have to add
@@ -2706,10 +2924,16 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
 // ---------------------------------------------------------------------------
 // Database functions
 
+/*
+ * Provide all the fields in a view.
+ */
 function _views_view_fields() {
   return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'block_more', 'url', 'changed', 'query', 'countquery');
 }
 
+/*
+ * Delete a view from the database.
+ */
 function _views_delete_view($view) {
   $view->vid = intval($view->vid);
   if (!$view->vid)
@@ -2719,6 +2943,9 @@ function _views_delete_view($view) {
   db_query("DELETE FROM {view_sort} where vid=$view->vid");
 }
 
+/*
+ * Load a view from the database.
+ */
 function _views_load_view($arg) {
 
   if (intval($arg) == 0)
@@ -2773,6 +3000,9 @@ function _views_load_view($arg) {
   return $view;
 }
 
+/*
+ * Save a view to the database.
+ */
 function _views_save_view($view) {
   _views_check_arrays($view);
 
@@ -2853,6 +3083,11 @@ function _views_save_view($view) {
 // ---------------------------------------------------------------------------
 // Themeable and support
 
+/*
+ * Figure out how to display the data of a field. Many fields simply display
+ * the data as-is, but many fields have to massage that data, which is
+ * done through handlers.
+ */
 function _views_handle_field($fields, $field, $data) {
 
   $info = $fields[$field['fullname']];
@@ -2861,7 +3096,6 @@ function _views_handle_field($fields, $field, $data) {
     return $field['handler']($info, $field, $data->$field['queryname'], $data);
   }
 
-
   if ($info['handler'] && is_string($info['handler']) && function_exists($info['handler'])) {
     return $info['handler']($info, $field, $data->$field['queryname'], $data);
   }
@@ -2869,6 +3103,9 @@ function _views_handle_field($fields, $field, $data) {
   return $data->$field['queryname'];
 }
 
+/*
+ * Construct a header for a table view.
+ */
 function _views_construct_header($view, $fields) {
   foreach($view->field as $field) {
     $header = array();
@@ -2892,6 +3129,9 @@ function _views_construct_header($view, $fields) {
   return $headers;
 }
 
+/*
+ * Display the nodes of a view as a list.
+ */
 function views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
     $item = '';
@@ -2906,6 +3146,9 @@ function views_view_list($view, $nodes) {
     return theme('item_list', $items);
 }
 
+/*
+ * Display the nodes of a view as a table.
+ */
 function views_view_table($view, $nodes) {
   $fields = _views_get_fields(); 
 
@@ -2922,15 +3165,20 @@ function views_view_table($view, $nodes) {
   return theme('table', $view->table_header, $rows);
 }
 
+/*
+ * Display the nodes of a view as plain nodes.
+ */
 function views_view_nodes($nodes, $teasers = true, $links = true) {
   foreach ($nodes as $n) {
     $node = node_load($n->nid);
-//    $node = node_load(array('nid'=> $n->nid));
     $output .= node_view($node, $teasers, false, $links);
   }
   return $output;
 }
 
+/*
+ * Display a view.
+ */
 function theme_views_view($view, $type, $nodes) {
 
   if ($type == 'page')
@@ -2966,10 +3214,18 @@ function theme_views_view($view, $type, $nodes) {
   return "<div class='view' id='view-$view->name'>$output</div>\n";
 }
 
+/*
+ * Format the 'more' link for a view.
+ */
 function theme_views_more($name) {
   return "<div class='more'>" . l("[More]", "views/$name") . "</div>";
 }
 
+/*
+ * In a summary view, each entry links to a more specific entry
+ * in that view. Construct the base of that link. It should
+ * be views/VIEWNAME/arg1/arg2/arg3 etc.
+ */
 function views_get_summary_link($argtype, $viewname, $item, $level, $args)
 {
   $arginfo = _views_get_arguments();
@@ -2985,7 +3241,17 @@ function views_get_summary_link($argtype, $viewname, $item, $level, $args)
 
 }
 
+/*
+ * Display a summary version of a view.
+ */
 function theme_views_summary($view, $type, $level, $nodes, $args) {
+  if ($type == 'page') {
+    $title = $view->argument[$level]['title'];
+    if (!$title)
+      $title = $view->title;
+    drupal_set_title($title);
+  }
+
   foreach ($nodes as $node) {
     $items[] = array(views_get_summary_link($view->argument[$level]['type'], $view->name, $node, $level, $args), $node->num_nodes);
   }
@@ -2999,22 +3265,51 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
 // ---------------------------------------------------------------------------
 // Field handlers
 
+/*
+ * Field handlers accept the following arguments:
+ * @param $fieldinfo
+ *   The array of info for that field from the global tables array.
+ * @param $fielddata
+ *   All of the info about that field in the database. 
+ * @param $value
+ *   The value of the field fetched from the database.
+ * @param $data
+ *   The rest of the data about the node fetched from the database, in case
+ *   the handler needs more than just the field.
+ */
+
+/*
+ * Format a date.
+ */
 function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
   return format_date($value);
 }
 
+/*
+ * Format a date as "X time ago".
+ */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
   return format_interval(time() - $value);
 }
 
+/*
+ * Format a field as an integer.
+ */
 function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
   return intval($value);
 }
 
+/*
+ * Format a field as a simple string.
+ */
 function views_handler_field_string($fieldinfo, $fielddata, $value, $data) {
   return $value;
 }
 
+/*
+ * Format as a field as a username. Needs to also have a 'uid' available,
+ * specified in the field info.
+ */
 function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
   $obj->name = $value;
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
@@ -3022,20 +3317,32 @@ function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
   return theme('username', $obj);
 }
 
+/*
+ * Format a field as a link to a node.
+ */
 function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
   return l($value, "node/$data->nid");
 }
 
+/*
+ * Format a field as a link to a 'mark', stating whether or not the node has
+ * updated since it was last viewed by the user.
+ */
 function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
   return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->n_changed))
 ;
 }
 
-
+/*
+ * Format a field as a node type.
+ */
 function views_handler_nodetype($fieldinfo, $fielddata, $value, $data) {
   return node_get_name($value);
 }
 
+/*
+ * Format a field as a number of comments, plus the number of unread comments.
+ */
 function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
   $comments = intval($value);
   if (module_exist('comment') && $comments && $new = comment_num_new($data->nid)) {
@@ -3046,11 +3353,49 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
 }
 
 // ---------------------------------------------------------------------------
+// Sort handlers
+
+// function views_handler_sort_random(&$query, $sortinfo, $sort) {
+//   $query->add_orderby('', "rand()");
+// }
+
+// ---------------------------------------------------------------------------
 // Argument handlers
 
+
+/*
+ * Argument handlers take up to 4 fields, which vary based upon the operation.
+ * @param $op
+ *   The operation to perform:
+ *   'summary': A summary view is being constructed. In this case the handler
+ *              is to add the necessary components to the query to display
+ *              the summary. It must return a $fieldinfo array with 'field'
+ *              set to the field the summary is ordered by; if this is aliased
+ *              for some reason (such as being an aggregate field) set 'fieldname'
+ *              to the alias.
+ *    'filter': Filter the view based upon the argument sent; essentially just
+ *              add the where clause here.
+ *    'link':   Provide a link from a summary view based upon the argument sent.
+ *    'title':  Provide the title of a view for substitution.\
+ * @param &$query
+ *   For summary, filter and link, this is the actual query object; for title this is
+ *   simply the value of the argument. 
+ * @param $a2
+ *   For summary, this is the type of the argument. For the others, this is the info
+ *   for the argument from the global table. (Why is this not consistent? I dunno).
+ * @param $a3
+ *   For summary, this is the 'options' field from the db. For 'filter' this is
+ *   the argument received. For 'link' this is the base URL of the link. Not used
+ *   for 'title'.
+ *   
+ */
+
+/*
+ * Handle the node type argument.
+ */
 function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $query->add_field("type");
       $query->add_groupby("n.type");
       $fieldinfo['field'] = "n.type";
@@ -3068,7 +3413,7 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
 
 function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $query->add_table('users', true);
       $query->add_field('name', 'users');
       $query->add_field('uid', 'users');
@@ -3093,7 +3438,7 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
 
 function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $query->ensure_table('term_data', true);
       $query->add_field('name', 'term_data');
       $query->add_field('weight', 'term_data');
@@ -3111,7 +3456,6 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       else {
         $values = _views_break_phrase($arg);
         _views_add_taxonomy(strtoupper($values[0]), $values[1], $argtype['options'], $query);
-//        $query->add_complex_filter('term_node', 'tid', $arg);
       }
       break;
     case 'link':
@@ -3128,7 +3472,7 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
 
 function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $query->add_table('term_data', true);
       $len = intval($arg);
       if ($len <= 0) {
@@ -3158,7 +3502,7 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
 
 function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $len = intval($arg);
       if ($len <= 0) {
         $fieldinfo['field'] = "n.title";
@@ -3185,7 +3529,7 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       $fieldinfo['field'] = "YEAR(FROM_UNIXTIME(n.created+$timezone))";
       $fieldinfo['fieldname'] = "year";
       $query->add_field('created');
@@ -3205,7 +3549,7 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       $fieldinfo['field'] = "MONTH(FROM_UNIXTIME(n.created+$timezone))";
       $fieldinfo['fieldname'] = "name";
       $query->add_field('created');
@@ -3225,7 +3569,7 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       // The 3 makes the week 1-53, the first week of the year has at least 3 days
       $fieldinfo['field'] = "WEEK(FROM_UNIXTIME(n.created+$timezone), 3)";
       $fieldinfo['fieldname'] = "name";
@@ -3247,7 +3591,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m')";
       $fieldinfo['fieldname'] = "name";
       $query->add_field('created');
@@ -3266,7 +3610,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d')";
       $fieldinfo['fieldname'] = "name";
       $query->add_field('created');
@@ -3285,6 +3629,28 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
 // ---------------------------------------------------------------------------
 // Filter handlers
 
+/*
+ * There are two kinds of filter handlers here; the easy kind simply creates an
+ * array of options. For example, for taxonomy we provide a list of all taxonomy
+ * terms which is placed in the select box.
+ *
+ * The other type is the 'custom' handler which is used to create a customized
+ * WHERE clause for specialized filters.
+ *
+ * It takes 4 parameters.
+ * @param $op
+ *   At this time it will always be 'custom'.
+ * @param $filter
+ *   Information on the filter from the database, including 'options', 'value' and 'operator'.
+ * @param $filterinfo
+ *   Information on the filter from the global table array.
+ * @param &$query
+ *   The query object being worked on.
+ */
+
+/*
+ * Filter a view based on taxonomy id.
+ */
 function views_handler_filter_tid() {
   $tids = array();
   $result = db_query("SELECT DISTINCT(td.tid), td.name, v.name as vocabname FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid ORDER BY v.weight, v.name, td.weight, td.name");
@@ -3294,7 +3660,9 @@ function views_handler_filter_tid() {
 
   return $tids;
 }
-
+/*
+ * add custom WHERE clauses and joins to a query based on taxonomy.
+ */
 function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
   // When filtering via depth, we have to add a chain. If it's an or query
   // we add 1 chain, but in an and query we actually basically have to add
@@ -3304,6 +3672,9 @@ function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
 
 }
 
+/*
+ * Create a list of vocabulary names and IDs.
+ */
 function views_handler_filter_vid() {
   $vids = array();
   $result = db_query("SELECT v.vid, v.name FROM {vocabulary} v ORDER BY v.weight, v.name");
@@ -3313,9 +3684,12 @@ function views_handler_filter_vid() {
   return $vids;
 }
 
-// I worry this will really, really suck for large sites.
-// But then, why would large sites create a filter for one particular user?
-// Better to go with roles.
+/*
+ * Create a list of usernames.
+ * I worry this will really, really suck for large sites.
+ * But then, why would large sites create a filter for one particular user?
+ * Better to go with roles.
+ */
 function views_handler_filter_username() {
   $uids = array();
   $result = db_query("SELECT u.uid, u.name FROM {users} u WHERE uid != 0 ORDER BY u.name");
@@ -3325,14 +3699,24 @@ function views_handler_filter_username() {
   return $uids;
 }
 
+/*
+ * Simple array for anonymous..
+ */
+
 function views_handler_filter_useranon() {
   return array("0" => variable_get('anonymous', 'Anonymous'));
 }
 
+/*
+ * Simple array for current user.
+ */
 function views_handler_filter_usercurrent() {
   return array("-1" => t('Currently Logged In User'));
 }
 
+/*
+ * Custom filter for current user.
+ */
 function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
   global $user;
   $query->ensure_table("users");
@@ -3340,6 +3724,9 @@ function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$qu
 
 }
 
+/*
+ * Create a list of roles.
+ */
 function views_handler_filter_role() {
   $rids = array();
   $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
@@ -3349,6 +3736,9 @@ function views_handler_filter_role() {
   return $rids;
 }
 
+/*
+ * Create a list of node types.
+ */
 function views_handler_filter_nodetype($op) {
   $nodes = array();
   foreach (node_get_types() as $type => $name) {
@@ -3361,18 +3751,30 @@ function views_handler_filter_nodetype($op) {
 // ---------------------------------------------------------------------------
 // Operator handlers (for filters)
 
+/*
+ * A list of and/or/nor.
+ */
 function views_handler_operator_andor() {
   return array('AND' => 'Is All Of', 'OR' => 'Is One Of', 'NOR' => "Is None Of");
 }
 
+/*
+ * A list of or/nor.
+ */
 function views_handler_operator_or() {
   return array('OR' => 'Is One Of', 'NOR' => "Is None Of");
 }
 
+/*
+ * A list of equal or not equal to.
+ */
 function views_handler_operator_eqneq() {
   return array('=' => 'Is Equal To', '!=' => 'Is Not Equal To');
 }
 
+/*
+ * A list of yes/no.
+ */
 function views_handler_operator_yesno() {
   return array('1' => 'Yes', '0' => 'No');
 }
@@ -3385,8 +3787,9 @@ function views_handler_operator_yesno() {
 // ---------------------------------------------------------------------------
 // View creator tool (for module developers)
 
-// TO USE THIS TOOL: Use a PHP snippet or something to call this function!
-
+/*
+ * This function creates view code for a view.
+ */
 function views_create_view_code($vid) {
   $view = _views_load_view($vid);
   if (!$view)
