@@ -346,6 +346,30 @@ function _views_internal_tables() {
     )
   );
   
+  $tables['history'] = array(
+    "name" => "history",
+    "provider" => "internal",
+    "join" => array(
+      "left" => array(
+        "table" => "node",
+        "field" => "nid"
+      ), 
+      "right" => array(
+        "field" => "nid"
+      ), 
+    ),
+    "filters" => array(
+      "timestamp" => array(
+        'name' => "Node: Has New Content",
+        'operator' => array("Has"),
+        'list' => array("New Content"),
+        'custom' => "views_handler_filter_isnew",
+        'cacheable' => 'no',
+        'help' => "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes.",
+      ),
+    ),
+  );
+
   $tables['n'] = array(
     "name" => "n", 
     "provider" => "internal", // won't show up in external list.
@@ -3721,7 +3745,28 @@ function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$qu
   global $user;
   $query->ensure_table("users");
   $query->add_where("users.uid $filter[operator] '$user->uid'");
+}
 
+/*
+ * Custom filter for new content.
+ */
+function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
+  global $user;
+  if (!$user || !$user->uid)
+    return;
+
+  $query->ensure_table("history");
+  if (module_exist("comment")) {
+    $query->ensure_table("node_comment_statistics");
+  }
+  // NULL in case a history record doesn't exist. That's clearly new content.
+  $query->add_where("(history.uid = '$user->uid' OR history.uid IS NULL)");
+  if (module_exist("comment")) {
+    $query->add_where("(history.timestamp IS NULL OR history.timestamp < n.changed OR history.timestamp < node_comment_statistics.last_comment_timestamp)");
+  }
+  else {
+    $query->add_where("history.timestamp < n.changed");
+  }
 }
 
 /*
