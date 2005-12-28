@@ -1,3 +1,6 @@
+// $Id$
+
+
 OVERVIEW
 
 The views module provides a flexible method for Drupal administrators to control 
@@ -98,21 +101,12 @@ Views provides almost too many features in order to please the user.
 
 NOTES
 
-The module is implemented using only 4.6 features for now. I'd like to keep it 
-this way until it's ready, and then jump it to 4.7, mostly because I don't have 
-any 4.7 systems right now, and I don't want to take the time to upgrade or 
-create one until there's a stable release.
-
-I probably wrote this thing a little too quickly. Some parts are better than 
-others, and it's hard for me to tell which parts are which at this point.
-
-database.inc has a minor bug that makes from_unixtime not work:
+In Drupal 4.6, database.inc has a minor bug that makes from_unixtime not work:
 
 (line 246 in my version but it's kind of old).
     $query = preg_replace('|FROM[^[:upper:]/,]+|','\0 '. $join .' ', $query);
 should be
     $query = preg_replace('|FROM[^[:upper:]_/,]+|','\0 '. $join .' ', $query);
-
 
 * Half-assed Changelog (mostly for schema):
 

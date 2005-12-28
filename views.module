@@ -164,7 +164,7 @@ function _views_internal_tables() {
           'list' => "views_handler_filter_tid",
           'option' => 'string',
           'operator' => "views_handler_operator_andor",
-          'custom' => 'views_handler_filter_tid_custom',
+          'handler' => 'views_handler_filter_tid_custom',
           'help' => 'When filtering by taxonomy term you may specify the "depth" as an option. Please see the taxonomy help for more information.',
         )
       )
@@ -317,7 +317,7 @@ function _views_internal_tables() {
         'name' => "Node: Author is Current User",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_usercurrent",
-        'custom' => "views_handler_filter_usercurrent_custom",
+        'handler' => "views_handler_filter_usercurrent_custom",
         'cacheable' => 'no',
         'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
       ),
@@ -363,7 +363,7 @@ function _views_internal_tables() {
         'name' => "Node: Has New Content",
         'operator' => array("Has"),
         'list' => array("New Content"),
-        'custom' => "views_handler_filter_isnew",
+        'handler' => "views_handler_filter_isnew",
         'cacheable' => 'no',
         'help' => "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes.",
       ),
@@ -427,7 +427,6 @@ function _views_internal_tables() {
     "filters" => array(
       "status" => array(
         'name' => "Node: Published",
-        'table' => "n",
         'operator' => array("=" => "Equals"),
         'list' => "views_handler_operator_yesno",
         'list-type' => "select",
@@ -435,7 +434,6 @@ function _views_internal_tables() {
       ),
       "promote" => array(
         'name' => "Node: Front Page",
-        'table' => "n",
         'operator' => array("=" => "Equals"),
         'list' => "views_handler_operator_yesno",
         'list-type' => "select",
@@ -443,7 +441,6 @@ function _views_internal_tables() {
       ),
       "type" => array(
         'name' => "Node: Type",
-        'table' => "n",
         'list' => "views_handler_filter_nodetype",
         'list-type' => 'list',
         'operator' => "views_handler_operator_or",
@@ -2382,8 +2379,8 @@ function _views_view_build_filters(&$query, $view) {
 
     $table = $filterinfo['table'];
 
-    if (function_exists($filterinfo['custom'])) {
-      $filterinfo['custom']('custom', $filter, $filterinfo, $query);
+    if (function_exists($filterinfo['handler'])) {
+      $filterinfo['handler']('handler', $filter, $filterinfo, $query);
     }
     else if (is_array($filter['value'])) {
       if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
@@ -3211,7 +3208,6 @@ function theme_views_view($view, $type, $nodes) {
 
   if ($view->header) {
     $header = check_markup($view->header, $view->header_format, false);
-//    dprint_r($header);
     $output = "<div class='view-header' id='view-header-$view->name'>$header</div>\n";
   }
 
@@ -3250,7 +3246,15 @@ function theme_views_more($name) {
  * in that view. Construct the base of that link. It should
  * be views/VIEWNAME/arg1/arg2/arg3 etc.
  */
-function views_get_summary_link($argtype, $viewname, $item, $level, $args)
+function views_get_summary_link($argtype, $item, $base)
+{
+  $arginfo = _views_get_arguments();
+
+  return $arginfo[$argtype]['handler']('link', $item, $argtype, $base);
+
+}
+
+function views_get_summary_link_base($argtype, $viewname, $level, $args)
 {
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argtype]['handler']))
@@ -3261,7 +3265,7 @@ function views_get_summary_link($argtype, $viewname, $item, $level, $args)
     $arg .= "/$args[$i]";
   }
 
-  return $arginfo[$argtype]['handler']('link', $item, $argtype, $arg);
+  return $arg;
 
 }
 
@@ -3276,8 +3280,9 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
     drupal_set_title($title);
   }
 
+  $base = views_get_summary_link_base($view->argument[$level]['type'], $view->name, $level, $args);
   foreach ($nodes as $node) {
-    $items[] = array(views_get_summary_link($view->argument[$level]['type'], $view->name, $node, $level, $args), $node->num_nodes);
+    $items[] = array(views_get_summary_link($view->argument[$level]['type'], $node, $base), $node->num_nodes);
   }
   if ($items)
     $output .= theme('table', array(), $items, array('id' => 'summary'));
@@ -3663,7 +3668,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
  *
  * It takes 4 parameters.
  * @param $op
- *   At this time it will always be 'custom'.
+ *   At this time it will always be 'handler'.
  * @param $filter
  *   Information on the filter from the database, including 'options', 'value' and 'operator'.
  * @param $filterinfo

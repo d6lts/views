@@ -1,3 +1,6 @@
+// $Id$
+
+
 Module Developer's API
 ======================
 
@@ -67,7 +70,7 @@ is an example of this data:
         'name' => "Node Author is Current User",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_usercurrent",
-        'custom' => "views_handler_filter_usercurrent_custom",
+        'handler' => "views_handler_filter_usercurrent_custom",
         'cacheable' => 'no', // for future use.
       ),
     )
@@ -199,7 +202,7 @@ system, exposes the 'users' table to the system.
         'name' => "Node Author is Current User",
         'operator' => "views_handler_operator_eqneq",
         'list' => "views_handler_filter_usercurrent",
-        'custom' => "views_handler_filter_usercurrent_custom",
+        'handler' => "views_handler_filter_usercurrent_custom",
         'cacheable' => 'no',
       ),
 
@@ -281,6 +284,71 @@ of code:
       )
     );
 
+Specifics
+=========
+
+This section is a theoretically exhaustive list of what parameters are available.
+
+Fields:
+  The key should be the database name of the field; it doesn't have to be,
+	however. You may include a handler which creates data for the field.
+
+  name: 
+		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+		your name field with something recognizable as your module.
+  sortable:
+	  If 'true' this field will offer click-sorting.
+  handler:
+	  Optional. Set to a string that is used for a handler; only necessary for
+		complex fields or non-fields. May be set to an array; if so, the user
+		will be allowed to choose the handler. The key will be the function name
+		and the value will be text displayed to the user.
+  addlfields: 
+	  Some handlers may require additional fields in the query; this will
+	  a automatically add them.
+  help:
+	  Help text for the field.
+  uid: 
+	  specific to the username handler; gives the name of the UID field so it
+		can properly use theme('username').
+
+Sorts:
+  The key should be the database name of the field to sort on.
+	name: 
+		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+		your name field with something recognizable as your module.
+	field:
+	  This is the actual database name of the field to sort on. Should match the
+		key.
+	help:
+		This is the help text for the sort, displayed to the admin.
+
+Filters:
+	The key should be the database name of the field that may be filtered on.
+  name:
+		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+		your name field with something recognizable as your module.
+	list: 
+		May be an array of options; the key of the array is stored as the 'value',
+		while the value of the array is displayed to the admin.
+	list-type:
+	  May be 'select' or 'list'; defaults to 'list'. 'list' indicates multi-select
+		capability, whereas select is just one.
+	operator:
+	  May be a string which points to a function, or may be an array of allowed
+		operators. (=, !=, LIKE, etc). In the case of a LIST, only AND, OR and NOR
+		have any meaning. There are several functions in Views that provide
+		typical operators, such as views_handler_operator_andor
+	cacheable:
+	  Whether or not the filter is cacheable. Defaults to true; use this if the
+		handler requires some run-time data (such as the currently logged in user).
+	handler:
+	  This is used for any custom filtering that needs to be done; useful for
+		complex filters that aren't quite as simple as just WHERE field operator value.
+	help:
+	  This is the help text displayed to the admin.
+
+
 Arguments
 =========
 
@@ -300,7 +368,7 @@ respect it's a little easier. Unfortunately, the handlers are much more complex.
 
 function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
   switch($op) {
-    case 'fields':
+    case 'summary':
       $query->add_field("type");
       $query->add_groupby("n.type");
       $fieldinfo['field'] = "n.type";
@@ -316,9 +384,9 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
   }
 }
 
-There are 3 operations for the handler:
+There are 4 operations for the handler:
 
-The 'fields' op means that the system wants to know what fields need to be
+The 'summary' op means that the system wants to know what fields need to be
 added to the query in order to utilize the argument. In the above case,
 the node type is used. (Note that the system calls the 'node' table 'n'. It is
 the only table it does not refer to by full name; this is because of the way
@@ -339,13 +407,39 @@ The 'title' op is called to deal with title substitution. For example,
 to be. In this case, the argument is passed via the $query parameter. Yea,
 I know. Overloading causes weirdness.
 
+/*
+ * Argument handlers take up to 4 fields, which vary based upon the operation.
+ * @param $op
+ *   The operation to perform:
+ *   'summary': A summary view is being constructed. In this case the handler
+ *              is to add the necessary components to the query to display
+ *              the summary. It must return a $fieldinfo array with 'field'
+ *              set to the field the summary is ordered by; if this is aliased
+ *              for some reason (such as being an aggregate field) set 'fieldname'
+ *              to the alias.
+ *    'filter': Filter the view based upon the argument sent; essentially just
+ *              add the where clause here.
+ *    'link':   Provide a link from a summary view based upon the argument sent.
+ *    'title':  Provide the title of a view for substitution.\
+ * @param &$query
+ *   For summary, filter and link, this is the actual query object; for title this is
+ *   simply the value of the argument. 
+ * @param $a2
+ *   For summary, this is the type of the argument. For the others, this is the info
+ *   for the argument from the global table. (Why is this not consistent? I dunno).
+ * @param $a3
+ *   For summary, this is the 'options' field from the db. For 'filter' this is
+ *   the argument received. For 'link' this is the base URL of the link. Not used
+ *   for 'title'.
+ *   
+ */
 Another, more complex example:
 
 function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
   $timezone = _views_get_timezone();
 
   switch($op) {
-    case 'fields':
+    case 'summary':
       $fieldinfo['field'] = "YEAR(FROM_UNIXTIME(n.created+$timezone))";
       $fieldinfo['fieldname'] = "year";
       $query->add_field('created');
@@ -356,7 +450,9 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
       $query->add_where("YEAR(FROM_UNIXTIME(n.created+$timezone)) = $year");
       break;
     case 'link':
-      return l($query->year, "views/$arg/$query->year");
+      return l($query->year, "$arg/$query->year");
+    case 'title':
+      return $query;
   }
 }
 
@@ -368,7 +464,7 @@ the query as 'field' AS 'fieldname' so that it knows how to refer to it.
 Handlers
 ========
 
-An example of a custom handler:
+An example of a custom filter handler:
 
 function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
   global $user;
@@ -403,17 +499,14 @@ Luckily for you, and me, this part is actually very simple.
 Expose your tables in your module. Then, use the interface and construct a
 view. Get it exactly the way you want it.
 
-Then, run this function: views_create_view_code($vid)
-$vid can either be the VID or the name of the view.
-
-Print the results of the function. You should be able to plug that code
+Then, export the view. You should be able to plug that code
 directly into your hook_views_default_tables(). Then just return the $views
 variable.
 
 Example:
 
   $view = new stdClass();
-  $view->name = 'tracker_trackerxxxx';
+  $view->name = 'tracker/tracker';
   $view->description = 'Shows all new activity on system.';
   $view->title = 'recent posts';
   $view->header = '';
