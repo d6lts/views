@@ -919,6 +919,7 @@ function _views_get_default_view($template = '') {
     }
   }
   
+  $view = stdClass();
   $view->use_pager = 1;
   $view->nodes_per_page = variable_get('default_nodes_main', 10);
   $view->header_format = variable_get('filter_default_format', 1);
@@ -2597,7 +2598,8 @@ class _views_query {
       // special case for node table
       if ($ltable == 'node')
         $ltable = 'n'; 
-      $joins .= " LEFT JOIN \{$table} $tn ON $ltable.$lfield = $tn.$rfield";
+      // Trying to get around problem with \ in PHP 5(?)
+      $joins .= ' LEFT JOIN {' . $table. "} $tn ON $ltable.$lfield = $tn.$rfield";
     }
 
     if (!$getcount) {
