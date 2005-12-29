@@ -3121,7 +3121,7 @@ function _views_handle_field($fields, $field, $data) {
     return $info['handler']($info, $field, $data->$field['queryname'], $data);
   }
 
-  return $data->$field['queryname'];
+  return check_plain($data->$field['queryname']);
 }
 
 /*
@@ -3329,18 +3329,11 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
- * Format a field as a simple string.
- */
-function views_handler_field_string($fieldinfo, $fielddata, $value, $data) {
-  return $value;
-}
-
-/*
  * Format as a field as a username. Needs to also have a 'uid' available,
  * specified in the field info.
  */
 function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
-  $obj->name = $value;
+  $obj->name = check_plain($value);
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
   $obj->uid = $data->$uidfield;
   return theme('username', $obj);
@@ -3350,7 +3343,7 @@ function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
  * Format a field as a link to a node.
  */
 function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
-  return l($value, "node/$data->nid");
+  return l(check_plain($value), "node/$data->nid");
 }
 
 /*
@@ -3358,7 +3351,7 @@ function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
  * updated since it was last viewed by the user.
  */
 function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
-  return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->n_changed))
+  return l(check_plain($value), "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->n_changed))
 ;
 }
 
@@ -3431,7 +3424,8 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'filter':
-      $query->add_where("n.type = '$arg'");
+      $where = db_escape_string($arg);
+      $query->add_where("n.type = '$where'");
       break;
     case 'link':
       return l($query->type, "$arg/$query->type");
@@ -3627,7 +3621,8 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'filter':
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m') = '$arg'");
+      $where = db_escape_string($arg);
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m') = '$where'");
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F, Y'), "$arg/$query->name");
@@ -3646,7 +3641,8 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'filter':
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d') = '$arg'");
+      $where = db_escape_string($arg);
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(n.created+$timezone), '%Y%m%d') = '$where'");
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F j, Y'), "$arg/$query->name");
@@ -3760,12 +3756,21 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   if (!$user || !$user->uid)
     return;
 
+  // Hey, Drupal kills old history, so nodes that haven't been updated
+  // since NODE_NEW_LIMIT are bzzzzzzzt outta here! 
+
+  $limit = NODE_NEW_LIMIT;
+
   $query->ensure_table("history");
   if (module_exist("comment")) {
     $query->ensure_table("node_comment_statistics");
+    $clause = "OR node_comment_statistics.last_comment_timestamp > $limit";
   }
+
   // NULL in case a history record doesn't exist. That's clearly new content.
-  $query->add_where("(history.uid = '$user->uid' OR history.uid IS NULL)");
+  // Unless it's very very old content.
+//  $query->add_where("(history.uid = '$user->uid' OR (history.uid IS NULL))");
+  $query->add_where("(history.uid = '$user->uid' OR (history.uid IS NULL AND (n.changed > $limit $clause)))");
   if (module_exist("comment")) {
     $query->add_where("(history.timestamp IS NULL OR history.timestamp < n.changed OR history.timestamp < node_comment_statistics.last_comment_timestamp)");
   }
