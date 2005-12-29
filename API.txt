@@ -291,62 +291,65 @@ This section is a theoretically exhaustive list of what parameters are available
 
 Fields:
   The key should be the database name of the field; it doesn't have to be,
-	however. You may include a handler which creates data for the field.
+  however. You may include a handler which creates data for the field.
 
   name: 
-		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
-		your name field with something recognizable as your module.
+    This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+    your name field with something recognizable as your module.
   sortable:
-	  If 'true' this field will offer click-sorting.
+    If 'true' this field will offer click-sorting.
   handler:
-	  Optional. Set to a string that is used for a handler; only necessary for
-		complex fields or non-fields. May be set to an array; if so, the user
-		will be allowed to choose the handler. The key will be the function name
-		and the value will be text displayed to the user.
+    Optional. Set to a string that is used for a handler; only necessary for
+    complex fields or non-fields. May be set to an array; if so, the user
+    will be allowed to choose the handler. The key will be the function name
+    and the value will be text displayed to the user.
   addlfields: 
-	  Some handlers may require additional fields in the query; this will
-	  a automatically add them.
+    Some handlers may require additional fields in the query; this will
+    a automatically add them.
   help:
-	  Help text for the field.
+    Help text for the field.
   uid: 
-	  specific to the username handler; gives the name of the UID field so it
-		can properly use theme('username').
+    specific to the username handler; gives the name of the UID field so it
+    can properly use theme('username').
+  notafield:
+    Set to true if this isn't actually field but instead is some sort of
+    aggregate.
 
 Sorts:
   The key should be the database name of the field to sort on.
-	name: 
-		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
-		your name field with something recognizable as your module.
-	field:
-	  This is the actual database name of the field to sort on. Should match the
-		key.
-	help:
-		This is the help text for the sort, displayed to the admin.
+  name: 
+    This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+    your name field with something recognizable as your module.
+  field:
+    This is the actual database name of the field to sort on. Should match the
+    key.
+  help:
+    This is the help text for the sort, displayed to the admin.
 
 Filters:
-	The key should be the database name of the field that may be filtered on.
+  The key should be the database name of the field that may be filtered on.
   name:
-		This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
-		your name field with something recognizable as your module.
-	list: 
-		May be an array of options; the key of the array is stored as the 'value',
-		while the value of the array is displayed to the admin.
-	list-type:
-	  May be 'select' or 'list'; defaults to 'list'. 'list' indicates multi-select
-		capability, whereas select is just one.
-	operator:
-	  May be a string which points to a function, or may be an array of allowed
-		operators. (=, !=, LIKE, etc). In the case of a LIST, only AND, OR and NOR
-		have any meaning. There are several functions in Views that provide
-		typical operators, such as views_handler_operator_andor
-	cacheable:
-	  Whether or not the filter is cacheable. Defaults to true; use this if the
-		handler requires some run-time data (such as the currently logged in user).
-	handler:
-	  This is used for any custom filtering that needs to be done; useful for
-		complex filters that aren't quite as simple as just WHERE field operator value.
-	help:
-	  This is the help text displayed to the admin.
+    This is the name displayed to the admin. PLEASE PLEASE PLEASE tag
+    your name field with something recognizable as your module.
+  list: 
+    May be an array of options; the key of the array is stored as the 'value',
+    while the value of the array is displayed to the admin.
+  list-type:
+    May be 'select' or 'list'; defaults to 'list'. 'list' indicates multi-select
+    capability, whereas select is just one.
+  operator:
+    May be a string which points to a function, or may be an array of allowed
+    operators. (=, !=, LIKE, etc). In the case of a LIST, only AND, OR and NOR
+    have any meaning. There are several functions in Views that provide
+    typical operators, such as views_handler_operator_andor
+  cacheable:
+    Whether or not the filter is cacheable. Defaults to true; use this if the
+    handler requires some run-time data (such as the currently logged in user).
+  handler:
+    This is used for any custom filtering that needs to be done; useful for
+    complex filters that aren't quite as simple as just WHERE field operator value.
+  help:
+    This is the help text displayed to the admin.
 
 
 Arguments

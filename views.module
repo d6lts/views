@@ -2,122 +2,7 @@
 // $Id$
 
 // ---------------------------------------------------------------------------
-// Select Box Definitions
-
-// These should probably have string array keys that are easier to identify.
-
-/*
- * Select box entries for argument defaults.
- */
-function _views_get_arguments_default() {
-  return array(
-    1 => t('Return Page Not Found'),
-    2 => t('Display All Values'),
-    3 => t('Summary Of Choices')
-   );
-}
-
-/*
- * Types of views supported.
- */
-function _views_types() {
-  return array(
-    1 => t("List View"), 
-    2 => t("Table View"), 
-    3 => t("Teaser List"),
-    4 => t("Full Nodes"),
-    5 => t("Random Teaser"),
-    6 => t("Random Node")
-  );
-}
-
-/*
- * Possible URL configurations.
- */
-function _views_urls() {
-  return array(
-    1 => t("No URL"), 
-    2 => t("URL without Menu Entry"), 
-    3 => t("URL with Menu Entry")
-  );
-}
-
-/*
- * Select box entries for sort ordering.
- */
-function _views_sortorders() {
-  return array(
-    "ASC" => t("Ascending"),
-    "DESC" => t("Descending")
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Argument definitions.
-
-/*
- * All of the arguments that Views supports natively. Some of this may 
- * eventually be shipped off to the modules that provide this data.
- */
-function _views_internal_arguments() {
-  $arguments = array(
-    'nodetype' => array(
-      'name' => t("Node Type"), 
-      'handler' => "views_handler_arg_nodetype",
-      'help' => "The node type argument allows users to filter a view by specifying the type of node.",
-    ),
-    'uid' => array(
-      'name' => t("User ID"), 
-      'handler' => "views_handler_arg_uid",
-      'help' => "The User ID argument allows users to filter a view by specifying a user ID.",
-    ),
-    'taxid' => array(
-      'name' => t("Taxonomy Term ID"), 
-      'handler' => "views_handler_arg_taxid", 
-      'option' => 'string', 
-      'help' => "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information.",
-    ),
-    'taxletter' => array(
-      'name' => t("Taxonomy Term Name"), 
-      'handler' => "views_handler_arg_taxletter", 
-      'option' => 'string', 
-      'help' => "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.",
-    ),
-    'nodeletter' => array(
-      'name' => t("Node Title"), 
-      'handler' => "views_handler_arg_nodeletter", 
-      'option' => 'string', 
-      'help' => "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.",
-    ),
-    'year' => array(
-      'name' => t("Year"), 
-      'handler' => "views_handler_arg_year",
-      'help' => "This argument allows users to filter by what year the node was posted, in the form of CCYY.",
-    ),
-    'month' => array(
-      'name' => t("Month"), 
-      'handler' => "views_handler_arg_month",
-      'help' => "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument.",
-    ),
-    'week' => array(
-      'name' => t("Week"), 
-      'handler' => "views_handler_arg_week",
-      'help' => "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'year' argument.",
-    ),
-    'monthyear' => array(
-      'name' => t("Month + Year"),
-      'handler' => "views_handler_arg_monthyear",
-      'help' => "This argument combines Month and Year into a single argument, specified in the form CCYYMM.",
-    ),
-    'fulldate' => array(
-      'name' => t("Full Date"), 
-      'handler' => "views_handler_arg_fulldate",
-      'help' => "This argument is a complete date in the form of CCYYMMDD.",
-    ),
-  );
-  return $arguments;
-}
-
+// Acquire Views Data
 
 /*
  * Return the arguments array; construct one if we haven't already. The
@@ -125,6 +10,8 @@ function _views_internal_arguments() {
  * are only constructed once per run.
  */
 function _views_get_arguments($titles = false) {
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_data.inc");
   global $VIEWS_ARGUMENTS;
   global $VIEWS_ARGUMENTS_TITLES;
 
@@ -138,325 +25,14 @@ function _views_get_arguments($titles = false) {
   return ($titles ? $VIEWS_ARGUMENTS_TITLES : $VIEWS_ARGUMENTS);
 }
 
-/*
- * Provides all of the internal table definition that Views supports natively.
- * This info will probably one day be shipped off to the modules that provide
- * it.
- */
-function _views_internal_tables() {
-
-  if (module_exist('taxonomy')) {
-    $tables['term_node'] = array(
-      "name" => "term_node", 
-      "provider" => "internal",
-      "join" => array(
-        "left" => array(
-          "table" => "node",
-          "field" => "nid"
-        ), 
-        "right" => array(
-          "field" => "nid"
-        )
-      ),
-      "filters" => array(
-        "tid" => array(
-          'name' => "Taxonomy: Term",
-          'list' => "views_handler_filter_tid",
-          'option' => 'string',
-          'operator' => "views_handler_operator_andor",
-          'handler' => 'views_handler_filter_tid_custom',
-          'help' => 'When filtering by taxonomy term you may specify the "depth" as an option. Please see the taxonomy help for more information.',
-        )
-      )
-    ); 
-
-    $tables['term_hierarchy'] = array(
-      "name" => "term_node", 
-      "provider" => "internal",
-      "join" => array(
-        "left" => array(
-          "table" => "term_node",
-          "field" => "tid"
-        ), 
-        "right" => array(
-          "field" => "tid"
-        )
-      ),
-    );
-
-    $tables['term_data'] = array(
-      "name" => "term_data", 
-      "provider" => "internal",
-      "join" => array(
-        "left" => array(
-          "table" => "term_node",
-          "field" => "tid"
-        ), 
-        "right" => array(
-          "field" => "tid"
-        ), 
-      ),
-      "fields" => array(
-        "name" => array(
-          'name' => "Taxonomy: Term", 
-          'sortable' => true,
-          'help' => "This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter.",
-        ),
-        "description" => array(
-          'name' => "Taxonomy: Term Description", 
-          'sortable' => false,
-          'help' => 'This will display the description associated with a taxonomy term.',
-        ),
-      ),
-      "sorts" => array(
-        "weight" => array(
-          'name' => "Taxonomy: Term Name", 
-          'field' => array('weight', 'name'),
-          'help' => "This will sort nodes by taxonomy weight and name, as defined in the category administration.",
-        )
-      ),
-      "filters" => array(
-        "vid" => array(
-          'name' => "Taxonomy: Vocabulary Name",
-          'list' => "views_handler_filter_vid",
-          'operator' => "views_handler_operator_andor",
-          'help' => 'This will filter a view to only nodes that contain a term in the associated vocabulary.',
-        )
-      )
-    );
-  }
-
-  if (module_exist('comment')) {
-    $tables['node_comment_statistics'] = array(
-      "name" => "node_comment_statistics", 
-      "provider" => "internal",
-      "join" => array(
-        "left" => array(
-          "table" => "node",
-          "field" => "nid"
-        ), 
-        "right" => array(
-          "field" => "nid"
-        ), 
-      ),
-      "fields" => array(
-        "last_comment_timestamp" => array(
-          'name' => "Comment: Last Comment Time", 
-          'sortable' => true, 
-          'handler' => 
-            array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
-          'help' => "This will display the last comment time.",
-         ),
-        "last_comment_name" => array(
-          'name' => "Comment: Last Comment Author", 
-          'handler' => 'views_handler_field_username', 
-          'sortable' => true, 
-          'uid' => "last_comment_uid", 
-          'addlfields' => array("last_comment_uid"),
-          'help' => "This will display the name of the last user to comment on the post.",
-        ),
-        "comment_count" => array(
-          'name' => "Comment: Count", 
-          'sortable' => true, 
-          'handler' => 
-            array("views_handler_field_int" => "Normal", "views_handler_comments_with_new" => "With New Count"),
-          'help' => "This will display the comment count.",
-        ),
-      ),
-      "sorts" => array(
-        "last_comment_timestamp" => array(
-          'name' => "Comment: Last Comment Date",
-          'help' => "This will allow you to sort by the date of the most recent comment on a node.")
-      )
-    );
-  }
-
-  $tables['users'] = array(
-    "name" => "users", 
-    "provider" => "internal", // won't show up in external list.
-    "join" => array(
-      "left" => array(
-        "table" => "node",
-        "field" => "uid"
-      ), 
-      "right" => array(
-        "field" => "uid"
-      ), 
-    ),
-    "fields" => array(
-      "name" => array(
-        'name' => "Node: Author Name", 
-        'handler' => 'views_handler_field_username', 
-        'sortable' => true, 
-        'uid' => "uid", 
-        'addlfields' => array("uid"),
-        'help' => "This will display the author of the node.",
-      ),
-    ),
-    "sorts" => array(
-      "name" => array(
-        'name' => "Node: Author Name",
-        'help' => "This allows you to sort alphabetically by author.",
-      )
-    ),
-    "filters" => array(
-      "uid" => array(
-        'name' => "Node: Author Name",
-        'operator' => "views_handler_operator_or",
-        'list' => "views_handler_filter_username",
-        'help' => "This allows you to filter by a particular user. You might not find this useful if you have a lot of users.",
-      ),
-      "anon" => array(
-        'field' => 'uid',
-        'name' => "Node: Author is Anonymous",
-        'operator' => "views_handler_operator_eqneq",
-        'list' => "views_handler_filter_useranon",
-        'help' => "This allows you to filter by whether or not the node author is anonymous.",
-      ),
-      "currentuid" => array(
-        'name' => "Node: Author is Current User",
-        'operator' => "views_handler_operator_eqneq",
-        'list' => "views_handler_filter_usercurrent",
-        'handler' => "views_handler_filter_usercurrent_custom",
-        'cacheable' => 'no',
-        'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
-      ),
-    )
-  );
-
-  $tables['users_roles'] = array(
-    "name" => "users_role", 
-    "provider" => "internal", // won't show up in external list.
-    "join" => array(
-      "left" => array(
-        "table" => "node",
-        "field" => "uid"
-      ), 
-      "right" => array(
-        "field" => "uid"
-      ), 
-    ),
-    "filters" => array(
-      "rid" => array(
-        'name' => "Role: Author Role",
-        'operator' => "views_handler_operator_andor",
-        'list' => "views_handler_filter_role",
-        'help' => "Include the node only if the author is a member of the selected role.",
-      ),
-    )
-  );
-  
-  $tables['history'] = array(
-    "name" => "history",
-    "provider" => "internal",
-    "join" => array(
-      "left" => array(
-        "table" => "node",
-        "field" => "nid"
-      ), 
-      "right" => array(
-        "field" => "nid"
-      ), 
-    ),
-    "filters" => array(
-      "timestamp" => array(
-        'name' => "Node: Has New Content",
-        'operator' => array("Has"),
-        'list' => array("New Content"),
-        'handler' => "views_handler_filter_isnew",
-        'cacheable' => 'no',
-        'help' => "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes.",
-      ),
-    ),
-  );
-
-  $tables['n'] = array(
-    "name" => "n", 
-    "provider" => "internal", // won't show up in external list.
-    "fields" => array(
-      "title" => array(
-        'name' => "Node: Title", 
-        'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
-        'sortable' => true, 'addlfields' => array('changed'),
-        'help' => "Display the title of the node.",
-      ),
-      "created" => array(
-        'name' => "Node: Created Time", 
-        'sortable' => true, 
-        'handler' => 
-          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
-        'help' => "Display the post time of the node.",
-      ),
-      "changed" => array(
-        'name' => "Node: Updated Time", 
-        'sortable' => true, 
-        'handler' => 
-          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
-        'help' => "Display the last time the node was updated.",
-      ),
-      "type" => array(
-        'name' => "Node: Type", 
-        'handler' => 'views_handler_nodetype', 
-        'sortable' => true,
-        'help' => "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)",
-      ),
-    ),
-    "sorts" => array(
-      "created" => array(
-        'name' => "Node: Created Time", 
-        'help' => "Sort by the submission date of the node.",
-       ),
-      "changed" => array(
-        'name' => "Node: Last Updated Time", 
-        'help' => 'nSort by the last update date of the node.',
-      ),
-      "sticky" => array(
-        'name' => "Node: Sticky",
-        'help' => 'Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top.',
-      ),
-      "title" => array(
-        'name' => "Node: Title", 
-        'help' => 'Sort by the node title, alphabetically',
-      ),
-//      "random" => array(
-//        'name' => "Random",
-//        'handler' => 'views_handler_sort_random',
-//        'help' => "By choosing random, nodes will be ordered completely randomly. This is a good way to choose X random nodes from a group of nodes.",
-//      ),
-    ),
-    "filters" => array(
-      "status" => array(
-        'name' => "Node: Published",
-        'operator' => array("=" => "Equals"),
-        'list' => "views_handler_operator_yesno",
-        'list-type' => "select",
-        'help' => "Filter by whether or not the node is published. This is recommended for most Views!",
-      ),
-      "promote" => array(
-        'name' => "Node: Front Page",
-        'operator' => array("=" => "Equals"),
-        'list' => "views_handler_operator_yesno",
-        'list-type' => "select",
-        'help' => "Filter by whether or not the node has been promoted to Front Page.",
-      ),
-      "type" => array(
-        'name' => "Node: Type",
-        'list' => "views_handler_filter_nodetype",
-        'list-type' => 'list',
-        'operator' => "views_handler_operator_or",
-        'help' => "Include or exclude nodes of the selected types.",
-      ),
-    ),
-
-  );    
-  return $tables;
-}
 
 /*
  * Constructs the full table information array. Caches it into a global array
  * so that it will only be called once per run.
  */
 function _views_get_tables() {
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_data.inc");
   global $VIEWS_TABLES;
 
   if (!$VIEWS_TABLES) {
@@ -502,9 +78,7 @@ function _views_organize_data() {
         $VIEWS_SORTS["$table[name].$field"] = $data;
       }
     }
-
   }
-
 }
 
 /*
@@ -578,131 +152,11 @@ function _views_sanitize_view(&$view) {
 }
 
 /*
- * Provides internal, default views that can always be used. This area is
- * a little grey right now -- many of these views should be provided
- * by other modules, and not always be active.
- */
-function _views_internal_default_views() {
-  if (module_exist('comment')) {
-    $view = new stdClass();
-    $view->name = 'tracker/tracker';
-    $view->description = 'Shows all new activity on system.';
-    $view->title = 'recent posts for %1';
-    $view->menu_title = 'recent posts';
-    $view->use_pager = '1';
-    $view->nodes_per_page = '25';
-    $view->nodes_per_block = '10';
-    $view->block_display_header = '0';
-    $view->type = '2';
-    $view->block = '1';
-    $view->url = '3';
-    $view->field = array (
-      array (
-        'tablename' => 'n',
-        'field' => 'type',
-        'label' => 'Type',
-      ),
-      array (
-        'tablename' => 'n',
-        'field' => 'title',
-        'label' => 'Title',
-        'handler' => 'views_handler_field_nodelink_with_mark',
-      ),
-      array (
-        'tablename' => 'users',
-        'field' => 'name',
-        'label' => 'Author',
-      ),
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'comment_count',
-        'label' => 'Replies',
-        'handler' => 'views_handler_comments_with_new',
-      ),
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'last_comment_timestamp',
-        'label' => 'Last Post',
-        'handler' => 'views_handler_field_since',
-      ),
-    );
-    $view->sort = array (
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'last_comment_timestamp',
-        'sortorder' => 'DESC',
-      ),
-    );
-    $view->argument = array (
-      array (
-        'type' => 'uid',
-        'argdefault' => '2',
-        'title' => 'recent posts for all users',
-      ),
-    );
-    $view->filter = array (
-      array (
-        'tablename' => 'n',
-        'field' => 'status',
-        'operator' => '=',
-        'value' => '1',
-      ),
-    );
-
-    $views[$view->name] = $view;
-  }
-
-  $view = new stdClass();
-  $view->name = 'frontpage';
-  $view->description = 'The basic front page view.';
-  $view->title = '';
-  $view->menu_title = '';
-  $view->header = '';
-  $view->header_format = '1';
-  $view->type = '3';
-  $view->url = '2';
-  $view->use_pager = '1';
-  $view->nodes_per_page = '10';
-  $view->block = '0';
-  $view->nodes_per_block = '0';
-  $view->block_more = '0';
-  $view->block_display_header = '0';
-  $view->sort = array (
-    array (
-      'tablename' => 'n',
-      'field' => 'sticky',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
-    array (
-      'tablename' => 'n',
-      'field' => 'created',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
-  );
-  $view->argument = array (
-  );
-  $view->field = array (
-  );
-  $view->filter = array (
-    array (
-      'tablename' => 'n',
-      'field' => 'promote',
-      'operator' => '=',
-      'options' => '',
-      'value' => '1',
-    ),
-  );
-  $views[$view->name] = $view;
-
-  return $views;
-}
-
-/*
  * Build default view information from all modules and cache it.
  */
 function _views_get_default_views() {
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_data.inc");
   global $VIEWS_DEFAULT_VIEWS;
 
   if (!$VIEWS_DEFAULT_VIEWS) {
@@ -716,7 +170,6 @@ function _views_get_default_views() {
 
 // ---------------------------------------------------------------------------
 // Drupal Hooks
-
 
 /*
  * Implementation of hook_help()
@@ -876,8 +329,9 @@ function views_block($op = 'list', $delta = 0) {
     }
     $dviews = _views_get_default_views();
     foreach ($dviews as $name => $view) {
-      if (!isset($block[$name]) && $view->block)
+      if (!isset($block[$name]) && $view->block) {
         $block[$name]['info'] = $view->title;
+      }
     }
     return $block;
   }
@@ -931,22 +385,6 @@ function views_admin_page() {
 }
 
 /*
- * Handle submit buttons on a view form.
- */
-function views_edit_view_submit($form_id, $form) {
-//  dprint_r($form);
-  $view = array2object($form);
-  _views_save_view($view);
-  menu_rebuild();
-  if ($form['vid'])
-    drupal_set_message("View successfully saved.");
-  else
-    drupal_set_message("View successfully added.");
-
-  return drupal_goto('admin/views');
-}
-
-/*
  * Provide a textarea to paste a view export into.
  */
 function views_admin_import_page() {
@@ -995,6 +433,8 @@ function views_import_view_submit($formid, $form) {
  */
 function views_admin_export_page($vid = '') {
   // FIXME: Change this to a textarea.
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_data.inc");
   return "<pre>" . views_create_view_code($vid) . "</pre>";
 }
 
@@ -1004,17 +444,15 @@ function views_admin_export_page($vid = '') {
 function views_admin_add_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
-    if (!$template)
-      $template = $next;
-    else
-      $template .= "/$next";
+    $template = ($template ? "/$next" : $next);
   }
 
   $edit = $_POST['edit'];
   $op = $_POST['op'];
 
-  if (is_array($edit))
+  if (is_array($edit)) {
     $edit = array2object($edit);
+  }
 
   if ($op == 'Cancel') {
     return drupal_goto('admin/views');
@@ -1024,6 +462,8 @@ function views_admin_add_page() {
 
   drupal_set_title(t('Add a View'));
 
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_form.inc");
   return _views_view_form($edit, $view, $op);
 }
 
@@ -1048,11 +488,14 @@ function views_admin_edit_page($vid = '') {
 
   $view = _views_load_view($vid);
 
-  if (!$view)
+  if (!$view) {
     return drupal_goto('admin/views');
+  }
 
   drupal_set_title(t('Edit View %n', array('%n' => $view->name)));
 
+  $path = drupal_get_path('module', 'views');
+  require_once("$path/views_form.inc");
   return _views_view_form($edit, $view, $op);
 }
 
@@ -1062,8 +505,9 @@ function views_admin_edit_page($vid = '') {
 function views_admin_delete_page($vid = '') {
   $view = _views_load_view($vid);
 
-  if (!$view)
+  if (!$view) {
     return drupal_goto('admin/views');
+  }
 
   $form['vid'] = array('#type' => 'value', '#value' => $view->vid);
   return confirm_form('views_delete_confirm', $form,
@@ -1107,1032 +551,30 @@ function _views_get_default_view($template = '') {
   return $view;
 }
 
+// ---------------------------------------------------------------------------
+// View Construction
+
 /*
  * Ensure that all the arrays in a view exist so we don't run into array
  * operations on a non-array error.
  */
 function _views_check_arrays(&$view) {
-  if (!is_array($view->field))
+  if (!is_array($view->field)) {
     $view->field = array();
-  if (!is_array($view->sort))
+  }
+  if (!is_array($view->sort)) {
     $view->sort = array();
-  if (!is_array($view->argument))
+  }
+  if (!is_array($view->argument)) {
     $view->argument = array();
-  if (!is_array($view->breadcrumb))
+  }
+  if (!is_array($view->breadcrumb)) {
     $view->breadcrumb = array();
-  if (!is_array($view->filter))
+  }
+  if (!is_array($view->filter)) {
     $view->filter = array();
-}
-
-/*
- * Swap two items in an array.
- */
-function _views_swap(&$arr, $a, $b) {
-  $temp = $arr[$a];
-  $arr[$a] = $arr[$b];
-  $arr[$b] = $temp;
-}
-
-/*
- * Move an item up in an array.
- */
-function _views_move_up(&$arr, $i) {
-  if ($i <= 0 || $i >= count($arr))
-    return; // can't do it.
-  _views_swap($arr, $i - 1, $i);
-}
-
-/*
- * Move an item down in an array.
- */
-function _views_move_down(&$arr, $i) {
-  if ($i >= count($arr) - 1 || $i < 0)
-    return; // can't do it.
-  _views_swap($arr, $i + 1, $i);
-}
-
-/*
- * Move an item to the front of an array.
- */
-function _views_move_top(&$arr, $i) {
-  if ($i <= 0 || $i >= count($arr))
-    return; // can't do it.
-  $temp = $arr[$i];
-  for ($x = $i; $x > 0; $x--)
-    $arr[$x] = $arr[$x - 1];
-  $arr[0] = $temp;
-}
-
-/*
- * Move an item to the end of an array.
- */
-function _views_move_bottom(&$arr, $i) {
-  $end = count($arr) - 1;
-  if ($i >= $end || $i < 0)
-    return; // can't do it.
-  $temp = $arr[$i];
-  for ($x = $i; $x < $end; $x++)
-    $arr[$x] = $arr[$x + 1];
-  $arr[$end] = $temp;
-}
-
-/*
- * Figure out which of the many, many buttons on a form were clicked and
- * handle it.
- */
-function _views_check_sub_ops(&$view, $var) {
-  foreach ($view->$var as $i => $obj) {
-    if (!$obj['op'])
-      continue;
-    if ($obj['op'] == t('Delete')) {
-      unset($view->{$var}[$i]);
-      $view->$var = array_values($view->$var); // reindex
-      return true;
-    }
-    else if ($obj['op'] == t('Up')) {
-      _views_move_up($view->$var, $i);
-      _views_move_up($_POST['edit'][$var], $i);
-      return true;
-    }
-    else if ($obj['op'] == t('Down')) {
-      _views_move_down($view->$var, $i);
-      _views_move_down($_POST['edit'][$var], $i);
-      return true;
-    }
-    else if ($obj['op'] == t('Top')) {
-      _views_move_top($view->$var, $i);
-      _views_move_top($_POST['edit'][$var], $i);
-      return true;
-    }
-    else if ($obj['op'] == t('Bottom')) {
-      _views_move_bottom($view->$var, $i);
-      _views_move_bottom($_POST['edit'][$var], $i);
-      return true;
-    }
-  }
-  return false;
-}
-
-/*
- * Figure out if one of the many, many buttons on a form were clicked, and
- * handle it.
- */
-function _views_check_ops(&$view, $op) {
-  if (!$op) {
-    // Could probably use short circuiting here to make prettier
-    $rc = _views_check_sub_ops($view, 'filter');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'sort');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'argument');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'field');
-  }
-  else if ($op == t("Add Filter")) {
-    $filter['field'] = $view->add['filter'];
-    $view->filter[] = $filter;
-  }
-  else if ($op == t("Add Criteria")) {
-    $view->sort[] = $view->add['sort'];
-  }
-  else if ($op == t("Add Argument")) {
-    $view->argument[] = $view->add['argument'];
-  }
-  else if ($op == t("Add Field")) {
-    $fieldbits = explode('.', $view->add['field']);
-
-    $newfield['fullname'] = $view->add['field'];
-    $newfield['tablename'] = $fieldbits[0];
-    $newfield['field'] = $fieldbits[1];
-    $newfield['label'] = $fieldnames[$view->add['field']];
-    $newfield['queryname'] = "$fieldbits[0]_$fieldbits[1]";
-    $view->field[] = $newfield;
   }
 }
-
-/*
- * Custom form element to do our nice images.
- */
-function hook_elements() {
-  $type['imagebutton'] = array('#input' => TRUE, '#name' => 'op', '#button_type' => 'submit', '#form_submitted' => TRUE);
-}
-
-function theme_imagebutton($element) {
-  return '<input type="image" class="form-'. $element['#button_type'] .'" name="'. $element['#name'] .'" value="'. check_plain($element['#value']) .'" '. drupal_attributes($element['#attributes']) ." />\n";
-}
-
-/*
- * Display all the guts of a view in a form for editing.
- */
-function _views_view_form($view, $orig, $op = '') {
-  if ($view) {
-    _views_check_arrays($view); // make sure arrays that might be empty get set
-    _views_check_ops($view, $op);
-    if ($orig->vid && $op != t('Save'))
-      drupal_set_message("You have modified this view; changes will not be recorded until you Save the form.");
-  }
-  else
-    $view = $orig;
-
-  // Load some things we're going to need.
-  $fields = _views_get_fields();
-  $fieldnames = _views_get_fields(true); // for selecting
-
-  $sorts = _views_get_sorts(); // for selecting
-  $sortnames = _views_get_sorts(true); // for selecting
-
-  $filters = _views_get_filters();
-  $filternames = _views_get_filters(true);
-
-  $arguments = _views_get_arguments();
-  $argnames = _views_get_arguments(true);
-
-  $form['vid'] = array(
-    '#type' => 'value',
-    '#value' => $orig->vid,
-  );
-  $form['changed'] = array(
-    '#type' => 'hidden',
-    '#value' => $view->changed,
-  );
-
-  $form['display'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Display'),
-  );
-
-  $form['display']['name'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Name'),
-    '#default_value' => $view->name,
-    '#size' => 20,
-    '#maxlength' => 32,
-    '#description' => t('The name of the view. The URL of the view will be views/NAME. If a block, this will be the unique identifier for the block. Since this is a URL, please do not use spaces!'),
-    '#attributes' => NULL,
-    '#required' => true,
-  );
-  $form['display']['description'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Description'),
-    '#default_value' => $view->description,
-    '#size' => 60,
-    '#maxlength' => 255,
-    '#description' => t('A description of the view for the admin list.'),
-  );
-
-  $form['display']['type'] = array(
-    '#type' => 'select',
-    '#title' => t('View Type'),
-    '#default_value' => $view->type,
-    '#options' => _views_types(),
-    '#description' => t('How the nodes should be displayed to the user.'),
-  );
-
-  $form['display']['title'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Title'),
-    '#default_value' => $view->title,
-    '#size' => 60,
-    '#maxlength' => 255,
-    '#description' => t('The title of the view will be shown at the top of the view. May be blank if not using a block.'),
-  );
-
-  $form['display']['header'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Header'),
-    '#default_value' => $view->header,
-    '#cols' => 60,
-    '#rows' => 6,
-    '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
-  );
-
-  $form['display']['header_format'] = filter_form($view->header_format, 1, array('header_format'));
-
-
-  $form['block-info'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('Block'),
-  );
-
-  $form['block-info']['block'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Provide Block'),
-    '#return_value' => 1,
-    '#default_value' => $view->block,
-    '#description' => t('If checked this view will be provided as a block. If checked title may not be blank.'),
-  );
-
-  $form['block-info']['nodes_per_block'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Nodes per Block'),
-    '#default_value' => $view->nodes_per_block,
-    '#size' => 2,
-    '#maxlength' => 2,
-    '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
-    '#attributes' => NULL,
-  );
-
-  $form['block-info']['block_display_header'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Display Header'),
-    '#return_value' => 1,
-    '#default_value' => $view->block_display_header,
-    '#description' => t('If using a view as both a block and URL, display the header in the block?'),
-  );
-
-  $form['block-info']['block_more'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('[More] Link?'),
-    '#return_value' => 1,
-    '#default_value' => $view->block_more,
-    '#description' => t('If using a view as both a block and URL, display a more link in the block that links to the view URL?'),
-  );
-
-  $form['url-info'] = array(
-    '#type' => 'fieldset',
-    '#title' => t('URL and Pager'),
-  );
-
-  $form['url-info']['url'] = array(
-    '#type' => 'select',
-    '#title' => t('URL Type'),
-    '#default_value' => $view->url,
-    '#options' => _views_urls(),
-    '#description' => t('Choose whether or not to provide a URL and a Menu entry for this view..'),
-  );
-  $form['url-info']['menu_title'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Menu Title'),
-    '#default_value' => $view->menu_title,
-    '#size' => 60,
-    '#maxlength' => 255,
-    '#description' => t('If URL with Menu Entry, this title will be used for the menu; if blank, title field will be used instead.'),
-  );
-  $form['url-info']['use_pager'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Use Pager'),
-    '#return_value' => 1,
-    '#default_value' => $view->use_pager,
-    '#description' => t('If checked this query may be multiple pages. If not checked this query will be one page.'),
-  );
-  $form['url-info']['nodes_per_page'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Nodes per Page'),
-    '#default_value' => $view->nodes_per_page,
-    '#size' => 2,
-    '#maxlength' => 2,
-    '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
-    '#attributes' => NULL,
-    '#required' => true,
-  );
-
-  $form['add'] = array('#tree' => true);
-
-  $form['field'] = array('#tree' => true);
-
-  foreach ($view->field as $i => $field) {
-    $fieldname = $field['fullname']; // combined table & fieldname
-    $fieldinfo = $fields[$fieldname]; // laziness + readability
-
-    $form['field'][$i] = array('#tree' => true);
-
-    $form['field'][$i]['name'] = array(
-      '#type' => 'markup',
-      '#value' => $fieldinfo['name'], // combined table & fieldname
-    );
-    $form['field'][$i]['queryname'] = array(
-      '#type' => 'hidden',
-      '#value' => $field['queryname'],
-    );
-    $form['field'][$i]['tablename'] = array(
-      '#type' => 'hidden',
-      '#value' => $field['tablename'],
-    );
-    $form['field'][$i]['field'] = array(
-      '#type' => 'hidden',
-      '#value' => $field['field'],
-    );
-    $form['field'][$i]['fullname'] = array(
-      '#type' => 'hidden',
-      '#value' => $field['fullname'],
-    );
-
-    $form['field'][$i]['label'] = array(
-      '#type' => 'textfield',
-      '#default_value' => $field['label'],
-      '#size' => 15,
-      '#maxlength' => 25,
-    );
-
-    if (is_array($fieldinfo['handler'])) {
-      $form['field'][$i]['handler'] = array(
-        '#type' => 'select',
-        '#default_value' => $field['handler'],
-        '#options' => $fieldinfo['handler'],
-      );
-    }
-
-    if ($fieldinfo['sortable']) {
-      $form['field'][$i]['sortable'] = array(
-        '#type' => 'select',
-        '#default_value' => $field['sortable'],
-        '#options' => array('0' => t("No"), "1" => t("Yes")),
-      );
-      $form['field'][$i]['defaultsort'] = array(
-        '#type' => 'select',
-        '#default_value' => $field['defaultsort'],
-        '#options' => array('0' => t("None"), "ASC" => t("Ascending"), "DESC" => t("Descending")),
-      );
-    }
-    if (isset($fieldinfo['help'])) {
-      $form['field'][$i]['help'] = array(
-        '#type' => 'markup',
-        '#value' => "<div class='description'>" . $fieldinfo['help'] . "</div>",
-      );
-    }
-    $form['field'][$i]['delete'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
-      '#value' => t("Delete"),
-    );
-    $form['field'][$i]['up'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
-      '#value' => t("Up"),
-    );
-    $form['field'][$i]['down'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
-      '#value' => t("Down"),
-    );
-    $form['field'][$i]['top'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
-      '#value' => t("Top"),
-    );
-    $form['field'][$i]['bottom'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
-      '#value' => t("Bottom"),
-    );
-  }
-
-  $form['add']['field'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => $fieldnames,
-  );
-  $form['add']['fieldbutton'] = array(
-    '#type' => 'button',
-    '#value' => t("Add Field"),
-  );
-
-  $form['argument'] = array('#tree' => true);
-  
-  foreach ($view->argument as $i => $argument) {
-    $arginfo = $arguments[$argument['type']];
-    $form['argument'][$i] = array('#tree' => true);
-
-    $form['argument'][$i]['type'] = array(
-      '#type' => 'select',
-      '#default_value' => $argument['type'],
-      '#options' => $argnames,
-    );    
-    $form['argument'][$i]['argdefault'] = array(
-      '#type' => 'select',
-      '#default_value' => $argument['argdefault'],
-      '#options' => _views_get_arguments_default(),
-    );
-    $form['argument'][$i]['title'] = array(
-      '#type' => 'textfield',
-      '#default_value' => $argument['title'],
-      '#size' => 10,
-      '#maxlength' => 255,
-    );
-    if (isset($arginfo['option'])) {
-      if ($arginfo['option'] == 'string') {
-        $form['argument'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $argument['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else if ($arginfo['option'] == 'integer') {
-        // same as above for now but should have validate routine
-        $form['argument'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $argument['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else {
-        $list = $arginfo['option'];
-        if (!is_array($list) && function_exists($arginfo['option'])) {
-          $list = $arginfo['option']('option');
-        }
-        $form['argument'][$i]['options'] = array(
-          '#type' => 'select',
-          '#default_value' => $argument['options'],
-          '#options' => $list,
-        );
-        
-      }
-    }
-    if (isset($arginfo['help'])) {
-      $form['argument'][$i]['help'] = array(
-        '#type' => 'markup',
-        '#value' => $arginfo['help'],
-      );
-    }
-    $form['argument'][$i]['delete'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
-      '#value' => t("Delete"),
-    );
-    $form['argument'][$i]['up'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
-      '#value' => t("Up"),
-    );
-    $form['argument'][$i]['down'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
-      '#value' => t("Down"),
-    );
-    $form['argument'][$i]['top'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
-      '#value' => t("Top"),
-    );
-    $form['argument'][$i]['bottom'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
-      '#value' => t("Bottom"),
-    );
-  }
-
-  $form['add']['argument'] = array('#tree' => true);
-
-  $form['add']['argument']['type'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => $argnames,
-  );
-  $form['add']['argument']['argdefault'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => _views_get_arguments_default(),
-  );
-  $form['add']['argument']['title'] = array(
-    '#type' => 'textfield',
-    '#default_value' => $argument['title'],
-    '#size' => 10,
-    '#maxlength' => 255,
-  );
-  $form['add']['argbutton'] = array(
-    '#type' => 'button',
-    '#value' => t("Add Argument"),
-  );
-
-
-  $form['filter'] = array('#tree' => true);
-
-  foreach ($view->filter as $i => $filter) {
-    $filtername = $filter['field']; // combined table & filtername
-    $filterinfo = $filters[$filtername];
-
-    $form['filter'][$i] = array('#tree' => true);
-
-    $form['filter'][$i]['name'] = array(
-      '#type' => 'markup',
-      '#value' => $filterinfo['name'],
-    );
-
-    $form['filter'][$i]['field'] = array(
-      '#type' => 'hidden',
-      '#value' => $filter['field'],
-    );
-
-    // 'operator' is either an array or a handler
-    $operator = $filterinfo['operator'];
-    if (!is_array($operator) && function_exists($filterinfo['operator'])) 
-      $operator = $filterinfo['operator']('operator', $filterinfo);
-
-    $form['filter'][$i]['operator'] = array(
-      '#type' => 'select',
-      '#default_value' => $filter['operator'],
-      '#options' => $operator,
-    );
-
-    if (isset($filterinfo['option'])) {
-      if ($filterinfo['option'] == 'string') {
-        $form['filter'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $filter['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else if ($filterinfo['option'] == 'integer') {
-        // same as above for now but should have validate routine
-        $form['filter'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $filter['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else {
-        $list = $filterinfo['option'];
-        if (!is_array($list) && function_exists($filterinfo['option'])) {
-          $list = $filterinfo['option']('filteroption');
-        }
-        $form['filter'][$i]['options'] = array(
-          '#type' => 'select',
-          '#default_value' => $filter['options'],
-          '#options' => $list,
-        );
-        
-      }
-    }
-
-    if ($filterinfo['list']) {
-      $list = $filterinfo['list'];
-
-      if (!is_array($list) && function_exists($filterinfo['list'])) 
-        $list = $filterinfo['list']('list', $filterinfo);
-
-      $multiple = false;
-      switch($filterinfo['list-type']) {
-        case 'list':
-        default:
-          $multiple = true;
-          // no break, fall thru
-        case 'select':
-          $form['filter'][$i]['value'] = array(
-            '#type' => 'select',
-            '#default_value' => $filter['value'],
-            '#options' => $list,
-            '#multiple' => $multiple,
-          );
-          break;
-      }
-    }
-    else {
-      if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
-        $filter['value'] = $filterinfo['transform']('out', $filter['value'], $filterinfo);
-      }
-      $form['filter'][$i]['value'] = array(
-        '#type' => 'textfield',
-        '#default_value' => $filter['value'],
-        '#size' => 20,
-        '#maxlength' => 255,
-      );
-    }
-    if (isset($filterinfo['help'])) {
-      $form['filter'][$i]['help'] = array(
-        '#type' => 'markup',
-        '#value' => $filterinfo['help'],
-      );
-    }
-    $form['filter'][$i]['delete'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
-      '#value' => t("Delete"),
-    );
-    $form['filter'][$i]['up'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
-      '#value' => t("Up"),
-    );
-    $form['filter'][$i]['down'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
-      '#value' => t("Down"),
-    );
-    $form['filter'][$i]['top'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
-      '#value' => t("Top"),
-    );
-    $form['filter'][$i]['bottom'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
-      '#value' => t("Bottom"),
-    );
-  }
-
-  $form['add']['filter'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => $filternames,
-  );
-  $form['add']['filterbutton'] = array(
-    '#type' => 'button',
-    '#value' => t("Add Filter"),
-  );
-
-  $form['sort'] = array('#tree' => true);
-  foreach ($view->sort as $i => $sort) {
-    $sortname = $sort['field']; // combined table & sortname
-    $sortinfo = $sorts[$sortname];
-    $form['sort'][$i] = array('#tree' => true);
-    $form['sort'][$i]['field'] = array(
-      '#type' => 'select',
-      '#title' => NULL,
-      '#default_value' => $sort['field'],
-      '#options' => $sortnames,
-    );
-    $form['sort'][$i]['sortorder'] = array(
-      '#type' => 'select',
-      '#title' => NULL,
-      '#default_value' => $sort['sortorder'],
-      '#options' => _views_sortorders(),
-    );
-    // option can be either 'string', 'integer', an array or a handler
-    // that must return an array.
-    if (isset($sortinfo['option'])) {
-      if ($sortinfo['option'] == 'string') {
-        $form['sort'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $sort['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else if ($sortinfo['option'] == 'integer') {
-        // same as above for now but should have validate routine
-        $form['sort'][$i]['options'] = array(
-          '#type' => 'textfield',
-          '#default_value' => $sort['options'],
-          '#size' => 10,
-          '#maxlength' => 255,
-        );
-      }
-      else {
-        $list = $sortinfo['option'];
-        if (!is_array($list) && function_exists($sortinfo['option'])) {
-          $list = $sortinfo['option']('sortoption');
-        }
-        $form['sort'][$i]['options'] = array(
-          '#type' => 'select',
-          '#default_value' => $sort['options'],
-          '#options' => $list,
-        );
-        
-      }
-    }
-    if (isset($sortinfo['help'])) {
-      $form['sort'][$i]['help'] = array(
-        '#type' => 'markup',
-        '#value' => $sortinfo['help'],
-      );
-    }
-    $form['sort'][$i]['delete'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
-      '#value' => t("Delete"),
-    );
-    $form['sort'][$i]['up'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
-      '#value' => t("Up"),
-    );
-    $form['sort'][$i]['down'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
-      '#value' => t("Down"),
-    );
-    $form['sort'][$i]['top'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
-      '#value' => t("Top"),
-    );
-    $form['sort'][$i]['bottom'] = array(
-      '#type' => 'imagebutton',
-      '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
-      '#value' => t("Bottom"),
-    );
-  }
-
-  $form['add']['sort']['#tree'] = true;
-  $form['add']['sort']['field'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => $sortnames,
-  );
-  $form['add']['sort']['sortorder'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => _views_sortorders(),
-  );
-  $form['add']['sortbutton'] = array(
-    '#type' => 'button',
-    '#value' => t("Add Criteria"),
-  );
-
-  $form['save'] = array(
-    '#type' => 'submit',
-    '#value' => t("Save"),
-  );
-  if ($orig->vid)
-    $form['delete'] = array(
-      '#type' => 'submit',
-      '#value' => t("Delete"),
-    );
-  $form['cancel'] = array(
-    '#type' => 'submit',
-    '#value' => t("Cancel"),
-  );
-  
-  return drupal_get_form('views_edit_view', $form);
-}
-
-/*
- * Display the form built by _views_view_form()
- */
-function theme_views_edit_view($form) {
-//  print "<pre>" . var_export($form, true) . "</pre>";
-
-  $output .= form_render($form['display']);
-  $output .= form_render($form['block-info']);
-  $output .= form_render($form['url-info']);
-
-  // form_render wants a reference so use full array notation.
-
-  $rows = array();
-  foreach ($form['field'] as $i => $field) {
-    if (is_numeric($i)) {
-      $rows[] = array(
-        form_render($form['field'][$i]['name']),
-        form_render($form['field'][$i]['label']),
-        form_render($form['field'][$i]['handler']),
-        form_render($form['field'][$i]['sortable']),
-        form_render($form['field'][$i]['defaultsort']),
-        form_render($form['field'][$i]['delete']),
-        form_render($form['field'][$i]['up']),
-        form_render($form['field'][$i]['down']),
-        form_render($form['field'][$i]['top']),
-        form_render($form['field'][$i]['bottom']),
-      );
-      if (isset($field['help'])) {
-        $rows[] = array(array('data' => form_render($form['field'][$i]['help']), 'colspan' => '10'));
-      }
-    }
-  }
-  if (!$rows)
-    $rows[] = array(array('data' => "This view currently has no fields defined.", 'colspan' => 6));
-  
-  $group .= theme('table', array('Name', 'Label', 'Handler', 'Sortable', 'Default Sort', array('data' =>'Ops', 'colspan' =>'6')), $rows);
-
-  $rows = array(
-    array(
-      form_render($form['add']['field']),
-      form_render($form['add']['fieldbutton']),
-    )
-  );
-  $group .= "<br/>";
-  $group .= theme('table', array(array('data' => t('Add Field'), 'colspan' => 3)), $rows);
-  $group .= "<p>Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order.</p>";
-  $output .= theme('fieldset', array('#title' => t('Fields'), '#children' => $group));
-  $group = "";
-
-  $rows = array();
-  foreach ($form['argument'] as $i => $argument) {
-    if (is_numeric($i)) {
-      $rows[] = array(
-        form_render($form['argument'][$i]['type']),
-        form_render($form['argument'][$i]['argdefault']),
-        form_render($form['argument'][$i]['title']),
-        form_render($form['argument'][$i]['options']),
-        form_render($form['argument'][$i]['delete']),
-        form_render($form['argument'][$i]['up']),
-        form_render($form['argument'][$i]['down']),
-        form_render($form['argument'][$i]['top']),
-        form_render($form['argument'][$i]['bottom']),
-      );
-      if (isset($argument['help'])) {
-        $rows[] = array(array('data' => form_render($form['argument'][$i]['help']), 'colspan' => '10'));
-      }
-    }
-  }
-  if (!$rows)
-    $rows[] = array(array('data' => "This view currently has no arguments defined.", 'colspan' => 3));
-
-  $group .= theme('table', array(t('Argument Type'), t('Default'), t('Title'), t('Option'), array('data' =>'Ops', 'colspan' =>'6')), $rows);
-
-  $rows = array(
-    array(
-      form_render($form['add']['argument']['type']),
-      form_render($form['add']['argument']['argdefault']),
-      form_render($form['add']['argument']['title']),
-      form_render($form['add']['argbutton']),
-    )
-  );
-  $group .= "<br/>";
-  $group .= theme('table', array(t('Add Argument'), t('Default'), array('data' => t('Title'), 'colspan' => 3)), $rows);
-  $group .= "<p>Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility.</p>";
-  $output .= theme('fieldset', array('#title' => t('Arguments'), '#children' => $group));
-  $group = "";
-
-  $rows = array();
-  foreach ($form['filter'] as $i => $filter) {
-    if (is_numeric($i)) {
-      $rows[] = array(
-        form_render($form['filter'][$i]['name']),
-        form_render($form['filter'][$i]['operator']),
-        form_render($form['filter'][$i]['options']),
-        form_render($form['filter'][$i]['value']),
-        form_render($form['filter'][$i]['delete']),
-        form_render($form['filter'][$i]['up']),
-        form_render($form['filter'][$i]['down']),
-        form_render($form['filter'][$i]['top']),
-        form_render($form['filter'][$i]['bottom']),
-      );
-      if (isset($filter['help'])) {
-        $rows[] = array(array('data' => form_render($form['filter'][$i]['help']), 'colspan' => '10'));
-      }
-    }
-  }
-  if (!$rows)
-    $rows[] = array(array('data' => "This view currently has no filters defined.", 'colspan' => 3));
-
-  $group .= theme('table', array('Field', 'Operator', 'Option', 'Value', array('data' =>'Ops', 'colspan' =>'6')), $rows);
-
-  $rows = array(
-    array(
-      form_render($form['add']['filter']),
-      form_render($form['add']['filterbutton']),
-    )
-  );
-  $group .= "<br/>";
-  $group .= theme('table', array(array('data' => t('Add Filter'), 'colspan' => 3)), $rows);
-  $group .= "<p>Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together.</p>";
-  $output .= theme('fieldset', array('#title' => t('Filters'), '#children' => $group));
-  $group = "";
-
-  $rows = array();
-  foreach ($form['sort'] as $i => $sort) {
-    if (is_numeric($i)) {
-      $rows[] = array(
-        form_render($form['sort'][$i]['field']),
-        form_render($form['sort'][$i]['sortorder']),
-        form_render($form['sort'][$i]['options']),
-        form_render($form['sort'][$i]['delete']),
-        form_render($form['sort'][$i]['up']),
-        form_render($form['sort'][$i]['down']),
-        form_render($form['sort'][$i]['top']),
-        form_render($form['sort'][$i]['bottom']),
-      );
-      if (isset($sort['help'])) {
-        $rows[] = array(array('data' => form_render($form['sort'][$i]['help']), 'colspan' => '10'));
-      }
-    }
-  }
-  if (!$rows)
-    $rows[] = array(array('data' => "This view currently has no sort criteria defined.", 'colspan' => 3));
-
-  $group .= theme('table', array('Field', 'Order', 'Option', array('data' =>'Ops', 'colspan' =>'6')), $rows);
-
-  $rows = array(
-    array(
-      form_render($form['add']['sort']['field']),
-      form_render($form['add']['sort']['sortorder']),
-      form_render($form['add']['sortbutton']),
-    )
-  );
-  $group .= "<br/>";
-  $group .= theme('table', array(array('data' => t('Add Sort Criteria'), 'colspan' => 3)), $rows);
-  $output .= theme('fieldset', array('#title' => t('Sort Criteria'), '#children' => $group));
-  $group = "";
-
-  $output .= form_render($form);
-  return $output;
-}
-
-/*
- * Validate that a view sent via form is OK.
- */
-
-function views_edit_view_validate($form_id, $view) {
-//  dprint_r(var_export($view, true));
-  $filters = _views_get_filters();
-  _views_check_arrays($view);
-  
-  $op = $_POST['op'];
-
-  if ($op != t('Save')) {
-    return; // only validate on saving!
-  }
-
-  if ($view['vid']) {
-    $changed = db_result(db_query("SELECT changed FROM {view_view} WHERE vid = $view[vid]"));
-    if ($changed && $view['changed'] != $changed) {
-      form_set_error('', "Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!");
-      return;
-    }
-  }
-
-  if (is_array($view['filter'])) foreach ($view['filter'] as $i => $filter) {
-    $filterinfo = $filters[$filter['field']]; // shortcut
-    if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
-      $filter['value'] = $filterinfo['transform']('in', $filter['value'], $filterinfo);
-    }
-    if ($filterinfo['validate'] && function_exists($filterinfo['validate'])) {
-      if ($rc = $filterinfo['validate']('validate', $filter['value'], $filterinfo)) {
-        $validfilter = false;
-        form_set_error("filter][$i][value", $rc);
-      }
-    }
-  }
-  
-  if ($view['use_block'] && !$view['title']) {
-    form_set_error('title', "If being used as a block, title may not be blank.");
-  }
-
-  if (!$view['name']) {
-    form_set_error('name', "View name is required.");
-  }
-
-  // test uniqueness of name
-  $vid = db_result(db_query("SELECT vid FROM {view_view} WHERE name='%s'", $view['name']));
-  if ($vid && $vid != $view['vid']) {
-    form_set_error('name', "View name already in use.");
-  }
-
-
-  if ($view['use_block'] && $view['nodes_per_block'] < 1) {
-    form_set_error('nodes_per_block', "If being used as a block, Nodes Per Block must be positive.");
-  }
-/*
-  if ($view['type'] == 2 || $view['type'] == 1 && !count($view['field'])) { // "Table" 
-    form_set_error('add][field', "You must select what fields to display when using type 'Table'!");
-  }
-*/
-}
-
-
-// ---------------------------------------------------------------------------
-// View Construction
 
 /*
  * This function loads a view by name or vid; if not found in db, it looks
@@ -2140,16 +582,19 @@ function views_edit_view_validate($form_id, $view) {
  */
 function views_get_view($viewname) {
   $view = _views_load_view($viewname);
-  if ($view)
+  if ($view) {
     return $view;
+  }
 
-  if (is_int($viewname))
+  if (is_int($viewname)) {
     return; // don't bother looking if viewname is an int!
+  }
 
   $dviews = _views_get_default_views();
 
-  if (isset($dviews[$viewname]))
+  if (isset($dviews[$viewname])) {
     return $dviews[$viewname];
+  }
 
 }
 
@@ -2159,12 +604,16 @@ function views_get_view($viewname) {
 function views_view_page() {
   $args = func_get_args();
   while ($next = array_shift($args)) {
-    if (!$viewname)
+    if (!$viewname) {
       $viewname = $next;
-    else
+    }
+    else {
       $viewname .= "/$next";
-    if ($view = views_get_view($viewname))
+    }
+
+    if ($view = views_get_view($viewname)) {
       break;
+    }
   }
   if (!$view) {
     drupal_not_found();
@@ -2186,76 +635,15 @@ function views_view_page() {
 function views_view_block($vid) {
   $view = views_get_view($vid);
 
-  if (!$view || !$view->block)
+  if (!$view || !$view->block) {
     return NULL;
+  }
 
   $block['content'] = views_build_view('block', $view, $args, false, $view->nodes_per_block);
   $block['subject'] = _views_get_title($view);
   return $block;
 }
 
-/*
- * This builds a query for the view.
- */
-function _views_build_query(&$view, $args = array()) {
-  $query = new _views_query();
-
-  // Process static filters
-  _views_view_build_filters($query, $view);
-  
-  // Process arguments.
-  $view->args = $args; // we'll need these later.
-
-  foreach ($view->argument as $i => $argument) {
-    if ($args[$i] != NULL && $args[$i] != '') {
-      _views_view_build_arg($query, $args[$i], $argument);
-    }
-    else { 
-      // This is what we do if we expected an arg but we didn't get it.
-      switch ($argument['argdefault']) {
-        case 1:
-          drupal_not_found();
-          exit;
-        case 3:
-          $level = $i;
-          _views_build_summary($query, $argument['type'], $argument['options']);
-          $summary = true;
-          break 2; // switch and for
-      } 
-    } 
-  }
-
-  if (!$summary) {
-    _views_view_build_sorts($query, $view);
-    if ($view->type == 1 || $view->type == 2) { // list (1) or table (2)
-      $fields = _views_get_fields(); 
-
-      foreach($view->field as $field) {
-        // Some fields are not actually fields but require special handlers
-        // to display their data.
-        if (!$field['notafield'])
-          $query->add_field($field['field'], $field['tablename'], $field['queryname']);
-        // special handling
-        if (is_array($fields[$field['fullname']]['addlfields'])) {
-          foreach($fields[$field['fullname']]['addlfields'] as $name) 
-            $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
-        }
-      }
-      if ($view->type == 2) { // table only
-        $view->table_header = _views_construct_header($view, $fields);
-        $query->set_header($view->table_header);
-      }
-    }
-  }
-
-  $info['query'] = $query->query();
-  $info['countquery'] = $query->query(true);
-  $info['summary'] = $summary;
-  $info['level'] = $level;
-
-  return $info;
-
-}
 /*
  * This builds the basic view.
  * @param $type
@@ -2295,10 +683,14 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   if ($view->query) {
     $info['query'] = $view->query;
     $info['countquery'] = $view->countquery;
-    if ($view->type == 2)  // table only
+    if ($view->type == 2) {  // table only
       $view->table_header = _views_construct_header($view, $fields);
+    }
   }
   else {
+    $path = drupal_get_path('module', 'views');
+    require_once("$path/views_query.inc");
+
     $info = _views_build_query($view, $args);
     if ($info['fail']) {
       return;
@@ -2317,7 +709,6 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     $cquery = db_rewrite_sql($info['countquery'], 'n', 'numrecs');
     $result = pager_query($query, $limit, $use_pager, $cquery);
   }
-
   else {
     $result = ($limit ? db_query_range($query, 0, $limit) : db_query($query));
   }
@@ -2331,8 +722,6 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   while ($item = db_fetch_object($result)) {
     $items[] = $item;
   }
-  // DEBUG
-  //  dprint(var_export($items, true));
 
   if ($type == 'items') {
     $info['items'] = $items;
@@ -2341,15 +730,13 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
   if ($info['summary']) {
     $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items, $args);
-    if ($out)
-      $output .= $out;
-    else
-      $output .= theme('views_summary', $view, $type, $info['level'], $items, $args);
+    $output .= $out ? $out : theme('views_summary', $view, $type, $info['level'], $items, $args);
   }
   else {
     $output .= theme("views_view_$view->name", $view, $type, $items);
-    if (!$output)
+    if (!$output) {
       $output .= theme('views_view', $view, $type, $items);
+    }
   }
 
   if ($use_pager) {
@@ -2363,55 +750,23 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   return $output;
 }
 
+// ---------------------------------------------------------------------------
+// Utility
+
 /*
- * Take all the filters in a view and add them to the query object.
+ * Figure out what timezone we're in; needed for some date manipulations.
  */
-function _views_view_build_filters(&$query, $view) {
-  $filters = _views_get_filters();
-
-  foreach ($view->filter as $i => $filter) {
-    $filterinfo = $filters[$filter['field']]; // shortcut
-    $field = $filterinfo['field'];
-    if (!$field) {
-      $fieldbits = explode('.', $filter['field']);
-      $field = $fieldbits[1];
-    }
-
-    $table = $filterinfo['table'];
-
-    if (function_exists($filterinfo['handler'])) {
-      $filterinfo['handler']('handler', $filter, $filterinfo, $query);
-    }
-    else if (is_array($filter['value'])) {
-      if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
-        $not = '';
-        if ($filter['operator'] == 'NOR')
-          $not = "NOT";
-        $query->ensure_table($table);
-        $query->add_where("$table.$field $not IN ('" . implode("','", $filter['value']) . "')");
-      }
-      else {
-        $howmany = count($filter['value']);
-        $high_table = $query->add_table($table, true, $howmany);
-        if (!$high_table) // couldn't add the table
-          break;
-
-        $table_num = $high_table - $howmany;
-        foreach ($filter['value'] as $item) {
-          $table_num++;
-          $tn = $query->get_table_name($table, $table_num);
-          $query->add_where("$tn.$field = '$item'");
-        }
-      }
-    }
-    else {
-      $query->ensure_table("$table");
-      $query->add_where("$table.$field $filter[operator] '$filter[value]'");
-    }
+function _views_get_timezone() {
+  global $user;
+  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
+    $timezone = $user->timezone;
+  }
+  else {
+    $timezone = variable_get('date_default_timezone', 0);
   }
 
+  return $timezone;
 }
-
 /*
  * Figure out what the title of a view should be.
  */
@@ -2436,65 +791,6 @@ function _views_get_title($view) {
 }
 
 /*
- * Add argument data to a view; mostly passes through to handlers.
- */
-function _views_view_build_arg(&$query, $arg, $argdata) {
-  $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo[$argdata['type']]['handler']))
-    return false;
-
-  // call the handler
-  $arginfo[$argdata['type']]['handler']('filter', $query, $argdata, $arg);
-  
-}
-
-/*
- * Add sorting information from a view to a query.
- */
-function _views_view_build_sorts(&$query, $view) {
-  $sorts = _views_get_sorts();
-
-  foreach ($view->sort as $i => $sort) {
-    $sortinfo = $sorts[$sort['field']];
-    $field = $sortinfo['field'];
-
-    if (!$field) {
-      $fieldbits = explode('.', $sort['field']);
-      $field = $fieldbits[1];
-    }
-
-    $table = $sortinfo['table'];
-    if (isset($sortinfo['handler']) && function_exists($sortinfo['handler'])) {
-      $sortinfo['handler']('sort', $query, $sortinfo, $sort);
-    }
-    else {
-      $query->add_orderby_multi($table, $field, $sort['sortorder']);
-    }
-  }
-}
-
-/*
- * Build a summary if an argument was required and is not present. Mostly
- * this calls handlers.
- */
-function _views_build_summary(&$query, $argtype, $option) {
-
-  $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo[$argtype]['handler']))
-    return false;
-
-  $query->clear_fields();
-
-  $fieldinfo = $arginfo[$argtype]['handler']('summary', $query, $argtype, $option);
-
-  if ($fieldinfo['fieldname'])
-    $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
-  $query->add_field("count(n.nid) as num_nodes", '');
-  $query->add_groupby("$fieldinfo[field]");
-  $query->set_count_field("DISTINCT($fieldinfo[field])");
-}
-
-/*
  * Determine whether or not a view is cacheable. A view is not cacheable if
  * there is some kind of user input or data required. For example, views
  * that need to restrict to the 'current' user, or any view that requires
@@ -2502,14 +798,16 @@ function _views_build_summary(&$query, $argtype, $option) {
  */
 function _views_is_cacheable(&$view) {
   // views with arguments are immediately not cacheable.
-  if (!empty($view->argument))
+  if (!empty($view->argument)) {
     return false;
+  }
 
   $filters = _views_get_filters();
 
   foreach ($view->filter as $i => $filter) {
-    if ($filters[$filter['field']]['cacheable'] == 'no') 
+    if ($filters[$filter['field']]['cacheable'] == 'no')  {
       return false;
+    }
   }
 
   foreach ($view->field as $i => $field) {
@@ -2518,428 +816,6 @@ function _views_is_cacheable(&$view) {
     }
   }
   return true;
-}
-
-// ---------------------------------------------------------------------------
-// Query construction object
-
-class _views_query {
-
-  /*
-   * Create the basic query object and fill with default values.
-   */
-  function _views_query() {
-    $this->where = "";
-    $this->orderby = "";
-    $this->groupby = "";
-    $this->tables = array();
-    // Joins care about order, so we put our tables in a queue to make sure
-    // the order is correct.
-    $this->tablequeue = array();
-    $this->field = array("n.nid");
-    $this->count_field = "*";
-    $this->header = array();
-  }
-
-  /*
-   * Add a field to the query table, possibly with an alias. This will 
-   * automatically call ensure_table to make sure the required table
-   * exists, *unless* $table is unset.
-   */
-  function add_field($field, $table = 'n', $alias = '') {
-    if ($table) {
-      if ($table && $table != 'n') {
-        $this->ensure_path($table);
-        if (!$this->tables[$table]) {
-          $this->queue_table($table);
-        }
-      }
-      $table .= ".";
-    }
-    if ($alias)
-      $a = " AS $alias";
-    $this->field[] = "$table$field$a";
-  }
-
-  /*
-   * Remove all fields that may've been added; primarily used for summary
-   * mode where we're changing the query because we didn't get data we needed.
-   */
-  function clear_fields() {
-    $this->field = array();
-  }
-
-  /*
-   * Set what field the query will count() on for paging.
-   */
-  function set_count_field($field) {
-    $this->count_field = $field;
-  }
-
-  /*
-   * Add a simple WHERE clause to the query. The caller is responsible for
-   * ensuring that all fields are fully qualified (TABLE.FIELD) and that
-   * the table already exists in the query.
-   */
-  function add_where($clause) {
-    if (!$this->where)
-      $this->where = "WHERE " . $clause;
-    else
-      $this->where .= " AND " . $clause;
-  }
-
-  /*
-   * Add an ORDER BY clause to the query. It will ensure the table exists
-   * in the query, but it will not ensure the path, so the caller is
-   * responsible!
-   */
-  function add_orderby($table, $field, $order, $alias = '') {
-    if (!$alias) {
-      $alias = $table;
-    }
-    if (!$this->tables[$table])
-      $this->add_table($table, true);
-
-		if ($this->orderby)
-			$this->orderby .= ", ";
-
-		$this->orderby = " $alias.$field $order";
-  }
-
-  /*
-   * Add multiple an orderby's. Right now I'm not sure why this function
-   * is separate from add_orderby above; I don't think it needs to
-   * be.
-   */
-  function add_orderby_multi($table, $field, $order, $alias = '') {
-    if (!$alias) {
-      $alias = $table;
-    }
-    if (!$this->tables[$table])
-      $this->add_table($table, true);
-
-    if (is_array($field)) {
-      foreach($field as $f) {
-        if ($this->orderby)
-          $this->orderby .= ", ";
-
-        $this->orderby = " $alias.$f $order";
-      }
-    }
-    else {
-      if ($this->orderby)
-        $this->orderby .= ", ";
-
-      $this->orderby = " $alias.$field $order";
-    }
-  }
-
-  /*
-   * Add a simple GROUP BY clause to the query. The caller is responsible
-   * for ensuring that the fields are fully qualified and the table is properly
-   * added.
-   */
-  function add_groupby($clause) {
-    if (!$this->groupby)
-      $this->groupby = "GROUP BY " . $clause;
-    else
-      $this->groupby .= ", " . $clause;
-  }
-
-  /*
-   * This function will ensure a table exists; if it already exists it won't
-   * do anything, but if it doesn't it will add the table. It will ensure a path
-   * leads back to the base table.
-   */
-  function ensure_table($table) {
-    if ($table == 'n' || $table == 'node')
-      return;
-    if ($this->tables[$table])
-      return;
-
-    if ($this->ensure_path($table)) {
-      $this->queue_table($table);
-    }
-  }
-
-  /*
-   * This function will add a table to the query.
-   *
-   * @param $table
-   *   The name of the table to add. It needs to exist in the global table
-   *   array.
-   * @param $ensure_path
-   *   If true, it will ensure that a path back to node exists. If false, it
-   *   assumes the caller is already sure about this and does not repeat it.
-   * @param $howmany
-   *   How many instances of the table to add? (Useful for interesting join 
-   *   combos)
-   * @param $joininfo
-   *   In some join configurations this table may actually join back through
-   *   a different method; this is most likely to be used when tracing
-   *   a hierarchy path. (node->parent->parent2->parent3). This parameter
-   *   will specify how this table joins if it is not the default.
-   */
-  function add_table($table, $ensure_path = false, $howmany = 1, $joininfo = NULL) {
-    if ($table == 'n' || $table == 'node')
-      return;
-
-    if ($ensure_path) {
-      if (!$this->ensure_path($table)) {
-        return false;
-      }
-    }
-    
-    if (isset($this->tables[$table])) {
-      $this->tables[$table] += $howmany;
-    }
-    else {
-      $this->tables[$table] = $howmany;
-    }
-
-    for ($i = $this->tables[$table] - $howmany + 1; $i <= $this->tables[$table]; $i++) {
-      if ($joininfo) {
-        $this->joins[$table][$i] = $joininfo;
-      }
-      $this->tablequeue[] = array('table' => $table, 'num' => $i);
-    }
-    return $this->tables[$table];
-  }
-
-  /*
-   * Add a table to the queue in the specified position. This is a low level
-   * operation and should only be performed after all safety checking has been done.
-   */
-  function queue_table($table) {
-    if (!isset($this->tables[$table])) {
-      $this->tables[$table] = 1;
-    }
-    else {
-      $this->tables[$table]++;
-    }
-    $this->tablequeue[] = array('table' => $table, 'num' => $this->tables[$table]);
-  }
-
-  /*
-   * Set the table header; used for click-sorting because it's needed
-   * info to modify the ORDER BY clause.
-   */
-  function set_header($header) {
-    $this->header = $header;
-  }
-
-  /*
-   * Make sure that the specified table can be properly linked to the base
-   * table in the JOINs. This function uses recursion. If the tables
-   * needed to complete the path back to the base table are not in the
-   * query they will be added, but additional copies will NOT be added
-   * if the table is already there.
-   */
-  function ensure_path($table, $traced = array(), $add = array()) {
-    if ($table == 'n' || $table == 'node')
-      return true;
-    $table_data = _views_get_tables();
-
-    $left_table = $table_data[$table]['join']['left']['table'];
-
-    // Does it end at 'node'?
-    if ($left_table == 'node') {
-      // We are done! Add our tables and unwind.
-      foreach ($add as $t) {
-        // Don't use add_table because it'll trace, and we already did that.
-        // And we already know anything in $add isn't already in $this->tables
-        $this->queue_table($table);
-      }
-      return true;
-    }
-
-    // Have we been this way?
-    if (isset($traced[$left_table])) {
-      // we looped. Broked.
-      return false;
-    }
-
-    // Do we have to add this table?
-    if (!isset($this->tables[$left_table]))
-      $add[] = $left_table;
-
-    // Keep looking.
-    $traced[$left_table] = 1;
-    return $this->ensure_path($left_table, $traced, $add);
-  }
-
-  /*
-   * Return the alias of a given table in the JOIN queries. If a table is in
-   * the query multiple times, use this function to figure out what successive
-   * iterations of the table will be named.
-   *
-   * @param $table
-   *   The name of the table in the global table array.
-   * @param $table_num
-   *   The instance number of the table.
-   */
-  function get_table_name($table, $table_num) {
-    if ($table_num < 2)
-      return $table;
-    else
-      return $table . $table_num;
-  }
-
-  /*
-   * Generate a query and a countquery from all of the information supplied
-   * to the object.
-   *
-   * @param $getcount
-   *   Provide a countquery if this is true, otherwise provide a normal query.
-   */
-  function query($getcount = false) {
-//    dprint_r($this);
-    $table_data = _views_get_tables();
-    // Add all the tables to the query via joins. We assume all LEFT joins.
-    foreach ($this->tablequeue as $tinfo) {
-      $table = $tinfo['table'];
-      $i = $tinfo['num'];
-      $tn = $this->get_table_name($table, $i);
-
-      if (!$this->joins[$table][$i]) {
-        $ltable = $table_data[$table]['join']['left']['table'];
-        $lfield = $table_data[$table]['join']['left']['field'];
-        $rfield = $table_data[$table]['join']['right']['field'];
-      }
-      else {
-        $ltable = $this->joins[$table][$i]['ltable'];
-        $lfield = $this->joins[$table][$i]['lfield'];
-        $rfield = $this->joins[$table][$i]['rfield'];
-      }
-
-      // special case for node table
-      if ($ltable == 'node')
-        $ltable = 'n'; 
-      // Trying to get around problem with \ in PHP 5(?)
-      $joins .= ' LEFT JOIN {' . $table. "} $tn ON $ltable.$lfield = $tn.$rfield";
-    }
-
-    // If it's not a count query, add our fields
-    if (!$getcount) {
-      foreach($this->field as $field) {
-        if (!$fields)
-          $fields = $field;
-        else
-          $fields .= ", $field";
-      }
-      $groupby = $this->groupby;
-    }
-    else
-      $fields = "count($this->count_field) as numrecs";
-
-    if ($this->header) {
-      if ($this->orderby)
-        $before = "$this->orderby, ";
-      $orderby = tablesort_sql($this->header, $before);
-      if (!$orderby && $this->orderby) { // why the hell would tablesort_sql do this anyway?!
-        $orderby = "ORDER BY $this->orderby";
-      }
-    }
-    else if ($this->orderby)
-      $orderby = "ORDER BY $this->orderby";
-
-    $query = "SELECT $fields FROM {node} n $joins $this->where $groupby $orderby";
-//    dprint_r($query);
-    return $query;
-  }
-}
-
-
-// ---------------------------------------------------------------------------
-// Utility
-
-/*
- * Figure out what timezone we're in; needed for some date manipulations.
- */
-function _views_get_timezone() {
-  global $user;
-  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
-    $timezone = $user->timezone;
-  }
-  else {
-    $timezone = variable_get('date_default_timezone', 0);
-  }
-
-  return $timezone;
-}
-
-/*
- * Break x,y,z and x+y+z into an array.
- */
-function _views_break_phrase($str) {
-  if (preg_match('/^([0-9]+[+ ])+[0-9]+$/', $str)) {
-    // The '+' character in a query string may be parsed as ' '.
-    return array('or', preg_split('/[+ ]/', $str));
-  }
-  else if (preg_match('/^([0-9]+,)*[0-9]+$/', $str)) {
-    return array('and', explode(',', $str));
-  }
-  else {
-    return NULL;
-  }
-}
-
-/*
- * Add a where clause based on taxonomy. This is a pretty exciting piece of
- * code because the clause and the JOINs are a bit complicated.
- */
-function _views_add_taxonomy($op, $value, $depth, &$query) {
-  // When filtering via depth, we have to add a chain. If it's an or query
-  // we add 1 chain, but in an and query we actually basically have to add
-  // a 2 dimensional array. 
-  
-  $query->ensure_table('term_data'); // this is to make sure the base table comes first.
-
-  if ($op == 'OR') {
-    $clause = "'" . implode("','", $value) . "'";
-    // base tables
-
-    // Any number of things might have already added a term_node table, but
-    // if they ahve and are filtering on it the query is going to be borken
-    // anyway. If it's been added and unfiltered, and we ignore it, we get
-    // bad results.
-    $num = 1;
-    $query->ensure_table('term_node');
-    $tablename = $query->get_table_name('term_node', $num);
-    $where = "$tablename.tid IN ($clause)";
-
-    // for each depth > 0, add the next child in term_hierarchy to the join
-    for ($i = 0; $i < $depth; $i++) {
-      $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
-      $thname = $query->get_table_name('term_hierarchy', $thnum);
-      $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
-      $tablename = $query->get_table_name('term_data', $num);
-      $where .= " OR $tablename.tid IN ($clause)";
-    }
-    $query->add_where("($where)");
-  }
-  else {
-    if ($op == 'NOR') {
-      $not = "!";
-    }
-    foreach ($value as $tid) {
-      // For every term we have to match, add a base table
-      $num = 1;
-      $query->ensure_table('term_node');
-      $tablename = $query->get_table_name('term_node', $num);
-      $where = "$tablename.tid = '$tid'";
-
-      // for each depth > 0, add the next child in term_hierarchy to the join
-      for ($i = 0; $i < $depth; $i++) {
-        $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
-        $thname = $query->get_table_name('term_hierarchy', $thnum);
-        $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
-        $tablename = $query->get_table_name('term_data', $num);
-        $where .= " OR $tablename.tid = '$tid'";
-      }
-      $query->add_where("$not($where)");
-    }
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -2957,8 +833,9 @@ function _views_view_fields() {
  */
 function _views_delete_view($view) {
   $view->vid = intval($view->vid);
-  if (!$view->vid)
+  if (!$view->vid) {
     return;
+  }
 
   db_query("DELETE FROM {view_view} where vid=$view->vid");
   db_query("DELETE FROM {view_sort} where vid=$view->vid");
@@ -2969,14 +846,12 @@ function _views_delete_view($view) {
  */
 function _views_load_view($arg) {
 
-  if (intval($arg) == 0)
-    $where = "v.name = '$arg'";
-  else
-    $where = "v.vid =  $arg";
-  $view = db_fetch_object(db_query("SELECT v.* FROM {view_view} v WHERE $where"));
+  $where = (intval($arg) == 0 ? "v.name = '%s'" : "v.vid =  %d");
+  $view = db_fetch_object(db_query("SELECT v.* FROM {view_view} v WHERE $where", $arg));
 
-  if (!$view->name)
+  if (!$view->name) {
     return NULL;
+  }
 
   // load the sorting criteria too.
   $result = db_query("SELECT * FROM {view_sort} vs WHERE vid = $view->vid ORDER BY position ASC");
@@ -3013,8 +888,9 @@ function _views_load_view($arg) {
 
   $view->filter = array();
   while ($arg = db_fetch_array($result)) {
-    if ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR')
+    if ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR') {
       $arg['value'] = explode(',', $arg['value']);
+    }
     $view->filter[] = $arg;
   }
 
@@ -3029,6 +905,9 @@ function _views_save_view($view) {
 
   // cache the query
   if (_views_is_cacheable($view)) {
+    $path = drupal_get_path('module', 'views');
+    require_once("$path/views_query.inc");
+
     $info = _views_build_query($view);
     $view->query = $info['query'];
     $view->countquery = $info['countquery'];
@@ -3094,8 +973,9 @@ function _views_save_view($view) {
   }
 
   foreach ($view->filter as $i => $arg) {
-    if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR'))
+    if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR')) {
       $arg['value'] = implode(',', $arg['value']);
+    }
     db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[value]', '$arg[operator]', '$arg[options]', $i)");
   }
 
@@ -3132,15 +1012,14 @@ function _views_construct_header($view, $fields) {
     $header = array();
     $info = $fields[$field['fullname']];
 
-    if ($field['label'])
-      $header['data'] = $field['label'];
-    else
-      $header['data'] = $info['name'];
+    $header['data'] = ($field['label'] ? $field['label'] : $info['name']);
 
-    if ($field['sortable'])
+    if ($field['sortable']) {
       $header['field'] = $field['fullname'];
-    if ($field['defaultsort'])
+    }
+    if ($field['defaultsort']) {
       $header['sort'] = $field['defaultsort'];
+    }
 
     // Add CSS id to table cell header cell.
     $header['id'] = "view-field-$field[queryname]";
@@ -3157,14 +1036,16 @@ function views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
     $item = '';
     foreach ($view->field as $field) {
-      if ($field['label'])
+      if ($field['label']) {
         $item .= "<div class='view-label' id='view-label-$field[queryname]'>" . $field['label'] . "</div>";
+      }
       $item .= "<div class='view-field' id='view-data-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
     }
     $items[] = "<div class='view-item' id='view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
-  if ($items)
+  if ($items) {
     return theme('item_list', $items);
+  }
 }
 
 /*
@@ -3202,9 +1083,10 @@ function views_view_nodes($nodes, $teasers = true, $links = true) {
  */
 function theme_views_view($view, $type, $nodes) {
 
-  if ($type == 'page')
+  if ($type == 'page') {
     // Done before theming so theme can change it if it wants.
     drupal_set_title(_views_get_title($view));
+  }
 
   if ($view->header) {
     $header = check_markup($view->header, $view->header_format, false);
@@ -3257,8 +1139,9 @@ function views_get_summary_link($argtype, $item, $base)
 function views_get_summary_link_base($argtype, $viewname, $level, $args)
 {
   $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo[$argtype]['handler']))
+  if (!function_exists($arginfo[$argtype]['handler'])) {
     return NULL;
+  }
 
   $arg = "views/$viewname";
   for ($i = 0; $i < $level; $i++) {
@@ -3275,8 +1158,9 @@ function views_get_summary_link_base($argtype, $viewname, $level, $args)
 function theme_views_summary($view, $type, $level, $nodes, $args) {
   if ($type == 'page') {
     $title = $view->argument[$level]['title'];
-    if (!$title)
+    if (!$title) {
       $title = $view->title;
+    }
     drupal_set_title($title);
   }
 
@@ -3284,8 +1168,9 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
   foreach ($nodes as $node) {
     $items[] = array(views_get_summary_link($view->argument[$level]['type'], $node, $base), $node->num_nodes);
   }
-  if ($items)
+  if ($items) {
     $output .= theme('table', array(), $items, array('id' => 'summary'));
+  }
   
   return "<div class='views' id='$view->name'>$output</div>";
   
@@ -3498,12 +1383,7 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
     case 'summary':
       $query->add_table('term_data', true);
       $len = intval($arg);
-      if ($len <= 0) {
-        $fieldinfo['field'] = "term_data.name";
-      }
-      else {
-        $fieldinfo['field'] = "LEFT(term_data.name, $len)";
-      }
+      $fieldinfo['field'] = ($len <= 0 ? "term_data.name" : "LEFT(term_data.name, $len)");
 
       $fieldinfo['fieldname'] = 'letter';
       $query->add_field('tid', 'term_data');
@@ -3527,13 +1407,7 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
       $len = intval($arg);
-      if ($len <= 0) {
-        $fieldinfo['field'] = "n.title";
-      }
-      else {
-        $fieldinfo['field'] = "LEFT(n.title, $len)";
-      }
-
+      $fieldinfo['field'] = ($len <= 0 ? "n.title" : $fieldinfo['field'] = "LEFT(n.title, $len)");
       $fieldinfo['fieldname'] = 'letter';
       return $fieldinfo;
       break;
@@ -3753,8 +1627,9 @@ function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$qu
  */
 function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   global $user;
-  if (!$user || !$user->uid)
+  if (!$user || !$user->uid) {
     return;
+  }
 
   // Hey, Drupal kills old history, so nodes that haven't been updated
   // since NODE_NEW_LIMIT are bzzzzzzzt outta here! 
@@ -3769,7 +1644,6 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
 
   // NULL in case a history record doesn't exist. That's clearly new content.
   // Unless it's very very old content.
-//  $query->add_where("(history.uid = '$user->uid' OR (history.uid IS NULL))");
   $query->add_where("(history.uid = '$user->uid' OR (history.uid IS NULL AND (n.changed > $limit $clause)))");
   if (module_exist("comment")) {
     $query->add_where("(history.timestamp IS NULL OR history.timestamp < n.changed OR history.timestamp < node_comment_statistics.last_comment_timestamp)");
@@ -3832,93 +1706,4 @@ function views_handler_operator_eqneq() {
  */
 function views_handler_operator_yesno() {
   return array('1' => 'Yes', '0' => 'No');
-}
-
-// ---------------------------------------------------------------------------
-// Sort handlers
-
-// There are no sort handlers.
-
-// ---------------------------------------------------------------------------
-// View creator tool (for module developers)
-
-/*
- * This function creates view code for a view.
- */
-function views_create_view_code($vid) {
-  $view = _views_load_view($vid);
-  if (!$view)
-    return "View '$vid' not found.";
-
-  $output = "  \$view = new stdClass();\n";
-  $output .= "  \$view->name = '$view->name';\n";
-  $output .= "  \$view->description = '$view->description';\n";
-  $output .= "  \$view->title = '$view->title';\n";
-  $output .= "  \$view->menu_title = '$view->menu_title';\n";
-  $output .= "  \$view->header = '$view->header';\n";
-  $output .= "  \$view->header_format = '$view->header_format';\n";
-  $output .= "  \$view->type = '$view->type';\n";
-  $output .= "  \$view->url = '$view->url';\n";
-  $output .= "  \$view->use_pager = '$view->use_pager';\n";
-  $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
-  $output .= "  \$view->block = '$view->block';\n";
-  $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
-  $output .= "  \$view->block_more = '$view->block_more';\n";
-  $output .= "  \$view->block_display_header = '$view->block_display_header';\n";
-
-  $output .= "  \$view->sort = array (\n";
-  foreach ($view->sort as $sort) {
-    $output .= "    array (\n";
-    $fieldbits = explode('.', $sort['field']);
-    $output .= "      'tablename' => '$fieldbits[0]',\n";
-    $output .= "      'field' => '$fieldbits[1]',\n";
-    $output .= "      'sortorder' => '$sort[sortorder]',\n";
-    $output .= "      'options' => '$sort[options]',\n";
-    $output .= "    ),\n";  
-  }
-  $output .= "  );\n";
-
-  $output .= "  \$view->argument = array (\n";
-  foreach ($view->argument as $argument) {
-    $output .= "    array (\n";
-    $output .= "      'type' => '$argument[type]',\n";
-    $output .= "      'argdefault' => '$argument[argdefault]',\n";
-    $output .= "      'title' => '$argument[title]',\n";
-    $output .= "      'options' => '$argument[options]',\n";
-    $output .= "    ),\n";  
-  }
-  $output .= "  );\n";
-    
-  $output .= "  \$view->field = array (\n";
-  foreach ($view->field as $field) {
-    $output .= "    array (\n";
-    $output .= "      'tablename' => '$field[tablename]',\n";
-    $output .= "      'field' => '$field[field]',\n";
-    $output .= "      'label' => '$field[label]',\n";
-    if ($field['handler'])
-      $output .= "      'handler' => '$field[handler]',\n";
-    if ($field['sortable'])
-      $output .= "      'sortable' => '$field[sortable]',\n";
-    if ($field['defaultsort'])
-      $output .= "      'defaultsort' => '$field[defaultsort]',\n";
-    $output .= "    ),\n";  
-  }
-  $output .= "  );\n";
-
-  $output .= "  \$view->filter = array (\n";
-  foreach ($view->filter as $filter) {
-    $output .= "    array (\n";
-    $fieldbits = explode('.', $filter['field']);
-    $output .= "      'tablename' => '$fieldbits[0]',\n";
-    $output .= "      'field' => '$fieldbits[1]',\n";
-    $output .= "      'operator' => '$filter[operator]',\n";
-    $value = var_export($filter['value'], true);
-    $output .= "      'options' => '$filter[options]',\n";
-    $output .= "      'value' => $value,\n";
-    $output .= "    ),\n";  
-  }
-  $output .= "  );\n";
-  $output .= "  \$views[\$view->name] = \$view;\n";
-  // no breadcrumb for now.
-  return $output;
 }
