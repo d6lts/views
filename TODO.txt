@@ -24,6 +24,10 @@ LESS TIME CONSUMING STUFF
 *  Getting started doc
 	-> explain admin/views
 	-> walk-through changing the default tracker view
+* fix tracker default view
+* add my tracker default view
+* add taxonomy/term default view
+* make sure click-sorting works.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 

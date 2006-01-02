@@ -430,15 +430,25 @@ function views_admin_page() {
 
   drupal_set_title("administer views");
 
-  $result = pager_query("SELECT vid, name, description, menu_title, page_title, block_title, url, page FROM {view_view} ORDER BY name", $numViews);
+  $result = pager_query("SELECT vid, name, description, menu_title, page_title, block_title, url, page, menu, block FROM {view_view} ORDER BY name", $numViews);
 
   while ($view = db_fetch_object($result)) {
     $url = ($view->page ? l($view->url, $view->url) : "No Page View");
-    $items[] = array(views_get_title($view, 'menu'), $view->description, $url, theme('links', array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
+    $provides = array();
+    if ($view->page) {
+      $provides[] = 'Page';
+    }
+    if ($view->block) {
+      $provides[] = 'Block';
+    }
+    if ($view->menu) {
+      $provides[] = 'Menu';
+    }
+    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, theme('links', array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
   }
 
   if ($items) {
-    $output = theme('table', array('View', 'Description', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Existing Views");
+    $output = theme('table', array('View', 'Title', 'Description', 'Provides', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Existing Views");
     $output .= theme('pager', NULL, $numViews);
   }
   else {
@@ -477,6 +487,17 @@ function views_admin_page() {
       $status = 'Enabled';
     }
 
+    $provides = array();
+    if ($view->page) {
+      $provides[] = 'Page';
+    }
+    if ($view->block) {
+      $provides[] = 'Block';
+    }
+    if ($view->menu) {
+      $provides[] = 'Menu';
+    }
+
     $links = array(l('add', "admin/views/add/$view->name"));
     if ($status == 'Enabled') {
       $links[] = l('disable', "admin/views/disable/$view->name");
@@ -485,11 +506,11 @@ function views_admin_page() {
       $links[] = l('enable', "admin/views/enable/$view->name");
     }
 
-    $items[] = array(views_get_title($view, 'menu'), $view->description, $url, $status, theme('links', $links));
+    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, $status, theme('links', $links));
   }
 
   if ($items) {
-    $output .= theme('table', array('Default View', 'Description', 'URL', 'Status', 'Actions'), $items, array("cellpadding" => "4"), "Default Views");
+    $output .= theme('table', array('Default View', 'Title', 'Description', 'Provides', 'URL', 'Status', 'Actions'), $items, array("cellpadding" => "4"), "Default Views");
   }
   else {
     $output .= "<p>No views have currently been defined.</p>";
