@@ -33,24 +33,9 @@ function _views_build_query(&$view, $args = array()) {
 
   if (!$summary) {
     _views_view_build_sorts($query, $view);
-    if ($view->type == 1 || $view->type == 2) { // list (1) or table (2)
-      $fields = _views_get_fields(); 
-
-      foreach($view->field as $field) {
-        // Some fields are not actually fields but require special handlers
-        // to display their data.
-        if (!$field['notafield'])
-          $query->add_field($field['field'], $field['tablename'], $field['queryname']);
-        // special handling
-        if (is_array($fields[$field['fullname']]['addlfields'])) {
-          foreach($fields[$field['fullname']]['addlfields'] as $name) 
-            $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
-        }
-      }
-      if ($view->type == 2) { // table only
-        $view->table_header = _views_construct_header($view, $fields);
-        $query->set_header($view->table_header);
-      }
+    if (($view->page && ($view->page_type == 'list' || $view->page_type == 'table')) || 
+      ($view->block && ($view->block_type == 'list' || $view->block_type == 'table'))) {
+      _views_view_build_fields($query, $view);
     }
   }
 
@@ -148,8 +133,40 @@ function _views_view_build_sorts(&$query, $view) {
       $sortinfo['handler']('sort', $query, $sortinfo, $sort);
     }
     else {
-      $query->add_orderby_multi($table, $field, $sort['sortorder']);
+      $query->add_orderby($table, $field, $sort['sortorder']);
     }
+  }
+}
+
+/*
+ * Add field information from a view to a query.
+ */
+function _views_view_build_fields(&$query, $view) {
+
+  $fields = _views_get_fields(); 
+
+  foreach($view->field as $field) {
+    // Some fields are not actually fields but require special handlers
+    // to display their data.
+
+    $fieldname = $field['fullname']; // combined table & fieldname
+    $fieldinfo = $fields[$fieldname]; // laziness + readability
+    
+    if (isset($fieldinfo['query_handler']) && function_exists($fieldinfo['query_handler'])) {
+      $fieldinfo['query_handler']($field, $fieldinfo, $query);
+    }
+    
+    if (!$fieldinfo['notafield'])
+      $query->add_field($field['field'], $field['tablename'], $field['queryname']);
+    // special handling
+    if (is_array($fields[$field['fullname']]['addlfields'])) {
+      foreach($fields[$field['fullname']]['addlfields'] as $name) 
+        $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
+    }
+  }
+  if (($view->page && $view->page_type == 'table') || ($view->block && $view->block_type == 'table')) { // table only
+    $view->table_header = _views_construct_header($view, $fields);
+    $query->set_header($view->table_header);
   }
 }
 
@@ -171,7 +188,7 @@ function _views_build_summary(&$query, $argtype, $option) {
   if ($fieldinfo['fieldname']) {
     $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
   }
-  $query->add_field("count(n.nid) as num_nodes", '');
+  $query->add_field("count(node.nid) as num_nodes", '');
   $query->add_groupby("$fieldinfo[field]");
   $query->set_count_field("DISTINCT($fieldinfo[field])");
 }
@@ -184,15 +201,18 @@ class _views_query {
   /*
    * Create the basic query object and fill with default values.
    */
-  function _views_query() {
-    $this->where = "";
-    $this->orderby = "";
-    $this->groupby = "";
+  function _views_query($views_get_title_table = 'node', $views_get_title_field = 'nid') {
+    $this->views_get_title_table = $views_get_title_table;
+    $this->where = array();
+    $this->orderby = array();
+    $this->groupby = array();
     $this->tables = array();
     // Joins care about order, so we put our tables in a queue to make sure
     // the order is correct.
     $this->tablequeue = array();
-    $this->field = array("n.nid");
+    if ($views_get_title_field) {
+      $this->fields = array("$views_get_title_table.$views_get_title_field");
+    }
     $this->count_field = "*";
     $this->header = array();
   }
@@ -202,28 +222,36 @@ class _views_query {
    * automatically call ensure_table to make sure the required table
    * exists, *unless* $table is unset.
    */
-  function add_field($field, $table = 'n', $alias = '') {
+  function add_field($field, $table = '$$', $alias = '') {
+    if ($table == '$$') {
+      // I picked $$ because it's not a legal name for a table and NULL is
+      // actually a valid possibility here, and I can't default to a variable.
+      $table = $this->views_get_title_table;
+    }
     if ($table) {
-      if ($table && $table != 'n') {
-        $this->ensure_path($table);
-        if (!$this->tables[$table]) {
-          $this->queue_table($table);
-        }
-      }
+      $this->ensure_table($table);
       $table .= ".";
     }
     if ($alias) {
       $a = " AS $alias";
     }
-    $this->field[] = "$table$field$a";
+    $this->fields[] = "$table$field$a";
   }
 
+  /* 
+   * Set the base field to be distinct.
+   */
+  function set_distinct() {
+    if (count($this->fields) && substr($this->fields[0], 0, 7) != 'DISTINCT') {
+      $this->fields[0] = "DISTINCT($this->fields[0])";
+    }
+  }
   /*
    * Remove all fields that may've been added; primarily used for summary
    * mode where we're changing the query because we didn't get data we needed.
    */
   function clear_fields() {
-    $this->field = array();
+    $this->fields = array();
   }
 
   /*
@@ -239,27 +267,11 @@ class _views_query {
    * the table already exists in the query.
    */
   function add_where($clause) {
-    $this->where .= (!$this->where ? "WHERE " : " AND ") . $clause;
-  }
-
-  /*
-   * Add an ORDER BY clause to the query. It will ensure the table exists
-   * in the query, but it will not ensure the path, so the caller is
-   * responsible!
-   */
-  function add_orderby($table, $field, $order, $alias = '') {
-    if (!$alias) {
-      $alias = $table;
-    }
-    if (!$this->tables[$table]) {
-      $this->add_table($table, true);
-    }
-
-		if ($this->orderby) {
-			$this->orderby .= ", ";
-    }
-
-		$this->orderby = " $alias.$field $order";
+    $args = func_get_args();
+    array_shift($args); // ditch $clause
+    $clause = _views_replace_args($clause, $args);
+  
+    $this->where[] = $clause;
   }
 
   /*
@@ -267,29 +279,21 @@ class _views_query {
    * is separate from add_orderby above; I don't think it needs to
    * be.
    */
-  function add_orderby_multi($table, $field, $order, $alias = '') {
+  function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias) {
       $alias = $table;
     }
-    if (!$this->tables[$table]) {
-      $this->add_table($table, true);
+    if ($table) {
+      $this->ensure_table($table);
     }
 
     if (is_array($field)) {
       foreach($field as $f) {
-        if ($this->orderby) {
-          $this->orderby .= ", ";
-        }
-
-        $this->orderby = " $alias.$f $order";
+        $this->orderby[] = "$alias.$f $order";
       }
     }
     else {
-      if ($this->orderby) {
-        $this->orderby .= ", ";
-      }
-
-      $this->orderby = " $alias.$field $order";
+      $this->orderby[] = "$alias.$field $order";
     }
   }
 
@@ -299,16 +303,16 @@ class _views_query {
    * added.
    */
   function add_groupby($clause) {
-    $this->groupby .= (!$this->groupby ? "GROUP BY " : ", ") . $clause;
+    $this->groupby[] = $clause;
   }
 
   /*
    * This function will ensure a table exists; if it already exists it won't
-   * do anything, but if it doesn't it will add the table. It will ensure a path
-   * leads back to the base table.
+   * do anything, but if it doesn't it will add the table queue. It will ensure 
+   * a path leads back to the views_get_title table.
    */
   function ensure_table($table) {
-    if ($table == 'n' || $table == 'node' || $this->tables[$table]) {
+    if ($table == $this->views_get_title_table || $this->tables[$table]) {
       return;
     }
 
@@ -324,7 +328,7 @@ class _views_query {
    *   The name of the table to add. It needs to exist in the global table
    *   array.
    * @param $ensure_path
-   *   If true, it will ensure that a path back to node exists. If false, it
+   *   If true, it will ensure that a path back to views_get_title_table exists. If false, it
    *   assumes the caller is already sure about this and does not repeat it.
    * @param $howmany
    *   How many instances of the table to add? (Useful for interesting join 
@@ -336,7 +340,7 @@ class _views_query {
    *   will specify how this table joins if it is not the default.
    */
   function add_table($table, $ensure_path = false, $howmany = 1, $joininfo = NULL) {
-    if ($table == 'n' || $table == 'node') {
+    if ($table == $this->views_get_title_table) {
       return;
     }
 
@@ -344,12 +348,14 @@ class _views_query {
       return false;
     }
     
-    if (isset($this->tables[$table])) {
+    // I don't think this extra code is necessary; remove commented code
+    // if all is working.
+//    if (isset($this->tables[$table])) {
       $this->tables[$table] += $howmany;
-    }
-    else {
-      $this->tables[$table] = $howmany;
-    }
+//    }
+//    else {
+//      $this->tables[$table] = $howmany;
+//    }
 
     for ($i = $this->tables[$table] - $howmany + 1; $i <= $this->tables[$table]; $i++) {
       if ($joininfo) {
@@ -383,26 +389,24 @@ class _views_query {
   }
 
   /*
-   * Make sure that the specified table can be properly linked to the base
+   * Make sure that the specified table can be properly linked to the views_get_title
    * table in the JOINs. This function uses recursion. If the tables
-   * needed to complete the path back to the base table are not in the
+   * needed to complete the path back to the views_get_title table are not in the
    * query they will be added, but additional copies will NOT be added
    * if the table is already there.
    */
   function ensure_path($table, $traced = array(), $add = array()) {
-    if ($table == 'n' || $table == 'node') {
+    if ($table == $this->views_get_title_table) {
       return true;
     }
     $table_data = _views_get_tables();
 
     $left_table = $table_data[$table]['join']['left']['table'];
 
-    // Does it end at 'node'?
-    if ($left_table == 'node') {
+    // Does it end at our views_get_title table?
+    if ($left_table == $this->views_get_title_table) {
       // We are done! Add our tables and unwind.
       foreach ($add as $t) {
-        // Don't use add_table because it'll trace, and we already did that.
-        // And we already know anything in $add isn't already in $this->tables
         $this->queue_table($table);
       }
       return true;
@@ -446,63 +450,92 @@ class _views_query {
    *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   function query($getcount = false) {
-//    dprint_r($this);
     $table_data = _views_get_tables();
+
     // Add all the tables to the query via joins. We assume all LEFT joins.
     foreach ($this->tablequeue as $tinfo) {
       $table = $tinfo['table'];
-      $i = $tinfo['num'];
-      $tn = $this->get_table_name($table, $i);
 
-      if (!$this->joins[$table][$i]) {
-        $ltable = $table_data[$table]['join']['left']['table'];
-        $lfield = $table_data[$table]['join']['left']['field'];
-        $rfield = $table_data[$table]['join']['right']['field'];
-      }
-      else {
-        $ltable = $this->joins[$table][$i]['ltable'];
-        $lfield = $this->joins[$table][$i]['lfield'];
-        $rfield = $this->joins[$table][$i]['rfield'];
-      }
+      // The real table name may differ from what we're calling it.
+      $table_real = (isset($table_data[$table]['name']) ? $table_data[$table]['name'] : $table);
 
-      // special case for node table
-      if ($ltable == 'node') {
-        $ltable = 'n'; 
+      $table_num = $tinfo['num'];
+      $table_alias = $this->get_table_name($table, $table_num);
+
+      $joininfo = (!$this->joins[$table][$table_num] ? 
+        $table_data[$table]['join'] : $this->joins[$table][$table_num]);
+
+      // the { is a special character which seems to be treated differently
+      // in PHP5 than PHP4 so we do this a little oddly.
+      $joins .= ' LEFT JOIN {' . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." . 
+        $joininfo['left']['field'] . " = $table_alias." . $joininfo['right']['field'];
+
+      if (isset($joininfo['extra'])) {
+        foreach ($joininfo['extra'] as $field => $value) {
+          $joins .= " AND $table_alias.$field";
+          if ($value) {
+            $joins .= " = '$value'";
+          }
+        }
       }
-      // Trying to get around problem with \ in PHP 5(?)
-      $joins .= ' LEFT JOIN {' . $table. "} $tn ON $ltable.$lfield = $tn.$rfield";
     }
 
     // If it's not a count query, add our fields
     if (!$getcount) {
-      foreach($this->field as $field) {
-        $fields .= ($fields ? ", " : "") . $field;
-      }
-      $groupby = $this->groupby;
-    }
-    else
-      $fields = "count($this->count_field) as numrecs";
+      $fields = implode(', ', $this->fields);
 
+      // we only add the groupby if we're not counting.
+      if ($this->groupby) {
+        $groupby = "GROUP BY " . implode(', ', $this->groupby);
+      }
+    }
+    else {
+      $fields = "count($this->count_field) AS numrecs";
+    }
+
+    // ok, tablesort_sql is really, really (really) annoying.
+    // 1) it insists on adding the ORDER BY clause.
+    // 2) You're supposed to give it your stuff as $before, but
+    // 3) You have to add the comma and
+    // 4) if it doesn't have anything to add, it returns NOTHING.
+    // 5) So I'm just going to get what it sends back and chop off
+    //    the orderby, cause otherwise my code is too ugly with
+    //    various checks.
     if ($this->header) {
-      if ($this->orderby)
-        $before = "$this->orderby, ";
-      $orderby = tablesort_sql($this->header, $before);
-      if (!$orderby && $this->orderby) {
-        $orderby = "ORDER BY $this->orderby";
+      $result = tablesort_sql($this->header);
+      if ($result) {
+        $this->orderby[] = str_replace('ORDER BY ', '', $result);
       }
     }
-    else if ($this->orderby) {
-      $orderby = "ORDER BY $this->orderby";
+       
+    if ($this->orderby) {
+      $orderby = "ORDER BY " . implode(', ', $this->orderby);
     }
 
-    $query = "SELECT $fields FROM {node} n $joins $this->where $groupby $orderby";
-//    dprint_r($query);
+    if ($this->where) {
+      $where = "WHERE (" . implode(') AND (', $this->where) . ')';
+    }
+
+    $query = "SELECT $fields FROM {$this->views_get_title_table} $joins $where $groupby $orderby";
     return $query;
   }
 }
 
 /*
- * Add a where clause based on taxonomy. This is a pretty exciting piece of
+ * Support db_query() style argument replacement in a clause.
+ */
+function _views_replace_args($clause, $args) {
+  // cut & pasted directly from db_query.
+  if (isset($args[0]) and is_array($args[0])) { // 'All arguments in one array' syntax
+    $args = $args[0];
+  }
+  _db_query_callback($args, TRUE);
+  return preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $clause);
+
+}
+
+/*
+ * Add a where clause views_get_titled on taxonomy. This is a pretty exciting piece of
  * code because the clause and the JOINs are a bit complicated.
  */
 function _views_add_taxonomy($op, $value, $depth, &$query) {
@@ -510,11 +543,11 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
   // we add 1 chain, but in an and query we actually basically have to add
   // a 2 dimensional array. 
   
-  $query->ensure_table('term_data'); // this is to make sure the base table comes first.
+  $query->ensure_table('term_data'); // this is to make sure the views_get_title table comes first.
 
   if ($op == 'OR') {
     $clause = "'" . implode("','", $value) . "'";
-    // base tables
+    // views_get_title tables
 
     // Any number of things might have already added a term_node table, but
     // if they ahve and are filtering on it the query is going to be borken
@@ -527,9 +560,9 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
 
     // for each depth > 0, add the next child in term_hierarchy to the join
     for ($i = 0; $i < $depth; $i++) {
-      $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+      $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
       $thname = $query->get_table_name('term_hierarchy', $thnum);
-      $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+      $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $thname, 'field' => 'parent'), 'right' => array('field' => 'tid')));
       $tablename = $query->get_table_name('term_data', $num);
       $where .= " OR $tablename.tid IN ($clause)";
     }
@@ -540,7 +573,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
       $not = "!";
     }
     foreach ($value as $tid) {
-      // For every term we have to match, add a base table
+      // For every term we have to match, add a views_get_title table
       $num = 1;
       $query->ensure_table('term_node');
       $tablename = $query->get_table_name('term_node', $num);
@@ -548,9 +581,9 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
 
       // for each depth > 0, add the next child in term_hierarchy to the join
       for ($i = 0; $i < $depth; $i++) {
-        $thnum = $query->add_table('term_hierarchy', false, 1, array('ltable' => $tablename, 'lfield' => 'tid', 'rfield' => 'tid'));
+        $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
         $thname = $query->get_table_name('term_hierarchy', $thnum);
-        $num = $query->add_table('term_data', false, 1, array('ltable' => $thname, 'lfield' => 'parent', 'rfield' => 'tid'));
+        $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $thname, 'field' => 'parent'), 'right' => array('field' => 'tid')));
         $tablename = $query->get_table_name('term_data', $num);
         $where .= " OR $tablename.tid = '$tid'";
       }

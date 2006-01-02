@@ -2,21 +2,37 @@ create table if not exists view_view (
   vid int(10) unsigned NOT NULL default '0',
   name varchar(32) NOT NULL UNIQUE,
   description varchar(255),
-  title varchar(255),
-  menu_title varchar(255),
-  header longtext,
-  header_format int(4) NOT NULL,
+  access varchar(255),
+  -- page fields
+  page int(1),
+  page_title varchar(255),
+  page_header longtext,
+  page_header_format int(4) NOT NULL,
+  page_type varchar(20),
   use_pager int(1),
   nodes_per_page int(2), -- yes, no more than 99
-  nodes_per_block int(2), -- yes, no more than 99
-  block_display_header int(1),
-  type int(2),
+  url varchar(255),
+  -- menu fields
+  menu int(1),
+  menu_tab int(1),
+  menu_tab_default int(1),
+  menu_tab_weight int(4),
+  menu_title varchar(255),
+  -- block fields
   block int(1),
+  block_title varchar(255),
+  block_use_page_header int(1),
+  block_header longtext,
+  block_header_format int(4) NOT NULL,
+  block_type varchar(20),
+  nodes_per_block int(5),
   block_more int(1),
-  url int(2),
+  -- breadcrumb
+  breadcrumb_no_home int(1), -- true means start breadcrumb trail from 'Home'.
+  -- other
+  changed int(11),
   query longtext,
   countquery longtext,
-  changed int(11),
   PRIMARY KEY (vid),
   KEY (name)
 );

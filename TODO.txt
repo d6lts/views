@@ -18,15 +18,12 @@ LESS TIME CONSUMING STUFF
 // Most of this is now slated for post 4.7 update.
 
 *  Check queries for injection attacks, especially on the URL!
-*  Check for enabled modules everywhere
-
 *  provide more default operator handlers
-
 *  Validation needs a thorough going-over.
-
 *  plugin module?
-
-*  Split form components out into a .inc
+*  Getting started doc
+	-> explain admin/views
+	-> walk-through changing the default tracker view
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 
@@ -95,4 +92,19 @@ TO DONE
    here because I keep confusing them.
 *  history table -- allow to filter on 'has updates' or not.
 * 'custom' filter handler should just be called 'handler' I think
+*  Split form components out into a .inc
+*  cacheing of table data
+* generalize query builder so a base-table can be defined, and remove
+  hard-coded references to 'node'.
+* change all references of the node table from 'n' to 'node'.
+* extra args for add_where, add_orderby used like db_query
+* substitution on generated queries so that 'current user' based queries can still
+  be cached.
+* allow disabling of default views
+* allow a view to specify exact menu path for view
+* mark default views that are overridden by views in the database
+* option for 'Home' breadcrumb item
+* breadcrumb for arguments
+* allow a view to specify: menu entry, tab, default tab.
+* cache default views
 

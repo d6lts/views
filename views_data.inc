@@ -122,7 +122,7 @@ function _views_internal_tables() {
         ), 
         "right" => array(
           "field" => "tid"
-        ), 
+        ),
       ),
       "fields" => array(
         "name" => array(
@@ -234,21 +234,6 @@ function _views_internal_tables() {
         'list' => "views_handler_filter_username",
         'help' => "This allows you to filter by a particular user. You might not find this useful if you have a lot of users.",
       ),
-      "anon" => array(
-        'field' => 'uid',
-        'name' => "Node: Author is Anonymous",
-        'operator' => "views_handler_operator_eqneq",
-        'list' => "views_handler_filter_useranon",
-        'help' => "This allows you to filter by whether or not the node author is anonymous.",
-      ),
-      "currentuid" => array(
-        'name' => "Node: Author is Current User",
-        'operator' => "views_handler_operator_eqneq",
-        'list' => "views_handler_filter_usercurrent",
-        'handler' => "views_handler_filter_usercurrent_custom",
-        'cacheable' => 'no',
-        'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
-      ),
     )
   );
 
@@ -274,6 +259,7 @@ function _views_internal_tables() {
     )
   );
   
+  // By default history table assumes current user.
   $tables['history'] = array(
     "name" => "history",
     "provider" => "internal",
@@ -285,6 +271,9 @@ function _views_internal_tables() {
       "right" => array(
         "field" => "nid"
       ), 
+      "extra" => array(
+        "uid" => "***CURRENT_USER***"
+      )
     ),
     "filters" => array(
       "timestamp" => array(
@@ -292,20 +281,20 @@ function _views_internal_tables() {
         'operator' => array("Has"),
         'list' => array("New Content"),
         'handler' => "views_handler_filter_isnew",
-        'cacheable' => 'no',
         'help' => "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes.",
       ),
     ),
   );
 
-  $tables['n'] = array(
-    "name" => "n", 
+  $tables['node'] = array(
+    "name" => "node", 
     "provider" => "internal", // won't show up in external list.
     "fields" => array(
       "title" => array(
         'name' => "Node: Title", 
         'handler' => array('views_handler_field_nodelink' => 'Normal', 'views_handler_field_nodelink_with_mark' => "With updated mark"),
-        'sortable' => true, 'addlfields' => array('changed'),
+        'sortable' => true, 
+        'addlfields' => array('changed'),
         'help' => "Display the title of the node.",
       ),
       "created" => array(
@@ -374,6 +363,21 @@ function _views_internal_tables() {
         'operator' => "views_handler_operator_or",
         'help' => "Include or exclude nodes of the selected types.",
       ),
+      "anon" => array(
+        'field' => 'uid',
+        'name' => "Node: Author is Anonymous",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_useranon",
+        'help' => "This allows you to filter by whether or not the node author is anonymous.",
+      ),
+      "currentuid" => array(
+        'field' => 'uid',
+        'name' => "Node: Author is Current User",
+        'operator' => "views_handler_operator_eqneq",
+        'list' => "views_handler_filter_usercurrent",
+        'list-type' => 'select',
+        'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
+      ),
     ),
 
   );    
@@ -386,27 +390,77 @@ function _views_internal_tables() {
  * by other modules, and not always be active.
  */
 function _views_internal_default_views() {
+  $view = new stdClass();
+  $view->name = 'frontpage';
+  $view->description = 'The basic front page view.';
+  $view->page = true;
+  $view->url = 'frontpage';
+  $view->page_title = '';
+  $view->page_type = 'teaser';
+  $view->use_pager = true;
+  $view->nodes_per_page = variable_get('default_nodes_main', 10);
+  $view->block = false;
+  $view->menu = false;
+  $view->breadcrumb_no_home = true;
+  $view->sort = array (
+    array (
+      'tablename' => 'node',
+      'field' => 'sticky',
+      'sortorder' => 'DESC',
+      'options' => '',
+    ),
+    array (
+      'tablename' => 'node',
+      'field' => 'created',
+      'sortorder' => 'DESC',
+      'options' => '',
+    ),
+  );
+  $view->argument = array (
+  );
+  $view->field = array (
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'node',
+      'field' => 'promote',
+      'operator' => '=',
+      'options' => '',
+      'value' => '1',
+    ),
+    array (
+      'tablename' => 'node',
+      'field' => 'status',
+      'operator' => '=',
+      'options' => '',
+      'value' => '1',
+    ),
+  );
+  $views[$view->name] = $view;
+
+  
   if (module_exist('comment')) {
     $view = new stdClass();
-    $view->name = 'tracker/tracker';
+    $view->name = 'tracker';
     $view->description = 'Shows all new activity on system.';
-    $view->title = 'recent posts for %1';
-    $view->menu_title = 'recent posts';
-    $view->use_pager = '1';
+    $view->page = true;
+    $view->url = 'tracker';
+    $view->page_title = 'recent posts for %1';
+    $view->page_type = 'table';
+    $view->use_pager = true;
     $view->nodes_per_page = '25';
-    $view->nodes_per_block = '10';
-    $view->block_display_header = '0';
-    $view->type = '2';
-    $view->block = '1';
-    $view->url = '3';
+
+    $view->menu = true;
+    $view->menu_title = 'recent posts';
+    $view->block = false;
     $view->field = array (
       array (
-        'tablename' => 'n',
+        'tablename' => 'node',
         'field' => 'type',
         'label' => 'Type',
       ),
       array (
-        'tablename' => 'n',
+        'tablename' => 'node',
         'field' => 'title',
         'label' => 'Title',
         'handler' => 'views_handler_field_nodelink_with_mark',
@@ -445,7 +499,7 @@ function _views_internal_default_views() {
     );
     $view->filter = array (
       array (
-        'tablename' => 'n',
+        'tablename' => 'node',
         'field' => 'status',
         'operator' => '=',
         'value' => '1',
@@ -455,55 +509,19 @@ function _views_internal_default_views() {
     $views[$view->name] = $view;
   }
 
-  $view = new stdClass();
-  $view->name = 'frontpage';
-  $view->description = 'The basic front page view.';
-  $view->title = '';
-  $view->menu_title = '';
-  $view->header = '';
-  $view->header_format = '1';
-  $view->type = '3';
-  $view->url = '2';
-  $view->use_pager = '1';
-  $view->nodes_per_page = '10';
-  $view->block = '0';
-  $view->nodes_per_block = '0';
-  $view->block_more = '0';
-  $view->block_display_header = '0';
-  $view->sort = array (
-    array (
-      'tablename' => 'n',
-      'field' => 'sticky',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
-    array (
-      'tablename' => 'n',
-      'field' => 'created',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
-  );
-  $view->argument = array (
-  );
-  $view->field = array (
-  );
-  $view->filter = array (
-    array (
-      'tablename' => 'n',
-      'field' => 'promote',
-      'operator' => '=',
-      'options' => '',
-      'value' => '1',
-    ),
-  );
-  $views[$view->name] = $view;
 
   return $views;
 }
 
 // ---------------------------------------------------------------------------
 // View creator tool (for module developers)
+
+/*
+ * Get a true/false.
+ */
+function views_tf($val) {
+  return ($val ? "TRUE" : "FALSE");
+}
 
 /*
  * This function creates view code for a view.
@@ -517,18 +535,35 @@ function views_create_view_code($vid) {
   $output = "  \$view = new stdClass();\n";
   $output .= "  \$view->name = '$view->name';\n";
   $output .= "  \$view->description = '$view->description';\n";
-  $output .= "  \$view->title = '$view->title';\n";
-  $output .= "  \$view->menu_title = '$view->menu_title';\n";
-  $output .= "  \$view->header = '$view->header';\n";
-  $output .= "  \$view->header_format = '$view->header_format';\n";
-  $output .= "  \$view->type = '$view->type';\n";
-  $output .= "  \$view->url = '$view->url';\n";
-  $output .= "  \$view->use_pager = '$view->use_pager';\n";
-  $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
-  $output .= "  \$view->block = '$view->block';\n";
-  $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
-  $output .= "  \$view->block_more = '$view->block_more';\n";
-  $output .= "  \$view->block_display_header = '$view->block_display_header';\n";
+  $output .= "  \$view->access = " . var_export($view->access, true) . ";\n";
+  // page items
+  if ($view->page) {
+    $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
+    $output .= "  \$view->page_title = '$view->page_title';\n";
+    $output .= "  \$view->page_header = '$view->page_header';\n";
+    $output .= "  \$view->page_header_format = '$view->page_header_format';\n";
+    $output .= "  \$view->page_type = '$view->page_type';\n";
+    $output .= "  \$view->url = '$view->url';\n";
+    $output .= "  \$view->use_pager = " . views_tf($view->use_pager) . ";\n";
+    $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
+    if ($view->menu) {
+      $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
+      $output .= "  \$view->menu_title = '$view->menu_title';\n";
+      $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
+      $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
+      $output .= "  \$view->menu_weight = '$view->menu_weight';\n";
+    }
+  }
+  if ($view->block) {
+    $output .= "  \$view->block = " . views_tf($view->block) . ";\n";
+    $output .= "  \$view->block_title = '$view->block_title';\n";
+    $output .= "  \$view->block_header = '$view->block_header';\n";
+    $output .= "  \$view->block_header_format = '$view->block_header_format';\n";
+    $output .= "  \$view->block_type = '$view->block_type';\n";
+    $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
+    $output .= "  \$view->block_more = '$view->block_more';\n";
+    $output .= "  \$view->block_use_page_header = " . views_tf($view->block_use_page_header) . ";\n";
+  }
 
   $output .= "  \$view->sort = array (\n";
   foreach ($view->sort as $sort) {
