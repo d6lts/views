@@ -15,9 +15,14 @@ function _views_internal_arguments() {
       'help' => "The node type argument allows users to filter a view by specifying the type of node.",
     ),
     'uid' => array(
-      'name' => t("User ID"), 
+      'name' => t("User ID Authored"), 
       'handler' => "views_handler_arg_uid",
-      'help' => "The User ID argument allows users to filter a view by specifying a user ID.",
+      'help' => "The User ID argument allows users to filter to nodes authored by the specified user ID.",
+    ),
+    'uidtouch' => array(
+      'name' => t("User ID Authored or Commented"), 
+      'handler' => "views_handler_arg_uid_touch",
+      'help' => "The User ID argument allows users to filter a to nodes authored or commented on the specified user ID.",
     ),
     'taxid' => array(
       'name' => t("Taxonomy Term ID"), 
@@ -155,6 +160,20 @@ function _views_internal_tables() {
   }
 
   if (module_exist('comment')) {
+    $tables['comments'] = array(
+      "name" => "comments", 
+      "provider" => "internal",
+      "join" => array(
+        "left" => array(
+          "table" => "node",
+          "field" => "nid"
+        ), 
+        "right" => array(
+          "field" => "nid"
+        ), 
+      ),
+    );
+    
     $tables['node_comment_statistics'] = array(
       "name" => "node_comment_statistics", 
       "provider" => "internal",
@@ -378,6 +397,15 @@ function _views_internal_tables() {
         'list-type' => 'select',
         'help' => "This allows you to filter by whether or not the node was authored by the logged in user of the view.",
       ),
+      "currentuidtouched" => array(
+        'field' => 'uid',
+        'name' => "Node: Current User Authored or Commented",
+        'operator' => array('=' => "touched by"),
+        'list' => "views_handler_filter_usercurrent",
+        'list-type' => 'select',
+        'handler' => "views_handler_filter_uid_touched",
+        'help' => "This allows you to filter by whether or not the logged in user authored or commented on the node.",
+      ),
     ),
 
   );    
@@ -508,7 +536,6 @@ function _views_internal_default_views() {
 
     $views[$view->name] = $view;
   }
-
 
   return $views;
 }

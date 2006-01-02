@@ -141,7 +141,7 @@ function _views_view_build_sorts(&$query, $view) {
 /*
  * Add field information from a view to a query.
  */
-function _views_view_build_fields(&$query, $view) {
+function _views_view_build_fields(&$query, &$view) {
 
   $fields = _views_get_fields(); 
 
@@ -243,7 +243,8 @@ class _views_query {
    */
   function set_distinct() {
     if (count($this->fields) && substr($this->fields[0], 0, 7) != 'DISTINCT') {
-      $this->fields[0] = "DISTINCT($this->fields[0])";
+      $field = $this->fields[0];
+      $this->fields[0] = "DISTINCT($field)";
     }
   }
   /*

@@ -154,7 +154,7 @@ function _views_get_default_views() {
     $cache = unserialize($data->data);
 
     if (is_array($cache)) {
-      $$VIEWS_DEFAULT_VIEWS = $cache;
+      $VIEWS_DEFAULT_VIEWS = $cache;
     }
     else {
       $path = drupal_get_path('module', 'views');
@@ -1281,14 +1281,16 @@ function views_set_breadcrumb($view) {
     array_shift($breadcrumb);
   }
 
-  // Add a breadcrumb trail for each level of argument we're at.
-  $url = $view->url;
-  $args = array();
-  foreach ($view->args as $level => $arg) {
-    $breadcrumb[] = l(views_get_title($view, 'page', $args), $url);
-    // For next round.
-    $args[] = $arg;
-    $url .= "/$arg";
+  if ($view->args) {
+    // Add a breadcrumb trail for each level of argument we're at.
+    $url = $view->url;
+    $args = array();
+    foreach ($view->args as $level => $arg) {
+      $breadcrumb[] = l(views_get_title($view, 'page', $args), $url);
+      // For next round.
+      $args[] = $arg;
+      $url .= "/$arg";
+    }
   }
 
   drupal_set_breadcrumb($breadcrumb);
@@ -1560,6 +1562,39 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
       return $user->name;
   }
 }
+
+function views_handler_arg_uid_touch($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+      $query->add_table('users', true);
+      $query->add_field('name', 'users');
+      $query->add_field('uid', 'users');
+      $fieldinfo['field'] = "users.name";
+      return $fieldinfo;
+      break;
+    case 'filter':
+      $uid = intval($arg);
+      $table_data = _views_get_tables();
+      $joininfo = $table_data['comments']['join'];
+      $joininfo['extra'] = array('uid' => $uid);
+      $tblnum = $query->add_table("comments", false, 1, $joininfo);
+      $table = $query->get_table_name('comments', $tblnum);
+
+      $query->set_distinct(); // once you do this, there's just one node.
+      $query->add_where("node.uid = '%s' OR $table.uid = '%s'", $uid, $uid);
+      break;
+    case 'link':
+      $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
+      return l($name, "$arg/" . intval($query->uid));
+    case 'title':
+      if (!$query) {
+        return variable_get('anonymous', 'Anonymous');
+      } 
+      $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
+      return $user->name;
+  }
+}
+
 
 function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
   switch($op) {
@@ -1889,6 +1924,24 @@ function views_handler_filter_nodetype($op) {
   return $nodes;
 }
 
+/*
+ * Add special info to see if a user either authored OR commented on a post
+ */
+function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
+  if (!module_exist("comment")) { // not much to do in this case
+    $query->add_where("node.uid = '%s'", $filter['value']);
+    return;
+  }
+
+  $table_data = _views_get_tables();
+  $joininfo = $table_data['comments']['join'];
+  $joininfo['extra'] = array('uid' => $filter['value']);
+  $tblnum = $query->add_table("comments", false, 1, $joininfo);
+  $table = $query->get_table_name('comments', $tblnum);
+
+  $query->set_distinct(); // once you do this, there's just one node.
+  $query->add_where("node.uid = '%s' OR $table.uid = '%s'", $filter['value'], $filter['value']);
+}
 
 // ---------------------------------------------------------------------------
 // Operator handlers (for filters)
