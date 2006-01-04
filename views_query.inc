@@ -156,11 +156,12 @@ function _views_view_build_fields(&$query, &$view) {
       $fieldinfo['query_handler']($field, $fieldinfo, $query);
     }
     
-    if (!$fieldinfo['notafield'])
+    if (!$fieldinfo['notafield']) {
       $query->add_field($field['field'], $field['tablename'], $field['queryname']);
+    }
     // special handling
-    if (is_array($fields[$field['fullname']]['addlfields'])) {
-      foreach($fields[$field['fullname']]['addlfields'] as $name) 
+    if (is_array($fieldinfo['addlfields'])) {
+      foreach($fieldinfo['addlfields'] as $name) 
         $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
     }
   }

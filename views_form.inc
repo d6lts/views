@@ -378,7 +378,7 @@ function _views_view_form($view, $orig, $op = '') {
     '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['page-info']['page_header_format'] = filter_form($view->page_header_format, 1, array('page-info', 'page_header_format'));
+  $form['page-info']['page_header_format'] = filter_form($view->page_header_format, 1, array('page_header_format'));
 
   // block info
 
@@ -1123,7 +1123,7 @@ function theme_views_edit_view($form) {
 function views_edit_view_validate($form_id, $view) {
 //  dprint_r(var_export($view, true));
   $filters = _views_get_filters();
-  _views_check_arrays($view);
+//  _views_check_arrays($view);
   
   $op = $_POST['op'];
 
@@ -1139,19 +1139,6 @@ function views_edit_view_validate($form_id, $view) {
     }
   }
 
-  if (is_array($view['filter'])) foreach ($view['filter'] as $i => $filter) {
-    $filterinfo = $filters[$filter['field']]; // shortcut
-    if ($filterinfo['transform'] && function_exists($filterinfo['transform'])) {
-      $filter['value'] = $filterinfo['transform']('in', $filter['value'], $filterinfo);
-    }
-    if ($filterinfo['validate'] && function_exists($filterinfo['validate'])) {
-      if ($rc = $filterinfo['validate']('validate', $filter['value'], $filterinfo)) {
-        $validfilter = false;
-        form_set_error("filter][$i][value", $rc);
-      }
-    }
-  }
-  
   if ($view['use_block'] && !$view['title']) {
     form_set_error('title', "If being used as a block, title may not be blank.");
   }

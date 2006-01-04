@@ -59,22 +59,22 @@ function _views_get_tables($full = false) {
         if (is_array($table['filters'])) {
           foreach($table['filters'] as $filter => $data) {
             $data['table'] = $name;
-            $VIEWS_TABLES['filters']['titles']["$table[name].$filter"] = $data['name'];
-            $VIEWS_TABLES['filters']['base']["$table[name].$filter"] = $data;
+            $VIEWS_TABLES['filters']['titles']["$name.$filter"] = $data['name'];
+            $VIEWS_TABLES['filters']['base']["$name.$filter"] = $data;
           }
         }
         if (is_array($table['fields'])) {
           foreach($table['fields'] as $field => $data) {
             $data['table'] = $name;
-            $VIEWS_TABLES['fields']['titles']["$table[name].$field"] = $data['name'];
-            $VIEWS_TABLES['fields']['base']["$table[name].$field"] = $data;
+            $VIEWS_TABLES['fields']['titles']["$name.$field"] = $data['name'];
+            $VIEWS_TABLES['fields']['base']["$name.$field"] = $data;
           }
         }
         if (is_array($table['sorts'])) {
           foreach($table['sorts'] as $field => $data) {
             $data['table'] = $name;
-            $VIEWS_TABLES['sorts']['titles']["$table[name].$field"] = $data['name'];
-            $VIEWS_TABLES['sorts']['base']["$table[name].$field"] = $data;
+            $VIEWS_TABLES['sorts']['titles']["$name.$field"] = $data['name'];
+            $VIEWS_TABLES['sorts']['base']["$name.$field"] = $data;
           }
         }
       }
@@ -263,7 +263,7 @@ function views_menu($may_cache) {
   if ($may_cache) {
     // Invalidate the views cache to ensure that views data gets rebuilt.
     // This is the best way to tell that module configuration has changed.
-    if (arg(0) == 'admin' && arg(1) == 'module') {
+    if (arg(0) == 'admin' && arg(1) == 'modules') {
       views_invalidate_cache();
     }
     
@@ -1015,7 +1015,7 @@ function _views_is_cacheable(&$view) {
   }
 
   foreach ($view->field as $i => $field) {
-    if ($field->sortable) {
+    if ($field['sortable']) {
       return false;
     }
   }
@@ -1030,7 +1030,6 @@ function _views_is_cacheable(&$view) {
  */
 function _views_view_fields() {
   return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery');
-//  return array('vid', 'name', 'description', 'title', 'header', 'header_format', 'use_pager', 'nodes_per_page', 'menu_title', 'nodes_per_block', 'block_display_header', 'type', 'block', 'block_more', 'url', 'changed', 'query', 'countquery');
 }
 
 /*
@@ -1553,7 +1552,7 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       $query->add_where("node.type = '$where'");
       break;
     case 'link':
-      return l($query->type, "$arg/$query->type");
+      return l(node_get_name($query->type), "$arg/$query->type");
     case 'title':
       return $query;
   }
