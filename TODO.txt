@@ -27,7 +27,8 @@ LESS TIME CONSUMING STUFF
 * fix tracker default view
 * add my tracker default view
 * add taxonomy/term default view
-* make sure click-sorting works.
+
+* figure out required modules when exporting; guard against that on import.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 
@@ -38,6 +39,7 @@ DEFAULT VIEWS/MODULES TO SUPPORT
 *  poll
 *  blog
 *  book
+*  sort on number of reads if statistics module enabled
 
 TO DONE
 
@@ -111,4 +113,5 @@ TO DONE
 * breadcrumb for arguments
 * allow a view to specify: menu entry, tab, default tab.
 * cache default views
-
+* wildcards in arguments
+* fix [more] link

@@ -171,7 +171,7 @@ function _views_check_ops(&$view, $op) {
 /*
  * Custom form element to do our nice images.
  */
-function hook_elements() {
+function views_elements() {
   $type['imagebutton'] = array('#input' => TRUE, '#name' => 'op', '#button_type' => 'submit', '#form_submitted' => TRUE);
 }
 

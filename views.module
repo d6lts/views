@@ -1353,7 +1353,7 @@ function theme_views_view($view, $type, $nodes) {
   }
 
   if ($type == 'block' && $view->block_more && count($nodes) >= $view->nodes_per_block) {
-    $output .= theme('views_more', $view->name); 
+    $output .= theme('views_more', $view->url); 
   }
   return "<div class='view' id='view-$view->name'>$output</div>\n";
 }
@@ -1361,8 +1361,8 @@ function theme_views_view($view, $type, $nodes) {
 /*
  * Format the 'more' link for a view.
  */
-function theme_views_more($name) {
-  return "<div class='more'>" . l("[More]", "views/$name") . "</div>";
+function theme_views_more($url) {
+  return "<div class='more'>" . l("[More]", "$url") . "</div>";
 }
 
 /*
@@ -1375,8 +1375,7 @@ function views_get_summary_link($argtype, $item, $base) {
 
 /*
  * In a summary view, each entry links to a more specific entry
- * in that view. Construct the base of that link. It should
- * be views/VIEWNAME/arg1/arg2/arg3 etc.
+ * in that view. Construct the base of that link. 
  */
 function views_get_summary_link_base($argtype, $url, $level, $args)
 {

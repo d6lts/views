@@ -108,9 +108,10 @@ function _views_view_build_arg(&$query, $arg, $argdata) {
     return false;
   }
 
-  // call the handler
-  $arginfo[$argdata['type']]['handler']('filter', $query, $argdata, $arg);
-  
+  // call the handler, unless the arg is the 'wildcard'.
+  if ($arg != '*') {
+    $arginfo[$argdata['type']]['handler']('filter', $query, $argdata, $arg);
+  }
 }
 
 /*
@@ -568,7 +569,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
       $tablename = $query->get_table_name('term_data', $num);
       $where .= " OR $tablename.tid IN ($clause)";
     }
-    $query->add_where("($where)");
+    $query->add_where("$where");
   }
   else {
     if ($op == 'NOR') {
@@ -577,7 +578,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
     foreach ($value as $tid) {
       // For every term we have to match, add a views_get_title table
       $num = 1;
-      $query->ensure_table('term_node');
+      $num = $query->add_table('term_node');
       $tablename = $query->get_table_name('term_node', $num);
       $where = "$tablename.tid = '$tid'";
 
