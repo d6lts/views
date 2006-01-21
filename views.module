@@ -823,7 +823,6 @@ function views_view_block($vid) {
   global $user;
   $roles = array_keys($user->roles);
   if ($view->access && !array_intersect($roles, $view->access)) {
-//    dprint_r($view->access);
     return NULL;
   }
 

@@ -140,21 +140,25 @@ function _views_check_sub_ops(&$view, $var) {
  */
 function _views_check_ops(&$view, $op) {
   if (!$op) {
-    // Could probably use short circuiting here to make prettier
-    $rc = _views_check_sub_ops($view, 'filter');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'sort');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'argument');
-    if (!$rc) $rc = _views_check_sub_ops($view, 'field');
+    $checks = array('filter', 'sort', 'argument', 'field');
+    foreach ($checks as $check) {
+      if (_views_check_sub_ops($view, $check)) {
+        return $check;
+      }
+    }
   }
   else if ($op == t("Add Filter")) {
     $filter['field'] = $view->add['filter'];
     $view->filter[] = $filter;
+    return 'filter';
   }
   else if ($op == t("Add Criteria")) {
     $view->sort[] = $view->add['sort'];
+    return 'sort';
   }
   else if ($op == t("Add Argument")) {
     $view->argument[] = $view->add['argument'];
+    return 'argument';
   }
   else if ($op == t("Add Field")) {
     $fieldbits = explode('.', $view->add['field']);
@@ -165,6 +169,7 @@ function _views_check_ops(&$view, $op) {
     $newfield['label'] = $fieldnames[$view->add['field']];
     $newfield['queryname'] = "$fieldbits[0]_$fieldbits[1]";
     $view->field[] = $newfield;
+    return 'field';
   }
 }
 
@@ -186,7 +191,7 @@ function theme_imagebutton($element) {
 function _views_view_form($view, $orig, $op = '') {
   if ($view) {
     _views_check_arrays($view); // make sure arrays that might be empty get set
-    _views_check_ops($view, $op);
+    $allbut = _views_check_ops($view, $op);
     if ($orig->vid && $op != t('Save')) {
       drupal_set_message("You have modified this view; changes will not be recorded until you Save the form.");
     }
@@ -211,6 +216,10 @@ function _views_view_form($view, $orig, $op = '') {
     '#type' => 'value',
     '#value' => $orig->vid,
   );
+  $form['allbut'] = array(
+    '#type' => 'value',
+    '#value' => $allbut,
+  );
   $form['changed'] = array(
     '#type' => 'hidden',
     '#value' => $view->changed,
@@ -219,7 +228,7 @@ function _views_view_form($view, $orig, $op = '') {
   $form['basic-info'] = array(
     '#type' => 'fieldset',
     '#collapsible' => true,
-    '#collapsed' => false,
+    '#collapsed' => ($allbut != NULL),
     '#title' => t('Basic Information'),
   );
 
@@ -260,7 +269,7 @@ function _views_view_form($view, $orig, $op = '') {
   $form['page-info'] = array(
     '#type' => 'fieldset',
     '#collapsible' => true,
-    '#collapsed' => !$view->page,
+    '#collapsed' => ($allbut != NULL || !$view->page),
     '#title' => t('Page'),
   );
 
@@ -386,7 +395,7 @@ function _views_view_form($view, $orig, $op = '') {
   $form['block-info'] = array(
     '#type' => 'fieldset',
     '#collapsible' => true,
-    '#collapsed' => !$view->block,
+    '#collapsed' => ($allbut != NULL || !$view->block),
     '#title' => t('Block'),
   );
 
@@ -952,7 +961,8 @@ function theme_views_edit_view($form) {
   // form_render wants a reference so use full array notation.
 
   $rows = array();
-  $collapsed = false;
+  $allbut = $form['allbut']['#value'];
+  $collapsed = $allbut && $allbut != 'field';
   foreach ($form['field'] as $i => $field) {
     if (is_numeric($i)) {
       $rows[] = array(
@@ -993,7 +1003,7 @@ function theme_views_edit_view($form) {
   $group = "";
 
   $rows = array();
-  $collapsed = false;
+  $collapsed = $allbut && $allbut != 'argument';
   foreach ($form['argument'] as $i => $argument) {
     if (is_numeric($i)) {
       $rows[] = array(
@@ -1035,7 +1045,7 @@ function theme_views_edit_view($form) {
   $group = "";
 
   $rows = array();
-  $collapsed = false;
+  $collapsed = $allbut && $allbut != 'filter';
   foreach ($form['filter'] as $i => $filter) {
     if (is_numeric($i)) {
       $rows[] = array(
@@ -1075,7 +1085,7 @@ function theme_views_edit_view($form) {
   $group = "";
 
   $rows = array();
-  $collapsed = false;
+  $collapsed = $allbut && $allbut != 'sort';
   foreach ($form['sort'] as $i => $sort) {
     if (is_numeric($i)) {
       $rows[] = array(
