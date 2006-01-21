@@ -173,6 +173,7 @@ function _views_check_ops(&$view, $op) {
  */
 function views_elements() {
   $type['imagebutton'] = array('#input' => TRUE, '#name' => 'op', '#button_type' => 'submit', '#form_submitted' => TRUE);
+  return $type;
 }
 
 function theme_imagebutton($element) {

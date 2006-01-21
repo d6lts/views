@@ -67,6 +67,11 @@ function _views_internal_arguments() {
       'handler' => "views_handler_arg_fulldate",
       'help' => "This argument is a complete date in the form of CCYYMMDD.",
     ),
+    'nid' => array(
+      'name' => t("Node ID"), 
+      'handler' => "views_handler_arg_nid",
+      'help' => "This argument is a single Node ID.",
+    ),
   );
   return $arguments;
 }
@@ -257,7 +262,7 @@ function _views_internal_tables() {
   );
 
   $tables['users_roles'] = array(
-    "name" => "users_role", 
+    "name" => "users_roles", 
     "provider" => "internal", // won't show up in external list.
     "join" => array(
       "left" => array(
@@ -467,75 +472,74 @@ function _views_internal_default_views() {
   $views[$view->name] = $view;
 
   
-  if (module_exist('comment')) {
-    $view = new stdClass();
-    $view->name = 'tracker';
-    $view->description = 'Shows all new activity on system.';
-    $view->page = true;
-    $view->url = 'tracker';
-    $view->page_title = 'recent posts for %1';
-    $view->page_type = 'table';
-    $view->use_pager = true;
-    $view->nodes_per_page = '25';
+  $view = new stdClass();
+  $view->name = 'tracker';
+  $view->requires = array('node_comment_statistics');
+  $view->description = 'Shows all new activity on system.';
+  $view->page = true;
+  $view->url = 'tracker';
+  $view->page_title = 'recent posts for %1';
+  $view->page_type = 'table';
+  $view->use_pager = true;
+  $view->nodes_per_page = '25';
 
-    $view->menu = true;
-    $view->menu_title = 'recent posts';
-    $view->block = false;
-    $view->field = array (
-      array (
-        'tablename' => 'node',
-        'field' => 'type',
-        'label' => 'Type',
-      ),
-      array (
-        'tablename' => 'node',
-        'field' => 'title',
-        'label' => 'Title',
-        'handler' => 'views_handler_field_nodelink_with_mark',
-      ),
-      array (
-        'tablename' => 'users',
-        'field' => 'name',
-        'label' => 'Author',
-      ),
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'comment_count',
-        'label' => 'Replies',
-        'handler' => 'views_handler_comments_with_new',
-      ),
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'last_comment_timestamp',
-        'label' => 'Last Post',
-        'handler' => 'views_handler_field_since',
-      ),
-    );
-    $view->sort = array (
-      array (
-        'tablename' => 'node_comment_statistics',
-        'field' => 'last_comment_timestamp',
-        'sortorder' => 'DESC',
-      ),
-    );
-    $view->argument = array (
-      array (
-        'type' => 'uid',
-        'argdefault' => '2',
-        'title' => 'recent posts for all users',
-      ),
-    );
-    $view->filter = array (
-      array (
-        'tablename' => 'node',
-        'field' => 'status',
-        'operator' => '=',
-        'value' => '1',
-      ),
-    );
+  $view->menu = true;
+  $view->menu_title = 'recent posts';
+  $view->block = false;
+  $view->field = array (
+    array (
+      'tablename' => 'node',
+      'field' => 'type',
+      'label' => 'Type',
+    ),
+    array (
+      'tablename' => 'node',
+      'field' => 'title',
+      'label' => 'Title',
+      'handler' => 'views_handler_field_nodelink_with_mark',
+    ),
+    array (
+      'tablename' => 'users',
+      'field' => 'name',
+      'label' => 'Author',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'comment_count',
+      'label' => 'Replies',
+      'handler' => 'views_handler_comments_with_new',
+    ),
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'label' => 'Last Post',
+      'handler' => 'views_handler_field_since',
+    ),
+  );
+  $view->sort = array (
+    array (
+      'tablename' => 'node_comment_statistics',
+      'field' => 'last_comment_timestamp',
+      'sortorder' => 'DESC',
+    ),
+  );
+  $view->argument = array (
+    array (
+      'type' => 'uid',
+      'argdefault' => '2',
+      'title' => 'recent posts for all users',
+    ),
+  );
+  $view->filter = array (
+    array (
+      'tablename' => 'node',
+      'field' => 'status',
+      'operator' => '=',
+      'value' => '1',
+    ),
+  );
 
-    $views[$view->name] = $view;
-  }
+  $views[$view->name] = $view;
 
   return $views;
 }
@@ -558,6 +562,8 @@ function views_create_view_code($vid) {
   if (!$view) {
     return "View '$vid' not found.";
   }
+
+  $requires = array();
 
   $output = "  \$view = new stdClass();\n";
   $output .= "  \$view->name = '$view->name';\n";
@@ -601,6 +607,7 @@ function views_create_view_code($vid) {
     $output .= "      'sortorder' => '$sort[sortorder]',\n";
     $output .= "      'options' => '$sort[options]',\n";
     $output .= "    ),\n";  
+    $requires[$fieldbits[0]] = 1;
   }
   $output .= "  );\n";
 
@@ -631,6 +638,7 @@ function views_create_view_code($vid) {
       $output .= "      'defaultsort' => '$field[defaultsort]',\n";
     }
     $output .= "    ),\n";  
+    $requires[$field['tablename']] = 1;
   }
   $output .= "  );\n";
 
@@ -645,8 +653,10 @@ function views_create_view_code($vid) {
     $output .= "      'options' => '$filter[options]',\n";
     $output .= "      'value' => $value,\n";
     $output .= "    ),\n";  
+    $requires[$fieldbits[0]] = 1;
   }
   $output .= "  );\n";
+  $output .= "  \$view->requires = array(" . implode(', ', array_keys($requires)) . ");\n";
   $output .= "  \$views[\$view->name] = \$view;\n";
   // no breadcrumb for now.
   return $output;

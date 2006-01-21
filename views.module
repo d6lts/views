@@ -10,7 +10,7 @@
  * are only constructed once per run.
  */
 function _views_get_arguments($titles = false) {
-  global $VIEWS_ARGUMENTS;
+  static $VIEWS_ARGUMENTS;
 
   if (!$VIEWS_ARGUMENTS) {
     $data = cache_get('views_arguments');
@@ -39,7 +39,7 @@ function _views_get_arguments($titles = false) {
  * so that it will only be called once per run.
  */
 function _views_get_tables($full = false) {
-  global $VIEWS_TABLES;
+  static $VIEWS_TABLES;
 
   if (!$VIEWS_TABLES) {
     $data = cache_get('views_tables');
@@ -147,7 +147,7 @@ function _views_sanitize_view(&$view) {
  * Build default view information from all modules and cache it.
  */
 function _views_get_default_views() {
-  global $VIEWS_DEFAULT_VIEWS;
+  static $VIEWS_DEFAULT_VIEWS;
 
   if (!$VIEWS_DEFAULT_VIEWS) {
     $data = cache_get('views_default_views');
@@ -157,13 +157,18 @@ function _views_get_default_views() {
       $VIEWS_DEFAULT_VIEWS = $cache;
     }
     else {
+      // We have to make sure table data is built in order to be sure about providers.
+      $tables = array_keys(_views_get_tables());
       $path = drupal_get_path('module', 'views');
       require_once("$path/views_data.inc");
 
-      $VIEWS_DEFAULT_VIEWS = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
-      foreach ($VIEWS_DEFAULT_VIEWS as $i => $view) {
-        _views_sanitize_view($VIEWS_DEFAULT_VIEWS[$i]); // so reference works.
-
+      $views = array_merge(module_invoke_all('views_default_views'), _views_internal_default_views());
+      $VIEWS_DEFAULT_VIEWS = array();
+      foreach ($views as $i => $view) {
+        if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
+          _views_sanitize_view($view); 
+          $VIEWS_DEFAULT_VIEWS[$i] = $view;
+        }
       }
       cache_set('views_default_views', serialize($VIEWS_DEFAULT_VIEWS));
     }
@@ -578,14 +583,21 @@ function views_import_view_submit($formid, $form) {
   ob_start();
   eval($form['view']);
   ob_end_clean();
+
+  $tables = array_keys(_views_get_tables());
   if ($view) {
-    _views_sanitize_view($view);
-    drupal_set_title(t('Add a View'));
-    $path = drupal_get_path('module', 'views');
-    require_once("$path/views_form.inc");
-    $output = _views_view_form(NULL, $view, NULL);
-    print theme('page', $output);
-    exit;
+    if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
+      _views_sanitize_view($view);
+      drupal_set_title(t('Add a View'));
+      $path = drupal_get_path('module', 'views');
+      require_once("$path/views_form.inc");
+      $output = _views_view_form(NULL, $view, NULL);
+      print theme('page', $output);
+      exit;
+    }
+    else {
+      drupal_set_message("You don't seem to have the following requirements: " . implode(', ', array_diff($view->requires, $tables)));
+    }
   }
   else {
     drupal_set_message("Unable to get a view out of that.");
@@ -811,7 +823,7 @@ function views_view_block($vid) {
   global $user;
   $roles = array_keys($user->roles);
   if ($view->access && !array_intersect($roles, $view->access)) {
-    dprint_r($view->access);
+//    dprint_r($view->access);
     return NULL;
   }
 
@@ -997,7 +1009,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
 /*
  * Determine whether or not a view is cacheable. A view is not cacheable if
  * there is some kind of user input or data required. For example, views
- * that need to restrict to the 'current' user, or any view that requires
+ * that need to restrict to the 'current' user, or any views that require
  * arguments or allow click-sorting are not cacheable.
  */
 function _views_is_cacheable(&$view) {
@@ -1402,7 +1414,7 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
     views_set_breadcrumb($view);
   }
 
-  $base = views_get_summary_link_base($view->argument[$level]['type'], $view->name, $level, $args);
+  $base = views_get_summary_link_base($view->argument[$level]['type'], $view->url, $level, $args);
   foreach ($nodes as $node) {
     $items[] = array(views_get_summary_link($view->argument[$level]['type'], $node, $base), $node->num_nodes);
   }
@@ -1793,6 +1805,24 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       return l(format_date($query->created, 'custom', 'F j, Y'), "$arg/$query->name");
     case 'title':
       return format_date(strtotime($query), 'custom', 'F j, Y');
+  }
+}
+
+function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+      $query->add_field("title");
+      $query->add_field('nid');
+      $fieldinfo['field'] = "node.nid";
+      return $fieldinfo;
+    case 'filter':
+      $query->add_where("node.nid = %d", $arg);
+      break;
+    case 'link':
+      return l($query->title, "$arg/$query->nid");
+    case 'title':
+      $node = db_fetch_object(db_query("SELECT title FROM {node} WHERE nid=%d", $query));
+      return $node->title;
   }
 }
 

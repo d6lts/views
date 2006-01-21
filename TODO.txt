@@ -22,24 +22,33 @@ LESS TIME CONSUMING STUFF
 *  Validation needs a thorough going-over.
 *  plugin module?
 *  Getting started doc
-	-> explain admin/views
+	-> Getting Started with Views
 	-> walk-through changing the default tracker view
+	-> All of the Views Fields explained
 * fix tracker default view
 * add my tracker default view
 * add taxonomy/term default view
-
 * figure out required modules when exporting; guard against that on import.
+* is it possible to integrate search into Views?
+* double check the access check on block views
+* controller for external view output control. i.e, centralized code to
+  deal with 'calendar', 'xml', 'specialized grouping' and other module-specific
+  view needs. Should have an API available.
+* Allow filters to be presented to the end-user so that they may filter a resultset.
+  Each filter should have: A way to not use it (either a checkbox or a special
+  operator that says 'unused'. What is set in the actual view definition merely
+  becomes the default.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 
 *  workflow
 *  taxonomy
-*  node queue
 *  forum
 *  poll
 *  blog
 *  book
 *  sort on number of reads if statistics module enabled
+*  event
 
 TO DONE
 
