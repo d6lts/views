@@ -411,8 +411,14 @@ function _views_internal_tables() {
         'handler' => "views_handler_filter_uid_touched",
         'help' => "This allows you to filter by whether or not the logged in user authored or commented on the node.",
       ),
+      "distinct" => array(
+        'name' => "Node: Distinct",
+        'operator' => array('=' => 'is'),
+        'list' => array('distinct' => 'distinct'),
+        'handler' => 'views_handler_filter_distinct',
+        'help' => "This filter ensures that each node may only be listed once, even if it matches multiple criteria. Use this if multiple taxonomy matches return duplicated nodes.",
+      ),
     ),
-
   );    
   return $tables;
 }

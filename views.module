@@ -1991,6 +1991,13 @@ function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
   $query->add_where("node.uid = '%s' OR $table.uid = '%s'", $filter['value'], $filter['value']);
 }
 
+/*
+ * Set a query to be distinct as a filter handler
+ */
+function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
+  $query->set_distinct();
+}
+
 // ---------------------------------------------------------------------------
 // Operator handlers (for filters)
 
