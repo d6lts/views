@@ -2029,3 +2029,12 @@ function views_handler_operator_yesno() {
   return array('1' => 'Yes', '0' => 'No');
 }
 
+// ---------------------------------------------------------------------------
+// Operator handlers (for filters)
+
+/*
+ * update module for UTF.
+ */
+function views_update_1() {
+  return _system_update_utf8(array('view_view', 'view_tablefield', 'view_filter', 'view_sort', 'view_argument'));
+}
