@@ -519,7 +519,7 @@ class _views_query {
       $where = "WHERE (" . implode(') AND (', $this->where) . ')';
     }
 
-    $query = "SELECT $fields FROM {$this->views_get_title_table} $joins $where $groupby $orderby";
+    $query = "SELECT $fields FROM {" . $this->views_get_title_table . "} $this->views_get_title_table $joins $where $groupby $orderby";
     return $query;
   }
 }
