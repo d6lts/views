@@ -35,7 +35,7 @@ create table if not exists view_view (
   countquery longtext,
   PRIMARY KEY (vid),
   KEY (name)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 create table if not exists view_sort (
   vid int(10) unsigned NOT NULL default '0',
@@ -45,7 +45,7 @@ create table if not exists view_sort (
   options varchar(255),
   tablename varchar(255),
   KEY (vid)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 create table if not exists view_argument (
   vid int(10) unsigned NOT NULL default '0',
@@ -55,7 +55,7 @@ create table if not exists view_argument (
   options varchar(255),
   position int(2),
   KEY (vid)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 create table if not exists view_tablefield (
   vid int(10) unsigned NOT NULL default '0',
@@ -67,7 +67,7 @@ create table if not exists view_tablefield (
   defaultsort varchar(5),
   position int(2),
   KEY (vid)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 create table if not exists view_breadcrumb (
   vid int(10) unsigned NOT NULL default '0',
@@ -75,7 +75,7 @@ create table if not exists view_breadcrumb (
   link varchar(255),
   position int(2),
   KEY (vid)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 create table if not exists view_filter (
   vid int(10) unsigned NOT NULL default '0',
@@ -86,7 +86,7 @@ create table if not exists view_filter (
   options varchar(255),
   position int(2),
   KEY (vid)
-) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;;
+) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;
   
 
 
