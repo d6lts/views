@@ -1450,6 +1450,21 @@ function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
+ * Format a date using small representation.
+ */
+function views_handler_field_date_small($fieldinfo, $fielddata, $value, $data) {
+  return format_date($value, 'small');
+}
+
+/*
+ * Format a date using large representation.
+ */
+function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
+  return format_date($value, 'large');
+}
+
+/*
+/*
  * Format a date as "X time ago".
  */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {

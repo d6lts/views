@@ -195,8 +195,12 @@ function _views_internal_tables() {
         "last_comment_timestamp" => array(
           'name' => "Comment: Last Comment Time", 
           'sortable' => true, 
-          'handler' => 
-            array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+          'handler' => array(
+              "views_handler_field_date_small"=>"As Short Date", 
+              "views_handler_field_date"=>"As Medium Date", 
+              "views_handler_field_date_large"=>"As Long Date", 
+              "views_handler_field_since" => "As Time Ago"
+            ),
           'help' => "This will display the last comment time.",
          ),
         "last_comment_name" => array(
@@ -325,14 +329,24 @@ function _views_internal_tables() {
         'name' => "Node: Created Time", 
         'sortable' => true, 
         'handler' => 
-          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+          array(
+            "views_handler_field_date_small"=>"As Short Date", 
+            "views_handler_field_date"=>"As Medium Date", 
+            "views_handler_field_date_large"=>"As Long Date", 
+            "views_handler_field_since" => "As Time Ago"
+          ),
         'help' => "Display the post time of the node.",
       ),
       "changed" => array(
         'name' => "Node: Updated Time", 
         'sortable' => true, 
         'handler' => 
-          array("views_handler_field_date" => "As Date", "views_handler_field_since" => "As Time Ago"),
+          array(
+            "views_handler_field_date_small"=>"As Short Date", 
+            "views_handler_field_date"=>"As Medium Date", 
+            "views_handler_field_date_large"=>"As Long Date", 
+            "views_handler_field_since" => "As Time Ago"
+          ),
         'help' => "Display the last time the node was updated.",
       ),
       "type" => array(
