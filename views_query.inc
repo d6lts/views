@@ -247,6 +247,7 @@ class _views_query {
     if (count($this->fields) && substr($this->fields[0], 0, 7) != 'DISTINCT') {
       $field = $this->fields[0];
       $this->fields[0] = "DISTINCT($field)";
+      $this->count_field = "DISTINCT($field)";
     }
   }
   /*
