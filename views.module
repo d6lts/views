@@ -1053,8 +1053,11 @@ function _views_delete_view($view) {
     return;
   }
 
-  db_query("DELETE FROM {view_view} where vid=$view->vid");
-  db_query("DELETE FROM {view_sort} where vid=$view->vid");
+  db_query("DELETE FROM {view_view} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_sort} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_breadcrumb} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_argument} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
 }
 
 /*
