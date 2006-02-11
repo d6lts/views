@@ -1696,7 +1696,11 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
       break;
     case 'filter':
       $len = intval($argtype['options']);
-      $query->add_where("LEFT(node.title, $len) = '$arg'");
+      if ($len <= 0) {
+        $query->add_where("term_data.name = '$arg'");
+      } else {
+        $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+      }
       break;
     case 'link':
       return l(strtoupper($query->letter), "$arg/$query->letter");
