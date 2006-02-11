@@ -409,7 +409,7 @@ class _views_query {
     // Does it end at our views_get_title table?
     if ($left_table == $this->views_get_title_table) {
       // We are done! Add our tables and unwind.
-      foreach ($add as $t) {
+      foreach ($add as $table) {
         $this->queue_table($table);
       }
       return true;
