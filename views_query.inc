@@ -491,28 +491,28 @@ class _views_query {
       if ($this->groupby) {
         $groupby = "GROUP BY " . implode(', ', $this->groupby);
       }
+
+      // ok, tablesort_sql is really, really (really) annoying.
+      // 1) it insists on adding the ORDER BY clause.
+      // 2) You're supposed to give it your stuff as $before, but
+      // 3) You have to add the comma and
+      // 4) if it doesn't have anything to add, it returns NOTHING.
+      // 5) So I'm just going to get what it sends back and chop off
+      //    the orderby, cause otherwise my code is too ugly with
+      //    various checks.
+      if ($this->header) {
+        $result = tablesort_sql($this->header);
+        if ($result) {
+          $this->orderby[] = str_replace('ORDER BY ', '', $result);
+        }
+      }
+         
+      if ($this->orderby) {
+        $orderby = "ORDER BY " . implode(', ', $this->orderby);
+      }
     }
     else {
       $fields = "count($this->count_field) AS numrecs";
-    }
-
-    // ok, tablesort_sql is really, really (really) annoying.
-    // 1) it insists on adding the ORDER BY clause.
-    // 2) You're supposed to give it your stuff as $before, but
-    // 3) You have to add the comma and
-    // 4) if it doesn't have anything to add, it returns NOTHING.
-    // 5) So I'm just going to get what it sends back and chop off
-    //    the orderby, cause otherwise my code is too ugly with
-    //    various checks.
-    if ($this->header) {
-      $result = tablesort_sql($this->header);
-      if ($result) {
-        $this->orderby[] = str_replace('ORDER BY ', '', $result);
-      }
-    }
-       
-    if ($this->orderby) {
-      $orderby = "ORDER BY " . implode(', ', $this->orderby);
     }
 
     if ($this->where) {
