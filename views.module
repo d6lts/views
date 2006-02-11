@@ -322,6 +322,8 @@ function views_menu($may_cache) {
 
     $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
     while ($view = db_fetch_object($result)) {
+      // unpack the array
+      $view->access = ($view->access ? explode(', ', $view->access) : array());
 
       $type = _views_menu_type($view);
       $items[] = array('path' => $view->url,
