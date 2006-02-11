@@ -322,14 +322,13 @@ function views_menu($may_cache) {
 
     $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
     while ($view = db_fetch_object($result)) {
-      $access = ($access ? explode(', ', $view->access) : array());
 
       $type = _views_menu_type($view);
       $items[] = array('path' => $view->url,
         'title' => views_get_title($view, 'menu'),
         'callback' => 'views_view_page',
         'callback arguments' => array($view->name),
-        'access' => !$access || array_intersect($access, $roles),
+        'access' => !$view->access || array_intersect($view->access, $roles),
         'weight' => intval($view->menu_tab_weight),
         'type' => $type,
       );
@@ -339,7 +338,7 @@ function views_menu($may_cache) {
           'title' => views_get_title($view, 'menu'),
           'callback' => 'views_view_page',
           'callback arguments' => array($view->name),
-          'access' => !$access || array_intersect($access, $roles),
+          'access' => !$view->access || array_intersect($view->access, $roles),
           'type' => MENU_NORMAL_ITEM,
         );
       }
@@ -358,7 +357,7 @@ function views_menu($may_cache) {
           'title' => views_get_title($view, 'menu'),
           'callback' => 'views_view_page',
           'callback arguments' => array($view->name),
-          'access' => !$access || array_intersect($view->access, $roles),
+          'access' => !$view->access || array_intersect($view->access, $roles),
           'weight' => intval($view->menu_tab_weight),
           'type' => $type,
         );
@@ -367,7 +366,7 @@ function views_menu($may_cache) {
             'title' => views_get_title($view, 'menu'),
             'callback' => 'views_view_page',
             'callback arguments' => array($view->name),
-            'access' => !$access || array_intersect($access, $roles),
+            'access' => !$view->access || array_intersect($view->access, $roles),
             'type' => MENU_NORMAL_ITEM,
           );
         }
