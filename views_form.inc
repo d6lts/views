@@ -212,6 +212,9 @@ function _views_view_form($view, $orig, $op = '') {
   $arguments = _views_get_arguments();
   $argnames = _views_get_arguments(true);
 
+  // shortcut cause that's just too long.
+  $module_path = base_path() . drupal_get_path('module', 'views');
+
   $form['vid'] = array(
     '#type' => 'value',
     '#value' => $orig->vid,
@@ -528,31 +531,31 @@ function _views_view_form($view, $orig, $op = '') {
     $form['field'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => $module_path .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['field'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => $module_path .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['field'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => $module_path .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['field'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => $module_path .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['field'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[field][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => $module_path .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -629,31 +632,31 @@ function _views_view_form($view, $orig, $op = '') {
     $form['argument'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => $module_path .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['argument'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => $module_path .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['argument'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => $module_path .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['argument'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => $module_path .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['argument'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[argument][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => $module_path .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -787,31 +790,31 @@ function _views_view_form($view, $orig, $op = '') {
     $form['filter'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => $module_path .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['filter'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => $module_path .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['filter'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => $module_path .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['filter'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => $module_path .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['filter'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[filter][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => $module_path .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
@@ -885,31 +888,31 @@ function _views_view_form($view, $orig, $op = '') {
     $form['sort'][$i]['delete'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
+      '#attributes' => array('src' => $module_path .'/user-trash.png', 'alt' => t('Delete this item'), 'title' => t('Delete this item')),
       '#value' => t("Delete"),
     );
     $form['sort'][$i]['up'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
+      '#attributes' => array('src' => $module_path .'/go-up.png', 'alt' => t('Move item up'), 'title' => t('Move item up')),
       '#value' => t("Up"),
     );
     $form['sort'][$i]['down'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
+      '#attributes' => array('src' => $module_path .'/go-down.png', 'alt' => t('Move item down'), 'title' => t('Move item down')),
       '#value' => t("Down"),
     );
     $form['sort'][$i]['top'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
+      '#attributes' => array('src' => $module_path .'/go-top.png', 'alt' => t('Move item to top'), 'title' => t('Move item to top')),
       '#value' => t("Top"),
     );
     $form['sort'][$i]['bottom'] = array(
       '#type' => 'imagebutton',
       '#name' => "edit[sort][$i][op]",
-      '#attributes' => array('src' => drupal_get_path('module', 'views') .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
+      '#attributes' => array('src' => $module_path .'/go-bottom.png', 'alt' => t('Move item to bottm'), 'title' => t('Move item to bottm')),
       '#value' => t("Bottom"),
     );
   }
