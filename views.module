@@ -709,6 +709,7 @@ function views_admin_delete_page($vid = '') {
 function views_delete_confirm_submit($formid, $form) {
   if ($form['confirm']) {
     _views_delete_view((object) $form);
+    menu_rebuild();
     drupal_goto('admin/views');
   }
 }
