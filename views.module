@@ -1251,7 +1251,7 @@ function _views_construct_header($view, $fields) {
       $header['field'] = $field['fullname'];
     }
     if ($field['defaultsort']) {
-      $header['sort'] = $field['defaultsort'];
+      $header['sort'] = strtolower($field['defaultsort']);
     }
 
     // Add CSS id to table cell header cell.
