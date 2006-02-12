@@ -96,6 +96,15 @@ function _views_internal_tables() {
           "field" => "nid"
         )
       ),
+      "fields" => array(
+        "name" => array(
+          'name' => "Taxonomy: All Terms", 
+          'sortable' => false,
+          'help' => "This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact.",
+          'handler' => "views_handler_field_allterms",
+          'notafield' => true,
+        ),
+      ),
       "filters" => array(
         "tid" => array(
           'name' => "Taxonomy: Term",
@@ -104,9 +113,48 @@ function _views_internal_tables() {
           'operator' => "views_handler_operator_andor",
           'handler' => 'views_handler_filter_tid_custom',
           'help' => 'When filtering by taxonomy term you may specify the "depth" as an option. Please see the taxonomy help for more information.',
-        )
+        ),
       )
     ); 
+
+    $vocabularies = taxonomy_get_vocabularies();
+    foreach ($vocabularies as $voc) {
+      $tables["term_node_$voc->name"] = array(
+        "name" => "term_node", 
+        "provider" => "internal",
+        "join" => array(
+          "left" => array(
+            "table" => "node",
+            "field" => "nid"
+          ), 
+          "right" => array(
+            "field" => "nid"
+          )
+        ),
+        "fields" => array(
+          "name" => array(
+            'name' => "Taxonomy: All Terms for $voc->name", 
+            'sortable' => false,
+            'help' => "This will display all taxonomy terms associated with the node that are members of $voc->name. Note that this causes one extra query per row displayed, and might have a minor performance impact.",
+            'handler' => "views_handler_field_allterms",
+            'vocabulary' => $voc->vid,
+            'notafield' => true,
+          ),
+        ),
+        "filters" => array(
+          "tid" => array(
+            'name' => "Taxonomy: Terms for $voc->name",
+            'list' => "views_handler_filter_tid",
+            'option' => 'string',
+            'operator' => "views_handler_operator_andor",
+            'handler' => 'views_handler_filter_tid_custom',
+            'vocabulary' => $voc->vid,
+            'help' => "Only terms associated with $voc->name will appear in the select box for this filter. When filtering by taxonomy term you may specify the \"depth\" as an option. Please see the taxonomy help for more information.",
+          ),
+        )
+      ); 
+     
+    }
 
     $tables['term_hierarchy'] = array(
       "name" => "term_node", 

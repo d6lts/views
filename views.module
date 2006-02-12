@@ -1504,8 +1504,19 @@ function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
  * updated since it was last viewed by the user.
  */
 function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
-  return l(check_plain($value), "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed))
-;
+  return l(check_plain($value), "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
+}
+
+function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
+  if ($fieldinfo['vocabulary']) {
+    $terms = taxonomy_node_get_terms_by_vocabulary($data->nid, $fieldinfo['vocabulary']);
+  }
+  else {
+    $terms = taxonomy_node_get_terms($data->nid);
+  }
+
+  $node->taxonomy = $terms;
+  return theme('links', taxonomy_link('taxonomy terms', $node));
 }
 
 /*
@@ -1873,11 +1884,19 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
 /*
  * Filter a view based on taxonomy id.
  */
-function views_handler_filter_tid() {
+function views_handler_filter_tid($op, $filterinfo) {
   $tids = array();
-  $result = db_query("SELECT DISTINCT(td.tid), td.name, v.name as vocabname FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid ORDER BY v.weight, v.name, td.weight, td.name");
+  if ($filterinfo['vocabulary']) {
+    $where = "WHERE td.vid = $filterinfo[vocabulary]";
+  }
+  $result = db_query("SELECT DISTINCT(td.tid), td.name, v.name as vocabname FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid $where ORDER BY v.weight, v.name, td.weight, td.name");
   while ($obj = db_fetch_object($result)) {
-    $tids[$obj->tid] = "$obj->vocabname: $obj->name";
+    if ($filterinfo['vocabulary']) {
+      $tids[$obj->tid] = "$obj->name";
+    }
+    else {
+      $tids[$obj->tid] = "$obj->vocabname: $obj->name";
+    }
   }
 
   return $tids;
