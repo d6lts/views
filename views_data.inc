@@ -442,6 +442,13 @@ function _views_internal_tables() {
         'list-type' => "select",
         'help' => "Filter by whether or not the node has been promoted to Front Page.",
       ),
+      "moderate" => array(
+        'name' => "Node: Moderated",
+        'operator' => array("=" => "Equals"),
+        'list' => "views_handler_operator_yesno",
+        'list-type' => "select",
+        'help' => "Filter by whether or not the node is moderated.",
+      ),
       "type" => array(
         'name' => "Node: Type",
         'list' => "views_handler_filter_nodetype",
