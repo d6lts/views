@@ -197,7 +197,7 @@ function views_help($section) {
     switch (arg(2)) {
       case 'add':
       case 'edit':
-        return t("There are many choices to make in editing a view.");
+        return t('There are many choices to make in editing a view.');
       case 'export':
         return t('You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location.');
     }
@@ -208,21 +208,22 @@ function views_help($section) {
  * Because the add/edit page is kind of complicated.
  */
 function _views_help_add() {
-  $output = t("<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>");
-  $output .= t("<h3>View Types</h3><dl>\n");
-  $output .= t("<dt><i>List View</i><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).\n");
-  $output .= t("<dt><i>Table View</i><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If the you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.\n");
-  $output .= t("<dt><i>Teaser List</i><dd>A Teaser List will simply present the teaser of each node retrieved.\n");
-  $output .= t("<dt><i>Full Nodes</i><dd>A Teaser List will simply present the full content of each node retrieved.\n");
-  $output .= t("<dt><i>Random Teaser</i><dd>This will show a single random teaser.\n");
-  $output .= t("<dt><i>Random Node</i><dd>This will show a single random node's full view.\n");
-  $output .= "</dl>";
+  $output = t('<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>');
+  $output .= t("<h3>View Types</h3>
+    <dl>
+      <dt><em>List View</em></dt><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).</dd>
+      <dt><em>Table View</em></dt><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If the you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.</dd>
+      <dt><em>Teaser List</em></dt><dd>A Teaser List will simply present the teaser of each node retrieved.</dd>
+      <dt><em>Full Nodes</em></dt><dd>A Teaser List will simply present the full content of each node retrieved.</dd>
+      <dt><em>Random Teaser</em></dt><dd>This will show a single random teaser.</dd>
+      <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>
+    </dl>");
 
   $output .= t("<h3>Fields</h3>\n");
   $output .= t("<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n");
   $fields = _views_get_fields();
   foreach ($fields as $field) {
-    $output .= "<dt><i>$field[name]</i><dd>$field[help]\n";
+    $output .= "<dt><em>$field[name]</em></dt><dd>$field[help]</dd>\n";
   }
   $output .= "</dl>\n";
 
@@ -230,7 +231,7 @@ function _views_help_add() {
   $output .= t("<p>Arguments can be passed to the View through the URL, in order to create views that are configurable by the user. This is very useful to create views for taxonomy, or to sort by user. When using arguments, substitution is performed on the title. %1 will represent argument 1, %2 will represent argument 2. Each argument has a title field; this title is used if providing a summary view (which can matter because the argument is missing which could result in confusing phrases such as 'view for')</p><dl>\n");
   $arguments = _views_get_arguments();
   foreach ($arguments as $argument) {
-    $output .= "<dt><i>$argument[name]</i><dd>$argument[help]\n";
+    $output .= "<dt><em>$argument[name]</em></dt><dd>$argument[help]</dd>\n";
   }
   $output .= "</dl>\n";
 
@@ -238,7 +239,7 @@ function _views_help_add() {
   $output .= t("<p>Views may be filtered to restrict the view on a number of criteria.</p><dl>\n");
   $filters = _views_get_filters();
   foreach ($filters as $filter) {
-    $output .= "<dt><i>$filter[name]</i><dd>$filter[help]\n";
+    $output .= "<dt><em>$filter[name]</em></dt><dd>$filter[help]</dd>\n";
   }
   $output .= "</dl>\n";
 
@@ -246,7 +247,7 @@ function _views_help_add() {
   $output .= t("<p>The result set may be sorted on any of the following criteria.</p><dl>\n");
   $sorts = _views_get_sorts();
   foreach ($sorts as $sort) {
-    $output .= "<dt><i>$sort[name]</i><dd>$sort[help]\n";
+    $output .= "<dt><em>$sort[name]</em></dt><dd>$sort[help]</dd>\n";
   }
   $output .= "</dl>\n";
 
@@ -434,12 +435,12 @@ function views_block($op = 'list', $delta = 0) {
 function views_admin_page() {
   $numViews = 25;
 
-  drupal_set_title("administer views");
+  drupal_set_title(t('administer views'));
 
   $result = pager_query("SELECT vid, name, description, menu_title, page_title, block_title, url, page, menu, block FROM {view_view} ORDER BY name", $numViews);
 
   while ($view = db_fetch_object($result)) {
-    $url = ($view->page ? l($view->url, $view->url) : "No Page View");
+    $url = ($view->page ? l($view->url, $view->url) : t('No Page View'));
     $provides = array();
     if ($view->page) {
       $provides[] = 'Page';
@@ -450,15 +451,15 @@ function views_admin_page() {
     if ($view->menu) {
       $provides[] = 'Menu';
     }
-    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, theme('links', array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l('delete', "admin/views/delete/$view->vid"))));
+    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, theme('links', array(l('edit', "admin/views/edit/$view->vid"), l('export', "admin/views/export/$view->vid"), l(t('delete'), "admin/views/delete/$view->vid"))));
   }
 
   if ($items) {
-    $output = theme('table', array('View', 'Title', 'Description', 'Provides', 'URL', 'Actions'), $items, array("cellpadding" => "4"), "Existing Views");
+    $output = theme('table', array(t('View'), t('Title'), t('Description'), t('Provides'), t('URL'), t('Actions')), $items, array("cellpadding" => "4"), t('Existing Views'));
     $output .= theme('pager', NULL, $numViews);
   }
   else {
-    $output .= "<p>No views have currently been defined.</p>";
+    $output .= t('<p>No views have currently been defined.</p>');
   }
 
   $result = db_query("SELECT name FROM {view_view}");
@@ -466,17 +467,17 @@ function views_admin_page() {
     $used[$view->name] = true;
   }
 
-  $output .= "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>";
+  $output .= t('<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>');
   $items = array();
   $dviews = _views_get_default_views();
 
   $views_status = variable_get('views_defaults', array());
 
   foreach ($dviews as $view) {
-    $url = ($view->page ? l($view->url, $view->url) : "No Page View");
+    $url = ($view->page ? l($view->url, $view->url) : t('No Page View'));
 
     if ($used[$view->name]) {
-      $status = 'Overridden';
+      $status = t('Overridden');
     }
     else if (isset($views_status[$view->name])) {
       if ($views_status[$view->name] == 'enabled') {
@@ -495,31 +496,31 @@ function views_admin_page() {
 
     $provides = array();
     if ($view->page) {
-      $provides[] = 'Page';
+      $provides[] = t('Page');
     }
     if ($view->block) {
-      $provides[] = 'Block';
+      $provides[] = t('Block');
     }
     if ($view->menu) {
-      $provides[] = 'Menu';
+      $provides[] = t('Menu');
     }
 
-    $links = array(l('add', "admin/views/add/$view->name"));
+    $links = array(l(t('add'), "admin/views/add/$view->name"));
     if ($status == 'Enabled') {
-      $links[] = l('disable', "admin/views/disable/$view->name");
+      $links[] = l(t('disable'), "admin/views/disable/$view->name");
     }
     else if ($status == 'Disabled') {
-      $links[] = l('enable', "admin/views/enable/$view->name");
+      $links[] = l(t('enable'), "admin/views/enable/$view->name");
     }
 
     $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, $status, theme('links', $links));
   }
 
   if ($items) {
-    $output .= theme('table', array('Default View', 'Title', 'Description', 'Provides', 'URL', 'Status', 'Actions'), $items, array("cellpadding" => "4"), "Default Views");
+    $output .= theme('table', array(t('Default View'), t('Title'), t('Description'), t('Provides'), t('URL'), t('Status'), t('Actions')), $items, array("cellpadding" => "4"), t('Default Views'));
   }
   else {
-    $output .= "<p>No views have currently been defined.</p>";
+    $output .= t('<p>No views have currently been defined.</p>');
   }
 
   return $output;
@@ -597,11 +598,11 @@ function views_import_view_submit($formid, $form) {
       exit;
     }
     else {
-      drupal_set_message("You don't seem to have the following requirements: " . implode(', ', array_diff($view->requires, $tables)));
+      drupal_set_message(t("You don't seem to have the following requirements: ") . implode(', ', array_diff($view->requires, $tables)));
     }
   }
   else {
-    drupal_set_message("Unable to get a view out of that.");
+    drupal_set_message(t('Unable to get a view out of that.'));
   }
 }
 
@@ -615,9 +616,9 @@ function views_admin_export_page($vid = '') {
   $code = views_create_view_code($vid);
   $lines = substr_count($code, "\n");
   $form['code'] = array(
-    '#type' => 'textarea', 
-    '#title' => t($view->name), 
-    '#default_value' => $code, 
+    '#type' => 'textarea',
+    '#title' => $view->name,
+    '#default_value' => $code,
     '#rows' => $lines);
   return drupal_get_form('views_export', $form);
 }
@@ -638,7 +639,7 @@ function views_admin_add_page() {
     $edit = (object) $edit;
   }
 
-  if ($op == 'Cancel') {
+  if ($op == t('Cancel')) {
     return drupal_goto('admin/views');
   }
 
@@ -1351,10 +1352,10 @@ function theme_views_view($view, $type, $nodes) {
   }
 
   switch (($type == 'block' ? $view->block_type : $view->page_type)) {
-    case 'list': // => t("List View"), 
+    case 'list': // => t("List View"),
       $output .= views_view_list($view, $nodes);
       break;
-    case 'table': // => t("Table"), 
+    case 'table': // => t("Table"),
       $output .= views_view_table($view, $nodes);
       break;
     case 'teaser': // => t("Teaser List"),
@@ -1377,7 +1378,7 @@ function theme_views_view($view, $type, $nodes) {
  * Format the 'more' link for a view.
  */
 function theme_views_more($url) {
-  return "<div class='more'>" . l("[More]", "$url") . "</div>";
+  return "<div class='more'>" . l(t('[More]'), $url) . "</div>";
 }
 
 /*
@@ -1679,12 +1680,12 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       }
       break;
     case 'link':
-      $name = ($query->name ? $query->name : t("Uncategorized"));
+      $name = ($query->name ? $query->name : t('Uncategorized'));
       return l($name, "$arg/" . intval($query->tid));
     case 'title':
       if (!$query) {
-        return t("Uncategorized");
-      } 
+        return t('Uncategorized');
+      }
       $term = db_fetch_object(db_query("SELECT name FROM {term_data} WHERE tid = '%d'", $query));
       return $term->name;
   }
@@ -1744,7 +1745,7 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
       $fieldinfo['field'] = "YEAR(FROM_UNIXTIME(node.created+$timezone))";
-      $fieldinfo['fieldname'] = "year";
+      $fieldinfo['fieldname'] = 'year';
       $query->add_field('created');
       return $fieldinfo;
       break;
@@ -1764,7 +1765,7 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
       $fieldinfo['field'] = "MONTH(FROM_UNIXTIME(node.created+$timezone))";
-      $fieldinfo['fieldname'] = "name";
+      $fieldinfo['fieldname'] = 'name';
       $query->add_field('created');
       return $fieldinfo;
       break;
@@ -1806,7 +1807,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
       $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')";
-      $fieldinfo['fieldname'] = "name";
+      $fieldinfo['fieldname'] = 'name';
       $query->add_field('created');
       return $fieldinfo;
       break;
@@ -1826,7 +1827,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
       $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%d')";
-      $fieldinfo['fieldname'] = "name";
+      $fieldinfo['fieldname'] = 'name';
       $query->add_field('created');
       return $fieldinfo;
       break;
@@ -1846,7 +1847,7 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
     case 'summary':
       $query->add_field("title");
       $query->add_field('nid');
-      $fieldinfo['field'] = "node.nid";
+      $fieldinfo['field'] = 'node.nid';
       return $fieldinfo;
     case 'filter':
       $query->add_where("node.nid = %d", $arg);
@@ -1920,7 +1921,7 @@ function views_handler_filter_vid() {
   $vids = array();
   $result = db_query("SELECT v.vid, v.name FROM {vocabulary} v ORDER BY v.weight, v.name");
   while ($obj = db_fetch_object($result)) {
-    $vids[$obj->vid] = "$obj->name";
+    $vids[$obj->vid] = $obj->name;
   }
   return $vids;
 }
@@ -1935,7 +1936,7 @@ function views_handler_filter_username() {
   $uids = array();
   $result = db_query("SELECT u.uid, u.name FROM {users} u WHERE uid != 0 ORDER BY u.name");
   while ($obj = db_fetch_object($result)) {
-    $uids[$obj->uid] = "$obj->name";
+    $uids[$obj->uid] = $obj->name;
   }
   return $uids;
 }
@@ -1960,7 +1961,7 @@ function views_handler_filter_usercurrent() {
  */
 function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
   global $user;
-  $query->ensure_table("users");
+  $query->ensure_table('users');
   $query->add_where("users.uid $filter[operator] '$user->uid'");
 }
 
@@ -1974,13 +1975,13 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   }
 
   // Hey, Drupal kills old history, so nodes that haven't been updated
-  // since NODE_NEW_LIMIT are bzzzzzzzt outta here! 
+  // since NODE_NEW_LIMIT are bzzzzzzzt outta here!
 
   $limit = NODE_NEW_LIMIT;
 
-  $query->ensure_table("history");
-  if (module_exist("comment")) {
-    $query->ensure_table("node_comment_statistics");
+  $query->ensure_table('history');
+  if (module_exist('comment')) {
+    $query->ensure_table('node_comment_statistics');
     $clause = "OR node_comment_statistics.last_comment_timestamp > $limit";
     $clause2 = "OR history.timestamp < node_comment_statistics.last_comment_timestamp";
   }
@@ -1998,7 +1999,7 @@ function views_handler_filter_role() {
   $rids = array();
   $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
   while ($obj = db_fetch_object($result)) {
-    $rids[$obj->rid] = "$obj->name";
+    $rids[$obj->rid] = $obj->name;
   }
   return $rids;
 }
@@ -2018,7 +2019,7 @@ function views_handler_filter_nodetype($op) {
  * Add special info to see if a user either authored OR commented on a post
  */
 function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
-  if (!module_exist("comment")) { // not much to do in this case
+  if (!module_exist('comment')) { // not much to do in this case
     $query->add_where("node.uid = '%s'", $filter['value']);
     return;
   }
@@ -2026,7 +2027,7 @@ function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
   $table_data = _views_get_tables();
   $joininfo = $table_data['comments']['join'];
   $joininfo['extra'] = array('uid' => $filter['value']);
-  $tblnum = $query->add_table("comments", false, 1, $joininfo);
+  $tblnum = $query->add_table('comments', false, 1, $joininfo);
   $table = $query->get_table_name('comments', $tblnum);
 
   $query->set_distinct(); // once you do this, there's just one node.
@@ -2047,28 +2048,28 @@ function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
  * A list of and/or/nor.
  */
 function views_handler_operator_andor() {
-  return array('AND' => 'Is All Of', 'OR' => 'Is One Of', 'NOR' => "Is None Of");
+  return array('AND' => t('Is All Of'), 'OR' => t('Is One Of'), 'NOR' => t('Is None Of'));
 }
 
 /*
  * A list of or/nor.
  */
 function views_handler_operator_or() {
-  return array('OR' => 'Is One Of', 'NOR' => "Is None Of");
+  return array('OR' => t('Is One Of'), 'NOR' => t('Is None Of'));
 }
 
 /*
  * A list of equal or not equal to.
  */
 function views_handler_operator_eqneq() {
-  return array('=' => 'Is Equal To', '!=' => 'Is Not Equal To');
+  return array('=' => t('Is Equal To'), '!=' => t('Is Not Equal To'));
 }
 
 /*
  * A list of yes/no.
  */
 function views_handler_operator_yesno() {
-  return array('1' => 'Yes', '0' => 'No');
+  return array('1' => t('Yes'), '0' => t('No'));
 }
 
 // ---------------------------------------------------------------------------
