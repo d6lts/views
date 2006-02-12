@@ -1497,7 +1497,7 @@ function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
  * Format a field as a link to a node.
  */
 function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
-  return l(check_plain($value), "node/$data->nid");
+  return l($value, "node/$data->nid");
 }
 
 /*
