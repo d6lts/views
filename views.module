@@ -1708,7 +1708,11 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       $len = intval($argtype['options']);
       $query->add_table('term_data', true);
 
-      $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+      if ($len <= 0) {
+        $query->add_where("term_data.name = '$arg'");
+      } else {
+        $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+      }
       break;
     case 'link':
       return l(strtoupper($query->letter), "$arg/$query->letter");
@@ -1728,9 +1732,9 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
     case 'filter':
       $len = intval($argtype['options']);
       if ($len <= 0) {
-        $query->add_where("term_data.name = '$arg'");
+        $query->add_where("node.title = '$arg'");
       } else {
-        $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+        $query->add_where("LEFT(node.title, $len) = '$arg'");
       }
       break;
     case 'link':
