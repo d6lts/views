@@ -1617,7 +1617,7 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
  * specified in the field info.
  */
 function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
-  $obj->name = check_plain($value);
+  $obj->name = $value;
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
   $obj->uid = $data->$uidfield;
   return theme('username', $obj);
@@ -1635,7 +1635,7 @@ function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
  * updated since it was last viewed by the user.
  */
 function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
-  return l(check_plain($value), "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
+  return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
 }
 
 function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
