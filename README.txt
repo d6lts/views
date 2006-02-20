@@ -124,3 +124,5 @@ should be
 	 Views, you should export all your old views as a backup, then drop the
 	 views_view table and re-import. Sorry. I hope to not do something like
 	 this ever again.
+2/19/2006 allow a complete formsapi setting in any 'options' or 'value' setting for 'filter'.
+	  Retooled the API to be less hackish.

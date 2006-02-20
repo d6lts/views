@@ -23,6 +23,14 @@ function _views_get_arguments($titles = false) {
       require_once("$path/views_data.inc");
       $arguments = array_merge(module_invoke_all('views_arguments'), _views_internal_arguments());
       foreach ($arguments as $name => $arg) {
+        if ($arg['option'] && !is_array($arg['option'])) {
+          if ($arg['option'] == 'string' || $arg['option'] == 'integer') {
+            $arg['option'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+          }
+          else {
+            $arg['option'] = array('#type' => 'select', '#options' => $arg['option']);
+          }
+        }
         $VIEWS_ARGUMENTS['base'][$name] = $arg['name'];
         $VIEWS_ARGUMENTS['title'][$name] = $arg;
       }
@@ -59,6 +67,24 @@ function _views_get_tables($full = false) {
         if (is_array($table['filters'])) {
           foreach($table['filters'] as $filter => $data) {
             $data['table'] = $name;
+            // translate for deprecated APIs...
+            if ($data['option'] && !is_array($data['option'])) {
+              if ($data['option'] == 'string' || $data['option'] == 'integer') {
+                $data['option'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+              }
+              else {
+                $data['option'] = array('#type' => 'select', '#options' => $data['option']);
+              }
+            }
+            if ($data['list']) {
+              $data['value'] = array('#type' => 'select', '#options' => $data['list']);
+              if ($data['list-type'] != 'select') {
+                $data['value']['#multiple'] = TRUE;
+              }
+            }
+            else if (!$data['value']) {
+              $data['value'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+            }
             $VIEWS_TABLES['filters']['titles']["$name.$filter"] = $data['name'];
             $VIEWS_TABLES['filters']['base']["$name.$filter"] = $data;
           }
@@ -73,6 +99,14 @@ function _views_get_tables($full = false) {
         if (is_array($table['sorts'])) {
           foreach($table['sorts'] as $field => $data) {
             $data['table'] = $name;
+            if ($data['option'] && !is_array($data['option'])) {
+              if ($data['option'] == 'string' || $data['option'] == 'integer') {
+                $data['option'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+              }
+              else {
+                $data['option'] = array('#type' => 'select', '#options' => $data['option']);
+              }
+            }
             $VIEWS_TABLES['sorts']['titles']["$name.$field"] = $data['name'];
             $VIEWS_TABLES['sorts']['base']["$name.$field"] = $data;
           }
@@ -722,7 +756,7 @@ function views_import_view_submit($formid, $form) {
       drupal_set_title(t('Add a View'));
       $path = drupal_get_path('module', 'views');
       require_once("$path/views_form.inc");
-      $output = _views_view_form(NULL, $view, NULL);
+      $output = _views_view_form($view, NULL);
       print theme('page', $output);
       exit;
     }
@@ -761,13 +795,7 @@ function views_admin_add_page() {
     $template = ($template ? "/$next" : $next);
   }
 
-  $edit = $_POST['edit'];
   $op = $_POST['op'];
-
-  if (is_array($edit)) {
-    $edit = (object) $edit;
-  }
-
   if ($op == t('Cancel')) {
     return drupal_goto('admin/views');
   }
@@ -778,16 +806,14 @@ function views_admin_add_page() {
 
   $path = drupal_get_path('module', 'views');
   require_once("$path/views_form.inc");
-  return _views_view_form($edit, $view, $op);
+  return _views_view_form($view, $op);
 }
 
 /*
  * Provide a form to edit a view.
  */
 function views_admin_edit_page($vid = '') {
-  $edit = $_POST['edit'];
   $op = $_POST['op'];
-
   if ($op == t('Cancel')) {
     return drupal_goto('admin/views');
   }
@@ -796,21 +822,15 @@ function views_admin_edit_page($vid = '') {
     return drupal_goto("admin/views/delete/$vid");
   }
 
-  if (is_array($edit)) {
-    $edit = (object) $edit;
-  }
-
-  $view = _views_load_view($vid);
-
-  if (!$view) {
+  if (!($view = _views_load_view($vid))) {
     return drupal_goto('admin/views');
   }
 
-  drupal_set_title(t('Edit View %n', array('%n' => $view->name)));
+  drupal_set_title(t('Edit view %n', array('%n' => $view->name)));
 
   $path = drupal_get_path('module', 'views');
   require_once("$path/views_form.inc");
-  return _views_view_form($edit, $view, $op);
+  return _views_view_form($view, $op);
 }
 
 /*
