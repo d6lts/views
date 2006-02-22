@@ -299,8 +299,6 @@ function views_perm() {
  */
 function views_menu($may_cache) {
   $items = array();
-    global $user;
-    $roles = array_keys($user->roles);
 
   if ($may_cache) {
     // Invalidate the views cache to ensure that views data gets rebuilt.
@@ -355,192 +353,91 @@ function views_menu($may_cache) {
       'type' => MENU_CALLBACK);
   
     $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
+    $views_with_inline_args = array();
+
     while ($view = db_fetch_object($result)) {
       // unpack the array
       $view->access = ($view->access ? explode(', ', $view->access) : array());
+
+      // This happens before the next check; even if it's put off for later
+      // it is still used.
+      $used[$view->name] = true;
+ 
       if (strrpos($view->url, '$arg')) {
+        $views_with_inline_args[$view->name] = $view;
         continue;
       }
-      $view_args = array($view->name);
-      $path = $view->url;
-      
-      $type = _views_menu_type($view);
-      $menu_item = array('path' => $path,
-        'title' => views_get_title($view, 'menu'),
-        'callback' => 'views_view_page',
-        'callback arguments' => $view_args,
-        'access' => !$view->access || array_intersect($view->access, $roles),
-        'weight' => intval($view->menu_tab_weight),
-        'type' => $type,
-      );
-      $items[] = $menu_item;
-      
-      if ($type == MENU_DEFAULT_LOCAL_TASK) {
-        $menu_item = array('path' => dirname($path),
-          'title' => views_get_title($view, 'menu'),
-          'callback' => 'views_view_page',
-          'callback arguments' => $view_args,
-          'access' => !$view->access || array_intersect($view->access, $roles),
-          'type' => MENU_NORMAL_ITEM,
-        );
-        $items[] = $menu_item;
-      }
-      $used[$view->name] = true;
+      _views_create_menu_item($items, $view, $view->url, array($view->name));
     }
-
     $dviews = _views_get_default_views();
     $views_status = variable_get('views_defaults', array());
 
     foreach ($dviews as $name => $view) {
       if ($view->page && !$used[$name] && 
-         ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-        $type = _views_menu_type($view);
+       ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
 
         if (strrpos($view->url, '$arg')) {
+          $views_with_inline_args[$view->name] = $view;
           continue;
         }
-        $view_args = array($view->name);
-        $path = $view->url;
-        
-        $menu_item = array('path' => $path,
-          'title' => views_get_title($view, 'menu'),
-          'callback' => 'views_view_page',
-          'callback arguments' => $view_args,
-          'access' => !$view->access || array_intersect($view->access, $roles),
-          'weight' => intval($view->menu_tab_weight),
-          'type' => $type,
-        );
-        $items[] = $menu_item;
 
-        if ($type == MENU_DEFAULT_LOCAL_TASK) {
-          $menu_item = array('path' => dirname($path),
-            'title' => views_get_title($view, 'menu'),
-            'callback' => 'views_view_page',
-            'callback arguments' => $view_args,
-            'access' => !$view->access || array_intersect($view->access, $roles),
-            'type' => MENU_NORMAL_ITEM,
-          );
-          $items[] = $menu_item;
-        }
+        _views_create_menu_item($items, $view, $view->url, array($view->name));
       }
     }
+    cache_set('views_with_inline_args', serialize($views_with_inline_args), CACHE_TEMPORARY);
   }
   else {
-    $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
-    while ($view = db_fetch_object($result)) {
-      if (!strrpos($view->url, '$arg')) {
-        continue;
-      }
+    $data = cache_get('views_with_inline_args');
+    $views = unserialize($data->data);
 
-      // unpack the array
-      $view->access = ($view->access ? explode(', ', $view->access) : array());
-      
-      $view_args = array($view->name);
-      $url_elements = explode('/', $view->url);
-      $menu_path = array();
-      for ($arg_num = 0; $arg_num < count($url_elements); $arg_num++) {
-        if ($url_elements[$arg_num] == '$arg') {
-          $menu_path[] = arg($arg_num);
-          $view_args[] = arg($arg_num);
-        }
-        else {
-          $menu_path[] = $url_elements[$arg_num];
-        }
-      }
-      $path = implode('/', $menu_path);
-      
-      $type = _views_menu_type($view);
-      // now, get the cached version of the view.
-      $menu_item = unserialize(cache_get($path));
-      if ($menu_item == 0) {
-        $menu_item = array('path' => $path,
-          'title' => views_get_title($view, 'menu'),
-          'callback' => 'views_view_page',
-          'callback arguments' => $view_args,
-          'access' => !$view->access || array_intersect($view->access, $roles),
-          'weight' => intval($view->menu_tab_weight),
-          'type' => $type,
-        );
-        cache_set('view'.$path, serialize($menu_item), CACHE_TEMPORARY);
-      }
-      $items[] = $menu_item;
-      
-      if ($type == MENU_DEFAULT_LOCAL_TASK) {
-        $menu_item = unserialize(cache_get(dirname($path)));
-        if ($menu_item == 0) {
-          $menu_item = array('path' => dirname($path),
-            'title' => views_get_title($view, 'menu'),
-            'callback' => 'views_view_page',
-            'callback arguments' => $view_args,
-            'access' => !$view->access || array_intersect($view->access, $roles),
-            'type' => MENU_NORMAL_ITEM,
-          );
-          cache_set('view'.dirname($path), serialize($menu_item), CACHE_TEMPORARY);
-        }
-        $items[] = $menu_item;
-      }
-      $used[$view->name] = true;
-    }
-
-    $dviews = _views_get_default_views();
-    $views_status = variable_get('views_defaults', array());
-
-    foreach ($dviews as $name => $view) {
-      if (!strrpos($view->url, '$arg')) {
-        continue;
-      }
-      if ($view->page && !$used[$name] && 
-         ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-        $type = _views_menu_type($view);
-
+    if (is_array($views)) {
+      foreach ($views as $view) {
+        // Do substitution on args.
         $view_args = array($view->name);
-        $url_elements = explode('/', $view->url);
         $menu_path = array();
-        for ($arg_num = 0; $arg_num < count($url_elements); $arg_num++) {
-          if ($url_elements[$arg_num] == '$arg') {
-            $menu_path[] = arg($arg_num);
-            $view_args[] = arg($arg_num);
+        foreach (explode('/', $view->url) as $num => $element) {
+          if ($element == '$arg') {
+            $menu_path[] = arg($num);
+            $view_args[] = arg($num);
           }
           else {
-            $menu_path[] = $url_elements[$arg_num];
+            $menu_path[] = $element;
           }
         }
         $path = implode('/', $menu_path);
-        
-        // now, get the cached version of the view.
-        $menu_item = unserialize(cache_get($path));
-        if ($menu_item == 0) {
-          $menu_item = array('path' => $path,
-            'title' => views_get_title($view, 'menu'),
-            'callback' => 'views_view_page',
-            'callback arguments' => $view_args,
-            'access' => !$view->access || array_intersect($view->access, $roles),
-            'weight' => intval($view->menu_tab_weight),
-            'type' => $type,
-          );
-          cache_set('view'.$path, serialize($menu_item), CACHE_TEMPORARY);
-        }
-        $items[] = $menu_item;
 
-        if ($type == MENU_DEFAULT_LOCAL_TASK) {
-          $menu_item = unserialize(cache_get(dirname($path)));
-          if ($menu_item == 0) {
-            $menu_item = array('path' => dirname($path),
-              'title' => views_get_title($view, 'menu'),
-              'callback' => 'views_view_page',
-              'callback arguments' => $view_args,
-              'access' => !$view->access || array_intersect($view->access, $roles),
-              'type' => MENU_NORMAL_ITEM,
-            );
-            cache_set('view'.dirname($path), serialize($menu_item), CACHE_TEMPORARY);
-          }
-          $items[] = $menu_item;
-        }
+        _views_create_menu_item($items, $view, $path, $view_args);
       }
     }
   }
 
   return $items;
+}
+
+function _views_create_menu_item(&$items, $view, $path, $args) {
+  static $roles = NULL;
+  if ($roles == NULL) {
+    global $user;
+    $roles = array_keys($user->roles);
+  }
+  $title = views_get_title($view, 'menu');
+  $type = _views_menu_type($view);
+  $access = !$view->access || array_intersect($view->access, $roles);
+  $items[] = _views_menu_item($path, $title, $args, $access, $type);
+  
+  if ($type == MENU_DEFAULT_LOCAL_TASK) {
+    $items[] = _views_menu_item(dirname($path), $title, $args, $access, MENU_NORMAL_ITEM);
+  }
+}
+
+function _views_menu_item($path, $title, $args, $access, $type) {
+  return array('path' => $path,
+    'title' => $title,
+    'callback' => 'views_view_page',
+    'callback arguments' => $args,
+    'access' => $access,
+    'type' => $type,
+  );
 }
 
 function _views_menu_type($view) {
