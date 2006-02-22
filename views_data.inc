@@ -83,9 +83,9 @@ function _views_internal_arguments() {
  */
 function _views_internal_tables() {
 
-  if (module_exist('taxonomy')) {
-    $tables['term_node'] = array(
-      'name' => 'term_node',
+  if (module_exist('book')) {
+    $tables['book'] = array(
+      'name' => 'book',
       'provider' => 'internal',
       'join' => array(
         'left' => array(
@@ -96,26 +96,25 @@ function _views_internal_tables() {
           'field' => 'nid'
         )
       ),
-      'fields' => array(
-        'name' => array(
-          'name' => t('Taxonomy: All Terms'),
-          'sortable' => false,
-          'help' => t('This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact.'),
-          'handler' => 'views_handler_field_allterms',
-          'notafield' => true,
-        ),
-      ),
-      'filters' => array(
-        'tid' => array(
-          'name' => t('Taxonomy: Term'),
-          'list' => 'views_handler_filter_tid',
-          'option' => 'string',
-          'operator' => 'views_handler_operator_andor',
-          'handler' => 'views_handler_filter_tid_custom',
-          'help' => t("When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information."),
-        ),
-      )
     );
+  }
+  
+  if (module_exist('taxonomy')) {
+    $table = views_new_table('term_node', 'internal', 'node', 'nid', 'nid');
+    views_table_add_field($table, 'name', 'Taxonomy: All Terms', 'This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact.', array(
+      'sortable' => false,
+      'handler' => 'views_handler_field_allterms',
+      'notafield' => true,
+    ));
+
+    views_table_add_filter($table, 'tid', 'Taxonomy: Term', 'When filtering by taxonomy term you may specify the "depth" as an option. Please see the taxonomy help for more information.', array(
+      'list' => 'views_handler_filter_tid',
+      'option' => 'string',
+      'operator' => 'views_handler_operator_andor',
+      'handler' => 'views_handler_filter_tid_custom',
+    ));
+
+    $tables[$table->name] = $table;
 
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {

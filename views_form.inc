@@ -827,9 +827,9 @@ function views_ui_add_button($image, $name, $text) {
  */
 function theme_views_edit_view($form) {
 
-  $output .= form_render($form['basic-info']);
-  $output .= form_render($form['page-info']);
-  $output .= form_render($form['block-info']);
+  $output .= form_render($form['basic-info'], false);
+  $output .= form_render($form['page-info'], false);
+  $output .= form_render($form['block-info'], false);
 
   $allbut = $form['allbut']['#value'];
 
@@ -872,7 +872,7 @@ function theme_views_edit_view($form) {
   $output .= theme('fieldset', array('#title' => t('Sort Criteria'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
 
-  $output .= form_render($form);
+  $output .= form_render($form, false);
   return $output;
 }
 
@@ -891,15 +891,15 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
   foreach ($order as $key => $i) {
     $row = array();
     foreach ($items as $item) {
-      $row[] = form_render($form[$i][$item]);
+      $row[] = form_render($form[$i][$item], false);
     }
     $rows[] = $row;
     if (isset($form[$i]['help'])) {
-      $rows[] = array(array('data' => form_render($form[$i]['help']), 'colspan' => $num_items));
+      $rows[] = array(array('data' => form_render($form[$i]['help']), 'colspan' => $num_items), false);
     }
   }
   if (!$rows) {
-    $rows[] = array(array('data' => t('This view currently has no $section defined.'), 'colspan' => $num_items));
+    $rows[] = array(array('data' => t('This view currently has no %s defined.', array('%s' => $section)), 'colspan' => $num_items));
     $collapsed = true;
   }
 
@@ -912,7 +912,7 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
  */
 function views_ui_render_section_add(&$form, $items,  $label) {
   foreach ($items as $item) {
-    $row[] = form_render($form[$item]);
+    $row[] = form_render($form[$item], false);
   }
   $rows[] = $row;
 

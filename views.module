@@ -1,5 +1,5 @@
 <?php
-// $Id$
+ $Id$
 
 // ---------------------------------------------------------------------------
 // Acquire Views Data
@@ -65,7 +65,7 @@ function _views_get_tables($full = false) {
 
       foreach ($table_data as $name => $table) {
         if (is_array($table['filters'])) {
-          foreach($table['filters'] as $filter => $data) {
+          foreach ($table['filters'] as $filter => $data) {
             $data['table'] = $name;
             // translate for deprecated APIs...
             if ($data['option'] && !is_array($data['option'])) {
@@ -90,14 +90,14 @@ function _views_get_tables($full = false) {
           }
         }
         if (is_array($table['fields'])) {
-          foreach($table['fields'] as $field => $data) {
+          foreach ($table['fields'] as $field => $data) {
             $data['table'] = $name;
             $VIEWS_TABLES['fields']['titles']["$name.$field"] = $data['name'];
             $VIEWS_TABLES['fields']['base']["$name.$field"] = $data;
           }
         }
         if (is_array($table['sorts'])) {
-          foreach($table['sorts'] as $field => $data) {
+          foreach ($table['sorts'] as $field => $data) {
             $data['table'] = $name;
             if ($data['option'] && !is_array($data['option'])) {
               if ($data['option'] == 'string' || $data['option'] == 'integer') {
@@ -160,18 +160,18 @@ function views_invalidate_cache() {
 function _views_sanitize_view(&$view) {
   _views_check_arrays($view); // so reference works.
   if (is_array($view->field)) {
-    foreach($view->field as $i => $field) {
+    foreach ($view->field as $i => $field) {
       $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
       $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
     }
   }
   if (is_array($view->filter)) {
-    foreach($view->filter as $i => $filter) {
+    foreach ($view->filter as $i => $filter) {
       $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
     }
   }
   if (is_array($view->sort)) {
-    foreach($view->sort as $i => $sort) {
+    foreach ($view->sort as $i => $sort) {
       $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
     }
   }
@@ -1264,6 +1264,59 @@ function _views_save_view($view) {
 // ---------------------------------------------------------------------------
 // Themeable and support
 
+/**
+ * Helper function to make table creation a little easier. It adds the necessary
+ * data to a $table array and returns it.
+ */
+function views_new_table($table_name, $provider, $left_table, $left_field, $right_field, $extra = NULL) {
+  $table['name'] = $table_name;
+  $table['provider'] = $provider;
+  $table['join']['left']['table'] = $left_table;
+  $table['join']['left']['field'] = $left_field;
+  $table['join']['right']['field'] = $left_field;
+  if ($extra) {
+    $table['join']['extra'] = $extra;
+  }
+  return $table;
+}
+
+/**
+ * Helper function to make table creation a little easier. It adds the necessary
+ * data to the $table array.
+ */
+function views_table_add_field(&$table, $name, $label, $help, $others) {
+  views_table_add_data($table, 'fields', $name, $label, $help, $others);
+}
+
+/**
+ * Helper function to make table creation a little easier. It adds the necessary
+ * data to the $table array.
+ */
+function views_table_add_filter(&$table, $name, $label, $help, $operator, $others = array()) {
+  views_table_add_data($table, 'filters', $name, $label, $help, $others);
+  $table['filter'][$name]['operator'] = $operator;
+}
+
+/**
+ * Helper function to make table creation a little easier. It adds the necessary
+ * data to the $table array.
+ */
+function views_table_add_sort(&$table, $name, $label, $help, $others = array()) {
+  views_table_add_data($table, 'sorts', $name, $label, $help, $others);
+}
+
+/**
+ * Helper function to make table creation a little easier. It adds the necessary
+ * data to the $table array.
+ */
+function views_table_add_data(&$table, $type, $name, $label, $help, $others = array()) {
+  $table[$type][$name]['name'] = $label;
+  $table[$type][$name]['help'] = $help;
+  foreach ($others as $key => $value) {
+    $table[$type][$name][$key] = $value;
+  }
+}
+
 /*
  * Figure out how to display the data of a field. Many fields simply display
  * the data as-is, but many fields have to massage that data, which is
@@ -1288,7 +1341,7 @@ function _views_handle_field($fields, $field, $data) {
  * Construct a header for a table view.
  */
 function _views_construct_header($view, $fields) {
-  foreach($view->field as $field) {
+  foreach ($view->field as $field) {
     $header = array();
     $info = $fields[$field['fullname']];
 

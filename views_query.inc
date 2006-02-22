@@ -146,7 +146,7 @@ function _views_view_build_fields(&$query, &$view) {
 
   $fields = _views_get_fields(); 
 
-  foreach($view->field as $field) {
+  foreach ($view->field as $field) {
     // Some fields are not actually fields but require special handlers
     // to display their data.
 
@@ -162,7 +162,7 @@ function _views_view_build_fields(&$query, &$view) {
     }
     // special handling
     if (is_array($fieldinfo['addlfields'])) {
-      foreach($fieldinfo['addlfields'] as $name) 
+      foreach ($fieldinfo['addlfields'] as $name) 
         $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
     }
   }
@@ -292,7 +292,7 @@ class _views_query {
     }
 
     if (is_array($field)) {
-      foreach($field as $f) {
+      foreach ($field as $f) {
         $this->orderby[] = "$alias.$f $order";
       }
     }
