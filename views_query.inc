@@ -284,20 +284,23 @@ class _views_query {
    * be.
    */
   function add_orderby($table, $field, $order, $alias = '') {
-    if (!$alias) {
-      $alias = $table;
+    if (!$alias && $table) {
+      $alias = $table . ".";
     }
+    elseif ($alias) {
+      $alias .= ".";
+    }
+
     if ($table) {
       $this->ensure_table($table);
     }
 
-    if (is_array($field)) {
-      foreach ($field as $f) {
-        $this->orderby[] = "$alias.$f $order";
-      }
+    if (!is_array($field)) {
+      $field = array($field);
     }
-    else {
-      $this->orderby[] = "$alias.$field $order";
+
+    foreach($field as $f) {
+      $this->orderby[] = "$alias$f $order";
     }
   }
 
