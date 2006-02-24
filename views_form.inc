@@ -676,7 +676,6 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
     }
     $widget['#default_value'] = $argument['options'];
     $form['options'] = $widget;
-    dprint_r($widget);
   }
 
   if (isset($arginfo['help'])) {
