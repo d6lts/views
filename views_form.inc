@@ -685,6 +685,7 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
       '#value' => $arginfo['help'],
     );
   }
+  return $retval;
 }
 
 /**
@@ -745,6 +746,7 @@ function views_ui_add_filter(&$form, $filter, &$order, $key, $i) {
       '#value' => $filterinfo['help'],
     );
   }
+  return $retval;
 }
 
 /**
@@ -795,6 +797,7 @@ function views_ui_add_sort(&$form, $sort, &$order, $key, $i) {
       '#value' => $sortinfo['help'],
     );
   }
+  return $retval;
 }
 
 /**
