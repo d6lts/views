@@ -116,7 +116,7 @@ function _views_check_sub_ops(&$form, &$order, $i) {
   else foreach (array('up', 'down', 'top', 'bottom') as $dir) {
     if ($form[$dir]['#value']) {
       unset ($form[$dir]['#value']);
-      $func = "views_move_$dir";
+      $func = "_views_move_$dir";
       $func($order, $i);
       return true;
     }
@@ -569,7 +569,7 @@ function views_ui_add_field(&$form, $field, &$order, $key, $i) {
   views_ui_build_form($form);
 
   $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval == 'delete') {
+  if ($retval === 'delete') {
     return true;
   }
 
