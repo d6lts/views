@@ -1370,11 +1370,11 @@ function views_view_list($view, $nodes) {
     $item = '';
     foreach ($view->field as $field) {
       if ($field['label']) {
-        $item .= "<div class='view-label' id='view-label-$field[queryname]'>" . $field['label'] . "</div>";
+        $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
       }
-      $item .= "<div class='view-field' id='view-data-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
+      $item .= "<div class='view-field view-data-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
     }
-    $items[] = "<div class='view-item' id='view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
+    $items[] = "<div class='view-item view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
   if ($items) {
     return theme('item_list', $items);
@@ -1448,7 +1448,7 @@ function theme_views_view($view, $type, $nodes) {
 
   if ($header) {
     $header = check_markup($header, $header_format, false);
-    $output = "<div class='view-header' id='view-header-$view->name'>$header</div>\n";
+    $output = "<div class='view-header view-header-$view->name'>$header</div>\n";
   }
 
   switch (($type == 'block' ? $view->block_type : $view->page_type)) {
@@ -1471,7 +1471,7 @@ function theme_views_view($view, $type, $nodes) {
   if ($type == 'block' && $view->block_more && count($nodes) >= $view->nodes_per_block) {
     $output .= theme('views_more', $view->url); 
   }
-  return "<div class='view' id='view-$view->name'>$output</div>\n";
+  return "<div class='view view-$view->name'>$output</div>\n";
 }
 
 /*
@@ -1526,7 +1526,7 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
     $output .= theme('table', array(), $items, array('id' => 'summary'));
   }
   
-  return "<div class='views' id='$view->name'>$output</div>";
+  return "<div class='view view-$view->name'>$output</div>";
   
 }
 
@@ -1642,17 +1642,9 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
 // ---------------------------------------------------------------------------
 // Sort handlers
 
-function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
-  switch ($GLOBALS['db_type']) {
-    case 'mysql':
-    case 'mysqli':
-      $query->add_orderby('', "rand()", "ASC");
-      break;
-    case 'pgsql':
-      $query->add_orderby('', "random()", "ASC");
-      break;
-  }
-}
+// function views_handler_sort_random(&$query, $sortinfo, $sort) {
+//   $query->add_orderby('', "rand()");
+// }
 
 // ---------------------------------------------------------------------------
 // Argument handlers
