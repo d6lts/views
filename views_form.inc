@@ -646,7 +646,7 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
   views_ui_build_form($form);
 
   $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval == 'delete') {
+  if ($retval === 'delete') {
     return true;
   }
 
@@ -701,7 +701,7 @@ function views_ui_add_filter(&$form, $filter, &$order, $key, $i) {
   views_ui_build_form($form);
 
   $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval == 'delete') {
+  if ($retval === 'delete') {
     return true;
   }
 
@@ -761,7 +761,7 @@ function views_ui_add_sort(&$form, $sort, &$order, $key, $i) {
   views_ui_build_form($form);
 
   $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval == 'delete') {
+  if ($retval === 'delete') {
     return true;
   }
 
@@ -888,9 +888,15 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
     ? explode(',', $form['order']['#value']) 
     : array());
 
+  $count = count($order) - 1;
   foreach ($order as $key => $i) {
     $row = array();
     foreach ($items as $item) {
+      if (($key == 0 && ($item == 'up' || $item == 'top')) || 
+          ($key == $count && ($item == 'down' || $item == 'bottom'))) {
+        $form[$i][$item]['#printed'] = true;
+        continue;
+      }
       $row[] = form_render($form[$i][$item], false);
     }
     $rows[] = $row;
