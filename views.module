@@ -1694,6 +1694,9 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       $fieldinfo['field'] = "node.type";
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby('node', 'type', $argtype);
+      break;
     case 'filter':
       $where = db_escape_string($arg);
       $query->add_where("node.type = '$where'");
@@ -1713,6 +1716,9 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
       $query->add_field('uid', 'users');
       $fieldinfo['field'] = "users.name";
       return $fieldinfo;
+      break;
+    case 'sort':
+      $query->add_orderby('users', 'name', $argtype);
       break;
     case 'filter':
       $uid = intval($arg);
@@ -1738,6 +1744,9 @@ function views_handler_arg_uid_touch($op, &$query, $argtype, $arg = '') {
       $query->add_field('uid', 'users');
       $fieldinfo['field'] = "users.name";
       return $fieldinfo;
+      break;
+    case 'sort':
+      $query->add_orderby('users', 'name', $argtype);
       break;
     case 'filter':
       $uid = intval($arg);
@@ -1771,9 +1780,10 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       $query->add_field('weight', 'term_data');
       $query->add_field('tid', 'term_data');
       $fieldinfo['field'] = "term_data.name";
-      $query->add_orderby('term_data', 'weight', "ASC");
-      $query->add_orderby('term_data', 'name', "ASC");
       return $fieldinfo;
+    case 'sort':
+      $query->add_orderby('term_data', 'weight', $argtype);
+      $query->add_orderby('term_data', 'name', $argtype);
       break;
     case 'filter':
       if ($arg == 0) { // untagged only!
@@ -1809,6 +1819,9 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       $query->add_where('term_data.name IS NOT NULL');
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby('term_data', 'name', $argtype);
+      break;
     case 'filter':
       $len = intval($argtype['options']);
       $query->add_table('term_data', true);
@@ -1833,6 +1846,9 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
       $fieldinfo['field'] = ($len <= 0 ? "node.title" : $fieldinfo['field'] = "LEFT(node.title, $len)");
       $fieldinfo['fieldname'] = 'letter';
       return $fieldinfo;
+      break;
+    case 'sort':
+      $query->add_orderby('node', 'title', $argtype);
       break;
     case 'filter':
       $len = intval($argtype['options']);
@@ -1859,6 +1875,9 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
       $query->add_field('created');
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby(NULL, 'year', $argtype);
+      break;
     case 'filter':
       $year = intval($arg);
       $query->add_where("YEAR(FROM_UNIXTIME(node.created+$timezone)) = $year");
@@ -1878,6 +1897,9 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
       $fieldinfo['fieldname'] = 'name';
       $query->add_field('created');
       return $fieldinfo;
+      break;
+    case 'sort':
+      $query->add_orderby(NULL, 'name', $argtype);
       break;
     case 'filter':
       $month = intval($arg);
@@ -1900,6 +1922,9 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
       $query->add_field('created');
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby(NULL, 'name', $argtype);
+      break;
     case 'filter':
       // The 3 makes the week 1-53, the first week of the year has at least 3 days
       $week = intval($arg);
@@ -1921,6 +1946,9 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       $query->add_field('created');
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby(NULL, "name", $argtype);
+      break;
     case 'filter':
       $where = db_escape_string($arg);
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m') = '$where'");
@@ -1941,6 +1969,9 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       $query->add_field('created');
       return $fieldinfo;
       break;
+    case 'sort':
+      $query->add_orderby(NULL, 'name', $argtype);
+      break;
     case 'filter':
       $where = db_escape_string($arg);
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%d') = '$where'");
@@ -1959,6 +1990,9 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
       $query->add_field('nid');
       $fieldinfo['field'] = 'node.nid';
       return $fieldinfo;
+    case 'sort':
+      // do nothing here.
+      break;
     case 'filter':
       $query->add_where("node.nid = %d", $arg);
       break;
@@ -2180,14 +2214,4 @@ function views_handler_operator_eqneq() {
  */
 function views_handler_operator_yesno() {
   return array('1' => t('Yes'), '0' => t('No'));
-}
-
-// ---------------------------------------------------------------------------
-// Operator handlers (for filters)
-
-/*
- * update module for UTF.
- */
-function views_update_1() {
-  return _system_update_utf8(array('view_view', 'view_tablefield', 'view_filter', 'view_sort', 'view_argument'));
 }

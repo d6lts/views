@@ -24,15 +24,26 @@ function _views_build_query(&$view, $args = array()) {
           drupal_not_found();
           exit;
         case 3:
+        case 4:
+          $self_sort = "ASC";
+        case 5:
+          // the if is a kind of a hack to make this case fall-thru fluid
+          if (!$self_sort) { 
+            $self_sort = "DESC";
+        }
+        case 6:
           $level = $i;
-          _views_build_summary($query, $argument['type'], $argument['options']);
+          _views_build_summary($query, $argument['type'], $argument['options'], $self_sort);
           $summary = true;
+          if (!$self_sort) {
+            $sort = true;
+          }
           break 2; // switch and for
       } 
     } 
   }
 
-  if (!$summary) {
+  if (!$summary || $sort) {
     _views_view_build_sorts($query, $view);
     if (($view->page && ($view->page_type == 'list' || $view->page_type == 'table')) || 
       ($view->block && ($view->block_type == 'list' || $view->block_type == 'table'))) {
@@ -177,7 +188,7 @@ function _views_view_build_fields(&$query, &$view) {
  * Build a summary if an argument was required and is not present. Mostly
  * this calls handlers.
  */
-function _views_build_summary(&$query, $argtype, $option) {
+function _views_build_summary(&$query, $argtype, $option, $self_sort) {
 
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argtype]['handler'])) {
@@ -192,8 +203,11 @@ function _views_build_summary(&$query, $argtype, $option) {
     $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
   }
   $query->add_field("count(node.nid) as num_nodes", '');
-  $query->add_groupby("$fieldinfo[field]");
+  $query->add_groupby($fieldinfo['field']);
   $query->set_count_field("DISTINCT($fieldinfo[field])");
+  if ($self_sort) {
+    $arginfo[$argtype]['handler']('sort', $query, $self_sort);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -285,20 +299,23 @@ class _views_query {
    * be.
    */
   function add_orderby($table, $field, $order, $alias = '') {
-    if (!$alias) {
-      $alias = $table;
+    if (!$alias && $table) {
+      $alias = $table . ".";
     }
+    elseif ($alias) {
+      $alias .= ".";
+    }
+
     if ($table) {
       $this->ensure_table($table);
     }
 
-    if (is_array($field)) {
-      foreach ($field as $f) {
-        $this->orderby[] = "$alias.$f $order";
-      }
+    if (!is_array($field)) {
+      $field = array($field);
     }
-    else {
-      $this->orderby[] = "$alias.$field $order";
+
+    foreach($field as $f) {
+      $this->orderby[] = "$alias$f $order";
     }
   }
 

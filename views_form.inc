@@ -13,7 +13,10 @@ function _views_get_arguments_default() {
   return array(
     1 => t('Return Page Not Found'),
     2 => t('Display All Values'),
-    3 => t('Summary Of Choices')
+    3 => t('Summary, unsorted'),
+    4 => t('Summary, sorted ascending'),
+    5 => t('Summary, sorted descending'),
+    6 => t('Summary, sorted as view'),
    );
 }
 

@@ -11,6 +11,8 @@
       page_title varchar(255),
       page_header longtext,
       page_header_format int(4) NOT NULL,
+      page_empty longtext,
+      page_empty_format int(4) NOT NULL,
       page_type varchar(20),
       use_pager int(1),
       nodes_per_page int(2), -- yes, no more than 99
@@ -27,6 +29,9 @@
       block_use_page_header int(1),
       block_header longtext,
       block_header_format int(4) NOT NULL,
+      block_use_page_empty int(1),
+      block_empty longtext,
+      block_empty_format int(4) NOT NULL,
       block_type varchar(20),
       nodes_per_block int(5),
       block_more int(1),
@@ -91,6 +96,44 @@
       KEY (vid)
     ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-  }      
+    db_query("create table if not exists {view_exposed_filter} (
+      vid int(10) unsigned NOT NULL default '0',
+      field varchar(255),
+      label varchar(255),
+      optional int(1),
+      default int(1),
+      operator int(1),
+      position int(2),
+      KEY (vid)
+    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
+ }      
 
+/*
+ * update module for UTF.
+ */
+function views_update_1() {
+  return _system_update_utf8(array('view_view', 'view_tablefield', 'view_filter', 'view_sort', 'view_argument'));
+}
+/*
+ * update module for UTF.
+ */
+function views_update_2() {
+  $ret = array();
+  db_add_column($ret, 'view_view', 'page_empty', 'longtext');
+  db_add_column($ret, 'view_view', 'page_empty_format', 'int(4)', array('not null' => TRUE));
+  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
+  db_add_column($ret, 'view_view', 'block_empty', 'longtext');
+  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('not null' => TRUE));
+  db_query("create table if not exists {view_exposed_filter} (
+      vid int(10) unsigned NOT NULL default '0',
+      field varchar(255),
+      label varchar(255),
+      optional int(1),
+      default int(1),
+      operator int(1),
+      position int(2),
+      KEY (vid)
+    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+  return $ret;
+}
