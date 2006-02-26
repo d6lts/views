@@ -115,11 +115,11 @@ function _views_internal_tables() {
       'handler' => 'views_handler_filter_tid_custom',
     ));
 
-    $tables[$table->name] = $table;
+    $tables[$table['name']] = $table;
 
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {
-      $tables["term_node_$voc->name"] = array(
+      $tables["term_node_$voc->vid"] = array(
         'name' => 'term_node',
         'provider' => 'internal',
         'join' => array(
