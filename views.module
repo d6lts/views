@@ -1614,6 +1614,9 @@ function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, 
   return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
 }
 
+/**
+ * Display all the terms for a given vocabulary
+ */
 function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
   if ($fieldinfo['vocabulary']) {
     $terms = taxonomy_node_get_terms_by_vocabulary($data->nid, $fieldinfo['vocabulary']);
@@ -1624,6 +1627,20 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
 
   $node->taxonomy = $terms;
   return theme('links', taxonomy_link('taxonomy terms', $node));
+}
+
+/**
+ * Display a simple taxonomy term
+ */
+function views_handler_field_tid($fieldinfo, $fielddata, $value, $data) {
+  return check_plain($value);
+}
+
+/**
+ * Display a link to a taxonomy term
+ */
+function views_handler_field_tid_link($fieldinfo, $fielddata, $value, $data) {
+  return l($value, "node/$data->tid");
 }
 
 /*

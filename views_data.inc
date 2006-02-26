@@ -186,6 +186,8 @@ function _views_internal_tables() {
         'name' => array(
           'name' => 'Taxonomy: Term',
           'sortable' => true,
+          'handler' => array('views_handler_field_tid' => "No link", 'views_handler_field_tid_link' => "With link"),
+          'addlfields' => array('tid'),
           'help' => t('This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter.'),
         ),
         'description' => array(
