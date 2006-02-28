@@ -145,6 +145,7 @@ function _views_internal_tables() {
           'tid' => array(
             'name' => t('Taxonomy: Terms for %voc-name', array('%voc-name' => $voc->name)),
             'list' => 'views_handler_filter_tid',
+            'value-type' => 'array',
             'option' => 'string',
             'operator' => 'views_handler_operator_andor',
             'handler' => 'views_handler_filter_tid_custom',
@@ -208,6 +209,7 @@ function _views_internal_tables() {
           'name' => t('Taxonomy: Vocabulary Name'),
           'list' => 'views_handler_filter_vid',
           'operator' => 'views_handler_operator_andor',
+          'value-type' => 'array',
           'help' => t('This will filter a view to only nodes that contain a term in the associated vocabulary.'),
         )
       )
@@ -313,6 +315,7 @@ function _views_internal_tables() {
         'name' => t('Node: Author Name'),
         'operator' => 'views_handler_operator_or',
         'list' => 'views_handler_filter_username',
+        'value-type' => 'array',
         'help' => t('This allows you to filter by a particular user. You might not find this useful if you have a lot of users.'),
       ),
     )
@@ -335,6 +338,7 @@ function _views_internal_tables() {
         'name' => t('Role: Author Role'),
         'operator' => 'views_handler_operator_andor',
         'list' => 'views_handler_filter_role',
+        'value-type' => 'array',
         'help' => t('Include the node only if the author is a member of the selected role.'),
       ),
     )
@@ -362,6 +366,7 @@ function _views_internal_tables() {
         'operator' => array('Has'),
         'list' => array('New Content'),
         'handler' => 'views_handler_filter_isnew',
+        'value-type' => 'array',
         'help' => t('Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes.'),
       ),
     ),
@@ -460,6 +465,7 @@ function _views_internal_tables() {
         'list' => 'views_handler_filter_nodetype',
         'list-type' => 'list',
         'operator' => 'views_handler_operator_or',
+        'value-type' => 'array',
         'help' => t('Include or exclude nodes of the selected types.'),
       ),
       'anon' => array(
@@ -467,6 +473,7 @@ function _views_internal_tables() {
         'name' => t('Node: Author is Anonymous'),
         'operator' => 'views_handler_operator_eqneq',
         'list' => 'views_handler_filter_useranon',
+        'value-type' => 'array',
         'help' => t('This allows you to filter by whether or not the node author is anonymous.'),
       ),
       'currentuid' => array(
@@ -491,6 +498,7 @@ function _views_internal_tables() {
         'operator' => array('=' => 'is'),
         'list' => array('distinct' => 'distinct'),
         'handler' => 'views_handler_filter_distinct',
+        'value-type' => 'array',
         'help' => t('This filter ensures that each node may only be listed once, even if it matches multiple criteria. Use this if multiple taxonomy matches return duplicated nodes.'),
       ),
     ),

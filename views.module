@@ -21,7 +21,7 @@ function _views_get_arguments($titles = false) {
     else {
       $path = drupal_get_path('module', 'views');
       require_once("$path/views_data.inc");
-      $arguments = array_merge(module_invoke_all('views_arguments'), _views_internal_arguments());
+      $arguments = array_merge(_views_internal_arguments(), module_invoke_all('views_arguments'));
       foreach ($arguments as $name => $arg) {
         if ($arg['option'] && !is_array($arg['option'])) {
           if ($arg['option'] == 'string' || $arg['option'] == 'integer') {
@@ -60,7 +60,7 @@ function _views_get_tables($full = false) {
       $path = drupal_get_path('module', 'views');
       require_once("$path/views_data.inc");
 
-      $table_data = array_merge(module_invoke_all('views_tables'), _views_internal_tables());
+      $table_data = array_merge(_views_internal_tables(), module_invoke_all('views_arguments'));
       $VIEWS_TABLES['tables'] = $table_data;
 
       foreach ($table_data as $name => $table) {
@@ -1166,13 +1166,23 @@ function _views_load_view($arg) {
 
   $result = db_query("SELECT * FROM {view_filter} WHERE vid = $view->vid ORDER BY position ASC");
 
+  $filters = _views_get_filters();
   $view->filter = array();
   while ($filter = db_fetch_array($result)) {
     if (substr($filter['field'], 0, 2) == 'n.') {
       $filter['field'] = 'node' . substr($filter['field'], 1);
     }
-    if ($filter['operator'] == 'AND' || $filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
-      $filter['value'] = explode(',', $filter['value']);
+
+    if ($filter['operator'] == 'AND' || 
+        $filter['operator'] == 'OR' || 
+        $filter['operator'] == 'NOR' || 
+        $filters[$filter['field']]['value-type'] == 'array' ) {
+      if ($filter['value'] !== NULL && $filter['value'] !== '') {
+        $filter['value'] = explode(',', $filter['value']);
+      }
+      else {
+        $filter['value'] = array();
+      }
     }
     $view->filter[] = $filter;
   }
@@ -1256,8 +1266,9 @@ function _views_save_view($view) {
     db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES (%d, '%s', '%s', '%s', '%s', %d, '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['label'], $arg['handler'], $arg['sortable'], $arg['defaultsort'], $i);
   }
 
+  $filters = _views_get_filters();
   foreach ($view->filter as $i => $arg) {
-    if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR')) {
+    if (is_array($arg['value'])) {
       $arg['value'] = implode(',', $arg['value']);
     }
     db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES (%d, '%s', '%s', '%s', '%s', '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['value'], $arg['operator'], $arg['options'], $i);

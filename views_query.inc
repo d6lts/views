@@ -572,7 +572,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
     // views_get_title tables
 
     // Any number of things might have already added a term_node table, but
-    // if they ahve and are filtering on it the query is going to be borken
+    // if they have and are filtering on it the query is going to be borken
     // anyway. If it's been added and unfiltered, and we ignore it, we get
     // bad results.
     $num = 1;
