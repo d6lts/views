@@ -60,7 +60,7 @@ function _views_get_tables($full = false) {
       $path = drupal_get_path('module', 'views');
       require_once("$path/views_data.inc");
 
-      $table_data = array_merge(_views_internal_tables(), module_invoke_all('views_arguments'));
+      $table_data = array_merge(_views_internal_tables(), module_invoke_all('views_tables'));
       $VIEWS_TABLES['tables'] = $table_data;
 
       foreach ($table_data as $name => $table) {
