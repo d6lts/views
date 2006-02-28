@@ -1112,8 +1112,13 @@ function _views_delete_view($view) {
  * Load a view from the database.
  */
 function _views_load_view($arg) {
+  static $cache = array();
+  $which = is_numeric($arg) ? 'vid' : 'name';
+  if (isset($cache[$which][$arg])) {
+    return $cache[$which][$arg];
+  }
 
-  $where = (intval($arg) == 0 ? "v.name = '%s'" : "v.vid =  %d");
+  $where = (is_numeric($arg) ? "v.vid =  %d" : "v.name = '%s'");
   $view = db_fetch_object(db_query("SELECT v.* FROM {view_view} v WHERE $where", $arg));
 
   if (!$view->name) {
@@ -1171,6 +1176,9 @@ function _views_load_view($arg) {
     }
     $view->filter[] = $filter;
   }
+
+  $cache['vid'][$view->vid] = $view;
+  $cache['name'][$view->name] = $view; 
 
   return $view;
 }
