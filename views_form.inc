@@ -888,7 +888,7 @@ function theme_views_edit_view($form) {
  */
 function views_ui_render_section(&$form, $items, $header, $section, &$collapsed) {
   // always do the buttons
-  $items = array_merge($items, array('delete', 'up', 'down', 'top', 'bottom'));
+  $items = array_merge($items, array('delete', 'top', 'up', 'down', 'bottom'));
   $num_items = count($items);
 
   $order = ($form['order']['#value'] != ''
@@ -902,13 +902,15 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
       if (($key == 0 && ($item == 'up' || $item == 'top')) || 
           ($key == $count && ($item == 'down' || $item == 'bottom'))) {
         $form[$i][$item]['#printed'] = true;
-        continue;
+        $row[] = '&nbsp;'; // array('data' => '&nbsp;', 'width' => 16);
       }
-      $row[] = form_render($form[$i][$item], false);
+      else {
+        $row[] = form_render($form[$i][$item], false);
+      }
     }
     $rows[] = $row;
     if (isset($form[$i]['help'])) {
-      $rows[] = array(array('data' => form_render($form[$i]['help']), 'colspan' => $num_items), false);
+      $rows[] = array(array('data' => form_render($form[$i]['help']), 'colspan' => $num_items));
     }
   }
   if (!$rows) {
