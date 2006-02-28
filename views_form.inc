@@ -742,6 +742,7 @@ function views_ui_add_filter(&$form, $filter, &$order, $key, $i) {
   if (!is_array($form['value']['#options']) && function_exists($form['value']['#options'])) {
     $form['value']['#options'] = $form['value']['#options']('value', $filterinfo);
   }
+  $form['value']['#default_value'] = $filter['value'];
 
   if (isset($filterinfo['help'])) {
     $form['help'] = array(
