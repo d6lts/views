@@ -1237,7 +1237,7 @@ function _views_save_view($view) {
       if (in_array((string) $key, $fields)) {
         $k[] = db_escape_string($key);
         $v[] = $value;
-        $s[] = "'%s'";
+        $s[] = is_numeric($value) ? '%d' : "'%s'";
       }
     }
 
@@ -1245,26 +1245,22 @@ function _views_save_view($view) {
   }
 
   foreach ($view->sort as $i => $sort) {
-    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder, options) VALUES ($view->vid, $i, '$sort[field]', '$sort[sortorder]', '$sort[options]')");
+    db_query("INSERT INTO {view_sort} (vid, position, field, sortorder, options) VALUES (%d, %d, '%s', '%s', '%s')", $view->vid, $i, $sort['field'], $sort['sortorder'], $sort['options']);
   }
 
   foreach ($view->argument as $i => $arg) {
-    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, options, position) VALUES ($view->vid, '$arg[type]', '$arg[argdefault]', '$arg[title]', '$arg[options]', $i)");
+    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, options, position) VALUES (%d, '%s', %d, '%s', '%s', %d)", $view->vid, $arg['type'], $arg['argdefault'], $arg['title'], $arg['options'], $i);
   }
 
   foreach ($view->field as $i => $arg) {
-    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[label]', '$arg[handler]', '$arg[sortable]', '$arg[defaultsort]', $i)");
-  }
-
-  foreach ($view->breadcrumb as $i => $arg) {
-    db_query("INSERT INTO {view_breadcrumb} (vid, title, link, position) VALUES ($view->vid, '$arg[title]', '$arg[link]', $i)");
+    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES (%d, '%s', '%s', '%s', '%s', %d, '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['label'], $arg['handler'], $arg['sortable'], $arg['defaultsort'], $i);
   }
 
   foreach ($view->filter as $i => $arg) {
     if (is_array($arg['value']) && ($arg['operator'] == 'AND' || $arg['operator'] == 'OR' || $arg['operator'] == 'NOR')) {
       $arg['value'] = implode(',', $arg['value']);
     }
-    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES ($view->vid, '$arg[tablename]', '$arg[field]', '$arg[value]', '$arg[operator]', '$arg[options]', $i)");
+    db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES (%d, '%s', '%s', '%s', '%s', '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['value'], $arg['operator'], $arg['options'], $i);
   }
 
 }
