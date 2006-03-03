@@ -1017,6 +1017,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 function views_theme() {
   $args = func_get_args();
   $function = array_shift($args);
+  $view = $args[0];
 
   if (!($func = theme_get_function($function . "_" . $view->name))) {
     $func = theme_get_function($function);
