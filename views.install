@@ -117,7 +117,7 @@ function views_update_1() {
   return _system_update_utf8(array('view_view', 'view_tablefield', 'view_filter', 'view_sort', 'view_argument'));
 }
 /*
- * update module for UTF.
+ * update module for exposed filters.
  */
 function views_update_3() {
   $ret = array();
