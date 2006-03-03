@@ -159,22 +159,27 @@ function views_invalidate_cache() {
  */
 function _views_sanitize_view(&$view) {
   _views_check_arrays($view); // so reference works.
-  if (is_array($view->field)) {
-    foreach ($view->field as $i => $field) {
-      $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
-      $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
-    }
+  foreach ($view->field as $i => $field) {
+    $view->field[$i]['id'] = $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
+    $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
   }
-  if (is_array($view->filter)) {
-    foreach ($view->filter as $i => $filter) {
-      $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
-    }
+
+  foreach ($view->filter as $i => $filter) {
+    $view->filter[$i]['id'] = $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
   }
-  if (is_array($view->sort)) {
-    foreach ($view->sort as $i => $sort) {
-      $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
-    }
+
+  foreach ($view->exposed_filter as $i => $exposed_filter) {
+    $view->exposed_filter[$i]['id'] = $view->exposed_filter[$i]['field'] = "$exposed_filter[tablename].$exposed_filter[field]";
   }
+
+  foreach ($view->sort as $i => $sort) {
+    $view->sort[$i]['id'] = $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
+  }
+
+  foreach ($view->argument as $i => $argument) {
+    $view->argument[$i]['id'] = $view->argument[$i]['type'];
+  }
+
 }
 
 /*
@@ -805,6 +810,9 @@ function _views_check_arrays(&$view) {
   if (!is_array($view->filter)) {
     $view->filter = array();
   }
+  if (!is_array($view->exposed_filter)) {
+    $view->exposed_filter = array();
+  }
   if (!is_array($view->access)) {
     $view->access = array();
   }
@@ -973,14 +981,16 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   }
 
   if ($info['summary']) {
-    $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items, $args);
-    $output .= $out ? $out : theme('views_summary', $view, $type, $info['level'], $items, $args);
+//    $out .= theme("views_summary_$view->name", $view, $type, $info['level'], $items, $args);
+//    $output .= $out ? $out : theme('views_summary', $view, $type, $info['level'], $items, $args);
+    $output .= views_theme('views_summary', $view, $type, $info['level'], $items, $args);
   }
   else {
-    $output .= theme("views_view_$view->name", $view, $type, $items);
-    if (!$output) {
-      $output .= theme('views_view', $view, $type, $items);
-    }
+//    $output .= theme("views_view_$view->name", $view, $type, $items);
+//    if (!$output) {
+//      $output .= theme('views_view', $view, $type, $items);
+//    }
+    $output .= views_theme('views_view', $view, $type, $items);
   }
 
   if ($use_pager) {
@@ -996,6 +1006,26 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
 // ---------------------------------------------------------------------------
 // Utility
+
+/** 
+ * Easily theme any item to a view.
+ * @param $function 
+ *   The name of the function to call.
+ * @param $view
+ *   The view being themed.
+ */
+function views_theme() {
+  $args = func_get_args();
+  $function = array_shift($args);
+
+  if (!($func = theme_get_function($function . "_" . $view->name))) {
+    $func = theme_get_function($function);
+  }
+
+  if ($func) {
+    return call_user_func_array($func, $args);
+  }
+}
 
 /*
  * Figure out what timezone we're in; needed for some date manipulations.
@@ -1062,7 +1092,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
  */
 function _views_is_cacheable(&$view) {
   // views with arguments are immediately not cacheable.
-  if (!empty($view->argument)) {
+  if (!empty($view->argument) || !empty($view->exposed_filter)) {
     return false;
   }
 
@@ -1135,6 +1165,7 @@ function _views_load_view($arg) {
     if (substr($sort['field'], 0, 2) == 'n.') {
       $sort['field'] = 'node' . substr($sort['field'], 1);
     }
+    $sort['id'] = $sort['field'];
     $view->sort[] = $sort;
   }
 
@@ -1142,6 +1173,7 @@ function _views_load_view($arg) {
 
   $view->argument = array();
   while ($arg = db_fetch_array($result)) {
+    $arg['id'] = $arg['type'];
     $view->argument[] = $arg;
   }
 
@@ -1152,17 +1184,18 @@ function _views_load_view($arg) {
     if ($arg['tablename'] == 'n') {
       $arg['tablename'] = 'node';
     }
-    $arg['fullname'] = "$arg[tablename].$arg[field]";
+    $arg['id'] = $arg['fullname'] = "$arg[tablename].$arg[field]";
     $arg['queryname'] = "$arg[tablename]_$arg[field]";
     $view->field[] = $arg;
   }
 
-  $result = db_query("SELECT * FROM {view_breadcrumb} WHERE vid = $view->vid ORDER BY position ASC");
-
-  $view->breadcrumb = array();
-  while ($arg = db_fetch_array($result)) {
-    $view->breadcrumb[] = $arg;
-  }
+// Commented out; this is likely to never get used.
+//  $result = db_query("SELECT * FROM {view_breadcrumb} WHERE vid = $view->vid ORDER BY position ASC");
+//
+//  $view->breadcrumb = array();
+//  while ($arg = db_fetch_array($result)) {
+//    $view->breadcrumb[] = $arg;
+//  }
 
   $result = db_query("SELECT * FROM {view_filter} WHERE vid = $view->vid ORDER BY position ASC");
 
@@ -1184,7 +1217,16 @@ function _views_load_view($arg) {
         $filter['value'] = array();
       }
     }
+    $filter['id'] = $filter['field'];
     $view->filter[] = $filter;
+  }
+
+  $result = db_query("SELECT * FROM {view_exposed_filter} WHERE vid = $view->vid ORDER BY position ASC");
+
+  $view->exposed_filter = array();
+  while ($arg = db_fetch_array($result)) {
+    $arg['id'] = $arg['field'];
+    $view->exposed_filter[] = $arg;
   }
 
   $cache['vid'][$view->vid] = $view;
@@ -1232,8 +1274,9 @@ function _views_save_view($view) {
     db_query("DELETE from {view_sort} WHERE vid='$view->vid'");
     db_query("DELETE from {view_argument} WHERE vid='$view->vid'");
     db_query("DELETE from {view_tablefield} WHERE vid='$view->vid'");
-    db_query("DELETE from {view_breadcrumb} WHERE vid='$view->vid'");
+//    db_query("DELETE from {view_breadcrumb} WHERE vid='$view->vid'");
     db_query("DELETE from {view_filter} WHERE vid='$view->vid'");
+    db_query("DELETE from {view_exposed_filter} WHERE vid='$view->vid'");
   }
   else {
     // insert
@@ -1272,6 +1315,10 @@ function _views_save_view($view) {
       $arg['value'] = implode(',', $arg['value']);
     }
     db_query("INSERT INTO {view_filter} (vid, tablename, field, value, operator, options, position) VALUES (%d, '%s', '%s', '%s', '%s', '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['value'], $arg['operator'], $arg['options'], $i);
+  }
+
+  foreach ($view->exposed_filter as $i => $arg) {
+    db_query("INSERT INTO {view_exposed_filter} (vid, field, label, optional, is_default, single, operator, position) VALUES (%d, '%s', '%s', %d, %d, %d, %d, %d)", $view->vid, $arg['field'], $arg['label'], $arg['optional'], $arg['is_default'], $arg['single'], $arg['operator'], $i);
   }
 
 }
@@ -1376,10 +1423,73 @@ function _views_construct_header($view, $fields) {
   return $headers;
 }
 
+function theme_views_display_filters($view) {
+  $filters = _views_get_filters();
+  foreach ($view->exposed_filter as $expose) {
+    $id = $expose['id'];
+    $safe_id = strtr($id, '.', '_');
+    $filterinfo = $filters[$id];
+    foreach ($view->filter as $filter) {
+      if ($filter['id'] == $id) {
+        break;
+      }
+    }
+
+    if (!$expose['operator']) {
+      // 'operator' is either an array or a handler
+      $operator = $filterinfo['operator'];
+      if (!is_array($operator) && function_exists($filterinfo['operator']))  {
+        $operator = $filterinfo['operator']('operator', $filterinfo);
+      }
+
+      $form[$id]['operator'] = array(
+        '#type' => 'select',
+        '#default_value' => $filter['operator'],
+        '#options' => $operator,
+//        '#name' => $safe_id . "_operator",
+      );
+    }
+    $form[$id]['#tree'] = true;
+    $form[$id]['value'] = $filterinfo['value'];
+    $form[$id]['value']['#tree'] = true;
+//    $form[$id]['value']['#name'] = $safe_id . "_value";
+
+    if (!is_array($form[$id]['value']['#options']) && function_exists($form[$id]['value']['#options'])) {
+      $form[$id]['value']['#options'] = $form[$id]['value']['#options']('value', $filterinfo);
+    }
+    if (!$expose['optional'] || $expose['is_default']) {
+      $form[$id]['value']['#default_value'] = $filter['value'];
+    }
+
+    if ($expose['single']) {
+      unset($form[$id]['value']['#multiple']);
+    }
+    if ($expose['optional'] && is_array($form[$id]['value']['#options'])) {
+      $form[$id]['value']['#options'] = array('**ALL**' => t('<All>')) + $form[$id]['value']['#options'];
+    }
+  }
+  $form['view'] = array('#type' => 'value', '#value' => $view);
+  $form['submit'] = array('#type' => 'button', '#value' => t('Submit'));
+
+  return drupal_get_form("views_filters_$view->name", $form, 'views_filters');
+}
+
+function theme_views_filters($form) {
+  $view = $form['view']['#value'];
+  foreach ($view->exposed_filter as $expose) {
+    $id = $expose['id'];
+    $row[] = form_render($form[$id]['operator']) . form_render($form[$id]['value']);
+    $label[] = $expose['label'];
+  }
+  $row[] = form_render($form['submit']);
+  $label[] = ''; // so the column count is the same.
+  return theme('table', $label, array($row)) . form_render($form);
+}
+
 /*
  * Display the nodes of a view as a list.
  */
-function views_view_list($view, $nodes) {
+function theme_views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
     $item = '';
     foreach ($view->field as $field) {
@@ -1398,7 +1508,7 @@ function views_view_list($view, $nodes) {
 /*
  * Display the nodes of a view as a table.
  */
-function views_view_table($view, $nodes) {
+function theme_views_view_table($view, $nodes) {
   $fields = _views_get_fields(); 
 
   foreach ($nodes as $node) {
@@ -1417,7 +1527,7 @@ function views_view_table($view, $nodes) {
 /*
  * Display the nodes of a view as plain nodes.
  */
-function views_view_nodes($nodes, $teasers = true, $links = true) {
+function theme_views_view_nodes($nodes, $teasers = true, $links = true) {
   foreach ($nodes as $n) {
     $node = node_load($n->nid);
     $output .= node_view($node, $teasers, false, $links);
@@ -1457,28 +1567,31 @@ function theme_views_view($view, $type, $nodes) {
     views_set_breadcrumb($view);
   }
 
+  if ($type != 'block' && $view->exposed_filter) {
+    $output .= views_theme('views_display_filters', $view);
+  }
   $header = ($type != 'block' || $view->block_use_page_header ? $view->page_header : $view->block_header);
   $header_format = ($type != 'block' || $view->block_use_page_header ? $view->page_header_format : $view->block_header_format);
 
   if ($header) {
     $header = check_markup($header, $header_format, false);
-    $output = "<div class='view-header view-header-$view->name'>$header</div>\n";
+    $output .= "<div class='view-header view-header-$view->name'>$header</div>\n";
   }
 
   switch (($type == 'block' ? $view->block_type : $view->page_type)) {
     case 'list': // => t("List View"),
-      $output .= views_view_list($view, $nodes);
+      $output .= theme('views_view_list', $view, $nodes);
       break;
     case 'table': // => t("Table"),
-      $output .= views_view_table($view, $nodes);
+      $output .= theme('views_view_table', $view, $nodes);
       break;
     case 'teaser': // => t("Teaser List"),
     case 'random teaser': // random teaser
-      $output .= views_view_nodes($nodes, true);
+      $output .= theme('views_view_nodes', $nodes, true);
       break;
     case 'node': // => t("Full Nodes")
     case 'random node': // random node
-      $output .= views_view_nodes($nodes, false);
+      $output .= theme('views_view_nodes', $nodes, false);
       break;
   }
 
@@ -1537,10 +1650,10 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
 
   $base = views_get_summary_link_base($view->argument[$level]['type'], $view->url, $level, $args);
   foreach ($nodes as $node) {
-    $items[] = array(views_get_summary_link($view->argument[$level]['type'], $node, $base), $node->num_nodes);
+    $items[] = views_get_summary_link($view->argument[$level]['type'], $node, $base)  . " (" . $node->num_nodes . ")";
   }
   if ($items) {
-    $output .= theme('table', array(), $items, array('id' => 'summary'));
+    $output .= theme('item_list', $items);
   }
   
   if ($output) {

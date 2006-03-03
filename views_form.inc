@@ -133,25 +133,29 @@ function _views_check_sub_ops(&$form, &$order, $i) {
  */
 function _views_check_ops(&$view, $op, $form) {
   if ($op == t('Add Filter')) {
-    $view->newfilter['field'] = $form['filter']['add']['field']['#value'];
+    $view->new_filter['id'] = $form['filter']['add']['id']['#value'];
     return 'filter';
   }
   else if ($op == t('Add Criteria')) {
-    $view->newsort['field'] = $form['sort']['add']['field']['#value'];
+    $view->new_sort['id'] = $form['sort']['add']['id']['#value'];
     return 'sort';
   }
   else if ($op == t('Add Argument')) {
-    $view->newargument['type'] = $form['argument']['add']['type']['#value'];
+    $view->new_argument['id'] = $form['argument']['add']['id']['#value'];
     return 'argument';
   }
   else if ($op == t('Add Field')) {
-    $fieldbits = explode('.', $form['field']['add']['field']['#value']);
-    $view->newfield['fullname'] = $form['field']['add']['field']['#value'];
-    $view->newfield['tablename'] = $fieldbits[0];
-    $view->newfield['field'] = $fieldbits[1];
-    $view->newfield['label'] = $fieldnames[$form['field']['add']['field']['#value']];
-    $view->newfield['queryname'] = "$fieldbits[0]_$fieldbits[1]";
+    $fieldbits = explode('.', $form['field']['add']['id']['#value']);
+    $view->new_field['id'] = $form['field']['add']['id']['#value'];
+    $view->new_field['tablename'] = $fieldbits[0];
+    $view->new_field['field'] = $fieldbits[1];
+    $view->new_field['label'] = $fieldnames[$form['field']['add']['id']['#value']];
+    $view->new_field['queryname'] = "$fieldbits[0]_$fieldbits[1]";
     return 'field';
+  }
+  else if ($op == t('Expose Filter')) {
+    $view->new_exposed_filter['id'] = $form['exposed_filter']['add']['id']['#value'];
+    return 'filter';
   }
 }
 
@@ -178,63 +182,33 @@ function _views_view_form($view, $op = '') {
   _views_check_arrays($view); // make sure arrays that might be empty get set
 
   // Put in all our add buttons, then process them to see if they've been hit.
-  $form['field']['add'] = array('#tree' => true, '#parents' => array('field', 'add'));
+  views_ui_add_add_button($form, 'field', _views_get_fields(true), t('Add Field'));
+  views_ui_add_add_button($form, 'argument', _views_get_arguments(true), t('Add Argument'));
+  views_ui_add_add_button($form, 'filter', _views_get_filters(true), t('Add Filter'));
+  views_ui_add_add_button($form, 'sort', _views_get_sorts(true), t('Add Criteria'));
 
-  $form['field']['add']['field'] = array(
-    '#type' => 'select',
-    '#options' => _views_get_fields(true),
-  );
-  $form['field']['add']['button'] = array(
-    '#type' => 'button',
-    '#value' => t('Add Field'),
-  );
+/*
+  $filter_names = _views_get_filters(true);
+  $exposable_filters = array();
+  foreach ($view->filter as $filter) {
+    dprint_r($filter);
+    $exposable_filters[$filter['id']] = $filter_names[$filter['id']]['name'];
+  }
 
-  views_ui_build_form($form['field']['add']);
-
-  $form['argument']['add'] = array('#tree' => true, '#parents' => array('argument', 'add'));
-  $form['argument']['add']['type'] = array(
-    '#type' => 'select',
-    '#options' => _views_get_arguments(true),
-  );
-  $form['argument']['add']['button'] = array(
-    '#type' => 'button',
-    '#value' => t('Add Argument'),
-  );
-
-  views_ui_build_form($form['argument']['add']);
-
-  $form['filter']['add'] = array('#tree' => true, '#parents' => array('filter', 'add'));
-  $form['filter']['add']['field'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => _views_get_filters(true),
-  );
-  $form['filter']['add']['button'] = array(
-    '#type' => 'button',
-    '#value' => t('Add Filter'),
-  );
-
-  views_ui_build_form($form['filter']['add']);
-
-  $form['sort']['add'] = array('#tree' => true,  '#parents' => array('sort', 'add'));
-  $form['sort']['add']['field'] = array(
-    '#type' => 'select',
-    '#default_value' => NULL,
-    '#options' => _views_get_sorts(true),
-  );
-  $form['sort']['add']['button'] = array(
-    '#type' => 'button',
-    '#value' => t('Add Criteria'),
-  );
-
-  views_ui_build_form($form['sort']['add']);
-  
+  views_ui_add_add_button($form, 'exposed_filter', $exposable_filters, t('Expose Filter'));
+  if (!$exposable_filters) {
+    $form['exposed_filter']['add']['id']['#type'] = 'markup';
+    $form['exposed_filter']['add']['id']['#value'] = 'There are no filters to expose';
+    $form['exposed_filter']['add']['button']['#attributes'] = array('disabled' => NULL);
+  }
+*/
   $allbut = _views_check_ops($view, $op, $form);
   if ($_POST['edit'] && $op != t('Save')) {
     drupal_set_message(t('You have modified this view; changes will not be recorded until you Save the form.'));
   }
 
-  foreach (array('field', 'argument', 'filter', 'sort') as $section) {
+  $form['exposed_filter'] = array();
+  foreach (array('field', 'argument', 'filter', 'exposed_filter', 'sort') as $section) {
     if (views_ui_add_section($form[$section], $view, $section)) {
       $allbut = $section;
     }
@@ -510,6 +484,23 @@ function views_ui_build_form(&$form) {
 }
 
 /**
+ * Add the 'add' button for a section into the form
+ */
+function views_ui_add_add_button(&$form, $section, $options, $label) {
+  $form[$section]['add'] = array('#tree' => true, '#parents' => array($section, 'add'));
+
+  $form[$section]['add']['id'] = array(
+    '#type' => 'select',
+    '#options' => $options,
+  );
+  $form[$section]['add']['button'] = array(
+    '#type' => 'button',
+    '#value' => $label,
+  );
+  views_ui_build_form($form[$section]['add']);
+}
+
+/**
  * Add one of the list sections to the form.
  */
 function views_ui_add_section(&$form, &$view, $section) {
@@ -539,10 +530,10 @@ function views_ui_add_section(&$form, &$view, $section) {
     $view_section[] = array();
   }
 
-  $newsection = "new$section";
+  $new_section = "new_$section";
   // instantiate the new field if one was added.
-  if ($view->$newsection) {
-    $view_section[] = $view->$newsection;
+  if ($view->$new_section) {
+    $view_section[] = $view->$new_section;
     $order[] = $form['count']['#value'];
     $form['count']['#value']++;
   }
@@ -550,7 +541,22 @@ function views_ui_add_section(&$form, &$view, $section) {
   $func = "views_ui_add_$section";
   if ($order) {
     foreach ($order as $key => $i) {
-      if ($func($form[$i], $view_section[$i], $order, $key, $i)) {
+      $form[$i] = array('#tree' => true, '#parents' => array($section, $i));
+
+      $form[$i]['id'] = array(
+        '#type' => 'hidden',
+        '#default_value' => $view_section[$i]['id'],
+      );
+
+      views_ui_add_buttons($form[$i]);
+      views_ui_build_form($form[$i]);
+
+      $retval = _views_check_sub_ops($form[$i], $order, $key);
+      if ($retval !== 'delete') {
+        $retval2 = $func($form[$i], $view_section[$i], $order, $key, $i, $view);
+      }
+
+      if ($retval || $retval2) {
         $allbut = $section;
       }
     }
@@ -563,23 +569,14 @@ function views_ui_add_section(&$form, &$view, $section) {
  * Add all the info for a single field into the form.
  */
 function views_ui_add_field(&$form, $field, &$order, $key, $i) {
-  $form = array('#tree' => true, '#parents' => array('field', $i));
+  $fields = _views_get_fields();
+  $fieldname = $form['id']['#value']; // combined table & fieldname
+  $fieldinfo = $fields[$fieldname]; // laziness + readability
+
   $form['fullname'] = array(
     '#type' => 'hidden',
-    '#default_value' => $field['fullname'],
+    '#default_value' => $field['id'],
   );
-
-  views_ui_add_buttons($form);
-  views_ui_build_form($form);
-
-  $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval === 'delete') {
-    return true;
-  }
-
-  $fields = _views_get_fields();
-  $fieldname = $form['fullname']['#value']; // combined table & fieldname
-  $fieldinfo = $fields[$fieldname]; // laziness + readability
 
   $form['name'] = array(
     '#type' => 'markup',
@@ -631,32 +628,20 @@ function views_ui_add_field(&$form, $field, &$order, $key, $i) {
       '#value' => '<div class="description">' . $fieldinfo['help'] . '</div>',
     );
   }
-
-  return $retval;
 }
 
 /**
  * Add all the info for a single argument into the form.
  */
 function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
-  $form = array('#tree' => true, '#parents' => array('argument', $i));
+  $arguments = _views_get_arguments();
+  $arg_type = $form['id']['#value'];
+  $arginfo = $arguments[$arg_type];
 
   $form['type'] = array(
     '#type' => 'hidden',
-    '#default_value' => $argument['type'],
+    '#default_value' => $argument['id'],
   );
-
-  views_ui_add_buttons($form);
-  views_ui_build_form($form);
-
-  $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval === 'delete') {
-    return true;
-  }
-
-  $arguments = _views_get_arguments();
-  $arg_type = $form['type']['#value'];
-  $arginfo = $arguments[$arg_type];
 
   $form['name'] = array(
     '#value' => $arginfo['name'],
@@ -688,30 +673,20 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
       '#value' => $arginfo['help'],
     );
   }
-  return $retval;
 }
 
 /**
  * Add all the info for a single filter into the form.
  */
-function views_ui_add_filter(&$form, $filter, &$order, $key, $i) {
-  $form = array('#tree' => true, '#parents' => array('filter', $i));
+function views_ui_add_filter(&$form, $filter, &$order, $key, $i, &$view) {
+  $filters = _views_get_filters();
+  $filtername = $form['id']['#value']; // combined table & filtername
+  $filterinfo = $filters[$filtername];
+
   $form['field'] = array(
     '#type' => 'hidden',
-    '#default_value' => $filter['field'],
+    '#default_value' => $filter['id'],
   );
-
-  views_ui_add_buttons($form);
-  views_ui_build_form($form);
-
-  $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval === 'delete') {
-    return true;
-  }
-
-  $filters = _views_get_filters();
-  $filtername = $form['field']['#value']; // combined table & filtername
-  $filterinfo = $filters[$filtername];
 
   $form['name'] = array(
     '#type' => 'markup',
@@ -750,30 +725,110 @@ function views_ui_add_filter(&$form, $filter, &$order, $key, $i) {
       '#value' => $filterinfo['help'],
     );
   }
-  return $retval;
+
+  // This is kind of a pain in the butt -- The only way to know all of
+  // the filters that have been exposed is to look at the form, but that
+  // part of the form hasn't been built yet, so I can't use the form_builder
+  // method. I can't put this after that, either, because then I'd have to
+  // go back to add one if we see one here. So we cheat heavily with _POST.
+
+  if ($_POST['edit']) {
+    $exposed_order = $_POST['edit']['exposed_filter']['order'];
+    if ($exposed_order !== '') {
+      $exposed_order = explode(',', $exposed_order);
+      foreach ($exposed_order as $x) {
+        if ($_POST['edit']['exposed_filter'][$x]['id'] == $filtername) {
+          $exposed = true;
+          break;
+        }
+      }
+    }
+  }
+  else { // do this if there's never been a submit.
+    $exposed_order = array_keys($view->exposed_filter);
+    foreach ($exposed_order as $x) {
+      if ($view->exposed_filter[$x]['id'] == $filtername) {
+        $exposed = true;
+        break;
+      }
+    }
+  }
+  if (!$exposed) {
+    // I can't find a way to see if this button was pressed other than
+    // directly checking, because #form_submitted doesn't work on arrays
+
+    if ($_POST['edit']['filter'][$i]['expose']) {
+      $view->new_exposed_filter['id'] = $filtername;
+      return true;
+    }
+    else {
+      $form['expose'] = array(
+        '#type' => 'button',
+        '#default_value' => t('Expose'),
+        '#name' => "edit[filter][$i][expose]",
+      );
+    }
+  }
+}
+
+/**
+ * Add all the info for a single exposed filter into the form.
+ */
+function views_ui_add_exposed_filter(&$form, $filter, &$order, $key, $i) {
+  $filters = _views_get_filters();
+  $filtername = $form['id']['#value']; // combined table & filtername
+  $filterinfo = $filters[$filtername];
+
+  $form['field'] = array(
+    '#type' => 'hidden',
+    '#default_value' => $filter['id'],
+  );
+
+  $form['name'] = array(
+    '#type' => 'markup',
+    '#value' => $filterinfo['name'],
+  );
+
+  $form['label'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $filter['label'],
+    '#size' => 15,
+    '#maxlength' => 25,
+  );
+
+  $form['optional'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => $filter['optional'],
+  );
+
+  $form['is_default'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => $filter['is_default'],
+  );
+
+  $form['single'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => $filter['single'],
+  );
+
+  $form['operator'] = array(
+    '#type' => 'checkbox',
+    '#default_value' => $filter['operator'],
+  );
 }
 
 /**
  * Add all the info for a single sort into the form.
  */
 function views_ui_add_sort(&$form, $sort, &$order, $key, $i) {
-  $form = array('#tree' => true, '#parents' => array('sort', $i));
+  $sorts = _views_get_sorts();
+  $sortname = $form['id']['#value']; // combined table & sortname
+  $sortinfo = $sorts[$sortname];
+
   $form['field'] = array(
     '#type' => 'hidden',
-    '#default_value' => $sort['field'],
+    '#default_value' => $sort['id'],
   );
-
-  views_ui_add_buttons($form);
-  views_ui_build_form($form);
-
-  $retval = _views_check_sub_ops($form, $order, $key);
-  if ($retval === 'delete') {
-    return true;
-  }
-
-  $sorts = _views_get_sorts();
-  $sortname = $form['field']['#value']; // combined table & sortname
-  $sortinfo = $sorts[$sortname];
 
   $form['name'] = array(
     '#value' => $sortinfo['name'],
@@ -801,7 +856,6 @@ function views_ui_add_sort(&$form, $sort, &$order, $key, $i) {
       '#value' => $sortinfo['help'],
     );
   }
-  return $retval;
 }
 
 /**
@@ -845,7 +899,7 @@ function theme_views_edit_view($form) {
   // fields
   $collapsed = $allbut && $allbut != 'field';
   $group = views_ui_render_section($form['field'], array('name', 'label', 'handler', 'sortable', 'defaultsort'), array(t('Name'), t('Label'), t('Handler'), t('Sortable'), t('Default Sort')), 'fields', $collapsed);
-  $group .= views_ui_render_section_add($form['field']['add'], array('field', 'button'), 'Add Field');
+  $group .= views_ui_render_section_add($form['field']['add'], array('id', 'button'), 'Add Field');
 
   $group .= '<p>'. t('Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Fields'), '#children' => $group,
@@ -856,26 +910,40 @@ function theme_views_edit_view($form) {
   $collapsed = $allbut && $allbut != 'argument';
   $group = views_ui_render_section($form['argument'], array('name', 'argdefault', 'title', 'options'), array(t('Argument Type'), t('Default'), t('Title'), t('Option')), 'arguments', $collapsed);
   
-  $group .= views_ui_render_section_add($form['argument']['add'], array('type', 'button'), 'Add Argument');
+  $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), 'Add Argument');
   
   $group .= '<p>'. t('Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Arguments'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
 
+  // filter
   $collapsed = $allbut && $allbut != 'filter';
-  $group = views_ui_render_section($form['filter'], array('name', 'operator', 'value', 'options'), array(t('Field'), t('Operator'), t('Value'), t('Option')), 'filters', $collapsed);
+  $group = views_ui_render_section($form['filter'], array('name', 'operator', 'value', 'options', 'expose'), array(t('Field'), t('Operator'), t('Value'), t('Option'), ''), 'filters', $collapsed);
   
-  $group .= views_ui_render_section_add($form['filter']['add'], array('field', 'button'), 'Add Filter');
+  $group .= views_ui_render_section_add($form['filter']['add'], array('id', 'button'), 'Add Filter');
 
   $group .= '<p>'. t('Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Filters'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
   $group = '';
 
+  // exposed exposed_filter
+  $collapsed = $allbut && $allbut != 'exposed_filter';
+  $group = views_ui_render_section($form['exposed_filter'], array('name', 'label', 'optional', 'is_default', 'single', 'operator'), array(t('Field'), t('Label'), t('Optional'), t('Filter settings Default'), t('Force Single'), t('Lock Operator')), 'exposed_filters', $collapsed);
+  
+  
+//  $group .= views_ui_render_section_add($form['exposed_filter']['add'], array('id', 'button'), 'Expose Filter');
+
+  $group .= '<p>'. t('Exposed filters will be presented to the viewer. If not set required, then filters will include a "<None>" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user.') .'</p>';
+  $output .= theme('fieldset', array('#title' => t('Exposed Filters'), '#children' => $group,
+    '#collapsible' => true, '#collapsed' => $collapsed,));
+  $group = '';
+
+  // sort
   $collapsed = $allbut && $allbut != 'sort';
   $group = views_ui_render_section($form['sort'], array('name', 'sortorder', 'options'), array(t('Field'), t('Order'), t('Option')), 'sort criteria', $collapsed);
   
-  $group .= views_ui_render_section_add($form['sort']['add'], array('field', 'button'), 'Add criteria');
+  $group .= views_ui_render_section_add($form['sort']['add'], array('id', 'button'), 'Add criteria');
   $output .= theme('fieldset', array('#title' => t('Sort Criteria'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
 
@@ -1002,7 +1070,7 @@ function views_edit_view_submit($form_id, $form) {
   $view->access = array_keys(array_filter($view->access));
 
   // re-order things as they were ordered on the form.
-  foreach (array('field', 'argument', 'filter', 'sort') as $section) {
+  foreach (array('field', 'argument', 'filter', 'sort', 'exposed_filter') as $section) {
     views_ui_reorder($view->$section);
   }
 

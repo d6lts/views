@@ -65,13 +65,37 @@ function _views_build_query(&$view, $args = array()) {
  */
 function _views_view_build_filters(&$query, $view) {
   $filters = _views_get_filters();
-
+  
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
     $field = $filterinfo['field'];
     if (!$field) {
       $fieldbits = explode('.', $filter['field']);
       $field = $fieldbits[1];
+    }
+
+    foreach($view->exposed_filter as $expose) {
+      if ($filter['id'] == $expose['id']) {
+        $id = $expose['id'];
+        $edit = $_POST['edit'][$id];
+
+        if (!$expose['operator'] && $edit['operator']) {
+          $filter['operator'] = check_plain($edit['operator']);
+        }
+        if ($expose['optional']  
+          && ((!isset($edit['value']) && !$expose['is_default'])  
+          || $edit['value'] == "**ALL**")) {
+          continue 2; // skip this filter entirely.
+        }
+        if ($edit['value']) {
+          $value = $edit['value'];
+          if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
+            $value = array($value);
+          }
+          $filter['value'] = $value;
+        }
+        break;
+      }
     }
 
     $table = $filterinfo['table'];

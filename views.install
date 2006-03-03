@@ -96,16 +96,17 @@
       KEY (vid)
     ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-//    db_query("create table if not exists {view_exposed_filter} (
-//      vid int(10) unsigned NOT NULL default '0',
-//      field varchar(255),
-//      label varchar(255),
-//      optional int(1),
-//      default int(1),
-//      operator int(1),
-//      position int(2),
-//      KEY (vid)
-//    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+    db_query("create table if not exists {view_exposed_filter} (
+        vid int(10) unsigned NOT NULL default '0',
+        field varchar(255),
+        label varchar(255),
+        optional int(1),
+        is_default int(1),
+        operator int(1),
+        single int(1),
+        position int(2),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
  }      
 
@@ -118,22 +119,23 @@ function views_update_1() {
 /*
  * update module for UTF.
  */
-function views_update_2() {
-//  $ret = array();
+function views_update_3() {
+  $ret = array();
 //  db_add_column($ret, 'view_view', 'page_empty', 'longtext');
 //  db_add_column($ret, 'view_view', 'page_empty_format', 'int(4)', array('not null' => TRUE));
 //  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
 //  db_add_column($ret, 'view_view', 'block_empty', 'longtext');
 //  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('not null' => TRUE));
-//  db_query("create table if not exists {view_exposed_filter} (
-//      vid int(10) unsigned NOT NULL default '0',
-//      field varchar(255),
-//      label varchar(255),
-//      optional int(1),
-//      default int(1),
-//      operator int(1),
-//      position int(2),
-//      KEY (vid)
-//    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
-//  return $ret;
+  db_query("create table if not exists {view_exposed_filter} (
+      vid int(10) unsigned NOT NULL default '0',
+      field varchar(255),
+      label varchar(255),
+      optional int(1),
+      is_default int(1),
+      operator int(1),
+      single int(1),
+      position int(2),
+      KEY (vid)
+    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+  return $ret;
 }

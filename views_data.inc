@@ -392,6 +392,7 @@ function _views_internal_tables() {
       'option' => 'string',
       'operator' => 'views_handler_operator_andor',
       'handler' => 'views_handler_filter_tid_custom',
+      'value-type' => 'array',
     ));
 
     $tables[$table['name']] = $table;
