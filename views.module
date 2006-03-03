@@ -1793,9 +1793,17 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
 // ---------------------------------------------------------------------------
 // Sort handlers
 
-// function views_handler_sort_random(&$query, $sortinfo, $sort) {
-//   $query->add_orderby('', "rand()");
-// }
+function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $query->add_orderby('', "rand()", "ASC");
+      break;
+    case 'pgsql':
+      $query->add_orderby('', "random()", "ASC");
+      break;
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Argument handlers
