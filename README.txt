@@ -1,6 +1,5 @@
 // $Id$
 
-
 OVERVIEW
 
 The views module provides a flexible method for Drupal administrators to control 
@@ -101,15 +100,6 @@ Views provides almost too many features in order to please the user.
 
 NOTES
 
-In Drupal 4.6, database.inc has a minor bug that makes from_unixtime not work:
-
-(line 246 in my version but it's kind of old).
-    $query = preg_replace('|FROM[^[:upper:]/,]+|','\0 '. $join .' ', $query);
-should be
-    $query = preg_replace('|FROM[^[:upper:]_/,]+|','\0 '. $join .' ', $query);
-
-* Half-assed Changelog (mostly for schema):
-
 11/27/2005 added field 'handler' to view_tablefield
 11/28/2005 added fields 'sortable' and 'defaultsort' to view_tablefield
 11/28/2005 changed view_argument type from int(2) to varchar(25) for greater flexibility
@@ -126,3 +116,4 @@ should be
 	 this ever again.
 2/19/2006 allow a complete formsapi setting in any 'options' or 'value' setting for 'filter'.
 	  Retooled the API to be less hackish.
+3/2/2006  Added the ability to expose filters to end user. Requires running update.php.

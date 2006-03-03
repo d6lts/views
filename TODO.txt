@@ -1,6 +1,5 @@
 // $Id$
 
-
 TODO
 
 MAJOR FEATURES
@@ -33,10 +32,6 @@ LESS TIME CONSUMING STUFF
 * controller for external view output control. i.e, centralized code to
   deal with 'calendar', 'xml', 'specialized grouping' and other module-specific
   view needs. Should have an API available.
-* Allow filters to be presented to the end-user so that they may filter a resultset.
-  Each filter should have: A way to not use it (either a checkbox or a special
-  operator that says 'unused'. What is set in the actual view definition merely
-  becomes the default.
 
 DEFAULT VIEWS/MODULES TO SUPPORT
 
@@ -124,3 +119,7 @@ TO DONE
 * wildcards in arguments
 * fix [more] link
 * figure out required modules when exporting; guard against that on import.
+* Allow filters to be presented to the end-user so that they may filter a resultset.
+  Each filter should have: A way to not use it (either a checkbox or a special
+  operator that says 'unused'. What is set in the actual view definition merely
+  becomes the default.
