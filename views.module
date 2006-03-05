@@ -1134,7 +1134,6 @@ function _views_delete_view($view) {
 
   db_query("DELETE FROM {view_view} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_sort} where vid=%d", $view->vid);
-  db_query("DELETE FROM {view_breadcrumb} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_argument} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
 }
@@ -1189,14 +1188,6 @@ function _views_load_view($arg) {
     $arg['queryname'] = "$arg[tablename]_$arg[field]";
     $view->field[] = $arg;
   }
-
-// Commented out; this is likely to never get used.
-//  $result = db_query("SELECT * FROM {view_breadcrumb} WHERE vid = $view->vid ORDER BY position ASC");
-//
-//  $view->breadcrumb = array();
-//  while ($arg = db_fetch_array($result)) {
-//    $view->breadcrumb[] = $arg;
-//  }
 
   $result = db_query("SELECT * FROM {view_filter} WHERE vid = $view->vid ORDER BY position ASC");
 
@@ -1275,7 +1266,6 @@ function _views_save_view($view) {
     db_query("DELETE from {view_sort} WHERE vid='$view->vid'");
     db_query("DELETE from {view_argument} WHERE vid='$view->vid'");
     db_query("DELETE from {view_tablefield} WHERE vid='$view->vid'");
-//    db_query("DELETE from {view_breadcrumb} WHERE vid='$view->vid'");
     db_query("DELETE from {view_filter} WHERE vid='$view->vid'");
     db_query("DELETE from {view_exposed_filter} WHERE vid='$view->vid'");
   }

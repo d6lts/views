@@ -1,102 +1,99 @@
 <?php
+  // $Id$
 
   function views_install() {
-    db_query("create table if not exists {view_view} (
-      vid int(10) unsigned NOT NULL default '0',
-      name varchar(32) NOT NULL UNIQUE,
-      description varchar(255),
-      access varchar(255),
-      -- page fields
-      page int(1),
-      page_title varchar(255),
-      page_header longtext,
-      page_header_format int(4) NOT NULL,
-      page_empty longtext,
-      page_empty_format int(4) NOT NULL,
-      page_type varchar(20),
-      use_pager int(1),
-      nodes_per_page int(2), -- yes, no more than 99
-      url varchar(255),
-      -- menu fields
-      menu int(1),
-      menu_tab int(1),
-      menu_tab_default int(1),
-      menu_tab_weight int(4),
-      menu_title varchar(255),
-      -- block fields
-      block int(1),
-      block_title varchar(255),
-      block_use_page_header int(1),
-      block_header longtext,
-      block_header_format int(4) NOT NULL,
-      block_use_page_empty int(1),
-      block_empty longtext,
-      block_empty_format int(4) NOT NULL,
-      block_type varchar(20),
-      nodes_per_block int(5),
-      block_more int(1),
-      -- breadcrumb
-      breadcrumb_no_home int(1), -- true means start breadcrumb trail from 'Home'.
-      -- other
-      changed int(11),
-      query longtext,
-      countquery longtext,
-      PRIMARY KEY (vid),
-      KEY (name)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+    drupal_set_message('Installing views');
+    switch ($GLOBALS['db_type']) {
+      case 'mysqli':
+      case 'mysql':
+      db_query("CREATE TABLE if not exists {view_view} (
+        vid int(10) unsigned NOT NULL default '0',
+        name varchar(32) NOT NULL UNIQUE,
+        description varchar(255),
+        access varchar(255),
+        -- page fields
+        page int(1),
+        page_title varchar(255),
+        page_header longtext,
+        page_header_format int(4) NOT NULL,
+        page_empty longtext,
+        page_empty_format int(4) NOT NULL,
+        page_type varchar(20),
+        use_pager int(1),
+        nodes_per_page int(2), -- yes, no more than 99
+        url varchar(255),
+        -- menu fields
+        menu int(1),
+        menu_tab int(1),
+        menu_tab_default int(1),
+        menu_tab_weight int(4),
+        menu_title varchar(255),
+        -- block fields
+        block int(1),
+        block_title varchar(255),
+        block_use_page_header int(1),
+        block_header longtext,
+        block_header_format int(4) NOT NULL,
+        block_use_page_empty int(1),
+        block_empty longtext,
+        block_empty_format int(4) NOT NULL,
+        block_type varchar(20),
+        nodes_per_block int(5),
+        block_more int(1),
+        -- breadcrumb
+        breadcrumb_no_home int(1), -- true means start breadcrumb trail from 'Home'.
+        -- other
+        changed int(11),
+        query longtext,
+        countquery longtext,
+        PRIMARY KEY (vid),
+        KEY (name)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-    db_query("create table if not exists {view_sort} (
-      vid int(10) unsigned NOT NULL default '0',
-      position int(2),
-      field varchar(255),
-      sortorder varchar(5),
-      options varchar(255),
-      tablename varchar(255),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      db_query("CREATE TABLE if not exists {view_sort} (
+        vid int(10) unsigned NOT NULL default '0',
+        position int(2),
+        field varchar(255),
+        sortorder varchar(5),
+        options varchar(255),
+        tablename varchar(255),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-    db_query("create table if not exists {view_argument} (
-      vid int(10) unsigned NOT NULL default '0',
-      type varchar(25),
-      argdefault varchar(255),
-      title varchar(255),
-      options varchar(255),
-      position int(2),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      db_query("CREATE TABLE if not exists {view_argument} (
+        vid int(10) unsigned NOT NULL default '0',
+        type varchar(25),
+        argdefault varchar(255),
+        title varchar(255),
+        options varchar(255),
+        position int(2),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-    db_query("create table if not exists {view_tablefield} (
-      vid int(10) unsigned NOT NULL default '0',
-      tablename varchar(255),
-      field varchar(255),
-      label varchar(255),
-      handler varchar(255),
-      sortable int(1),
-      defaultsort varchar(5),
-      position int(2),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      db_query("CREATE TABLE if not exists {view_tablefield} (
+        vid int(10) unsigned NOT NULL default '0',
+        tablename varchar(255),
+        field varchar(255),
+        label varchar(255),
+        handler varchar(255),
+        sortable int(1),
+        defaultsort varchar(5),
+        position int(2),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-    db_query("create table if not exists {view_breadcrumb} (
-      vid int(10) unsigned NOT NULL default '0',
-      title varchar(255),
-      link varchar(255),
-      position int(2),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      db_query("CREATE TABLE if not exists {view_filter} (
+        vid int(10) unsigned NOT NULL default '0',
+        tablename varchar(255),
+        field varchar(255),
+        value longtext,
+        operator varchar(20),
+        options varchar(255),
+        position int(2),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
-    db_query("create table if not exists {view_filter} (
-      vid int(10) unsigned NOT NULL default '0',
-      tablename varchar(255),
-      field varchar(255),
-      value longtext,
-      operator varchar(20),
-      options varchar(255),
-      position int(2),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
-
-    db_query("create table if not exists {view_exposed_filter} (
+      db_query("CREATE TABLE if not exists {view_exposed_filter} (
         vid int(10) unsigned NOT NULL default '0',
         field varchar(255),
         label varchar(255),
@@ -108,7 +105,113 @@
         KEY (vid)
       ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
- }      
+      $success = TRUE;
+      break;
+    case 'pgsql':
+      db_query("CREATE TABLE {view_view} (
+        vid numeric(10) NOT NULL default '0',
+        name varchar(32) NOT NULL UNIQUE,
+        description varchar(255),
+        access varchar(255),
+        -- page fields
+        page numeric(1),
+        page_title varchar(255),
+        page_header text,
+        page_header_format numeric(4) NOT NULL,
+        page_type varchar(20),
+        use_pager numeric(1),
+        nodes_per_page numeric(2), -- yes, no more than 99
+        url varchar(255),
+        -- menu fields
+        menu numeric(1),
+        menu_tab numeric(1),
+        menu_tab_default numeric(1),
+        menu_tab_weight numeric(4),
+        menu_title varchar(255),
+        -- block fields
+        block numeric(1),
+        block_title varchar(255),
+        block_use_page_header numeric(1),
+        block_header text,
+        block_header_format numeric(4) NOT NULL,
+        block_type varchar(20),
+        nodes_per_block numeric(5),
+        block_more numeric(1),
+        -- breadcrumb
+        breadcrumb_no_home numeric(1), -- true means start breadcrumb trail from 'Home'.
+        -- other
+        changed numeric(11),
+        query text,
+        countquery text,
+        CONSTRAINT {view_view_pkey} PRIMARY KEY (vid)
+      )");
+      db_query("CREATE INDEX {view_view_name_idx} ON {view_view} (name)");
+
+      db_query("CREATE TABLE {view_sort} (
+        vid numeric(10) NOT NULL default '0',
+        position numeric(2),
+        field varchar(255),
+        sortorder varchar(5),
+        options varchar(255),
+        tablename varchar(255)
+      )");
+      db_query("CREATE INDEX {view_sort_vid_idx} ON {view_sort} (vid)");
+
+      db_query("CREATE TABLE {view_argument} (
+        vid numeric(10) NOT NULL default '0',
+        type varchar(25),
+        argdefault varchar(255),
+        title varchar(255),
+        options varchar(255),
+        position numeric(2)
+      )");
+      db_query("CREATE INDEX {view_argument_vid_idx} ON {view_argument} (vid)");
+
+      db_query("CREATE TABLE {view_tablefield} (
+        vid numeric(10) NOT NULL default '0',
+        tablename varchar(255),
+        field varchar(255),
+        label varchar(255),
+        handler varchar(255),
+        sortable numeric(1),
+        defaultsort varchar(5),
+        position numeric(2)
+      )");
+      db_query("CREATE INDEX {view_tablefield_vid_idx} ON {view_tablefield} (vid)");
+
+      db_query("CREATE TABLE {view_filter} (
+        vid numeric(10) NOT NULL default '0',
+        tablename varchar(255),
+        field varchar(255),
+        value text,
+        operator varchar(20),
+        options varchar(255),
+        position numeric(2)
+      )");
+      db_query("CREATE INDEX {view_filter_vid_idx} ON {view_filter} (vid)");
+      db_query("CREATE TABLE {view_exposed_filter} (
+        vid numeric(10) unsigned NOT NULL default '0',
+        field varchar(255),
+        label varchar(255),
+        optional numeric(1),
+        is_default numeric(1),
+        operator numeric(1),
+        single numeric(1),
+        position numeric(2),
+      )");
+      db_query("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
+      break;
+    default:
+      break;
+  } // End case
+
+  if ($success) {
+    drupal_set_message(t('Views module installed tables successfully.'));
+  }
+  else {
+    drupal_set_message(t('The installation of views module was unsuccessful.'), 'error');
+  }
+}      
 
 /*
  * update module for UTF.
@@ -126,16 +229,34 @@ function views_update_3() {
 //  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
 //  db_add_column($ret, 'view_view', 'block_empty', 'longtext');
 //  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('not null' => TRUE));
-  db_query("create table if not exists {view_exposed_filter} (
-      vid int(10) unsigned NOT NULL default '0',
-      field varchar(255),
-      label varchar(255),
-      optional int(1),
-      is_default int(1),
-      operator int(1),
-      single int(1),
-      position int(2),
-      KEY (vid)
-    ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+  switch($_GLOBALS['dbtype']) {
+    case 'mysql':
+    case 'mysqli':
+    db_query("CREATE TABLE if not exists {view_exposed_filter} (
+        vid int(10) unsigned NOT NULL default '0',
+        field varchar(255),
+        label varchar(255),
+        optional int(1),
+        is_default int(1),
+        operator int(1),
+        single int(1),
+        position int(2),
+        KEY (vid)
+      ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
+      break;
+    case 'pgsql':
+      db_query("CREATE TABLE {view_exposed_filter} (
+        vid numeric(10) unsigned NOT NULL default '0',
+        field varchar(255),
+        label varchar(255),
+        optional numeric(1),
+        is_default numeric(1),
+        operator numeric(1),
+        single numeric(1),
+        position numeric(2),
+      )");
+      db_query("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
+      break;
+  }
   return $ret;
 }
