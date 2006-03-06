@@ -229,10 +229,10 @@ function views_update_3() {
 //  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
 //  db_add_column($ret, 'view_view', 'block_empty', 'longtext');
 //  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('not null' => TRUE));
-  switch($_GLOBALS['dbtype']) {
+  switch($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
-    db_query("CREATE TABLE if not exists {view_exposed_filter} (
+    $ret[] = update_sql("CREATE TABLE if not exists {view_exposed_filter} (
         vid int(10) unsigned NOT NULL default '0',
         field varchar(255),
         label varchar(255),
@@ -245,7 +245,7 @@ function views_update_3() {
       ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
       break;
     case 'pgsql':
-      db_query("CREATE TABLE {view_exposed_filter} (
+      $ret[] = update_sql("CREATE TABLE {view_exposed_filter} (
         vid numeric(10) unsigned NOT NULL default '0',
         field varchar(255),
         label varchar(255),
@@ -255,7 +255,7 @@ function views_update_3() {
         single numeric(1),
         position numeric(2),
       )");
-      db_query("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
+      $ret[] = update_sql("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
       break;
   }
   return $ret;
