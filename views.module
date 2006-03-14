@@ -427,22 +427,29 @@ function _views_create_menu_item(&$items, $view, $path, $args) {
   }
   $title = views_get_title($view, 'menu');
   $type = _views_menu_type($view);
+  if ($type == MENU_LOCAL_TASK || $type == MENU_DEFAULT_LOCAL_TASK) {
+    $weight = $view->menu_tab_weight;
+  }
   $access = !$view->access || array_intersect($view->access, $roles);
-  $items[] = _views_menu_item($path, $title, $args, $access, $type);
+  $items[] = _views_menu_item($path, $title, $args, $access, $type, $weight);
   
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
-    $items[] = _views_menu_item(dirname($path), $title, $args, $access, MENU_NORMAL_ITEM);
+    $items[] = _views_menu_item(dirname($path), $title, $args, $access, MENU_NORMAL_ITEM, $weight);
   }
 }
 
-function _views_menu_item($path, $title, $args, $access, $type) {
-  return array('path' => $path,
+function _views_menu_item($path, $title, $args, $access, $type, $weight = NULL) {
+  $retval = array('path' => $path,
     'title' => $title,
     'callback' => 'views_view_page',
     'callback arguments' => $args,
     'access' => $access,
     'type' => $type,
   );
+  if ($weight !== NULL) {
+    $retval['weight'] = $weight;
+  }
+  return $retval;
 }
 
 function _views_menu_type($view) {
