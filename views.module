@@ -921,8 +921,12 @@ function views_view_block($vid) {
  *   setting set to $view->nodes_per_page or $view->nodes_per_block. If
  *   $use_pager is set and this field is not, you'll get a SQL error. Don't
  *   do that!
+ * @param $page
+ *   $use_pager is false, and $limit is !0, $page tells it what page to start
+ *   on, in case for some reason a particular section of view is needed,
+ *   without paging on.
 */
-function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0) {
+function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
 
   $viewtype = ($type == 'block' ? $view->block_type : $view->page_type);
 
@@ -962,7 +966,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     $result = pager_query($query, $limit, $use_pager, $cquery);
   }
   else {
-    $result = ($limit ? db_query_range($query, 0, $limit) : db_query($query));
+    $result = ($limit ? db_query_range($query, $page * $limit, $limit) : db_query($query));
   }
 
   if ($type == 'result') {
@@ -1437,13 +1441,11 @@ function theme_views_display_filters($view) {
         '#type' => 'select',
         '#default_value' => $filter['operator'],
         '#options' => $operator,
-//        '#name' => $safe_id . "_operator",
       );
     }
     $form[$id]['#tree'] = true;
     $form[$id]['value'] = $filterinfo['value'];
     $form[$id]['value']['#tree'] = true;
-//    $form[$id]['value']['#name'] = $safe_id . "_value";
 
     if (!is_array($form[$id]['value']['#options']) && function_exists($form[$id]['value']['#options'])) {
       $form[$id]['value']['#options'] = $form[$id]['value']['#options']('value', $filterinfo);
@@ -2051,7 +2053,7 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l(format_date($query->created, 'custom', 'F'), "$arg/$query->name");
     case 'title':
-      return format_date(strtotime("2005${query}01"), 'custom', 'F');
+      return format_date(strtotime("2005${query}01"), 'custom', 'F', 0);
   }
 }
 function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
@@ -2099,7 +2101,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l(format_date($query->created, 'custom', 'F, Y'), "$arg/$query->name");
     case 'title':
-      return format_date(strtotime("${query}01"), 'custom', 'F, Y');
+      return format_date(strtotime("${query}01"), 'custom', 'F, Y', 0);
   }
 }
 function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
