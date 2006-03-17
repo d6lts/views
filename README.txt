@@ -16,6 +16,7 @@ INSTALLING VIEWS
 In 4.7, Views can be installed simply by activating the module, thanks to the
 new module installation features.
 
+Please note that this is now TWO modules -- views.module and views_ui.module
 DOCUMENTATION
 
 Documentation is now available at http://drupal.org/handbook/modules/views.
