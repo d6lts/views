@@ -353,9 +353,6 @@ function views_import_view_submit($formid, $form) {
  * Export a view for cut & paste.
  */
 function views_ui_admin_export_page($vid = '') {
-  // FIXME: Change this to a textarea.
-  $path = drupal_get_path('module', 'views');
-  require_once("$path/views_data.inc");
   $code = views_create_view_code($vid);
   $lines = substr_count($code, "\n");
   $form['code'] = array(
