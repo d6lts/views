@@ -2,6 +2,11 @@
 // $Id$
 
 function views_init() {
+  // hook init is called even on cached pages, but we don't want to
+  // actually do anything in that case.
+  if (!function_exists('drupal_get_path')) {
+    return;
+  }
   // Load all our module 'on behalfs'.
   $path = drupal_get_path('module', 'views') . '/modules';
   $files = system_listing('views_.*\.inc$', $path, 'name', 0);
