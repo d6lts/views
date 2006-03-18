@@ -215,7 +215,7 @@ function _views_get_default_views() {
       $views_default_views = array();
       foreach ($views as $i => $view) {
         if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
-          _views_sanitize_view($view); 
+          _views_sanitize_view($view);
           $views_default_views[$i] = $view;
         }
       }
@@ -262,7 +262,7 @@ function views_menu($may_cache) {
       // This happens before the next check; even if it's put off for later
       // it is still used.
       $used[$view->name] = true;
- 
+
       if (strrpos($view->url, '$arg')) {
         $views_with_inline_args[$view->name] = $view;
         continue;
@@ -273,7 +273,7 @@ function views_menu($may_cache) {
     $views_status = variable_get('views_defaults', array());
 
     foreach ($default_views as $name => $view) {
-      if ($view->page && !$used[$name] && 
+      if ($view->page && !$used[$name] &&
        ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
 
         if (strrpos($view->url, '$arg')) {
@@ -329,7 +329,7 @@ function _views_create_menu_item(&$items, $view, $path, $args) {
   }
   $access = !$view->access || array_intersect($view->access, $roles);
   $items[] = _views_menu_item($path, $title, $args, $access, $type, $weight);
-  
+
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
     $items[] = _views_menu_item(dirname($path), $title, $args, $access, MENU_NORMAL_ITEM, $weight);
   }
@@ -409,7 +409,7 @@ function views_block($op = 'list', $delta = 0) {
  * operations on a non-array error.
  */
 function _views_check_arrays(&$view) {
-  $fields = array('field', 'sort', 'argument', 'filter', 'exposed_filter', 'access'); 
+  $fields = array('field', 'sort', 'argument', 'filter', 'exposed_filter', 'access');
 
   foreach($fields as $field) {
     if (!is_array($view->$field)) {
@@ -532,7 +532,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   if ($view->query) {
     $info['query'] = $view->query;
     $info['countquery'] = $view->countquery;
-    
+
     if ($viewtype == 'table') {
       $view->table_header = _views_construct_header($view, $fields);
     }
@@ -570,7 +570,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
   if ($type == 'result') {
     $info['result'] = $result;
-    return $info; 
+    return $info;
   }
 
   $items = array();
@@ -604,9 +604,9 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 // ---------------------------------------------------------------------------
 // Utility
 
-/** 
+/**
  * Easily theme any item to a view.
- * @param $function 
+ * @param $function
  *   The name of the function to call.
  * @param $view
  *   The view being themed.
@@ -795,9 +795,9 @@ function _views_load_view($arg) {
       $filter['field'] = 'node' . substr($filter['field'], 1);
     }
 
-    if ($filter['operator'] == 'AND' || 
-        $filter['operator'] == 'OR' || 
-        $filter['operator'] == 'NOR' || 
+    if ($filter['operator'] == 'AND' ||
+        $filter['operator'] == 'OR' ||
+        $filter['operator'] == 'NOR' ||
         $filters[$filter['field']]['value-type'] == 'array' ) {
       if ($filter['value'] !== NULL && $filter['value'] !== '') {
         $filter['value'] = explode(',', $filter['value']);
@@ -819,7 +819,7 @@ function _views_load_view($arg) {
   }
 
   $cache['vid'][$view->vid] = $view;
-  $cache['name'][$view->name] = $view; 
+  $cache['name'][$view->name] = $view;
 
   return $view;
 }
@@ -1095,7 +1095,7 @@ function theme_views_view_list($view, $nodes) {
  * Display the nodes of a view as a table.
  */
 function theme_views_view_table($view, $nodes) {
-  $fields = _views_get_fields(); 
+  $fields = _views_get_fields();
 
   foreach ($nodes as $node) {
     $row = array();
@@ -1184,7 +1184,7 @@ function theme_views_view($view, $type, $nodes) {
   }
 
   if ($type == 'block' && $view->block_more && count($nodes) >= $view->nodes_per_block) {
-    $output .= theme('views_more', $view->url); 
+    $output .= theme('views_more', $view->url);
   }
   if ($output) {
     $output = "<div class='view view-$view->name'>$output</div>\n";
@@ -1209,7 +1209,7 @@ function views_get_summary_link($argtype, $item, $base) {
 
 /*
  * In a summary view, each entry links to a more specific entry
- * in that view. Construct the base of that link. 
+ * in that view. Construct the base of that link.
  */
 function views_get_summary_link_base($argtype, $url, $level, $args)
 {
@@ -1242,12 +1242,12 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
   if ($items) {
     $output .= theme('item_list', $items);
   }
-  
+
   if ($output) {
     $output = "<div class='view view-$view->name'>$output</div>";
   }
   return $output;
-  
+
 }
 
 // ---------------------------------------------------------------------------
@@ -1258,7 +1258,7 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
  * @param $fieldinfo
  *   The array of info for that field from the global tables array.
  * @param $fielddata
- *   All of the info about that field in the database. 
+ *   All of the info about that field in the database.
  * @param $value
  *   The value of the field fetched from the database.
  * @param $data
@@ -1319,7 +1319,7 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
  *    'title':  Provide the title of a view for substitution.
  * @param &$query
  *   For summary, filter and link, this is the actual query object; for title this is
- *   simply the value of the argument. 
+ *   simply the value of the argument.
  * @param $a2
  *   For summary, this is the type of the argument. For the others, this is the info
  *   for the argument from the global table. (Why is this not consistent? I dunno).
@@ -1327,7 +1327,7 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
  *   For summary, this is the 'options' field from the db. For 'filter' this is
  *   the argument received. For 'link' this is the base URL of the link. Not used
  *   for 'title'.
- *   
+ *
  */
 
 // ---------------------------------------------------------------------------
