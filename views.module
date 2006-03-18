@@ -1074,6 +1074,8 @@ function theme_views_filters($form) {
  * Display the nodes of a view as a list.
  */
 function theme_views_view_list($view, $nodes) {
+  $fields = _views_get_fields();
+
   foreach ($nodes as $node) {
     $item = '';
     foreach ($view->field as $field) {
