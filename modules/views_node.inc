@@ -460,7 +460,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
 
   switch($op) {
     case 'summary':
-      $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%d')";
+      $fieldinfo['field'] = "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%d')";
       $fieldinfo['fieldname'] = 'name';
       $query->add_field('created');
       return $fieldinfo;
