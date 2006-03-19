@@ -548,9 +548,11 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   }
 
   // Run-time replacement so we can do cacheing
-  global $user;
-  $info['query'] = str_replace('***CURRENT_USER***', $user->uid, $info['query']);
-  $info['countquery'] = str_replace('***CURRENT_USER***', $user->uid, $info['countquery']);
+  $replacements = module_invoke_all('views_query_substitutions', $view);
+  foreach ($replacements as $src => $dest) {
+    $info['query'] = str_replace($src, $dest, $info['query']);
+    $info['countquery'] = str_replace($src, $dest, $info['countquery']);
+  }
 
   $query = db_rewrite_sql($info['query'], 'node');
 
@@ -583,6 +585,12 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     return $info;
   }
 
+  // Call a hook that'll let modules modify the view just before it is displayed.
+  foreach (module_implements('views_pre_view') as $module) {
+    $function = $module .'_views_pre_view';
+    $output .= $function(&$view, &$items);
+  }
+
   if ($info['summary']) {
     $output .= views_theme('views_summary', $view, $type, $info['level'], $items, $args);
   }
@@ -598,6 +606,12 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
       $output .= theme('pager', NULL, $limit, $use_pager);
     }
   }
+  // Call a hook that'll let modules modify the view just after it is displayed.
+  foreach (module_implements('views_post_view') as $module) {
+    $function = $module .'_views_post_view';
+    $output .= $function(&$view, &$items, $output);
+  }
+
   return $output;
 }
 
@@ -962,6 +976,128 @@ function views_table_add_data(&$table, $type, $name, $label, $help, $others = ar
   foreach ($others as $key => $value) {
     $table[$type][$name][$key] = $value;
   }
+}
+
+/**
+ * Create a blank view.
+ */
+function views_create_view($name, $description, $access = array()) {
+  $view = new stdClass();
+  _views_check_arrays($view);
+
+  $view->name = $name;
+  $view->description = $description;
+  $view->access = $access;
+  
+  // ensure some things are numerically 0.
+  $view->nodes_per_page = 0;
+  $view->nodes_per_block = 0;
+  return $view;
+}
+
+/**
+ * Add page info to a view.
+ */
+function views_view_add_page(&$view, $title, $url, $type, $pager, $nodes_per_page, $header, $header_format, $breadcrumb_no_home = FALSE) {
+  $view->page = TRUE;
+  $view->page_title = $title;
+  $view->url = $url;
+  $view->page_type = $type;
+  $view->use_pager = $pager;
+  $view->nodes_per_page = $nodes_per_page;
+  $view->page_header = $header;
+  $view->page_header_format = $header_format;
+  $view->breadcrumb_no_home = $breadcrumb_no_home;
+}
+
+/**
+ * Add menu info to a view.
+ */
+function views_view_add_menu(&$view, $title, $tab, $tab_weight, $default_tab) {
+  $view->menu = TRUE;
+  $view->menu_title = $title;
+  $view->menu_tab = $tab;
+  $view->menu_tab_weight = $tab_weight;
+  $view->menu_tab_default = $default_tab;
+}
+
+/**
+ * Add block info to a view.
+ */
+function views_view_add_block(&$view, $title, $type, $nodes_per_block, $more, $use_page_header, $header = '', $header_format = 0) {
+  $view->block = TRUE;
+  $view->block_title = $title;
+  $view->block_type = $type;
+  $view->nodes_per_block = $nodes_per_block;
+  $view->block_more = $more;
+  $view->block_use_page_header = $use_page_header;
+  $view->block_header = $header;
+  $view->block_header_format = $header_format;
+}
+
+/**
+ * Add field info to a view.
+ */
+function views_view_add_field(&$view, $table, $field, $label, $sortable = FALSE, $default_sort = 0, $handler = '') {
+  $view->filter[] = array(
+    'tablename' => $table,
+    'field' => $field,
+    'label' => $label,
+    'sortable' => $sortable,
+    'defaultsort' => $default_sort,
+    'handler' => $handler
+  );
+}
+
+/**
+ * Add argument info to a view.
+ */
+function views_view_add_argument(&$view, $type, $default, $title, $option = '') {
+  $view->argument[] = array(
+    'type' => $type,
+    'argdefault' => $default,
+    'title' => $title,
+    'options' => $option,
+  );
+}
+
+/**
+ * Add filter info to a view.
+ */
+function views_view_add_filter(&$view, $table, $field, $operator, $value, $option) {
+  $view->filter[] = array(
+    'tablename' => $table,
+    'field' => $field,
+    'operator' => $operator,
+    'value' => $value,
+    'options' => $option,
+  );
+}
+
+/**
+ * Add exposed_filter info to a view.
+ */
+function views_view_add_exposed_filter(&$view, $table, $field, $optional, $is_default, $lock_operator, $single) {
+  $view->exposed_filter[] = array(
+    'tablename' => $table,
+    'field' => $field,
+    'optional' => $optional,
+    'is_default' => $is_default,
+    'operator' => $lock_operator,
+    'single' => $single
+  );
+}
+
+/**
+ * Add sort info to a view.
+ */
+function views_view_add_sort(&$view, $table, $field, $order, $option) {
+  $view->sort[] = array(
+    'tablename' => $table,
+    'field' => $field,
+    'sortorder' => $order,
+    'options' => $option
+  );
 }
 
 /*

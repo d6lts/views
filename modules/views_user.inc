@@ -167,6 +167,14 @@ function user_views_default_views() {
   return $views;
 }
 
+/**
+ * Allow replacement of current userid so we can cache these queries
+ */
+function user_views_query_substitutions($view) {
+  global $user;
+  return array('***CURRENT_USER***' => intval($user->uid));
+}
+
 /*
  * Format as a field as a username. Needs to also have a 'uid' available,
  * specified in the field info.
