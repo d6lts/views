@@ -450,6 +450,10 @@ function _views_get_default_view($template = '') {
     $view->use_pager = true;
     $view->nodes_per_page = variable_get('default_nodes_main', 10);
     $view->page_header_format = variable_get('filter_default_format', 1);
+    $view->page_footer_format = variable_get('filter_default_format', 1);
+    $view->page_header_format = variable_get('filter_default_format', 1);
+    $view->block_header_format = variable_get('filter_default_format', 1);
+    $view->block_footer_format = variable_get('filter_default_format', 1);
     $view->block_header_format = variable_get('filter_default_format', 1);
     $view->vid = 0;
   }
@@ -711,7 +715,7 @@ function _views_view_form($view, $op = '') {
     '#title' => t('Page'),
   );
 
-  $form['page-info']['page'] = array(
+  $form['page-info']['page_age'] = array(
     '#type' => 'checkbox',
     '#title' => t('Provide Page View'),
     '#return_value' => 1,
@@ -728,7 +732,7 @@ function _views_view_form($view, $op = '') {
     '#description' => t("Enter the URL to use for this view in the form of 'dir/dir'. Do not begin or end the URL with a /. Example: 'view/tracker'. This is required if providing a page view."),
   );
 
-  $form['page-info']['page_type'] = array(
+  $form['page-info']['page_age_type'] = array(
     '#type' => 'select',
     '#title' => t('View Type'),
     '#default_value' => $view->page_type,
@@ -736,7 +740,7 @@ function _views_view_form($view, $op = '') {
     '#description' => t('How the nodes should be displayed to the user.'),
   );
 
-  $form['page-info']['page_title'] = array(
+  $form['page-info']['page_age_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
     '#default_value' => $view->page_title,
@@ -769,9 +773,58 @@ function _views_view_form($view, $op = '') {
     '#attributes' => NULL,
     '#required' => true,
   );
+  $form['page-info']['page_header_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Header'),
+  );
+  $form['page-info']['page_header_fieldset']['page_header'] = array(
+    '#type' => 'textarea',
+    '#default_value' => $view->page_header,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
+  );
+
+  $form['page-info']['page_header_fieldset']['page_header_format'] = filter_form($view->page_header_format, 1, array('page_header_format'));
+
+  $form['page-info']['page_footer_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Footer'),
+  );
+  $form['page-info']['page_footer_fieldset']['page_footer'] = array(
+    '#type' => 'textarea',
+    '#default_value' => $view->page_footer,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional.'),
+  );
+
+  $form['page-info']['page_footer_fieldset']['page_footer_format'] = filter_form($view->page_footer_format, 1, array('page_footer_format'));
+
+  $form['page-info']['page_empty_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Empty Text'),
+  );
+  $form['page-info']['page_empty_fieldset']['page_empty'] = array(
+    '#type' => 'textarea',
+    '#default_value' => $view->page_empty,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display if a view returns no nodes. Optional.'),
+  );
+
+  $form['page-info']['page_empty_fieldset']['page_empty_format'] = filter_form($view->page_empty_format, 1, array('page_empty_format'));
+
   $form['page-info']['menu-info'] = array(
     '#type' => 'fieldset',
-    '#collapsible' => false,
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
     '#title' => t('Menu'),
   );
 
@@ -815,17 +868,6 @@ function _views_view_form($view, $op = '') {
     '#maxlength' => 255,
     '#description' => t('Enter the title to use for the menu entry or tab. If blank, the page title will be used.'),
   );
-
-  $form['page-info']['page_header'] = array(
-    '#type' => 'textarea',
-    '#title' => t('Header'),
-    '#default_value' => $view->page_header,
-    '#cols' => 60,
-    '#rows' => 6,
-    '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
-  );
-
-  $form['page-info']['page_header_format'] = filter_form($view->page_header_format, 1, array('page_header_format'));
 
   // block info
 
@@ -879,7 +921,13 @@ function _views_view_form($view, $op = '') {
     '#description' => t('If using a view as both a page and a block, display a more link in the block that links to the view URL?'),
   );
 
-  $form['block-info']['block_use_page_header'] = array(
+  $form['block-info']['block_header_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Header'),
+  );
+  $form['block-info']['block_header_fieldset']['block_use_page_header'] = array(
     '#type' => 'checkbox',
     '#title' => t('Use Page Header'),
     '#return_value' => 1,
@@ -887,7 +935,7 @@ function _views_view_form($view, $op = '') {
     '#description' => t('If checked, use the Page Header for block view instead. If so, you should leave the Block Header blank.'),
   );
 
-  $form['block-info']['block_header'] = array(
+  $form['block-info']['block_header_fieldset']['block_header'] = array(
     '#type' => 'textarea',
     '#title' => t('Header'),
     '#default_value' => $view->block_header,
@@ -896,7 +944,57 @@ function _views_view_form($view, $op = '') {
     '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['block-info']['block_header_format'] = filter_form($view->block_header_format, 1, array( 'block_header_format'));
+  $form['block-info']['block_header_fieldset']['block_header_format'] = filter_form($view->block_header_format, 1, array( 'block_header_format'));
+
+  $form['block-info']['block_footer_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Footer'),
+  );
+  $form['block-info']['block_footer_fieldset']['block_use_page_footer'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Page Footer'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_use_page_footer,
+    '#description' => t('If checked, use the page footer for block view instead. If so, you should leave the block footer blank.'),
+  );
+
+  $form['block-info']['block_footer_fieldset']['block_footer'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Footer'),
+    '#default_value' => $view->block_footer,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional.'),
+  );
+
+  $form['block-info']['block_footer_fieldset']['block_footer_format'] = filter_form($view->block_footer_format, 1, array( 'block_footer_format'));
+
+  $form['block-info']['block_empty_fieldset'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Empty text'),
+  );
+  $form['block-info']['block_empty_fieldset']['block_use_page_empty'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use Page empty'),
+    '#return_value' => 1,
+    '#default_value' => $view->block_use_page_empty,
+    '#description' => t('If checked, use the Page Empty Text for block view instead. If so, you should leave the block empty text blank.'),
+  );
+
+  $form['block-info']['block_empty_fieldset']['block_empty'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Empty text'),
+    '#default_value' => $view->block_empty,
+    '#cols' => 60,
+    '#rows' => 6,
+    '#description' => t('Text to display if a view results in no nodes. Optional.'),
+  );
+
+  $form['block-info']['block_empty_fieldset']['block_empty_format'] = filter_form($view->block_empty_format, 1, array( 'block_empty_format'));
 
   $form['save'] = array(
     '#type' => 'submit',

@@ -23,7 +23,7 @@ function views_init() {
 // ---------------------------------------------------------------------------
 // Acquire Views Data
 
-/*
+/**
  * Return the arguments array; construct one if we haven't already. The
  * array is cached in a global, safely named variable so that arguments
  * are only constructed once per run.
@@ -58,7 +58,7 @@ function _views_get_arguments($titles = false) {
   return ($titles ? $views_arguments['base'] : $views_arguments['title']);
 }
 
-/*
+/**
  * Constructs the full table information array. Caches it into a global array
  * so that it will only be called once per run.
  */
@@ -131,7 +131,7 @@ function _views_get_tables($full = false) {
   return ($full ? $views_tables : $views_tables['tables']);
 }
 
-/*
+/**
  * Gets the filter information; if it doesn't exist, call the function
  * that constructs all that.
  */
@@ -140,7 +140,7 @@ function _views_get_filters($titles = false) {
   return ($titles ? $table_data['filters']['titles'] : $table_data['filters']['base']);
 }
 
-/*
+/**
  * Gets the field information; if it doesn't exist, call the function
  * that constructs all that.
  */
@@ -149,7 +149,7 @@ function _views_get_fields($titles = false) {
   return ($titles ? $table_data['fields']['titles'] : $table_data['fields']['base']);
 }
 
-/*
+/**
  * Gets the sort information; if it doesn't exist, call the function
  * that constructs all that.
  */
@@ -158,14 +158,14 @@ function _views_get_sorts($titles = false) {
   return ($titles ? $table_data['sorts']['titles'] : $table_data['sorts']['base']);
 }
 
-/*
+/**
  * Invalidate the views cache, forcing a rebuild on the next grab of table data.
  */
 function views_invalidate_cache() {
   cache_clear_all('views_', true);
 }
 
-/*
+/**
  * Ensures that views have legitimate information; a bit more is stored on
  * the $view object than is in the database, and this isn't necessarily
  * set when a view is constructed externally.
@@ -194,7 +194,7 @@ function _views_sanitize_view(&$view) {
   }
 }
 
-/*
+/**
  * Build default view information from all modules and cache it.
  */
 function _views_get_default_views() {
@@ -228,7 +228,7 @@ function _views_get_default_views() {
 // ---------------------------------------------------------------------------
 // Drupal Hooks
 
-/*
+/**
  * Implementation of hook_help()
  */
 function views_help($section) {
@@ -239,7 +239,7 @@ function views_help($section) {
   }
 }
 
-/*
+/**
  * Implementation of hook_menu()
  */
 function views_menu($may_cache) {
@@ -373,7 +373,7 @@ function _views_menu_type($view) {
   return $type;
 }
 
-/*
+/**
  * Implementation of hook_block()
  */
 function views_block($op = 'list', $delta = 0) {
@@ -404,7 +404,7 @@ function views_block($op = 'list', $delta = 0) {
 // ---------------------------------------------------------------------------
 // View Construction
 
-/*
+/**
  * Ensure that all the arrays in a view exist so we don't run into array
  * operations on a non-array error.
  */
@@ -419,7 +419,7 @@ function _views_check_arrays(&$view) {
   return $view;
 }
 
-/*
+/**
  * This function loads a view by name or vid; if not found in db, it looks
  * for a default view by that name.
  */
@@ -440,7 +440,7 @@ function views_get_view($view_name) {
   }
 }
 
-/*
+/**
  * This views a view by page, and should only be used as a callback.
  */
 function views_view_page() {
@@ -466,7 +466,7 @@ function views_view_page() {
   return $output;
 }
 
-/*
+/**
  * This views a view by block. Can be used as a callback or programmatically.
  */
 function views_view_block($vid) {
@@ -487,7 +487,7 @@ function views_view_block($vid) {
   return $block;
 }
 
-/*
+/**
  * This builds the basic view.
  * @param $type
  *    'page' -- Produce output as a page, sent through theme.
@@ -588,28 +588,19 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   // Call a hook that'll let modules modify the view just before it is displayed.
   foreach (module_implements('views_pre_view') as $module) {
     $function = $module .'_views_pre_view';
-    $output .= $function(&$view, &$items);
+    $output .= $function($view, $items);
   }
 
-  if ($info['summary']) {
-    $output .= views_theme('views_summary', $view, $type, $info['level'], $items, $args);
-  }
-  else {
-    $output .= views_theme('views_view', $view, $type, $items);
-  }
+  $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
   if ($use_pager) {
-    if ($view->table_header && !$info['summary']) {
-      $output .= theme('pager', NULL, $limit, $use_pager, tablesort_pager());
-    }
-    else {
-      $output .= theme('pager', NULL, $limit, $use_pager);
-    }
+    $tablesort = ($view->table_header && !$info['summary']) ? tablesort_pager() : array();
+    $output .= theme('pager', NULL, $limit, $use_pager, $tablesort);
   }
   // Call a hook that'll let modules modify the view just after it is displayed.
   foreach (module_implements('views_post_view') as $module) {
     $function = $module .'_views_post_view';
-    $output .= $function(&$view, &$items, $output);
+    $output .= $function($view, $items, $output);
   }
 
   return $output;
@@ -639,7 +630,7 @@ function views_theme() {
   }
 }
 
-/*
+/**
  * Figure out what timezone we're in; needed for some date manipulations.
  */
 function _views_get_timezone() {
@@ -653,7 +644,7 @@ function _views_get_timezone() {
 
   return $timezone;
 }
-/*
+/**
  * Figure out what the title of a view should be.
  */
 function views_get_title($view, $context = 'menu', $args = NULL) {
@@ -696,7 +687,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   return $title;
 }
 
-/*
+/**
  * Determine whether or not a view is cacheable. A view is not cacheable if
  * there is some kind of user input or data required. For example, views
  * that need to restrict to the 'current' user, or any views that require
@@ -727,14 +718,14 @@ function _views_is_cacheable(&$view) {
 // ---------------------------------------------------------------------------
 // Database functions
 
-/*
+/**
  * Provide all the fields in a view.
  */
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery');
+  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery');
 }
 
-/*
+/**
  * Delete a view from the database.
  */
 function _views_delete_view($view) {
@@ -749,7 +740,7 @@ function _views_delete_view($view) {
   db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
 }
 
-/*
+/**
  * Load a view from the database.
  */
 function _views_load_view($arg) {
@@ -838,7 +829,7 @@ function _views_load_view($arg) {
   return $view;
 }
 
-/*
+/**
  * Save a view to the database.
  */
 function _views_save_view($view) {
@@ -924,7 +915,7 @@ function _views_save_view($view) {
 }
 
 // ---------------------------------------------------------------------------
-// Themeable and support
+// Helper functions to build views and view data
 
 /**
  * Helper function to make table creation a little easier. It adds the necessary
@@ -1100,13 +1091,15 @@ function views_view_add_sort(&$view, $table, $field, $order, $option) {
   );
 }
 
-/*
+// ---------------------------------------------------------------------------
+// Themeable and support for themeables.
+
+/**
  * Figure out how to display the data of a field. Many fields simply display
  * the data as-is, but many fields have to massage that data, which is
  * done through handlers.
  */
 function _views_handle_field($fields, $field, $data) {
-
   $info = $fields[$field['fullname']];
 
   if ($field['handler'] && function_exists($field['handler'])) {
@@ -1120,7 +1113,7 @@ function _views_handle_field($fields, $field, $data) {
   return check_plain($data->$field['queryname']);
 }
 
-/*
+/**
  * Construct a header for a table view.
  */
 function _views_construct_header($view, $fields) {
@@ -1206,7 +1199,7 @@ function theme_views_filters($form) {
   return theme('table', $label, array($row)) . form_render($form);
 }
 
-/*
+/**
  * Display the nodes of a view as a list.
  */
 function theme_views_view_list($view, $nodes) {
@@ -1227,7 +1220,7 @@ function theme_views_view_list($view, $nodes) {
   }
 }
 
-/*
+/**
  * Display the nodes of a view as a table.
  */
 function theme_views_view_table($view, $nodes) {
@@ -1246,10 +1239,10 @@ function theme_views_view_table($view, $nodes) {
   return theme('table', $view->table_header, $rows);
 }
 
-/*
+/**
  * Display the nodes of a view as plain nodes.
  */
-function theme_views_view_nodes($nodes, $teasers = true, $links = true) {
+function theme_views_view_nodes($view, $nodes, $teasers = true, $links = true) {
   foreach ($nodes as $n) {
     $node = node_load($n->nid);
     $output .= node_view($node, $teasers, false, $links);
@@ -1280,13 +1273,24 @@ function views_set_breadcrumb($view) {
   drupal_set_breadcrumb($breadcrumb);
 }
 
-/*
+function views_get_textarea($view, $type, $textarea) {
+  $use_page = "block_use_page_$textarea";
+  $var = ($type != 'block' || $view->$use_page ? 'page_' : 'block_') . $textarea;
+  $format = $var . '_format';
+
+  if ($view->$var) {
+    return "<div class='view-$textarea view-$textarea-$view->name'>"
+      . check_markup($view->$var, $view->$format, false) . "</div>\n";
+  }
+}
+
+/**
  * Display a view.
  */
-function theme_views_view($view, $type, $nodes) {
+function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
+  $num_nodes = count($nodes);
 
   if ($type == 'page') {
-    // Done before theming so theme can change it if it wants.
     drupal_set_title(views_get_title($view, 'page'));
     views_set_breadcrumb($view);
   }
@@ -1294,33 +1298,39 @@ function theme_views_view($view, $type, $nodes) {
   if ($type != 'block' && $view->exposed_filter) {
     $output .= views_theme('views_display_filters', $view);
   }
-  $header = ($type != 'block' || $view->block_use_page_header ? $view->page_header : $view->block_header);
-  $header_format = ($type != 'block' || $view->block_use_page_header ? $view->page_header_format : $view->block_header_format);
 
-  if ($header) {
-    $header = check_markup($header, $header_format, false);
-    $output .= "<div class='view-header view-header-$view->name'>$header</div>\n";
+  if ($num_nodes) {
+    $output .= views_get_textarea($view, $type, 'header');
+
+    if ($level !== NULL) {
+      $output .= views_theme('views_summary', $view, $type, $level, $nodes, $args);
+    }
+    else {
+      switch (($type == 'block' ? $view->block_type : $view->page_type)) {
+        case 'list': 
+          $output .= views_theme('views_view_list', $view, $nodes);
+          break;
+        case 'table':
+          $output .= views_theme('views_view_table', $view, $nodes);
+          break;
+        case 'teaser':
+        case 'random teaser': 
+          $output .= views_theme('views_view_nodes', $view, $nodes, true);
+          break;
+        case 'node': 
+        case 'random node': 
+          $output .= views_theme('views_view_nodes', $view, $nodes, false);
+          break;
+      }
+    }
+    $output .= views_get_textarea($view, $type, 'footer');
+
+    if ($type == 'block' && $view->block_more && $num_nodes >= $view->nodes_per_block) {
+      $output .= theme('views_more', $view->url);
+    }
   }
-
-  switch (($type == 'block' ? $view->block_type : $view->page_type)) {
-    case 'list': // => t("List View"),
-      $output .= theme('views_view_list', $view, $nodes);
-      break;
-    case 'table': // => t("Table"),
-      $output .= theme('views_view_table', $view, $nodes);
-      break;
-    case 'teaser': // => t("Teaser List"),
-    case 'random teaser': // random teaser
-      $output .= theme('views_view_nodes', $nodes, true);
-      break;
-    case 'node': // => t("Full Nodes")
-    case 'random node': // random node
-      $output .= theme('views_view_nodes', $nodes, false);
-      break;
-  }
-
-  if ($type == 'block' && $view->block_more && count($nodes) >= $view->nodes_per_block) {
-    $output .= theme('views_more', $view->url);
+  else {
+    $output .= views_get_textarea($view, $type, 'empty');
   }
   if ($output) {
     $output = "<div class='view view-$view->name'>$output</div>\n";
@@ -1328,14 +1338,14 @@ function theme_views_view($view, $type, $nodes) {
   return $output;
 }
 
-/*
+/**
  * Format the 'more' link for a view.
  */
 function theme_views_more($url) {
   return "<div class='more'>" . l(t('[More]'), $url) . "</div>";
 }
 
-/*
+/**
  * Get the summary link for a view.
  */
 function views_get_summary_link($argtype, $item, $base) {
@@ -1343,7 +1353,7 @@ function views_get_summary_link($argtype, $item, $base) {
   return $arginfo[$argtype]['handler']('link', $item, $argtype, $base);
 }
 
-/*
+/**
  * In a summary view, each entry links to a more specific entry
  * in that view. Construct the base of that link.
  */
@@ -1362,15 +1372,10 @@ function views_get_summary_link_base($argtype, $url, $level, $args)
   return $arg;
 }
 
-/*
+/**
  * Display a summary version of a view.
  */
 function theme_views_summary($view, $type, $level, $nodes, $args) {
-  if ($type == 'page') {
-    drupal_set_title(views_get_title($view, 'page'));
-    views_set_breadcrumb($view);
-  }
-
   $base = views_get_summary_link_base($view->argument[$level]['type'], $view->url, $level, $args);
   foreach ($nodes as $node) {
     $items[] = views_get_summary_link($view->argument[$level]['type'], $node, $base)  . " (" . $node->num_nodes . ")";
@@ -1379,17 +1384,13 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
     $output .= theme('item_list', $items);
   }
 
-  if ($output) {
-    $output = "<div class='view view-$view->name'>$output</div>";
-  }
   return $output;
-
 }
 
 // ---------------------------------------------------------------------------
 // Generic handlers. These make sense to be used in a lot of different places.
 
-/*
+/**
  * Field handlers accept the following arguments:
  * @param $fieldinfo
  *   The array of info for that field from the global tables array.
@@ -1402,21 +1403,21 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
  *   the handler needs more than just the field.
  */
 
-/*
+/**
  * Format a date.
  */
 function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
   return format_date($value);
 }
 
-/*
+/**
  * Format a date using small representation.
  */
 function views_handler_field_date_small($fieldinfo, $fielddata, $value, $data) {
   return format_date($value, 'small');
 }
 
-/*
+/**
  * Format a date using large representation.
  */
 function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
@@ -1424,21 +1425,21 @@ function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
-/*
+/**
  * Format a date as "X time ago".
  */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
   return format_interval(time() - $value);
 }
 
-/*
+/**
  * Format a field as an integer.
  */
 function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
   return intval($value);
 }
 
-/*
+/**
  * Argument handlers take up to 4 fields, which vary based upon the operation.
  * @param $op
  *   The operation to perform:
@@ -1469,7 +1470,7 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
 // ---------------------------------------------------------------------------
 // Filter handlers
 
-/*
+/**
  * There are two kinds of filter handlers here; the easy kind simply creates an
  * array of options. For example, for taxonomy we provide a list of all taxonomy
  * terms which is placed in the select box.
@@ -1488,28 +1489,28 @@ function views_handler_field_int($fieldinfo, $fielddata, $value, $data) {
  *   The query object being worked on.
  */
 
-/*
+/**
  * A list of and/or/nor.
  */
 function views_handler_operator_andor() {
   return array('AND' => t('Is All Of'), 'OR' => t('Is One Of'), 'NOR' => t('Is None Of'));
 }
 
-/*
+/**
  * A list of or/nor.
  */
 function views_handler_operator_or() {
   return array('OR' => t('Is One Of'), 'NOR' => t('Is None Of'));
 }
 
-/*
+/**
  * A list of equal or not equal to.
  */
 function views_handler_operator_eqneq() {
   return array('=' => t('Is Equal To'), '!=' => t('Is Not Equal To'));
 }
 
-/*
+/**
  * A list of yes/no.
  */
 function views_handler_operator_yesno() {

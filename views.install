@@ -118,6 +118,10 @@
         page_title varchar(255),
         page_header text,
         page_header_format numeric(4) NOT NULL,
+        page_footer text,
+        page_footer_format numeric(4) NOT NULL,
+        page_empty text,
+        page_empty_format numeric(4) NOT NULL,
         page_type varchar(20),
         use_pager numeric(1),
         nodes_per_page numeric(2), -- yes, no more than 99
@@ -134,6 +138,12 @@
         block_use_page_header numeric(1),
         block_header text,
         block_header_format numeric(4) NOT NULL,
+        block_use_page_footer numeric(1),
+        block_footer text,
+        block_footer_format numeric(4) NOT NULL,
+        block_use_page_empty numeric(1),
+        block_empty text,
+        block_empty_format numeric(4) NOT NULL,
         block_type varchar(20),
         nodes_per_block numeric(5),
         block_more numeric(1),
@@ -258,5 +268,20 @@ function views_update_3() {
       $ret[] = update_sql("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
       break;
   }
+  return $ret;
+}
+
+function views_update_4() {
+  $ret = array();
+  db_add_column($ret, 'view_view', 'page_footer', 'longtext');
+  db_add_column($ret, 'view_view', 'page_footer_format', 'int(4)', array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_use_page_footer', 'int(1)');
+  db_add_column($ret, 'view_view', 'block_footer', 'longtext');
+  db_add_column($ret, 'view_view', 'block_footer_format', 'int(4)', array('default' => 0));
+  db_add_column($ret, 'view_view', 'page_empty', 'longtext');
+  db_add_column($ret, 'view_view', 'page_empty_format', 'int(4)', array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
+  db_add_column($ret, 'view_view', 'block_empty', 'longtext');
+  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('default' => 0));
   return $ret;
 }
