@@ -18,6 +18,8 @@
         page_header_format int(4) NOT NULL,
         page_empty longtext,
         page_empty_format int(4) NOT NULL,
+        page_footer longtext,
+        page_footer_format int(4) NOT NULL,
         page_type varchar(20),
         use_pager int(1),
         nodes_per_page int(2), -- yes, no more than 99
@@ -34,6 +36,9 @@
         block_use_page_header int(1),
         block_header longtext,
         block_header_format int(4) NOT NULL,
+        block_use_page_footer int(1),
+        block_footer longtext,
+        block_footer_format int(4) NOT NULL,
         block_use_page_empty int(1),
         block_empty longtext,
         block_empty_format int(4) NOT NULL,
