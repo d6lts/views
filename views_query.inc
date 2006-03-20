@@ -555,7 +555,7 @@ class _views_query {
       }
     }
     else {
-      $fields = "count($this->count_field) AS numrecs";
+      $fields = "count($this->count_field)";
     }
 
     if ($this->where) {

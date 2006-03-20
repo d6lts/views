@@ -563,7 +563,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     $result = db_query_range($query, $which, 1);
   }
   else if ($use_pager) {
-    $cquery = db_rewrite_sql($info['countquery'], 'node');
+    $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
     $result = pager_query($query, $limit, $use_pager, $cquery);
   }
   else {
