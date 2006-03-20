@@ -355,7 +355,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
   // we add 1 chain, but in an and query we actually basically have to add
   // a 2 dimensional array. 
   
-  $query->ensure_table('term_data'); // this is to make sure the views_get_title table comes first.
+//  $query->ensure_table('term_data'); // this is to make sure the views_get_title table comes first.
 
   if ($op == 'OR') {
     $clause = "'" . implode("','", $value) . "'";
