@@ -715,7 +715,7 @@ function _views_view_form($view, $op = '') {
     '#title' => t('Page'),
   );
 
-  $form['page-info']['page_age'] = array(
+  $form['page-info']['page'] = array(
     '#type' => 'checkbox',
     '#title' => t('Provide Page View'),
     '#return_value' => 1,
@@ -732,7 +732,7 @@ function _views_view_form($view, $op = '') {
     '#description' => t("Enter the URL to use for this view in the form of 'dir/dir'. Do not begin or end the URL with a /. Example: 'view/tracker'. This is required if providing a page view."),
   );
 
-  $form['page-info']['page_age_type'] = array(
+  $form['page-info']['page_type'] = array(
     '#type' => 'select',
     '#title' => t('View Type'),
     '#default_value' => $view->page_type,
@@ -740,7 +740,7 @@ function _views_view_form($view, $op = '') {
     '#description' => t('How the nodes should be displayed to the user.'),
   );
 
-  $form['page-info']['page_age_title'] = array(
+  $form['page-info']['page_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Title'),
     '#default_value' => $view->page_title,
