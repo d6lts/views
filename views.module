@@ -463,6 +463,11 @@ function views_view_page() {
   }
 
   $output = views_build_view('page', $view, $args, $view->use_pager, $view->nodes_per_page);
+  if (!$output) {
+    drupal_not_found();
+    exit;
+  }
+
   return $output;
 }
 
@@ -482,9 +487,15 @@ function views_view_block($vid) {
     return NULL;
   }
 
-  $block['content'] = views_build_view('block', $view, $args, false, $view->nodes_per_block);
-  $block['subject'] = views_get_title($view, 'block');
-  return $block;
+  $content = views_build_view('block', $view, $args, false, $view->nodes_per_block);
+  if ($content) {
+    $block['content'] = $content;
+    $block['subject'] = views_get_title($view, 'block');
+    return $block;
+  }
+  else {
+    return NULL;
+  }
 }
 
 /**
@@ -528,6 +539,12 @@ function views_view_block($vid) {
 function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
 
   $viewtype = ($type == 'block' ? $view->block_type : $view->page_type);
+
+  if ($view->view_args_php) {
+    ob_start();
+    $args = eval($view->view_args_php);
+    ob_end_clean();
+  }
 
   if ($view->query) {
     $info['query'] = $view->query;
@@ -591,6 +608,13 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     $output .= $function($view, $items);
   }
 
+  // In block mode, change $view->url to include the proper arguments.
+  if ($type == 'block' && $args) {
+    $url = views_get_summary_link_base($view->argument[count($args)-1]['type'], $view->url, count($args), $args);
+    if ($url) {
+      $view->url = $url;
+    }
+  }
   $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
   if ($use_pager) {
@@ -722,7 +746,7 @@ function _views_is_cacheable(&$view) {
  * Provide all the fields in a view.
  */
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery');
+  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery', 'view_args_php');
 }
 
 /**

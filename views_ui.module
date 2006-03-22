@@ -996,6 +996,30 @@ function _views_view_form($view, $op = '') {
 
   $form['block-info']['block_empty_fieldset']['block_empty_format'] = filter_form($view->block_empty_format, 1, array( 'block_empty_format'));
 
+  $access = user_access('use PHP for block visibility');
+  if ($access) {
+    $form['view_args_php_fieldset'] = array(
+      '#type' => 'fieldset',
+      '#collapsible' => TRUE,
+      '#collapsed' => TRUE,
+      '#title' => t('Argument Handling Code'),
+    );
+
+    $form['view_args_php_fieldset']['view_args_php'] = array(
+      '#type' => 'textarea',
+      '#title' => t('Argument Code'),
+      '#default_value' => $view->view_args_php,
+      '#cols' => 60,
+      '#rows' => 6,
+      '#description' => t('Advanced Usage Only: PHP code that returns a custom array of arguments for the view.'),
+    );
+  } else {
+    $form['view_args_php_fieldset']['view_args_php'] = array(
+      '#type' => 'value',
+      '#value' => $view->view_args_php,
+    );
+  }
+
   $form['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
@@ -1450,6 +1474,8 @@ function theme_views_edit_view($form) {
   
   $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), 'Add Argument');
   
+  $group .= form_render($form['view_args_php_fieldset']);
+
   $group .= '<p>'. t('Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Arguments'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
@@ -1646,22 +1672,29 @@ function views_create_view_code($vid) {
   $requires = array();
 
   $output = "  \$view = new stdClass();\n";
-  $output .= "  \$view->name = '$view->name';\n";
-  $output .= "  \$view->description = '$view->description';\n";
+  $output .= "  \$view->name = '" . db_escape_string($view->name) . "';\n";
+  $output .= "  \$view->description = '" . db_escape_string($view->description) . "';\n";
   $output .= "  \$view->access = " . var_export($view->access, true) . ";\n";
+  if (user_access('use PHP for block visibility')) {
+    $output .= "  \$view->view_args_php = '" . db_escape_string($view->view_args_php) . "';\n";
+  }
   // page items
   if ($view->page) {
     $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
-    $output .= "  \$view->page_title = '$view->page_title';\n";
-    $output .= "  \$view->page_header = '$view->page_header';\n";
+    $output .= "  \$view->page_title = '" . db_escape_string($view->page_title) . "';\n";
+    $output .= "  \$view->page_header = '" . db_escape_string($view->page_header) ."';\n";
     $output .= "  \$view->page_header_format = '$view->page_header_format';\n";
+    $output .= "  \$view->page_footer = '" . db_escape_string($view->page_footer) ."';\n";
+    $output .= "  \$view->page_footer_format = '$view->page_footer_format';\n";
+    $output .= "  \$view->page_empty = '" . db_escape_string($view->page_empty) ."';\n";
+    $output .= "  \$view->page_empty_format = '$view->page_empty_format';\n";
     $output .= "  \$view->page_type = '$view->page_type';\n";
-    $output .= "  \$view->url = '$view->url';\n";
+    $output .= "  \$view->url = '" . db_escape_string($view->url) . "';\n";
     $output .= "  \$view->use_pager = " . views_tf($view->use_pager) . ";\n";
     $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
     if ($view->menu) {
       $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
-      $output .= "  \$view->menu_title = '$view->menu_title';\n";
+      $output .= "  \$view->menu_title = '" . db_escape_string($view->menu_title) . "';\n";
       $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
       $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
       $output .= "  \$view->menu_weight = '$view->menu_weight';\n";
@@ -1669,13 +1702,19 @@ function views_create_view_code($vid) {
   }
   if ($view->block) {
     $output .= "  \$view->block = " . views_tf($view->block) . ";\n";
-    $output .= "  \$view->block_title = '$view->block_title';\n";
-    $output .= "  \$view->block_header = '$view->block_header';\n";
+    $output .= "  \$view->block_title = '" . db_escape_string($view->block_title) . "';\n";
+    $output .= "  \$view->block_header = '" . db_escape_string($view->block_header) . "';\n";
     $output .= "  \$view->block_header_format = '$view->block_header_format';\n";
+    $output .= "  \$view->block_footer = '" . db_escape_string($view->block_footer) ."';\n";
+    $output .= "  \$view->block_footer_format = '$view->block_footer_format';\n";
+    $output .= "  \$view->block_empty = '" . db_escape_string($view->block_empty) ."';\n";
+    $output .= "  \$view->block_empty_format = '$view->block_empty_format';\n";
     $output .= "  \$view->block_type = '$view->block_type';\n";
     $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
     $output .= "  \$view->block_more = '$view->block_more';\n";
     $output .= "  \$view->block_use_page_header = " . views_tf($view->block_use_page_header) . ";\n";
+    $output .= "  \$view->block_use_page_footer = " . views_tf($view->block_use_page_footer) . ";\n";
+    $output .= "  \$view->block_use_page_empty = " . views_tf($view->block_use_page_empty) . ";\n";
   }
 
   $output .= "  \$view->sort = array (\n";

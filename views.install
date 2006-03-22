@@ -51,6 +51,7 @@
         changed int(11),
         query longtext,
         countquery longtext,
+        view_args_php longtext,
         PRIMARY KEY (vid),
         KEY (name)
       ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
@@ -158,6 +159,7 @@
         changed numeric(11),
         query text,
         countquery text,
+        view_args_php text,
         CONSTRAINT {view_view_pkey} PRIMARY KEY (vid)
       )");
       db_query("CREATE INDEX {view_view_name_idx} ON {view_view} (name)");
@@ -288,5 +290,11 @@ function views_update_4() {
   db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
   db_add_column($ret, 'view_view', 'block_empty', 'longtext');
   db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('default' => 0));
+  return $ret;
+}
+
+function views_update_5() {
+  $ret = array();
+  db_add_column($ret, 'view_view', 'view_args_php', 'longtext');
   return $ret;
 }
