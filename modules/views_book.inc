@@ -39,8 +39,8 @@ function book_views_tables() {
     'provider' => 'internal',
     'join' => array(
       'left' => array(
-        'table' => 'node',
-        'field' => 'nid'
+        'table' => 'book',
+        'field' => 'parent'
       ),
       'right' => array(
         'field' => 'nid'
@@ -55,6 +55,12 @@ function book_views_tables() {
         ),
         'addlfields' => array('nid'),
         'help' => t('Display the title of the parent node'),
+      ),
+    ),
+    'sorts' => array(
+      'title' => array(
+        'name' => t('Book: Parent Title'),
+        'help' => t('Sort by the title of the parent node'),
       ),
     ),
   );
@@ -80,16 +86,18 @@ function views_handler_arg_book_parent($op, & $query, $argtype, $arg = '') {
   switch ($op)
   {
     case 'summary' :
-      $query->ensure_table("book");
-      $query->add_field("parent", "book");
-      $query->add_field("title", "node");
+      $query->ensure_table("book_parent_node");
       $query->add_field("nid");
-      $fieldinfo['field'] = "book.parent";
+      $query->add_field("parent", "book");
+      $query->add_field("title", "book_parent_node");
+      $query->add_field("nid", "book_parent_node", "pnid");
+      $query->add_where("book_parent_node.nid IS NOT NULL");
+      $fieldinfo['field'] = "book_parent_node.title";
       return $fieldinfo;
       break;
     case 'sort':
       $query->add_orderby('book', 'weight', $argtype);
-      $query->add_orderby('node', 'title', $argtype);
+      $query->add_orderby('book_parent_node', 'title', $argtype);
       break;
     case 'filter' :
       $query->ensure_table("book");
@@ -97,7 +105,7 @@ function views_handler_arg_book_parent($op, & $query, $argtype, $arg = '') {
       $query->add_where("book.vid = node.vid");
       break;
     case 'link' :
-      return l($query->title, "$arg/$query->nid");
+      return l($query->title, "$arg/$query->pnid");
     case 'title' :
       if ($query)
       {

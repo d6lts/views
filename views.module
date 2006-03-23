@@ -537,6 +537,7 @@ function views_view_block($vid) {
  *   without paging on.
 */
 function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
+  $GLOBALS['current_view'] = &$view;
 
   $viewtype = ($type == 'block' ? $view->block_type : $view->page_type);
 

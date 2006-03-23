@@ -482,8 +482,8 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
 function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
-      $query->add_field("title");
       $query->add_field('nid');
+      $query->add_field("title");
       $fieldinfo['field'] = 'node.nid';
       return $fieldinfo;
     case 'sort':
