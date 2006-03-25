@@ -92,7 +92,7 @@ function taxonomy_views_tables() {
       ),
       'fields' => array(
         'name' => array(
-          'name' => 'Taxonomy: Term',
+          'name' => t('Taxonomy: Term'),
           'sortable' => true,
           'handler' => array('views_handler_field_tid' => "No link", 'views_handler_field_tid_link' => "With link"),
           'addlfields' => array('tid'),
@@ -147,7 +147,7 @@ function taxonomy_views_default_views() {
   $view = new stdClass();
   $view->name = 'taxonomy_term';
   $view->disabled = true;
-  $view->description = 'The taxonomy view with a depth of 0.';
+  $view->description = t('The taxonomy view with a depth of 0.');
   $view->access = array (
 );
   $view->page = TRUE;

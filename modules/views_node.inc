@@ -228,7 +228,7 @@ function node_views_default_views() {
 
   $view = new stdClass();
   $view->name = 'frontpage';
-  $view->description = 'The basic front page view.';
+  $view->description = t('The basic front page view.');
   $view->page = true;
   $view->url = 'frontpage';
   $view->page_title = '';

@@ -66,12 +66,12 @@ function statistics_views_arguments() {
 function statistics_views_default_views() {
   $view = new stdClass();
   $view->name = 'popular_recent';
-  $view->description = 'Nodes sorted by recent page-views';
+  $view->description = t('Nodes sorted by recent page-views');
   $view->access = array (
 );
   $view->view_args_php = '';
   $view->page = TRUE;
-  $view->page_title = 'recent popular content';
+  $view->page_title = t('recent popular content');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_footer = '';
@@ -88,7 +88,7 @@ function statistics_views_default_views() {
   $view->menu_tab_default = TRUE;
   $view->menu_weight = '-1';
   $view->block = TRUE;
-  $view->block_title = 'recent popular content';
+  $view->block_title = t('recent popular content');
   $view->block_header = '';
   $view->block_header_format = '1';
   $view->block_footer = '';
@@ -160,12 +160,12 @@ function statistics_views_default_views() {
 
   $view = new stdClass();
   $view->name = 'popular_alltime';
-  $view->description = 'Nodes sorted by total page-views';
+  $view->description = t('Nodes sorted by total page-views');
   $view->access = array (
 );
   $view->view_args_php = '';
   $view->page = TRUE;
-  $view->page_title = 'all-time popular content';
+  $view->page_title = t('all-time popular content');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_footer = '';
@@ -182,7 +182,7 @@ function statistics_views_default_views() {
   $view->menu_tab_default = FALSE;
   $view->menu_weight = '1';
   $view->block = TRUE;
-  $view->block_title = 'all-time popular content';
+  $view->block_title = t('all-time popular content');
   $view->block_header = '';
   $view->block_header_format = '1';
   $view->block_footer = '';
@@ -209,33 +209,33 @@ function statistics_views_default_views() {
     array (
       'tablename' => 'node',
       'field' => 'type',
-      'label' => 'type',
+      'label' => t('type'),
       'sortable' => '1',
     ),
     array (
       'tablename' => 'node',
       'field' => 'title',
-      'label' => 'title',
+      'label' => t('title'),
       'handler' => 'views_handler_field_nodelink',
       'sortable' => '1',
     ),
     array (
       'tablename' => 'users',
       'field' => 'name',
-      'label' => 'author',
+      'label' => t('author'),
       'sortable' => '1',
     ),
     array (
       'tablename' => 'node',
       'field' => 'created',
-      'label' => 'created',
+      'label' => t('created'),
       'handler' => 'views_handler_field_since',
       'sortable' => '1',
     ),
     array (
       'tablename' => 'node_counter',
       'field' => 'totalcount',
-      'label' => 'reads',
+      'label' => t('reads'),
       'sortable' => '1',
       'defaultsort' => 'DESC',
     ),
