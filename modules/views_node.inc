@@ -50,6 +50,10 @@ function node_views_tables() {
       ),
     ),
     'sorts' => array(
+      'nid' => array(
+        'name' => t('Node: ID'),
+        'help' => t('Sort by the database ID of the node.'),
+       ),
       'created' => array(
         'name' => t('Node: Created Time'),
         'help' => t('Sort by the submission date of the node.'),
