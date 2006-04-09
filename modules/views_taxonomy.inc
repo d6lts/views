@@ -65,7 +65,7 @@ function taxonomy_views_tables() {
     }
 
     $tables['term_hierarchy'] = array(
-      'name' => 'term_node',
+      'name' => 'term_hierarchy',
       'provider' => 'internal',
       'join' => array(
         'left' => array(
