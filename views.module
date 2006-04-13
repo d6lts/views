@@ -623,8 +623,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
   if ($use_pager) {
-    $tablesort = ($view->table_header && !$info['summary']) ? tablesort_pager() : array();
-    $output .= theme('pager', NULL, $limit, $use_pager, $tablesort);
+    $output .= theme('pager', NULL, $limit, $use_pager);
   }
   // Call a hook that'll let modules modify the view just after it is displayed.
   foreach (module_implements('views_post_view') as $module) {
