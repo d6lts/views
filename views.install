@@ -236,6 +236,14 @@
 function views_update_1() {
   return _system_update_utf8(array('view_view', 'view_tablefield', 'view_filter', 'view_sort', 'view_argument'));
 }
+
+/**
+ * Dummy function cause we're apparently not to skip update #s.
+ */
+function views_update_2() {
+// dummy function
+  return array();
+}
 /*
  * update module for exposed filters.
  */

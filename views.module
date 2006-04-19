@@ -965,7 +965,7 @@ function views_new_table($table_name, $provider, $left_table, $left_field, $righ
  * Helper function to make table creation a little easier. It adds the necessary
  * data to the $table array.
  */
-function views_table_add_field(&$table, $name, $label, $help, $others) {
+function views_table_add_field(&$table, $name, $label, $help, $others = array()) {
   views_table_add_data($table, 'fields', $name, $label, $help, $others);
 }
 
