@@ -481,20 +481,6 @@ function _views_get_arguments_default() {
 }
 
 /**
- * Types of views supported.
- */
-function _views_types() {
-  return array(
-    'list' => t('List View'),
-    'table' => t('Table View'),
-    'teaser' => t('Teaser List'),
-    'node' => t('Full Nodes'),
-    'random teaser' => t('Random Teaser'),
-    'random node' => t('Random Node')
-  );
-}
-
-/**
  * Select box entries for sort ordering.
  */
 function _views_sortorders() {
@@ -736,7 +722,7 @@ function _views_view_form($view, $op = '') {
     '#type' => 'select',
     '#title' => t('View Type'),
     '#default_value' => $view->page_type,
-    '#options' => _views_types(),
+    '#options' => _views_get_style_plugins(true),
     '#description' => t('How the nodes should be displayed to the user.'),
   );
 
@@ -890,7 +876,7 @@ function _views_view_form($view, $op = '') {
     '#type' => 'select',
     '#title' => t('View Type'),
     '#default_value' => $view->block_type,
-    '#options' => _views_types(),
+    '#options' => _views_get_style_plugins(true),
     '#description' => t('How the nodes should be displayed to the user.'),
   );
 
