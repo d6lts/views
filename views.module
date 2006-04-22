@@ -1293,7 +1293,7 @@ function theme_views_view_table($view, $nodes) {
  * Display the nodes of a view as teasers.
  */
 function theme_views_view_teasers($view, $nodes) {
-  return views_theme('views_view_nodes', $view, $nodes, $true); 
+  return views_theme('views_view_nodes', $view, $nodes, true); 
 }
 
 /**
