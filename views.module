@@ -1358,10 +1358,13 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
 
   if ($num_nodes) {
     $output .= views_get_textarea($view, $type, 'header');
+  }
 
-    if ($type != 'block' && $view->exposed_filter) {
-      $output .= views_theme('views_display_filters', $view);
-    }
+  if ($type != 'block' && $view->exposed_filter) {
+    $output .= views_theme('views_display_filters', $view);
+  }
+
+  if ($num_nodes) {
 
     if ($level !== NULL) {
       $output .= views_theme('views_summary', $view, $type, $level, $nodes, $args);
@@ -1369,7 +1372,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
     else {
       $plugins = _views_get_style_plugins();
       $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
-      $output = views_theme($plugins[$view_type]['theme'], $view, $nodes);
+      $output .= views_theme($plugins[$view_type]['theme'], $view, $nodes);
     }
     $output .= views_get_textarea($view, $type, 'footer');
 
