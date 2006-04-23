@@ -414,7 +414,7 @@ function views_block($op = 'list', $delta = 0) {
     // Grab views from the database and provide them as blocks.
     $result = db_query("SELECT vid, block_title, page_title, name FROM {view_view} WHERE block = 1");
     while ($view = db_fetch_object($result)) {
-      $block[$view->name]['info'] = views_get_title($view, 'block');
+      $block[$view->name]['info'] = views_get_title($view, 'block-info');
     }
 
     $default_views = _views_get_default_views();
@@ -701,8 +701,12 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   if ($context == 'menu' && $view->menu_title)
     return $view->menu_title;
 
-  if ($context == 'block' && $view->block_title)
+  if (($context == 'block' || $context == 'block-info') && $view->block_title)
     return $view->block_title;
+
+  if ($context == 'block-info') {
+    return $view->description ? $view->description : $view->name;
+  }
 
   if ($args === NULL)
     $args = $view->args;
