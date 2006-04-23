@@ -214,7 +214,7 @@
         is_default numeric(1),
         operator numeric(1),
         single numeric(1),
-        position numeric(2),
+        position numeric(2)
       )");
       db_query("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
       break;
