@@ -1356,12 +1356,12 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
     views_set_breadcrumb($view);
   }
 
-  if ($type != 'block' && $view->exposed_filter) {
-    $output .= views_theme('views_display_filters', $view);
-  }
-
   if ($num_nodes) {
     $output .= views_get_textarea($view, $type, 'header');
+
+    if ($type != 'block' && $view->exposed_filter) {
+      $output .= views_theme('views_display_filters', $view);
+    }
 
     if ($level !== NULL) {
       $output .= views_theme('views_summary', $view, $type, $level, $nodes, $args);
