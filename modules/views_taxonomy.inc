@@ -265,8 +265,14 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       if (!$query) {
         return t('Uncategorized');
       }
-      $term = db_fetch_object(db_query("SELECT name FROM {term_data} WHERE tid = '%d'", $query));
-      return $term->name;
+      list($type, $info) = _views_break_phrase($query);
+      $tids = implode(',', $info); // only does numbers so safe
+      
+      $result = db_query("SELECT name FROM {term_data} WHERE tid IN (%s)", $tids);
+      while ($term = db_fetch_object($result)) {
+        $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($term->name);
+      }
+      return $title;
   }
 }
 
