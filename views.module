@@ -1629,5 +1629,11 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
   }
 }
 
+/**
+ * Format a field as file size.
+ */
+function views_handler_field_filesize($fieldinfo, $fielddata, $value, $data) {
+  return format_size($value);
+}
 
 
