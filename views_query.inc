@@ -513,7 +513,8 @@ class _views_query {
 
       // the { is a special character which seems to be treated differently
       // in PHP5 than PHP4 so we do this a little oddly.
-      $joins .= ' LEFT JOIN {' . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." . 
+      $join_type = $joininfo['type'] == 'inner' ? 'INNER' : 'LEFT';
+      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." . 
         $joininfo['left']['field'] . " = $table_alias." . $joininfo['right']['field'];
 
       if (isset($joininfo['extra'])) {
