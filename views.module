@@ -495,7 +495,7 @@ function views_view_page() {
   }
 
   $output = views_build_view('page', $view, $args, $view->use_pager, $view->nodes_per_page);
-  if (!$output) {
+  if ($output === FALSE) {
     drupal_not_found();
     exit;
   }
@@ -593,7 +593,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
     $info = _views_build_query($view, $args);
     if ($info['fail']) {
-      return;
+      return FALSE;
     }
   }
 
@@ -1588,3 +1588,46 @@ function views_views_style_plugins() {
     ),
   );
 }
+
+/**
+ * A list of options to be used in LIKE queries
+ */
+function views_handler_operator_like() {
+  return array('' => t('<All>'), 'contains' => t('Contains'), 'starts' => t('Starts With'), 'ends' => t('Ends With'), 'not' => t('Does Not Contain'));
+}
+
+/**
+ * Custom filter for LIKE operations
+ */
+function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
+  switch (trim($filter['value'])) {
+    case (''):
+      return;
+      break;
+  }
+  switch ($op) {
+    case 'handler':
+      $fieldbits = explode('.', $filter['field']);
+      $query->ensure_table($fieldbits[0]);
+      switch ($filter['operator']) {
+        case 'contains':
+          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%%%s%%')", $filter[value]);
+          break;
+        case 'starts':
+          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%s%%')", $filter[value]);
+          break;
+        case 'ends':
+          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%%%s')", $filter[value]);
+          break;
+        case 'not':
+          $query->add_where("UPPER(".$filter[field].") NOT LIKE UPPER('%%%s%%')", $filter[value]);
+          break;
+        case 'all':
+          break;
+      }
+    break;
+  }
+}
+
+
+
