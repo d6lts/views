@@ -1390,7 +1390,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
  * Format the 'more' link for a view.
  */
 function theme_views_more($url) {
-  return "<div class='more'>" . l(t('[More]'), $url) . "</div>";
+  return "<div class='more-link'>" . l(t('[More]'), $url) . "</div>";
 }
 
 /**
