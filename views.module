@@ -106,6 +106,14 @@ function _views_get_tables($full = false) {
         }
         if (is_array($table['fields'])) {
           foreach ($table['fields'] as $field => $data) {
+            if ($data['option'] && !is_array($data['option'])) {
+              if ($data['option'] == 'string' || $data['option'] == 'integer') {
+                $data['option'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+              }
+              else {
+                $data['option'] = array('#type' => 'select', '#options' => $data['option']);
+              }
+            }
             $data['table'] = $name;
             $views_tables['fields']['titles']["$name.$field"] = $data['name'];
             $views_tables['fields']['base']["$name.$field"] = $data;
@@ -477,6 +485,8 @@ function views_get_view($view_name) {
  */
 function views_view_page() {
   $args = func_get_args();
+  // FIXME: Most of this code is unnecessary now that we add our
+  // $view info as a callback argument via the menu hook.
   while ($next = array_shift($args)) {
     if (!$view_name) {
       $view_name = $next;
@@ -519,7 +529,7 @@ function views_view_block($vid) {
     return NULL;
   }
 
-  $content = views_build_view('block', $view, $args, false, $view->nodes_per_block);
+  $content = views_build_view('block', $view, array(), false, $view->nodes_per_block);
   if ($content) {
     $block['content'] = $content;
     $block['subject'] = views_get_title($view, 'block');
@@ -953,7 +963,7 @@ function _views_save_view($view) {
   }
 
   foreach ($view->field as $i => $arg) {
-    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, position) VALUES (%d, '%s', '%s', '%s', '%s', %d, '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['label'], $arg['handler'], $arg['sortable'], $arg['defaultsort'], $i);
+    db_query("INSERT INTO {view_tablefield} (vid, tablename, field, label, handler, sortable, defaultsort, options, position) VALUES (%d, '%s', '%s', '%s', '%s', %d, '%s', '%s', %d)", $view->vid, $arg['tablename'], $arg['field'], $arg['label'], $arg['handler'], $arg['sortable'], $arg['defaultsort'], $arg['options'], $i);
   }
 
   foreach ($view->filter as $i => $arg) {

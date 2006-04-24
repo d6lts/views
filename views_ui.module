@@ -1158,6 +1158,16 @@ function views_ui_add_field(&$form, $field, &$order, $key, $i) {
     );
   }
 
+  if (isset($fieldinfo['option'])) {
+    $widget = $fieldinfo['option'];
+    if (is_string($widget['#options']) && function_exists($widget['#options'])) {
+      $widget['#options'] = $widget['#options']('option', $fieldinfo['option']);
+    }
+    $widget['#default_value'] = $field['options'];
+    $form['options'] = $widget;
+  }
+
+
   if ($fieldinfo['sortable']) {
     $form['sortable'] = array(
       '#type' => 'select',
@@ -1446,7 +1456,7 @@ function theme_views_edit_view($form) {
 
   // fields
   $collapsed = $allbut && $allbut != 'field';
-  $group = views_ui_render_section($form['field'], array('name', 'label', 'handler', 'sortable', 'defaultsort'), array(t('Name'), t('Label'), t('Handler'), t('Sortable'), t('Default Sort')), 'fields', $collapsed);
+  $group = views_ui_render_section($form['field'], array('name', 'label', 'handler', 'options', 'sortable', 'defaultsort'), array(t('Name'), t('Label'), t('Handler'), t('Option'), t('Sortable'), t('Default Sort')), 'fields', $collapsed);
   $group .= views_ui_render_section_add($form['field']['add'], array('id', 'button'), 'Add Field');
 
   $group .= '<p>'. t('Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order.') .'</p>';
@@ -1741,6 +1751,9 @@ function views_create_view_code($vid) {
     }
     if ($field['defaultsort']) {
       $output .= "      'defaultsort' => '$field[defaultsort]',\n";
+    }
+    if ($field['options']) {
+      $output .= "      'options' => '$field[options]',\n";
     }
     $output .= "    ),\n";
     $requires[$field['tablename']] = 1;

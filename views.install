@@ -84,6 +84,7 @@
         handler varchar(255),
         sortable int(1),
         defaultsort varchar(5),
+        options varchar(255),
         position int(2),
         KEY (vid)
       ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
@@ -192,6 +193,7 @@
         handler varchar(255),
         sortable numeric(1),
         defaultsort varchar(5),
+        options varchar(255),
         position numeric(2)
       )");
       db_query("CREATE INDEX {view_tablefield_vid_idx} ON {view_tablefield} (vid)");
@@ -304,5 +306,11 @@ function views_update_4() {
 function views_update_5() {
   $ret = array();
   db_add_column($ret, 'view_view', 'view_args_php', 'longtext');
+  return $ret;
+}
+
+function views_update_6() {
+  $ret = array();
+  db_add_column($ret, 'view_tablefield', 'options', 'varchar(255)');
   return $ret;
 }
