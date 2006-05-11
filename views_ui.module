@@ -1494,7 +1494,7 @@ function theme_views_edit_view($form) {
   
 //  $group .= views_ui_render_section_add($form['exposed_filter']['add'], array('id', 'button'), 'Expose Filter');
 
-  $group .= '<p>'. t('Exposed filters will be presented to the viewer. If not set required, then filters will include a "<None>" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user.') .'</p>';
+  $group .= '<p>'. t('Exposed filters will be presented to the viewer. If not set required, then filters will include a "&lt;None&gt;" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Exposed Filters'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
   $group = '';
