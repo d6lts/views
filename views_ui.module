@@ -37,9 +37,9 @@ function _views_ui_help_add() {
   $output .= t("<h3>View Types</h3>
     <dl>
       <dt><em>List View</em></dt><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).</dd>
-      <dt><em>Table View</em></dt><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If the you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.</dd>
+      <dt><em>Table View</em></dt><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.</dd>
       <dt><em>Teaser List</em></dt><dd>A Teaser List will simply present the teaser of each node retrieved.</dd>
-      <dt><em>Full Nodes</em></dt><dd>A Teaser List will simply present the full content of each node retrieved.</dd>
+      <dt><em>Full Nodes</em></dt><dd>This will show the full content of each node retrieved.</dd>
       <dt><em>Random Teaser</em></dt><dd>This will show a single random teaser.</dd>
       <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>
     </dl>");
