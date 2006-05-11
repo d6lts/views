@@ -346,7 +346,7 @@ function views_menu($may_cache) {
         }
         $path = implode('/', $menu_path);
 
-        _views_create_menu_item($items, $view, $path, $view_args);
+        _views_create_menu_item($items, $view, $path, $view_args, MENU_CALLBACK);
       }
     }
   }
@@ -356,7 +356,7 @@ function views_menu($may_cache) {
 /**
  * Helper function to add a menu item for a view.
  */
-function _views_create_menu_item(&$items, $view, $path, $args) {
+function _views_create_menu_item(&$items, $view, $path, $args, $local_task_type = MENU_NORMAL_ITEM) {
   static $roles = NULL;
   if ($roles == NULL) {
     global $user;
@@ -371,7 +371,7 @@ function _views_create_menu_item(&$items, $view, $path, $args) {
   $items[] = _views_menu_item($path, $title, $args, $access, $type, $weight);
 
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
-    $items[] = _views_menu_item(dirname($path), $title, $args, $access, MENU_NORMAL_ITEM, $weight);
+    $items[] = _views_menu_item(dirname($path), $title, $args, $access, $local_task_type, $weight);
   }
 }
 
