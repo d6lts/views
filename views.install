@@ -317,6 +317,6 @@ function views_update_6() {
 
 function views_update_7() {
   $ret = array();
-  $ret[] = update_sql("ALTER TABLE {view_argument} MODIFY type varchar(100)");
+  $ret[] = update_sql("ALTER TABLE {view_argument} MODIFY type varchar(255)");
   return $ret;
 }
