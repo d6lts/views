@@ -1147,7 +1147,7 @@ function views_ui_add_field(&$form, $field, &$order, $key, $i) {
     '#type' => 'textfield',
     '#default_value' => $field['label'],
     '#size' => 15,
-    '#maxlength' => 25,
+    '#maxlength' => 255,
   );
 
   if (is_array($fieldinfo['handler'])) {
@@ -1351,7 +1351,7 @@ function views_ui_add_exposed_filter(&$form, $filter, &$order, $key, $i) {
     '#type' => 'textfield',
     '#default_value' => $filter['label'],
     '#size' => 15,
-    '#maxlength' => 25,
+    '#maxlength' => 255,
   );
 
   $form['optional'] = array(

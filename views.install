@@ -68,7 +68,7 @@
 
       db_query("CREATE TABLE if not exists {view_argument} (
         vid int(10) unsigned NOT NULL default '0',
-        type varchar(25),
+        type varchar(255),
         argdefault varchar(255),
         title varchar(255),
         options varchar(255),
@@ -177,7 +177,7 @@
 
       db_query("CREATE TABLE {view_argument} (
         vid numeric(10) NOT NULL default '0',
-        type varchar(25),
+        type varchar(255),
         argdefault varchar(255),
         title varchar(255),
         options varchar(255),
@@ -312,5 +312,11 @@ function views_update_5() {
 function views_update_6() {
   $ret = array();
   db_add_column($ret, 'view_tablefield', 'options', 'varchar(255)');
+  return $ret;
+}
+
+function views_update_7() {
+  $ret = array();
+  $ret[] = update_sql("ALTER TABLE {view_argument} MODIFY type varchar(100)");
   return $ret;
 }
