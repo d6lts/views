@@ -1294,8 +1294,7 @@ function theme_views_view_table($view, $nodes) {
     $row = array();
     foreach ($view->field as $field) {
       $cell['data'] = _views_handle_field($fields, $field, $node);
-      $cell['class'] = 'view-field';
-      $cell['id'] = "view-field-$field[queryname]";
+      $cell['class'] = "view-field view-field-$field[queryname]";
       $row[] = $cell;
     }
     $rows[] = $row;
