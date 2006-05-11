@@ -691,6 +691,30 @@ function views_theme() {
 }
 
 /**
+ * Easily theme any item to a field name.
+ * field name will be in the format of TABLENAME_FIELDNAME
+ * You have to understand a bit about the views data to utilize this.
+ *
+ * @param $function
+ *   The name of the function to call.
+ * @param $field_name
+ *   The field being themed.
+ */
+function views_theme_field() {
+  $args = func_get_args();
+  $function = array_shift($args);
+  $field_name = array_shift($args);
+
+  if (!($func = theme_get_function($function . "_" . $field_name))) {
+    $func = theme_get_function($function);
+  }
+
+  if ($func) {
+    return call_user_func_array($func, $args);
+  }
+}
+
+/**
  * Figure out what timezone we're in; needed for some date manipulations.
  */
 function _views_get_timezone() {
@@ -1162,8 +1186,14 @@ function views_view_add_sort(&$view, $table, $field, $order, $option) {
  * Figure out how to display the data of a field. Many fields simply display
  * the data as-is, but many fields have to massage that data, which is
  * done through handlers.
+ * 
+ * DEPRECATED. Left in for backward compatibility.
  */
 function _views_handle_field($fields, $field, $data) {
+  return views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $data);
+}
+
+function theme_views_handle_field($fields, $field, $data) {
   $info = $fields[$field['fullname']];
 
   if ($field['handler'] && function_exists($field['handler'])) {
@@ -1176,6 +1206,8 @@ function _views_handle_field($fields, $field, $data) {
 
   return check_plain($data->$field['queryname']);
 }
+
+/**
 
 /**
  * Construct a header for a table view.
@@ -1275,7 +1307,7 @@ function theme_views_view_list($view, $nodes) {
       if ($field['label']) {
         $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
       }
-      $item .= "<div class='view-field view-data-$field[queryname]'>" . _views_handle_field($fields, $field, $node) . "</div>";
+      $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node) . "</div>";
     }
     $items[] = "<div class='view-item view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
@@ -1293,7 +1325,7 @@ function theme_views_view_table($view, $nodes) {
   foreach ($nodes as $node) {
     $row = array();
     foreach ($view->field as $field) {
-      $cell['data'] = _views_handle_field($fields, $field, $node);
+      $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node);
       $cell['class'] = "view-field view-field-$field[queryname]";
       $row[] = $cell;
     }
