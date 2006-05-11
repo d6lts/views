@@ -1774,6 +1774,22 @@ function views_create_view_code($vid) {
     $requires[$fieldbits[0]] = 1;
   }
   $output .= "  );\n";
+
+  $output .= "  \$view->exposed_filter = array (\n";
+  foreach ($view->exposed_filter as $filter) {
+    $output .= "    array (\n";
+    $fieldbits = explode('.', $filter['field']);
+    $output .= "      'tablename' => '$fieldbits[0]',\n";
+    $output .= "      'field' => '$fieldbits[1]',\n";
+    $output .= "      'label' => '$filter[label]',\n";
+    $output .= "      'optional' => $filter[optional],\n";
+    $output .= "      'is_default' => $filter[is_default],\n";
+    $output .= "      'operator' => $filter[operator],\n";
+    $output .= "      'single' => $filter[single],\n";
+    $output .= "    ),\n";
+    $requires[$fieldbits[0]] = 1;
+  }
+  $output .= "  );\n";
   $output .= "  \$view->requires = array(" . implode(', ', array_keys($requires)) . ");\n";
   $output .= "  \$views[\$view->name] = \$view;\n";
   // no breadcrumb for now.
