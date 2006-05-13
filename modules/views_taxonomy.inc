@@ -296,9 +296,9 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       $query->add_table('term_data', true);
 
       if ($len <= 0) {
-        $query->add_where("term_data.name = '$arg'");
+        $query->add_where("term_data.name = '%s'", $arg);
       } else {
-        $query->add_where("LEFT(term_data.name, $len) = '$arg'");
+        $query->add_where("LEFT(term_data.name, $len) = '%s'", $arg);
       }
       break;
     case 'link':

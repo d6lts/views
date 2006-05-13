@@ -612,16 +612,20 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   foreach ($replacements as $src => $dest) {
     $info['query'] = str_replace($src, $dest, $info['query']);
     $info['countquery'] = str_replace($src, $dest, $info['countquery']);
+    
+    foreach ($info['args'] as $id => $arg) {
+      $info['args'][$id] = str_replace($src, $dest, $arg);
+    }
   }
 
   $query = db_rewrite_sql($info['query'], 'node');
 
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
-    $result = pager_query($query, $limit, $use_pager, $cquery);
+    $result = pager_query($query, $limit, $use_pager, $cquery, $info['args']);
   }
   else {
-    $result = ($limit ? db_query_range($query, $page * $limit, $limit) : db_query($query));
+    $result = ($limit ? db_query_range($query, $info['args'], $page * $limit, $limit) : db_query($query, $info['args']));
   }
 
   if ($type == 'result') {
@@ -1695,19 +1699,25 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
       $query->ensure_table($fieldbits[0]);
       switch ($filter['operator']) {
         case 'contains':
-          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%%%s%%')", $filter['value']);
+          $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')", 
+            $filter['field'], $filter['value']);
           break;
         case 'starts':
-          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%s%%')", $filter['value']);
+          $query->add_where("UPPER(%s) LIKE UPPER('%s%%')", 
+            $filter['field'], $filter['value']);
           break;
         case 'ends':
-          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%%%s')", $filter['value']);
+          $query->add_where("UPPER(%s) LIKE UPPER('%%%s')", 
+            $filter['field'], $filter['value']);
           break;
         case 'not':
-          $query->add_where("UPPER(" . $filter['field'] . ") NOT LIKE UPPER('%%%s%%')", $filter['value']);
+          $query->add_where("UPPER(%s) NOT LIKE UPPER('%%%s%%')", 
+            $filter['field'], $filter['value']);
           break;
         case '=':
-          $query->add_where("UPPER(" . $filter['field'] . ") = '%%%s%%'", $filter[value]);
+          $query->add_where("UPPER(%s) = '%%%s%%'", 
+            $filter['field'], $filter['value']);
+          break;
       }
     break;
   }

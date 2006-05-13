@@ -101,7 +101,7 @@ function views_handler_arg_book_parent($op, & $query, $argtype, $arg = '') {
       break;
     case 'filter' :
       $query->ensure_table("book");
-      $query->add_where("book.parent = '$arg'");
+      $query->add_where("book.parent = '%s'", $arg);
       $query->add_where("book.vid = node.vid");
       break;
     case 'link' :

@@ -344,7 +344,7 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
       break;
     case 'filter':
       $where = db_escape_string($arg);
-      $query->add_where("node.type = '$where'");
+      $query->add_where("node.type = '%s'", $where);
       break;
     case 'link':
       return l(node_get_name($query->type), "$arg/$query->type");
@@ -367,9 +367,9 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
     case 'filter':
       $len = intval($argtype['options']);
       if ($len <= 0) {
-        $query->add_where("node.title = '$arg'");
+        $query->add_where("node.title = '%s'", $arg);
       } else {
-        $query->add_where("LEFT(node.title, $len) = '$arg'");
+        $query->add_where("LEFT(node.title, $len) = '%s'", $arg);
       }
       break;
     case 'link':
@@ -464,8 +464,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       $query->add_orderby(NULL, "name", $argtype);
       break;
     case 'filter':
-      $where = db_escape_string($arg);
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m') = '$where'");
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m') = '%s'", $arg);
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F, Y'), "$arg/$query->name");
@@ -487,8 +486,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       $query->add_orderby(NULL, 'name', $argtype);
       break;
     case 'filter':
-      $where = db_escape_string($arg);
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%%%d') = '$where'");
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%%%d') = '%s'", $arg);
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F j, Y'), "$arg/$query->name");
@@ -541,8 +539,8 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   }
 
   // NULL means a history record doesn't exist. That's clearly new content.
-  // Unless it's very very old content.
-
+  // Unless it's very very old content. Everything in the query is already
+  // type safe cause none of it is coming from outside here.
   $query->add_where("(history.timestamp IS NULL AND (node.changed > $limit $clause)) OR history.timestamp < node.changed $clause2");
 }
 

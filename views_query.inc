@@ -55,6 +55,7 @@ function _views_build_query(&$view, $args = array()) {
   $info['countquery'] = $query->query(true);
   $info['summary'] = $summary;
   $info['level'] = $level;
+  $info['args'] = $query->where_args;
 
   return $info;
 
@@ -114,7 +115,7 @@ function _views_view_build_filters(&$query, &$view) {
           $not = "NOT";
         }
         $query->ensure_table($table);
-        $query->add_where("$table.$field $not IN ('" . implode("','", $filter['value']) . "')");
+        $query->add_where("%s.%s $not IN ('%s')", $table, $field, implode("','", $filter['value']));
       }
       else {
         $howmany = count($filter['value']);
@@ -127,16 +128,15 @@ function _views_view_build_filters(&$query, &$view) {
         foreach ($filter['value'] as $item) {
           $table_num++;
           $tn = $query->get_table_name($table, $table_num);
-          $query->add_where("$tn.$field = '$item'");
+          $query->add_where("%s.%s = '%s'", $tn, $field, $item);
         }
       }
     }
     else {
       $query->ensure_table("$table");
-      $query->add_where("$table.$field $filter[operator] '$filter[value]'");
+      $query->add_where("%s.%s %s '%s'", $table, $field, $filter['operator'], $filter['value']);
     }
   }
-
 }
 
 /*
@@ -316,9 +316,12 @@ class _views_query {
   function add_where($clause) {
     $args = func_get_args();
     array_shift($args); // ditch $clause
-    $clause = _views_replace_args($clause, $args);
-  
+
+    if (count($args) == 1 && is_array(reset($args))) {
+      $args = current($args);
+    }
     $this->where[] = $clause;
+    $this->where_args = array_merge($this->where_args, $args);
   }
 
   /*
@@ -575,6 +578,7 @@ class _views_query {
 /*
  * Support db_query() style argument replacement in a clause.
  */
+/*
 function _views_replace_args($clause, $args) {
   // cut & pasted directly from db_query.
   if (isset($args[0]) and is_array($args[0])) { // 'All arguments in one array' syntax
@@ -582,5 +586,5 @@ function _views_replace_args($clause, $args) {
   }
   _db_query_callback($args, TRUE);
   return preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $clause);
-
 }
+*/
