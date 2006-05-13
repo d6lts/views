@@ -121,6 +121,9 @@ function taxonomy_views_tables() {
         )
       )
     );
+    $table = views_new_table('vocabulary', 'internal', 'term_data', 'vid', 'vid');
+    $tables['vocabulary'] = $table;
+
   }
   return $tables;
 }
@@ -138,6 +141,11 @@ function taxonomy_views_arguments() {
       'handler' => 'views_handler_arg_taxletter',
       'option' => 'string',
       'help' => t('The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary.'),
+    ),
+    'vocid' => array(
+      'name' => t('Taxonomy: Vocabulary ID'),
+      'handler' => 'views_handler_arg_vocid',
+      'help' => t('The argument will filter to nodes with terms in a vocabulary.'),
     ),
   );
   return $arguments;
@@ -272,6 +280,33 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       while ($term = db_fetch_object($result)) {
         $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($term->name);
       }
+      return $title;
+  }
+}
+
+function views_handler_arg_vocid($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+      $query->ensure_table('vocabulary');
+      $query->add_field('name', 'vocabulary');
+      $query->add_field('vid', 'vocabulary');
+      $fieldinfo['field'] = "vocabulary.name";
+      return $fieldinfo;
+    case 'sort':
+      $query->add_orderby('vocabulary', 'weight', $argtype);
+      $query->add_orderby('vocabulary', 'name', $argtype);
+      break;
+    case 'filter':
+      $query->ensure_table('vocabulary');
+      $query->add_where('vocabulary.vid = %d', $arg);
+      $query->set_distinct();
+      break;
+    case 'link':
+      return l($query->name, "$arg/" . intval($query->vid));
+    case 'title':
+      $result = db_query("SELECT name FROM {vocabulary} WHERE vid = %d", $query);
+      $voc = db_fetch_object($result);
+      $title = check_plain($voc->name);
       return $title;
   }
 }

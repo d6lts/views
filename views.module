@@ -737,8 +737,9 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   if ($context == 'menu' && $view->menu_title)
     return $view->menu_title;
 
-  if (($context == 'block' && $view->block_title)
+  if ($context == 'block' && $view->block_title) {
     return $view->block_title;
+  }
 
   if ($context == 'block-info') {
     return $view->description ? $view->description : $view->name;
