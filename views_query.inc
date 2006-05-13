@@ -63,7 +63,7 @@ function _views_build_query(&$view, $args = array()) {
 /*
  * Take all the filters in a view and add them to the query object.
  */
-function _views_view_build_filters(&$query, $view) {
+function _views_view_build_filters(&$query, &$view) {
   $filters = _views_get_filters();
   
   foreach ($view->filter as $i => $filter) {
@@ -74,21 +74,20 @@ function _views_view_build_filters(&$query, $view) {
       $field = $fieldbits[1];
     }
 
-    foreach($view->exposed_filter as $expose) {
+    foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
         $id = $expose['id'];
-        $edit = $_POST['edit'][$id];
 
-        if (!$expose['operator'] && $edit['operator']) {
-          $filter['operator'] = check_plain($edit['operator']);
+        if (!$expose['operator'] && $_GET["op$count"]) {
+          $filter['operator'] = check_plain($_GET["op$count"]);
         }
         if ($expose['optional']  
-          && ((!isset($edit['value']) && !$expose['is_default'])  
-          || $edit['value'] == "**ALL**")) {
+          && ((!isset($_GET["filter$count"]) && !$expose['is_default'])  
+          || $_GET["filter$count"] == "**ALL**")) {
           continue 2; // skip this filter entirely.
         }
-        if ($edit['value']) {
-          $value = $edit['value'];
+        if ($_GET["filter$count"]) {
+          $value = $_GET["filter$count"];
           if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
             $value = array($value);
           }
@@ -96,6 +95,10 @@ function _views_view_build_filters(&$query, $view) {
         }
         break;
       }
+      // remove these so they don't show up in the pager.
+      if (strstr($_REQUEST['edit']['form_id'], ) 
+      unset($_REQUEST['op']);
+      unset($_REQUEST['edit']['form_id']);
     }
 
     $table = $filterinfo['table'];

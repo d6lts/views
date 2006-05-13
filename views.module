@@ -652,11 +652,9 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
       $view->url = $url;
     }
   }
+  $view->use_pager = $use_pager;
   $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
-  if ($use_pager) {
-    $output .= theme('pager', NULL, $limit, $use_pager);
-  }
   // Call a hook that'll let modules modify the view just after it is displayed.
   foreach (module_implements('views_post_view') as $module) {
     $function = $module .'_views_post_view';
@@ -1193,6 +1191,9 @@ function _views_handle_field($fields, $field, $data) {
   return views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $data);
 }
 
+/**
+ * Themeable function to handle displaying a specific field.
+ */
 function theme_views_handle_field($fields, $field, $data) {
   $info = $fields[$field['fullname']];
 
@@ -1206,8 +1207,6 @@ function theme_views_handle_field($fields, $field, $data) {
 
   return check_plain($data->$field['queryname']);
 }
-
-/**
 
 /**
  * Construct a header for a table view.
@@ -1236,9 +1235,8 @@ function _views_construct_header($view, $fields) {
 
 function theme_views_display_filters($view) {
   $filters = _views_get_filters();
-  foreach ($view->exposed_filter as $expose) {
+  foreach ($view->exposed_filter as $count => $expose) {
     $id = $expose['id'];
-    $safe_id = strtr($id, '.', '_');
     $filterinfo = $filters[$id];
     foreach ($view->filter as $filter) {
       if ($filter['id'] == $id) {
@@ -1246,6 +1244,7 @@ function theme_views_display_filters($view) {
       }
     }
 
+    // set up the operator widget.
     if (!$expose['operator']) {
       // 'operator' is either an array or a handler
       $operator = $filterinfo['operator'];
@@ -1253,30 +1252,41 @@ function theme_views_display_filters($view) {
         $operator = $filterinfo['operator']('operator', $filterinfo);
       }
 
-      $form[$id]['operator'] = array(
+      $form["op$count"] = array(
+        '#name' => "op$count", // get rid of edit[] array.
         '#type' => 'select',
         '#default_value' => $filter['operator'],
         '#options' => $operator,
       );
+      if (array_key_exists("op$count", $_GET)) {
+        $form["op$count"]["#default_value"] = $_GET["op$count"];
+      }
     }
-    $form[$id]['#tree'] = true;
-    $form[$id]['value'] = $filterinfo['value'];
-    $form[$id]['value']['#tree'] = true;
 
-    if (!is_array($form[$id]['value']['#options']) && function_exists($form[$id]['value']['#options'])) {
-      $form[$id]['value']['#options'] = $form[$id]['value']['#options']('value', $filterinfo);
+    // set up the filter widget.
+    $item = $filterinfo['value'];
+    $item['#name'] = "filter$count";
+
+    if (!is_array($item['#options']) && function_exists($item['#options'])) {
+      $item['#options'] = $item['#options']('value', $filterinfo);
     }
     if (!$expose['optional'] || $expose['is_default']) {
-      $form[$id]['value']['#default_value'] = $filter['value'];
+      $item['#default_value'] = $filter['value'];
     }
 
     if ($expose['single']) {
-      unset($form[$id]['value']['#multiple']);
+      unset($item['#multiple']);
     }
-    if ($expose['optional'] && is_array($form[$id]['value']['#options'])) {
-      $form[$id]['value']['#options'] = array('**ALL**' => t('<All>')) + $form[$id]['value']['#options'];
+    if ($expose['optional'] && is_array($item['#options'])) {
+      $item['#options'] = array('**ALL**' => t('<All>')) + $item['#options'];
     }
+
+    if (array_key_exists("filter$count", $_GET)) {
+      $item["#default_value"] = $_GET["filter$count"];
+    }
+    $form["filter$count"] = $item;
   }
+  $form['#method'] = 'get';
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#value' => t('Submit'));
 
@@ -1285,9 +1295,8 @@ function theme_views_display_filters($view) {
 
 function theme_views_filters($form) {
   $view = $form['view']['#value'];
-  foreach ($view->exposed_filter as $expose) {
-    $id = $expose['id'];
-    $row[] = form_render($form[$id]['operator']) . form_render($form[$id]['value']);
+  foreach ($view->exposed_filter as $count => $expose) {
+    $row[] = form_render($form["op$count"]) . form_render($form["filter$count"]);
     $label[] = $expose['label'];
   }
   $row[] = form_render($form['submit']);
@@ -1424,6 +1433,11 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   else {
     $output .= views_get_textarea($view, $type, 'empty');
   }
+
+  if ($view->use_pager) {
+    $output .= theme('pager', '', $limit, $view->use_pager);
+  }
+
   if ($output) {
     $output = "<div class='view view-$view->name'>$output</div>\n";
   }
@@ -1431,10 +1445,11 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
 }
 
 /**
- * Format the 'more' link for a view.
+ * Format the 'more' link for a view. Personally I prefer [More] but I've
+ * been convinced to go with simply 'more'.
  */
 function theme_views_more($url) {
-  return "<div class='more-link'>" . l(t('[More]'), $url) . "</div>";
+  return "<div class='more-link'>" . l(t('more'), $url) . "</div>";
 }
 
 /**
@@ -1637,7 +1652,7 @@ function views_views_style_plugins() {
  * A list of options to be used in LIKE queries
  */
 function views_handler_operator_like() {
-  return array('' => t('<All>'), 'contains' => t('Contains'), 'starts' => t('Starts With'), 'ends' => t('Ends With'), 'not' => t('Does Not Contain'));
+  return array('=' => t('Is Equal To'), 'contains' => t('Contains'), 'starts' => t('Starts With'), 'ends' => t('Ends With'), 'not' => t('Does Not Contain'));
 }
 
 /**
@@ -1666,8 +1681,8 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
         case 'not':
           $query->add_where("UPPER(".$filter[field].") NOT LIKE UPPER('%%%s%%')", $filter[value]);
           break;
-        case 'all':
-          break;
+        case '=':
+          $query->add_where("UPPER(".$filter[field].") = '%%%s%%'", $filter[value]);
       }
     break;
   }
