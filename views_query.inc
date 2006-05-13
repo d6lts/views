@@ -82,10 +82,15 @@ function _views_view_build_filters(&$query, &$view) {
         if (!$expose['operator'] && $_GET["op$count"]) {
           $filter['operator'] = check_plain($_GET["op$count"]);
         }
-        if ($expose['optional']  
-          && ((!isset($_GET["filter$count"]) && !$expose['is_default'])  
-          || $_GET["filter$count"] == "**ALL**")) {
-          continue 2; // skip this filter entirely.
+
+        if ($expose['optional']) {  
+          if (!isset($_GET["filter$count"]) && !$expose['is_default']) {
+            continue 2; // skip
+          }
+          if ($_GET["filter$count"] == '**ALL**' || 
+            (is_array($_GET["filter$count"]) && in_array('**ALL**', $_GET["filter$count"]))) {
+            continue 2; // skip this filter entirely.
+          }
         }
         if ($_GET["filter$count"]) {
           $value = $_GET["filter$count"];
