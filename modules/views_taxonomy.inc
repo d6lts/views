@@ -387,8 +387,17 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
     // if they have and are filtering on it the query is going to be borken
     // anyway. If it's been added and unfiltered, and we ignore it, we get
     // bad results.
-    $num = 1;
-    $query->ensure_table('term_node');
+
+    // However, if they added multiple or filters, we do have to separate
+    // them a bit.
+    if ($query->added_taxonomy_or) {
+      $num = $query->add_table('term_node');
+    }
+    else {
+      $num = 1;
+      $query->ensure_table('term_node');
+      $query->added_taxonomy_or = TRUE;
+    }
     $tablename = $query->get_table_name('term_node', $num);
     $where = "$tablename.tid IN ($clause)";
 
