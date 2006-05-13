@@ -1531,12 +1531,30 @@ function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
   return format_date($value, 'large');
 }
 
-/*
+/**
+ * Format a date using custom representation.
+ */
+function views_handler_field_date_custom($fieldinfo, $fielddata, $value, $data) {
+  return format_date($value, 'custom', $fielddata['options']);
+}
 /**
  * Format a date as "X time ago".
  */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
   return format_interval(time() - $value);
+}
+
+/**
+ * Provide a list of all standard supproted date output handlers.
+ */
+function views_handler_field_dates() {
+return array(
+    'views_handler_field_date_small'  => t('As Short Date'),
+    'views_handler_field_date'        => t('As Medium Date'),
+    'views_handler_field_date_large'  => t('As Long Date'),
+    'views_handler_field_date_custom' => t('As Custom Date'),
+    'views_handler_field_since'       => t('As Time Ago')
+  );
 }
 
 /**
@@ -1617,6 +1635,13 @@ function views_handler_operator_eqneq() {
   return array('=' => t('Is Equal To'), '!=' => t('Is Not Equal To'));
 }
 
+ /**
+ * A list of greater / equal / less than
+ */
+function views_handler_operator_gtlt() {
+  return array('>' => t("Is Greater Than"), '>=' => t("Is Greater Than Or Equals"), '=' => t("Is Equal To"), '!=' => t("Is Not Equal To"), '<=' => t("Is Less Than Or Equals"), '<' => t("Is Less Than"));
+}
+
 /**
  * A list of yes/no.
  */
@@ -1670,19 +1695,19 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
       $query->ensure_table($fieldbits[0]);
       switch ($filter['operator']) {
         case 'contains':
-          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%%%s%%')", $filter[value]);
+          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%%%s%%')", $filter['value']);
           break;
         case 'starts':
-          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%s%%')", $filter[value]);
+          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%s%%')", $filter['value']);
           break;
         case 'ends':
-          $query->add_where("UPPER(".$filter[field].") LIKE UPPER('%%%s')", $filter[value]);
+          $query->add_where("UPPER(" . $filter['field'] . ") LIKE UPPER('%%%s')", $filter['value']);
           break;
         case 'not':
-          $query->add_where("UPPER(".$filter[field].") NOT LIKE UPPER('%%%s%%')", $filter[value]);
+          $query->add_where("UPPER(" . $filter['field'] . ") NOT LIKE UPPER('%%%s%%')", $filter['value']);
           break;
         case '=':
-          $query->add_where("UPPER(".$filter[field].") = '%%%s%%'", $filter[value]);
+          $query->add_where("UPPER(" . $filter['field'] . ") = '%%%s%%'", $filter[value]);
       }
     break;
   }
@@ -1695,4 +1720,33 @@ function views_handler_field_filesize($fieldinfo, $fielddata, $value, $data) {
   return format_size($value);
 }
 
+/**
+ * Handle a timestamp filter.
+ */
+function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
+  $value = $filter['value'] == 'now' ? "***CURRENT_TIME***" : strtotime($filter['value']);
 
+  $field = $filter['field'];
+  if ($filterinfo['from_unixtime']) {
+    $field = "from_UNIXTIME($field)";
+  }
+
+  $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
+}
+
+/**
+ * Provide a form gadget for dates.
+ */
+function views_handler_filter_date_value_form() {
+  return array(
+    '#type' => 'textfield',
+    '#attributes' => array('class' => 'jscalendar'),
+  );
+}
+/**
+ * Substitute current time; this works with cached queries.
+ */
+function views_views_query_substitutions($view) {
+  global $user;
+  return array('***CURRENT_TIME***' => time());
+}

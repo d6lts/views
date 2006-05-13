@@ -23,23 +23,15 @@ function node_views_tables() {
       'created' => array(
         'name' => t('Node: Created Time'),
         'sortable' => true,
-        'handler' => array(
-          'views_handler_field_date_small' => t('As Short Date'),
-          'views_handler_field_date'       => t('As Medium Date'),
-          'views_handler_field_date_large' => t('As Long Date'),
-          'views_handler_field_since'      => t('As Time Ago'),
-        ),
+        'handler' => views_handler_field_dates(),
+        'option' => 'string',
         'help' => t('Display the post time of the node.'),
       ),
       'changed' => array(
         'name' => t('Node: Updated Time'),
         'sortable' => true,
-        'handler' => array(
-          'views_handler_field_date_small' => t('As Short Date'),
-          'views_handler_field_date'       => t('As Medium Date'),
-          'views_handler_field_date_large' => t('As Long Date'),
-          'views_handler_field_since'      => t('As Time Ago'),
-        ),
+        'handler' => views_handler_field_dates(),
+        'option' => 'string',
         'help' => t('Display the last time the node was updated.'),
       ),
       'type' => array(
@@ -151,6 +143,22 @@ function node_views_tables() {
         'operator' => 'views_handler_operator_like',
         'handler' => 'views_handler_filter_like',
         'help' => t('This filter allows nodes to be filtered by their title.'),
+      ),
+      'created' => array(
+        'name' => t('Node: Created Time'),
+        'operator' => 'views_handler_operator_gtlt',
+        'value' => views_handler_filter_date_value_form(),
+        'handler' => 'views_handler_filter_timestamp',
+        'option' => 'string',
+        'help' => t('This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+      ),
+      'changed' => array(
+        'name' => t('Node: Updated Time'),
+        'operator' => 'views_handler_operator_gtlt',
+        'value' => views_handler_filter_date_value_form(),
+        'handler' => 'views_handler_filter_timestamp',
+        'option' => 'string',
+        'help' => t('This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
       ),
     ),
   );
