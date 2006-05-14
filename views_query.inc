@@ -327,7 +327,7 @@ class _views_query {
     }
     if (is_array($args)) {
       $this->where[] = $clause;
-      $this->where_args = array_merge($this->where_args, $args);
+      $this->where_args = array_merge((array)$this->where_args, $args);
     }
   }
 
