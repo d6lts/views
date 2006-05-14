@@ -1678,7 +1678,9 @@ function views_edit_view_submit($form_id, $form) {
  */
 function views_ui_plugin_validate_list($type, $view, $form) {
   // list (and table) modes require there to be at least 1 field active.
-  $fields = array_filter(array_keys($view['field']), 'is_numeric');
+  if (is_array($view['field'])) {
+    $fields = array_filter(array_keys($view['field']), 'is_numeric');
+  }
   if (!$fields) {
     form_error($form["$type-info"][$type . '_type'], "List and Table types require at least one field.");
   }
