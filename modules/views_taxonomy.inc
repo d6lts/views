@@ -239,7 +239,9 @@ function views_handler_field_tid($fieldinfo, $fielddata, $value, $data) {
  * Display a link to a taxonomy term
  */
 function views_handler_field_tid_link($fieldinfo, $fielddata, $value, $data) {
-  return l($value, "node/$data->tid");
+  $fieldname = $fielddata['tablename'] . '_tid';
+  $tid = $data->$fieldname;
+  return l($value, "taxonomy/term/$tid");
 }
 
 

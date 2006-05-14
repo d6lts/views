@@ -1526,7 +1526,6 @@ function views_get_summary_link_base($argtype, $url, $level, $args) {
  * Display a summary version of a view.
  */
 function theme_views_summary($view, $type, $level, $nodes, $args) {
-//  $base = views_get_summary_link_base($view->argument[$level]['type'], $view->url, $level, $args);
   foreach ($nodes as $node) {
     $items[] = views_get_summary_link($view->argument[$level]['type'], $node, $view->real_url)  . " (" . $node->num_nodes . ")";
   }
