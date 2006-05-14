@@ -1619,15 +1619,16 @@ function views_edit_view_validate($form_id, $view, $form) {
   foreach (array('field', 'argument', 'sort', 'filter') as $type) {
     $function = "_views_get_$type" . 's';
     $info = $function();
-    foreach ($view->$type as $key => $data) {
-      if (!is_numeric($key)) { 
-        continue; // some non-data data is in here.
+    if (is_array($view->$type)) {
+      foreach ($view->$type as $key => $data) {
+        if (!is_numeric($key)) { 
+          continue; // some non-data data is in here.
+        }
+        $validator = $info[$data['id']]['validate'];
+        if (function_exists($validator)) {
+          $validator($data, $view, $form);
+        }
       }
-      $validator = $info[$data['id']]['validate'];
-      if (function_exists($validator)) {
-        $validator($data, $view, $form);
-      }
-
     }
   }
 }

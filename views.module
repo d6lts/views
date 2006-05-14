@@ -616,8 +616,10 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     $info['query'] = str_replace($src, $dest, $info['query']);
     $info['countquery'] = str_replace($src, $dest, $info['countquery']);
     
-    foreach ($info['args'] as $id => $arg) {
-      $info['args'][$id] = str_replace($src, $dest, $arg);
+    if (is_array($info['args'])) {
+      foreach ($info['args'] as $id => $arg) {
+        $info['args'][$id] = str_replace($src, $dest, $arg);
+      }
     }
   }
 
