@@ -1698,10 +1698,12 @@ function views_views_style_plugins() {
     'list' => array(
       'name' => t('List View'),
       'theme' => 'views_view_list',
+      'validate' => 'views_ui_plugin_validate_list',
     ),
     'table' => array(
       'name' => t('Table View'),
       'theme' => 'views_view_table',
+      'validate' => 'views_ui_plugin_validate_table',
     ),
     'teaser' => array(
       'name' => t('Teaser List'),

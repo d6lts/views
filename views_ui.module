@@ -1566,48 +1566,70 @@ function views_ui_render_section_add(&$form, $items,  $label) {
 /**
  * Validate that a view sent via form is OK.
  */
-function views_edit_view_validate($form_id, $view) {
-//  print_r(var_export($view, true));
-  $filters = _views_get_filters();
-//  _views_check_arrays($view);
-
+function views_edit_view_validate($form_id, $view, $form) {
   $op = $_POST['op'];
-
   if ($op != t('Save')) {
     return; // only validate on saving!
   }
 
   if ($view['vid']) {
-    $changed = db_result(db_query("SELECT changed FROM {view_view} WHERE vid = $view[vid]"));
+    $changed = db_result(db_query("SELECT changed FROM {view_view} WHERE vid = %d", $view['vid']));
     if ($changed && $view['changed'] != $changed) {
       form_set_error('', t('Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!'));
       return;
     }
   }
 
-  if ($view['use_block'] && !$view['title']) {
-    form_set_error('title', t('If being used as a block, title may not be blank.'));
+  if (!$view['name']) {
+    form_error($form['basic-info']['name'], t('View name is required.'));
   }
 
-  if (!$view['name']) {
-    form_set_error('name', t('View name is required.'));
+  // view name must be alphanumeric or underscores, no other punctuation.
+  if (preg_match('/[^a-zA-Z0-9_]/', $view['name'])) {
+    form_error($form['basic-info']['name'], t('View name must be alphanumeric or underscores only.'));
   }
 
   // test uniqueness of name
   $vid = db_result(db_query("SELECT vid FROM {view_view} WHERE name='%s'", $view['name']));
   if ($vid && $vid != $view['vid']) {
-    form_set_error('name', t('View name already in use.'));
+    form_error($form['basic-info']['name'], t('View name already in use.'));
   }
-
 
   if ($view['use_block'] && $view['nodes_per_block'] < 1) {
-    form_set_error('nodes_per_block', t('If being used as a block, Nodes Per Block must be positive.'));
+    form_set_error($form['block-info']['nodes_per_block'], t('If being used as a block, Nodes Per Block must be positive.'));
   }
-/*
-  if ($view['type'] == 2 || $view['type'] == 1 && !count($view['field'])) { // "Table"
-    form_set_error('add][field', "You must select what fields to display when using type 'Table'!");
+
+  // validation based on type:
+
+  $plugins = _views_get_style_plugins();
+  if ($view['page']) {
+    $validator = $plugins[$view['page_type']]['validate'];
+    if (function_exists($validator)) {
+      $validator('page', $view, $form);
+    }
   }
-*/
+
+  if ($view['block']) {
+    $validator = $plugins[$view['block_type']]['validate'];
+    if (function_exists($validator)) {
+      $validator('block', $view, $form);
+    }
+  }
+
+  foreach (array('field', 'argument', 'sort', 'filter') as $type) {
+    $function = "_views_get_$type" . 's';
+    $info = $function();
+    foreach ($view->$type as $key => $data) {
+      if (!is_numeric($key)) { 
+        continue; // some non-data data is in here.
+      }
+      $validator = $info[$data['id']]['validate'];
+      if (function_exists($validator)) {
+        $validator($data, $view, $form);
+      }
+
+    }
+  }
 }
 
 function views_ui_reorder(&$view) {
@@ -1617,7 +1639,6 @@ function views_ui_reorder(&$view) {
     $placeholder[] = $view[$key];
   }
   $view = $placeholder;
-
 }
 
 /**
@@ -1628,6 +1649,10 @@ function views_edit_view_submit($form_id, $form) {
 
   // Transform any data that requires it here.
   $view->access = array_keys(array_filter($view->access));
+
+  // ensure for MYSQL 5 irritation reasons.
+  $view->nodes_per_page = intval($view->nodes_per_page);
+  $view->nodes_per_block = intval($view->nodes_per_block);
 
   // re-order things as they were ordered on the form.
   foreach (array('field', 'argument', 'filter', 'sort', 'exposed_filter') as $section) {
@@ -1646,6 +1671,24 @@ function views_edit_view_submit($form_id, $form) {
   return drupal_goto('admin/views');
 }
 
+/**
+ * Validate a view with a type: list.
+ */
+function views_ui_plugin_validate_list($type, $view, $form) {
+  // list (and table) modes require there to be at least 1 field active.
+  $fields = array_filter(array_keys($view['field']), 'is_numeric');
+  if (!$fields) {
+    form_error($form["$type-info"][$type . '_type'], "List and Table types require at least one field.");
+  }
+}
+
+/**
+ * Validate a view with type: table.
+ */
+function views_ui_plugin_validate_table($type, $view, $form) {
+  // pass thru to list cause for now they're the same.
+  return views_ui_plugin_validate_list($type, $view, $form);
+}
 // ---------------------------------------------------------------------------
 // View creator tool 
 
