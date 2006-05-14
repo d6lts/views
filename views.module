@@ -751,7 +751,7 @@ function views_get_url($view, $args) {
     // This odd construct prevents us from strposing once there is no
     // longer an $arg to replace.
     if ($where && $where = strpos('$arg', $url)) {
-      $url = str_replace($url, $arg, $where, 4);
+      $url = substr_replace($url, $arg, $where, 4);
     }
     else {
       $url .= "/$arg";
@@ -1416,7 +1416,7 @@ function views_set_breadcrumb($view) {
       }
       $args[] = $arg;
       if ($where && $where = strpos('$arg', $url)) {
-        $url = str_replace($url, $arg, $where, 4);
+        $url = substr_replace($url, $arg, $where, 4);
       }
       else {
         $url .= "/$arg";
