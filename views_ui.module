@@ -1653,6 +1653,7 @@ function views_edit_view_submit($form_id, $form) {
   // ensure for MYSQL 5 irritation reasons.
   $view->nodes_per_page = intval($view->nodes_per_page);
   $view->nodes_per_block = intval($view->nodes_per_block);
+  $view->menu_tab_weight = intval($view->menu_tab_weight);
 
   // re-order things as they were ordered on the form.
   foreach (array('field', 'argument', 'filter', 'sort', 'exposed_filter') as $section) {
