@@ -257,6 +257,7 @@ class _views_query {
     $this->orderby = array();
     $this->groupby = array();
     $this->tables = array();
+    $this->where_args = array();
     // Joins care about order, so we put our tables in a queue to make sure
     // the order is correct.
     $this->tablequeue = array();
@@ -327,7 +328,7 @@ class _views_query {
     }
     if (is_array($args)) {
       $this->where[] = $clause;
-      $this->where_args = array_merge((array)$this->where_args, $args);
+      $this->where_args = array_merge($this->where_args, $args);
     }
   }
 
