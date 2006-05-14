@@ -325,8 +325,10 @@ class _views_query {
     if (count($args) == 1 && is_array(reset($args))) {
       $args = current($args);
     }
-    $this->where[] = $clause;
-    $this->where_args = array_merge($this->where_args, $args);
+    if (is_array($args)) {
+      $this->where[] = $clause;
+      $this->where_args = array_merge($this->where_args, $args);
+    }
   }
 
   /*
