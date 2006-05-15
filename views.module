@@ -628,7 +628,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
-    $result = pager_query($query, $limit, $use_pager, $cquery, $info['args']);
+    $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
   }
   else {
     $result = ($limit ? db_query_range($query, $info['args'], $page * $limit, $limit) : db_query($query, $info['args']));
@@ -658,6 +658,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   $view->real_url = views_get_url($view, $args);
 
   $view->use_pager = $use_pager;
+  $view->pager_limit = $limit;
   $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
   // Call a hook that'll let modules modify the view just after it is displayed.
@@ -1475,7 +1476,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   }
 
   if ($view->use_pager) {
-    $output .= theme('pager', '', $limit, $view->use_pager - 1);
+    $output .= theme('pager', '', $view->pager_limit, $view->use_pager - 1);
   }
 
   if ($output) {
