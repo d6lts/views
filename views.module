@@ -568,7 +568,8 @@ function views_view_block($vid) {
  * @param $use_pager
  *   If set, use a pager. Set this to the pager id you want it
  *   to use if you plan on using multiple pagers on a page. To go with the
- *   default setting, set to $view->use_pager.
+ *   default setting, set to $view->use_pager. Note that the pager element
+ *   id will be decremented in order to have the IDs start at 0.
  * @param $limit
  *   Required if $use_pager is set; if $limit is set and $use_pager is
  *   not, this will be the maximum number of records returned. This is ignored
@@ -1469,7 +1470,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   }
 
   if ($view->use_pager) {
-    $output .= theme('pager', '', $limit, $view->use_pager);
+    $output .= theme('pager', '', $limit, $view->use_pager - 1);
   }
 
   if ($output) {
