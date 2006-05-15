@@ -101,11 +101,6 @@ function _views_view_build_filters(&$query, &$view) {
         }
         break;
       }
-      // remove these so they don't show up in the pager.
-      if (strpos($_REQUEST['edit']['form_id'], 'views_filters')) {
-        unset($_REQUEST['op']);
-        unset($_REQUEST['edit']['form_id']);
-      }
     }
 
     $table = $filterinfo['table'];

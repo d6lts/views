@@ -1316,12 +1316,17 @@ function theme_views_display_filters($view) {
     $form["filter$count"] = $item;
   }
   $form['#method'] = 'get';
+  $form['#process'] = array('views_filters_process' => array());
   $form['view'] = array('#type' => 'value', '#value' => $view);
-  $form['submit'] = array('#type' => 'button', '#value' => t('Submit'));
+  $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
 
   return drupal_get_form("views_filters_$view->name", $form, 'views_filters');
 }
 
+function views_filters_process($form) {
+  unset($form['form_id']);
+  return $form;
+}
 function theme_views_filters($form) {
   $view = $form['view']['#value'];
   foreach ($view->exposed_filter as $count => $expose) {
