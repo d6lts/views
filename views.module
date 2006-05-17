@@ -593,11 +593,12 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
     ob_end_clean();
   }
 
+  $plugins = _views_get_style_plugins();
   if ($view->query) {
     $info['query'] = $view->query;
     $info['countquery'] = $view->countquery;
 
-    if ($viewtype == 'table') {
+    if ($plugins[$viewtype]['needs_table_header']) {
       $view->table_header = _views_construct_header($view, $fields);
     }
   }
@@ -1698,11 +1699,14 @@ function views_views_style_plugins() {
       'name' => t('List View'),
       'theme' => 'views_view_list',
       'validate' => 'views_ui_plugin_validate_list',
+      'needs_fields' => true,
     ),
     'table' => array(
       'name' => t('Table View'),
       'theme' => 'views_view_table',
       'validate' => 'views_ui_plugin_validate_table',
+      'needs_fields' => true,
+      'needs_table_header' => true,
     ),
     'teaser' => array(
       'name' => t('Teaser List'),

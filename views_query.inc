@@ -45,8 +45,9 @@ function _views_build_query(&$view, $args = array()) {
 
   if (!$summary || $sort) {
     _views_view_build_sorts($query, $view);
-    if (($view->page && ($view->page_type == 'list' || $view->page_type == 'table')) || 
-      ($view->block && ($view->block_type == 'list' || $view->block_type == 'table'))) {
+    $plugins = _views_get_style_plugins();
+    if (($view->page && ($plugins[$view->page_type]['needs_fields'])) || 
+      ($view->block && ($plugins[$view->block_type]['needs_fields']))) {
       _views_view_build_fields($query, $view);
     }
   }
@@ -208,7 +209,8 @@ function _views_view_build_fields(&$query, &$view) {
         $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
     }
   }
-  if (($view->page && $view->page_type == 'table') || ($view->block && $view->block_type == 'table')) { // table only
+  $plugins = _views_get_style_plugins();
+  if ($view->page && $plugins[$view->page_type]['needs_table_header']) { // table only
     $view->table_header = _views_construct_header($view, $fields);
     $query->set_header($view->table_header);
   }
