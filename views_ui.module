@@ -226,17 +226,17 @@ function views_ui_admin_page() {
     }
     else if (isset($views_status[$view->name])) {
       if ($views_status[$view->name] == 'enabled') {
-        $status = 'Enabled';
+        $status = t('Enabled');
       }
       else {
-        $status = 'Disabled';
+        $status = t('Disabled');
       }
     }
     else if ($view->disabled) {
-      $status = 'Disabled';
+      $status = t('Disabled');
     }
     else {
-      $status = 'Enabled';
+      $status = t('Enabled');
     }
 
     $provides = array();

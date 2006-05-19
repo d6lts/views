@@ -1349,10 +1349,12 @@ function theme_views_view_list($view, $nodes) {
   foreach ($nodes as $node) {
     $item = '';
     foreach ($view->field as $field) {
-      if ($field['label']) {
-        $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
+      if ($fields[$field['id']]['visible'] !== FALSE) {
+        if ($field['label']) {
+          $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
+        }
+        $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node) . "</div>";
       }
-      $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node) . "</div>";
     }
     $items[] = "<div class='view-item view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
@@ -1370,9 +1372,11 @@ function theme_views_view_table($view, $nodes) {
   foreach ($nodes as $node) {
     $row = array();
     foreach ($view->field as $field) {
-      $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node);
-      $cell['class'] = "view-field view-field-$field[queryname]";
-      $row[] = $cell;
+      if ($fields[$field['id']]['visible'] !== FALSE) {
+        $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node);
+        $cell['class'] = "view-field view-field-$field[queryname]";
+        $row[] = $cell;
+      }
     }
     $rows[] = $row;
   }
