@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Drupal 4.7 - Views module - Greek\n"
 "POT-Creation-Date: 2006-05-17 06:02+0100\n"
-"PO-Revision-Date: 2006-05-19 03:35+0200\n"
+"PO-Revision-Date: 2006-05-19 17:06+0200\n"
 "Last-Translator: Cog <cog@cogville.com>\n"
 "Language-Team: Project Cogville <cog@cogville.com>\n"
 "MIME-Version: 1.0\n"
@@ -640,12 +640,12 @@ msgstr "Αν το επιλέξετε, το ερώτημα μπορεί να εί
 #: views_form.inc:301
 #: views_ui.module:747
 msgid "Breadcrumb trail should not include \"Home\""
-msgstr "Το ίχνος πλοήγησης να μην περιέχει τη \"Βάση\""
+msgstr "Το ίχνος πλοήγησης να μην περιέχει την \"Αρχή\""
 
 #: views_form.inc:304
 #: views_ui.module:750
 msgid "If checked the breadcrumb trail for this page will discard \"Home\". Usually you will not set this, but this is used for the Front Page View, where it IS Home and should not leave a trail to itself."
-msgstr "Αν το επιλέξετε, το ίχνος πλοήγησης (breadcrumb) αυτής της σελίδας θα αφαιρεί τη \"Βάση\". Συνήθως δεν θα το επιλέγετε, αλλά χρησιμοποιείται στην προβολή της πρώτης σελίδας, η οποία ΕΙΝΑΙ η Βάση και δεν πρέπει να έχει ένα ίχνος που οδηγεί στον εαυτό της."
+msgstr "Αν το επιλέξετε, το ίχνος πλοήγησης (breadcrumb) αυτής της σελίδας θα αφαιρεί την \"Αρχή\". Συνήθως δεν θα το επιλέγετε, αλλά χρησιμοποιείται στην προβολή της πρώτης σελίδας, η οποία ΕΙΝΑΙ η Αρχή και δεν πρέπει να έχει ένα ίχνος που οδηγεί στον εαυτό της."
 
 #: views_form.inc:308
 #: views_ui.module:754
