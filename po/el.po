@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Drupal 4.7 - Views module - Greek\n"
 "POT-Creation-Date: 2006-05-17 06:02+0100\n"
-"PO-Revision-Date: 2006-05-19 17:06+0200\n"
+"PO-Revision-Date: 2006-05-20 17:17+0200\n"
 "Last-Translator: Cog <cog@cogville.com>\n"
 "Language-Team: Project Cogville <cog@cogville.com>\n"
 "MIME-Version: 1.0\n"
@@ -1051,7 +1051,7 @@ msgstr "Η προβολή της ταξονομίας με βάθος 0."
 
 #: modules/views_taxonomy.inc:262;266
 msgid "Uncategorized"
-msgstr "Αταξινόμητο"
+msgstr "Χωρίς κατηγορία"
 
 #: modules/views_user.inc:31
 msgid "User: Author Picture"
