@@ -858,7 +858,15 @@ function _views_delete_view($view) {
 }
 
 /**
+ * Load a view from the database -- public version of the function.
+ */
+function views_load_view($arg) {
+  return _views_load_view($arg);
+}
+
+/**
  * Load a view from the database.
+ * (deprecated; use views_load_view in favor of this function).
  */
 function _views_load_view($arg) {
   static $cache = array();
@@ -1250,7 +1258,12 @@ function _views_construct_header($view, $fields) {
     $header['data'] = ($field['label'] ? $field['label'] : $info['name']);
 
     if ($field['sortable']) {
-      $header['field'] = $field['fullname'];
+      if (function_exists($info['sort_handler']))  {
+        $header['field'] = $info['sort_handler']($field, $info);
+      }
+      else {
+        $header['field'] = $field['fullname'];
+      }
     }
     if ($field['defaultsort']) {
       $header['sort'] = strtolower($field['defaultsort']);
@@ -1294,6 +1307,7 @@ function theme_views_display_filters($view) {
       }
     }
 
+
     // set up the filter widget.
     $item = $filterinfo['value'];
     $item['#name'] = "filter$count";
@@ -1321,6 +1335,15 @@ function theme_views_display_filters($view) {
   $form['#process'] = array('views_filters_process' => array());
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
+    // clean URL get forms breaks if we don't give it a 'q'.
+    if (!(bool)variable_get('clean_url', '0')) {
+      $form['q'] = array(
+        '#type' => 'hidden',
+        '#value' => $_GET['q'],
+        '#name' => 'q',
+      );
+    }
+
 
   return drupal_get_form("views_filters_$view->name", $form, 'views_filters');
 }
@@ -1331,13 +1354,16 @@ function views_filters_process($form) {
 }
 function theme_views_filters($form) {
   $view = $form['view']['#value'];
+  
   foreach ($view->exposed_filter as $count => $expose) {
     $row[] = form_render($form["op$count"]) . form_render($form["filter$count"]);
     $label[] = $expose['label'];
   }
   $row[] = form_render($form['submit']);
   $label[] = ''; // so the column count is the same.
-  return theme('table', $label, array($row)) . form_render($form);
+
+  // make the 'q' come first
+  return form_render($form['q']) . theme('table', $label, array($row)) . form_render($form);
 }
 
 /**
