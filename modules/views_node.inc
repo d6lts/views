@@ -349,7 +349,8 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l(node_get_name($query->type), "$arg/$query->type");
     case 'title':
-      return $query;
+      $title = node_get_name($query);
+      return $title ? $title : check_plain($query);
   }
 }
 
