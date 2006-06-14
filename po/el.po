@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Drupal 4.7 - Views module - Greek\n"
 "POT-Creation-Date: 2006-05-17 06:02+0100\n"
-"PO-Revision-Date: 2006-06-02 02:08+0200\n"
+"PO-Revision-Date: 2006-06-14 04:44+0200\n"
 "Last-Translator: Cog <cog@cogville.com>\n"
 "Language-Team: Project Cogville <cog@cogville.com>\n"
 "MIME-Version: 1.0\n"
@@ -360,7 +360,7 @@ msgstr "Σας επιτρέπει την ταξινόμηση κατά ημερ�
 #: ;426 modules/views_taxonomy.inc:43
 #: ;53
 msgid "Taxonomy: Terms for %voc-name"
-msgstr "Ταξονομία: Όροι για λεξιλόγιο %voc-name"
+msgstr "Ταξονομία: Όροι λεξιλογίου %voc-name"
 
 #: views_data.inc:418
 #: modules/views_taxonomy.inc:45
@@ -370,7 +370,7 @@ msgstr "Εμφανίζει όλους τους όρους της ταξονομ�
 #: views_data.inc:433
 #: modules/views_taxonomy.inc:60
 msgid "Only terms associated with %voc-name will appear in the select box for this filter. When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information."
-msgstr "Μόνο οι όροι του λεξιλογίου %voc-name θα εμφανιστούν στο πλαίσιο επιλογής αυτού του φίλτρου. Όταν κάνετε διαλογή κατά όρο ταξονομίας, μπορείτε να καθορίσετε το 'βάθος'. Για περισσότερες επεξηγήσεις κοιτάξτε στις οδηγίες της ταξονομίας."
+msgstr "Μόνο οι όροι του λεξιλογίου %voc-name θα εμφανίζονται στο πλαίσιο επιλογής αυτού του φίλτρου. Όταν κάνετε διαλογή κατά όρο της ταξονομίας, μπορείτε να καθορίσετε το 'βάθος'. Για περισσότερες επεξηγήσεις κοιτάξτε στις οδηγίες της ταξονομίας."
 
 #: views_data.inc:472
 #: modules/views_taxonomy.inc:99
@@ -676,12 +676,12 @@ msgstr "Αν είναι καρτέλα μενού, επιλέξτε το βάρ�
 #: views_form.inc:356
 #: views_ui.module:851
 msgid "Menu Title"
-msgstr "Τίτλος στο μενού"
+msgstr "Τίτλος του μενού"
 
 #: views_form.inc:360
 #: views_ui.module:855
 msgid "Enter the title to use for the menu entry or tab. If blank, the page title will be used."
-msgstr "Ορίστε τον τίτλο που θα χρησιμοποιηθεί για την καταχώριση στο μενού ή την καρτέλα. Αν μείνει κενό, θα χρησιμοποιηθεί ο τίτλος της σελίδας."
+msgstr "Ορίστε τον τίτλο που θα χρησιμοποιηθεί για την καταχώριση του μενού ή για την καρτέλα. Αν μείνει κενό, θα χρησιμοποιηθεί ο τίτλος της σελίδας."
 
 #: views_form.inc:366
 #: ;437 views_ui.module:766
@@ -714,7 +714,7 @@ msgstr "Αν το επιλέξετε, η άποψη αυτή θα είναι δ�
 #: views_form.inc:406
 #: views_ui.module:889
 msgid "The title that will be shown at the top of the block. May be blank."
-msgstr "Ο τίτλος που θα εμφανίζεται στην κορυφή του μπλοκ. Μπορεί να είναι κενό."
+msgstr "Ο τίτλος που θα εμφανίζεται στην κορυφή του μπλοκ. Μπορεί να είναι κενός."
 
 #: views_form.inc:411
 #: views_ui.module:894
@@ -739,12 +739,12 @@ msgstr "Αν χρησιμοποιείτε μια άποψη και σε σελί
 #: views_form.inc:429
 #: views_ui.module:918
 msgid "Use Page Header"
-msgstr "Να χρησιμοποιηθεί η κεφαλίδα σελίδας"
+msgstr "Να χρησιμοποιείται η κεφαλίδα της σελίδας"
 
 #: views_form.inc:432
 #: views_ui.module:921
 msgid "If checked, use the Page Header for block view instead. If so, you should leave the Block Header blank."
-msgstr "Αν το επιλέξετε, θα χρησιμοποιείται η κεφαλίδα της σελίδας για την άποψη σε μπλοκ. Στην περίπτωση αυτή, θα πρέπει να αφήσετε κενή την κεφαλίδα του μπλοκ."
+msgstr "Αν το επιλέξετε, θα χρησιμοποιείται η κεφαλίδα της σελίδας για την άποψη του μπλοκ. Στην περίπτωση αυτή, θα πρέπει να αφήσετε κενή την κεφαλίδα του μπλοκ."
 
 #: views_form.inc:453
 #: ;850 views_ui.module:396
@@ -1367,11 +1367,11 @@ msgstr "Κείμενο που θα εφανίζεται αν το αποτέλε
 
 #: views_ui.module:943
 msgid "Use Page Footer"
-msgstr "Να χρησιμοποιηθεί το υποσέλιδο σελίδας"
+msgstr "Να χρησιμοποιείται το υποσέλιδο της σελίδας"
 
 #: views_ui.module:946
 msgid "If checked, use the page footer for block view instead. If so, you should leave the block footer blank."
-msgstr "Αν το επιλέξετε, θα χρησιμοποιείται για την άποψη μπλοκ το υποσέλιδο σελίδας. Στην περίπτωση αυτή, θα πρέπει να αφήσετε κενό το υποσέλιδο μπλοκ."
+msgstr "Αν το επιλέξετε, θα χρησιμοποιείται για την άποψη του μπλοκ το υποσέλιδο της άποψης σελίδας. Στην περίπτωση αυτή, θα πρέπει να αφήσετε κενό το υποσέλιδο του μπλοκ."
 
 #: views_ui.module:964
 #: ;976
@@ -1380,11 +1380,11 @@ msgstr "Κείμενο κενής άποψης"
 
 #: views_ui.module:968
 msgid "Use Page empty"
-msgstr "Να χρησιμοποιηθεί το κείμενο κενής σελίδας"
+msgstr "Να χρησιμοποιείται το κείμενο της κενής σελίδας"
 
 #: views_ui.module:971
 msgid "If checked, use the Page Empty Text for block view instead. If so, you should leave the block empty text blank."
-msgstr "Αν το επιλέξετε, χρησιμοποιείται για την άποψη μπλοκ το κείμενο κενής σελίδας. Στην περίπτωση αυτή θα πρέπει να αφήσετε κενό το κείμενο κενού μπλοκ."
+msgstr "Αν το επιλέξετε, χρησιμοποιείται για την άποψη του μπλοκ το κείμενο της κενής σελίδας. Στην περίπτωση αυτή θα πρέπει να αφήσετε κενό το κείμενο του κενού μπλοκ."
 
 #: views_ui.module:980
 msgid "Text to display if a view results in no nodes. Optional."
@@ -1460,7 +1460,7 @@ msgstr "Ταξινόμηση κόμβων σύμφωνα με τις πρόσφ�
 #: modules/views_statistics.inc:70
 #: ;87
 msgid "recent popular content"
-msgstr "δημοφιλής ύλη πρόσφατα"
+msgstr "πρόσφατα δημοφιλή"
 
 #: modules/views_statistics.inc:159
 msgid "Nodes sorted by total page-views"
@@ -1469,7 +1469,7 @@ msgstr "Ταξινόμηση κόμβων σύμφωνα με τις συνολ�
 #: modules/views_statistics.inc:164
 #: ;181
 msgid "all-time popular content"
-msgstr "δημοφιλής ύλη διαχρονικά"
+msgstr "πάντα δημοφιλή"
 
 #: modules/views_statistics.inc:208
 msgid "type"
