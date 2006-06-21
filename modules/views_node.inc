@@ -487,7 +487,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       $query->add_orderby(NULL, 'name', $argtype);
       break;
     case 'filter':
-      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%%%d') = '%s'", $arg);
+      $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%d') = '%s'", $arg);
       break;
     case 'link':
       return l(format_date($query->created, 'custom', 'F j, Y'), "$arg/$query->name");
