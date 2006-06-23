@@ -1278,6 +1278,11 @@ function _views_construct_header($view, $fields) {
 }
 
 function theme_views_display_filters($view) {
+  $form = views_filters_form($view);
+  return drupal_get_form("views_filters_$view->name", $form, 'views_filters');
+}
+
+function views_filters_form($view) {
   $filters = _views_get_filters();
   foreach ($view->exposed_filter as $count => $expose) {
     $id = $expose['id'];
@@ -1345,7 +1350,7 @@ function theme_views_display_filters($view) {
     }
 
 
-  return drupal_get_form("views_filters_$view->name", $form, 'views_filters');
+  return $form;
 }
 
 function views_filters_process($form) {
