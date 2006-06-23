@@ -52,6 +52,11 @@ function _views_build_query(&$view, $args = array()) {
     }
   }
 
+  foreach (module_implements('views_query_alter') as $module) {
+    $function = $module .'_views_query_alter';
+    $results = $function($query, $view, $summary, $level);
+  }
+
   $info['query'] = $query->query();
   $info['countquery'] = $query->query(true);
   $info['summary'] = $summary;
@@ -106,6 +111,9 @@ function _views_view_build_filters(&$query, &$view) {
 
     $table = $filterinfo['table'];
 
+    $replace = array('&gt;' => '>', '&lt;' => '<');
+    $filter['operator'] = strtr($filter['operator'], $replace);
+    
     if (function_exists($filterinfo['handler'])) {
       $filterinfo['handler']('handler', $filter, $filterinfo, $query);
     }
