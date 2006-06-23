@@ -27,3 +27,15 @@ As of 3/16/2006, the user documentation is UP TO DATE. The API documentation
 is somewhat out of date, and the theming documentation is very out of date.
 I hope to correct this in the very near future.
 
+-------------- IMPORTANT --------------------------------------------------
+-------------- IMPORTANT --------------------------------------------------
+
+If you update Views or any module that uses Views, you MUST MUST MUST
+go and resubmit the admin/modules page. Views caches information provided
+by modules, and this information MUST be re-cached whenever an update
+is performed. 
+
+DRUPAL CANNOT TELL AUTOMATICALLY IF YOU HAVE UPDATED CODE. Therefore you
+must go and submit this page.
+
+Hopefully in 4.8 this won't be an issue.

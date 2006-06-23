@@ -263,7 +263,7 @@ class _views_query {
     if ($views_get_title_field) {
       $this->fields = array("$views_get_title_table.$views_get_title_field");
     }
-    $this->count_field = "*";
+    $this->count_field = "$views_get_title_table.$views_get_title_field";
     $this->header = array();
   }
 
