@@ -207,8 +207,8 @@ function taxonomy_views_default_views() {
 /**
  * invalidate the views cache when taxonomy vocabulary changes.
  */
-function views_hook_taxonomy($op, $type, $object) {
-  if ($op == 'vocabulary' && $type == 'delete' || $type == 'insert' || $type == 'update') {
+function views_taxonomy($op, $type, $object = NULL) {
+  if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
     views_invalidate_cache();
   }
 }
