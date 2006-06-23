@@ -266,7 +266,7 @@ function theme_views_view_popular_recent($view, $type, $nodes) {
       }
       $items[] = $item;
     }
-    
+
     $output = theme('item_list', $items);
     return "<div class='view' id='view-$view->name'>$output</div>\n";
   }
@@ -290,7 +290,7 @@ function theme_views_view_popular_alltime($view, $type, $nodes) {
       }
       $items[] = $item;
     }
-    
+
     $output = theme('item_list', $items);
     return "<div class='view' id='view-$view->name'>$output</div>\n";
   }

@@ -93,51 +93,51 @@ function views_ui_menu($may_cache) {
   $items = array();
 
   if ($may_cache) {
-    $items[] = array('path' => 'admin/views', 
+    $items[] = array('path' => 'admin/views',
       'title' => t('views'),
       'callback' => 'views_ui_admin_page',
       'access' => user_access('administer views'),
       'type' => MENU_NORMAL_ITEM);
-    $items[] = array('path' => 'admin/views/list', 
+    $items[] = array('path' => 'admin/views/list',
       'title' => t('list'),
       'callback' => 'views_ui_admin_page',
       'access' => user_access('administer views'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => '-1');
-    $items[] = array('path' => 'admin/views/add', 
+    $items[] = array('path' => 'admin/views/add',
       'title' => t('add'),
       'callback' => 'views_ui_admin_add_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
-    $items[] = array('path' => 'admin/views/edit', 
+    $items[] = array('path' => 'admin/views/edit',
       'title' => t('edit view'),
       'callback' => 'views_ui_admin_edit_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/views/import', 
+    $items[] = array('path' => 'admin/views/import',
       'title' => t('import'),
       'callback' => 'views_ui_admin_import_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
-    $items[] = array('path' => 'admin/views/export', 
+    $items[] = array('path' => 'admin/views/export',
       'title' => t('export view'),
       'callback' => 'views_ui_admin_export_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/views/delete', 
+    $items[] = array('path' => 'admin/views/delete',
       'title' => t('edit view'),
       'callback' => 'views_ui_admin_delete_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/views/enable', 
+    $items[] = array('path' => 'admin/views/enable',
       'callback' => 'views_ui_admin_enable_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/views/disable', 
+    $items[] = array('path' => 'admin/views/disable',
       'callback' => 'views_ui_admin_disable_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-  
+
   }
   return $items;
 }
@@ -314,7 +314,7 @@ function views_ui_admin_import_page() {
     '#rows' => 6,
     '#description' => t('Cut and paste the results of an Export View here.'),
   );
-  
+
   $form['submit'] = array(
     '#type' => 'submit',
     '#value' => t("Submit"),
@@ -417,10 +417,10 @@ function views_ui_admin_delete_page($vid = '') {
 
   $form['vid'] = array('#type' => 'value', '#value' => $view->vid);
   return confirm_form('views_delete_confirm', $form,
-    t('Are you sure you want to delete %title?', array('%title' => $view->name)), 
-    $_GET['destination'] ? $_GET['destination'] : 'admin/views', 
+    t('Are you sure you want to delete %title?', array('%title' => $view->name)),
+    $_GET['destination'] ? $_GET['destination'] : 'admin/views',
     t('This action cannot be undone.'),
-    t('Delete'), t('Cancel')  
+    t('Delete'), t('Cancel')
   );
 }
 
@@ -445,7 +445,7 @@ function _views_get_default_view($template = '') {
       $view = $default_views[$template];
     }
   }
-  if (!$view) {  
+  if (!$view) {
     $view = new stdClass();
     $view->use_pager = true;
     $view->nodes_per_page = variable_get('default_nodes_main', 10);
@@ -1468,9 +1468,9 @@ function theme_views_edit_view($form) {
   // arguments
   $collapsed = $allbut && $allbut != 'argument';
   $group = views_ui_render_section($form['argument'], array('name', 'argdefault', 'title', 'options'), array(t('Argument Type'), t('Default'), t('Title'), t('Option')), 'arguments', $collapsed);
-  
+
   $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), 'Add Argument');
-  
+
   $group .= form_render($form['view_args_php_fieldset']);
 
   $group .= '<p>'. t('Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility.') .'</p>';
@@ -1480,7 +1480,7 @@ function theme_views_edit_view($form) {
   // filter
   $collapsed = $allbut && $allbut != 'filter';
   $group = views_ui_render_section($form['filter'], array('name', 'operator', 'value', 'options', 'expose'), array(t('Field'), t('Operator'), t('Value'), t('Option'), ''), 'filters', $collapsed);
-  
+
   $group .= views_ui_render_section_add($form['filter']['add'], array('id', 'button'), 'Add Filter');
 
   $group .= '<p>'. t('Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together.') .'</p>';
@@ -1491,8 +1491,8 @@ function theme_views_edit_view($form) {
   // exposed exposed_filter
   $collapsed = $allbut && $allbut != 'exposed_filter';
   $group = views_ui_render_section($form['exposed_filter'], array('name', 'label', 'optional', 'is_default', 'single', 'operator'), array(t('Field'), t('Label'), t('Optional'), t('Filter settings Default'), t('Force Single'), t('Lock Operator')), 'exposed_filters', $collapsed);
-  
-  
+
+
 //  $group .= views_ui_render_section_add($form['exposed_filter']['add'], array('id', 'button'), 'Expose Filter');
 
   $group .= '<p>'. t('Exposed filters will be presented to the viewer. If not set required, then filters will include a "&lt;None&gt;" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user.') .'</p>';
@@ -1503,7 +1503,7 @@ function theme_views_edit_view($form) {
   // sort
   $collapsed = $allbut && $allbut != 'sort';
   $group = views_ui_render_section($form['sort'], array('name', 'sortorder', 'options'), array(t('Field'), t('Order'), t('Option')), 'sort criteria', $collapsed);
-  
+
   $group .= views_ui_render_section_add($form['sort']['add'], array('id', 'button'), 'Add criteria');
   $output .= theme('fieldset', array('#title' => t('Sort Criteria'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
@@ -1521,14 +1521,14 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
   $num_items = count($items);
 
   $order = ($form['order']['#value'] != ''
-    ? explode(',', $form['order']['#value']) 
+    ? explode(',', $form['order']['#value'])
     : array());
 
   $count = count($order) - 1;
   foreach ($order as $key => $i) {
     $row = array();
     foreach ($items as $item) {
-      if (($key == 0 && ($item == 'up' || $item == 'top')) || 
+      if (($key == 0 && ($item == 'up' || $item == 'top')) ||
           ($key == $count && ($item == 'down' || $item == 'bottom'))) {
         $form[$i][$item]['#printed'] = true;
         $row[] = '&nbsp;'; // array('data' => '&nbsp;', 'width' => 16);
@@ -1622,7 +1622,7 @@ function views_edit_view_validate($form_id, $view, $form) {
     $info = $function();
     if (is_array($view->$type)) {
       foreach ($view->$type as $key => $data) {
-        if (!is_numeric($key)) { 
+        if (!is_numeric($key)) {
           continue; // some non-data data is in here.
         }
         $validator = $info[$data['id']]['validate'];
@@ -1695,7 +1695,7 @@ function views_ui_plugin_validate_table($type, $view, $form) {
   return views_ui_plugin_validate_list($type, $view, $form);
 }
 // ---------------------------------------------------------------------------
-// View creator tool 
+// View creator tool
 
 /*
  * Get a true/false.

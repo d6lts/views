@@ -617,7 +617,7 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
   foreach ($replacements as $src => $dest) {
     $info['query'] = str_replace($src, $dest, $info['query']);
     $info['countquery'] = str_replace($src, $dest, $info['countquery']);
-    
+
     if (is_array($info['args'])) {
       foreach ($info['args'] as $id => $arg) {
         $info['args'][$id] = str_replace($src, $dest, $arg);
@@ -1104,7 +1104,7 @@ function views_create_view($name, $description, $access = array()) {
   $view->name = $name;
   $view->description = $description;
   $view->access = $access;
-  
+
   // ensure some things are numerically 0.
   $view->nodes_per_page = 0;
   $view->nodes_per_block = 0;
@@ -1223,7 +1223,7 @@ function views_view_add_sort(&$view, $table, $field, $order, $option) {
  * Figure out how to display the data of a field. Many fields simply display
  * the data as-is, but many fields have to massage that data, which is
  * done through handlers.
- * 
+ *
  * DEPRECATED. Left in for backward compatibility.
  */
 function _views_handle_field($fields, $field, $data) {
@@ -1359,7 +1359,7 @@ function views_filters_process($form) {
 }
 function theme_views_filters($form) {
   $view = $form['view']['#value'];
-  
+
   foreach ($view->exposed_filter as $count => $expose) {
     $row[] = form_render($form["op$count"]) . form_render($form["filter$count"]);
     $label[] = $expose['label'];
@@ -1418,7 +1418,7 @@ function theme_views_view_table($view, $nodes) {
  * Display the nodes of a view as teasers.
  */
 function theme_views_view_teasers($view, $nodes) {
-  return views_theme('views_view_nodes', $view, $nodes, true); 
+  return views_theme('views_view_nodes', $view, $nodes, true);
 }
 
 /**
@@ -1775,23 +1775,23 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
       $query->ensure_table($filterinfo['table']);
       switch ($filter['operator']) {
         case 'contains':
-          $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')", 
+          $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')",
             $filter['field'], $filter['value']);
           break;
         case 'starts':
-          $query->add_where("UPPER(%s) LIKE UPPER('%s%%')", 
+          $query->add_where("UPPER(%s) LIKE UPPER('%s%%')",
             $filter['field'], $filter['value']);
           break;
         case 'ends':
-          $query->add_where("UPPER(%s) LIKE UPPER('%%%s')", 
+          $query->add_where("UPPER(%s) LIKE UPPER('%%%s')",
             $filter['field'], $filter['value']);
           break;
         case 'not':
-          $query->add_where("UPPER(%s) NOT LIKE UPPER('%%%s%%')", 
+          $query->add_where("UPPER(%s) NOT LIKE UPPER('%%%s%%')",
             $filter['field'], $filter['value']);
           break;
         case '=':
-          $query->add_where("UPPER(%s) = '%%%s%%'", 
+          $query->add_where("UPPER(%s) = '%%%s%%'",
             $filter['field'], $filter['value']);
           break;
       }

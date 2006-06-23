@@ -9,7 +9,7 @@ function _views_build_query(&$view, $args = array()) {
 
   // Process static filters
   _views_view_build_filters($query, $view);
-  
+
   // Process arguments.
   $view->args = $args; // we'll need these later.
 
@@ -17,7 +17,7 @@ function _views_build_query(&$view, $args = array()) {
     if ($args[$i] != NULL && $args[$i] != '') {
       _views_view_build_arg($query, $args[$i], $argument);
     }
-    else { 
+    else {
       // This is what we do if we expected an arg but we didn't get it.
       switch ($argument['argdefault']) {
         case 1:
@@ -28,7 +28,7 @@ function _views_build_query(&$view, $args = array()) {
           $self_sort = "ASC";
         case 5:
           // the if is a kind of a hack to make this case fall-thru fluid
-          if (!$self_sort) { 
+          if (!$self_sort) {
             $self_sort = "DESC";
         }
         case 6:
@@ -39,14 +39,14 @@ function _views_build_query(&$view, $args = array()) {
             $sort = true;
           }
           break 2; // switch and for
-      } 
-    } 
+      }
+    }
   }
 
   if (!$summary || $sort) {
     _views_view_build_sorts($query, $view);
     $plugins = _views_get_style_plugins();
-    if (($view->page && ($plugins[$view->page_type]['needs_fields'])) || 
+    if (($view->page && ($plugins[$view->page_type]['needs_fields'])) ||
       ($view->block && ($plugins[$view->block_type]['needs_fields']))) {
       _views_view_build_fields($query, $view);
     }
@@ -67,7 +67,7 @@ function _views_build_query(&$view, $args = array()) {
  */
 function _views_view_build_filters(&$query, &$view) {
   $filters = _views_get_filters();
-  
+
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
     $field = $filterinfo['field'];
@@ -84,11 +84,11 @@ function _views_view_build_filters(&$query, &$view) {
           $filter['operator'] = check_plain($_GET["op$count"]);
         }
 
-        if ($expose['optional']) {  
+        if ($expose['optional']) {
           if (!isset($_GET["filter$count"]) && !$expose['is_default']) {
             continue 2; // skip
           }
-          if ($_GET["filter$count"] == '**ALL**' || 
+          if ($_GET["filter$count"] == '**ALL**' ||
             (is_array($_GET["filter$count"]) && in_array('**ALL**', $_GET["filter$count"]))) {
             continue 2; // skip this filter entirely.
           }
@@ -187,7 +187,7 @@ function _views_view_build_sorts(&$query, $view) {
  */
 function _views_view_build_fields(&$query, &$view) {
 
-  $fields = _views_get_fields(); 
+  $fields = _views_get_fields();
 
   foreach ($view->field as $field) {
     // Some fields are not actually fields but require special handlers
@@ -195,17 +195,17 @@ function _views_view_build_fields(&$query, &$view) {
 
     $fieldname = $field['fullname']; // combined table & fieldname
     $fieldinfo = $fields[$fieldname]; // laziness + readability
-    
+
     if (isset($fieldinfo['query_handler']) && function_exists($fieldinfo['query_handler'])) {
       $fieldinfo['query_handler']($field, $fieldinfo, $query);
     }
-    
+
     if (!$fieldinfo['notafield']) {
       $query->add_field($field['field'], $field['tablename'], $field['queryname']);
     }
     // special handling
     if (is_array($fieldinfo['addlfields'])) {
-      foreach ($fieldinfo['addlfields'] as $name) 
+      foreach ($fieldinfo['addlfields'] as $name)
         $query->add_field($name, $field['tablename'], "$field[tablename]_$name");
     }
   }
@@ -268,7 +268,7 @@ class _views_query {
   }
 
   /*
-   * Add a field to the query table, possibly with an alias. This will 
+   * Add a field to the query table, possibly with an alias. This will
    * automatically call ensure_table to make sure the required table
    * exists, *unless* $table is unset.
    */
@@ -288,7 +288,7 @@ class _views_query {
     $this->fields[] = "$table$field$a";
   }
 
-  /* 
+  /*
    * Set the base field to be distinct.
    */
   function set_distinct() {
@@ -368,7 +368,7 @@ class _views_query {
 
   /*
    * This function will ensure a table exists; if it already exists it won't
-   * do anything, but if it doesn't it will add the table queue. It will ensure 
+   * do anything, but if it doesn't it will add the table queue. It will ensure
    * a path leads back to the views_get_title table.
    */
   function ensure_table($table) {
@@ -391,7 +391,7 @@ class _views_query {
    *   If true, it will ensure that a path back to views_get_title_table exists. If false, it
    *   assumes the caller is already sure about this and does not repeat it.
    * @param $howmany
-   *   How many instances of the table to add? (Useful for interesting join 
+   *   How many instances of the table to add? (Useful for interesting join
    *   combos)
    * @param $joininfo
    *   In some join configurations this table may actually join back through
@@ -407,7 +407,7 @@ class _views_query {
     if ($ensure_path && !$this->ensure_path($table)) {
       return false;
     }
-    
+
     $this->tables[$table] += $howmany;
 
     for ($i = $this->tables[$table] - $howmany + 1; $i <= $this->tables[$table]; $i++) {
@@ -515,13 +515,13 @@ class _views_query {
       $table_num = $tinfo['num'];
       $table_alias = $this->get_table_name($table, $table_num);
 
-      $joininfo = (!$this->joins[$table][$table_num] ? 
+      $joininfo = (!$this->joins[$table][$table_num] ?
         $table_data[$table]['join'] : $this->joins[$table][$table_num]);
 
       // the { is a special character which seems to be treated differently
       // in PHP5 than PHP4 so we do this a little oddly.
       $join_type = $joininfo['type'] == 'inner' ? 'INNER' : 'LEFT';
-      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." . 
+      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." .
         $joininfo['left']['field'] . " = $table_alias." . $joininfo['right']['field'];
 
       if (isset($joininfo['extra'])) {
@@ -557,7 +557,7 @@ class _views_query {
           $this->orderby[] = str_replace('ORDER BY ', '', $result);
         }
       }
-         
+
       if ($this->orderby) {
         $orderby = "ORDER BY " . implode(', ', $this->orderby);
       }

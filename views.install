@@ -230,7 +230,7 @@
   else {
     drupal_set_message(t('The installation of views module was unsuccessful.'), 'error');
   }
-}      
+}
 
 /*
  * update module for UTF.

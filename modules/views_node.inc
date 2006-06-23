@@ -633,6 +633,6 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
   }
 }
 
- 
+
 
 

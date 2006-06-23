@@ -219,7 +219,7 @@ function views_handler_arg_uid($op, &$query, $argtype, $arg = '') {
     case 'title':
       if (!$query) {
         return variable_get('anonymous', 'Anonymous');
-      } 
+      }
       $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
       return $user->name;
   }
@@ -254,7 +254,7 @@ function views_handler_arg_uid_touch($op, &$query, $argtype, $arg = '') {
     case 'title':
       if (!$query) {
         return variable_get('anonymous', 'Anonymous');
-      } 
+      }
       $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
       return $user->name;
   }

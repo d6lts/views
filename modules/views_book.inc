@@ -64,14 +64,14 @@ function book_views_tables() {
       ),
     ),
   );
-  
+
   return $tables;
 }
 
 function book_views_arguments() {
   $arguments = array(
     'book_parent' => array(
-      'name' => t("Book: Parent Node ID"), 
+      'name' => t("Book: Parent Node ID"),
       'handler' => "views_handler_arg_book_parent",
     ),
   );

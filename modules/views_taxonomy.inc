@@ -277,7 +277,7 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
       }
       list($type, $info) = _views_break_phrase($query);
       $tids = implode(',', $info); // only does numbers so safe
-      
+
       $result = db_query("SELECT name FROM {term_data} WHERE tid IN (%s)", $tids);
       while ($term = db_fetch_object($result)) {
         $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($term->name);
@@ -387,7 +387,7 @@ function views_handler_filter_tid_by_voc($op, $filterinfo) {
 function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
   // When filtering via depth, we have to add a chain. If it's an or query
   // we add 1 chain, but in an and query we actually basically have to add
-  // a 2 dimensional array. 
+  // a 2 dimensional array.
 
   _views_add_taxonomy($filter['operator'], $filter['value'], $filter['options'], $query);
 
@@ -412,8 +412,8 @@ function views_handler_filter_vid() {
 function _views_add_taxonomy($op, $value, $depth, &$query) {
   // When filtering via depth, we have to add a chain. If it's an or query
   // we add 1 chain, but in an and query we actually basically have to add
-  // a 2 dimensional array. 
-  
+  // a 2 dimensional array.
+
 //  $query->ensure_table('term_data'); // this is to make sure the views_get_title table comes first.
 
   if ($op == 'OR') {

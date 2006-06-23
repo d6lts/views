@@ -2,13 +2,13 @@
 
 OVERVIEW
 
-The views module provides a flexible method for Drupal administrators to control 
-how lists of content are presented. Traditionally, Drupal has hard-coded most of 
+The views module provides a flexible method for Drupal administrators to control
+how lists of content are presented. Traditionally, Drupal has hard-coded most of
 this, particularly in how taxonomy and tracker lists are formatted.
 
-This tool is essentially a sort-of smart query builder that, given enough 
-information, can build the proper query, execute it, and display the results. It 
-has four modes, plus a special mode, and provides an impressive amount of 
+This tool is essentially a sort-of smart query builder that, given enough
+information, can build the proper query, execute it, and display the results. It
+has four modes, plus a special mode, and provides an impressive amount of
 functionality from these modes.
 
 INSTALLING VIEWS
