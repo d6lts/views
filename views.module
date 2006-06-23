@@ -745,15 +745,17 @@ function _views_get_timezone() {
 function views_get_url($view, $args) {
   $url = $view->url;
 
-  $where = 1;
-  foreach ($args as $arg) {
-    // This odd construct prevents us from strposing once there is no
-    // longer an $arg to replace.
-    if ($where && $where = strpos('$arg', $url)) {
-      $url = substr_replace($url, $arg, $where, 4);
-    }
-    else {
-      $url .= "/$arg";
+  if (!empty($url)) {
+    $where = 1;
+    foreach ($args as $arg) {
+      // This odd construct prevents us from strposing once there is no
+      // longer an $arg to replace.
+      if ($where && $where = strpos('$arg', $url)) {
+        $url = substr_replace($url, $arg, $where, 4);
+      }
+      else {
+        $url .= "/$arg";
+      }
     }
   }
 
