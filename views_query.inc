@@ -117,7 +117,7 @@ function _views_view_build_filters(&$query, &$view) {
     if (function_exists($filterinfo['handler'])) {
       $filterinfo['handler']('handler', $filter, $filterinfo, $query);
     }
-    else if (is_array($filter['value'])) {
+    else if (is_array($filter['value']) && count($filter['value'])) {
       if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
         $not = '';
         if ($filter['operator'] == 'NOR') {
