@@ -98,12 +98,6 @@ function statistics_views_default_views() {
   $view->block_use_page_footer = FALSE;
   $view->block_use_page_empty = FALSE;
   $view->sort = array (
-    array (
-      'tablename' => 'node_counter',
-      'field' => 'daycount',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
   );
   $view->argument = array (
   );
@@ -192,12 +186,6 @@ function statistics_views_default_views() {
   $view->block_use_page_footer = FALSE;
   $view->block_use_page_empty = FALSE;
   $view->sort = array (
-    array (
-      'tablename' => 'node_counter',
-      'field' => 'totalcount',
-      'sortorder' => 'DESC',
-      'options' => '',
-    ),
   );
   $view->argument = array (
   );
