@@ -22,7 +22,7 @@
         page_footer_format int(4) NOT NULL,
         page_type varchar(20),
         use_pager int(1),
-        nodes_per_page int(2), -- yes, no more than 99
+        nodes_per_page int(5),
         url varchar(255),
         -- menu fields
         menu int(1),
@@ -131,7 +131,7 @@
         page_footer_format smallint NOT NULL,
         page_type varchar(20),
         use_pager smallint,
-        nodes_per_page smallint, -- yes, no more than 99
+        nodes_per_page smallint, 
         url varchar(255),
         -- menu fields
         menu smallint,
@@ -318,5 +318,11 @@ function views_update_6() {
 function views_update_7() {
   $ret = array();
   $ret[] = update_sql("ALTER TABLE {view_argument} MODIFY type varchar(255)");
+  return $ret;
+}
+
+function views_update_8() {
+  $ret = array();
+  $ret[] = update_sql("ALTER TABLE {view_view} MODIFY nodes_per_page int(5)");
   return $ret;
 }
