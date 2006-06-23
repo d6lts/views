@@ -327,12 +327,11 @@ function views_menu($may_cache) {
         _views_create_menu_item($items, $view, $view->url, array($view->name));
       }
     }
-    cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args), CACHE_TEMPORARY);
+    cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
   }
   else {
     $data = cache_get("views_with_inline_args:$locale");
     $views = unserialize($data->data);
-
     if (is_array($views)) {
       foreach ($views as $view) {
         // Do substitution on args.
