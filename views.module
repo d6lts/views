@@ -1772,8 +1772,7 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
   }
   switch ($op) {
     case 'handler':
-      $fieldbits = explode('.', $filter['field']);
-      $query->ensure_table($fieldbits[0]);
+      $query->ensure_table($filterinfo['table']);
       switch ($filter['operator']) {
         case 'contains':
           $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')", 
@@ -1817,7 +1816,7 @@ function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
   if ($filterinfo['from_unixtime']) {
     $field = "from_UNIXTIME($field)";
   }
-
+  $query->ensure_table($filterinfo['table']);
   $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
 }
 
