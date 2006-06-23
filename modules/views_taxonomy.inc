@@ -339,9 +339,9 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       }
       break;
     case 'link':
-      return l(strtoupper($query->letter), "$arg/$query->letter");
+      return l($query->letter, "$arg/$query->letter");
     case 'title':
-      return strtoupper($query);
+      return check_plain($query);
   }
 }
 
