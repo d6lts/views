@@ -1779,27 +1779,35 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
   }
   switch ($op) {
     case 'handler':
-      $query->ensure_table($filterinfo['table']);
+      $table = $filterinfo['table'];
+      $column = $filterinfo['field'];
+      if (empty($column)) {
+        $fieldbits = explode('.', $filter['field']);
+        $column = $fieldbits[1];
+      }
+      $field = "$table.$column";
+      $query->ensure_table($table);
+
       switch ($filter['operator']) {
         case 'contains':
           $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')",
-            $filter['field'], $filter['value']);
+            $field, $filter['value']);
           break;
         case 'starts':
           $query->add_where("UPPER(%s) LIKE UPPER('%s%%')",
-            $filter['field'], $filter['value']);
+            $field, $filter['value']);
           break;
         case 'ends':
           $query->add_where("UPPER(%s) LIKE UPPER('%%%s')",
-            $filter['field'], $filter['value']);
+            $field, $filter['value']);
           break;
         case 'not':
           $query->add_where("UPPER(%s) NOT LIKE UPPER('%%%s%%')",
-            $filter['field'], $filter['value']);
+            $field, $filter['value']);
           break;
         case '=':
           $query->add_where("UPPER(%s) = '%%%s%%'",
-            $filter['field'], $filter['value']);
+            $field, $filter['value']);
           break;
       }
     break;
@@ -1819,11 +1827,17 @@ function views_handler_field_filesize($fieldinfo, $fielddata, $value, $data) {
 function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
   $value = $filter['value'] == 'now' ? "***CURRENT_TIME***" : strtotime($filter['value']);
 
-  $field = $filter['field'];
+  $table = $filterinfo['table'];
+  $column = $filterinfo['field'];
+  if (empty($column)) {
+    $fieldbits = explode('.', $filter['field']);
+    $column = $fieldbits[1];
+  }
+  $field = "$table.$column";
   if ($filterinfo['from_unixtime']) {
     $field = "from_UNIXTIME($field)";
   }
-  $query->ensure_table($filterinfo['table']);
+  $query->ensure_table($table);
   $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
 }
 
