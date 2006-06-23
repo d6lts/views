@@ -37,7 +37,7 @@ function comment_views_tables() {
         'name' => t('Comment: Last Comment Time'),
         'sortable' => true,
         'handler' => views_handler_field_dates(),
-        'option' => string,
+        'option' => 'string',
         'help' => t('This will display the last comment time.'),
        ),
       'last_comment_name' => array(
@@ -58,12 +58,20 @@ function comment_views_tables() {
         'help' => t('This will display the comment count.'),
       ),
     ),
+    'filters' => array(
+      'comment_count' => array(
+        'name' => t('Node: Comment Count'),
+        'operator' => 'views_handler_operator_gtlt',
+        'option' => 'integer',
+        'help' => t('This filter allows you to filter by the amount of comments.'),
+      ),
+    ),
     'sorts' => array(
       'last_comment_timestamp' => array(
         'name' => t('Comment: Last Comment Date'),
         'help' => t('This will allow you to sort by the date of the most recent comment on a node.')
-      )
-    )
+      ),
+    ),
   );
   return $tables;
 }

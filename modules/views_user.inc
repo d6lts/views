@@ -183,6 +183,8 @@ function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
   $obj->name = $value;
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
   $obj->uid = $data->$uidfield;
+  dprint_r($obj);
+  dprint_r($data);
   return theme('username', $obj);
 }
 
