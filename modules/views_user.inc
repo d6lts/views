@@ -31,7 +31,6 @@ function user_views_tables() {
         'name' => t('User: Author Picture'),
         'handler' => 'views_handler_field_userpic',
         'sortable' => false,
-        'notafield' => true,
         'help' => t('Display the user picture of the author.'),
       ),
     ),
