@@ -987,7 +987,7 @@ function _views_view_form($view, $op = '') {
     $form['view_args_php_fieldset'] = array(
       '#type' => 'fieldset',
       '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsed' => empty($view->view_args_php) ? TRUE : FALSE,
       '#title' => t('Argument Handling Code'),
     );
 
@@ -997,7 +997,8 @@ function _views_view_form($view, $op = '') {
       '#default_value' => $view->view_args_php,
       '#cols' => 60,
       '#rows' => 6,
-      '#description' => t('Advanced Usage Only: PHP code that returns a custom array of arguments for the view.'),
+      '#description' => '<p>'. t('Advanced Usage Only: PHP code that returns a custom array of arguments for the view. Should not include &lt;?php ?&gt; delimiters.') .'</p>' .
+                        '<p>'. t('For more information, please see the <a href="%arg">Argument Handling Code documentation</a> in the Drupal handbook.', array('%arg' => 'http://drupal.org/node/70145')) .'</p>',
     );
   } else {
     $form['view_args_php_fieldset']['view_args_php'] = array(
