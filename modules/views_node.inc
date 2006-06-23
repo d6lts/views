@@ -40,6 +40,16 @@ function node_views_tables() {
         'sortable' => true,
         'help' => t("The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)"),
       ),
+      'body' => array(
+        'name' => t('Node: Body'),
+        'handler' => array(
+          'views_handler_field_body'   => t('Full Text'),
+          'views_handler_field_teaser' => t('Teaser')
+        ),
+        'addlfields' => array('nid'),
+        'notafield' => TRUE,
+        'help' => t('Display the Main Content.'),
+      ),
     ),
     'sorts' => array(
       'nid' => array(
@@ -326,6 +336,42 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
     $comments .= l(t('%num new', array('%num' => $new)), "node/$data->nid", NULL, NULL, 'new');
   }
   return $comments;
+}
+
+/*
+ * Format a field as the Body of a node.
+ */
+function views_handler_field_body($fieldinfo, $fielddata, $value, $data) {
+  $node = node_load($data->nid);
+
+  if ($fielddata['handler'] == 'views_handler_field_body') {
+    $teaser = FALSE;
+  }
+  else {
+    $teaser = TRUE;
+  }
+
+  $node->body = str_replace('<!--break-->', '', $node->body);
+
+  // The 'view' hook can be implemented to overwrite the default function
+  // to display nodes.
+  if (node_hook($node, 'view')) {
+    node_invoke($node, 'view', $teaser, TRUE);
+  }
+  else {
+    $node = node_prepare($node, $teaser);
+  }
+  // Allow modules to change $node->body before viewing.
+  node_invoke_nodeapi($node, 'view', $teaser, TRUE);
+
+  return $teaser ? $node->teaser : $node->body;
+}
+
+/*
+ * Format a field as the Teaser of a node.
+ */
+function views_handler_field_teaser($fieldinfo, $fielddata, $value, $data) {
+  return views_handler_field_body($fieldinfo, $fielddata, $value, $data);
 }
 
 /*
