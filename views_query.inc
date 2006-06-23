@@ -579,6 +579,10 @@ class _views_query {
     }
 
     $query = "SELECT $fields FROM {" . $this->views_get_title_table . "} $this->views_get_title_table $joins $where $groupby $orderby";
+
+    $replace = array('&gt;' => '>', '&lt;' => '<');
+    $query = strtr($query, $replace);
+
     return $query;
   }
 }
