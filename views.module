@@ -526,6 +526,10 @@ function views_view_block($vid) {
   }
 
   global $user;
+  if (!$user->roles) {
+    return NULL;
+  }
+
   $roles = array_keys($user->roles);
   if ($view->access && !array_intersect($roles, $view->access)) {
     return NULL;
