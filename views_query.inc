@@ -14,7 +14,7 @@ function _views_build_query(&$view, $args = array()) {
   $view->args = $args; // we'll need these later.
 
   foreach ($view->argument as $i => $argument) {
-    if ($args[$i] != NULL && $args[$i] != '') {
+    if ($args[$i] != NULL && $args[$i] != '' && $args[$i] != '$arg') {
       _views_view_build_arg($query, $args[$i], $argument);
     }
     else {

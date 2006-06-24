@@ -283,6 +283,9 @@ function views_handler_arg_taxid($op, &$query, $argtype, $arg = '') {
         return t('Uncategorized');
       }
       list($type, $info) = _views_break_phrase($query);
+      if (!$info) {
+        return t('Uncategorized');
+      }
       $tids = implode(',', $info); // only does numbers so safe
 
       $result = db_query("SELECT name FROM {term_data} WHERE tid IN (%s)", $tids);

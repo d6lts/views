@@ -1395,7 +1395,7 @@ function theme_views_filters($form) {
 /**
  * Display the nodes of a view as a list.
  */
-function theme_views_view_list($view, $nodes) {
+function theme_views_view_list($view, $nodes, $type) {
   $fields = _views_get_fields();
 
   foreach ($nodes as $node) {
@@ -1418,7 +1418,7 @@ function theme_views_view_list($view, $nodes) {
 /**
  * Display the nodes of a view as a table.
  */
-function theme_views_view_table($view, $nodes) {
+function theme_views_view_table($view, $nodes, $type) {
   $fields = _views_get_fields();
 
   foreach ($nodes as $node) {
@@ -1438,14 +1438,14 @@ function theme_views_view_table($view, $nodes) {
 /**
  * Display the nodes of a view as teasers.
  */
-function theme_views_view_teasers($view, $nodes) {
+function theme_views_view_teasers($view, $nodes, $type) {
   return views_theme('views_view_nodes', $view, $nodes, true);
 }
 
 /**
  * Display the nodes of a view as plain nodes.
  */
-function theme_views_view_nodes($view, $nodes, $teasers = false, $links = true) {
+function theme_views_view_nodes($view, $nodes, $type, $teasers = false, $links = true) {
   foreach ($nodes as $n) {
     $node = node_load($n->nid);
     $output .= node_view($node, $teasers, false, $links);
@@ -1520,7 +1520,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
     else {
       $plugins = _views_get_style_plugins();
       $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
-      $output .= views_theme($plugins[$view_type]['theme'], $view, $nodes);
+      $output .= views_theme($plugins[$view_type]['theme'], $view, $nodes, $type);
     }
     $output .= views_get_textarea($view, $type, 'footer');
 
