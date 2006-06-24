@@ -794,15 +794,24 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   if ($args === NULL)
     $args = $view->args;
 
-  $count = count($args);
-  if ($count >= count($view->argument)) {
-    $title = $view->page_title;
+  // Grab the title from the highest argument we got. If there is no such
+  // title, track back until we find a title.
+
+  if (is_array($args)) {
+    $rargs = array_reverse(array_keys($args));
+    foreach ($rargs as $arg_id) {
+      if ($title = $view->argument[$arg_id]['title']) {
+        break;
+      }
+    }
   }
-  else {
-    $title = $view->argument[$count]['title'];
-  }
+
   if (!$title && $context == 'menu') {
     $title = $view->block_title;
+  }
+
+  if (!$title) {
+    $title = $view->page_title;
   }
 
   if (!$view->argument) {
