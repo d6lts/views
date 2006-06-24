@@ -116,6 +116,7 @@ function taxonomy_views_tables() {
           'name' => t('Taxonomy: Vocabulary Name'),
           'list' => 'views_handler_filter_vid',
           'operator' => 'views_handler_operator_andor',
+          'handler' => 'views_handler_filter_voc',
           'value-type' => 'array',
           'help' => t('This will filter a view to only nodes that contain a term in the associated vocabulary.'),
         )
@@ -406,6 +407,13 @@ function views_handler_filter_vid() {
 }
 
 /*
+ * Add custom WHERE and JOIN clauses based on taxonomy vocabularies.
+ */
+function views_handler_filter_voc($op, $filter, $filterinfo, &$query) {
+  _views_add_vocabulary($filter['operator'], $filter['value'], $filter['options'], $query);
+}
+
+/*
  * Add a where clause views_get_titled on taxonomy. This is a pretty exciting piece of
  * code because the clause and the JOINs are a bit complicated.
  */
@@ -468,6 +476,37 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
         $where .= " OR $tablename.tid = '$tid'";
       }
       $query->add_where("$not($where)");
+    }
+  }
+}
+
+/*
+ * Add a WHERE clause views_get_title on taxonomy vocabulary
+ */
+function _views_add_vocabulary($op, $value, $depth, &$query) {
+  if ($op == 'OR' || $op == 'NOR') {
+    if ($op == 'NOR') {
+      $not = 'NOT';
+    }
+    if (($op == 'NOR' || count($value) > 1) && count($query->fields)) {
+      // group by views_title_table.views_title_field
+      // count($query->fields) == 0 will break this code (can this happen?)
+      $field = $query->fields[0];
+      $query->add_groupby($field);
+      $query->set_count_field("DISTINCT($field)");
+    }
+    $query->ensure_table('term_data');
+    $clause = "'" . implode("','", $value) . "'";
+    $query->add_where("term_data.vid $not IN ($clause)");
+  }
+  else {
+    foreach ($value as $vid) {
+      // For every vocabulary we have to match, add a views_get_title table
+      $num = $query->add_table('term_node');
+      $tablename = $query->get_table_name('term_node', $num);
+      $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
+      $tablename = $query->get_table_name('term_data', $num);
+      $query->add_where("$tablename.vid = '$vid'");
     }
   }
 }
