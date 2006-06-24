@@ -109,6 +109,11 @@ function views_ui_menu($may_cache) {
       'callback' => 'views_ui_admin_add_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
+    $items[] = array('path' => 'admin/views/clone',
+      'title' => t('clone'),
+      'callback' => 'views_ui_admin_clone_page',
+      'access' => user_access('administer views'),
+      'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/views/edit',
       'title' => t('edit view'),
       'callback' => 'views_ui_admin_edit_page',
@@ -196,7 +201,19 @@ function views_ui_admin_page() {
     if ($view->menu) {
       $provides[] = 'Menu';
     }
-    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, theme('links', array(l(t('edit'), "admin/views/edit/$view->vid"), l(t('export'), "admin/views/export/$view->vid"), l(t('delete'), "admin/views/delete/$view->vid"))));
+    $items[] = array(
+      $view->name, 
+      views_get_title($view, 'menu'), 
+      $view->description, 
+      implode(', ', $provides), 
+      $url, 
+      theme('links', array(
+        l(t('edit'), "admin/views/edit/$view->vid"), 
+        l(t('export'), "admin/views/export/$view->vid"), 
+        l(t('delete'), "admin/views/delete/$view->vid"),
+        l(t('clone'), "admin/views/clone/$view->vid"),
+      ))
+    );
   }
 
   if ($items) {
@@ -366,12 +383,7 @@ function views_ui_admin_export_page($vid = '') {
 /*
  * Provide a form to add a view. Allow adding a view from default templates.
  */
-function views_ui_admin_add_page() {
-  $args = func_get_args();
-  while ($next = array_shift($args)) {
-    $template = ($template ? "/$next" : $next);
-  }
-
+function views_ui_admin_add_page($template) {
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
     return 'admin/views';
@@ -379,6 +391,26 @@ function views_ui_admin_add_page() {
 
   $view = _views_get_default_view($template);
 
+  drupal_set_title(t('Add a View'));
+
+  return _views_view_form($view, $op);
+}
+
+/*
+ * Provide a form to clone a view.
+ */
+function views_ui_admin_clone_page($viewname) {
+  $op = $_POST['op'];
+  if ($op == t('Cancel')) {
+    return 'admin/views';
+  }
+
+  $view = views_load_view($viewname);
+  if (!$view) {
+    return drupal_not_found();
+  }
+
+  unset($view->vid);
   drupal_set_title(t('Add a View'));
 
   return _views_view_form($view, $op);
