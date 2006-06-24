@@ -753,7 +753,7 @@ function views_get_url($view, $args) {
     foreach ($args as $arg) {
       // This odd construct prevents us from strposing once there is no
       // longer an $arg to replace.
-      if ($where && $where = strpos('$arg', $url)) {
+      if ($where && $where = strpos($url, '$arg')) {
         $url = substr_replace($url, $arg, $where, 4);
       }
       else {
