@@ -666,22 +666,24 @@ function node_views_post_view($view, $items, $output) {
   }
 
   if ($feed !== NULL) {
-    $additions = module_invoke_all('views_feed_argument', 'post_view', $view, $feed);
+    $additions = module_invoke_all('views_feed_argument', 'post_view', $view, $argument['type']);
     return (implode(' ', $additions));
   }
 }
 
 /**
- * helper function
+ * helper function -- this function builds a URL for a given feed.
+ * It defaults to the built in feed selector, but the 3rd arg can
+ * be used to set it up for custom selectors too.
  */
-function views_post_view_make_url($view, $feed, $arg) {
+function views_post_view_make_url($view, $feed_id, $arg) {
   // assemble the URL
   $args = array();
   foreach ($view->argument as $id => $argdata) {
     if (isset($view->args[$id])) {
       $args[] = $view->args[$id];
     } else {
-      if ($argdata['id'] == 'node_feed') {
+      if ($argdata['id'] == $feed_id) {
         $args[] = $arg;
       }
       else if ($argdata['argdefault'] != 1) {

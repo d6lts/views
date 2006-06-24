@@ -20,6 +20,59 @@ function views_rss_views_style_plugins() {
   );
 }
 
+/**
+ * While we support the global selector, some might want to allow
+ * ONLY RSS feeds so we support a stingy selector too
+ */
+function views_rss_views_arguments() {
+  $arguments = array(
+    'rss_feed' => array(
+      'name' => t('RSS: RSS Feed Selector'),
+      'handler' => 'views_handler_arg_rss_feed',
+      'help' => t('This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds.'),
+    ),
+  );
+  return $arguments;
+}
+
+/**
+ * handler for our own RSS argument; mimics the feed selector
+ */
+function views_handler_arg_rss_feed($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+    case 'sort':
+    case 'link':
+    case 'title':
+      break;
+    case 'filter':
+      // This is a clone of the default selector, but it just invokes ours
+      // rather than calling all of them.
+      views_rss_views_feed_argument('argument', $GLOBALS['current_view'], $arg);
+  }
+}
+
+/**
+ * post view for our own op -- mimics the feed selector
+ */
+function views_rss_views_post_view($view, $items, $output) {
+  foreach ($view->argument as $id => $argument) {
+    if ($argument['type'] == 'rss_feed') {
+      $feed = $id;
+      break;
+    }
+  }
+
+  if ($feed !== NULL) {
+    return views_rss_views_feed_argument('post_view', $view, 'rss_feed');
+  }
+}
+
+/**
+ * feed argument hook that will convert us to RSS or display an icon.
+ * the 4th argument isn't part of the hook, but we use it to differentiate
+ * when called as a hook or when called manually from views_rss_views_post_view
+ */
 function views_rss_views_feed_argument($op, &$view, $arg) {
   if ($op == 'argument' && $arg == 'feed') {
     $view->page_type = 'views_rss';
@@ -34,6 +87,9 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
   }
 }
 
+/**
+ * plugin that actually displays an RSS feed
+ */
 function theme_views_rss_feed($view, $nodes) {
   global $base_url;
 

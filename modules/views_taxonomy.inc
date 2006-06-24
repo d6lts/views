@@ -188,6 +188,12 @@ function taxonomy_views_default_views() {
       'title' => '',
       'options' => '0',
     ),
+    array (
+      'type' => 'node_feed',
+      'argdefault' => '2',
+      'title' => '',
+      'options' => '',
+    ),
   );
   $view->field = array (
   );
