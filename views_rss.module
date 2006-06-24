@@ -1,0 +1,115 @@
+<?php
+
+function views_rss_help($section = 'admin/help#views_rss') {
+  $output = '';
+  switch ($section) {
+    case 'admin/modules#description':
+      return t('RSS plugin for the views feed selector argument.');
+  }
+}
+
+/**
+ * Provide views plugins for the feed types we support.
+ */
+function views_rss_views_style_plugins() {
+  return array(
+    'views_rss' => array(
+      'name' => t('Views RSS: RSS feed'),
+      'theme' => 'views_rss_feed',
+    ),
+  );
+}
+
+function views_rss_views_feed_argument($op, &$view, $arg) {
+  if ($op == 'argument' && $arg == 'feed') {
+    $view->page_type = 'views_rss';
+  }
+  else if ($op == 'post_view') {
+    $url = views_post_view_make_url($view, $arg, 'feed');
+    drupal_add_link(array('rel' => 'alternate',
+                          'type' => 'application/rss+xml',
+                          'title' => t('RSS'),
+                          'href' => url($url, NULL, NULL, TRUE)));
+    return theme('feed_icon', url($url));
+  }
+}
+
+function theme_views_rss_feed($view, $nodes) {
+  global $base_url;
+
+  $channel = array(
+    'title'       => variable_get('site_name', 'drupal') .' - '. check_plain(views_get_title($view, 'page')),
+    'link'        => url($view->real_url, NULL, NULL, true),
+    'description' => check_plain($view->description),
+  );
+
+  $item_length = variable_get('feed_item_length', 'teaser');
+  $namespaces = array('xmlns:dc="http://purl.org/dc/elements/1.1/"');
+
+  // Except for the original being a while and this being a foreach, this is
+  // completely cut & pasted from node.module.
+  foreach ($nodes as $node) {
+    // Load the specified node:
+    $item = node_load($node->nid);
+    $link = url("node/$node->nid", NULL, NULL, 1);
+
+    if ($item_length != 'title') {
+      $teaser = ($item_length == 'teaser') ? TRUE : FALSE;
+
+      // Filter and prepare node teaser
+      if (node_hook($item, 'view')) {
+        node_invoke($item, 'view', $teaser, FALSE);
+      }
+      else {
+        $item = node_prepare($item, $teaser);
+      }
+
+      // Allow modules to change $node->teaser before viewing.
+      node_invoke_nodeapi($item, 'view', $teaser, FALSE);
+    }
+
+    // Prepare the item description
+    switch ($item_length) {
+      case 'fulltext':
+        $item_text = $item->body;
+        break;
+      case 'teaser':
+        $item_text = $item->teaser;
+        if ($item->readmore) {
+          $item_text .= '<p>'. l(t('read more'), 'node/'. $item->nid, NULL, NULL, NULL, TRUE) .'</p>';
+        }
+        break;
+      case 'title':
+        $item_text = '';
+        break;
+    }
+
+    // Allow modules to add additional item fields
+    $extra = node_invoke_nodeapi($item, 'rss item');
+    $extra = array_merge($extra, array(array('key' => 'pubDate', 'value' =>  date('r', $item->created)), array('key' => 'dc:creator', 'value' => $item->name), array('key' => 'guid', 'value' => $item->nid . ' at ' . $base_url, 'attributes' => array('isPermaLink' => 'false'))));
+    foreach ($extra as $element) {
+      if ($element['namespace']) {
+        $namespaces = array_merge($namespaces, $element['namespace']);
+      }
+    }
+    $items .= format_rss_item($item->title, $link, $item_text, $extra);
+  }
+
+  $channel_defaults = array(
+    'version'     => '2.0',
+    'title'       => variable_get('site_name', 'drupal') .' - '. variable_get('site_slogan', ''),
+    'link'        => $base_url,
+    'description' => variable_get('site_mission', ''),
+    'language'    => $locale
+  );
+  $channel = array_merge($channel_defaults, $channel);
+
+  $output = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n";
+  $output .= "<rss version=\"". $channel["version"] . "\" xml:base=\"". $base_url ."\" ". implode(' ', $namespaces) .">\n";
+  $output .= format_rss_channel($channel['title'], $channel['link'], $channel['description'], $items, $channel['language']);
+  $output .= "</rss>\n";
+
+  drupal_set_header('Content-Type: text/xml; charset=utf-8');
+  print $output;
+  exit; 
+}

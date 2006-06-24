@@ -247,6 +247,13 @@ function node_views_arguments() {
       'handler' => 'views_handler_arg_nid',
       'help' => t('This argument is a single Node ID.'),
     ),
+    // renamed from 'feed' so things don't DIE when you have viewfeed.module still
+    // enabled
+    'node_feed' => array(
+      'name' => t('Node: Feed Selector'),
+      'handler' => 'views_handler_arg_node_feed',
+      'help' => t('This argument allows pluggable "feed" selectors. If using views_rss module, "feed" will turn the view into an RSS feed. Other modules may provide their own feeds.'),
+    ),
   );
   return $arguments;
 }
@@ -633,6 +640,56 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
   }
 }
 
+function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+    case 'sort':
+    case 'link':
+    case 'title':
+      break;
+    case 'filter':
+      // Can't use node_invoke_all because we're using a reference to 
+      // $view.
+      foreach (module_implements('views_feed_argument') as $name) {
+        $function = $name .'_views_feed_argument';
+        $function('argument', $GLOBALS['current_view'], $arg);
+      }
+  }
+}
 
+function node_views_post_view($view, $items, $output) {
+  foreach ($view->argument as $id => $argument) {
+    if ($argument['type'] == 'node_feed') {
+      $feed = $id;
+      break;
+    }
+  }
 
+  if ($feed !== NULL) {
+    $additions = module_invoke_all('views_feed_argument', 'post_view', $view, $feed);
+    return (implode(' ', $additions));
+  }
+}
+
+/**
+ * helper function
+ */
+function views_post_view_make_url($view, $feed, $arg) {
+  // assemble the URL
+  $args = array();
+  foreach ($view->argument as $id => $argdata) {
+    if (isset($view->args[$id])) {
+      $args[] = $view->args[$id];
+    } else {
+      if ($argdata['id'] == 'node_feed') {
+        $args[] = $arg;
+      }
+      else if ($argdata['argdefault'] != 1) {
+        $args[] = '*';
+      }
+    }
+  }
+  
+  return views_get_url($view, $args);
+}
 
