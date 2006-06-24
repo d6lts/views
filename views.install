@@ -116,7 +116,7 @@
       break;
     case 'pgsql':
       db_query("CREATE TABLE {view_view} (
-        vid integer NOT NULL default '0',
+        vid SERIAL,
         name varchar(32) NOT NULL UNIQUE,
         description varchar(255),
         access varchar(255),
@@ -161,9 +161,9 @@
         query text,
         countquery text,
         view_args_php text,
-        CONSTRAINT {view_view_pkey} PRIMARY KEY (vid)
+        PRIMARY KEY (vid)
       )");
-      db_query("CREATE INDEX {view_view_name_idx} ON {view_view} (name)");
+      db_query("CREATE INDEX {view_view}_name_idx ON {view_view} (name)");
 
       db_query("CREATE TABLE {view_sort} (
         vid integer NOT NULL default '0',
@@ -173,7 +173,7 @@
         options varchar(255),
         tablename varchar(255)
       )");
-      db_query("CREATE INDEX {view_sort_vid_idx} ON {view_sort} (vid)");
+      db_query("CREATE INDEX {view_sort}_vid_idx ON {view_sort} (vid)");
 
       db_query("CREATE TABLE {view_argument} (
         vid integer NOT NULL default '0',
@@ -183,7 +183,7 @@
         options varchar(255),
         position smallint
       )");
-      db_query("CREATE INDEX {view_argument_vid_idx} ON {view_argument} (vid)");
+      db_query("CREATE INDEX {view_argument}_vid_idx ON {view_argument} (vid)");
 
       db_query("CREATE TABLE {view_tablefield} (
         vid integer NOT NULL default '0',
@@ -196,7 +196,7 @@
         options varchar(255),
         position smallint
       )");
-      db_query("CREATE INDEX {view_tablefield_vid_idx} ON {view_tablefield} (vid)");
+      db_query("CREATE INDEX {view_tablefield}_vid_idx ON {view_tablefield} (vid)");
 
       db_query("CREATE TABLE {view_filter} (
         vid integer NOT NULL default '0',
@@ -207,7 +207,7 @@
         options varchar(255),
         position smallint
       )");
-      db_query("CREATE INDEX {view_filter_vid_idx} ON {view_filter} (vid)");
+      db_query("CREATE INDEX {view_filter}_vid_idx ON {view_filter} (vid)");
       db_query("CREATE TABLE {view_exposed_filter} (
         vid integer NOT NULL default '0',
         field varchar(255),
@@ -218,9 +218,9 @@
         single smallint,
         position smallint
       )");
-      db_query("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
-      break;
-    default:
+      db_query("CREATE INDEX {view_exposed_filter}_vid_idx ON {view_exposed_filter} (vid)");
+
+      $success = TRUE;
       break;
   } // End case
 
@@ -282,7 +282,7 @@ function views_update_3() {
         single numeric(1),
         position numeric(2),
       )");
-      $ret[] = update_sql("CREATE INDEX {view_exposed_filter_vid_idx} ON {view_exposed_filter} (vid)");
+      $ret[] = update_sql("CREATE INDEX {view_exposed_filter}_vid_idx ON {view_exposed_filter} (vid)");
       break;
   }
   return $ret;
