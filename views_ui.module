@@ -374,7 +374,7 @@ function views_ui_admin_add_page() {
 
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
-    return drupal_goto('admin/views');
+    return 'admin/views';
   }
 
   $view = _views_get_default_view($template);
@@ -390,15 +390,15 @@ function views_ui_admin_add_page() {
 function views_ui_admin_edit_page($vid = '') {
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
-    return drupal_goto('admin/views');
+    return 'admin/views';
   }
 
   if ($op == t('Delete')) {
-    return drupal_goto("admin/views/delete/$vid");
+    return "admin/views/delete/$vid";
   }
 
   if (!($view = _views_load_view($vid))) {
-    return drupal_goto('admin/views');
+    return 'admin/views';
   }
 
   drupal_set_title(t('Edit view %n', array('%n' => $view->name)));
@@ -412,7 +412,7 @@ function views_ui_admin_delete_page($vid = '') {
   $view = _views_load_view($vid);
 
   if (!$view) {
-    return drupal_goto('admin/views');
+    return 'admin/views';
   }
 
   $form['vid'] = array('#type' => 'value', '#value' => $view->vid);
@@ -1671,7 +1671,7 @@ function views_edit_view_submit($form_id, $form) {
     drupal_set_message(t('View successfully added.'));
   }
 
-  return drupal_goto('admin/views');
+  return 'admin/views';
 }
 
 /**
