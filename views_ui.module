@@ -1715,7 +1715,20 @@ function views_ui_plugin_validate_list($type, $view, $form) {
     $fields = array_filter(array_keys($view['field']), 'is_numeric');
   }
   if (!$fields) {
-    form_error($form["$type-info"][$type . '_type'], "List and Table types require at least one field.");
+    form_error($form["$type-info"][$type . '_type'], t('List and Table types require at least one field.'));
+  }
+
+  if (isset($view['field']['count'])) {
+    $defaultsort = false;
+    for ($i = 0; $i < $view['field']['count']; $i++) {
+      if ($view['field'][$i]['defaultsort']) {
+        if ($defaultsort) {
+          form_error($form['field'][$i]['defaultsort'], t('You can only set on Default Sort on one field.'));
+          break;
+        }
+        $defaultsort = true;
+      }
+    }
   }
 }
 
@@ -1742,7 +1755,7 @@ function views_tf($val) {
 function views_create_view_code($vid) {
   $view = _views_load_view($vid);
   if (!$view) {
-    return "View '$vid' not found.";
+    return t("View '%vid' not found.", array('%vid' => $vid));
   }
 
   $requires = array();
