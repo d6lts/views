@@ -585,7 +585,7 @@ function views_view_block($vid) {
  *   on, in case for some reason a particular section of view is needed,
  *   without paging on.
 */
-function views_build_view($type, $view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
+function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
   // Fix a number of annoying whines when NULL is passed in..
   if ($args == NULL) {
     $args = array();
@@ -597,7 +597,10 @@ function views_build_view($type, $view, $args = array(), $use_pager = false, $li
 
   if ($view->view_args_php) {
     ob_start();
-    $args = eval($view->view_args_php);
+    $result = eval($view->view_args_php);
+    if (is_array($result)) {
+      $args = $result;
+    }
     ob_end_clean();
   }
 
@@ -783,17 +786,13 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   if ($context == 'menu' && $view->menu_title)
     return $view->menu_title;
 
-  if ($context == 'block' && $view->block_title) {
-    return $view->block_title;
-  }
-
   if ($context == 'block-info') {
     return $view->description ? $view->description : $view->name;
   }
 
-  if ($args === NULL)
+  if ($args === NULL) {
     $args = $view->args;
-
+  }
   // Grab the title from the highest argument we got. If there is no such
   // title, track back until we find a title.
 
@@ -811,7 +810,12 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   }
 
   if (!$title) {
-    $title = $view->page_title;
+    if ($context == 'block' && $view->block_title) {
+      $title = $view->block_title;
+    }
+    else {
+      $title = $view->page_title;
+    }
   }
 
   if (!$view->argument) {
@@ -824,11 +828,13 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
       break;
     }
     $argtype = $arg['type'];
-    if (function_exists($arginfo[$argtype]['handler'])) {
+    if ($arg['wildcard'] == $args[$i] && $arg['wildcard_substitution'] != '') {
+      $title = str_replace("%" . ($i + 1), $arg['wildcard_substitution'], $title);
+    }
+    else if (function_exists($arginfo[$argtype]['handler'])) {
       // call the handler
       $rep = $arginfo[$argtype]['handler']('title', $args[$i], $argtype);
       $title = str_replace("%" . ($i + 1), $rep, $title);
-
     }
   }
   return $title;
@@ -1050,7 +1056,7 @@ function _views_save_view($view) {
   }
 
   foreach ($view->argument as $i => $arg) {
-    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, options, position) VALUES (%d, '%s', %d, '%s', '%s', %d)", $view->vid, $arg['type'], $arg['argdefault'], $arg['title'], $arg['options'], $i);
+    db_query("INSERT INTO {view_argument} (vid, type, argdefault, title, options, position, wildcard, wildcard_substitution) VALUES (%d, '%s', %d, '%s', '%s', %d, '%s', '%s')", $view->vid, $arg['type'], $arg['argdefault'], $arg['title'], $arg['options'], $i, $arg['wildcard'], $arg['wildcard_substitution']);
   }
 
   foreach ($view->field as $i => $arg) {

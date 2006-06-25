@@ -1257,7 +1257,18 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
     $widget['#default_value'] = $argument['options'];
     $form['options'] = $widget;
   }
-
+  $form['wildcard'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $argument['wildcard'],
+    '#size' => 5,
+    '#maxlength' => 32,
+  );
+  $form['wildcard_substitution'] = array(
+    '#type' => 'textfield',
+    '#default_value' => $argument['wildcard_substitution'],
+    '#size' => 5,
+    '#maxlength' => 32,
+  );
   if (isset($arginfo['help'])) {
     $form['help'] = array(
       '#type' => 'markup',
@@ -1499,7 +1510,7 @@ function theme_views_edit_view($form) {
 
   // arguments
   $collapsed = $allbut && $allbut != 'argument';
-  $group = views_ui_render_section($form['argument'], array('name', 'argdefault', 'title', 'options'), array(t('Argument Type'), t('Default'), t('Title'), t('Option')), 'arguments', $collapsed);
+  $group = views_ui_render_section($form['argument'], array('name', 'argdefault', 'title', 'options', 'wildcard', 'wildcard_substitution'), array(t('Argument Type'), t('Default'), t('Title'), t('Option'), t('Wildcard'), t('Wildcard Sub')), 'arguments', $collapsed);
 
   $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), 'Add Argument');
 
@@ -1826,6 +1837,8 @@ function views_create_view_code($vid) {
     $output .= "      'argdefault' => '$argument[argdefault]',\n";
     $output .= "      'title' => '$argument[title]',\n";
     $output .= "      'options' => '$argument[options]',\n";
+    $output .= "      'wildcard' => '$argument[wildcard]',\n";
+    $output .= "      'wildcard_substitution' => '$argument[wildcard_substitution]',\n";
     $output .= "    ),\n";
   }
   $output .= "  );\n";

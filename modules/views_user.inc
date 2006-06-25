@@ -97,10 +97,10 @@ function user_views_default_views() {
   $view = new stdClass();
   $view->name = 'tracker';
   $view->requires = array('node_comment_statistics');
-  $view->description = 'Shows all new activity on system.';
+  $view->description = t('Shows all new activity on system.');
   $view->page = true;
   $view->url = 'tracker';
-  $view->page_title = 'recent posts for %1';
+  $view->page_title = t('recent posts');
   $view->page_type = 'table';
   $view->use_pager = true;
   $view->nodes_per_page = '25';
@@ -149,7 +149,7 @@ function user_views_default_views() {
     array (
       'type' => 'uid',
       'argdefault' => '2',
-      'title' => 'recent posts for all users',
+      'title' => t('recent posts for %1'),
     ),
   );
   $view->filter = array (

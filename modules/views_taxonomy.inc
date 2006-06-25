@@ -160,7 +160,7 @@ function taxonomy_views_default_views() {
   $view->access = array (
 );
   $view->page = TRUE;
-  $view->page_title = '%1';
+  $view->page_title = t('taxonomy');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_type = 'teaser';
@@ -185,7 +185,7 @@ function taxonomy_views_default_views() {
     array (
       'type' => 'taxid',
       'argdefault' => '1',
-      'title' => '',
+      'title' => '%1',
       'options' => '0',
     ),
     array (

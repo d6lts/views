@@ -73,6 +73,8 @@
         title varchar(255),
         options varchar(255),
         position int(2),
+        wildcard varchar(32),
+        wildcard_substitution varchar(32),
         KEY (vid)
       ) TYPE=MyISAM /*!40100 DEFAULT CHARACTER SET utf8 */;");
 
@@ -182,6 +184,8 @@
         title varchar(255),
         options varchar(255),
         position smallint
+        wildcard varchar(32),
+        wildcard_substitution varchar(32),
       )");
       db_query("CREATE INDEX {view_argument}_vid_idx ON {view_argument} (vid)");
 
@@ -324,5 +328,12 @@ function views_update_7() {
 function views_update_8() {
   $ret = array();
   $ret[] = update_sql("ALTER TABLE {view_view} MODIFY nodes_per_page int(5)");
+  return $ret;
+}
+
+function views_update_9() {
+  $ret = array();
+  db_add_column($ret, 'view_argument', 'wildcard', 'varchar(32)');
+  db_add_column($ret, 'view_argument', 'wildcard_substitution', 'varchar(32)');
   return $ret;
 }

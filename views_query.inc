@@ -160,7 +160,7 @@ function _views_view_build_arg(&$query, $arg, $argdata) {
   }
 
   // call the handler, unless the arg is the 'wildcard'.
-  if ($arg != '*') {
+  if ($arg != $argdata['wildcard']) {
     $arginfo[$argdata['type']]['handler']('filter', $query, $argdata, $arg);
   }
 }
