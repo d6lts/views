@@ -113,8 +113,11 @@ function phptemplate_views_view_list_{$view->name}(\$view, \$nodes, \$type) {
     'view_type' => \$type,
   );
 
-  foreach (\$nodes as \$node) {
+  foreach (\$nodes as \$i => \$node) {
     \$vars = \$base_vars;
+    \$vars['node'] = \$node;
+    \$vars['count'] = \$i;
+    \$vars['stripe'] = \$i % 2 ? 'even' : 'odd';
     foreach (\$view->field as \$id => \$field) {
       \$name = \$field_names[\$id];
       \$vars[\$name] = views_theme_field('views_handle_field', \$field['queryname'], \$fields, \$field, \$node);
@@ -149,6 +152,11 @@ function views_theme_wizard_generate_list_template_code($view) {
  *   $view->name, $view->real_url.
  * \$view_type -- The type of the view. Probably 'page' or 'block' but could
  *   also be 'embed' or other string passed in from a custom view creator.
+ * \$node -- the raw data. This is not a real node object, but will contain
+ *   the nid as well as other support fields that might be necessary.
+ * \$count -- the current row in the view (not TOTAL but for this page) starting
+ *   from 0.
+ * \$stripe -- 'odd' or 'even', alternating.
 
 EOT;
 
