@@ -183,9 +183,9 @@
         argdefault varchar(255),
         title varchar(255),
         options varchar(255),
-        position smallint
+        position smallint,
         wildcard varchar(32),
-        wildcard_substitution varchar(32),
+        wildcard_substitution varchar(32)
       )");
       db_query("CREATE INDEX {view_argument}_vid_idx ON {view_argument} (vid)");
 
