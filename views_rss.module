@@ -17,6 +17,8 @@ function views_rss_views_style_plugins() {
     'views_rss' => array(
       'name' => t('Views RSS: RSS feed'),
       'theme' => 'views_rss_feed',
+      'needs_table_header' => TRUE,
+      'needs_fields' => TRUE,
     ),
   );
 }
