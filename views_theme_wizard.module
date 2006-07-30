@@ -23,9 +23,18 @@ function views_theme_wizard_menu($may_cache) {
 }
 
 function views_theme_wizard_page() {
-  $result = db_query("SELECT vid, name FROM {view_view} ORDER BY name");
-  while ($v = db_fetch_object($result)) {
-    $views[$v->vid] = $v->name;
+  $result = db_query("SELECT name, description FROM {view_view}");
+  while ($view = db_fetch_object($result)) {
+    $views[$view->name] = $view->name . ': ' . $view->description;
+  }
+
+  $default_views = _views_get_default_views();
+  $views_status = variable_get('views_defaults', array());
+  foreach ($default_views as $view) {
+    if (!$views[$view->name] && 
+      ($views_status[$view->name] == 'enabled' || (!$views_status[$view->name] && !$view->disabled))) {
+      $views[$view->name] = check_plain($view->name . ': ' . $view->description);
+    }
   }
 
   $form['markup'] = array(
