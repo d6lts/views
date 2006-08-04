@@ -268,10 +268,10 @@ function views_ui_admin_page() {
     }
 
     $links = array(l(t('add'), "admin/views/add/$view->name"));
-    if ($status == 'Enabled') {
+    if ($status == t('Enabled')) {
       $links[] = l(t('disable'), "admin/views/disable/$view->name");
     }
-    else if ($status == 'Disabled') {
+    else if ($status == t('Disabled')) {
       $links[] = l(t('enable'), "admin/views/enable/$view->name");
     }
 
