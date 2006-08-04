@@ -746,7 +746,7 @@ function _views_get_timezone() {
   if (in_array($GLOBALS['db_type'], array('mysql', 'mysqli'))) {
     static $already_set = false;
     if (!$already_set) {
-      if (version_compare(mysql_get_server_info(), '4.1.3', '>=')) {
+      if ($GLOBALS['db_type'] == 'mysqli' || version_compare(mysql_get_server_info(), '4.1.3', '>=')) {
         db_query("SET @@session.time_zone = '+00:00'");
       } 
       $already_set = true;
