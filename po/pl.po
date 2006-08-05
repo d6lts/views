@@ -1,0 +1,1452 @@
+# Polish translation of Drupal's Views module
+# Copyright 2006 archetwist <arche#letwist.net>
+
+msgid ""
+msgstr ""
+"Project-Id-Version: drupal PL arche\n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2006-08-05 02:27+0100\n"
+"Last-Translator: Arche Twist <arche#letwist.net>\n"
+"Language-Team: archetwist\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: modules/views_book.inc:23
+msgid "Book: Parent Node"
+msgstr "Książka: Nadrzędny segment"
+
+#: modules/views_book.inc:26
+msgid "This allows you to filter books based on parent node."
+msgstr ""
+
+#: modules/views_book.inc:31
+msgid "Book: Weight"
+msgstr "Książka: Ciężar"
+
+#: modules/views_book.inc:33
+msgid "This will sort the view by book weight, if that is applicable."
+msgstr "Uporządkuje to elementy widoku wedle ciężaru książek (jeśli dostępne)."
+
+#: modules/views_book.inc:53
+msgid "As Link"
+msgstr "Jako odnośnik"
+
+#: modules/views_book.inc:54
+msgid "Without Link"
+msgstr "Bez odnośnika"
+
+#: modules/views_book.inc:57
+msgid "Display the title of the parent node"
+msgstr "Wyświetlaj tytuł nadrzędnego segmentu"
+
+#: modules/views_book.inc:63
+msgid "Sort by the title of the parent node"
+msgstr "Sortuj wedle tytułu nadzędnego segmentu"
+
+#: modules/views_book.inc:74
+msgid "Book: Parent Node ID"
+msgstr "Książka: ID nadrzędnego segmentu"
+
+#: modules/views_book.inc:51
+#: ;62
+msgid "Book: Parent Title"
+msgstr "Książka: Tytuł nadrzędnego"
+
+#: modules/views_comment.inc:37
+msgid "Comment: Last Comment Time"
+msgstr "Odpowiedź: Czas dodania ostatniej"
+
+#: modules/views_comment.inc:41
+msgid "This will display the last comment time."
+msgstr ""
+
+#: modules/views_comment.inc:44
+msgid "Comment: Last Comment Author"
+msgstr "Odpowiedź: Autor ostatniej"
+
+#: modules/views_comment.inc:49
+msgid "This will display the name of the last user to comment on the post."
+msgstr ""
+
+#: modules/views_comment.inc:52
+msgid "Comment: Count"
+msgstr "Odpowiedź: Liczba"
+
+#: modules/views_comment.inc:55
+#: modules/views_node.inc:16
+msgid "Normal"
+msgstr "Zwykłe"
+
+#: modules/views_comment.inc:56
+msgid "With New Count"
+msgstr ""
+
+#: modules/views_comment.inc:58
+msgid "This will display the comment count."
+msgstr "Spowoduje to wyświetlanie liczby odpowiedzi."
+
+#: modules/views_comment.inc:63
+msgid "Node: Comment Count"
+msgstr "Segment: Liczba odpowiedzi"
+
+#: modules/views_comment.inc:66
+msgid "This filter allows you to filter by the amount of comments."
+msgstr "Umożliwia to filtrowanie wedle ilości odpowiedzi."
+
+#: modules/views_comment.inc:71
+msgid "Comment: Last Comment Date"
+msgstr "Odpowiedź: Czas dodanie ostatniej"
+
+#: modules/views_comment.inc:72
+msgid "This will allow you to sort by the date of the most recent comment on a node."
+msgstr ""
+
+#: modules/views_node.inc:17
+msgid "With updated mark"
+msgstr "Z oznaczeniem zaktualizowania"
+
+#: modules/views_node.inc:21
+msgid "Display the title of the node."
+msgstr "Wyświetlaj tytuł segmentu."
+
+#: modules/views_node.inc:28
+msgid "Display the post time of the node."
+msgstr "Wyświetla czas dodania segmentu."
+
+#: modules/views_node.inc:35
+msgid "Display the last time the node was updated."
+msgstr "Wyświetla czas ostatniej aktualizacji segmentu."
+
+#: modules/views_node.inc:41
+msgid "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)"
+msgstr "Wyświetla rodzaj segmentu (na przykład \"wątek\" czy \"artykuł\")."
+
+#: modules/views_node.inc:44
+msgid "Node: Body"
+msgstr "Segment: Treść"
+
+#: modules/views_node.inc:46
+msgid "Full Text"
+msgstr "Pełen tekst"
+
+#: modules/views_node.inc:47
+msgid "Teaser"
+msgstr "Skrót"
+
+#: modules/views_node.inc:51
+msgid "Display the Main Content."
+msgstr "Wyświetlaj główną zawartość"
+
+#: modules/views_node.inc:57
+msgid "Sort by the database ID of the node."
+msgstr ""
+
+#: modules/views_node.inc:61
+msgid "Sort by the submission date of the node."
+msgstr "Sortuj wedle daty dodania segmentu."
+
+#: modules/views_node.inc:64
+msgid "Node: Last Updated Time"
+msgstr "Segment: Czas ostatniej aktualizacji"
+
+#: modules/views_node.inc:65
+msgid "Sort by the last update date of the node."
+msgstr "Sortuj wedle daty ostatniej aktualizacji segmentu."
+
+#: modules/views_node.inc:69
+msgid "Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top."
+msgstr "Podczas sortowania będzie brana pod uwagę opcja \"zawsze na górze\". Jeśli wybierzesz porządek malejący, segmenty z tą opcją znajdą się na górze."
+
+#: modules/views_node.inc:73
+msgid "Sort by the node title, alphabetically"
+msgstr "Sortuj wedle tytułu segmentu, alfabetycznie"
+
+#: modules/views_node.inc:76
+msgid "Random"
+msgstr "Losowo"
+
+#: modules/views_node.inc:78
+msgid "By choosing random, nodes will be ordered completely randomly. This is a good way to choose X random nodes from a group of nodes."
+msgstr "Powoduje wyświetlanie segmentów w całkowicie losowym porządku."
+
+#: modules/views_node.inc:83
+msgid "Node: Published"
+msgstr "Segment: Opublikowany"
+
+#: modules/views_node.inc:87
+msgid "Filter by whether or not the node is published. This is recommended for most Views!"
+msgstr "Brana będzie pod uwagę ocja \"do publikacji\". Zalecane dla większości widoków!"
+
+#: modules/views_node.inc:90
+msgid "Node: Front Page"
+msgstr "Segment: Na głównej"
+
+#: modules/views_node.inc:94
+msgid "Filter by whether or not the node has been promoted to Front Page."
+msgstr "Brana będzie pod uwagę opcja \"na główną stronę\" segmentu."
+
+#: modules/views_node.inc:101
+msgid "Filter by whether or not the node is set sticky."
+msgstr "Brane będzie pod uwagę to, czy segment został przyklejony."
+
+#: modules/views_node.inc:104
+msgid "Node: Moderated"
+msgstr "Segment: Moderowany"
+
+#: modules/views_node.inc:108
+msgid "Filter by whether or not the node is moderated."
+msgstr "Brane będzie pod uwagę to, czy segment jest moderowany."
+
+#: modules/views_node.inc:116
+msgid "Include or exclude nodes of the selected types."
+msgstr "Wyświetlaj lub ukryj segmenty określonego rodzaju."
+
+#: modules/views_node.inc:120
+msgid "Node: Author is Anonymous"
+msgstr "Segment: Autor anonimowy"
+
+#: modules/views_node.inc:124
+msgid "This allows you to filter by whether or not the node author is anonymous."
+msgstr "Sprawdza czy autor segmentu był anonimowym użytkownikiem."
+
+#: modules/views_node.inc:128
+msgid "Node: Author is Current User"
+msgstr "Segment: Użytkownik jest autorem"
+
+#: modules/views_node.inc:132
+msgid "This allows you to filter by whether or not the node was authored by the logged in user of the view."
+msgstr "Sprawdza czy aktualnie przeglądający widok użytkownik jest autorem segmentów."
+
+#: modules/views_node.inc:136
+msgid "Node: Current User Authored or Commented"
+msgstr ""
+
+#: modules/views_node.inc:141
+msgid "This allows you to filter by whether or not the logged in user authored or commented on the node."
+msgstr ""
+
+#: modules/views_node.inc:144
+msgid "Node: Distinct"
+msgstr ""
+
+#: modules/views_node.inc:149
+msgid "This filter ensures that each node may only be listed once, even if it matches multiple criteria. Use this if multiple taxonomy matches return duplicated nodes."
+msgstr ""
+
+#: modules/views_node.inc:155
+msgid "This filter allows nodes to be filtered by their title."
+msgstr ""
+
+#: modules/views_node.inc:194
+msgid "Node: Has New Content"
+msgstr "Segment: Zawiera nową treść"
+
+#: modules/views_node.inc:199
+msgid "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes."
+msgstr "Zastosowanie tego filtru spowoduje wyświetlanie jedynie tych segmentów, których treść zmieniła się od czasu ostatniego przeczytania ich przez użytkownika."
+
+#: modules/views_node.inc:212
+msgid "The node type argument allows users to filter a view by specifying the type of node."
+msgstr "Kryterium rodzaju segmentu umożliwia użytkownikom wyświetlenie jedynie segmentów określonego rodzaju."
+
+#: modules/views_node.inc:218
+msgid "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
+msgstr ""
+
+#: modules/views_node.inc:221
+msgid "Node: Posted Year"
+msgstr "Segment: Rok dodania"
+
+#: modules/views_node.inc:223
+msgid "This argument allows users to filter by what year the node was posted, in the form of CCYY."
+msgstr ""
+
+#: modules/views_node.inc:226
+msgid "Node: Posted Month"
+msgstr "Segment: Miesiąc dodania"
+
+#: modules/views_node.inc:228
+msgid "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument."
+msgstr "Poszczególnym miesiącom odpowiadają liczby od 1 do 12. Ponieważ to kryterium samo nie uwzględnia roku, zaleca się by poprzedzało je kryterium roku."
+
+#: modules/views_node.inc:231
+msgid "Node: Posted Week"
+msgstr "Segment: Tydzień dodania"
+
+#: modules/views_node.inc:233
+msgid "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'Year' argument."
+msgstr "Kryterium ma postać liczby od 1 do 52, określającej numer wybranego miesiąca. Zaleca się by poprzedzało je kryterium roku."
+
+#: modules/views_node.inc:236
+msgid "Node: Posted Month + Year"
+msgstr ""
+
+#: modules/views_node.inc:238
+msgid "This argument combines Month and Year into a single argument, specified in the form CCYYMM."
+msgstr "Kryterium ma postać daty w formacie CCYYMM."
+
+#: modules/views_node.inc:241
+msgid "Node: Posted Full Date"
+msgstr ""
+
+#: modules/views_node.inc:243
+msgid "This argument is a complete date in the form of CCYYMMDD."
+msgstr "Kryterium ma postać daty w formacie CCYYMMDD."
+
+#: modules/views_node.inc:248
+msgid "This argument is a single Node ID."
+msgstr "Kryterium ma postać pojedynczego ID segmentu."
+
+#: modules/views_node.inc:253
+msgid "Node: Feed Selector"
+msgstr "Segment: Wybór kanału"
+
+#: modules/views_node.inc:255
+msgid "This argument allows pluggable \"feed\" selectors. If using views_rss module, \"feed\" will turn the view into an RSS feed. Other modules may provide their own feeds."
+msgstr ""
+
+#: modules/views_node.inc:266
+msgid "The basic front page view."
+msgstr "Podstawowy widok strony głównej."
+
+#: modules/views_node.inc:343
+msgid "%num new"
+msgstr "nowych: %num"
+
+#: modules/views_node.inc:14
+#: ;72;152;215
+msgid "Node: Title"
+msgstr "Segment: Tytuł"
+
+#: modules/views_node.inc:163
+#: ;171
+msgid "This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter 'now' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here."
+msgstr ""
+
+#: modules/views_node.inc:24
+#: ;60;158
+msgid "Node: Created Time"
+msgstr "Segment: Czas dodania"
+
+#: modules/views_node.inc:31
+#: ;166
+msgid "Node: Updated Time"
+msgstr "Segment: Czas zaktualizacji"
+
+#: modules/views_node.inc:38
+#: ;111;210
+msgid "Node: Type"
+msgstr "Segment: Rodzaj"
+
+#: modules/views_node.inc:56
+#: ;246
+msgid "Node: ID"
+msgstr ""
+
+#: modules/views_node.inc:68
+#: ;97
+msgid "Node: Sticky"
+msgstr "Segment: Przyklejony"
+
+#: modules/views_node.inc:84
+#: ;91;98;105 modules/views_upload.inc:44
+msgid "Equals"
+msgstr ""
+
+#: modules/views_statistics.inc:25
+msgid "This will display the number of times a node has been read."
+msgstr ""
+
+#: modules/views_statistics.inc:30
+msgid "This will display the number of times a node has been read recently."
+msgstr ""
+
+#: modules/views_statistics.inc:37
+msgid "Display the time the node was last read."
+msgstr ""
+
+#: modules/views_statistics.inc:43
+msgid "This allows you to sort by the number of times a node has been read."
+msgstr ""
+
+#: modules/views_statistics.inc:47
+msgid "This allows you to sort by the number of times a node has been read recently."
+msgstr ""
+
+#: modules/views_statistics.inc:51
+msgid "This allows you to sort by the time a node was last read."
+msgstr ""
+
+#: modules/views_statistics.inc:65
+msgid "Nodes sorted by recent page-views"
+msgstr ""
+
+#: modules/views_statistics.inc:153
+msgid "Nodes sorted by total page-views"
+msgstr ""
+
+#: modules/views_statistics.inc:202
+msgid "title"
+msgstr "tytuł"
+
+#: modules/views_statistics.inc:209
+msgid "author"
+msgstr "autor"
+
+#: modules/views_statistics.inc:215
+msgid "created"
+msgstr "napisane"
+
+#: modules/views_statistics.inc:222
+msgid "reads"
+msgstr ""
+
+#: modules/views_statistics.inc:158
+#: ;175
+msgid "all-time popular content"
+msgstr "najpopularniejsze strony wszechczasów"
+
+#: modules/views_statistics.inc:23
+#: ;42
+msgid "Node: Total Hits"
+msgstr "Segment: Wszystkich odwiedzin"
+
+#: modules/views_statistics.inc:28
+#: ;46
+msgid "Node: Recent Hits"
+msgstr "Segment: Ostatnie odwiedziny"
+
+#: modules/views_statistics.inc:33
+#: ;50
+msgid "Node: Last Hit Time"
+msgstr ""
+
+#: modules/views_statistics.inc:70
+#: ;87
+msgid "recent popular content"
+msgstr "najpopularniejsze ostatnio"
+
+#: modules/views_taxonomy.inc:11
+msgid "Taxonomy: All Terms"
+msgstr "Taksonomia: Wszystkie terminy"
+
+#: modules/views_taxonomy.inc:11
+msgid "This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact."
+msgstr ""
+
+#: modules/views_taxonomy.inc:17
+msgid "When filtering by taxonomy term you may specify the \"depth\" as an option. Please see the taxonomy help for more information."
+msgstr ""
+
+#: modules/views_taxonomy.inc:45
+msgid "This will display all taxonomy terms associated with the node that are members of %voc-name. Note that this causes one extra query per row displayed, and might have a minor performance impact."
+msgstr ""
+
+#: modules/views_taxonomy.inc:60
+msgid "Only terms associated with %voc-name will appear in the select box for this filter. When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information."
+msgstr ""
+
+#: modules/views_taxonomy.inc:99
+msgid "This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter."
+msgstr ""
+
+#: modules/views_taxonomy.inc:102
+msgid "Taxonomy: Term Description"
+msgstr "Taksonomia: Opis terminu"
+
+#: modules/views_taxonomy.inc:104
+msgid "This will display the description associated with a taxonomy term."
+msgstr ""
+
+#: modules/views_taxonomy.inc:111
+msgid "This will sort nodes by taxonomy weight and name, as defined in the category administration."
+msgstr ""
+
+#: modules/views_taxonomy.inc:116
+msgid "Taxonomy: Vocabulary Name"
+msgstr "Taksonomia: Nazwa słownika"
+
+#: modules/views_taxonomy.inc:121
+msgid "This will filter a view to only nodes that contain a term in the associated vocabulary."
+msgstr ""
+
+#: modules/views_taxonomy.inc:135
+msgid "Taxonomy: Term ID"
+msgstr "Taksonomia: ID terminu"
+
+#: modules/views_taxonomy.inc:138
+msgid "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information."
+msgstr "Kryterium to ograniczy wyświetlanie segmentów do umieszczonych w kategorii o określonym ID. Ustal także głębokość poszukiwań wewnątrz hierarchii taksonomii (więcej w pomocy modułu <em>taxonomy</em>)."
+
+#: modules/views_taxonomy.inc:144
+msgid "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
+msgstr ""
+
+#: modules/views_taxonomy.inc:147
+msgid "Taxonomy: Vocabulary ID"
+msgstr "Taksonomia: ID słownika"
+
+#: modules/views_taxonomy.inc:149
+msgid "The argument will filter to nodes with terms in a vocabulary."
+msgstr ""
+
+#: modules/views_taxonomy.inc:159
+msgid "The taxonomy view with a depth of 0."
+msgstr ""
+
+#: modules/views_taxonomy.inc:109
+#: ;141
+msgid "Taxonomy: Term Name"
+msgstr "Taksonomia: Nazwa terminu"
+
+#: modules/views_taxonomy.inc:17
+#: ;95
+msgid "Taxonomy: Term"
+msgstr "Taksonomia: termin"
+
+#: modules/views_taxonomy.inc:279
+#: ;283;287
+msgid "Uncategorized"
+msgstr ""
+
+#: modules/views_taxonomy.inc:43
+#: ;53
+msgid "Taxonomy: Terms for %voc-name"
+msgstr ""
+
+#: modules/views_upload.inc:23
+msgid "File: Id"
+msgstr "Plik: ID"
+
+#: modules/views_upload.inc:25
+msgid "File Id which represents the file."
+msgstr ""
+
+#: modules/views_upload.inc:30
+msgid "Sort by File Id"
+msgstr ""
+
+#: modules/views_upload.inc:35
+msgid "File: Has file downloads"
+msgstr "Plik: Posiada załączone pliki"
+
+#: modules/views_upload.inc:36
+msgid "Exists"
+msgstr ""
+
+#: modules/views_upload.inc:40
+msgid "Filter weather the node has files for download"
+msgstr "Filtruj wedle tego, czy do segmentu załączono pliki"
+
+#: modules/views_upload.inc:43
+msgid "File: Listed in file downloads"
+msgstr "Plik: Ujęty na liście plików"
+
+#: modules/views_upload.inc:47
+msgid "Filter weather the file is listed in downloads"
+msgstr ""
+
+#: modules/views_upload.inc:64
+msgid "File: Name"
+msgstr "Plik: Nazwa"
+
+#: modules/views_upload.inc:66
+msgid "Plain"
+msgstr ""
+
+#: modules/views_upload.inc:67
+msgid "With download link"
+msgstr "Wraz z odnośnikiem do pobierania"
+
+#: modules/views_upload.inc:71
+msgid "Display file name"
+msgstr "Wyświetlaj nazwę pliku"
+
+#: modules/views_upload.inc:74
+msgid "File: Path"
+msgstr "Plik: Ścieżka"
+
+#: modules/views_upload.inc:76
+msgid "Display Path to File."
+msgstr "Wyświetlaj ścieżkę do pliku."
+
+#: modules/views_upload.inc:81
+msgid "File: Sort by Filename"
+msgstr "Plik: Porządkuj wedle nazwy pliku"
+
+#: modules/views_upload.inc:82
+msgid "Sort by file name"
+msgstr "Sortuj wedle nazwy pliku"
+
+#: modules/views_user.inc:28
+msgid "This will display the author of the node."
+msgstr "Spowoduje to wyświetlenie autora segmentu."
+
+#: modules/views_user.inc:31
+msgid "User: Author Picture"
+msgstr "Użytkownik: Portret autora"
+
+#: modules/views_user.inc:34
+msgid "Display the user picture of the author."
+msgstr ""
+
+#: modules/views_user.inc:40
+msgid "This allows you to sort alphabetically by author."
+msgstr ""
+
+#: modules/views_user.inc:49
+msgid "This allows you to filter by a particular user. You might not find this useful if you have a lot of users."
+msgstr ""
+
+#: modules/views_user.inc:68
+msgid "Role: Author Role"
+msgstr "Ranga: Ranga autora"
+
+#: modules/views_user.inc:72
+msgid "Include the node only if the author is a member of the selected role."
+msgstr ""
+
+#: modules/views_user.inc:82
+msgid "User: UID is Author"
+msgstr ""
+
+#: modules/views_user.inc:84
+msgid "The User ID argument allows users to filter to nodes authored by the specified user ID."
+msgstr "Kryterium ID użytkownika umożliwia użytkownikom wyświetlenie segmentów stworzonych przez użytkownika o określonym ID."
+
+#: modules/views_user.inc:87
+msgid "User: UID Authored or Commented"
+msgstr ""
+
+#: modules/views_user.inc:89
+msgid "The User ID argument allows users to filter a to nodes authored or commented on the specified user ID."
+msgstr "Kryterium ID użytkownika umożliwia użytkownikom wyświetlenie segmentów stworzonych bądź skomentowanych przez użytkownika o określonym ID."
+
+#: modules/views_user.inc:100
+msgid "Shows all new activity on system."
+msgstr ""
+
+#: modules/views_user.inc:137
+msgid "Last Post"
+msgstr "Ostatni wpis"
+
+#: modules/views_user.inc:152
+msgid "recent posts for %1"
+msgstr "ostatnie wpisy użytkownika %1"
+
+#: modules/views_user.inc:288
+msgid "Currently Logged In User"
+msgstr "Aktualnie zalogowany użytkownik"
+
+#: modules/views_user.inc:23
+#: ;39;45
+msgid "Node: Author Name"
+msgstr "Segment: Nazwisko autora"
+
+#: views.install:232
+msgid "Views module installed tables successfully."
+msgstr ""
+
+#: views.install:235
+msgid "The installation of views module was unsuccessful."
+msgstr ""
+
+#: views.module:0
+#: views_ui.module:97
+msgid "views"
+msgstr "widoki"
+
+#: views.module:277
+#: views_ui.module:15
+msgid "The views module creates customized views of node lists."
+msgstr ""
+
+#: views.module:1367
+msgid "<All>"
+msgstr "<wszystko>"
+
+#: views.module:1664
+msgid "As Short Date"
+msgstr "krótka data"
+
+#: views.module:1665
+msgid "As Medium Date"
+msgstr "średnio długa data"
+
+#: views.module:1666
+msgid "As Long Date"
+msgstr "długa data"
+
+#: views.module:1667
+msgid "As Custom Date"
+msgstr "Ostatnio aktualizowano: %date"
+
+#: views.module:1668
+msgid "As Time Ago"
+msgstr "czas, który upłynął"
+
+#: views.module:1733
+msgid "Is All Of"
+msgstr "spełnia wszystkie"
+
+#: views.module:1754
+msgid "Is Greater Than"
+msgstr "większy niż"
+
+#: views.module:1754
+msgid "Is Greater Than Or Equals"
+msgstr "większy lub równy"
+
+#: views.module:1754
+msgid "Is Less Than"
+msgstr "mniejszy niż"
+
+#: views.module:1754
+msgid "Is Less Than Or Equals"
+msgstr "mniejszy lub równy"
+
+#: views.module:1770
+msgid "List View"
+msgstr "Lista"
+
+#: views.module:1776
+msgid "Table View"
+msgstr "Tabela"
+
+#: views.module:1783
+msgid "Teaser List"
+msgstr "Skróty segmentów"
+
+#: views.module:1787
+msgid "Full Nodes"
+msgstr "Pełne segmenty"
+
+#: views.module:1797
+msgid "Contains"
+msgstr ""
+
+#: views.module:1797
+msgid "Does Not Contain"
+msgstr "nie zawiera"
+
+#: views.module:1797
+msgid "Ends With"
+msgstr "kończy się na"
+
+#: views.module:1797
+msgid "Starts With"
+msgstr "zaczyna się od"
+
+#: views.module:1733
+#: ;1740
+msgid "Is None Of"
+msgstr "nie spełnia żadnego"
+
+#: views.module:1733
+#: ;1740
+msgid "Is One Of"
+msgstr "spełnia jeden z"
+
+#: views.module:1747
+#: ;1754
+msgid "Is Not Equal To"
+msgstr "nie jest równy"
+
+#: views.module:1747
+#: ;1754;1797
+msgid "Is Equal To"
+msgstr "jest równy"
+
+#: views_rss.module:0
+msgid "views_rss"
+msgstr "views_rss"
+
+#: views_rss.module:8
+msgid "RSS plugin for the views feed selector argument."
+msgstr ""
+
+#: views_rss.module:18
+msgid "Views RSS: RSS feed"
+msgstr "RSS modułu views: kanał RSS"
+
+#: views_rss.module:31
+msgid "RSS: RSS Feed Selector"
+msgstr "RSS: Wybór kanału RSS"
+
+#: views_rss.module:33
+msgid "This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds."
+msgstr ""
+
+#: views_theme_wizard.module:0
+msgid "views_theme_wizard"
+msgstr "views_theme_wizard"
+
+#: views_theme_wizard.module:8
+msgid "The views theme wizard helps create stub theming for views."
+msgstr ""
+
+#: views_theme_wizard.module:17
+msgid "theme wizard"
+msgstr ""
+
+#: views_theme_wizard.module:32
+msgid "<p>The views theming wizard generates code that you can use in your phptemplate theme to help you customize the output of a view. Simply select a theme and it will generate code for your template.php as well as template files for the individual views.</p><p>At this time this code assumes your view is a <b>list type view</b>! It may not generate effective code for other types of views. Future versions of this program will be smarter, and give more options, but this wizard is still a huge start.</p>"
+msgstr ""
+
+#: views_theme_wizard.module:39
+msgid "Select a view"
+msgstr "Wybierz widok"
+
+#: views_theme_wizard.module:55
+msgid "Generate Theme"
+msgstr "Wygeneruj skórkę"
+
+#: views_theme_wizard.module:73
+msgid "This code goes in your template.php file"
+msgstr ""
+
+#: views_theme_wizard.module:78
+msgid "This code goes in a file named views-list-%s.tpl.php"
+msgstr ""
+
+#: views_ui.module:0
+msgid "views_ui"
+msgstr "views_ui"
+
+#: views_ui.module:17
+msgid "You may import a view by cut-and-pasting the results of an export view. If the import is successful you will be taken to the Add View page with all of the settings of the imported view.."
+msgstr ""
+
+#: views_ui.module:19
+msgid "This screen shows all of the views that are currently defined in your system. The default views are provided by Views and other modules and are automatically available. If a customized view of the same name exists, it will be used in place of a default view."
+msgstr ""
+
+#: views_ui.module:25
+msgid "Please see %s or the views documentation on drupal.org for help here."
+msgstr ""
+
+#: views_ui.module:25
+msgid "the views help page"
+msgstr ""
+
+#: views_ui.module:27
+msgid "You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location."
+msgstr ""
+
+#: views_ui.module:36
+msgid "<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>"
+msgstr ""
+
+#: views_ui.module:37
+msgid ""
+"<h3>View Types</h3>\n"
+"    <dl>\n"
+"      <dt><em>List View</em></dt><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).</dd>\n"
+"      <dt><em>Table View</em></dt><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.</dd>\n"
+"      <dt><em>Teaser List</em></dt><dd>A Teaser List will simply present the teaser of each node retrieved.</dd>\n"
+"      <dt><em>Full Nodes</em></dt><dd>This will show the full content of each node retrieved.</dd>\n"
+"      <dt><em>Random Teaser</em></dt><dd>This will show a single random teaser.</dd>\n"
+"      <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>\n"
+"    </dl>"
+msgstr ""
+
+#: views_ui.module:47
+msgid "<h3>Fields</h3>\n"
+msgstr "<h3>Pola</h3>\n"
+
+#: views_ui.module:48
+msgid "<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n"
+msgstr ""
+
+#: views_ui.module:55
+msgid "<h3>Arguments</h3>\n"
+msgstr ""
+
+#: views_ui.module:56
+msgid "<p>Arguments can be passed to the View through the URL, in order to create views that are configurable by the user. This is very useful to create views for taxonomy, or to sort by user. When using arguments, substitution is performed on the title. %1 will represent argument 1, %2 will represent argument 2. Each argument has a title field; this title is used if providing a summary view (which can matter because the argument is missing which could result in confusing phrases such as 'view for')</p><dl>\n"
+msgstr ""
+
+#: views_ui.module:63
+msgid "<h3>Filters</h3>\n"
+msgstr "<h3>Filtry</h3>\n"
+
+#: views_ui.module:64
+msgid "<p>Views may be filtered to restrict the view on a number of criteria.</p><dl>\n"
+msgstr ""
+
+#: views_ui.module:71
+msgid "<h3>Sorting Critera</h3>\n"
+msgstr ""
+
+#: views_ui.module:72
+msgid "<p>The result set may be sorted on any of the following criteria.</p><dl>\n"
+msgstr ""
+
+#: views_ui.module:128
+msgid "export view"
+msgstr "wyeksportuj widok"
+
+#: views_ui.module:175
+msgid "The module %module was deactivated--it requires the following disabled/non-existant modules to function properly: %dependencies"
+msgstr ""
+
+#: views_ui.module:220
+msgid "Existing Views"
+msgstr "Istniejące widoki"
+
+#: views_ui.module:220
+msgid "View"
+msgstr "Widok"
+
+#: views_ui.module:232
+msgid "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>"
+msgstr ""
+
+#: views_ui.module:242
+msgid "Overridden"
+msgstr ""
+
+#: views_ui.module:282
+msgid "Default View"
+msgstr "Domyślny widok"
+
+#: views_ui.module:282
+msgid "Default Views"
+msgstr "Domyślne widoki"
+
+#: views_ui.module:329
+msgid "Import View Code"
+msgstr "Importuj kod widoku"
+
+#: views_ui.module:332
+msgid "Cut and paste the results of an Export View here."
+msgstr ""
+
+#: views_ui.module:361
+msgid "You don't seem to have the following requirements: "
+msgstr ""
+
+#: views_ui.module:365
+msgid "Unable to get a view out of that."
+msgstr ""
+
+#: views_ui.module:436
+msgid "Edit view %n"
+msgstr "Edytuj widok %n"
+
+#: views_ui.module:506
+msgid "Return Page Not Found"
+msgstr ""
+
+#: views_ui.module:507
+msgid "Display All Values"
+msgstr "Wyświetl wszystkie wartości"
+
+#: views_ui.module:508
+msgid "Summary, unsorted"
+msgstr "Podsumowanie (nieuporządkowane)"
+
+#: views_ui.module:509
+msgid "Summary, sorted ascending"
+msgstr ""
+
+#: views_ui.module:510
+msgid "Summary, sorted descending"
+msgstr ""
+
+#: views_ui.module:511
+msgid "Summary, sorted as view"
+msgstr ""
+
+#: views_ui.module:634
+msgid "Expose Filter"
+msgstr "Udostępnij filtr"
+
+#: views_ui.module:670
+msgid "You have modified this view; changes will not be recorded until you Save the form."
+msgstr "Dokonałeś zmian w tym widoku, jednak nie zostaną one wprowadzone póki nie wciśniesz przycisku \"Zapisz\"."
+
+#: views_ui.module:697
+msgid "Basic Information"
+msgstr "Podstawowe informacje"
+
+#: views_ui.module:706
+msgid "The unique identifier of the view; it is only important for overridden views and views that modules or themes will need to use. Only alphanumeric and _ allowed here"
+msgstr ""
+
+#: views_ui.module:712
+msgid "Access"
+msgstr "Dostęp"
+
+#: views_ui.module:715
+msgid "Only the checked roles will be able to see this view in any form; if no roles are checked, access will not be restricted."
+msgstr ""
+
+#: views_ui.module:724
+msgid "A description of the view for the admin list."
+msgstr ""
+
+#: views_ui.module:738
+msgid "Provide Page View"
+msgstr "Udostępniaj widok strony"
+
+#: views_ui.module:741
+msgid "If checked this view will be provided as a page. If not checked, the fields in this group will be ignored."
+msgstr ""
+
+#: views_ui.module:750
+msgid "Enter the URL to use for this view in the form of 'dir/dir'. Do not begin or end the URL with a /. Example: 'view/tracker'. This is required if providing a page view. You can also add $arg as a placeholder for arguments passed in the URL, for example 'user/$arg/tracker' or 'view/taxonomy/$arg'."
+msgstr ""
+
+#: views_ui.module:767
+msgid "The title that be shown at the top of the view. May be blank. If your View allows arguments, you may use %1 to substitute argument 1 text, %2 to argument #2, and so on."
+msgstr ""
+
+#: views_ui.module:772
+msgid "Use Pager"
+msgstr "Korzystaj z podziału na strony"
+
+#: views_ui.module:775
+msgid "If checked this query may be multiple pages. If not checked this query will be one page."
+msgstr ""
+
+#: views_ui.module:779
+msgid "Breadcrumb trail should not include \"Home\""
+msgstr ""
+
+#: views_ui.module:782
+msgid "If checked the breadcrumb trail for this page will discard \"Home\". Usually you will not set this, but this is used for the Front Page View, where it IS Home and should not leave a trail to itself."
+msgstr ""
+
+#: views_ui.module:786
+msgid "Nodes per Page"
+msgstr "Segmentów na stronę"
+
+#: views_ui.module:790
+msgid "The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list."
+msgstr ""
+
+#: views_ui.module:830
+msgid "Empty Text"
+msgstr ""
+
+#: views_ui.module:837
+msgid "Text to display if a view returns no nodes. Optional."
+msgstr ""
+
+#: views_ui.module:851
+msgid "Provide Menu"
+msgstr "Udostępnij menu"
+
+#: views_ui.module:854
+msgid "If checked this view be given a menu entry in the Drupal menu system. If not checked the data in this group will be ignored."
+msgstr ""
+
+#: views_ui.module:859
+msgid "Provide Menu as Tab"
+msgstr ""
+
+#: views_ui.module:862
+msgid "If checked this view's menu entry will be provided as a tab rather than in the main menu system."
+msgstr ""
+
+#: views_ui.module:867
+msgid "Make Default Menu Tab"
+msgstr ""
+
+#: views_ui.module:870
+msgid "If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. For tabs to work properly, one tab in the group must be set as the default."
+msgstr ""
+
+#: views_ui.module:875
+msgid "Tab Weight"
+msgstr ""
+
+#: views_ui.module:878
+msgid "If this is a menu tab, select the weight; lower numbers will be further to the left."
+msgstr ""
+
+#: views_ui.module:883
+msgid "Menu Title"
+msgstr "Tytuł menu"
+
+#: views_ui.module:887
+msgid "Enter the title to use for the menu entry or tab. If blank, the page title will be used."
+msgstr ""
+
+#: views_ui.module:901
+msgid "Provide Block"
+msgstr "Udostępnij blok"
+
+#: views_ui.module:904
+msgid "If checked this view will be provided as a block. If checked title may not be blank."
+msgstr ""
+
+#: views_ui.module:921
+msgid "The title that will be shown at the top of the block. May be blank."
+msgstr ""
+
+#: views_ui.module:926
+msgid "Nodes per Block"
+msgstr "Segmentów w bloku"
+
+#: views_ui.module:930
+msgid "If using a block, the maximum number of items to display in the block. Pagers are not used in blocks."
+msgstr ""
+
+#: views_ui.module:936
+msgid "[More] Link?"
+msgstr "Odnośnik [więcej]?"
+
+#: views_ui.module:939
+msgid "If using a view as both a page and a block, display a more link in the block that links to the view URL?"
+msgstr ""
+
+#: views_ui.module:950
+msgid "Use Page Header"
+msgstr ""
+
+#: views_ui.module:953
+msgid "If checked, use the Page Header for block view instead. If so, you should leave the Block Header blank."
+msgstr ""
+
+#: views_ui.module:975
+msgid "Use Page Footer"
+msgstr ""
+
+#: views_ui.module:978
+msgid "If checked, use the page footer for block view instead. If so, you should leave the block footer blank."
+msgstr ""
+
+#: views_ui.module:1000
+msgid "Use Page empty"
+msgstr ""
+
+#: views_ui.module:1003
+msgid "If checked, use the Page Empty Text for block view instead. If so, you should leave the block empty text blank."
+msgstr ""
+
+#: views_ui.module:1012
+msgid "Text to display if a view results in no nodes. Optional."
+msgstr ""
+
+#: views_ui.module:1023
+msgid "Argument Handling Code"
+msgstr ""
+
+#: views_ui.module:1028
+msgid "Argument Code"
+msgstr ""
+
+#: views_ui.module:1032
+msgid "Advanced Usage Only: PHP code that returns a custom array of arguments for the view. Should not include &lt;?php ?&gt; delimiters."
+msgstr ""
+
+#: views_ui.module:1033
+msgid "For more information, please see the <a href=\"%arg\">Argument Handling Code documentation</a> in the Drupal handbook."
+msgstr ""
+
+#: views_ui.module:1213
+msgid "None"
+msgstr "Brak"
+
+#: views_ui.module:1369
+msgid "Expose"
+msgstr ""
+
+#: views_ui.module:1467
+msgid "Delete this item."
+msgstr ""
+
+#: views_ui.module:1468
+msgid "Move this item up."
+msgstr "Przesuń ten element w górę."
+
+#: views_ui.module:1468
+msgid "Up"
+msgstr "W górę"
+
+#: views_ui.module:1469
+msgid "Down"
+msgstr ""
+
+#: views_ui.module:1469
+msgid "Move this item down."
+msgstr "Przesuń ten element w dół"
+
+#: views_ui.module:1470
+msgid "Move this item to the top."
+msgstr "Przesuń ten element na samą górę."
+
+#: views_ui.module:1470
+msgid "Top"
+msgstr ""
+
+#: views_ui.module:1471
+msgid "Bottom"
+msgstr ""
+
+#: views_ui.module:1471
+msgid "Move this item to the bottom."
+msgstr "Przesuń ten element na sam dół."
+
+#: views_ui.module:1503
+msgid "Default Sort"
+msgstr "Domyślny porządek"
+
+#: views_ui.module:1503
+msgid "Handler"
+msgstr ""
+
+#: views_ui.module:1503
+msgid "Sortable"
+msgstr ""
+
+#: views_ui.module:1506
+msgid "Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order."
+msgstr ""
+
+#: views_ui.module:1507
+msgid "Fields"
+msgstr "Pola"
+
+#: views_ui.module:1513
+msgid "Argument Type"
+msgstr "Typ argumentu"
+
+#: views_ui.module:1513
+msgid "Wildcard"
+msgstr ""
+
+#: views_ui.module:1513
+msgid "Wildcard Sub"
+msgstr ""
+
+#: views_ui.module:1519
+msgid "Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility."
+msgstr ""
+
+#: views_ui.module:1520
+msgid "Arguments"
+msgstr ""
+
+#: views_ui.module:1525
+msgid "Operator"
+msgstr ""
+
+#: views_ui.module:1525
+msgid "Value"
+msgstr ""
+
+#: views_ui.module:1529
+msgid "Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together."
+msgstr ""
+
+#: views_ui.module:1536
+msgid "Filter settings Default"
+msgstr ""
+
+#: views_ui.module:1536
+msgid "Force Single"
+msgstr ""
+
+#: views_ui.module:1536
+msgid "Lock Operator"
+msgstr ""
+
+#: views_ui.module:1541
+msgid "Exposed filters will be presented to the viewer. If not set required, then filters will include a \"&lt;None&gt;\" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user."
+msgstr ""
+
+#: views_ui.module:1542
+msgid "Exposed Filters"
+msgstr "Wyświetlane filtry"
+
+#: views_ui.module:1548
+msgid "Order"
+msgstr "Porządek"
+
+#: views_ui.module:1551
+msgid "Sort Criteria"
+msgstr "Kryteria sortowania"
+
+#: views_ui.module:1589
+msgid "This view currently has no %s defined."
+msgstr ""
+
+#: views_ui.module:1593
+msgid "Ops"
+msgstr ""
+
+#: views_ui.module:1622
+msgid "Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!"
+msgstr ""
+
+#: views_ui.module:1628
+msgid "View name is required."
+msgstr "Nazwa widoku jest wymagana."
+
+#: views_ui.module:1633
+msgid "View name must be alphanumeric or underscores only."
+msgstr ""
+
+#: views_ui.module:1639
+msgid "View name already in use."
+msgstr "Widok o tej nazwie już istnieje."
+
+#: views_ui.module:1643
+msgid "If being used as a block, Nodes Per Block must be positive."
+msgstr ""
+
+#: views_ui.module:1711
+msgid "View successfully saved."
+msgstr "Widok został pomyślnie zapisany."
+
+#: views_ui.module:1714
+msgid "View successfully added."
+msgstr "Widok został pomyślnie dodany."
+
+#: views_ui.module:1729
+msgid "List and Table types require at least one field."
+msgstr ""
+
+#: views_ui.module:1737
+msgid "You can only set on Default Sort on one field."
+msgstr ""
+
+#: views_ui.module:1769
+msgid "View '%vid' not found."
+msgstr ""
+
+#: views_ui.module:108
+#: ;270
+msgid "add"
+msgstr "dodaj"
+
+#: views_ui.module:113
+#: ;214
+msgid "clone"
+msgstr ""
+
+#: views_ui.module:118
+#: ;133
+msgid "edit view"
+msgstr "edytuj widok"
+
+#: views_ui.module:1503
+#: ;1513;1525;1548
+msgid "Option"
+msgstr "Opcja"
+
+#: views_ui.module:1503
+#: ;1536
+msgid "Label"
+msgstr "Etykieta"
+
+#: views_ui.module:1525
+#: ;1536;1548
+msgid "Field"
+msgstr "Pole"
+
+#: views_ui.module:188
+#: ;86
+msgid "administer views"
+msgstr "zarządzanie widokami"
+
+#: views_ui.module:193
+#: ;239
+msgid "No Page View"
+msgstr "Brak widoku strony"
+
+#: views_ui.module:220
+#: ;282
+msgid "Actions"
+msgstr "Działania"
+
+#: views_ui.module:220
+#: ;282
+msgid "Provides"
+msgstr "Udostępnia"
+
+#: views_ui.module:224
+#: ;285
+msgid "<p>No views have currently been defined.</p>"
+msgstr ""
+
+#: views_ui.module:267
+#: ;846
+msgid "Menu"
+msgstr "Menu"
+
+#: views_ui.module:355
+#: ;394;414
+msgid "Add a View"
+msgstr "Dodaj widok"
+
+#: views_ui.module:520
+#: ;1213
+msgid "Ascending"
+msgstr "Rosnąco"
+
+#: views_ui.module:521
+#: ;1213
+msgid "Descending"
+msgstr "Malejąco"
+
+#: views_ui.module:613
+#: ;665
+msgid "Add Filter"
+msgstr "Dodaj filtr"
+
+#: views_ui.module:617
+#: ;666
+msgid "Add Criteria"
+msgstr "Dodaj kryterium"
+
+#: views_ui.module:621
+#: ;664
+msgid "Add Argument"
+msgstr "Dodaj argument"
+
+#: views_ui.module:625
+#: ;663
+msgid "Add Field"
+msgstr "Dodaj pole"
+
+#: views_ui.module:669
+#: ;1044;1615
+msgid "Save"
+msgstr "Zapisz"
+
+#: views_ui.module:755
+#: ;909
+msgid "View Type"
+msgstr "Typ widoku"
+
+#: views_ui.module:758
+#: ;912
+msgid "How the nodes should be displayed to the user."
+msgstr ""
+
+#: views_ui.module:805
+#: ;962
+msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
+msgstr ""
+
+#: views_ui.module:814
+#: ;971;983
+msgid "Footer"
+msgstr "Stopka"
+
+#: views_ui.module:821
+#: ;987
+msgid "Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional."
+msgstr ""
+
+#: views_ui.module:996
+#: ;1008
+msgid "Empty text"
+msgstr ""
+
