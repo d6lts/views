@@ -88,7 +88,9 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
                           'type' => 'application/rss+xml',
                           'title' => check_plain($title),
                           'href' => url($url, NULL, NULL, TRUE)));
-    return theme('feed_icon', url($url));
+    if ($view->build_type != 'block') {
+      return theme('feed_icon', url($url));
+    }
   }
 }
 
