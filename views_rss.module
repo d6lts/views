@@ -81,10 +81,12 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
     $view->page_type = 'views_rss';
   }
   else if ($op == 'post_view') {
-    $url = views_post_view_make_url($view, $arg, 'feed');
+    $args = views_post_view_make_args($view, $arg, 'feed');
+    $url = views_get_url($view, $args);
+    $title = views_get_title($view, 'page', $args);
     drupal_add_link(array('rel' => 'alternate',
                           'type' => 'application/rss+xml',
-                          'title' => t('RSS'),
+                          'title' => check_plain($title),
                           'href' => url($url, NULL, NULL, TRUE)));
     return theme('feed_icon', url($url));
   }
@@ -97,7 +99,7 @@ function theme_views_rss_feed($view, $nodes) {
   global $base_url;
 
   $channel = array(
-    'title'       => variable_get('site_name', 'drupal') .' - '. check_plain(views_get_title($view, 'page')),
+    'title'       => check_plain(views_get_title($view, 'page')),
     'link'        => url($view->real_url, NULL, NULL, true),
     'description' => check_plain($view->description),
   );
