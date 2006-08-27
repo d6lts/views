@@ -15,7 +15,7 @@ function views_init() {
     // The filename format is very specific. It must be views_MODULENAME.inc
     $module = substr_replace($file->name, '', 0, 6);
     if (module_exist($module)) {
-      require_once($file->filename);
+      require_once("./$file->filename");
     }
   }
 }
