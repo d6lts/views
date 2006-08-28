@@ -616,7 +616,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   }
   else {
     $path = drupal_get_path('module', 'views');
-    require_once("$path/views_query.inc");
+    require_once("./$path/views_query.inc");
 
     $info = _views_build_query($view, $args);
     if ($info['fail']) {
@@ -1000,7 +1000,7 @@ function _views_save_view($view) {
   // cache the query
   if (_views_is_cacheable($view)) {
     $path = drupal_get_path('module', 'views');
-    require_once("$path/views_query.inc");
+    require_once("./$path/views_query.inc");
 
     $info = _views_build_query($view);
     $view->query = _views_replace_args($info['query'], $info['args']);
