@@ -170,6 +170,12 @@ function node_views_tables() {
         'option' => 'string',
         'help' => t('This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
       ),
+      'body' => array(
+        'name' => t('Node: Body'),
+        'operator' => 'views_handler_operator_like',
+        'handler' => 'views_handler_filter_body',
+        'help' => t('This filter allows nodes to be filtered by their body.'),
+      ),
     ),
   );
 
@@ -627,6 +633,24 @@ function views_handler_filter_nodetype($op) {
  */
 function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
   $query->set_distinct();
+}
+
+/*
+ * Filter by body
+ */
+function views_handler_filter_body($op, $filter, $filterinfo, &$query) {
+  $filterinfo['table'] = 'node_revisions';
+  $joininfo = array(
+    'left' => array(
+      'table' => 'node',
+      'field' => 'vid',
+      ),
+    'right' => array(
+      'field' => 'vid',
+    ),
+  );
+  $query->add_table($filterinfo['table'], FALSE, 1, $joininfo);
+  views_handler_filter_like($op, $filter, $filterinfo, $query);
 }
 
 function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
