@@ -68,6 +68,7 @@ function upload_views_tables() {
         ),
         'sortable' => true,
         'addlfields' => array('filepath'),
+        'option' => 'string',
         'help' => t('Display file name'),
       ),
       'filepath' => array(
@@ -75,11 +76,49 @@ function upload_views_tables() {
         'sortable' => false,
         'help' => t('Display Path to File.'),
       ),
+      'filesize' => array(
+        'name' => t('File: Size'),
+        'handler' => 'views_handler_file_size',
+        'sortable' => true,
+        'help' => t('Display the size of the associated file.'),
+      ),
+      'filemime' => array(
+        'name' => t('File: Mime type'),
+        'sortable' => true,
+        'help' => t('This filter allows nodes to be filtered by mime type.'),
+      ),
+    ),
+    'filters' => array(
+      'filename' => array(
+        'name' => t('File: Filename'),
+        'operator' => 'views_handler_operator_like',
+        'handler' => 'views_handler_filter_like',
+        'help' => t('This filter allows nodes to be filtered by the name of attached files.'),
+      ),
+      'filesize' => array(
+        'name' => t('File: Size'),
+        'operator' => 'views_handler_operator_gtlt',
+        'help' => t('This filter allows nodes to be filtered by file size.'),
+      ),
+      'filemime' => array(
+        'name' => t('File: Mime type'),
+        'operator' => 'views_handler_operator_like',
+        'handler' => 'views_handler_filter_like',
+        'help' => t('This filter allows nodes to be filtered by mime type.'),
+      ),
     ),
     'sorts' => array(
       'filename' => array(
         'name' => t('File: Sort by Filename'),
         'help' => t('Sort by file name'),
+      ),
+      'filesize' => array(
+        'name' => t('File: File size'),
+        'help' => t('Sort by file size.'),
+      ),
+      'filemime' => array(
+        'name' => t('File: Mime type'),
+        'help' => t('Sort by mime type.'),
       ),
     ),
   );
@@ -90,8 +129,13 @@ function views_handler_file_filename($fieldinfo, $fielddata, $value, $data) {
   return $value;
 }
 
+function views_handler_file_size($fieldinfo, $fielddata, $value, $data) {
+  return format_size($value);
+}
+
 function views_handler_file_filename_download($fieldinfo, $fielddata, $value, $data) {
-  return $value ? l($value, check_url(file_create_url($data->files_filepath))) : '';
+  $link_text = $fielddata['options'] ? $fielddata['options'] : $value;
+  return $value ? l($link_text, check_url(file_create_url($data->files_filepath))) : '';
 }
 
 function views_handler_file_filter_fid_exist($op, $filter, $filterdata, &$query) {

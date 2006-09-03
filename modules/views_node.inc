@@ -16,6 +16,13 @@ function node_views_tables() {
           'views_handler_field_nodelink'           => t('Normal'),
           'views_handler_field_nodelink_with_mark' => t('With updated mark')
         ),
+        'option' => array(
+           '#type' => 'select',
+           '#options' => array(
+             'link' => 'As link',
+             'nolink' => 'Without link'
+            ),
+        ),
         'sortable' => true,
         'addlfields' => array('changed'),
         'help' => t('Display the title of the node.'),
@@ -321,6 +328,9 @@ function node_views_default_views() {
  * Format a field as a link to a node.
  */
 function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
+  if ($fielddata['options'] == 'nolink') {
+    return check_plain($value);
+  }
   return l($value, "node/$data->nid");
 }
 
@@ -329,7 +339,13 @@ function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
  * updated since it was last viewed by the user.
  */
 function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, $data) {
-  return l($value, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
+  if ($fielddata['options'] == 'nolink') {
+    $link = check_plain($value);
+  }
+  else {
+    $link = l($value, "node/$data->nid");
+  }
+  return l($link, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
 }
 
 /*
