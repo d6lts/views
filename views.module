@@ -720,9 +720,12 @@ function views_theme_field() {
   $args = func_get_args();
   $function = array_shift($args);
   $field_name = array_shift($args);
+  $view = array_pop($args);
 
-  if (!($func = theme_get_function($function . "_" . $field_name))) {
-    $func = theme_get_function($function);
+  if (!($func = theme_get_function($function . '_' . $view->name . '_' . $field_name))) {
+    if (!($func = theme_get_function($function . '_' . $field_name))) {
+      $func = theme_get_function($function);
+    }
   }
 
   if ($func) {
@@ -1251,17 +1254,6 @@ function views_view_add_sort(&$view, $table, $field, $order, $option) {
 // Themeable and support for themeables.
 
 /**
- * Figure out how to display the data of a field. Many fields simply display
- * the data as-is, but many fields have to massage that data, which is
- * done through handlers.
- *
- * DEPRECATED. Left in for backward compatibility.
- */
-function _views_handle_field($fields, $field, $data) {
-  return views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $data);
-}
-
-/**
  * Themeable function to handle displaying a specific field.
  */
 function theme_views_handle_field($fields, $field, $data) {
@@ -1419,7 +1411,7 @@ function theme_views_view_list($view, $nodes, $type) {
         if ($field['label']) {
           $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
         }
-        $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node) . "</div>";
+        $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view) . "</div>";
       }
     }
     $items[] = "<div class='view-item view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
@@ -1439,7 +1431,7 @@ function theme_views_view_table($view, $nodes, $type) {
     $row = array();
     foreach ($view->field as $field) {
       if ($fields[$field['id']]['visible'] !== FALSE) {
-        $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node);
+        $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view);
         $cell['class'] = "view-field view-field-$field[queryname]";
         $row[] = $cell;
       }

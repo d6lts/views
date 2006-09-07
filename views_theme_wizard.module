@@ -65,6 +65,12 @@ function views_theme_wizard_page() {
     '#weight' => 10,
   );
 
+  $form['submit2'] = array(
+    '#type' => 'button',
+    '#value' => t('List Theme Fields'),
+    '#weight' => 10,
+  );
+
   $form['#after_build'] = array(
     'views_theme_wizard_generate',
   );
@@ -76,18 +82,64 @@ function views_theme_wizard_generate($form, $form_values) {
   if (!$view) {
     return $form;
   }
+  $op = $_POST['op'];
+  if ($op == t('Generate Theme')) {
+    $form['code1']['#type'] = 'textarea';
+    $form['code1']['#value'] = views_theme_wizard_generate_list_code($view);
+    $form['code1']['#title'] = t('This code goes in your template.php file');
+    $form['code1']['#rows'] = 20;
 
-  $form['code1']['#type'] = 'textarea';
-  $form['code1']['#value'] = views_theme_wizard_generate_list_code($view);
-  $form['code1']['#title'] = t('This code goes in your template.php file');
-  $form['code1']['#rows'] = 20;
+    $form['code2']['#type'] = 'textarea';
+    $form['code2']['#value'] = views_theme_wizard_generate_list_template_code($view);
+    $form['code2']['#title'] = t('This code goes in a file named views-list-%s.tpl.php', array('%s' => $view->name));
+    $form['code2']['#rows'] = 20;
+  }
 
-  $form['code2']['#type'] = 'textarea';
-  $form['code2']['#value'] = views_theme_wizard_generate_list_template_code($view);
-  $form['code2']['#title'] = t('This code goes in a file named views-list-%s.tpl.php', array('%s' => $view->name));
-  $form['code2']['#rows'] = 20;
+  if ($op == t('List Theme Fields')) {
+    $form['code1']['#type'] = 'textarea';
+    $form['code1']['#value'] = views_theme_wizard_list_fields($view);
+    $form['code1']['#title'] = t('This is a list of all the theme functions you can use to override individual field displays');
+    $form['code1']['#rows'] = 20;
 
+    $form['code2']['#type'] = 'textarea';
+    $form['code2']['#value'] = views_theme_wizard_example_field($view);
+    $form['code2']['#title'] = t('This is a basic theme function', array('%s' => $view->name));
+    $form['code2']['#rows'] = 20;
+  }
   return $form;
+}
+
+function views_theme_wizard_list_fields($view) {
+  $fields = _views_get_fields();
+  $output = "These functions will override the given fields for just this view:\n\n";
+  foreach ($view->field as $field) {
+    $fieldinfo = $fields[$field['id']];
+    $output .= "$fieldinfo[name]\n  function phptemplate_views_handle_field_{$view->name}_$field[queryname](\$fields, \$field, \$data)\n\n";
+  }
+  return $output;
+}
+
+function views_theme_wizard_example_field($view) {
+  $fieldname = 'phptemplate_views_handle_field_' . $view->field[0]['queryname'];
+  $output = <<<EOT
+/**
+ * Function to handle a sample field.
+ */
+function $fieldname(\$fields, \$field, \$data) {
+  \$info = \$fields[\$field['fullname']];
+
+  if (\$field['handler'] && function_exists(\$field['handler'])) {
+    return \$field['handler'](\$info, \$field, \$data->\$field['queryname'], \$data);
+  }
+
+  if (\$info['handler'] && is_string(\$info['handler']) && function_exists(\$info['handler'])) {
+    return \$info['handler'](\$info, \$field, \$data->\$field['queryname'], \$data);
+  }
+
+  return check_plain(\$data->\$field['queryname']);
+}
+EOT;
+  return $output;
 }
 
 function views_theme_wizard_generate_list_code($view) {
