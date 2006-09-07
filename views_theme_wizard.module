@@ -119,7 +119,7 @@ function views_theme_wizard_list_fields($view) {
   $output .= "\n\nThese functions will override the given fields for every view:\n\n";
   foreach ($view->field as $field) {
     $fieldinfo = $fields[$field['id']];
-    $output .= "$fieldinfo[name]\n  function phptemplate_views_handle_field_$field[queryname](\$fields, \$field, \$data)\n\n";
+    $output .= "$fieldinfo[name]\n  phptemplate_views_handle_field_$field[queryname]\n\n";
   }
   return $output;
 }
