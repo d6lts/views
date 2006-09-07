@@ -38,6 +38,7 @@ function _views_build_query(&$view, $args = array()) {
           if (!$self_sort) {
             $sort = true;
           }
+          break 2;
         case 7:
           // to trigger empty text, send back an empty query
           $info['query'] = NULL;
@@ -373,7 +374,7 @@ class _views_query {
     }
 
     foreach($field as $f) {
-      $this->add_field($f, $table);
+//      $this->add_field($f, $table);
       $this->orderby[] = "$alias$f $order";
     }
   }
