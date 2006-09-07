@@ -197,7 +197,7 @@ function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
 function views_handler_field_userpic($fieldinfo, $fielddata, $value, $data) {
   $account = user_load(array('uid' => $value));
   if ($account !== FALSE) {
-    return theme_user_picture($account);
+    return theme('user_picture', $account);
   }
 }
 
