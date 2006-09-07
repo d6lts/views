@@ -310,7 +310,7 @@ function views_menu($may_cache) {
         $views_with_inline_args[$view->name] = $view;
         continue;
       }
-      _views_create_menu_item($items, $view, $view->url, array($view->name));
+      _views_create_menu_item($items, $view, $view->url);
     }
     $default_views = _views_get_default_views();
     $views_status = variable_get('views_defaults', array());
@@ -324,7 +324,7 @@ function views_menu($may_cache) {
           continue;
         }
 
-        _views_create_menu_item($items, $view, $view->url, array($view->name));
+        _views_create_menu_item($items, $view, $view->url);
       }
     }
     cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
@@ -335,7 +335,7 @@ function views_menu($may_cache) {
     if (is_array($views)) {
       foreach ($views as $view) {
         // Do substitution on args.
-        $view_args = array($view->name);
+        $view_args = array();
         $menu_path = array();
         foreach (explode('/', $view->url) as $num => $element) {
           if ($element == '$arg') {
@@ -348,7 +348,7 @@ function views_menu($may_cache) {
           }
         }
         $path = implode('/', $menu_path);
-        _views_create_menu_item($items, $view, $path, $view_args, MENU_CALLBACK);
+        _views_create_menu_item($items, $view, $path, MENU_CALLBACK, $view_args);
       }
     }
   }
@@ -358,7 +358,7 @@ function views_menu($may_cache) {
 /**
  * Helper function to add a menu item for a view.
  */
-function _views_create_menu_item(&$items, $view, $path, $args, $local_task_type = MENU_NORMAL_ITEM) {
+function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
   static $roles = NULL;
   if ($roles == NULL) {
     global $user;
@@ -370,17 +370,18 @@ function _views_create_menu_item(&$items, $view, $path, $args, $local_task_type 
     $weight = $view->menu_tab_weight;
   }
   $access = !$view->access || array_intersect($view->access, $roles);
-  $items[] = _views_menu_item($path, $title, $args, $access, $type, $weight);
+  $items[] = _views_menu_item($path, $title, $view, $args, $access, $type, $weight);
 
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
-    $items[] = _views_menu_item(dirname($path), $title, $args, $access, $local_task_type, $weight);
+    $items[] = _views_menu_item(dirname($path), $title, $view, $args, $access, $local_task_type, $weight);
   }
 }
 
 /**
  * Helper function to create a menu item for a view.
  */
-function _views_menu_item($path, $title, $args, $access, $type, $weight = NULL) {
+function _views_menu_item($path, $title, $view, $args, $access, $type, $weight = NULL) {
+  array_unshift($args, $view->name);
   $retval = array('path' => $path,
     'title' => $title,
     'callback' => 'views_view_page',
@@ -484,23 +485,20 @@ function views_get_view($view_name) {
 
 /**
  * This views a view by page, and should only be used as a callback.
+ *
+ * @param $view_name
+ *   The name or id of the view to load
+ * @param $args
+ *   The arguments from the end of the url. Usually passed from the menu system.
+ *
+ * @return
+ *   The view page.
  */
 function views_view_page() {
   $args = func_get_args();
-  // FIXME: Most of this code is unnecessary now that we add our
-  // $view info as a callback argument via the menu hook.
-  while ($next = array_shift($args)) {
-    if (!$view_name) {
-      $view_name = $next;
-    }
-    else {
-      $view_name .= "/$next";
-    }
+  $view_name = array_shift($args);
+  $view = views_get_view($view_name);
 
-    if ($view = views_get_view($view_name)) {
-      break;
-    }
-  }
   if (!$view) {
     drupal_not_found();
     exit;
@@ -642,11 +640,12 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
     $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
+    $view->total_rows = $GLOBALS['pager_total_items'][$use_pager - 1];
   }
   else {
     $result = ($limit ? db_query_range($query, $info['args'], $page * $limit, $limit) : db_query($query, $info['args']));
   }
-
+  $view->num_rows = db_num_rows($result);
   if ($type == 'result') {
     $info['result'] = $result;
     return $info;
