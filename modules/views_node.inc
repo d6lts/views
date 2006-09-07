@@ -47,6 +47,14 @@ function node_views_tables() {
         'sortable' => true,
         'help' => t("The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)"),
       ),
+      'link' => array(
+        'name' => t('Node: Link to node'),
+        'handler' => 'views_handler_field_node_link',
+        'sortable' => false,
+        'option' => 'string',
+        'notafield' => 'true',
+        'help' => t("This will create a link to the node; fill the option field with the text for the link. If you want titles that link to the node, use Node: Title instead."),
+      ),
       'body' => array(
         'name' => t('Node: Body'),
         'handler' => array(
@@ -333,6 +341,15 @@ function views_handler_field_nodelink($fieldinfo, $fielddata, $value, $data) {
   }
   return l($value, "node/$data->nid");
 }
+
+/*
+ * Not to be confused with views_handler_field_nodelink above. This formats
+ * the option field as a link to the node.
+ */
+function views_handler_field_node_link($fieldinfo, $fielddata, $value, $data) {
+  return l($fielddata['options'], "node/$data->nid");
+}
+
 
 /*
  * Format a field as a link to a 'mark', stating whether or not the node has
