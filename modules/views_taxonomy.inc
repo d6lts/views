@@ -385,7 +385,7 @@ function views_handler_filter_tid($op, $filterinfo) {
   if ($filterinfo['vocabulary']) {
     $where = "WHERE td.vid = $filterinfo[vocabulary]";
   }
-  $result = db_query("SELECT DISTINCT(td.tid), td.name, v.name as vocabname FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid $where ORDER BY v.weight, v.name, td.weight, td.name");
+  $result = db_query("SELECT DISTINCT(td.tid), td.name, td.weight, v.name as vocabname, v.weight FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid $where ORDER BY v.weight, v.name, td.weight, td.name");
   while ($obj = db_fetch_object($result)) {
     if ($filterinfo['vocabulary']) {
       $tids[$obj->tid] = "$obj->name";
@@ -430,7 +430,7 @@ function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
  */
 function views_handler_filter_vid() {
   $vids = array();
-  $result = db_query("SELECT v.vid, v.name FROM {vocabulary} v ORDER BY v.weight, v.name");
+  $result = db_query("SELECT v.vid, v.name, v.weight FROM {vocabulary} v ORDER BY v.weight, v.name");
   while ($obj = db_fetch_object($result)) {
     $vids[$obj->vid] = $obj->name;
   }

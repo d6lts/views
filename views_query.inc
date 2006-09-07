@@ -373,6 +373,7 @@ class _views_query {
     }
 
     foreach($field as $f) {
+      $this->add_field($f, $table);
       $this->orderby[] = "$alias$f $order";
     }
   }
