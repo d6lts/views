@@ -1496,7 +1496,7 @@ function theme_views_edit_view($form) {
   // fields
   $collapsed = $allbut && $allbut != 'field';
   $group = views_ui_render_section($form['field'], array('name', 'label', 'handler', 'options', 'sortable', 'defaultsort'), array(t('Name'), t('Label'), t('Handler'), t('Option'), t('Sortable'), t('Default Sort')), 'fields', $collapsed);
-  $group .= views_ui_render_section_add($form['field']['add'], array('id', 'button'), 'Add Field');
+  $group .= views_ui_render_section_add($form['field']['add'], array('id', 'button'), t('Add Field'));
 
   $group .= '<p>'. t('Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Fields'), '#children' => $group,
@@ -1507,7 +1507,7 @@ function theme_views_edit_view($form) {
   $collapsed = $allbut && $allbut != 'argument';
   $group = views_ui_render_section($form['argument'], array('name', 'argdefault', 'title', 'options', 'wildcard', 'wildcard_substitution'), array(t('Argument Type'), t('Default'), t('Title'), t('Option'), t('Wildcard'), t('Wildcard Sub')), 'arguments', $collapsed);
 
-  $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), 'Add Argument');
+  $group .= views_ui_render_section_add($form['argument']['add'], array('id', 'button'), t('Add Argument'));
 
   $group .= form_render($form['view_args_php_fieldset']);
 
@@ -1519,7 +1519,7 @@ function theme_views_edit_view($form) {
   $collapsed = $allbut && $allbut != 'filter';
   $group = views_ui_render_section($form['filter'], array('name', 'operator', 'value', 'options', 'expose'), array(t('Field'), t('Operator'), t('Value'), t('Option'), ''), 'filters', $collapsed);
 
-  $group .= views_ui_render_section_add($form['filter']['add'], array('id', 'button'), 'Add Filter');
+  $group .= views_ui_render_section_add($form['filter']['add'], array('id', 'button'), t('Add Filter'));
 
   $group .= '<p>'. t('Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Filters'), '#children' => $group,
@@ -1531,7 +1531,7 @@ function theme_views_edit_view($form) {
   $group = views_ui_render_section($form['exposed_filter'], array('name', 'label', 'optional', 'is_default', 'single', 'operator'), array(t('Field'), t('Label'), t('Optional'), t('Filter settings Default'), t('Force Single'), t('Lock Operator')), 'exposed_filters', $collapsed);
 
 
-//  $group .= views_ui_render_section_add($form['exposed_filter']['add'], array('id', 'button'), 'Expose Filter');
+//  $group .= views_ui_render_section_add($form['exposed_filter']['add'], array('id', 'button'), t('Expose Filter'));
 
   $group .= '<p>'. t('Exposed filters will be presented to the viewer. If not set required, then filters will include a "&lt;None&gt;" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user.') .'</p>';
   $output .= theme('fieldset', array('#title' => t('Exposed Filters'), '#children' => $group,
@@ -1542,7 +1542,7 @@ function theme_views_edit_view($form) {
   $collapsed = $allbut && $allbut != 'sort';
   $group = views_ui_render_section($form['sort'], array('name', 'sortorder', 'options'), array(t('Field'), t('Order'), t('Option')), 'sort criteria', $collapsed);
 
-  $group .= views_ui_render_section_add($form['sort']['add'], array('id', 'button'), 'Add criteria');
+  $group .= views_ui_render_section_add($form['sort']['add'], array('id', 'button'), t('Add criteria'));
   $output .= theme('fieldset', array('#title' => t('Sort Criteria'), '#children' => $group,
     '#collapsible' => true, '#collapsed' => $collapsed,));
 
@@ -1598,7 +1598,7 @@ function views_ui_render_section_add(&$form, $items,  $label) {
   }
   $rows[] = $row;
 
-  $header = array(array('data' => t($label), 'colspan' => count($items)));
+  $header = array(array('data' => $label, 'colspan' => count($items)));
   return theme('table', $header, $rows) . "<br />";
 }
 
