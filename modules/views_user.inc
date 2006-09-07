@@ -88,6 +88,11 @@ function user_views_arguments() {
       'handler' => 'views_handler_arg_uid_touch',
       'help' => t('The User ID argument allows users to filter a to nodes authored or commented on the specified user ID.'),
     ),
+    'username' => array(
+      'name' => t('User: Username is Author'),
+      'handler' => t('views_handler_arg_username'),
+      'help' => t('The Username argument allows users to file to a nodes authored by the specified username.'),
+    ),
   );
   return $arguments;
 }
@@ -256,6 +261,38 @@ function views_handler_arg_uid_touch($op, &$query, $argtype, $arg = '') {
       }
       $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE uid = '%d'", $query));
       return $user->name;
+  }
+}
+
+function views_handler_arg_username($op, &$query, $argtype, $arg = '') {
+  switch($op) {
+    case 'summary':
+      $query->add_table('users', true);
+      $query->add_field('name', 'users');
+      $query->add_field('uid', 'users');
+      $fieldinfo['field'] = "users.name";
+      return $fieldinfo;
+      break;
+    case 'sort':
+      $query->add_orderby('users', 'name', $argtype);
+      break;
+    case 'filter':
+      $name = check_plain($arg);
+      $table_data = _views_get_tables();
+      $joininfo = $table_data['users']['join'];
+      $query->add_table('users', false, 1, $joininfo);
+      drupal_set_message($name);
+      $query->add_where("users.name = '%s'", $name);
+      break;
+    case 'link':
+      $name = ($query->name ? $query->name : variable_get('anonymous', 'Anonymous'));
+      return l($name, "$arg/" . check_plain($name));
+    case 'title':
+      if (!$query) {
+        return variable_get('anonymous', 'Anonymous');
+      } 
+      $user = db_fetch_object(db_query("SELECT name FROM {users} WHERE name = '%s'", $query));
+      return check_plain($user->name);
   }
 }
 

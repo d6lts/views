@@ -149,4 +149,3 @@ function views_handler_file_filter_fid_exist($op, $filter, $filterdata, &$query)
       }
   }
 }
-
