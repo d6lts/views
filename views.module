@@ -1526,7 +1526,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
     else {
       $plugins = _views_get_style_plugins();
       $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
-      $output .= views_theme($plugins[$view_type]['theme'], $view, $nodes, $type);
+      $output .= "<div class='view-content view-content-".$view->name."'>".views_theme($plugins[$view_type]['theme'], $view, $nodes, $type).'</div>';
     }
     $output .= views_get_textarea($view, $type, 'footer');
 
