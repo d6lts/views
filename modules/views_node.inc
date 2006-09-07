@@ -345,7 +345,7 @@ function views_handler_field_nodelink_with_mark($fieldinfo, $fielddata, $value, 
   else {
     $link = l($value, "node/$data->nid");
   }
-  return l($link, "node/$data->nid") .' '. theme('mark', node_mark($data->nid, $data->node_changed));
+  return $link .' '. theme('mark', node_mark($data->nid, $data->node_changed));
 }
 
 /*

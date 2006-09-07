@@ -81,12 +81,15 @@ function _views_view_build_filters(&$query, &$view) {
       $field = $fieldbits[1];
     }
 
+    $view->used_filters = array();
+
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
         $id = $expose['id'];
 
         if (!$expose['operator'] && $_GET["op$count"]) {
           $filter['operator'] = check_plain($_GET["op$count"]);
+          $view->used_filters["op$count"] = $_GET["op$count"];
         }
 
         if ($expose['optional']) {
@@ -95,6 +98,7 @@ function _views_view_build_filters(&$query, &$view) {
           }
           if ($_GET["filter$count"] == '**ALL**' ||
             (is_array($_GET["filter$count"]) && in_array('**ALL**', $_GET["filter$count"]))) {
+            $view->used_filters["filter$count"] = $_GET["filter$count"];
             continue 2; // skip this filter entirely.
           }
         }
@@ -104,6 +108,7 @@ function _views_view_build_filters(&$query, &$view) {
             $value = array($value);
           }
           $filter['value'] = $value;
+          $view->used_filters["filter$count"] = $_GET["filter$count"];
         }
         break;
       }
