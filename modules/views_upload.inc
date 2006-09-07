@@ -33,7 +33,7 @@ function upload_views_tables() {
     'filters' => array(
       'fid' => array(
         'name' => t('File: Has file downloads'),
-        'operator' => array('=' => 'Exists'),
+        'operator' => array('=' => t('Exists')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'handler' => 'views_handler_file_filter_fid_exist',
@@ -41,7 +41,7 @@ function upload_views_tables() {
       ),
       'list' => array(
         'name' => t('File: Listed in file downloads'),
-        'operator' => array('=' => 'Equals'),
+        'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'help' => t('Filter weather the file is listed in downloads'),

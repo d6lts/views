@@ -117,29 +117,29 @@ function user_views_default_views() {
     array (
       'tablename' => 'node',
       'field' => 'type',
-      'label' => 'Type',
+      'label' => t('Type'),
     ),
     array (
       'tablename' => 'node',
       'field' => 'title',
-      'label' => 'Title',
+      'label' => t('Title'),
       'handler' => 'views_handler_field_nodelink_with_mark',
     ),
     array (
       'tablename' => 'users',
       'field' => 'name',
-      'label' => 'Author',
+      'label' => t('Author'),
     ),
     array (
       'tablename' => 'node_comment_statistics',
       'field' => 'comment_count',
-      'label' => 'Replies',
+      'label' => t('Replies'),
       'handler' => 'views_handler_comments_with_new',
     ),
     array (
       'tablename' => 'node_comment_statistics',
       'field' => 'last_comment_timestamp',
-      'label' => 'Last Post',
+      'label' => t('Last Post'),
       'handler' => 'views_handler_field_since',
     ),
   );

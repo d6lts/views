@@ -96,28 +96,28 @@ function node_views_tables() {
     'filters' => array(
       'status' => array(
         'name' => t('Node: Published'),
-        'operator' => array('=' => 'Equals'),
+        'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'help' => t('Filter by whether or not the node is published. This is recommended for most Views!'),
       ),
       'promote' => array(
         'name' => t('Node: Front Page'),
-        'operator' => array('=' => 'Equals'),
+        'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'help' => t('Filter by whether or not the node has been promoted to Front Page.'),
       ),
       'sticky' => array(
         'name' => t('Node: Sticky'),
-        'operator' => array('=' => 'Equals'),
+        'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'help' => t('Filter by whether or not the node is set sticky.'),
       ),
       'moderate' => array(
         'name' => t('Node: Moderated'),
-        'operator' => array('=' => 'Equals'),
+        'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'help' => t('Filter by whether or not the node is moderated.'),
