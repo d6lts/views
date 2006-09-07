@@ -1826,7 +1826,7 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
             $field, $filter['value']);
           break;
         case '=':
-          $query->add_where("UPPER(%s) = UPPER('%%%s%%')",
+          $query->add_where("UPPER(%s) = UPPER('%s')",
             $field, $filter['value']);
           break;
       }
