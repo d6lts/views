@@ -654,6 +654,24 @@ function imagebutton_value() {
 }
 
 /**
+ * Set up the dynamic #options on a widget
+ */
+function views_ui_setup_widget($widget, $default_value, $argument = NULL) {
+  if (!$argument) {
+    $argument = $widget;
+  }
+
+  if (is_string($widget['#options']) && function_exists($widget['#options'])) {
+    $widget['#options'] = $widget['#options']('option', $argument);
+  }
+  if ($widget['#multiple'] && is_array($widget['#options'])) {
+    $widget['#size'] = min(count($widget['#options']), 8);
+  }
+  $widget['#default_value'] = $default_value;
+  return $widget;
+}
+
+/**
  * Display all the guts of a view in a form for editing.
  */
 function _views_view_form($view, $op = '') {
@@ -1192,12 +1210,7 @@ function views_ui_add_field(&$form, $field, &$order, $key, $i) {
   }
 
   if (isset($fieldinfo['option'])) {
-    $widget = $fieldinfo['option'];
-    if (is_string($widget['#options']) && function_exists($widget['#options'])) {
-      $widget['#options'] = $widget['#options']('option', $fieldinfo['option']);
-    }
-    $widget['#default_value'] = $field['options'];
-    $form['options'] = $widget;
+    $form['options'] = views_ui_setup_widget($fieldinfo['option'], $field['options']);
   }
 
 
@@ -1250,12 +1263,7 @@ function views_ui_add_argument(&$form, $argument, &$order, $key, $i) {
     '#maxlength' => 255,
   );
   if (isset($arginfo['option'])) {
-    $widget = $arginfo['option'];
-    if (is_string($widget['#options']) && function_exists($widget['#options'])) {
-      $widget['#options'] = $widget['#options']('option', $arginfo['option']);
-    }
-    $widget['#default_value'] = $argument['options'];
-    $form['options'] = $widget;
+    $form['options'] = views_ui_setup_widget($arginfo['option'], $argument['options']);
   }
   $form['wildcard'] = array(
     '#type' => 'textfield',
@@ -1307,19 +1315,10 @@ function views_ui_add_filter(&$form, $filter, &$order, $key, $i, &$view) {
     '#options' => $operator,
   );
   if (isset($filterinfo['option'])) {
-    $widget = $filterinfo['option'];
-    if (is_string($widget['#options']) && function_exists($widget['#options'])) {
-      $widget['#options'] = $widget['#options']('option', $filterinfo['option']);
-    }
-    $widget['#default_value'] = $filter['options'];
-    $form['options'] = $widget;
+    $form['options'] = views_ui_setup_widget($filterinfo['option'], $filter['options']);
   }
 
-  $form['value'] = $filterinfo['value'];
-  if (!is_array($form['value']['#options']) && function_exists($form['value']['#options'])) {
-    $form['value']['#options'] = $form['value']['#options']('value', $filterinfo);
-  }
-  $form['value']['#default_value'] = $filter['value'];
+  $form['value'] = views_ui_setup_widget($filterinfo['value'], $filter['value'], $filterinfo);
 
   if (isset($filterinfo['help'])) {
     $form['help'] = array(
@@ -1445,12 +1444,7 @@ function views_ui_add_sort(&$form, $sort, &$order, $key, $i) {
   // option can be either 'string', 'integer', an array or a handler
   // that must return an array.
   if (isset($sortinfo['option'])) {
-    $widget = $sortinfo['option'];
-    if (is_string($widget['#options']) && function_exists($widget['#options'])) {
-      $widget['#options'] = $widget['#options']('option', $sortinfo['option']);
-    }
-    $widget['#default_value'] = $sort['options'];
-    $form['options'] = $widget;
+    $form['options'] = views_ui_setup_widget($sortinfo['option'], $sort['options']);
   }
   if (isset($sortinfo['help'])) {
     $form['help'] = array(

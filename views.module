@@ -1368,6 +1368,10 @@ function views_filters_form($view) {
       $item['#options'] = array('**ALL**' => t('<All>')) + $item['#options'];
     }
 
+    if ($item['#multiple'] && is_array($item['#options'])) {
+      $item['#size'] = min(count($item['#options']), 8);
+    }
+
     if (array_key_exists("filter$count", $_GET)) {
       $item["#default_value"] = $_GET["filter$count"];
     }
