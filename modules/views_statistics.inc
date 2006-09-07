@@ -256,6 +256,8 @@ function theme_views_view_popular_recent($view, $type, $nodes) {
     }
 
     $output = theme('item_list', $items);
+    if ($view->block_more && count($nodes) >= $view->nodes_per_block) 
+      $output .= theme('views_more', $view->real_url);
     return "<div class='view' id='view-$view->name'>$output</div>\n";
   }
   else {
