@@ -1877,3 +1877,30 @@ function views_views_query_substitutions($view) {
   global $user;
   return array('***CURRENT_TIME***' => time());
 }
+
+/**
+ * Returns a themed view.
+ * @param $view_name
+ *    The name of the view.
+ * @param $limit
+ *   Required if $use_pager is set; if $limit is set and $use_pager is
+ *   not, this will be the maximum number of records returned. This is ignored
+ *   if using a view set to return a random result. If $use_pager is set and 
+ *   this field is not, you'll get a SQL error. Don't do that!
+ * @param $use_pager
+ *   If set, use a pager. Set this to the pager id you want it to use if you
+ *   plan on using multiple pagers on a page. Note that the pager element id
+ *   will be decremented in order to have the IDs start at 0.
+ * @param $type
+ *    'page' -- Produce output as a page, sent through theme.
+ *      The only real difference between this and block is that
+ *      a page uses drupal_set_title to change the page title.
+ *    'block' -- Produce output as a block, sent through theme.
+ *    'embed' -- Use this if you want to embed a view onto another page,
+ *      and don't want any block or page specific things to happen to it.
+ */
+function theme_view( $view_name, $limit = 0, $use_pager = false, $type = 'embed' ) {
+  if ($view = views_get_view($view_name)) {
+    return views_build_view($type, $view, $view_args, $use_pager, $limit);
+  }
+}
