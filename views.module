@@ -807,16 +807,11 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
   }
 
   if (!$title && $context == 'menu') {
-    $title = $view->block_title;
+    $title = $view->page_title;
   }
 
   if (!$title) {
-    if ($context == 'block' && $view->block_title) {
-      $title = $view->block_title;
-    }
-    else {
-      $title = $view->page_title;
-    }
+    $title = $view->block_title;
   }
 
   if (!$view->argument) {
