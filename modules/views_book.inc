@@ -110,7 +110,7 @@ function views_handler_arg_book_parent($op, & $query, $argtype, $arg = '') {
       if ($query)
       {
         $term = db_fetch_object(db_query("SELECT title FROM {node} WHERE nid = '%d'", $query));
-        return $term->title;
+        return check_plain($term->title);
       }
   }
 }

@@ -476,7 +476,7 @@ function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l(strtoupper($query->letter), "$arg/$query->letter");
     case 'title':
-      return strtoupper($query);
+      return check_plain(strtoupper($query));
   }
 }
 
@@ -500,7 +500,7 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l($query->year, "$arg/$query->year");
     case 'title':
-      return $query;
+      return check_plain($query);
   }
 }
 function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
@@ -549,7 +549,7 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l("Week $query->name", "$arg/$query->name");
     case 'title':
-      return $query;
+      return check_plain($query);
   }
 }
 function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
@@ -614,7 +614,7 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
       return l($query->title, "$arg/$query->nid");
     case 'title':
       $node = db_fetch_object(db_query("SELECT title FROM {node} WHERE nid=%d", $query));
-      return $node->title;
+      return check_plain($node->title);
   }
 }
 
@@ -714,7 +714,7 @@ function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
     case 'title':
       break;
     case 'filter':
-      // Can't use node_invoke_all because we're using a reference to 
+      // Can't use node_invoke_all because we're using a reference to
       // $view.
       foreach (module_implements('views_feed_argument') as $name) {
         $function = $name .'_views_feed_argument';
