@@ -385,7 +385,7 @@ function _views_menu_item($path, $title, $args, $access, $type, $weight = NULL) 
     'title' => $title,
     'callback' => 'views_view_page',
     'callback arguments' => $args,
-    'access' => $access,
+    'access' => user_access('access content') && $access,
     'type' => $type,
   );
   if ($weight !== NULL) {
