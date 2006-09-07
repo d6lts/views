@@ -422,15 +422,15 @@ function views_ui_admin_clone_page($viewname) {
 function views_ui_admin_edit_page($vid = '') {
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
-    return 'admin/views';
+    drupal_goto('admin/views');
   }
 
   if ($op == t('Delete')) {
-    return "admin/views/delete/$vid";
+    drupal_goto("admin/views/delete/$vid");
   }
 
   if (!($view = _views_load_view($vid))) {
-    return 'admin/views';
+    drupal_goto('admin/views');
   }
 
   drupal_set_title(t('Edit view %n', array('%n' => $view->name)));
@@ -463,7 +463,7 @@ function views_delete_confirm_submit($formid, $form) {
   if ($form['confirm']) {
     _views_delete_view((object) $form);
     menu_rebuild();
-    drupal_goto('admin/views');
+    return 'admin/views';
   }
 }
 
