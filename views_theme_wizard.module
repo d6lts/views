@@ -114,13 +114,18 @@ function views_theme_wizard_list_fields($view) {
   $output = "These functions will override the given fields for just this view:\n\n";
   foreach ($view->field as $field) {
     $fieldinfo = $fields[$field['id']];
-    $output .= "$fieldinfo[name]\n  function phptemplate_views_handle_field_{$view->name}_$field[queryname](\$fields, \$field, \$data)\n\n";
+    $output .= "$fieldinfo[name]\n  phptemplate_views_handle_field_{$view->name}_$field[queryname]\n\n";
+  }
+  $output .= "\n\nThese functions will override the given fields for every view:\n\n";
+  foreach ($view->field as $field) {
+    $fieldinfo = $fields[$field['id']];
+    $output .= "$fieldinfo[name]\n  function phptemplate_views_handle_field_$field[queryname](\$fields, \$field, \$data)\n\n";
   }
   return $output;
 }
 
 function views_theme_wizard_example_field($view) {
-  $fieldname = 'phptemplate_views_handle_field_' . $view->field[0]['queryname'];
+  $fieldname = 'phptemplate_views_handle_field_' . $view->name . '_' .  $view->field[0]['queryname'];
   $output = <<<EOT
 /**
  * Function to handle a sample field.
