@@ -85,6 +85,7 @@ function _views_view_build_filters(&$query, &$view) {
       $fieldbits = explode('.', $filter['field']);
       $field = $fieldbits[1];
     }
+    $filterinfo['field'] = $field;
 
     $view->used_filters = array();
 

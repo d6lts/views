@@ -1806,10 +1806,6 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
     case 'handler':
       $table = $filterinfo['table'];
       $column = $filterinfo['field'];
-      if (empty($column)) {
-        $fieldbits = explode('.', $filter['field']);
-        $column = $fieldbits[1];
-      }
       $field = "$table.$column";
       $query->ensure_table($table);
 
@@ -1854,10 +1850,6 @@ function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
 
   $table = $filterinfo['table'];
   $column = $filterinfo['field'];
-  if (empty($column)) {
-    $fieldbits = explode('.', $filter['field']);
-    $column = $fieldbits[1];
-  }
   $field = "$table.$column";
   if ($filterinfo['from_unixtime']) {
     $field = "from_UNIXTIME($field)";
