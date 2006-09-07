@@ -11,6 +11,13 @@ function taxonomy_views_tables() {
     views_table_add_field($table, 'name', 'Taxonomy: All Terms', 'This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact.', array(
       'sortable' => false,
       'handler' => 'views_handler_field_allterms',
+      'option' => array(
+         '#type' => 'select',
+         '#options' => array(
+           'link' => 'As links',
+           'nolink' => 'Without links'
+          ),
+      ),
       'notafield' => true,
     ));
 
@@ -46,6 +53,13 @@ function taxonomy_views_tables() {
             'handler' => 'views_handler_field_allterms',
             'vocabulary' => $voc->vid,
             'notafield' => true,
+            'option' => array(
+               '#type' => 'select',
+               '#options' => array(
+                 'link' => 'As links',
+                 'nolink' => 'Without links'
+                ),
+            ),
           ),
         ),
         'filters' => array(
@@ -231,8 +245,16 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
     $terms = taxonomy_node_get_terms($data->nid);
   }
 
-  $node->taxonomy = $terms;
-  return theme('links', taxonomy_link('taxonomy terms', $node));
+  if ($fielddata['options'] == 'nolink') {
+    foreach ($terms as $term) {
+      $links[] = check_plain($term->name);
+    }
+  }
+  else {
+    $node->taxonomy = $terms;
+    $links = taxonomy_link('taxonomy terms', $node);
+  }
+  return theme('links', $links);
 }
 
 /**
