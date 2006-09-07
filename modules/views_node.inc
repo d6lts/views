@@ -309,6 +309,14 @@ function node_views_default_views() {
     ),
   );
   $view->argument = array (
+    array (
+      'type' => 'node_feed',
+      'argdefault' => '2',
+      'title' => '',
+      'options' => '',
+      'wildcard' => '',
+      'wildcard_substitution' => '',
+    ),
   );
   $view->field = array (
   );
