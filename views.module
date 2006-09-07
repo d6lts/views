@@ -180,27 +180,37 @@ function views_invalidate_cache() {
  * the $view object than is in the database, and this isn't necessarily
  * set when a view is constructed externally.
  */
-function _views_sanitize_view(&$view) {
+function views_sanitize_view(&$view) {
   _views_check_arrays($view); // so reference works.
   foreach ($view->field as $i => $field) {
-    $view->field[$i]['id'] = $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
-    $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
+    if (!isset($view->field[$i]['id'])) {
+      $view->field[$i]['id'] = $view->field[$i]['fullname'] = "$field[tablename].$field[field]";
+      $view->field[$i]['queryname'] = "$field[tablename]_$field[field]";
+    }
   }
 
   foreach ($view->filter as $i => $filter) {
-    $view->filter[$i]['id'] = $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
+    if (!isset($view->filter[$i]['id'])) {
+      $view->filter[$i]['id'] = $view->filter[$i]['field'] = "$filter[tablename].$filter[field]";
+    }
   }
 
   foreach ($view->exposed_filter as $i => $exposed_filter) {
-    $view->exposed_filter[$i]['id'] = $view->exposed_filter[$i]['field'] = "$exposed_filter[tablename].$exposed_filter[field]";
+    if (!isset($view->exposed_filter[$i]['id'])) {
+      $view->exposed_filter[$i]['id'] = $view->exposed_filter[$i]['field'] = "$exposed_filter[tablename].$exposed_filter[field]";
+    }
   }
 
   foreach ($view->sort as $i => $sort) {
-    $view->sort[$i]['id'] = $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
+    if (!isset($view->sort[$i]['id'])) {
+      $view->sort[$i]['id'] = $view->sort[$i]['field'] = "$sort[tablename].$sort[field]";
+    }
   }
 
   foreach ($view->argument as $i => $argument) {
-    $view->argument[$i]['id'] = $view->argument[$i]['type'];
+    if (!isset($view->argument[$i]['id'])) {
+      $view->argument[$i]['id'] = $view->argument[$i]['type'];
+    }
   }
 }
 
@@ -226,7 +236,7 @@ function _views_get_default_views() {
       $views_default_views = array();
       foreach ($views as $i => $view) {
         if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
-          _views_sanitize_view($view);
+          views_sanitize_view($view);
           $views_default_views[$i] = $view;
         }
       }
