@@ -509,6 +509,7 @@ function _views_get_arguments_default() {
     4 => t('Summary, sorted ascending'),
     5 => t('Summary, sorted descending'),
     6 => t('Summary, sorted as view'),
+    7 => t('Use Empty Text'),
    );
 }
 

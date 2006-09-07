@@ -38,6 +38,10 @@ function _views_build_query(&$view, $args = array()) {
           if (!$self_sort) {
             $sort = true;
           }
+        case 7:
+          // to trigger empty text, send back an empty query
+          $info['query'] = NULL
+          return $info;
           break 2; // switch and for
       }
     }
