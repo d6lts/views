@@ -1792,7 +1792,7 @@ function views_create_view_code($vid) {
       $output .= "  \$view->menu_title = '" . db_escape_string($view->menu_title) . "';\n";
       $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
       $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
-      $output .= "  \$view->menu_weight = '$view->menu_weight';\n";
+      $output .= "  \$view->menu_tab_weight = '$view->menu_tab_weight';\n";
     }
   }
   if ($view->block) {
