@@ -40,7 +40,7 @@ function _views_build_query(&$view, $args = array()) {
           }
         case 7:
           // to trigger empty text, send back an empty query
-          $info['query'] = NULL
+          $info['query'] = NULL;
           return $info;
           break 2; // switch and for
       }
