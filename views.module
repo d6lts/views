@@ -264,6 +264,9 @@ function _views_get_style_plugins($titles = false) {
     else {
       $arguments = module_invoke_all('views_style_plugins');
       foreach ($arguments as $name => $arg) {
+        if (!isset($arg['summary_theme'])) {
+          $arg['summary_theme'] = 'views_summary';
+        }
         $views_style_plugins['title'][$name] = $arg['name'];
         $views_style_plugins['base'][$name] = $arg;
       }
@@ -1033,7 +1036,7 @@ function _views_save_view($view) {
     }
 
     // Update the view in the database:
-    db_query("UPDATE {view_view} SET ". implode(', ', $q) ." WHERE vid = '$view->vid'", $v);
+    db_query("UPDATE {view_view} SET " . implode(', ', $q) . " WHERE vid = '$view->vid'", $v);
     db_query("DELETE from {view_sort} WHERE vid='$view->vid'");
     db_query("DELETE from {view_argument} WHERE vid='$view->vid'");
     db_query("DELETE from {view_tablefield} WHERE vid='$view->vid'");
@@ -1056,7 +1059,7 @@ function _views_save_view($view) {
       }
     }
 
-    db_query("INSERT INTO {view_view} (". implode(", ", $k) .") VALUES (". implode(", ", $s) .")", $v);
+    db_query("INSERT INTO {view_view} (" . implode(", ", $k) . ") VALUES (" . implode(", ", $s) . ")", $v);
   }
 
   foreach ($view->sort as $i => $sort) {
@@ -1530,13 +1533,13 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
 
   if ($num_nodes) {
 
+    $plugins = _views_get_style_plugins();
+    $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
     if ($level !== NULL) {
-      $output .= views_theme('views_summary', $view, $type, $level, $nodes, $args);
+      $output .= "<div class='view-summary view-summary-$view->name'>" . views_theme($plugins[$view_type]['summary_theme'], $view, $type, $level, $nodes, $args) . '</div>';
     }
     else {
-      $plugins = _views_get_style_plugins();
-      $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
-      $output .= "<div class='view-content view-content-".$view->name."'>".views_theme($plugins[$view_type]['theme'], $view, $nodes, $type).'</div>';
+      $output .= "<div class='view-content view-content-$view->name'>" . views_theme($plugins[$view_type]['theme'], $view, $nodes, $type) . '</div>';
     }
     $output .= views_get_textarea($view, $type, 'footer');
 
