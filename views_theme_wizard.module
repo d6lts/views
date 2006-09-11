@@ -187,7 +187,7 @@ function phptemplate_views_view_list_{$view->name}(\$view, \$nodes, \$type) {
     \$vars['stripe'] = \$i % 2 ? 'even' : 'odd';
     foreach (\$view->field as \$id => \$field) {
       \$name = \$field_names[\$id];
-      \$vars[\$name] = views_theme_field('views_handle_field', \$field['queryname'], \$fields, \$field, \$node);
+      \$vars[\$name] = views_theme_field('views_handle_field', \$field['queryname'], \$fields, \$field, \$node, \$view);
       if (isset(\$field['label'])) {
         \$vars[\$name . '_label'] = \$field['label'];
       }
