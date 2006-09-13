@@ -14,7 +14,7 @@ function views_init() {
   foreach($files as $file) {
     // The filename format is very specific. It must be views_MODULENAME.inc
     $module = substr_replace($file->name, '', 0, 6);
-    if (module_exist($module)) {
+    if (module_exists($module)) {
       require_once("./$file->filename");
     }
   }
@@ -33,7 +33,7 @@ function _views_get_arguments($titles = false) {
   global $locale;
 
   if (!$views_arguments) {
-    $data = cache_get("views_arguments:$locale");
+    $data = cache_get("views_arguments:$locale", 'cache');
     $cache = unserialize($data->data);
     if (is_array($cache)) {
       $views_arguments = $cache;
@@ -53,7 +53,7 @@ function _views_get_arguments($titles = false) {
         $views_arguments['title'][$name] = $arg;
       }
       $cache = $views_arguments;
-      cache_set("views_arguments:$locale", serialize($cache));
+      cache_set("views_arguments:$locale", 'cache', serialize($cache));
     }
   }
   return ($titles ? $views_arguments['base'] : $views_arguments['title']);
@@ -68,7 +68,7 @@ function _views_get_tables($full = false) {
   global $locale;
 
   if (!$views_tables) {
-    $data = cache_get("views_tables:$locale");
+    $data = cache_get("views_tables:$locale", 'cache');
     $cache = unserialize($data->data);
 
     if (is_array($cache)) {
@@ -135,7 +135,7 @@ function _views_get_tables($full = false) {
           }
         }
       }
-      cache_set("views_tables:$locale", serialize($views_tables));
+      cache_set("views_tables:$locale", 'cache', serialize($views_tables));
     }
   }
   return ($full ? $views_tables : $views_tables['tables']);
@@ -172,7 +172,7 @@ function _views_get_sorts($titles = false) {
  * Invalidate the views cache, forcing a rebuild on the next grab of table data.
  */
 function views_invalidate_cache() {
-  cache_clear_all('views_', true);
+  cache_clear_all('views_', 'cache', true);
 }
 
 /**
@@ -222,7 +222,7 @@ function _views_get_default_views() {
   global $locale;
 
   if (!$views_default_views) {
-    $data = cache_get("views_default_views:$locale");
+    $data = cache_get("views_default_views:$locale", 'cache');
     $cache = unserialize($data->data);
 
     if (is_array($cache)) {
@@ -240,7 +240,7 @@ function _views_get_default_views() {
           $views_default_views[$i] = $view;
         }
       }
-      cache_set("views_default_views:$locale", serialize($views_default_views));
+      cache_set("views_default_views:$locale", 'cache', serialize($views_default_views));
     }
   }
   return $views_default_views;
@@ -256,7 +256,7 @@ function _views_get_style_plugins($titles = false) {
   global $locale;
 
   if (!$views_style_plugins) {
-    $data = cache_get("views_style_plugins:$locale");
+    $data = cache_get("views_style_plugins:$locale", 'cache');
     $cache = unserialize($data->data);
     if (is_array($cache)) {
       $views_style_plugins = $cache;
@@ -271,7 +271,7 @@ function _views_get_style_plugins($titles = false) {
         $views_style_plugins['base'][$name] = $arg;
       }
       $cache = $views_style_plugins;
-      cache_set("views_style_plugins:$locale", serialize($cache));
+      cache_set("views_style_plugins:$locale", 'cache', serialize($cache));
     }
   }
   return ($titles ? $views_style_plugins['title'] : $views_style_plugins['base']);
@@ -286,7 +286,6 @@ function _views_get_style_plugins($titles = false) {
 function views_help($section) {
   switch ($section) {
     case 'admin/help#views':
-    case 'admin/modules#description':
       return t('The views module creates customized views of node lists.');
   }
 }
@@ -340,10 +339,10 @@ function views_menu($may_cache) {
         _views_create_menu_item($items, $view, $view->url);
       }
     }
-    cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
+    cache_set("views_with_inline_args:$locale", 'cache', serialize($views_with_inline_args));
   }
   else {
-    $data = cache_get("views_with_inline_args:$locale");
+    $data = cache_get("views_with_inline_args:$locale", 'cache');
     $views = unserialize($data->data);
     if (is_array($views)) {
       foreach ($views as $view) {
@@ -1401,14 +1400,14 @@ function theme_views_filters($form) {
   $view = $form['view']['#value'];
 
   foreach ($view->exposed_filter as $count => $expose) {
-    $row[] = form_render($form["op$count"]) . form_render($form["filter$count"]);
+    $row[] = drupal_render($form["op$count"]) . drupal_render($form["filter$count"]);
     $label[] = $expose['label'];
   }
-  $row[] = form_render($form['submit']);
+  $row[] = drupal_render($form['submit']);
   $label[] = ''; // so the column count is the same.
 
   // make the 'q' come first
-  return form_render($form['q']) . theme('table', $label, array($row)) . form_render($form);
+  return drupal_render($form['q']) . theme('table', $label, array($row)) . drupal_render($form);
 }
 
 /**

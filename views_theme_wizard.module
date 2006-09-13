@@ -1,18 +1,10 @@
 <?php
 // $Id$
 
-function views_theme_wizard_help($section = 'admin/help#views_theme_wizard') {
-  $output = '';
-  switch ($section) {
-    case 'admin/modules#description':
-      return t('The views theme wizard helps create stub theming for views.');
-  }
-}
-
 function views_theme_wizard_menu($may_cache) {
   if ($may_cache) {
     $items[] = array(
-      'path' => 'admin/views/wizard',
+      'path' => 'admin/build/views/wizard',
       'access' => user_access('administer views'),
       'title' => t('theme wizard'),
       'callback' => 'views_theme_wizard_page',
@@ -37,7 +29,10 @@ function views_theme_wizard_page() {
       $views[$view->name] = check_plain($view->name . ': ' . $view->description);
     }
   }
+  return drupal_get_form('views_theme_wizard_form', $views);
+}
 
+function views_theme_wizard_form($views) {
   $form['markup'] = array(
     '#value' => t('<p>The views theming wizard generates code that you can use in your phptemplate theme to help you customize the output of a view. Simply select a theme and it will generate code for your template.php as well as template files for the individual views.</p><p>At this time this code assumes your view is a <b>list type view</b>! It may not generate effective code for other types of views. Future versions of this program will be smarter, and give more options, but this wizard is still a huge start.</p>'),
     '#weight' => 0,
@@ -75,7 +70,7 @@ function views_theme_wizard_page() {
   $form['#after_build'] = array(
     'views_theme_wizard_generate',
   );
-  return drupal_get_form('views_theme_wizard_form', $form);
+  return $form;
 }
 
 function views_theme_wizard_generate($form, $form_values) {

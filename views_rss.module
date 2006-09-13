@@ -1,14 +1,6 @@
 <?php
 // $Id$
 
-function views_rss_help($section = 'admin/help#views_rss') {
-  $output = '';
-  switch ($section) {
-    case 'admin/modules#description':
-      return t('RSS plugin for the views feed selector argument.');
-  }
-}
-
 /**
  * Provide views plugins for the feed types we support.
  */

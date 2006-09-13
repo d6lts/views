@@ -338,7 +338,7 @@ function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$qu
  * Add special info to see if a user either authored OR commented on a post
  */
 function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
-  if (!module_exist('comment')) { // not much to do in this case
+  if (!module_exists('comment')) { // not much to do in this case
     $query->add_where("node.uid = '%s'", $filter['value']);
     return;
   }

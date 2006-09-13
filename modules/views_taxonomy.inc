@@ -6,7 +6,7 @@
  */
 
 function taxonomy_views_tables() {
-  if (module_exist('taxonomy')) {
+  if (module_exists('taxonomy')) {
     $table = views_new_table('term_node', 'internal', 'node', 'nid', 'nid');
     views_table_add_field($table, 'name', 'Taxonomy: All Terms', 'This will display all taxonomy terms associated with the node. Note that this causes one extra query per row displayed, and might have a minor performance impact.', array(
       'sortable' => false,
