@@ -272,7 +272,7 @@ function views_handler_field_profile_vocabulary($fieldinfo, $fielddata, $value, 
  * Display a profile field of type 'selection'
  */
 function views_handler_field_profile_selection($fieldinfo, $fielddata, $value, $data) {  
-  $value = ( unserialize($value) == false ) ? $value : unserialize($value);
+  $value = (unserialize($value) === false) ? $value : unserialize($value);
   if ( !is_array($value)) { $value = array($value); } // handles cases where values were set before this new profile module was put in place
   return check_plain(implode(', ',$value));
 }
@@ -281,7 +281,7 @@ function views_handler_field_profile_selection($fieldinfo, $fielddata, $value, $
  * Default display method for a profile field
  */
 function views_handler_field_profile_default($fieldinfo, $fielddata, $value, $data) {
-  $value = ( unserialize($value) == false ) ? $value : unserialize($value);
+  $value = (unserialize($value) === false) ? $value : unserialize($value);
   return check_plain($value);
 }
 
@@ -289,7 +289,7 @@ function views_handler_field_profile_default($fieldinfo, $fielddata, $value, $da
  * Display a profile field of type 'checkbox', view as tick mark
  */
 function views_handler_field_profile_checkbox($fieldinfo, $fielddata, $value, $data) {
-  $value = ( unserialize($value) == false ) ? $value : unserialize($value);
+  $value = (unserialize($value) === false) ? $value : unserialize($value);
   return (check_plain($value) == '0') ? '&#10007;' : '&#10003;';
 }
 
