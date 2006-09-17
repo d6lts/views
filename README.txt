@@ -27,6 +27,11 @@ As of 3/16/2006, the user documentation is UP TO DATE. The API documentation
 is somewhat out of date, and the theming documentation is very out of date.
 I hope to correct this in the very near future.
 
+DOCUMENTATION
+
+The best documentation will be here:
+http://drupal.org/handbook/modules/views
+
 -------------- IMPORTANT --------------------------------------------------
 -------------- IMPORTANT --------------------------------------------------
 
@@ -39,3 +44,18 @@ DRUPAL CANNOT TELL AUTOMATICALLY IF YOU HAVE UPDATED CODE. Therefore you
 must go and submit this page.
 
 Hopefully in 4.8 this won't be an issue.
+
+-------------- UPDATING VIEWS ---------------------------------------------
+
+If you're updating from 4.6 to 4.7+, this is important:
+  Views Will Not Update Properly.
+
+I'm sorry, but there is no upgrade path from 4.6 to 4.7. In order to
+achieve this result, you need to first completely unstall Views. Before
+you do this you may want to write down your view information.
+
+Then uninstall views; there are instructions on the views module handbook
+page on drupal.org -- http://drupal.org/handbook/modules/views.
+
+Once you have it completely uninstalled, you may then install the new
+Views for 4.7, via Drupal's automatic installer. 
