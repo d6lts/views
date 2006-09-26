@@ -89,8 +89,8 @@ function profile_views_get_fields() {
         if (user_access('administer users') || $row->visibility != PROFILE_PRIVATE) {
             // make this work for default and modified profile.module
             //$row->options = unserialize($row->options);
-            if( !empty($row->options) ){
-              if( unserialize($row->options) == false ){
+            if (!empty($row->options)) {
+              if (unserialize($row->options) == false) {
                 // unserialized fields default version
                 $options = $row->options;
                 unset($row->options);
@@ -366,10 +366,12 @@ function views_handler_filter_profile_date($op, $filter, &$filterinfo, &$query) 
   // - read out date, unserialize
   // - compare to input date
   // - filter out matching users: WHERE users.uid IN(match1, match2, match3)
-  if( empty($filter['value']) ) return;
+  if (empty($filter['value'])) {
+    return;
+  }
   // CAREFUL! this may result in negative timestamp...
 
-  if( is_array($filter['value']) ){
+  if (is_array($filter['value'])) {
     // custom selection boxes for date entry were used
     $value = mktime(0, 0, 0, $filter['value']['month'], $filter['value']['day'], $filter['value']['year']);
   }
@@ -386,7 +388,9 @@ function views_handler_filter_profile_date($op, $filter, &$filterinfo, &$query) 
     $time = mktime(0, 0, 0, $date['month'], $date['day'], $date['year']);
     switch($filter['operator']){
       case '>':
-        if($time > $value) $users[] = $profile->uid;
+        if ($time > $value) {
+          $users[] = $profile->uid;
+      }
         break;
       case '>=':
         if($time >= $value) $users[] = $profile->uid;
