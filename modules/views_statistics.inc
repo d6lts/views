@@ -246,10 +246,10 @@ function theme_views_view_popular_recent($view, $type, $nodes) {
     foreach ($nodes as $node) {
       foreach ($view->field as $field) {
         if ($field['fullname'] == 'node.title') {
-          $item = _views_handle_field($fields, $field, $node);
+          $item = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view);
         }
         if ($field['fullname'] == 'node_counter.daycount') {
-          $item .= ' <span class="popular-content-count">(' . _views_handle_field($fields, $field, $node) . ')</span>';
+          $item .= ' <span class="popular-content-count">(' . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view) . ')</span>';
         }
       }
       $items[] = $item;
@@ -272,10 +272,10 @@ function theme_views_view_popular_alltime($view, $type, $nodes) {
     foreach ($nodes as $node) {
       foreach ($view->field as $field) {
         if ($field['fullname'] == 'node.title') {
-          $item = _views_handle_field($fields, $field, $node);
+          $item = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view);
         }
         if ($field['fullname'] == 'node_counter.totalcount') {
-          $item .= ' <span class="popular-content-count">(' . _views_handle_field($fields, $field, $node) . ')</span>';
+          $item .= ' <span class="popular-content-count">(' . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view) . ')</span>';
         }
       }
       $items[] = $item;
