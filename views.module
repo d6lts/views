@@ -300,7 +300,7 @@ function views_menu($may_cache) {
   if ($may_cache) {
     // Invalidate the views cache to ensure that views data gets rebuilt.
     // This is the best way to tell that module configuration has changed.
-    if (arg(0) == 'admin' && arg(1) == 'modules') {
+    if (arg(0) == 'admin' && arg(2) == 'modules') {
       views_invalidate_cache();
     }
 
@@ -858,7 +858,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
  */
 function _views_is_cacheable(&$view) {
   // views with arguments are immediately not cacheable.
-  if (!empty($view->argument) || !empty($view->exposed_filter)) {
+  if (!empty($view->argument) || !empty($view->exposed_filter) || !empty($view->no_cache)) {
     return false;
   }
 

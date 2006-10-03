@@ -5,7 +5,7 @@
  * This builds a query for the view.
  */
 function _views_build_query(&$view, $args = array()) {
-  $query = new _views_query();
+  $query = new _views_query('node', 'nid', !empty($view->use_alias_prefix) ? $view->use_alias_prefix : '');
 
   // Process static filters
   _views_view_build_filters($query, $view);
@@ -38,12 +38,11 @@ function _views_build_query(&$view, $args = array()) {
           if (!$self_sort) {
             $sort = true;
           }
-          break 2;
+          break 2; // switch and for
         case 7:
           // to trigger empty text, send back an empty query
           $info['query'] = NULL;
           return $info;
-          break 2; // switch and for
       }
     }
   }
@@ -92,6 +91,10 @@ function _views_view_build_filters(&$query, &$view) {
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
         $id = $expose['id'];
+        
+        if (isset($view->exposed_filter_offset)) {
+          $count += $view->exposed_filter_offset;
+        }
 
         if (!$expose['operator'] && $_GET["op$count"]) {
           $filter['operator'] = check_plain($_GET["op$count"]);
@@ -131,7 +134,7 @@ function _views_view_build_filters(&$query, &$view) {
     else if (is_array($filter['value']) && count($filter['value'])) {
       if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
         $query->ensure_table($table);
-        $where_args = array_merge(array($table, $field), $filter['value']);
+        $where_args = array_merge(array($query->use_alias_prefix . $table, $field), $filter['value']);
         $placeholder = array_fill(0, count($filter['value']), '%s');
         if ($filter['operator'] == 'OR') {
           $query->add_where("%s.%s IN ('". implode("','", $placeholder) ."')", $where_args);
@@ -159,7 +162,7 @@ function _views_view_build_filters(&$query, &$view) {
     }
     else {
       $query->ensure_table("$table");
-      $query->add_where("%s.%s %s '%s'", $table, $field, $filter['operator'], $filter['value']);
+      $query->add_where("%s.%s %s '%s'", $query->use_alias_prefix . $table, $field, $filter['operator'], $filter['value']);
     }
   }
 }
@@ -255,9 +258,9 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   $fieldinfo = $arginfo[$argtype]['handler']('summary', $query, $argtype, $option);
 
   if ($fieldinfo['fieldname']) {
-    $query->add_field("$fieldinfo[field] AS $fieldinfo[fieldname]", '');
+    $query->add_field($fieldinfo[field], '', $fieldinfo[fieldname]);
   }
-  $query->add_field("count(node.nid) as num_nodes", '');
+  $query->add_field('count(node.nid)', '', 'num_nodes');
   $query->add_groupby($fieldinfo['field']);
   $query->set_count_field("DISTINCT($fieldinfo[field])");
   if ($self_sort) {
@@ -273,20 +276,22 @@ class _views_query {
   /*
    * Create the basic query object and fill with default values.
    */
-  function _views_query($views_get_title_table = 'node', $views_get_title_field = 'nid') {
+  function _views_query($views_get_title_table = 'node', $views_get_title_field = 'nid', $alias_prefix = '') {
     $this->views_get_title_table = $views_get_title_table;
+    $this->joins = array();
     $this->where = array();
     $this->orderby = array();
     $this->groupby = array();
     $this->tables = array();
     $this->where_args = array();
+    $this->use_alias_prefix = $alias_prefix;
     // Joins care about order, so we put our tables in a queue to make sure
     // the order is correct.
     $this->tablequeue = array();
     if ($views_get_title_field) {
-      $this->fields = array("$views_get_title_table.$views_get_title_field");
+      $this->fields = array($alias_prefix ."$views_get_title_table.$views_get_title_field");
     }
-    $this->count_field = "$views_get_title_table.$views_get_title_field";
+    $this->count_field = $alias_prefix ."$views_get_title_table.$views_get_title_field";
     $this->header = array();
   }
 
@@ -303,10 +308,10 @@ class _views_query {
     }
     if ($table) {
       $this->ensure_table($table);
-      $table .= ".";
+      $table = $this->use_alias_prefix . $table .".";
     }
     if ($alias) {
-      $a = " AS $alias";
+      $a = " AS $this->use_alias_prefix$alias";
     }
     $this->fields[] = "$table$field$a";
   }
@@ -361,10 +366,10 @@ class _views_query {
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias && $table) {
-      $alias = $table . ".";
+      $alias = $this->use_alias_prefix . $table . ".";
     }
     elseif ($alias) {
-      $alias .= ".";
+      $alias = $this->use_alias_prefix . $alias . ".";
     }
 
     if ($table) {
@@ -454,7 +459,7 @@ class _views_query {
     else {
       $this->tables[$table]++;
     }
-    $this->tablequeue[] = array('table' => $table, 'num' => $this->tables[$table]);
+    $this->tablequeue[] = array('table' => $table, 'num' => $this->tables[$table], 'alias_prefix' => $this->use_alias_prefix);
   }
 
   /*
@@ -514,9 +519,11 @@ class _views_query {
    *   The name of the table in the global table array.
    * @param $table_num
    *   The instance number of the table.
+   * @param $alias_prefix
+   *   An optional prefix for the table alias.
    */
-  function get_table_name($table, $table_num) {
-    return ($table_num < 2 ? $table : $table . $table_num);
+  function get_table_name($table, $table_num, $alias_prefix = '') {
+    return ($table_num < 2 ? $alias_prefix . $table : $alias_prefix . $table . $table_num);
   }
 
   /*
@@ -537,15 +544,18 @@ class _views_query {
       $table_real = (isset($table_data[$table]['name']) ? $table_data[$table]['name'] : $table);
 
       $table_num = $tinfo['num'];
-      $table_alias = $this->get_table_name($table, $table_num);
+      $table_alias = $this->get_table_name($table, $table_num, $tinfo['alias_prefix']);
 
       $joininfo = (!$this->joins[$table][$table_num] ?
         $table_data[$table]['join'] : $this->joins[$table][$table_num]);
+        
+      $left_table_alias = isset($joininfo['left']['alias']) ? $joininfo['left']['alias'] : $tinfo['alias_prefix'];
+      $left_table_alias .= $joininfo['left']['table'];
 
       // the { is a special character which seems to be treated differently
       // in PHP5 than PHP4 so we do this a little oddly.
       $join_type = $joininfo['type'] == 'inner' ? 'INNER' : 'LEFT';
-      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $joininfo['left']['table'] . "." .
+      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $left_table_alias .".". 
         $joininfo['left']['field'] . " = $table_alias." . $joininfo['right']['field'];
 
       if (isset($joininfo['extra'])) {
