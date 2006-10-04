@@ -184,6 +184,8 @@ function views_ui_system_module_validate(&$form) {
  * This page lists all system views and provides links to edit them.
  */
 function views_ui_admin_page() {
+  views_load_cache();
+
   $numViews = 25;
 
   drupal_set_title(t('administer views'));
@@ -294,6 +296,8 @@ function views_ui_admin_page() {
  * Page to enable a disabled default view
  */
 function views_ui_admin_enable_page($view = '') {
+  views_load_cache();
+
   if ($view) {
     $views_status = variable_get('views_defaults', array());
     $views_status[$view] = 'enabled';
@@ -307,6 +311,8 @@ function views_ui_admin_enable_page($view = '') {
  * Page to disable an enabled default view
  */
 function views_ui_admin_disable_page($view = '') {
+  views_load_cache();
+
   if ($view) {
     $views_status = variable_get('views_defaults', array());
     $views_status[$view] = 'disabled';
@@ -320,6 +326,7 @@ function views_ui_admin_disable_page($view = '') {
  * Provide a textarea to paste a view export into.
  */
 function views_ui_admin_import_page() {
+  views_load_cache();
   $op = $_POST['edit']['name'];
 
   if ($op) {
@@ -375,6 +382,8 @@ function views_ui_admin_import_submit($formid, $form) {
  * Export a view for cut & paste.
  */
 function views_ui_admin_export_page($vid = '') {
+  views_load_cache();
+
   $code = views_create_view_code($vid);
   $lines = substr_count($code, "\n");
   $form['code'] = array(
@@ -389,6 +398,8 @@ function views_ui_admin_export_page($vid = '') {
  * Provide a form to add a view. Allow adding a view from default templates.
  */
 function views_ui_admin_add_page($template = NULL) {
+  views_load_cache();
+
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
     return 'admin/build/views';
@@ -405,6 +416,8 @@ function views_ui_admin_add_page($template = NULL) {
  * Provide a form to clone a view.
  */
 function views_ui_admin_clone_page($viewname) {
+  views_load_cache();
+
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
     return 'admin/build/views';
@@ -425,6 +438,8 @@ function views_ui_admin_clone_page($viewname) {
  * Provide a form to edit a view.
  */
 function views_ui_admin_edit_page($vid = '') {
+  views_load_cache();
+
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
     drupal_goto('admin/build/views');

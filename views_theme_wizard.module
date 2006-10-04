@@ -15,6 +15,7 @@ function views_theme_wizard_menu($may_cache) {
 }
 
 function views_theme_wizard_page() {
+  views_load_cache();
   $result = db_query("SELECT name, description FROM {view_view}");
   $views = array();
   while ($view = db_fetch_object($result)) {
