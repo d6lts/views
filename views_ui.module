@@ -126,13 +126,13 @@ function views_ui_menu($may_cache) {
     $items[] = array('path' => 'admin/build/views/export',
       'title' => t('export view'),
       'callback' => 'drupal_get_form',
-      'callback arguments' => 'views_ui_admin_export_page',
+      'callback arguments' => array('views_ui_admin_export_page'),
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/delete',
       'title' => t('edit view'),
       'callback' => 'drupal_get_form',
-      'callback arguments' => 'views_ui_admin_delete_confirm',
+      'callback arguments' => array('views_ui_admin_delete_confirm'),
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/enable',
