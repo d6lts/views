@@ -148,35 +148,6 @@ function views_ui_menu($may_cache) {
   return $items;
 }
 
-/**
- * hunmonk's module dependency check: see http://drupal.org/node/54463
- */
-function views_ui_form_alter($form_id, &$form) {
-  if ($form_id == 'system_modules' && !$_POST) {
-    views_ui_system_module_validate($form);
-  }
-}
-
-/**
- * hunmonk's module dependency check: see http://drupal.org/node/54463
- */
-function views_ui_system_module_validate(&$form) {
-  $module = 'views_ui';
-  $dependencies = array('views');
-  foreach ($dependencies as $dependency) {
-      if (!in_array($dependency, $form['status']['#default_value'])) {
-        $missing_dependency = TRUE;
-        $missing_dependency_list[] = $dependency;
-      }
-  }
-  if (in_array($module, $form['status']['#default_value']) && isset($missing_dependency)) {
-    db_query("UPDATE {system} SET status = 0 WHERE type = 'module' AND name = '%s'", $module);
-    $key = array_search($module, $form['status']['#default_value']);
-    unset($form['status']['#default_value'][$key]);
-    drupal_set_message(t('The module %module was deactivated--it requires the following disabled/non-existant modules to function properly: %dependencies', array('%module' => $module, '%dependencies' => implode(', ', $missing_dependency_list))), 'error');
-  }
-}
-
 // ---------------------------------------------------------------------------
 // Administrative Pages
 
