@@ -406,7 +406,7 @@ function views_handler_filter_tid_by_voc($op, $filterinfo) {
 
   if ($tree) {
     foreach ($tree as $term) {
-      $options[$term->tid] = _taxonomy_depth($term->depth, '-') . $term->name;
+      $options[$term->tid] = str_repeat('-', $term->depth) . $term->name;
     }
   }
   return $options;
