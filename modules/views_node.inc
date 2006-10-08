@@ -27,6 +27,11 @@ function node_views_tables() {
         'addlfields' => array('changed'),
         'help' => t('Display the title of the node.'),
       ),
+      'nid' => array(
+        'name' => t('Node: Node ID'),
+        'sortable' => true,
+        'help' => t('Display the NID of a node.'),
+      ),
       'created' => array(
         'name' => t('Node: Created Time'),
         'sortable' => true,
