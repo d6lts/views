@@ -452,28 +452,10 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
   // we add 1 chain, but in an and query we actually basically have to add
   // a 2 dimensional array.
 
-//  $query->ensure_table('term_data'); // this is to make sure the views_get_title table comes first.
-
   if ($op == 'OR') {
-    $clause = "'" . implode("','", $value) . "'";
-    // views_get_title tables
-
-    // Any number of things might have already added a term_node table, but
-    // if they have and are filtering on it the query is going to be borken
-    // anyway. If it's been added and unfiltered, and we ignore it, we get
-    // bad results.
-
-    // However, if they added multiple or filters, we do have to separate
-    // them a bit.
-    if ($query->added_taxonomy_or) {
-      $num = $query->add_table('term_node');
-    }
-    else {
-      $num = 1;
-      $query->ensure_table('term_node');
-      $query->added_taxonomy_or = TRUE;
-    }
+    $num = $query->add_table('term_node');
     $tablename = $query->get_table_name('term_node', $num);
+    $clause = "'" . implode("','", $value) . "'";
     $where = "$tablename.tid IN ($clause)";
 
     // for each depth > 0, add the next child in term_hierarchy to the join
@@ -484,15 +466,20 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
       $tablename = $query->get_table_name('term_data', $num);
       $where .= " OR $tablename.tid IN ($clause)";
     }
-    $query->add_where("$where");
+    $query->add_where($where);
+  }
+  else if ($op == 'NOR') {
+    //ignore the depth for this case
+    $table_data = _views_get_tables();
+    $joininfo = $table_data['term_node']['join'];
+    $joininfo['extra']['tid'] = $value;
+    $num = $query->add_table('term_node', false, 1, $joininfo);
+    $tablename = $query->get_table_name('term_node', $num);
+    $query->add_where("$tablename.tid IS NULL");
   }
   else {
-    if ($op == 'NOR') {
-      $not = "!";
-    }
     foreach ($value as $tid) {
-      // For every term we have to match, add a views_get_title table
-      $num = 1;
+      // For every term we have to match add the depth chain
       $num = $query->add_table('term_node');
       $tablename = $query->get_table_name('term_node', $num);
       $where = "$tablename.tid = '$tid'";
@@ -505,7 +492,7 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
         $tablename = $query->get_table_name('term_data', $num);
         $where .= " OR $tablename.tid = '$tid'";
       }
-      $query->add_where("$not($where)");
+      $query->add_where($where);
     }
   }
 }
@@ -515,19 +502,19 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
  */
 function _views_add_vocabulary($op, $value, $depth, &$query) {
   if ($op == 'OR' || $op == 'NOR') {
-    if ($op == 'NOR') {
-      $not = 'NOT';
+    $num = $query->add_table('term_node');
+    $tablename1 = $query->get_table_name('term_node', $num);
+    $joininfo = array('left' => array('table' => $tablename1, 'field' => 'tid'), 'right' => array('field' => 'tid'));
+    $joininfo['extra'] = array('vid' => $value);
+    $num = $query->add_table('term_data', false, 1, $joininfo);
+    $tablename2 = $query->get_table_name('term_data', $num);
+    if ($op == 'OR') {
+      $query->add_where("$tablename1.tid IS NOT NULL");
+      $query->add_where("$tablename2.tid IS NOT NULL");
     }
-    if (($op == 'NOR' || count($value) > 1) && count($query->fields)) {
-      // group by views_title_table.views_title_field
-      // count($query->fields) == 0 will break this code (can this happen?)
-      $field = $query->fields[0];
-      $query->add_groupby($field);
-      $query->set_count_field("DISTINCT($field)");
+    else {
+      $query->add_where("($tablename1.tid IS NULL AND $tablename2.tid IS NULL)");
     }
-    $query->ensure_table('term_data');
-    $clause = "'" . implode("','", $value) . "'";
-    $query->add_where("term_data.vid $not IN ($clause)");
   }
   else {
     foreach ($value as $vid) {
