@@ -679,8 +679,8 @@ function views_handler_filter_role() {
  */
 function views_handler_filter_nodetype($op) {
   $nodes = array();
-  foreach (node_get_types() as $type => $name) {
-    $nodes[$type] = $name;
+  foreach (node_get_types() as $type => $info) {
+    $nodes[$type] = $info->name;
   }
   return $nodes;
 }
