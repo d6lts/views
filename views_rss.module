@@ -164,7 +164,7 @@ function theme_views_rss_feed($view, $nodes) {
     'title'       => variable_get('site_name', 'drupal') .' - '. variable_get('site_slogan', ''),
     'link'        => $base_url,
     'description' => variable_get('site_mission', ''),
-    'language'    => $locale
+    'language'    => $GLOBALS['locale'],
   );
   $channel = array_merge($channel_defaults, $channel);
 
