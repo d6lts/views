@@ -448,6 +448,7 @@ function views_handler_filter_voc($op, $filter, $filterinfo, &$query) {
  * code because the clause and the JOINs are a bit complicated.
  */
 function _views_add_taxonomy($op, $value, $depth, &$query) {
+  $value = array_map('intval', $value);
   // When filtering via depth, we have to add a chain. If it's an or query
   // we add 1 chain, but in an and query we actually basically have to add
   // a 2 dimensional array.
@@ -501,6 +502,8 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
  * Add a WHERE clause views_get_title on taxonomy vocabulary
  */
 function _views_add_vocabulary($op, $value, $depth, &$query) {
+  $value = array_map('intval', $value);
+
   if ($op == 'OR' || $op == 'NOR') {
     $num = $query->add_table('term_node');
     $tablename1 = $query->get_table_name('term_node', $num);
