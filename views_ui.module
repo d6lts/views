@@ -775,7 +775,7 @@ function views_edit_view($view, $op = '') {
     '#default_value' => $view->page_title,
     '#size' => 60,
     '#maxlength' => 255,
-    '#description' => t('The title that be shown at the top of the view. May be blank. If your View allows arguments, you may use %1 to substitute argument 1 text, %2 to argument #2, and so on.'),
+    '#description' => t('The title that be shown at the top of the view. May be blank. This title ignores arguments; if you want your title to take arguments into account, use the "title" field in the arguments section.'),
   );
 
   $form['page-info']['use_pager'] = array(
