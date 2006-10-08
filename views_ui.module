@@ -1777,11 +1777,11 @@ function views_create_view_code($vid) {
   if ($view->page) {
     $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
     $output .= "  \$view->page_title = '" . db_escape_string($view->page_title) . "';\n";
-    $output .= "  \$view->page_header = '" . db_escape_string($view->page_header) ."';\n";
+    $output .= "  \$view->page_header = \"" . db_escape_string($view->page_header) ."\";\n";
     $output .= "  \$view->page_header_format = '$view->page_header_format';\n";
-    $output .= "  \$view->page_footer = '" . db_escape_string($view->page_footer) ."';\n";
+    $output .= "  \$view->page_footer = \"" . db_escape_string($view->page_footer) ."\";\n";
     $output .= "  \$view->page_footer_format = '$view->page_footer_format';\n";
-    $output .= "  \$view->page_empty = '" . db_escape_string($view->page_empty) ."';\n";
+    $output .= "  \$view->page_empty = \"" . db_escape_string($view->page_empty) ."\";\n";
     $output .= "  \$view->page_empty_format = '$view->page_empty_format';\n";
     $output .= "  \$view->page_type = '$view->page_type';\n";
     $output .= "  \$view->url = '" . db_escape_string($view->url) . "';\n";
@@ -1798,11 +1798,11 @@ function views_create_view_code($vid) {
   if ($view->block) {
     $output .= "  \$view->block = " . views_tf($view->block) . ";\n";
     $output .= "  \$view->block_title = '" . db_escape_string($view->block_title) . "';\n";
-    $output .= "  \$view->block_header = '" . db_escape_string($view->block_header) . "';\n";
+    $output .= "  \$view->block_header = \"" . db_escape_string($view->block_header) . "\";\n";
     $output .= "  \$view->block_header_format = '$view->block_header_format';\n";
-    $output .= "  \$view->block_footer = '" . db_escape_string($view->block_footer) ."';\n";
+    $output .= "  \$view->block_footer = \"" . db_escape_string($view->block_footer) ."\";\n";
     $output .= "  \$view->block_footer_format = '$view->block_footer_format';\n";
-    $output .= "  \$view->block_empty = '" . db_escape_string($view->block_empty) ."';\n";
+    $output .= "  \$view->block_empty = \"" . db_escape_string($view->block_empty) ."\";\n";
     $output .= "  \$view->block_empty_format = '$view->block_empty_format';\n";
     $output .= "  \$view->block_type = '$view->block_type';\n";
     $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
