@@ -806,7 +806,7 @@ function _views_view_form($view, $op = '') {
     '#default_value' => $view->nodes_per_page,
     '#size' => 5,
     '#maxlength' => 5,
-    '#description' => t('The number of nodes to display per page. If 0 no nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
+    '#description' => t('The number of nodes to display per page. If 0, all nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
     '#attributes' => NULL,
     '#required' => true,
   );
