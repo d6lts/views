@@ -77,12 +77,16 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
     $url = views_get_url($view, $args);
     $title = views_get_title($view, 'page', $args);
 
+    if ($view->used_filters) {
+      $filters = drupal_query_string_encode($view->used_filters);
+    }
+
     drupal_add_link(array('rel' => 'alternate',
                           'type' => 'application/rss+xml',
                           'title' => check_plain($title),
-                          'href' => url($url, drupal_query_string_encode($view->used_filters), NULL, TRUE)));
+                          'href' => url($url, $filters, NULL, TRUE)));
     if ($view->build_type != 'block') {
-      return theme('feed_icon', url($url, drupal_query_string_encode($view->used_filters)));
+      return theme('feed_icon', url($url, $filters));
     }
   }
 }
