@@ -11,6 +11,7 @@ function views_rss_views_style_plugins() {
       'theme' => 'views_rss_feed',
       'needs_table_header' => TRUE,
       'needs_fields' => TRUE,
+      'even_empty' => TRUE,
     ),
   );
 }
