@@ -211,7 +211,6 @@ function _views_view_build_sorts(&$query, $view) {
  * Add field information from a view to a query.
  */
 function _views_view_build_fields(&$query, &$view) {
-
   $fields = _views_get_fields();
 
   foreach ($view->field as $field) {

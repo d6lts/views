@@ -366,7 +366,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     $info['countquery'] = $view->countquery;
 
     if ($plugins[$view->type]['needs_table_header']) {
-      $view->table_header = _views_construct_header($view, $fields);
+      $view->table_header = _views_construct_header($view, _views_get_fields());
     }
   }
   else {
