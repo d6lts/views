@@ -284,7 +284,7 @@ function views_view_block($vid) {
   }
 }
 
-function &views_set_current_view($view = NULL) {
+function &views_set_current_view(&$view) {
   static $current_view = NULL;
   if ($view !== NULL) {
     unset($current_view);
@@ -296,7 +296,8 @@ function &views_set_current_view($view = NULL) {
 }
 
 function &views_get_current_view() {
-  return views_set_current_view();
+  $dummy = NULL;
+  return views_set_current_view($dummy);
 }
 
 /**
