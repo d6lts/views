@@ -1531,10 +1531,9 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
     $output .= views_theme('views_display_filters', $view);
   }
 
-  if ($num_nodes) {
-
-    $plugins = _views_get_style_plugins();
-    $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
+  $plugins = _views_get_style_plugins();
+  $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
+  if ($num_nodes || $plugins[$view_type]['even_empty']) {
     if ($level !== NULL) {
       $output .= "<div class='view-summary view-summary-$view->name'>" . views_theme($plugins[$view_type]['summary_theme'], $view, $type, $level, $nodes, $args) . '</div>';
     }
