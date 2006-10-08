@@ -608,16 +608,32 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
       // do nothing here.
       break;
     case 'filter':
-      $query->add_where("node.nid = %d", $arg);
+      $args = _views_break_phrase($arg);
+      if ($args[0] == 'and') {
+        foreach ($args[1] as $arg) {
+          $query->add_where("node.nid = %d", $arg);
+        }
+      }
+      else {
+        $query->add_where("node.nid IN (%s)", implode(',', $args[1]));
+      }
       break;
     case 'link':
       return l($query->title, "$arg/$query->nid");
     case 'title':
-      $node = db_fetch_object(db_query("SELECT title FROM {node} WHERE nid=%d", $query));
-      return check_plain($node->title);
+      list($type, $info) = _views_break_phrase($query);
+      if (!$info) {
+        return t('Untitled');
+      }
+      $nids = implode(',', $info); // only does numbers so safe
+
+      $result = db_query("SELECT title FROM {node} WHERE nid IN (%s)", $nids);
+      while ($node = db_fetch_object($result)) {
+        $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($node->title);
+      }
+
   }
 }
-
 
 /*
  * Custom filter for new content.
