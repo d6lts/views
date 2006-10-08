@@ -551,7 +551,10 @@ class _views_query {
       if (isset($joininfo['extra'])) {
         foreach ($joininfo['extra'] as $field => $value) {
           $joins .= " AND $table_alias.$field";
-          if ($value !== NULL) {
+          if (is_array($value) && count($value)) {
+            $joins .= " IN ('". implode("','", $value) ."')";
+          }
+          else if ($value !== NULL) {
             $joins .= " = '$value'";
           }
         }
