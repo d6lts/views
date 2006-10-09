@@ -281,7 +281,6 @@ function views_handler_arg_username($op, &$query, $argtype, $arg = '') {
       $table_data = _views_get_tables();
       $joininfo = $table_data['users']['join'];
       $query->add_table('users', false, 1, $joininfo);
-      drupal_set_message($name);
       $query->add_where("users.name = '%s'", $name);
       break;
     case 'link':
