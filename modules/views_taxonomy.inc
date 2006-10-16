@@ -270,7 +270,7 @@ function views_handler_field_tid($fieldinfo, $fielddata, $value, $data) {
 function views_handler_field_tid_link($fieldinfo, $fielddata, $value, $data) {
   $fieldname = $fielddata['tablename'] . '_tid';
   $term = taxonomy_get_term($data->$fieldname);
-  $path = taxonomy_get_path($term);
+  $path = taxonomy_term_path($term);
   return l($value, $path);
 }
 
