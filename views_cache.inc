@@ -4,7 +4,7 @@
 // Load all our module 'on behalfs'.
 // Whenever we decide we need this, load our module 'on behalfs'.
 $path = drupal_get_path('module', 'views') . '/modules';
-$files = system_listing('views_.*\.inc$', $path, 'name', 0);
+$files = drupal_system_listing('views_.*\.inc$', $path, 'name', 0);
 
 foreach($files as $file) {
   // The filename format is very specific. It must be views_MODULENAME.inc
