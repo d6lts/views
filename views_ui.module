@@ -92,45 +92,45 @@ function views_ui_menu($may_cache) {
 
   if ($may_cache) {
     $items[] = array('path' => 'admin/build/views',
-      'title' => t('views'),
+      'title' => t('Views'),
       'callback' => 'views_ui_admin_page',
       'access' => user_access('administer views'),
       'description' => t('Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented.'),
       'type' => MENU_NORMAL_ITEM);
     $items[] = array('path' => 'admin/build/views/list',
-      'title' => t('list'),
+      'title' => t('List'),
       'callback' => 'views_ui_admin_page',
       'access' => user_access('administer views'),
       'type' => MENU_DEFAULT_LOCAL_TASK,
       'weight' => '-1');
     $items[] = array('path' => 'admin/build/views/add',
-      'title' => t('add'),
+      'title' => t('Add'),
       'callback' => 'views_ui_admin_add_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
     $items[] = array('path' => 'admin/build/views/clone',
-      'title' => t('clone'),
+      'title' => t('Clone'),
       'callback' => 'views_ui_admin_clone_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/edit',
-      'title' => t('edit view'),
+      'title' => t('Edit view'),
       'callback' => 'views_ui_admin_edit_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/import',
-      'title' => t('import'),
+      'title' => t('Import'),
       'callback' => 'views_ui_admin_import_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
     $items[] = array('path' => 'admin/build/views/export',
-      'title' => t('export view'),
+      'title' => t('Export view'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('views_ui_admin_export_page'),
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/delete',
-      'title' => t('edit view'),
+      'title' => t('Edit view'),
       'callback' => 'drupal_get_form',
       'callback arguments' => array('views_ui_admin_delete_confirm'),
       'access' => user_access('administer views'),
@@ -182,10 +182,10 @@ function views_ui_admin_page() {
       implode(', ', $provides), 
       $url, 
       theme('links', array(
-        array('title' => t('edit'), 'href' => "admin/build/views/edit/$view->vid"), 
-        array('title' => t('export'), 'href' => "admin/build/views/export/$view->vid"), 
-        array('title' => t('delete'), 'href' => "admin/build/views/delete/$view->vid"),
-        array('title' => t('clone'), 'href' => "admin/build/views/clone/$view->vid"),
+        array('title' => t('Edit'), 'href' => "admin/build/views/edit/$view->vid"), 
+        array('title' => t('Export'), 'href' => "admin/build/views/export/$view->vid"), 
+        array('title' => t('Delete'), 'href' => "admin/build/views/delete/$view->vid"),
+        array('title' => t('Clone'), 'href' => "admin/build/views/clone/$view->vid"),
       ))
     );
   }
@@ -242,19 +242,19 @@ function views_ui_admin_page() {
     }
 
     $links = array();
-    $links[] = array('title' => t('add'), 'href' => "admin/build/views/add/$view->name");
+    $links[] = array('title' => t('Add'), 'href' => "admin/build/views/add/$view->name");
     if ($status == t('Enabled')) {
-      $links[] = array('title' => t('disable'), 'href' => "admin/build/views/disable/$view->name");
+      $links[] = array('title' => t('Disable'), 'href' => "admin/build/views/disable/$view->name");
     }
     else if ($status == t('Disabled')) {
-      $links[] = array('title' => t('enable'), 'href' => "admin/build/views/enable/$view->name");
+      $links[] = array('title' => t('Enable'), 'href' => "admin/build/views/enable/$view->name");
     }
 
     $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, $status, theme('links', $links));
   }
 
   if ($items) {
-    $output .= theme('table', array(t('Default View'), t('Title'), t('Description'), t('Provides'), t('URL'), t('Status'), t('Actions')), $items, array("cellpadding" => "4"), t('Default Views'));
+    $output .= theme('table', array(t('Default view'), t('Title'), t('Description'), t('Provides'), t('URL'), t('Status'), t('Actions')), $items, array("cellpadding" => "4"), t('Default Views'));
   }
   else {
     $output .= t('<p>No views have currently been defined.</p>');

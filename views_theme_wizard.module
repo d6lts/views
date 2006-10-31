@@ -6,7 +6,7 @@ function views_theme_wizard_menu($may_cache) {
     $items[] = array(
       'path' => 'admin/build/views/wizard',
       'access' => user_access('administer views'),
-      'title' => t('theme wizard'),
+      'title' => t('Theme wizard'),
       'callback' => 'views_theme_wizard_page',
       'type' => MENU_LOCAL_TASK,
     );

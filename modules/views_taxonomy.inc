@@ -174,7 +174,7 @@ function taxonomy_views_default_views() {
   $view->access = array (
 );
   $view->page = TRUE;
-  $view->page_title = t('taxonomy');
+  $view->page_title = t('Taxonomy');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_type = 'teaser';

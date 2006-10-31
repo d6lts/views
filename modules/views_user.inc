@@ -105,13 +105,13 @@ function user_views_default_views() {
   $view->description = t('Shows all new activity on system.');
   $view->page = true;
   $view->url = 'tracker';
-  $view->page_title = t('recent posts');
+  $view->page_title = t('Recent posts');
   $view->page_type = 'table';
   $view->use_pager = true;
   $view->nodes_per_page = '25';
 
   $view->menu = true;
-  $view->menu_title = 'recent posts';
+  $view->menu_title = t('Recent posts');
   $view->block = false;
   $view->field = array (
     array (

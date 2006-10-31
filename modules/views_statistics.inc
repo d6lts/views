@@ -67,7 +67,7 @@ function statistics_views_default_views() {
 );
   $view->view_args_php = '';
   $view->page = TRUE;
-  $view->page_title = t('recent popular content');
+  $view->page_title = t('Recent popular content');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_footer = '';
@@ -84,7 +84,7 @@ function statistics_views_default_views() {
   $view->menu_tab_default = TRUE;
   $view->menu_weight = '-1';
   $view->block = TRUE;
-  $view->block_title = t('recent popular content');
+  $view->block_title = t('Recent popular content');
   $view->block_header = '';
   $view->block_header_format = '1';
   $view->block_footer = '';
@@ -155,7 +155,7 @@ function statistics_views_default_views() {
 );
   $view->view_args_php = '';
   $view->page = TRUE;
-  $view->page_title = t('all-time popular content');
+  $view->page_title = t('All-time popular content');
   $view->page_header = '';
   $view->page_header_format = '1';
   $view->page_footer = '';
@@ -172,7 +172,7 @@ function statistics_views_default_views() {
   $view->menu_tab_default = FALSE;
   $view->menu_weight = '1';
   $view->block = TRUE;
-  $view->block_title = t('all-time popular content');
+  $view->block_title = t('All-time popular content');
   $view->block_header = '';
   $view->block_header_format = '1';
   $view->block_footer = '';

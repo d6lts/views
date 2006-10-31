@@ -732,6 +732,7 @@ function _views_load_view($arg) {
 
   $result = db_query("SELECT * FROM {view_filter} WHERE vid = $view->vid ORDER BY position ASC");
 
+  views_load_cache();
   $filters = _views_get_filters();
   $view->filter = array();
   while ($filter = db_fetch_array($result)) {
