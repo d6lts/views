@@ -95,7 +95,10 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
 /**
  * plugin that actually displays an RSS feed
  */
-function theme_views_rss_feed($view, $nodes) {
+function theme_views_rss_feed($view, $nodes, $type) {
+  if ($type == 'block') {
+    return;
+  }
   global $base_url;
 
   $channel = array(
