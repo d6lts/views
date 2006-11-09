@@ -316,7 +316,7 @@ function views_menu($may_cache) {
       // it is still used.
       $used[$view->name] = true;
 
-      if (strrpos($view->url, '$arg')) {
+      if (strrpos($view->url, '$arg') !== FALSE) {
         $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
         while ($view->argument[] = db_fetch_array($arg_result));
         array_pop($view->argument); // get rid of the NULL at the end.
@@ -331,8 +331,7 @@ function views_menu($may_cache) {
     foreach ($default_views as $name => $view) {
       if ($view->page && !$used[$name] &&
        ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-
-        if (strrpos($view->url, '$arg')) {
+        if (strrpos($view->url, '$arg') !== FALSE) {
           $views_with_inline_args[$view->name] = $view;
           continue;
         }
