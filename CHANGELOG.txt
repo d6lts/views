@@ -25,3 +25,4 @@ Views 1.1-dev
     o Early views_search.inc -- needs testing! [gordonh]
     o 90643: Access-checking 'edit', 'delete' and 'view' links as fields
     o Added uninstall function (accessible from the module administration page)
+    o 88849: new views_pre_query hook

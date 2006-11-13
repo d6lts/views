@@ -361,6 +361,12 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     ob_end_clean();
   }
 
+  // Call a hook that'll let modules modify the view query before it is created
+  foreach (module_implements('views_pre_query') as $module) {
+    $function = $module .'_views_pre_query';
+    $output .= $function($view);
+  }
+
   $plugins = _views_get_style_plugins();
   if ($view->query) {
     $info['query'] = $view->query;
