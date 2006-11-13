@@ -5,56 +5,6 @@
  */
 
 function profile_views_tables() {
-
-  // provide a distinct filter so users are only displayed once.
-  $tables['profile_distinct'] = array(
-    'name' => 'users',
-    'provider' => 'internal', // won't show up in external list.
-    'join' => array(
-      'left' => array(
-        'table' => 'node',
-        'field' => 'uid'
-      ),
-      'right' => array(
-        'field' => 'uid'
-      ),
-    ),
-    'fields' => array(
-      'mail' => array(
-        'name' => t('User: Email'),
-        'handler' => 'views_handler_field_email',
-        'sortable' => true,
-        'help' => t('This will display the email of the user.'),
-      ),
-    ),
-    'sorts' => array(
-      'uid' => array(
-        'name' => t('User: Uid'),
-        'help' => t('This allows you to sort by user id.'),
-      ),
-      'mail' => array(
-        'name' => t('User: Email'),
-        'help' => t('This allows you to sort alphabetically by email.'),
-      ),
-    ),
-    'filters' => array(
-      'distinct' => array(
-        'name' => t('Profile: Distinct'),
-        'operator' => array('=' => 'is'),
-        'list' => array('distinct' => 'distinct'),
-        'handler' => 'views_handler_filter_profile_distinct',
-        'value-type' => 'array',
-        'help' => t('This filter ensures that each user profile may only be listed once, even if it matches multiple criteria.'),
-      ),
-      'mail' => array(
-        'name' => t('User: Email'),
-        'operator' => 'views_handler_operator_like',
-        'handler' => 'views_handler_filter_like',
-        'help' => t('This allows you to filter by a particular email address.'),
-      ),
-    ),
-  );
-
   // add all profile fields as possible display fields and filters
   $profile_fields = profile_views_get_fields();
   foreach ($profile_fields as $field) {
@@ -339,16 +289,6 @@ function views_handler_filter_profile_selection($op, $filter) {
 }
 
 /* FILTER HANDLER FUNCTIONS */
-
-/**
- * Provide distince filter for user object. Note: this replaces the node 
- * distinct field and hence donflicts with it. 
- */
-function views_handler_filter_profile_distinct($op, $filter, $filterinfo, &$query) {
-  $field = 'users.uid';
-  $query->fields[0] = "DISTINCT($field)";
-  $query->count_field = "DISTINCT($field)";
-}
 
 /**
  * Handle a profile date fild.

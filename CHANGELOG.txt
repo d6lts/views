@@ -6,6 +6,8 @@ Views 1.0
 Views 1.1-dev
   Bugs fixed:
     o Exposed filters didn't work when value being sent in was 0.
+    o 92305: Remove broken distinct profile filter
+    o 93540: Don't use block title if no page title.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
