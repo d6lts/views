@@ -70,6 +70,29 @@ function node_views_tables() {
         'notafield' => TRUE,
         'help' => t('Display the Main Content.'),
       ),
+      'view' => array(
+        'name' => t('Node: View link'),
+        'handler' => 'views_handler_node_view',
+        'notafield' => TRUE,
+        'option' => 'string',
+        'help' => t('Display a link to view the node. Enter the text of this link into the option field; if blank the default "view" will be used.'),
+      ),
+      'edit' => array(
+        'name' => t('Node: Edit link'),
+        'handler' => 'views_handler_node_edit',
+        'notafield' => TRUE,
+        'addlfields' => array('type', 'uid'),
+        'option' => 'string',
+        'help' => t('Display a link to edit the node. Enter the text of this link into the option field; if blank the default "edit" will be used.'),
+      ),
+      'delete' => array(
+        'name' => t('Node: Delete link'),
+        'handler' => 'views_handler_node_delete',
+        'notafield' => TRUE,
+        'addlfields' => array('type', 'uid'),
+        'option' => 'string',
+        'help' => t('Display a link to delete the node. Enter the text of this link into the option field; if blank the default "delete" will be used.'),
+      ),
     ),
     'sorts' => array(
       'nid' => array(
@@ -809,4 +832,38 @@ function views_post_view_make_args($view, $feed_id, $arg) {
   }
   
   return $args;
+}
+
+/**
+ * display a link to view a node
+ */
+function views_handler_node_view($fieldinfo, $fielddata, $value, $data) {
+  $link_text = $fielddata['options'] ? $fielddata['options'] : t('view');
+  return l($link_text, "node/$data->nid");
+}
+
+/**
+ * display a link to edit a node
+ */
+function views_handler_node_edit($fieldinfo, $fielddata, $value, $data) {
+  // try to build a fake node object
+  $data->type = $data->node_type;
+  $data->uid = $data->node_uid;
+  if (node_access('update', $data)) {
+    $link_text = $fielddata['options'] ? $fielddata['options'] : t('edit');
+    return l($link_text, "node/$data->nid/edit");
+  }
+}
+
+/**
+ * display a link to delete a node
+ */
+function views_handler_node_delete($fieldinfo, $fielddata, $value, $data) {
+  // try to build a fake node object
+  $data->type = $data->node_type;
+  $data->uid = $data->node_uid;
+  if (node_access('delete', $data)) {
+    $link_text = $fielddata['options'] ? $fielddata['options'] : t('delete');
+    return l($link_text, "node/$data->nid/delete");
+  }
 }
