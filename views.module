@@ -1076,7 +1076,7 @@ function _views_construct_header($view, $fields) {
     }
 
     // Add CSS id to table cell header cell.
-    $header['id'] = "view-field-$field[queryname]";
+    $header['id'] = views_css_safe('view-field-'. $field['queryname']);
     $header['class'] = "view-cell-header";
     $headers[] = $header;
   }
@@ -1192,12 +1192,12 @@ function theme_views_view_list($view, $nodes, $type) {
     foreach ($view->field as $field) {
       if ($fields[$field['id']]['visible'] !== FALSE) {
         if ($field['label']) {
-          $item .= "<div class='view-label view-label-$field[queryname]'>" . $field['label'] . "</div>";
+          $item .= "<div class='view-label ". views_css_safe('view-label-'. $field['queryname']) ."'>" . $field['label'] . "</div>";
         }
-        $item .= "<div class='view-field view-data-$field[queryname]'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view) . "</div>";
+        $item .= "<div class='view-field ". views_css_safe('view-data-'. $field['queryname']) ."'>" . views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view) . "</div>";
       }
     }
-    $items[] = "<div class='view-item view-item-$view->name'>$item</div>\n"; // l($node->title, "node/$node->nid");
+    $items[] = "<div class='view-item ". views_css_safe('view-item-'. $view->name) ."'>$item</div>\n"; // l($node->title, "node/$node->nid");
   }
   if ($items) {
     return theme('item_list', $items);
@@ -1215,7 +1215,7 @@ function theme_views_view_table($view, $nodes, $type) {
     foreach ($view->field as $field) {
       if ($fields[$field['id']]['visible'] !== FALSE) {
         $cell['data'] = views_theme_field('views_handle_field', $field['queryname'], $fields, $field, $node, $view);
-        $cell['class'] = "view-field view-field-$field[queryname]";
+        $cell['class'] = "view-field ". views_css_safe('view-field-'. $field['queryname']);
         $row[] = $cell;
       }
     }
@@ -1277,9 +1277,16 @@ function views_get_textarea($view, $type, $textarea) {
   $format = $var . '_format';
 
   if ($view->$var) {
-    return "<div class='view-$textarea view-$textarea-$view->name'>"
+    return "<div class='". views_css_safe('view-'. $textarea .' view-'. $textarea .'-'. $view->name) ."'>"
       . check_markup($view->$var, $view->$format, false) . "</div>\n";
   }
+}
+
+/**
+ * Prepare the specified string for use as a CSS identifier.
+ */
+function views_css_safe($string) {
+  return str_replace('_', '-', $string);
 }
 
 /**
@@ -1305,10 +1312,10 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   $view_type = ($type == 'block') ? $view->block_type : $view->page_type;
   if ($num_nodes || $plugins[$view_type]['even_empty']) {
     if ($level !== NULL) {
-      $output .= "<div class='view-summary view-summary-$view->name'>" . views_theme($plugins[$view_type]['summary_theme'], $view, $type, $level, $nodes, $args) . '</div>';
+      $output .= "<div class='view-summary ". views_css_safe('view-summary-'. $view->name) ."'>". views_theme($plugins[$view_type]['summary_theme'], $view, $type, $level, $nodes, $args) . '</div>';
     }
     else {
-      $output .= "<div class='view-content view-content-$view->name'>" . views_theme($plugins[$view_type]['theme'], $view, $nodes, $type) . '</div>';
+      $output .= "<div class='view-content ". views_css_safe('view-content-'. $view->name) ."'>". views_theme($plugins[$view_type]['theme'], $view, $nodes, $type) . '</div>';
     }
     $output .= views_get_textarea($view, $type, 'footer');
 
@@ -1325,7 +1332,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   }
 
   if ($output) {
-    $output = "<div class='view view-$view->name'>$output</div>\n";
+    $output = "<div class='view ". views_css_safe('view-'. $view->name) ."'>$output</div>\n";
   }
   return $output;
 }

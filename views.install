@@ -236,6 +236,15 @@
   }
 }
 
+function views_uninstall() {
+  db_query("DROP TABLE IF EXISTS {view_view}");
+  db_query("DROP TABLE IF EXISTS {view_sort}");
+  db_query("DROP TABLE IF EXISTS {view_argument}");
+  db_query("DROP TABLE IF EXISTS {view_tablefield}");
+  db_query("DROP TABLE IF EXISTS {view_filter}");
+  db_query("DROP TABLE IF EXISTS {view_exposed_filter}");
+}
+
 /*
  * update module for UTF.
  */
