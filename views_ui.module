@@ -1634,8 +1634,14 @@ function views_edit_view_validate($form_id, $view, $form) {
     form_error($form['basic-info']['name'], t('View name already in use.'));
   }
 
-  if ($view['use_block'] && $view['nodes_per_block'] < 1) {
-    form_set_error($form['block-info']['nodes_per_block'], t('If being used as a block, Nodes Per Block must be positive.'));
+  if ($view['page']) {
+    if ($view['use_pager'] && !$view['nodes_per_page']) {
+      form_error($form['page-info']['nodes_per_page'], t('Nodes per page cannot be 0 if using the pager.'));
+    }
+  }
+
+  if ($view['block'] && $view['nodes_per_block'] < 1) {
+    form_error($form['block-info']['nodes_per_block'], t('If being used as a block, Nodes Per Block must be positive.'));
   }
 
   // validation based on type:
