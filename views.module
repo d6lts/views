@@ -1569,7 +1569,7 @@ function views_views_style_plugins() {
  * A list of options to be used in LIKE queries
  */
 function views_handler_operator_like() {
-  return array('=' => t('Is Equal To'), 'contains' => t('Contains'), 'starts' => t('Starts With'), 'ends' => t('Ends With'), 'not' => t('Does Not Contain'));
+  return array('=' => t('Is Equal To'), 'contains' => t('Contains'), 'word' => t('Contains Any Word'), 'allwords' => t('Contains All Words'), 'starts' => t('Starts With'), 'ends' => t('Ends With'), 'not' => t('Does Not Contain'));
 }
 
 /**
@@ -1592,6 +1592,33 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
         case 'contains':
           $query->add_where("UPPER(%s) LIKE UPPER('%%%s%%')",
             $field, $filter['value']);
+          break;
+        case 'word':
+        case 'allwords':
+          preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' '. $filter['value'], $matches, PREG_SET_ORDER);
+          foreach ($matches as $match) {
+            $phrase = false;
+            // Strip off phrase quotes
+            if ($match[2]{0} == '"') {
+              $match[2] = substr($match[2], 1, -1);
+              $phrase = true;
+            }
+            $words = trim($match[2], ',?!();:-');
+            $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
+            foreach ($words as $word) {
+              $q[] = "UPPER(%s) LIKE UPPER('%%%s%%')";
+              $v[] = $field;
+              $v[] = trim($word, " ,!?");
+            }
+          }
+          if ($filter['operator'] == 'word') {
+            $q = '('. implode(' OR ', $q) .')';
+          }
+          else {
+            $q = implode(' AND ', $q);
+          }
+          array_unshift($v, $q);
+          call_user_func_array(array($query, 'add_where'), $v);
           break;
         case 'starts':
           $query->add_where("UPPER(%s) LIKE UPPER('%s%%')",
