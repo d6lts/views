@@ -77,6 +77,7 @@ function _views_build_query(&$view, $args = array()) {
  */
 function _views_view_build_filters(&$query, &$view) {
   $filters = _views_get_filters();
+  $view->used_filters = array();
 
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
@@ -86,8 +87,6 @@ function _views_view_build_filters(&$query, &$view) {
       $field = $fieldbits[1];
     }
     $filterinfo['field'] = $field;
-
-    $view->used_filters = array();
 
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
