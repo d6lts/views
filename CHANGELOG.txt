@@ -1,18 +1,12 @@
-11/27/2005 added field 'handler' to view_tablefield
-11/28/2005 added fields 'sortable' and 'defaultsort' to view_tablefield
-11/28/2005 changed view_argument type from int(2) to varchar(25) for greater flexibility
-11/30/2005 changed filter table and view table significantly. Probably sort table too.
-12/5/2005 Add options varchar(255) to both sort and filter tables.
-12/7/2005 Add menu_title to view_view and title to view_argument
-12/8/2005 Added options varchar(255) to view_argument as well.
-12/10/2005 Added block_more int(1) to view_view
-12/21/2005 Renamed 'sql' to 'query' and 'countsql' to 'countquery' for consistency
-1/2/2006 SCHEMA CHANGES SCHEMA CHANGES
-         Too drastic to easily deal with. Before you install this version of
-	 Views, you should export all your old views as a backup, then drop the
-	 views_view table and re-import. Sorry. I hope to not do something like
-	 this ever again.
-2/19/2006 allow a complete formsapi setting in any 'options' or 'value' setting for 'filter'.
-	  Retooled the API to be less hackish.
-3/2/2006  Added the ability to expose filters to end user. Requires running update.php.
-3/16/2006 Basic user documentation written.
+CHANGELOG for Views for Drupal 4.7
+
+Views 1.0 
+ o Initial release under drupal.org's new release system
+
+Views 1.1-dev
+  Bugs fixed:
+    o 
+
+  New features:
+    o New comment fields to allow more Views use of comments.
+    o Recent comments block default view.
