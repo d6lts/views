@@ -9,6 +9,7 @@ Views 1.1-dev
     o 97228: Fatal error on the views help page.
     o View Import was completely not working.
     o 93873: Exposed filters were completely not working.
+    o 92305: Removed broken and unworkable 'distinct' profile filter.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
