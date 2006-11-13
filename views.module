@@ -585,7 +585,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
     $title = $view->page_title;
   }
 
-  if (!$title) {
+  if (!$title && $context == 'block') {
     $title = $view->block_title;
   }
 

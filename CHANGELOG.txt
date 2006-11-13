@@ -10,6 +10,7 @@ Views 1.1-dev
     o View Import was completely not working.
     o 93873: Exposed filters were completely not working.
     o 92305: Removed broken and unworkable 'distinct' profile filter.
+    o 93540: Don't use block title if no page title.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
