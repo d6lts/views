@@ -1058,9 +1058,8 @@ function _views_construct_header($view, $fields) {
     $header = array();
     $info = $fields[$field['fullname']];
 
-    $header['data'] = ($field['label'] ? $field['label'] : $info['name']);
-
     if ($field['sortable']) {
+      $header['data'] = ($field['label'] ? $field['label'] : $info['name']);
       if (function_exists($info['sort_handler']))  {
         $header['field'] = $info['sort_handler']($field, $info);
       }
@@ -1068,6 +1067,10 @@ function _views_construct_header($view, $fields) {
         $header['field'] = $field['fullname'];
       }
     }
+    else {
+      $header['data'] = $field['label'];
+    }
+
     if ($field['defaultsort']) {
       $header['sort'] = strtolower($field['defaultsort']);
     }
