@@ -311,7 +311,9 @@ class _views_query {
     if ($alias) {
       $a = " AS $this->use_alias_prefix$alias";
     }
-    $this->fields[] = "$table$field$a";
+    if (!in_array("$table$field$a", $this->fields)) {
+      $this->fields[] = "$table$field$a";
+    }
   }
 
   /*
@@ -364,10 +366,10 @@ class _views_query {
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias && $table) {
-      $alias = $this->use_alias_prefix . $table . ".";
+      $alias = $this->use_alias_prefix . $table;
     }
     elseif ($alias) {
-      $alias = $this->use_alias_prefix . $alias . ".";
+      $alias = $this->use_alias_prefix . $alias;
     }
 
     if ($table) {
@@ -379,8 +381,9 @@ class _views_query {
     }
 
     foreach($field as $f) {
-//      $this->add_field($f, $table);
-      $this->orderby[] = "$alias$f $order";
+      $as = $alias . '_' . $f;
+      $this->add_field($f, $table, $as);
+      $this->orderby[] = "$as $order";
     }
   }
 
