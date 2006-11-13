@@ -15,6 +15,7 @@ Views 1.1-dev
     o 91665: Order By pretty much borked in PGSQL.
     o 85290: Views generated invalid CSS with -- this could have an impact on 
       your theming!
+    o 90482: Validate that nodes per page is not 0 if pager is on.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
