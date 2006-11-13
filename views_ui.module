@@ -299,9 +299,8 @@ function views_ui_admin_disable_page($view = '') {
  */
 function views_ui_admin_import_page() {
   views_load_cache();
-  $op = $_POST['edit']['name'];
 
-  if ($op) {
+  if ($_POST['form_id'] == 'views_edit_view') {
     return views_ui_admin_add_page();
   }
   drupal_set_title("Import a View");
@@ -323,6 +322,7 @@ function views_ui_admin_import() {
     '#value' => t("Submit"),
   );
 
+  $form['#redirect'] = NULL;
   return $form;
 }
 
@@ -339,7 +339,9 @@ function views_ui_admin_import_submit($formid, $form) {
     if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
       views_sanitize_view($view);
       drupal_set_title(t('Add a View'));
-      return drupal_get_form('views_edit_view', $view, NULL);
+      $output = drupal_get_form('views_edit_view', $view, NULL);
+      print theme('page', $output);
+      exit;
     }
     else {
       drupal_set_message(t("You don't seem to have the following requirements: ") . implode(', ', array_diff($view->requires, $tables)));
@@ -796,7 +798,7 @@ function views_edit_view($view, $op = '') {
   $form['page-info']['nodes_per_page'] = array(
     '#type' => 'textfield',
     '#title' => t('Nodes per Page'),
-    '#default_value' => $view->nodes_per_page,
+    '#default_value' => intval($view->nodes_per_page),
     '#size' => 5,
     '#maxlength' => 5,
     '#description' => t('The number of nodes to display per page. If 0, all nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),

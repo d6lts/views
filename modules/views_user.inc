@@ -184,9 +184,14 @@ function user_views_query_substitutions($view) {
  * specified in the field info.
  */
 function views_handler_field_username($fieldinfo, $fielddata, $value, $data) {
-  $obj->name = $value;
   $uidfield = $fielddata['tablename'] . "_"  . $fieldinfo['uid'];
-  $obj->uid = $data->$uidfield;
+  if (!$value && $data->$uidfield) {
+    $obj = user_load(array('uid' => $data->$uidfield));
+  }
+  else {
+    $obj->name = $value;
+    $obj->uid = $data->$uidfield;
+  }
   return theme('username', $obj);
 }
 

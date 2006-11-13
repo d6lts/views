@@ -4,6 +4,9 @@ Views 1.0
  o Initial release under drupal.org's new release system
 
 Views 1.1-dev
-  Bugs fixed:
-  o 97228: Fatal error on the views help page.
   
+  Bugs fixed:
+    o 97228: Fatal error on the views help page.
+  
+  New features:
+    o New comment fields to allow more Views use of comments.
