@@ -11,4 +11,5 @@ Views 1.1-dev
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
     o Recent comments block default view.
     o Add simple 'word search' to text field operators [gordonh]
+    o Early views_search.inc -- needs testing! [gordonh]
 
