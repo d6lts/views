@@ -42,6 +42,7 @@ function _views_ui_help_add() {
       <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>
     </dl>");
 
+  views_load_cache();
   $output .= t("<h3>Fields</h3>\n");
   $output .= t("<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n");
   $fields = _views_get_fields();
