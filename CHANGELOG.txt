@@ -9,6 +9,7 @@ Views 1.1-dev
     o 92305: Remove broken distinct profile filter
     o 93540: Don't use block title if no page title.
     o 93493: Allow field labels to be turned off if item not sortable.
+    o 91665: Order By pretty much borked in PGSQL.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]

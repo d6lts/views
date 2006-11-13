@@ -28,7 +28,7 @@ function node_views_tables() {
         'help' => t('Display the title of the node.'),
       ),
       'nid' => array(
-        'name' => t('Node: Node ID'),
+        'name' => t('Node: ID'),
         'sortable' => true,
         'help' => t('Display the NID of a node.'),
       ),
@@ -104,7 +104,7 @@ function node_views_tables() {
         'help' => t('Sort by the submission date of the node.'),
        ),
       'changed' => array(
-        'name' => t('Node: Last Updated Time'),
+        'name' => t('Node: Updated Time'),
         'help' => t('Sort by the last update date of the node.'),
       ),
       'sticky' => array(
