@@ -108,7 +108,7 @@ function _views_view_build_filters(&$query, &$view) {
             continue 2; // skip this filter entirely.
           }
         }
-        if ($_GET["filter$count"]) {
+        if (isset($_GET["filter$count"])) {
           $value = $_GET["filter$count"];
           if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
             $value = array($value);

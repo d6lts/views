@@ -5,7 +5,7 @@ Views 1.0
 
 Views 1.1-dev
   Bugs fixed:
-    o 
+    o Exposed filters didn't work when value being sent in was 0.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
