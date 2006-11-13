@@ -8,6 +8,7 @@ Views 1.1-dev
   Bugs fixed:
     o 97228: Fatal error on the views help page.
     o View Import was completely not working.
+    o 93873: Exposed filters were completely not working.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
