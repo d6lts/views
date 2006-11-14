@@ -236,6 +236,15 @@
   }
 }
 
+function views_uninstall() {
+  db_query("DROP TABLE IF EXISTS {view_view}");
+  db_query("DROP TABLE IF EXISTS {view_sort}");
+  db_query("DROP TABLE IF EXISTS {view_argument}");
+  db_query("DROP TABLE IF EXISTS {view_tablefield}");
+  db_query("DROP TABLE IF EXISTS {view_filter}");
+  db_query("DROP TABLE IF EXISTS {view_exposed_filter}");
+}
+
 /*
  * update module for UTF.
  */
@@ -335,5 +344,11 @@ function views_update_9() {
   $ret = array();
   db_add_column($ret, 'view_argument', 'wildcard', 'varchar(32)');
   db_add_column($ret, 'view_argument', 'wildcard_substitution', 'varchar(32)');
+  return $ret;
+}
+
+function views_update_10() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'views'");
   return $ret;
 }

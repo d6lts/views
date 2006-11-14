@@ -1,18 +1,36 @@
-11/27/2005 added field 'handler' to view_tablefield
-11/28/2005 added fields 'sortable' and 'defaultsort' to view_tablefield
-11/28/2005 changed view_argument type from int(2) to varchar(25) for greater flexibility
-11/30/2005 changed filter table and view table significantly. Probably sort table too.
-12/5/2005 Add options varchar(255) to both sort and filter tables.
-12/7/2005 Add menu_title to view_view and title to view_argument
-12/8/2005 Added options varchar(255) to view_argument as well.
-12/10/2005 Added block_more int(1) to view_view
-12/21/2005 Renamed 'sql' to 'query' and 'countsql' to 'countquery' for consistency
-1/2/2006 SCHEMA CHANGES SCHEMA CHANGES
-         Too drastic to easily deal with. Before you install this version of
-	 Views, you should export all your old views as a backup, then drop the
-	 views_view table and re-import. Sorry. I hope to not do something like
-	 this ever again.
-2/19/2006 allow a complete formsapi setting in any 'options' or 'value' setting for 'filter'.
-	  Retooled the API to be less hackish.
-3/2/2006  Added the ability to expose filters to end user. Requires running update.php.
-3/16/2006 Basic user documentation written.
+CHANGELOG for Views for Drupal 5
+
+Views 1.0 
+ o Initial release under drupal.org's new release system
+
+Views 1.1-dev
+  
+  Bugs fixed:
+    o 97228: Fatal error on the views help page.
+    o View Import was completely not working.
+    o 93873: Exposed filters were completely not working.
+    o 92305: Removed broken and unworkable 'distinct' profile filter.
+    o 93540: Don't use block title if no page title.
+    o 93493: Allow field labels to be turned off if item not sortable.
+    o 91665: Order By pretty much borked in PGSQL.
+    o 85290: Views generated invalid CSS with -- this could have an impact on 
+      your theming!
+    o 90482: Validate that nodes per page is not 0 if pager is on.
+    o 89893: Multiple filters not showing up properly in RSS links
+    o 97462: More robust view export code.
+    o 82634: theme_imagebutton renamed to theme_views_imagebutton
+    o 77859: update module weight to 10 in update.php -- RUN UPDATE.PHP!!
+    o 97589: Add some sorting on plugins so that Views' default plugins are
+      always on top.
+
+  New features:
+    o New comment fields to allow more Views use of comments. [Egon Bianchet]
+    o Recent comments block default view.
+    o Add simple 'word search' to text field operators [gordonh]
+    o Early views_search.inc -- needs testing! [gordonh]
+    o 90643: Access-checking 'edit', 'delete' and 'view' links as fields
+    o Added uninstall function (accessible from the module administration page)
+    o 88849: new views_pre_query hook
+    o 97290: new $offset argument to views_build_view to allow views to to
+      skip the first N nodes [doesn't work if $ pager = true].
+    o 97290: New options for granularity on date sorts

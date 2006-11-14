@@ -76,6 +76,7 @@ function _views_build_query(&$view, $args = array()) {
  */
 function _views_view_build_filters(&$query, &$view) {
   $filters = _views_get_filters();
+  $view->used_filters = array();
 
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
@@ -85,8 +86,6 @@ function _views_view_build_filters(&$query, &$view) {
       $field = $fieldbits[1];
     }
     $filterinfo['field'] = $field;
-
-    $view->used_filters = array();
 
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
@@ -111,7 +110,7 @@ function _views_view_build_filters(&$query, &$view) {
             continue 2; // skip this filter entirely.
           }
         }
-        if ($_GET["filter$count"]) {
+        if (isset($_GET["filter$count"])) {
           $value = $_GET["filter$count"];
           if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
             $value = array($value);
@@ -122,7 +121,6 @@ function _views_view_build_filters(&$query, &$view) {
         break;
       }
     }
-
     $table = $filterinfo['table'];
 
     $replace = array('&gt;' => '>', '&lt;' => '<');
@@ -196,9 +194,9 @@ function _views_view_build_sorts(&$query, $view) {
       $fieldbits = explode('.', $sort['field']);
       $field = $fieldbits[1];
     }
-
     $table = $sortinfo['table'];
     if (isset($sortinfo['handler']) && function_exists($sortinfo['handler'])) {
+      $sortinfo['field'] = $field;
       $sortinfo['handler']('sort', $query, $sortinfo, $sort);
     }
     else {
@@ -312,7 +310,9 @@ class _views_query {
     if ($alias) {
       $a = " AS $this->use_alias_prefix$alias";
     }
-    $this->fields[] = "$table$field$a";
+    if (!in_array("$table$field$a", $this->fields)) {
+      $this->fields[] = "$table$field$a";
+    }
   }
 
   /*
@@ -365,10 +365,10 @@ class _views_query {
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias && $table) {
-      $alias = $this->use_alias_prefix . $table . ".";
+      $alias = $this->use_alias_prefix . $table;
     }
     elseif ($alias) {
-      $alias = $this->use_alias_prefix . $alias . ".";
+      $alias = $this->use_alias_prefix . $alias;
     }
 
     if ($table) {
@@ -380,8 +380,9 @@ class _views_query {
     }
 
     foreach($field as $f) {
-//      $this->add_field($f, $table);
-      $this->orderby[] = "$alias$f $order";
+      $as = $alias . '_' . $f;
+      $this->add_field($f, $table, $as);
+      $this->orderby[] = "$as $order";
     }
   }
 
