@@ -636,15 +636,15 @@ function _views_check_ops(&$view, $op, $form) {
  * Custom form element to do our nice images.
  */
 function views_elements() {
-  $type['imagebutton'] = array('#input' => TRUE, '#button_type' => 'submit',);
+  $type['views_imagebutton'] = array('#input' => TRUE, '#button_type' => 'submit',);
   return $type;
 }
 
-function theme_imagebutton($element) {
+function theme_views_imagebutton($element) {
   return '<input type="image" class="form-'. $element['#button_type'] .'" name="'. $element['#name'] .'" value="'. check_plain($element['#default_value']) .'" '. drupal_attributes($element['#attributes']) . ' src="' . $element['#image'] . '" alt="' . $element['#title'] . '" title="' . $element['#title'] . "\" />\n";
 }
 
-function imagebutton_value() {
+function views_imagebutton_value() {
   // null function guarantees default_value doesn't get moved to #value.
 }
 
@@ -1471,7 +1471,7 @@ function views_ui_add_button($image, $name, $text) {
   $module_path = base_path() . drupal_get_path('module', 'views');
 
   return array(
-    '#type' => 'imagebutton',
+    '#type' => 'views_imagebutton',
     '#image' => $module_path . '/' . $image,
     '#title' => $text,
     '#default_value' => $name,
