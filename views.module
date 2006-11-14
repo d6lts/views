@@ -1157,13 +1157,14 @@ function views_filters($view) {
   }
   $form['#method'] = 'get';
   $form['#process'] = array('views_filters_process' => array());
+  $form['#action'] = url($view->real_url ? $view->real_url : $view->url, NULL, NULL, true);
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
     // clean URL get forms breaks if we don't give it a 'q'.
     if (!(bool)variable_get('clean_url', '0')) {
       $form['q'] = array(
         '#type' => 'hidden',
-        '#value' => $_GET['q'],
+        '#value' => $view->real_url ? $view->real_url : $view->url,
         '#name' => 'q',
       );
     }
