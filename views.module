@@ -253,6 +253,8 @@ function _views_get_default_views() {
  * sort callback
  */
 function _views_sort_arrays($a, $b) {
+  $a = (array) $a; // safety -- something send objects.
+  $b = (array) $b;
   if ($a['weight'] == $b['weight']) {
     if ($a['name'] == $b['name']) {
       return 0;
