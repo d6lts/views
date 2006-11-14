@@ -1773,46 +1773,46 @@ function views_create_view_code($vid) {
   $requires = array();
 
   $output = "  \$view = new stdClass();\n";
-  $output .= "  \$view->name = '" . db_escape_string($view->name) . "';\n";
-  $output .= "  \$view->description = '" . db_escape_string($view->description) . "';\n";
+  $output .= "  \$view->name = " . var_export($view->name, true) . ";\n";
+  $output .= "  \$view->description = " . var_export($view->description, true) . ";\n";
   $output .= "  \$view->access = " . var_export($view->access, true) . ";\n";
   if (user_access('use PHP for block visibility')) {
-    $output .= "  \$view->view_args_php = '" . check_plain($view->view_args_php) . "';\n";
+    $output .= "  \$view->view_args_php = " . var_export($view->view_args_php, true) . ";\n";
   }
   // page items
   if ($view->page) {
     $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
-    $output .= "  \$view->page_title = '" . db_escape_string($view->page_title) . "';\n";
-    $output .= "  \$view->page_header = \"" . db_escape_string($view->page_header) ."\";\n";
-    $output .= "  \$view->page_header_format = '$view->page_header_format';\n";
-    $output .= "  \$view->page_footer = \"" . db_escape_string($view->page_footer) ."\";\n";
-    $output .= "  \$view->page_footer_format = '$view->page_footer_format';\n";
-    $output .= "  \$view->page_empty = \"" . db_escape_string($view->page_empty) ."\";\n";
-    $output .= "  \$view->page_empty_format = '$view->page_empty_format';\n";
-    $output .= "  \$view->page_type = '$view->page_type';\n";
-    $output .= "  \$view->url = '" . db_escape_string($view->url) . "';\n";
+    $output .= "  \$view->page_title = " . var_export($view->page_title, true) . ";\n";
+    $output .= "  \$view->page_header = " . var_export($view->page_header, true) .";\n";
+    $output .= "  \$view->page_header_format = " . var_export($view->page_header_format, true) . ";\n";
+    $output .= "  \$view->page_footer = " . var_export($view->page_footer, true) .";\n";
+    $output .= "  \$view->page_footer_format = " . var_export($view->page_footer_format, true) . ";\n";
+    $output .= "  \$view->page_empty = " . var_export($view->page_empty, true) .";\n";
+    $output .= "  \$view->page_empty_format = " . var_export($view->page_empty_format, true) . ";\n";
+    $output .= "  \$view->page_type = " . var_export($view->page_type, true) . ";\n";
+    $output .= "  \$view->url = " . var_export($view->url, true) . ";\n";
     $output .= "  \$view->use_pager = " . views_tf($view->use_pager) . ";\n";
-    $output .= "  \$view->nodes_per_page = '$view->nodes_per_page';\n";
+    $output .= "  \$view->nodes_per_page = " . var_export($view->nodes_per_page, true) . ";\n";
     if ($view->menu) {
       $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
-      $output .= "  \$view->menu_title = '" . db_escape_string($view->menu_title) . "';\n";
+      $output .= "  \$view->menu_title = " . var_export($view->menu_title, true) . ";\n";
       $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
       $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
-      $output .= "  \$view->menu_tab_weight = '$view->menu_tab_weight';\n";
+      $output .= "  \$view->menu_tab_weight = " . var_export($view->menu_tab_weight, true) . ";\n";
     }
   }
   if ($view->block) {
     $output .= "  \$view->block = " . views_tf($view->block) . ";\n";
-    $output .= "  \$view->block_title = '" . db_escape_string($view->block_title) . "';\n";
-    $output .= "  \$view->block_header = \"" . db_escape_string($view->block_header) . "\";\n";
-    $output .= "  \$view->block_header_format = '$view->block_header_format';\n";
-    $output .= "  \$view->block_footer = \"" . db_escape_string($view->block_footer) ."\";\n";
-    $output .= "  \$view->block_footer_format = '$view->block_footer_format';\n";
-    $output .= "  \$view->block_empty = \"" . db_escape_string($view->block_empty) ."\";\n";
-    $output .= "  \$view->block_empty_format = '$view->block_empty_format';\n";
-    $output .= "  \$view->block_type = '$view->block_type';\n";
-    $output .= "  \$view->nodes_per_block = '$view->nodes_per_block';\n";
-    $output .= "  \$view->block_more = '$view->block_more';\n";
+    $output .= "  \$view->block_title = " . var_export($view->block_title, true) . ";\n";
+    $output .= "  \$view->block_header = " . var_export($view->block_header, true) . ";\n";
+    $output .= "  \$view->block_header_format = " . var_export($view->block_header_format, true) . ";\n";
+    $output .= "  \$view->block_footer = " . var_export($view->block_footer, true) . ";\n";
+    $output .= "  \$view->block_footer_format = " . var_export($view->block_footer_format, true) . ";\n";
+    $output .= "  \$view->block_empty = " . var_export($view->block_empty, true) .";\n";
+    $output .= "  \$view->block_empty_format = " . var_export($view->block_empty_format, true) . ";\n";
+    $output .= "  \$view->block_type = " . var_export($view->block_type, true) . ";\n";
+    $output .= "  \$view->nodes_per_block = " . var_export($view->nodes_per_block, true) . ";\n";
+    $output .= "  \$view->block_more = " . views_tf($view->block_more) . ";\n";
     $output .= "  \$view->block_use_page_header = " . views_tf($view->block_use_page_header) . ";\n";
     $output .= "  \$view->block_use_page_footer = " . views_tf($view->block_use_page_footer) . ";\n";
     $output .= "  \$view->block_use_page_empty = " . views_tf($view->block_use_page_empty) . ";\n";
@@ -1822,10 +1822,10 @@ function views_create_view_code($vid) {
   foreach ($view->sort as $sort) {
     $output .= "    array (\n";
     $fieldbits = explode('.', $sort['field']);
-    $output .= "      'tablename' => '$fieldbits[0]',\n";
-    $output .= "      'field' => '$fieldbits[1]',\n";
-    $output .= "      'sortorder' => '$sort[sortorder]',\n";
-    $output .= "      'options' => '$sort[options]',\n";
+    $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
+    $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
+    $output .= "      'sortorder' => " . var_export($sort['sortorder'], true) . ",\n";
+    $output .= "      'options' => " . var_export($sort['options'], true) . ",\n";
     $output .= "    ),\n";
     $requires[$fieldbits[0]] = 1;
   }
@@ -1834,12 +1834,12 @@ function views_create_view_code($vid) {
   $output .= "  \$view->argument = array (\n";
   foreach ($view->argument as $argument) {
     $output .= "    array (\n";
-    $output .= "      'type' => '$argument[type]',\n";
-    $output .= "      'argdefault' => '$argument[argdefault]',\n";
-    $output .= "      'title' => '$argument[title]',\n";
-    $output .= "      'options' => '$argument[options]',\n";
-    $output .= "      'wildcard' => '$argument[wildcard]',\n";
-    $output .= "      'wildcard_substitution' => '$argument[wildcard_substitution]',\n";
+    $output .= "      'type' => " . var_export($argument['type'], true) . ",\n";
+    $output .= "      'argdefault' => " . var_export($argument['argdefault'], true) . ",\n";
+    $output .= "      'title' => " . var_export($argument['title'], true) . ",\n";
+    $output .= "      'options' => " . var_export($argument['options'], true) . ",\n";
+    $output .= "      'wildcard' => " . var_export($argument['wildcard'], true) . ",\n";
+    $output .= "      'wildcard_substitution' => " . var_export($argument['wildcard_substitution'], true) . ",\n";
     $output .= "    ),\n";
   }
   $output .= "  );\n";
@@ -1847,20 +1847,20 @@ function views_create_view_code($vid) {
   $output .= "  \$view->field = array (\n";
   foreach ($view->field as $field) {
     $output .= "    array (\n";
-    $output .= "      'tablename' => '$field[tablename]',\n";
-    $output .= "      'field' => '$field[field]',\n";
-    $output .= "      'label' => '$field[label]',\n";
+    $output .= "      'tablename' => " . var_export($field['tablename'], true) . ",\n";
+    $output .= "      'field' => " . var_export($field['field'], true) . ",\n";
+    $output .= "      'label' => " . var_export($field['label'], true) . ",\n";
     if ($field['handler']) {
-      $output .= "      'handler' => '$field[handler]',\n";
+      $output .= "      'handler' => " . var_export($field['handler'], true) . ",\n";
     }
     if ($field['sortable']) {
-      $output .= "      'sortable' => '$field[sortable]',\n";
+      $output .= "      'sortable' => " . var_export($field['sortable'], true) . ",\n";
     }
     if ($field['defaultsort']) {
-      $output .= "      'defaultsort' => '$field[defaultsort]',\n";
+      $output .= "      'defaultsort' => " . var_export($field['defaultsort'], true) . ",\n";
     }
     if ($field['options']) {
-      $output .= "      'options' => '$field[options]',\n";
+      $output .= "      'options' => " . var_export($field['options'], true) . ",\n";
     }
     $output .= "    ),\n";
     $requires[$field['tablename']] = 1;
@@ -1871,12 +1871,12 @@ function views_create_view_code($vid) {
   foreach ($view->filter as $filter) {
     $output .= "    array (\n";
     $fieldbits = explode('.', $filter['field']);
-    $output .= "      'tablename' => '$fieldbits[0]',\n";
-    $output .= "      'field' => '$fieldbits[1]',\n";
-    $output .= "      'operator' => '$filter[operator]',\n";
+    $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
+    $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
+    $output .= "      'operator' => " . var_export($filter['operator'], true) . ",\n";
     $value = var_export($filter['value'], true);
-    $output .= "      'options' => '$filter[options]',\n";
-    $output .= "      'value' => $value,\n";
+    $output .= "      'options' => " . var_export($filter['options'], true) . ",\n";
+    $output .= "      'value' => " . var_export($value, true) . ",\n";
     $output .= "    ),\n";
     $requires[$fieldbits[0]] = 1;
   }
@@ -1886,20 +1886,19 @@ function views_create_view_code($vid) {
   foreach ($view->exposed_filter as $filter) {
     $output .= "    array (\n";
     $fieldbits = explode('.', $filter['field']);
-    $output .= "      'tablename' => '$fieldbits[0]',\n";
-    $output .= "      'field' => '$fieldbits[1]',\n";
-    $output .= "      'label' => '$filter[label]',\n";
-    $output .= "      'optional' => $filter[optional],\n";
-    $output .= "      'is_default' => $filter[is_default],\n";
-    $output .= "      'operator' => $filter[operator],\n";
-    $output .= "      'single' => $filter[single],\n";
+    $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
+    $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
+    $output .= "      'label' => " . var_export($filter['label'], true) . ",\n";
+    $output .= "      'optional' => " . var_export($filter['optional'], true) . ",\n";
+    $output .= "      'is_default' => " . var_export($filter['is_default'], true) . ",\n";
+    $output .= "      'operator' => " . var_export($filter['operator'], true) . ",\n";
+    $output .= "      'single' => " . var_export($filter['single'], true) . ",\n";
     $output .= "    ),\n";
     $requires[$fieldbits[0]] = 1;
   }
   $output .= "  );\n";
   $output .= "  \$view->requires = array(" . implode(', ', array_keys($requires)) . ");\n";
   $output .= "  \$views[\$view->name] = \$view;\n";
-  // no breadcrumb for now.
   return $output;
 }
 
