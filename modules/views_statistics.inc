@@ -48,6 +48,8 @@ function statistics_views_tables() {
       ),
       'timestamp' => array(
         'name' => t('Node: Last Hit Time'),
+        'handler' => 'views_handler_sort_date',
+        'option' => views_handler_sort_date_options(),
         'help' => t('This allows you to sort by the time a node was last read.'),
       ),
     ),

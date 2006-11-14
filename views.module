@@ -1685,13 +1685,66 @@ function theme_views_nodate() {
  * Provide a list of all standard supproted date output handlers.
  */
 function views_handler_field_dates() {
-return array(
+  return array(
     'views_handler_field_date_small'  => t('As Short Date'),
     'views_handler_field_date'        => t('As Medium Date'),
     'views_handler_field_date_large'  => t('As Long Date'),
     'views_handler_field_date_custom' => t('As Custom Date'),
     'views_handler_field_since'       => t('As Time Ago')
   );
+}
+
+function views_handler_sort_date_options() {
+  return array(
+    '#type' => 'select',
+    '#options' => array(
+      'normal' => t('Normal'),
+      'minute' => t('Granularity: minute'),
+      'hour'   => t('Granularity: hour'),
+      'day'    => t('Granularity: day'),
+      'month'  => t('Granularity: month'),
+      'year'   => t('Granularity: year'),
+    ),
+  );
+}
+
+function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
+  switch($sort['options']) {
+    case 'normal':
+    default:
+      $table = $sortinfo['table'];
+      $field = $sortinfo['field'];
+      break;
+    case 'minute':
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d%H%m')";
+      break;
+    case 'hour':
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d%H')";
+      break;
+    case 'day':
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d')";
+      break;
+    case 'month':
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%)";
+      break;
+    case 'year':
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%')";
+      break;
+  }
+  $alias = $as = $sortinfo['table'] . '_' . $sortinfo['field'];
+  if (!$table) {
+     $as .= '_orderby';
+     $alias = $field;
+  }
+
+  $query->add_field($field, $table, $as);
+  $query->orderby[] = "$alias $sort[sortorder]";
+//  $query->add_orderby($table, $field, $sort['sortorder']);
+}
+
+function views_handler_sort_date_minute($op, &$query, $sortinfo, $sort) {
+  $field = "DATE_FORMAT(FROM_UNIXTIME($table.$sortinfo[field]), '%Y%m%%d%H%m')";
+  $query->add_orderby(NULL, $field, $sort['sortorder']);
 }
 
 /**

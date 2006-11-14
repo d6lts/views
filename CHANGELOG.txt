@@ -27,3 +27,4 @@ Views 1.1-dev
     o 88849: new views_pre_query hook
     o 97290: new $offset argument to views_build_view to allow views to to
       skip the first N nodes [doesn't work if $ pager = true].
+    o 97290: New options for granularity on date sorts
