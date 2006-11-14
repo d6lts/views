@@ -41,6 +41,7 @@ function _views_get_arguments($titles = false) {
     }
     else {
       $arguments = module_invoke_all('views_arguments');
+      uasort($arguments, '_views_sort_arrays');
       foreach ($arguments as $name => $arg) {
         if ($arg['option'] && !is_array($arg['option'])) {
           if ($arg['option'] == 'string' || $arg['option'] == 'integer') {
@@ -234,6 +235,7 @@ function _views_get_default_views() {
       $tables = array_keys(_views_get_tables());
 
       $views = module_invoke_all('views_default_views');
+      uasort($views, '_views_sort_arrays');
       $views_default_views = array();
       foreach ($views as $i => $view) {
         if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
@@ -245,6 +247,19 @@ function _views_get_default_views() {
     }
   }
   return $views_default_views;
+}
+
+/**
+ * sort callback
+ */
+function _views_sort_arrays($a, $b) {
+  if ($a['weight'] == $b['weight']) {
+    if ($a['name'] == $b['name']) {
+      return 0;
+    }
+    return ($a['name'] < $b['name']) ? -1 : 1;
+  }
+  return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
 /**
@@ -264,6 +279,7 @@ function _views_get_style_plugins($titles = false) {
     }
     else {
       $arguments = module_invoke_all('views_style_plugins');
+      uasort($arguments, '_views_sort_arrays');
       foreach ($arguments as $name => $arg) {
         if (!isset($arg['summary_theme'])) {
           $arg['summary_theme'] = 'views_summary';
@@ -1849,6 +1865,7 @@ function views_views_style_plugins() {
       'theme' => 'views_view_list',
       'validate' => 'views_ui_plugin_validate_list',
       'needs_fields' => true,
+      'weight' => -10,
     ),
     'table' => array(
       'name' => t('Table View'),
@@ -1856,14 +1873,17 @@ function views_views_style_plugins() {
       'validate' => 'views_ui_plugin_validate_table',
       'needs_fields' => true,
       'needs_table_header' => true,
+      'weight' => -9,
     ),
     'teaser' => array(
       'name' => t('Teaser List'),
       'theme' => 'views_view_teasers',
+      'weight' => -8,
     ),
     'node' => array(
       'name' => t('Full Nodes'),
       'theme' => 'views_view_nodes',
+      'weight' => -7,
     ),
   );
 }
