@@ -34,6 +34,7 @@ function _views_get_arguments($titles = false) {
     }
     else {
       $arguments = module_invoke_all('views_arguments');
+      uasort($arguments, '_views_sort_arrays');
       foreach ($arguments as $name => $arg) {
         if ($arg['option'] && !is_array($arg['option'])) {
           if ($arg['option'] == 'string' || $arg['option'] == 'integer') {
@@ -220,6 +221,7 @@ function _views_get_default_views() {
       $tables = array_keys(_views_get_tables());
 
       $views = module_invoke_all('views_default_views');
+      uasort($views, '_views_sort_arrays');
       $views_default_views = array();
       foreach ($views as $i => $view) {
         if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
@@ -231,6 +233,19 @@ function _views_get_default_views() {
     }
   }
   return $views_default_views;
+}
+
+/**
+ * sort callback
+ */
+function _views_sort_arrays($a, $b) {
+  if ($a['weight'] == $b['weight']) {
+    if ($a['name'] == $b['name']) {
+      return 0;
+    }
+    return ($a['name'] < $b['name']) ? -1 : 1;
+  }
+  return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
 /**
@@ -250,6 +265,7 @@ function _views_get_style_plugins($titles = false) {
     }
     else {
       $arguments = module_invoke_all('views_style_plugins');
+      uasort($arguments, '_views_sort_arrays');
       foreach ($arguments as $name => $arg) {
         if (!isset($arg['summary_theme'])) {
           $arg['summary_theme'] = 'views_summary';

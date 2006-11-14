@@ -20,6 +20,8 @@ Views 1.1-dev
     o 97462: More robust view export code.
     o 82634: theme_imagebutton renamed to theme_views_imagebutton
     o 77859: update module weight to 10 in update.php -- RUN UPDATE.PHP!!
+    o 97589: Add some sorting on plugins so that Views' default plugins are
+      always on top.
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]

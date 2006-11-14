@@ -1619,6 +1619,7 @@ function views_views_style_plugins() {
       'theme' => 'views_view_list',
       'validate' => 'views_ui_plugin_validate_list',
       'needs_fields' => true,
+      'weight' => -10,
     ),
     'table' => array(
       'name' => t('Table View'),
@@ -1626,14 +1627,17 @@ function views_views_style_plugins() {
       'validate' => 'views_ui_plugin_validate_table',
       'needs_fields' => true,
       'needs_table_header' => true,
+      'weight' => -9,
     ),
     'teaser' => array(
       'name' => t('Teaser List'),
       'theme' => 'views_view_teasers',
+      'weight' => -8,
     ),
     'node' => array(
       'name' => t('Full Nodes'),
       'theme' => 'views_view_nodes',
+      'weight' => -7,
     ),
   );
 }
