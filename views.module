@@ -1,5 +1,6 @@
 <?php
 // $Id$
+// $Name$
 
 function views_init() {
   // hook init is called even on cached pages, but we don't want to
