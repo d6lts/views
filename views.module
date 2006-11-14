@@ -1405,6 +1405,7 @@ function views_filters_form($view) {
     $form["filter$count"] = $item;
   }
   $form['#method'] = 'get';
+  $form['#action'] = url($view->real_url ? $view->real_url : $view->url, NULL, NULL, true);
   $form['#process'] = array('views_filters_process' => array());
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
@@ -1412,11 +1413,10 @@ function views_filters_form($view) {
     if (!(bool)variable_get('clean_url', '0')) {
       $form['q'] = array(
         '#type' => 'hidden',
-        '#value' => $_GET['q'],
+        '#value' => $view->real_url ? $view->real_url : $view->url,
         '#name' => 'q',
       );
     }
-
 
   return $form;
 }

@@ -30,3 +30,5 @@ Views 1.1-dev
     o 97290: new $offset argument to views_build_view to allow views to to
       skip the first N nodes [doesn't work if $ pager = true].
     o 97290: New options for granularity on date sorts
+    o Provide a proper 'action' for exposed filters so they always go to the
+      view, not just the current page.
