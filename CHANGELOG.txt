@@ -15,6 +15,7 @@ Views 1.1-dev
     o 90482: Validate that nodes per page is not 0 if pager is on.
     o 89893: Multiple filters not showing up properly in RSS links
     o 97462: More robust view export code.
+    o 82634: theme_imagebutton renamed to theme_views_imagebutton
 
   New features:
     o New comment fields to allow more Views use of comments. [Egon Bianchet]
