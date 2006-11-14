@@ -194,9 +194,9 @@ function _views_view_build_sorts(&$query, $view) {
       $fieldbits = explode('.', $sort['field']);
       $field = $fieldbits[1];
     }
-
     $table = $sortinfo['table'];
     if (isset($sortinfo['handler']) && function_exists($sortinfo['handler'])) {
+      $sortinfo['field'] = $field;
       $sortinfo['handler']('sort', $query, $sortinfo, $sort);
     }
     else {
