@@ -596,7 +596,7 @@ function views_view_block($vid) {
  *   on, in case for some reason a particular section of view is needed,
  *   without paging on.
 */
-function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0) {
+function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0, $offset = 0) {
   // Fix a number of annoying whines when NULL is passed in..
   if ($args == NULL) {
     $args = array();
@@ -663,7 +663,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     $view->total_rows = $GLOBALS['pager_total_items'][$use_pager - 1];
   }
   else {
-    $result = ($limit ? db_query_range($query, $info['args'], $page * $limit, $limit) : db_query($query, $info['args']));
+    $result = ($limit ? db_query_range($query, $info['args'], $page * $limit + $offset, $limit) : db_query($query, $info['args']));
   }
   $view->num_rows = db_num_rows($result);
   if ($type == 'result') {
