@@ -337,3 +337,9 @@ function views_update_9() {
   db_add_column($ret, 'view_argument', 'wildcard_substitution', 'varchar(32)');
   return $ret;
 }
+
+function views_update_10() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'views'");
+  return $ret;
+}
