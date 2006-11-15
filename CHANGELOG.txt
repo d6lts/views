@@ -3,7 +3,7 @@ CHANGELOG for Views for Drupal 4.7
 Views 1.0 
  o Initial release under drupal.org's new release system
 
-Views 1.1-dev
+Views 4.7.x-1.1
   Bugs fixed:
     o Exposed filters didn't work when value being sent in was 0.
     o 92305: Remove broken distinct profile filter
@@ -34,3 +34,5 @@ Views 1.1-dev
       view, not just the current page.
     o 76601: New 'all files' field to display all files on a node as a single
       field
+
+Views 4.7.x-dev
