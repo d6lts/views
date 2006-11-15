@@ -1998,6 +1998,23 @@ function views_handler_filter_date_value_form() {
     '#attributes' => array('class' => 'jscalendar'),
   );
 }
+
+/*
+ * Break x,y,z and x+y+z into an array.
+ */
+function _views_break_phrase($str) {
+  if (preg_match('/^([0-9]+[+ ])+[0-9]+$/', $str)) {
+    // The '+' character in a query string may be parsed as ' '.
+    return array('or', preg_split('/[+ ]/', $str));
+  }
+  else if (preg_match('/^([0-9]+,)*[0-9]+$/', $str)) {
+    return array('and', explode(',', $str));
+  }
+  else {
+    return NULL;
+  }
+}
+
 /**
  * Substitute current time; this works with cached queries.
  */
