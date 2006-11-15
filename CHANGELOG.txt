@@ -36,3 +36,5 @@ Views 1.1-dev
     o 97290: New options for granularity on date sorts
     o Provide a proper 'action' for exposed filters so they always go to the
       view, not just the current page.
+    o 76601: New 'all files' field to display all files on a node as a single
+      field
