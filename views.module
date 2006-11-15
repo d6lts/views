@@ -1610,6 +1610,22 @@ function views_handler_operator_yesno() {
   return array('1' => t('Yes'), '0' => t('No'));
 }
 
+/*
+ * Break x,y,z and x+y+z into an array. Numeric only.
+ */
+function _views_break_phrase($str) {
+  if (preg_match('/^([0-9]+[+ ])+[0-9]+$/', $str)) {
+    // The '+' character in a query string may be parsed as ' '.
+    return array('or', preg_split('/[+ ]/', $str));
+  }
+  else if (preg_match('/^([0-9]+,)*[0-9]+$/', $str)) {
+    return array('and', explode(',', $str));
+  }
+  else {
+    return NULL;
+  }
+}
+
 /**
  * Default Views style plugins. Implementation of hook_views_style_plugins()
  */
@@ -1785,3 +1801,4 @@ function theme_view( $view_name, $limit = 0, $use_pager = false, $type = 'embed'
     return views_build_view($type, $view, $view_args, $use_pager, $limit);
   }
 }
+
