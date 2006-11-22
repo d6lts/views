@@ -60,6 +60,22 @@ function upload_views_tables() {
       ),
     ),
     'fields' => array(
+      'all_files' => array(
+        'name' => t('File: All files'),
+        'notafield' => true,
+        'query_handler' => 'views_query_handler_file_all_files',
+        'handler' => array(
+          'views_handler_file_all_files' => t('All files'),
+          'views_handler_file_listed_files' => t('Listed files')),
+        'option' => array(
+          '#type' => 'select',
+          '#options' => array(
+            'link' => t('With links'), 
+            'nolink' => t('Without links'),
+           )),
+        'sortable' => false,
+        'help' => t('Display all attached files in one field.'),
+      ),
       'filename' => array(
         'name' => t('File: Name'),
         'handler' => array(
@@ -148,4 +164,33 @@ function views_handler_file_filter_fid_exist($op, $filter, $filterdata, &$query)
         $query->add_where('ISNULL(file_revisions.fid)');
       }
   }
+}
+
+function views_query_handler_file_all_files($field, $fieldinfo, &$query) {
+  $query->add_field('vid', 'node');
+}
+
+/**
+ * Display all files attached to a given node.
+ */
+function views_handler_file_all_files($fieldinfo, $fielddata, $value, $data, $listed = false) {
+  if ($listed) {
+    $and = " AND list = 1";
+  }
+  $links = array();
+
+  $result = db_query("SELECT f.* FROM {file_revisions} fr INNER JOIN {files} f ON f.fid = fr.fid WHERE fr.vid = %d $and", $data->vid);
+    while ($file = db_fetch_object($result)) {
+    if ($fielddata['options'] == 'nolink') {
+      $links[] = check_plain($file->filename);
+    }
+    else {
+      $links[] = l($file->filename, check_url(file_create_url($file->filepath)));
+    }
+  }
+  return implode(' | ', $links);
+}
+
+function views_handler_file_listed_files($fieldinfo, $fielddata, $value, $data) {
+  return views_handler_file_all_files($fieldinfo, $fielddata, $value, $data, TRUE);
 }
