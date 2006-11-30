@@ -40,3 +40,4 @@ Views 5.x-1.1-beta-1
       field
 
 Views --dev
+    o 100394: Fix to t() call in 'new comments'.
