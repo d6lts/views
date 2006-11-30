@@ -82,10 +82,6 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
       $filters = drupal_query_string_encode($view->used_filters);
     }
 
-    drupal_add_link(array('rel' => 'alternate',
-                          'type' => 'application/rss+xml',
-                          'title' => check_plain($title),
-                          'href' => url($url, $filters, NULL, TRUE)));
     drupal_add_feed($title, $filters);
   }
 }
