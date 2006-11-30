@@ -201,6 +201,18 @@ function views_handler_field_comment($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
+ * Format a field as a number of comments, plus the number of unread comments.
+ */
+function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
+  $comments = intval($value);
+  if ($comments && $new = comment_num_new($data->nid)) {
+    $comments .= '<br />';
+    $comments .= l(t('%num new', array('%num' => $new)), "node/$data->nid", NULL, comment_page_new_query($data->nid), 'new');
+  }
+  return $comments;
+}
+
+/*
 function comment_views_arguments() {
 
 }

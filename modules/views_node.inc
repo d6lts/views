@@ -417,18 +417,6 @@ function views_handler_nodetype($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
- * Format a field as a number of comments, plus the number of unread comments.
- */
-function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
-  $comments = intval($value);
-  if (module_exist('comment') && $comments && $new = comment_num_new($data->nid)) {
-    $comments .= '<br />';
-    $comments .= l(t('%num new', array('%num' => $new)), "node/$data->nid", NULL, NULL, 'new');
-  }
-  return $comments;
-}
-
-/*
  * Format a field as the Body of a node.
  */
 function views_handler_field_body($fieldinfo, $fielddata, $value, $data) {
