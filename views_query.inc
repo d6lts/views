@@ -362,6 +362,8 @@ class _views_query {
    * Add multiple an orderby's. Right now I'm not sure why this function
    * is separate from add_orderby above; I don't think it needs to
    * be.
+   *
+   * NOTE: $alias doesn't work when adding multiple orderbys.
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias && $table) {
@@ -380,7 +382,14 @@ class _views_query {
     }
 
     foreach($field as $f) {
-      $as = $alias . '_' . $f;
+      // Only fill out this aliasing if there is a table;
+      // otherwise we assume it is a formula.
+      if ($table) {
+        $as = $alias . '_' . $f;
+      }
+      else {
+        $as = $alias;
+      }
       $this->add_field($f, $table, $as);
       $this->orderby[] = "$as $order";
     }
