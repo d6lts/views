@@ -2027,14 +2027,15 @@ function views_views_query_substitutions($view) {
  * @param $view_name
  *    The name of the view.
  * @param $limit
- *   Required if $use_pager is set; if $limit is set and $use_pager is
+ *   Maximum number of nodes displayed on one page. if $limit is set and $use_pager is
  *   not, this will be the maximum number of records returned. This is ignored
- *   if using a view set to return a random result. If $use_pager is set and 
- *   this field is not, you'll get a SQL error. Don't do that!
+ *   if using a view set to return a random result.
+ *   If NULL, the setting defined for the $view will be used.
  * @param $use_pager
  *   If set, use a pager. Set this to the pager id you want it to use if you
  *   plan on using multiple pagers on a page. Note that the pager element id
  *   will be decremented in order to have the IDs start at 0.
+ *   If NULL, the setting defined for the $view will be used.
  * @param $type
  *    'page' -- Produce output as a page, sent through theme.
  *      The only real difference between this and block is that
@@ -2042,9 +2043,14 @@ function views_views_query_substitutions($view) {
  *    'block' -- Produce output as a block, sent through theme.
  *    'embed' -- Use this if you want to embed a view onto another page,
  *      and don't want any block or page specific things to happen to it.
+ * @param $view_args
+ *   An array containing the arguments for the view
  */
-function theme_view( $view_name, $limit = 0, $use_pager = false, $type = 'embed' ) {
+function theme_view($view_name, $limit = NULL, $use_pager = NULL, $type = 'embed', $view_args = array()) {
   if ($view = views_get_view($view_name)) {
+    $use_pager = isset($use_pager) ? $use_pager : $view->use_pager;
+    $limit_default = ($type == 'block') ? $view->nodes_per_block : $view->nodes_per_page;
+    $limit = isset($limit) ? $limit : $limit_default;
     return views_build_view($type, $view, $view_args, $use_pager, $limit);
   }
 }
