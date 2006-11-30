@@ -36,3 +36,8 @@ Views 4.7.x-1.1
       field
 
 Views 4.7.x-dev
+  Bugs fixed:
+    o 100109: Incorrect caching of 'is new' filter.
+
+  New features:
+    o 75635: views table offsets for views fusion module
