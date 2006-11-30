@@ -684,19 +684,19 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   // Hey, Drupal kills old history, so nodes that haven't been updated
   // since NODE_NEW_LIMIT are bzzzzzzzt outta here!
 
-  $limit = NODE_NEW_LIMIT;
+  $limit = time() - NODE_NEW_LIMIT;
 
   $query->ensure_table('history');
   if (module_exists('comment')) {
     $query->ensure_table('node_comment_statistics');
-    $clause = "OR node_comment_statistics.last_comment_timestamp > $limit";
+    $clause = ("OR node_comment_statistics.last_comment_timestamp > (***CURRENT_TIME*** - $limit)");
     $clause2 = "OR history.timestamp < node_comment_statistics.last_comment_timestamp";
   }
 
   // NULL means a history record doesn't exist. That's clearly new content.
   // Unless it's very very old content. Everything in the query is already
   // type safe cause none of it is coming from outside here.
-  $query->add_where("(history.timestamp IS NULL AND (node.changed > $limit $clause)) OR history.timestamp < node.changed $clause2");
+  $query->add_where("(history.timestamp IS NULL AND (node.changed > (***CURRENT_TIME***-$limit) $clause)) OR history.timestamp < node.changed $clause2");
 }
 
 /*
