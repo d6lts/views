@@ -97,6 +97,7 @@ function views_menu($may_cache) {
  * Helper function to add a menu item for a view.
  */
 function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
+  views_load_cache();
   static $roles = NULL;
   if ($roles == NULL) {
     global $user;
