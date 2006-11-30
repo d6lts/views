@@ -1044,7 +1044,7 @@ function views_edit_view($view, $op = '') {
       '#cols' => 60,
       '#rows' => 6,
       '#description' => '<p>'. t('Advanced Usage Only: PHP code that returns a custom array of arguments for the view. Should not include &lt;?php ?&gt; delimiters.') .'</p>' .
-                        '<p>'. t('For more information, please see the <a href="%arg">Argument Handling Code documentation</a> in the Drupal handbook.', array('%arg' => 'http://drupal.org/node/70145')) .'</p>',
+                        '<p>'. t('For more information, please see the <a href="!arg">Argument Handling Code documentation</a> in the Drupal handbook.', array('%arg' => 'http://drupal.org/node/70145')) .'</p>',
     );
   } else {
     $form['view_args_php_fieldset']['view_args_php'] = array(
