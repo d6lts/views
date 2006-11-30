@@ -45,6 +45,7 @@ Views --dev
     o 100394: Fix to t() call in 'new comments'.
     o 100164: alias prefixing fix.
     o 100109: Incorrect caching of 'is new' filter.
+    o 99849: DISTINCT could break summary views.
 
   New features:
     o 99225: CSS generator for views theme wizard

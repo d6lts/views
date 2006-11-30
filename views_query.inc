@@ -249,7 +249,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   if (!function_exists($arginfo[$argtype]['handler'])) {
     return false;
   }
-
+  $primary_field = $query->fields[0];
   $query->clear_fields();
 
   $fieldinfo = $arginfo[$argtype]['handler']('summary', $query, $argtype, $option);
@@ -257,7 +257,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   if ($fieldinfo['fieldname']) {
     $query->add_field($fieldinfo[field], '', $fieldinfo[fieldname]);
   }
-  $query->add_field('count(node.nid)', '', 'num_nodes');
+  $query->add_field("count($primary_field)", '', 'num_nodes');
   $query->add_groupby($fieldinfo['field']);
   $query->set_count_field("DISTINCT($fieldinfo[field])");
   if ($self_sort) {
