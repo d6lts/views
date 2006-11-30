@@ -178,6 +178,18 @@ function views_handler_field_commentlink($fieldinfo, $fielddata, $value, $data) 
 }
 
 /*
+ * Format a field as a number of comments, plus the number of unread comments.
+ */
+function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
+  $comments = intval($value);
+  if ($comments && $new = comment_num_new($data->nid)) {
+    $comments .= '<br />';
+    $comments .= l(t('@num new', array('@num' => $new)), "node/$data->nid", NULL, comment_page_new_query($data->nid), 'new');
+  }
+  return $comments;
+}
+
+/*
  * Format a field as a link to a 'mark', stating whether or not the comment has
  * updated since it was last viewed by the user.
  */

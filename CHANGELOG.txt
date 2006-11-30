@@ -46,6 +46,8 @@ Views --dev
     o 100164: alias prefixing fix.
     o 100109: Incorrect caching of 'is new' filter.
     o 99849: DISTINCT could break summary views.
+    o 99783: Comment count didn't take into account pages. Also moved handler 
+      out of node where it didn't belong.
 
   New features:
     o 99225: CSS generator for views theme wizard
