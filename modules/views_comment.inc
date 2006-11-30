@@ -62,6 +62,14 @@ function comment_views_tables() {
         'help' => t('This will display the author of the node.'),
       ),
     ),
+    'filters' => array(
+      'status' => array(
+        'name' => t('Comment: Pending approval'),
+        'operator' => array('=' => t('Equals')),
+        'list' => 'views_handler_operator_yesno',
+        'list-type' => 'select',
+        ),
+    ),
     'sorts' => array(
       'timestamp' => array(
         'name' => t('Comment: Created Time'),
