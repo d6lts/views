@@ -45,6 +45,7 @@ Views 4.7.x-dev
     o 98441: Fixed 'optional' setting on exposed filters.
     o 98747: Fixed random filter that was broken in 1.1.
     o 100997: Clarified use of $arg in help text
+    o 100769: Getting book parents didn't require parents to be current
 
   New features:
     o 75635: views table offsets for views fusion module
