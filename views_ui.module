@@ -803,7 +803,6 @@ function views_edit_view($view, $op = '') {
     '#maxlength' => 5,
     '#description' => t('The number of nodes to display per page. If 0, all nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list.'),
     '#attributes' => NULL,
-    '#required' => true,
   );
   $form['page-info']['page_header_fieldset'] = array(
     '#type' => 'fieldset',

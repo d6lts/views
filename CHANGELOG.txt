@@ -39,7 +39,7 @@ Views 5.x-1.1-beta-1
     o 76601: New 'all files' field to display all files on a node as a single
       field
 
-Views --dev
+Views 5.x-1.2-beta-1
 
   Bugs fixed:
     o 100394: Fix to t() call in 'new comments'.
@@ -55,9 +55,12 @@ Views --dev
     o 98441: Fixed 'optional' setting on exposed filters.
     o 100997: Clarified use of $arg in help text
     o 100769: Getting book parents didn't require parents to be current
+    o 98492: Recent comments block needed to filter out moderated comments
 
   New features:
     o 99225: CSS generator for views theme wizard
     o 88067: theme_view much more useful now.
     o 98492: Comment moderation status filter
     o 101025: Sort by node type
+
+Views --dev
