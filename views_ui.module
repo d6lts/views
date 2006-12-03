@@ -1874,9 +1874,8 @@ function views_create_view_code($vid) {
     $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
     $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
     $output .= "      'operator' => " . var_export($filter['operator'], true) . ",\n";
-    $value = var_export($filter['value'], true);
     $output .= "      'options' => " . var_export($filter['options'], true) . ",\n";
-    $output .= "      'value' => " . var_export($value, true) . ",\n";
+    $output .= "      'value' => " . var_export($filter['value'], true) . ",\n";
     $output .= "    ),\n";
     $requires[$fieldbits[0]] = 1;
   }

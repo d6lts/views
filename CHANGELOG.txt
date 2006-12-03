@@ -41,6 +41,7 @@ Views 4.7.x-dev
     o 99849: DISTINCT could break summary views.
     o 99783: Comment count didn't take into account pages. Also moved handler 
       out of node where it didn't belong.
+    o 100317: exported view gets improperly formed value fields on filters
 
   New features:
     o 75635: views table offsets for views fusion module
