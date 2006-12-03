@@ -54,6 +54,7 @@ Views --dev
     o 100317: exported view gets improperly formed value fields on filters
     o 98441: Fixed 'optional' setting on exposed filters.
     o 100997: Clarified use of $arg in help text
+    o 100769: Getting book parents didn't require parents to be current
 
   New features:
     o 99225: CSS generator for views theme wizard
