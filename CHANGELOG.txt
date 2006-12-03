@@ -44,6 +44,7 @@ Views 4.7.x-dev
     o 100317: exported view gets improperly formed value fields on filters
     o 98441: Fixed 'optional' setting on exposed filters.
     o 98747: Fixed random filter that was broken in 1.1.
+    o 100997: Clarified use of $arg in help text
 
   New features:
     o 75635: views table offsets for views fusion module
