@@ -51,6 +51,8 @@ Views --dev
     o Use drupal_add_feed() for RSS icons so they can be themed.
     o 99323: fix link in argument handling help
     o Temporary fix for cache not being loaded for menu item creation
+    o 100317: exported view gets improperly formed value fields on filters
+    o 98441: Fixed 'optional' setting on exposed filters.
 
   New features:
     o 99225: CSS generator for views theme wizard
