@@ -1930,19 +1930,20 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
             $words = trim($match[2], ',?!();:-');
             $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
             foreach ($words as $word) {
-              $q[] = "UPPER(%s) LIKE UPPER('%%%s%%')";
-              $v[] = $field;
-              $v[] = trim($word, " ,!?");
+              $where[] = "UPPER(%s) LIKE UPPER('%%%s%%')";
+              $values[] = $field;
+              $values[] = trim($word, " ,!?");
             }
           }
           if ($filter['operator'] == 'word') {
-            $q = '('. implode(' OR ', $q) .')';
+            $where = '('. implode(' OR ', $where) .')';
           }
           else {
-            $q = implode(' AND ', $q);
+            $where = implode(' AND ', $where);
           }
-          array_unshift($v, $q);
-          call_user_func_array(array($query, 'add_where'), $v);
+          // previously this was a call_user_func_array but that's unnecessary
+          // as views will unpack an array that is a single arg.
+          $query->add_where($where, $values);
           break;
         case 'starts':
           $query->add_where("UPPER(%s) LIKE UPPER('%s%%')",
