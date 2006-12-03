@@ -284,6 +284,13 @@ function comment_views_default_views() {
       'options' => '',
       'value' => '1',
     ),
+    array (
+      'tablename' => 'comments',
+      'field' => 'status',
+      'operator' => '=',
+      'options' => '',
+      'value' => '0',
+    ),
   );
   $view->exposed_filter = array (
   );
