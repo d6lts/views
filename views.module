@@ -97,6 +97,7 @@ function views_menu($may_cache) {
  * Helper function to add a menu item for a view.
  */
 function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
+  views_load_cache();
   static $roles = NULL;
   if ($roles == NULL) {
     global $user;
@@ -1157,13 +1158,14 @@ function views_filters($view) {
   }
   $form['#method'] = 'get';
   $form['#process'] = array('views_filters_process' => array());
+  $form['#action'] = url($view->real_url ? $view->real_url : $view->url, NULL, NULL, true);
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
     // clean URL get forms breaks if we don't give it a 'q'.
     if (!(bool)variable_get('clean_url', '0')) {
       $form['q'] = array(
         '#type' => 'hidden',
-        '#value' => $_GET['q'],
+        '#value' => $view->real_url ? $view->real_url : $view->url,
         '#name' => 'q',
       );
     }
@@ -1609,6 +1611,22 @@ function views_handler_operator_yesno() {
   return array('1' => t('Yes'), '0' => t('No'));
 }
 
+/*
+ * Break x,y,z and x+y+z into an array. Numeric only.
+ */
+function _views_break_phrase($str) {
+  if (preg_match('/^([0-9]+[+ ])+[0-9]+$/', $str)) {
+    // The '+' character in a query string may be parsed as ' '.
+    return array('or', preg_split('/[+ ]/', $str));
+  }
+  else if (preg_match('/^([0-9]+,)*[0-9]+$/', $str)) {
+    return array('and', explode(',', $str));
+  }
+  else {
+    return NULL;
+  }
+}
+
 /**
  * Default Views style plugins. Implementation of hook_views_style_plugins()
  */
@@ -1683,19 +1701,20 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
             $words = trim($match[2], ',?!();:-');
             $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
             foreach ($words as $word) {
-              $q[] = "UPPER(%s) LIKE UPPER('%%%s%%')";
-              $v[] = $field;
-              $v[] = trim($word, " ,!?");
+              $where[] = "UPPER(%s) LIKE UPPER('%%%s%%')";
+              $values[] = $field;
+              $values[] = trim($word, " ,!?");
             }
           }
           if ($filter['operator'] == 'word') {
-            $q = '('. implode(' OR ', $q) .')';
+            $where = '('. implode(' OR ', $where) .')';
           }
           else {
-            $q = implode(' AND ', $q);
+            $where = implode(' AND ', $where);
           }
-          array_unshift($v, $q);
-          call_user_func_array(array($query, 'add_where'), $v);
+          // previously this was a call_user_func_array but that's unnecessary
+          // as views will unpack an array that is a single arg.
+          $query->add_where($where, $values);
           break;
         case 'starts':
           $query->add_where("UPPER(%s) LIKE UPPER('%s%%')",
@@ -1763,14 +1782,15 @@ function views_views_query_substitutions($view) {
  * @param $view_name
  *    The name of the view.
  * @param $limit
- *   Required if $use_pager is set; if $limit is set and $use_pager is
+ *   Maximum number of nodes displayed on one page. if $limit is set and $use_pager is
  *   not, this will be the maximum number of records returned. This is ignored
- *   if using a view set to return a random result. If $use_pager is set and 
- *   this field is not, you'll get a SQL error. Don't do that!
+ *   if using a view set to return a random result.
+ *   If NULL, the setting defined for the $view will be used.
  * @param $use_pager
  *   If set, use a pager. Set this to the pager id you want it to use if you
  *   plan on using multiple pagers on a page. Note that the pager element id
  *   will be decremented in order to have the IDs start at 0.
+ *   If NULL, the setting defined for the $view will be used.
  * @param $type
  *    'page' -- Produce output as a page, sent through theme.
  *      The only real difference between this and block is that
@@ -1778,9 +1798,15 @@ function views_views_query_substitutions($view) {
  *    'block' -- Produce output as a block, sent through theme.
  *    'embed' -- Use this if you want to embed a view onto another page,
  *      and don't want any block or page specific things to happen to it.
+ * @param $view_args
+ *   An array containing the arguments for the view
  */
-function theme_view( $view_name, $limit = 0, $use_pager = false, $type = 'embed' ) {
+function theme_view($view_name, $limit = NULL, $use_pager = NULL, $type = 'embed', $view_args = array()) {
   if ($view = views_get_view($view_name)) {
+    $use_pager = isset($use_pager) ? $use_pager : $view->use_pager;
+    $limit_default = ($type == 'block') ? $view->nodes_per_block : $view->nodes_per_page;
+    $limit = isset($limit) ? $limit : $limit_default;
     return views_build_view($type, $view, $view_args, $use_pager, $limit);
   }
 }
+

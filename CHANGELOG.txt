@@ -3,7 +3,7 @@ CHANGELOG for Views for Drupal 5
 Views 1.0 
  o Initial release under drupal.org's new release system
 
-Views 1.1-dev
+Views 5.x-1.1-beta-1
   
   Bugs fixed:
     o 97228: Fatal error on the views help page.
@@ -34,3 +34,33 @@ Views 1.1-dev
     o 97290: new $offset argument to views_build_view to allow views to to
       skip the first N nodes [doesn't work if $ pager = true].
     o 97290: New options for granularity on date sorts
+    o Provide a proper 'action' for exposed filters so they always go to the
+      view, not just the current page.
+    o 76601: New 'all files' field to display all files on a node as a single
+      field
+
+Views 5.x-1.2-beta-1
+
+  Bugs fixed:
+    o 100394: Fix to t() call in 'new comments'.
+    o 100164: alias prefixing fix.
+    o 100109: Incorrect caching of 'is new' filter.
+    o 99849: DISTINCT could break summary views.
+    o 99783: Comment count didn't take into account pages. Also moved handler 
+      out of node where it didn't belong.
+    o Use drupal_add_feed() for RSS icons so they can be themed.
+    o 99323: fix link in argument handling help
+    o Temporary fix for cache not being loaded for menu item creation
+    o 100317: exported view gets improperly formed value fields on filters
+    o 98441: Fixed 'optional' setting on exposed filters.
+    o 100997: Clarified use of $arg in help text
+    o 100769: Getting book parents didn't require parents to be current
+    o 98492: Recent comments block needed to filter out moderated comments
+
+  New features:
+    o 99225: CSS generator for views theme wizard
+    o 88067: theme_view much more useful now.
+    o 98492: Comment moderation status filter
+    o 101025: Sort by node type
+
+Views --dev

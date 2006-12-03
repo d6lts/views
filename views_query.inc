@@ -101,7 +101,7 @@ function _views_view_build_filters(&$query, &$view) {
         }
 
         if ($expose['optional']) {
-          if (!isset($_GET["filter$count"]) && !$expose['is_default']) {
+          if ((!isset($_GET["filter$count"]) || $_GET["filter$count"] == '') && !$expose['is_default']) {
             continue 2; // skip
           }
           if ($_GET["filter$count"] == '**ALL**' ||
@@ -110,7 +110,7 @@ function _views_view_build_filters(&$query, &$view) {
             continue 2; // skip this filter entirely.
           }
         }
-        if (isset($_GET["filter$count"])) {
+        if (isset($_GET["filter$count"]) && $_GET["filter$count"] != '') {
           $value = $_GET["filter$count"];
           if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
             $value = array($value);
@@ -249,7 +249,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   if (!function_exists($arginfo[$argtype]['handler'])) {
     return false;
   }
-
+  $primary_field = $query->fields[0];
   $query->clear_fields();
 
   $fieldinfo = $arginfo[$argtype]['handler']('summary', $query, $argtype, $option);
@@ -257,7 +257,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   if ($fieldinfo['fieldname']) {
     $query->add_field($fieldinfo[field], '', $fieldinfo[fieldname]);
   }
-  $query->add_field('count(node.nid)', '', 'num_nodes');
+  $query->add_field("count($primary_field)", '', 'num_nodes');
   $query->add_groupby($fieldinfo['field']);
   $query->set_count_field("DISTINCT($fieldinfo[field])");
   if ($self_sort) {
@@ -362,6 +362,8 @@ class _views_query {
    * Add multiple an orderby's. Right now I'm not sure why this function
    * is separate from add_orderby above; I don't think it needs to
    * be.
+   *
+   * NOTE: $alias doesn't work when adding multiple orderbys.
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if (!$alias && $table) {
@@ -380,7 +382,14 @@ class _views_query {
     }
 
     foreach($field as $f) {
-      $as = $alias . '_' . $f;
+      // Only fill out this aliasing if there is a table;
+      // otherwise we assume it is a formula.
+      if ($table) {
+        $as = $alias . '_' . $f;
+      }
+      else {
+        $as = $alias;
+      }
       $this->add_field($f, $table, $as);
       $this->orderby[] = "$as $order";
     }
@@ -443,7 +452,7 @@ class _views_query {
       if ($joininfo) {
         $this->joins[$table][$i] = $joininfo;
       }
-      $this->tablequeue[] = array('table' => $table, 'num' => $i);
+      $this->tablequeue[] = array('table' => $table, 'num' => $i, 'alias_prefix' => $this->use_alias_prefix);
     }
     return $this->tables[$table];
   }
@@ -522,7 +531,10 @@ class _views_query {
    * @param $alias_prefix
    *   An optional prefix for the table alias.
    */
-  function get_table_name($table, $table_num, $alias_prefix = '') {
+  function get_table_name($table, $table_num, $alias_prefix = null) {
+    if (is_null($alias_prefix)) {
+      $alias_prefix = $this->use_alias_prefix;
+    }
     return ($table_num < 2 ? $alias_prefix . $table : $alias_prefix . $table . $table_num);
   }
 

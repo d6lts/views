@@ -119,6 +119,10 @@ function node_views_tables() {
         'name' => t('Node: Title'),
         'help' => t('Sort by the node title, alphabetically'),
       ),
+      'type' => array(
+        'name' => t('Node: Type'),
+        'help' => t('Sort by the node type, alphabetically'),
+      ),
       'random' => array(
         'name' => t('Random'),
         'handler' => 'views_handler_sort_random',
@@ -417,18 +421,6 @@ function views_handler_nodetype($fieldinfo, $fielddata, $value, $data) {
 }
 
 /*
- * Format a field as a number of comments, plus the number of unread comments.
- */
-function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) {
-  $comments = intval($value);
-  if (module_exists('comment') && $comments && $new = comment_num_new($data->nid)) {
-    $comments .= '<br />';
-    $comments .= l(t('%num new', array('%num' => $new)), "node/$data->nid", NULL, NULL, 'new');
-  }
-  return $comments;
-}
-
-/*
  * Format a field as the Body of a node.
  */
 function views_handler_field_body($fieldinfo, $fielddata, $value, $data) {
@@ -684,19 +676,19 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
   // Hey, Drupal kills old history, so nodes that haven't been updated
   // since NODE_NEW_LIMIT are bzzzzzzzt outta here!
 
-  $limit = NODE_NEW_LIMIT;
+  $limit = time() - NODE_NEW_LIMIT;
 
   $query->ensure_table('history');
   if (module_exists('comment')) {
     $query->ensure_table('node_comment_statistics');
-    $clause = "OR node_comment_statistics.last_comment_timestamp > $limit";
+    $clause = ("OR node_comment_statistics.last_comment_timestamp > (***CURRENT_TIME*** - $limit)");
     $clause2 = "OR history.timestamp < node_comment_statistics.last_comment_timestamp";
   }
 
   // NULL means a history record doesn't exist. That's clearly new content.
   // Unless it's very very old content. Everything in the query is already
   // type safe cause none of it is coming from outside here.
-  $query->add_where("(history.timestamp IS NULL AND (node.changed > $limit $clause)) OR history.timestamp < node.changed $clause2");
+  $query->add_where("(history.timestamp IS NULL AND (node.changed > (***CURRENT_TIME***-$limit) $clause)) OR history.timestamp < node.changed $clause2");
 }
 
 /*
@@ -751,10 +743,10 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
-      $query->add_orderby('', "rand()", "ASC");
+      $query->add_orderby('', "rand()", "ASC", 'random_sort');
       break;
     case 'pgsql':
-      $query->add_orderby('', "random()", "ASC");
+      $query->add_orderby('', "random()", "ASC", 'random_sort');
       break;
   }
 }
