@@ -388,9 +388,16 @@ class _views_query {
     }
 
     foreach($field as $f) {
-//      $as = $alias . '_' . $f;
-//      $this->add_field($f, $table, $as);
-        $this->orderby[] = "$alias.$f $order";
+      // Only fill out this aliasing if there is a table;
+      // otherwise we assume it is a formula.
+      if ($table) {
+        $as = $alias . '_' . $f;
+      }
+      else {
+        $as = $alias;
+      }
+      $this->add_field($f, $table, $as);
+      $this->orderby[] = "$as $order";
     }
   }
 
