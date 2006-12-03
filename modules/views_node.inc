@@ -119,6 +119,10 @@ function node_views_tables() {
         'name' => t('Node: Title'),
         'help' => t('Sort by the node title, alphabetically'),
       ),
+      'type' => array(
+        'name' => t('Node: Type'),
+        'help' => t('Sort by the node type, alphabetically'),
+      ),
       'random' => array(
         'name' => t('Random'),
         'handler' => 'views_handler_sort_random',
