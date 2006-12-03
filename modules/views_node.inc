@@ -743,10 +743,10 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
   switch ($GLOBALS['db_type']) {
     case 'mysql':
     case 'mysqli':
-      $query->add_orderby('', "rand()", "ASC");
+      $query->add_orderby('', "rand()", "ASC", 'random_sort');
       break;
     case 'pgsql':
-      $query->add_orderby('', "random()", "ASC");
+      $query->add_orderby('', "random()", "ASC", 'random_sort');
       break;
   }
 }
