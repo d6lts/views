@@ -64,3 +64,5 @@ Views 5.x-1.2-beta-1
     o 101025: Sort by node type
 
 Views --dev
+  Bugs fixed:
+    o Reverted 99783 which doesn't work.
