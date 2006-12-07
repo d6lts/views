@@ -599,7 +599,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
     case 'link':
       return l(format_date($query->created, 'custom', 'F, Y'), "$arg/$query->name");
     case 'title':
-      return format_date(strtotime("${query}01"), 'custom', 'F, Y', 0);
+      return format_date(strtotime("${query}15"), 'custom', 'F, Y', 0);
   }
 }
 function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {

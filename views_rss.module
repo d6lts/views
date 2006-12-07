@@ -82,7 +82,7 @@ function views_rss_views_feed_argument($op, &$view, $arg) {
       $filters = drupal_query_string_encode($view->used_filters);
     }
 
-    drupal_add_feed($title, $filters);
+    drupal_add_feed($url, $filters);
   }
 }
 
