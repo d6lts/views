@@ -56,5 +56,6 @@ Views 4.7.x-1.2
     o 101025: Sort by node type
 
 Views 4.7.x-dev
-
+  Bugs fixed:
     o Reverted 99783 which doesn't work.
+    o 100769: link book table via vid instead of nid.

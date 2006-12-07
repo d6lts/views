@@ -12,10 +12,10 @@ function book_views_tables() {
     'join' => array(
       'left' => array(
         'table' => 'node',
-        'field' => 'nid'
+        'field' => 'vid'
       ),
       'right' => array(
-        'field' => 'nid'
+        'field' => 'vid'
       )
     ),
     "filters" => array(
