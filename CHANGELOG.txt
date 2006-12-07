@@ -68,3 +68,4 @@ Views --dev
     o Reverted 99783 which doesn't work.
     o 100769: link book table via vid instead of nid.
     o 101306: views_new_table() used incorrect right_field
+    o 99225: theme wizard wasn't CSS safing classes in an ironic fashion.

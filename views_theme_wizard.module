@@ -214,8 +214,7 @@ EOT;
  * generate a template file for a list theme
  */
 function views_theme_wizard_generate_list_template_code($view) {
-  
-	
+  $now = format_date(time());
 	$header = <<<EOT
 <?php 
 /**
@@ -241,9 +240,9 @@ EOT;
 
   // Set up the fields in nicely named chunks.
   foreach ($view->field as $id => $field) {
-    $field_name = $field['field'];
+    $field_name = views_css_safe($field['field']);
     if (isset($taken[$field_name])) {
-      $field_name = $field['queryname'];
+      $field_name = views_css_safe($field['queryname']);
     }
     $taken[$field_name] = true;
     $output .= <<<EOT
@@ -281,6 +280,7 @@ EOT;
  * generate a stylesheet file for a list theme
  */
 function views_theme_wizard_generate_list_stylesheet_code($view) {
+  $now = format_date(time());
   $header = <<<EOT
 /* *
  * views template to output the stylesheet to customize a view.
