@@ -876,7 +876,7 @@ function views_new_table($table_name, $provider, $left_table, $left_field, $righ
   $table['provider'] = $provider;
   $table['join']['left']['table'] = $left_table;
   $table['join']['left']['field'] = $left_field;
-  $table['join']['right']['field'] = $left_field;
+  $table['join']['right']['field'] = $right_field;
   if ($extra) {
     $table['join']['extra'] = $extra;
   }

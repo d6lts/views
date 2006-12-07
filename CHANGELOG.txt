@@ -67,3 +67,4 @@ Views --dev
   Bugs fixed:
     o Reverted 99783 which doesn't work.
     o 100769: link book table via vid instead of nid.
+    o 101306: views_new_table() used incorrect right_field
