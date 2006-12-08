@@ -71,3 +71,4 @@ Views --dev
     o 99225: theme wizard wasn't CSS safing classes in an ironic fashion.
     o 101363: Made the DISTINCT more forceful by adding a GROUP BY.
     o 101167: Proper use of drupal_add_feed
+    o 'node' arguments weren't properly using node in the title.

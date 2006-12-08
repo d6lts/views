@@ -660,7 +660,7 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
       while ($node = db_fetch_object($result)) {
         $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($node->title);
       }
-
+      return $title;
   }
 }
 
