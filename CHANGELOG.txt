@@ -62,3 +62,4 @@ Views 4.7.x-dev
     o 101306: views_new_table() used incorrect right_field
     o 99225: theme wizard wasn't CSS safing classes in an ironic fashion.
     o 101363: Made the DISTINCT more forceful by adding a GROUP BY.
+    o 'node' arguments weren't properly using node in the title.
