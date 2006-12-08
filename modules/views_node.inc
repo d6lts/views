@@ -660,7 +660,7 @@ function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
       while ($node = db_fetch_object($result)) {
         $title .= ($title ? ($type == 'or' ? ' + ' : ', ') : '') . check_plain($node->title);
       }
-
+      return $title;
   }
 }
 
@@ -719,6 +719,7 @@ function views_handler_filter_nodetype($op) {
  */
 function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
   $query->set_distinct();
+  $query->add_groupby('node.nid');
 }
 
 /*
