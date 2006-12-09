@@ -74,3 +74,6 @@ Views --dev
     o 'node' arguments weren't properly using node in the title.
     o 102142: Default table sorting broken if field with no label comes after
       field to sort on.
+
+  New features:
+    o 101324: New op for views_build_view: 'queries'

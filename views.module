@@ -319,6 +319,8 @@ function &views_get_current_view() {
  *      result: Database object you can use db_fetch_object on.
  *    'items' -- return info array as above, except instead of result,
  *      items: An array of objects containing the results of the query.
+ *    'queries' -- returns an array, summarizing the queries, but does not
+ *      run them.
  * @param $view
  *   The actual view object. Use views_get_view() if you only have the name or
  *   vid.
@@ -404,7 +406,11 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   }
 
   $query = db_rewrite_sql($info['query'], 'node');
-
+  
+  if ($type == 'queries') {
+    return $info;
+  }
+  
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
     $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
