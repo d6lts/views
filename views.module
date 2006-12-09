@@ -324,9 +324,13 @@ function views_menu($may_cache) {
     }
 
     $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
-    $views_with_inline_args = array();
 
     while ($view = db_fetch_object($result)) {
+      // Skip views with arguments.
+      if (strrpos($view->url, '$arg') !== FALSE) {
+        continue;
+      }
+
       // unpack the array
       $view->access = ($view->access ? explode(', ', $view->access) : array());
 
@@ -334,13 +338,6 @@ function views_menu($may_cache) {
       // it is still used.
       $used[$view->name] = true;
 
-      if (strrpos($view->url, '$arg') !== FALSE) {
-        $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
-        while ($view->argument[] = db_fetch_array($arg_result));
-        array_pop($view->argument); // get rid of the NULL at the end.
-        $views_with_inline_args[$view->name] = $view;
-        continue;
-      }
       _views_create_menu_item($items, $view, $view->url);
     }
     $default_views = _views_get_default_views();
@@ -350,17 +347,21 @@ function views_menu($may_cache) {
       if ($view->page && !$used[$name] &&
        ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
         if (strrpos($view->url, '$arg') !== FALSE) {
-          $views_with_inline_args[$view->name] = $view;
           continue;
         }
 
         _views_create_menu_item($items, $view, $view->url);
       }
     }
-    cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
   }
   else {
     $data = cache_get("views_with_inline_args:$locale");
+    if ($data == 0) {
+      // There's no cache for our language, regenerate it.
+      views_reset_inline_args_cache($locale);
+      $data = cache_get("views_with_inline_args:$locale");
+    }
+
     $views = unserialize($data->data);
     if (is_array($views)) {
       foreach ($views as $view) {
@@ -383,6 +384,47 @@ function views_menu($may_cache) {
     }
   }
   return $items;
+}
+
+/**
+ * Reset the views with inline arguments cache for a locale.
+ */
+function views_reset_inline_args_cache($locale = 'en') {
+  $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
+  $views_with_inline_args = array();
+
+  while ($view = db_fetch_object($result)) {
+    // Skip over any non-argument views
+    if (strrpos($view->url, '$arg') == FALSE) {
+      continue;
+    }
+    // unpack the array
+    $view->access = ($view->access ? explode(', ', $view->access) : array());
+
+    // This happens before the next check; even if it's put off for later
+    // it is still used.
+    $used[$view->name] = true;
+
+
+    $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
+    while ($arg = db_fetch_array($arg_result)) {
+      $view->argument[] = $arg;
+    }
+
+    $views_with_inline_args[$view->name] = $view;
+  }
+
+  $default_views = _views_get_default_views();
+  $views_status = variable_get('views_defaults', array());
+
+  foreach ($default_views as $name => $view) {
+    if ($view->page && !$used[$name] && ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
+      if (strrpos($view->url, '$arg')) {
+        $views_with_inline_args[$view->name] = $view;
+      }
+    }
+  }
+  cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
 }
 
 /**
