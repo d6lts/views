@@ -67,6 +67,7 @@ Views 4.7.x-dev
       field to sort on.
     o 88343: $arg in urls (foo/$arg/bar) had locale problems.
     o 97497: rss feed did not call module_invoke_all('exit') as it should.
+    o 89332: Don't default tables to MyISAM type
 
   New features:
     o 101324: New op for views_build_view: 'queries'
