@@ -122,6 +122,7 @@ function views_reset_inline_args_cache($locale = 'en') {
     $views_with_inline_args[$view->name] = $view;
   }
 
+  views_load_cache();
   $default_views = _views_get_default_views();
   $views_status = variable_get('views_defaults', array());
 
