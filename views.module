@@ -1078,7 +1078,7 @@ function _views_construct_header($view, $fields) {
         $header['field'] = $field['fullname'];
       }
     }
-    else {
+    else if ($field['label']) {
       $header['data'] = $field['label'];
     }
 

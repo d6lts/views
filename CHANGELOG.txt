@@ -72,3 +72,5 @@ Views --dev
     o 101363: Made the DISTINCT more forceful by adding a GROUP BY.
     o 101167: Proper use of drupal_add_feed
     o 'node' arguments weren't properly using node in the title.
+    o 102142: Default table sorting broken if field with no label comes after
+      field to sort on.
