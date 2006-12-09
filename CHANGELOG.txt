@@ -63,3 +63,5 @@ Views 4.7.x-dev
     o 99225: theme wizard wasn't CSS safing classes in an ironic fashion.
     o 101363: Made the DISTINCT more forceful by adding a GROUP BY.
     o 'node' arguments weren't properly using node in the title.
+    o 102142: Default table sorting broken if field with no label comes after
+      field to sort on.

@@ -1324,7 +1324,7 @@ function _views_construct_header($view, $fields) {
         $header['field'] = $field['fullname'];
       }
     }
-    else {
+    else if ($field['label']) {
       $header['data'] = $field['label'];
     }
 
@@ -1335,6 +1335,7 @@ function _views_construct_header($view, $fields) {
     // Add CSS id to table cell header cell.
     $header['id'] = views_css_safe('view-field-'. $field['queryname']);
     $header['class'] = "view-cell-header";
+
     $headers[] = $header;
   }
   return $headers;
