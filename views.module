@@ -133,7 +133,7 @@ function views_reset_inline_args_cache($locale = 'en') {
       }
     }
   }
-  cache_set("views_with_inline_args:$locale", serialize($views_with_inline_args));
+  cache_set("views_with_inline_args:$locale", 'cache', serialize($views_with_inline_args));
 }
 
 /**
