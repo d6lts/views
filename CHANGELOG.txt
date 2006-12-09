@@ -80,3 +80,5 @@ Views --dev
 
   New features:
     o 101324: New op for views_build_view: 'queries'
+    o 77526: Automatically enable views_ui if views is installed without it. But not
+             just when the module is enabled.
