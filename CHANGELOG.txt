@@ -63,7 +63,8 @@ Views 5.x-1.2-beta-1
     o 98492: Comment moderation status filter
     o 101025: Sort by node type
 
-Views --dev
+Views 5.x-1.3-beta-1
+
   Bugs fixed:
     o Reverted 99783 which doesn't work.
     o 100769: link book table via vid instead of nid.
@@ -83,3 +84,5 @@ Views --dev
     o 101324: New op for views_build_view: 'queries'
     o 77526: Automatically enable views_ui if views is installed without it. But not
              just when the module is enabled.
+
+Views --dev
