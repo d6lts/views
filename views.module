@@ -1558,9 +1558,9 @@ function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
      $alias = $field;
   }
 
-  $query->add_field($field, $table, $as);
-  $query->orderby[] = "$alias $sort[sortorder]";
-//  $query->add_orderby($table, $field, $sort['sortorder']);
+//  $query->add_field($field, $table, $as);
+//  $query->orderby[] = "$alias $sort[sortorder]";
+  $query->add_orderby($table, $field, $sort['sortorder'], $as);
 }
 
 function views_handler_sort_date_minute($op, &$query, $sortinfo, $sort) {

@@ -519,7 +519,7 @@ function views_handler_arg_year($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby(NULL, 'year', $argtype);
+      $query->add_orderby(NULL, "YEAR(FROM_UNIXTIME(node.created+$timezone))", $argtype, 'year');
       break;
     case 'filter':
       $year = intval($arg);
@@ -542,7 +542,7 @@ function views_handler_arg_month($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby(NULL, 'name', $argtype);
+      $query->add_orderby(NULL, "MONTH(FROM_UNIXTIME(node.created+$timezone))", $argtype, 'name');
       break;
     case 'filter':
       $month = intval($arg);
@@ -567,7 +567,7 @@ function views_handler_arg_week($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby(NULL, 'name', $argtype);
+      $query->add_orderby(NULL, "WEEK(FROM_UNIXTIME(node.created+$timezone), 3)", $argtype, 'name');
       break;
     case 'filter':
       // The 3 makes the week 1-53, the first week of the year has at least 3 days
@@ -591,7 +591,7 @@ function views_handler_arg_monthyear($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby(NULL, "name", $argtype);
+      $query->add_orderby(NULL, "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')", $argtype, "name");
       break;
     case 'filter':
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m') = '%s'", $arg);
@@ -613,7 +613,7 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby(NULL, 'name', $argtype);
+      $query->add_orderby(NULL, "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%d')", $argtype, 'name');
       break;
     case 'filter':
       $query->add_where("DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m%%d') = '%s'", $arg);
