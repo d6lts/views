@@ -86,3 +86,6 @@ Views 5.x-1.3-beta-1
              just when the module is enabled.
 
 Views --dev
+
+  New Features:
+    o 89421: New last changed sort / filter / field

@@ -273,8 +273,8 @@ class _views_query {
   /*
    * Create the basic query object and fill with default values.
    */
-  function _views_query($views_get_title_table = 'node', $views_get_title_field = 'nid', $alias_prefix = '') {
-    $this->views_get_title_table = $views_get_title_table;
+  function _views_query($primary_table = 'node', $primary_field = 'nid', $alias_prefix = '') {
+    $this->primary_table = $primary_table;
     $this->joins = array();
     $this->where = array();
     $this->orderby = array();
@@ -285,10 +285,10 @@ class _views_query {
     // Joins care about order, so we put our tables in a queue to make sure
     // the order is correct.
     $this->tablequeue = array();
-    if ($views_get_title_field) {
-      $this->fields = array($alias_prefix ."$views_get_title_table.$views_get_title_field");
+    if ($primary_field) {
+      $this->fields = array($alias_prefix ."$primary_table.$primary_field");
     }
-    $this->count_field = $alias_prefix ."$views_get_title_table.$views_get_title_field";
+    $this->count_field = $alias_prefix ."$primary_table.$primary_field";
     $this->header = array();
   }
 
@@ -301,15 +301,23 @@ class _views_query {
     if ($table == '$$') {
       // I picked $$ because it's not a legal name for a table and NULL is
       // actually a valid possibility here, and I can't default to a variable.
-      $table = $this->views_get_title_table;
+      $table = $this->primary_table;
     }
+
+    // We check for this specifically because we don't want to add it aliased.
+    if ($table == $query->primary_table && $field == $view->primary_field) {
+      return;
+    }
+
     if ($table) {
       $this->ensure_table($table);
       $table = $this->use_alias_prefix . $table .".";
     }
+
     if ($alias) {
       $a = " AS $this->use_alias_prefix$alias";
     }
+
     if (!in_array("$table$field$a", $this->fields)) {
       $this->fields[] = "$table$field$a";
     }
@@ -410,7 +418,7 @@ class _views_query {
    * a path leads back to the views_get_title table.
    */
   function ensure_table($table) {
-    if ($table == $this->views_get_title_table || $this->tables[$table]) {
+    if ($table == $this->primary_table || $this->tables[$table]) {
       return;
     }
 
@@ -426,7 +434,7 @@ class _views_query {
    *   The name of the table to add. It needs to exist in the global table
    *   array.
    * @param $ensure_path
-   *   If true, it will ensure that a path back to views_get_title_table exists. If false, it
+   *   If true, it will ensure that a path back to primary_table exists. If false, it
    *   assumes the caller is already sure about this and does not repeat it.
    * @param $howmany
    *   How many instances of the table to add? (Useful for interesting join
@@ -438,7 +446,7 @@ class _views_query {
    *   will specify how this table joins if it is not the default.
    */
   function add_table($table, $ensure_path = false, $howmany = 1, $joininfo = NULL) {
-    if ($table == $this->views_get_title_table) {
+    if ($table == $this->primary_table) {
       return;
     }
 
@@ -487,7 +495,7 @@ class _views_query {
    * if the table is already there.
    */
   function ensure_path($table, $traced = array(), $add = array()) {
-    if ($table == $this->views_get_title_table) {
+    if ($table == $this->primary_table) {
       return true;
     }
     $table_data = _views_get_tables();
@@ -495,7 +503,7 @@ class _views_query {
     $left_table = $table_data[$table]['join']['left']['table'];
 
     // Does it end at our views_get_title table?
-    if ($left_table == $this->views_get_title_table) {
+    if ($left_table == $this->primary_table) {
       // We are done! Add our tables and unwind.
       foreach (array_reverse($add) as $table) {
         $this->queue_table($table);
@@ -619,7 +627,7 @@ class _views_query {
       $where = "WHERE (" . implode(') AND (', $this->where) . ')';
     }
 
-    $query = "SELECT $fields FROM {" . $this->views_get_title_table . "} $this->views_get_title_table $joins $where $groupby $orderby";
+    $query = "SELECT $fields FROM {" . $this->primary_table . "} $this->primary_table $joins $where $groupby $orderby";
 
     $replace = array('&gt;' => '>', '&lt;' => '<');
     $query = strtr($query, $replace);
