@@ -1712,35 +1712,35 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
  * Format a date.
  */
 function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value) : theme_views_nodate();
+  return $value ? format_date($value) : theme('views_nodate');
 }
 
 /**
  * Format a date using small representation.
  */
 function views_handler_field_date_small($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'small') : theme_views_nodate();
+  return $value ? format_date($value, 'small') : theme('views_nodate');
 }
 
 /**
  * Format a date using large representation.
  */
 function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'large') : theme_views_nodate();
+  return $value ? format_date($value, 'large') : theme('views_nodate');
 }
 
 /**
  * Format a date using custom representation.
  */
 function views_handler_field_date_custom($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'custom', $fielddata['options']) : theme_views_nodate();
+  return $value ? format_date($value, 'custom', $fielddata['options']) : theme('views_nodate');
 }
 
 /**
  * Format a date as "X time ago".
  */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
-  return $value ? t('%time ago', array('%time' => format_interval(time() - $value))) : theme_views_nodate();
+  return $value ? t('%time ago', array('%time' => format_interval(time() - $value, is_numeric($fielddata['options']) ? $fielddata['options'] : 2))) : theme('views_nodate');
 }
 
 function theme_views_nodate() {
