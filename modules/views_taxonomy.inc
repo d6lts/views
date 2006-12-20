@@ -254,7 +254,7 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
     $node->taxonomy = $terms;
     $links = taxonomy_link('taxonomy terms', $node);
   }
-  return return !empty($links) ? theme('links', $links) : '';
+  return !empty($links) ? theme('links', $links) : '';
 }
 
 /**
