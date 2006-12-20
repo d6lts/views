@@ -85,7 +85,8 @@ Views 5.x-1.3-beta-1
     o 77526: Automatically enable views_ui if views is installed without it. But not
              just when the module is enabled.
 
-Views --dev
+Views 5.x-1.4-rc1
+
   Bugs fixed:
     o All the date-based arguments were broken due to changes in $query->add_orderby
     o 103475: updated rss feed to match fixes in Drupal core.
@@ -99,3 +100,5 @@ Views --dev
   New Features:
     o 89421: New last changed sort / filter / field
     o 103649: allow customizing date interval granularity
+
+Views --dev
