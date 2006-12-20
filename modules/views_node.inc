@@ -823,7 +823,7 @@ function views_post_view_make_args($view, $feed_id, $arg) {
         $args[] = $arg;
       }
       else if ($argdata['argdefault'] != 1) {
-        $args[] = '*';
+        $args[] = $argdata['wildcard'] ? check_plain($argdata['wildcard']) : '*';
       }
     }
   }
