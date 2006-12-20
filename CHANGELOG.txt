@@ -78,6 +78,7 @@ Views 4.7.x-dev
     o All the date-based arguments were broken due to changes in $query->add_orderby
     o 103475: updated rss feed to match fixes in Drupal core.
     o Replaced theme_views_nodate with theme('views_nodate') which is actually themable.
+    o 103115: Validation for individual views fields/etc was never called.
 
   New Features:
     o 89421: New last changed sort / filter / field
