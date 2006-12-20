@@ -89,6 +89,7 @@ Views --dev
   Bugs fixed:
     o All the date-based arguments were broken due to changes in $query->add_orderby
     o 103475: updated rss feed to match fixes in Drupal core.
+    o 103773: Fixed some obnoxious t() % placeholder <em> stupidity. 
 
   New Features:
     o 89421: New last changed sort / filter / field

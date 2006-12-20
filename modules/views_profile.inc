@@ -63,7 +63,7 @@ function profile_views_get_fields() {
 function profile_views_add_field(&$table, $field) {
 
   $name = 'value';
-  $label = t('Profile: %field-name', array('%field-name' => $field->title));
+  $label = t('Profile: @field-name', array('@field-name' => $field->title));
   
   switch ($field->type) {
     case 'vocabulary':
@@ -112,7 +112,7 @@ function profile_views_add_field(&$table, $field) {
 function profile_views_add_sort(&$table, $field) {
 
   $name = 'value';
-  $label = t('Profile: %field-name', array('%field-name' => $field->title));
+  $label = t('Profile: @field-name', array('@field-name' => $field->title));
   $others = array();
   
   
@@ -146,7 +146,7 @@ function profile_views_add_sort(&$table, $field) {
 function profile_views_add_filter(&$table, $field) {
 
   $name = 'value';
-  $label = t('Profile: %field-name', array('%field-name' => $field->title));
+  $label = t('Profile: @field-name', array('@field-name' => $field->title));
   
   switch ($field->type) {
     case 'vocabulary':
