@@ -81,6 +81,7 @@ Views 4.7.x-dev
     o 103115: Validation for individual views fields/etc was never called.
     o 101275: Prevent node.nid from being added as a field twice (was happening when sorting)
     o 102746: * was being used instead of actual wildcard in feed URLs.
+    o 102457: Spurious warnings when displayed node has no terms
 
   New Features:
     o 89421: New last changed sort / filter / field
