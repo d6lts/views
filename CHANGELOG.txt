@@ -74,6 +74,9 @@ Views 4.7.x-1.3
     o 101324: New op for views_build_view: 'queries'
 
 Views 4.7.x-dev
+  Bugs fixed:
+    o All the date-based arguments were broken due to changes in $query->add_orderby
+    o 103475: updated rss feed to match fixes in Drupal core.
 
   New Features:
     o 89421: New last changed sort / filter / field
