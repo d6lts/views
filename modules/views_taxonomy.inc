@@ -47,7 +47,7 @@ function taxonomy_views_tables() {
         ),
         'fields' => array(
           'name' => array(
-            'name' => t('Taxonomy: Terms for %voc-name', array('%voc-name' => $voc->name)),
+            'name' => t('Taxonomy: Terms for @voc-name', array('@voc-name' => $voc->name)),
             'sortable' => false,
             'help' => t('This will display all taxonomy terms associated with the node that are members of %voc-name. Note that this causes one extra query per row displayed, and might have a minor performance impact.', array('%voc-name' => $voc->name)),
             'handler' => 'views_handler_field_allterms',
@@ -64,7 +64,7 @@ function taxonomy_views_tables() {
         ),
         'filters' => array(
           'tid' => array(
-            'name' => t('Taxonomy: Terms for %voc-name', array('%voc-name' => $voc->name)),
+            'name' => t('Taxonomy: Terms for @voc-name', array('@voc-name' => $voc->name)),
             'list' => 'views_handler_filter_tid_by_voc',
             'value-type' => 'array',
             'option' => 'string',
@@ -254,7 +254,7 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
     $node->taxonomy = $terms;
     $links = taxonomy_link('taxonomy terms', $node);
   }
-  return implode(' | ', $links);
+  return !empty($links) ? implode(' | ', $links) : '';
 }
 
 /**

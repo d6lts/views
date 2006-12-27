@@ -31,9 +31,13 @@ function views_menu($may_cache) {
     }
 
     $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
-    $views_with_inline_args = array();
 
     while ($view = db_fetch_object($result)) {
+      // Skip views with arguments.
+      if (strrpos($view->url, '$arg') !== FALSE) {
+        continue;
+      }
+
       // unpack the array
       $view->access = ($view->access ? explode(', ', $view->access) : array());
 
@@ -41,13 +45,6 @@ function views_menu($may_cache) {
       // it is still used.
       $used[$view->name] = true;
 
-      if (strrpos($view->url, '$arg')) {
-        $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
-        while ($view->argument[] = db_fetch_array($arg_result));
-        array_pop($view->argument); // get rid of the NULL at the end.
-        $views_with_inline_args[$view->name] = $view;
-        continue;
-      }
       _views_create_menu_item($items, $view, $view->url);
     }
     $default_views = _views_get_default_views();
@@ -57,18 +54,22 @@ function views_menu($may_cache) {
       if ($view->page && !$used[$name] &&
        ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
 
-        if (strrpos($view->url, '$arg')) {
-          $views_with_inline_args[$view->name] = $view;
+        if (strrpos($view->url, '$arg') !== FALSE) {
           continue;
         }
 
         _views_create_menu_item($items, $view, $view->url);
       }
     }
-    cache_set("views_with_inline_args:$locale", 'cache', serialize($views_with_inline_args));
   }
   else {
     $data = cache_get("views_with_inline_args:$locale", 'cache');
+    if ($data == 0) {
+      // There's no cache for our language, regenerate it.
+      views_reset_inline_args_cache($locale);
+      $data = cache_get("views_with_inline_args:$locale");
+    }
+
     $views = unserialize($data->data);
     if (is_array($views)) {
       foreach ($views as $view) {
@@ -94,10 +95,51 @@ function views_menu($may_cache) {
 }
 
 /**
+ * Reset the views with inline arguments cache for a locale.
+ */
+function views_reset_inline_args_cache($locale = 'en') {
+  $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
+  $views_with_inline_args = array();
+
+  while ($view = db_fetch_object($result)) {
+    // Skip over any non-argument views
+    if (strrpos($view->url, '$arg') == FALSE) {
+      continue;
+    }
+    // unpack the array
+    $view->access = ($view->access ? explode(', ', $view->access) : array());
+
+    // This happens before the next check; even if it's put off for later
+    // it is still used.
+    $used[$view->name] = true;
+
+
+    $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
+    while ($arg = db_fetch_array($arg_result)) {
+      $view->argument[] = $arg;
+    }
+
+    $views_with_inline_args[$view->name] = $view;
+  }
+
+  views_load_cache();
+  $default_views = _views_get_default_views();
+  $views_status = variable_get('views_defaults', array());
+
+  foreach ($default_views as $name => $view) {
+    if ($view->page && !$used[$name] && ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
+      if (strrpos($view->url, '$arg')) {
+        $views_with_inline_args[$view->name] = $view;
+      }
+    }
+  }
+  cache_set("views_with_inline_args:$locale", 'cache', serialize($views_with_inline_args));
+}
+
+/**
  * Helper function to add a menu item for a view.
  */
 function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
-  views_load_cache();
   static $roles = NULL;
   if ($roles == NULL) {
     global $user;
@@ -165,7 +207,7 @@ function views_block($op = 'list', $delta = 0) {
     // Grab views from the database and provide them as blocks.
     $result = db_query("SELECT vid, block_title, page_title, name FROM {view_view} WHERE block = 1");
     while ($view = db_fetch_object($result)) {
-      $block[$view->name]['info'] = views_get_title($view, 'block-info');
+      $block[$view->name]['info'] = filter_xss_admin(views_get_title($view, 'block-info'));
     }
 
     $default_views = _views_get_default_views();
@@ -174,7 +216,7 @@ function views_block($op = 'list', $delta = 0) {
     foreach ($default_views as $name => $view) {
       if (!isset($block[$name]) && $view->block &&
         ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-        $block[$name]['info'] = views_get_title($view, 'block');
+        $block[$name]['info'] = filter_xss_admin(views_get_title($view, 'block'));
       }
     }
     return $block;
@@ -278,7 +320,7 @@ function views_view_block($vid) {
   $content = views_build_view('block', $view, array(), false, $view->nodes_per_block);
   if ($content) {
     $block['content'] = $content;
-    $block['subject'] = views_get_title($view, 'block');
+    $block['subject'] = filter_xss_admin(views_get_title($view, 'block'));
     return $block;
   }
   else {
@@ -319,6 +361,8 @@ function &views_get_current_view() {
  *      result: Database object you can use db_fetch_object on.
  *    'items' -- return info array as above, except instead of result,
  *      items: An array of objects containing the results of the query.
+ *    'queries' -- returns an array, summarizing the queries, but does not
+ *      run them.
  * @param $view
  *   The actual view object. Use views_get_view() if you only have the name or
  *   vid.
@@ -404,7 +448,11 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   }
 
   $query = db_rewrite_sql($info['query'], 'node');
-
+  
+  if ($type == 'queries') {
+    return $info;
+  }
+  
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
     $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
@@ -604,6 +652,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
     return $title;
   }
 
+  views_load_cache();
   $arginfo = _views_get_arguments();
   foreach ($view->argument as $i => $arg) {
     if (!isset($args[$i])) {
@@ -876,7 +925,7 @@ function views_new_table($table_name, $provider, $left_table, $left_field, $righ
   $table['provider'] = $provider;
   $table['join']['left']['table'] = $left_table;
   $table['join']['left']['field'] = $left_field;
-  $table['join']['right']['field'] = $left_field;
+  $table['join']['right']['field'] = $right_field;
   if ($extra) {
     $table['join']['extra'] = $extra;
   }
@@ -1078,7 +1127,7 @@ function _views_construct_header($view, $fields) {
         $header['field'] = $field['fullname'];
       }
     }
-    else {
+    else if ($field['label']) {
       $header['data'] = $field['label'];
     }
 
@@ -1418,35 +1467,35 @@ function theme_views_summary($view, $type, $level, $nodes, $args) {
  * Format a date.
  */
 function views_handler_field_date($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value) : theme_views_nodate();
+  return $value ? format_date($value) : theme('views_nodate');
 }
 
 /**
  * Format a date using small representation.
  */
 function views_handler_field_date_small($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'small') : theme_views_nodate();
+  return $value ? format_date($value, 'small') : theme('views_nodate');
 }
 
 /**
  * Format a date using large representation.
  */
 function views_handler_field_date_large($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'large') : theme_views_nodate();
+  return $value ? format_date($value, 'large') : theme('views_nodate');
 }
 
 /**
  * Format a date using custom representation.
  */
 function views_handler_field_date_custom($fieldinfo, $fielddata, $value, $data) {
-  return $value ? format_date($value, 'custom', $fielddata['options']) : theme_views_nodate();
+  return $value ? format_date($value, 'custom', $fielddata['options']) : theme('views_nodate');
 }
 
 /**
  * Format a date as "X time ago".
  */
 function views_handler_field_since($fieldinfo, $fielddata, $value, $data) {
-  return $value ? t('%time ago', array('%time' => format_interval(time() - $value))) : theme_views_nodate();
+  return $value ? t('%time ago', array('%time' => format_interval(time() - $value, is_numeric($fielddata['options']) ? $fielddata['options'] : 2))) : theme('views_nodate');
 }
 
 function theme_views_nodate() {
@@ -1509,9 +1558,9 @@ function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
      $alias = $field;
   }
 
-  $query->add_field($field, $table, $as);
-  $query->orderby[] = "$alias $sort[sortorder]";
-//  $query->add_orderby($table, $field, $sort['sortorder']);
+//  $query->add_field($field, $table, $as);
+//  $query->orderby[] = "$alias $sort[sortorder]";
+  $query->add_orderby($table, $field, $sort['sortorder'], $as);
 }
 
 function views_handler_sort_date_minute($op, &$query, $sortinfo, $sort) {

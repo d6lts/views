@@ -1,6 +1,6 @@
 ; $Id$
 name = Views
 description = The views module creates customized views of node lists.
-version = $Name$
+version = "$Name$"
 package = Views
 

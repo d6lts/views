@@ -118,6 +118,15 @@ function comment_views_tables() {
         ),
         'help' => t('This will display the comment count.'),
       ),
+      'last_changed' => array(
+        'name' => t('Comment: Last Changed Time'),
+        'query_handler' => 'views_query_handler_field_last_changed',
+        'sortable' => TRUE,
+        'handler' => views_handler_field_dates(),
+        'option' => 'string',
+        'notafield' => TRUE,
+        'help' => t('This will display the time of the last comment or node edit.'),
+      ),
     ),
     'filters' => array(
       'comment_count' => array(
@@ -134,6 +143,15 @@ function comment_views_tables() {
         'option' => 'string',
         'help' => t('This filter allows nodes to be filtered by the last comment timestamp. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
       ),
+      'last_changed' => array(
+        'name' => t('Comment: Last Changed Time'),
+        'operator' => 'views_handler_operator_gtlt',
+        'value' => views_handler_filter_date_value_form(),
+        'handler' => 'views_handler_filter_last_changed',
+        'option' => 'string',
+        'help' => t('This filter allows nodes to be filtered by the timestamp for the last comment or node edit. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+      ),
+
     ),
     'sorts' => array(
       'last_comment_timestamp' => array(
@@ -146,9 +164,35 @@ function comment_views_tables() {
         'name' => t('Comment: Comment Count'),
         'help' => t('This filter allows you to sort by the number of comments.'),
       ),
+      'last_changed' => array(
+        'name' => t('Comment: Last Changed'),
+        'handler' => 'views_handler_sort_last_changed',
+        'option' => views_handler_sort_date_options(),
+        'help' => t('Sort based on the most recent comment or edit for the node.'),
+      ),
     ),
   );
   return $tables;
+}
+
+function views_query_handler_field_last_changed($field, $fieldinfo, &$query) {
+  $query->add_field('GREATEST(node.changed, node_comment_statistics.last_comment_timestamp)', '', $field['tablename'] . '_last_changed');
+}
+
+function views_handler_filter_last_changed($op, $filter, $filterinfo, &$query) {
+  $value = $filter['value'] == 'now' ? "***CURRENT_TIME***" : strtotime($filter['value']);
+
+  $table = $filterinfo['table'];
+  $column = $table . '_' . $filterinfo['field'];
+  $field = "GREATEST(node.changed, node_comment_statistics.last_comment_timestamp)";
+  $query->ensure_table($table);
+  $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
+}
+
+
+function views_handler_sort_last_changed($action, &$query, $sortinfo, $sort) {
+  $query->ensure_table('node_comment_statistics');
+  $query->orderby[] = 'GREATEST(node.changed, node_comment_statistics.last_comment_timestamp) ' . $sort['sortorder'];  
 }
 
 function views_query_handler_field_last_comment_name($field, $fieldinfo, &$query) {
@@ -192,7 +236,7 @@ function views_handler_comments_with_new($fieldinfo, $fielddata, $value, $data) 
   $comments = intval($value);
   if ($comments && $new = comment_num_new($data->nid)) {
     $comments .= '<br />';
-    $comments .= l(t('@num new', array('@num' => $new)), "node/$data->nid", NULL, comment_page_new_query($data->nid), 'new');
+    $comments .= l(t('@num new', array('@num' => $new)), "node/$data->nid", NULL, NULL, 'new');
   }
   return $comments;
 }
