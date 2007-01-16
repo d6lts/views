@@ -240,16 +240,18 @@ EOT;
 
   // Set up the fields in nicely named chunks.
   foreach ($view->field as $id => $field) {
-    $field_name = views_css_safe($field['field']);
+    $field_name = $field['field'];
+    $css_field_name = views_css_safe($field['field']);
     if (isset($taken[$field_name])) {
-      $field_name = views_css_safe($field['queryname']);
+      $field_name = $field['queryname'];
+      $css_field_name = views_css_safe($field['queryname']);
     }
     $taken[$field_name] = true;
     $output .= <<<EOT
-<div class="view-label view-field-{$field_name}">
+<div class="view-label view-field-{$css_field_name}">
   <?php print \${$field_name}_label ?>
 </div>
-<div class="view-field view-data-{$field_name}">
+<div class="view-field view-data-{$css_field_name}">
   <?php print \${$field_name}?>
 </div>
 \n

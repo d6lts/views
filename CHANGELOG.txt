@@ -104,3 +104,5 @@ Views 5.x-1.4-rc1
 Views --dev
   Bugs fixed:
     o 109456: Match API documentation on 'field' definition on fields.
+    o 104459: Correct theme wizard field names.
+
