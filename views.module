@@ -1381,8 +1381,7 @@ function _views_construct_header($view, $fields) {
     }
 
     // Add CSS id to table cell header cell.
-    $header['id'] = views_css_safe('view-field-'. $field['queryname']);
-    $header['class'] = "view-cell-header";
+    $header['class'] = "view-cell-header" . views_css_safe(' view-field-'. $field['queryname']);
 
     $headers[] = $header;
   }
