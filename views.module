@@ -395,7 +395,7 @@ function views_reset_inline_args_cache($locale = 'en') {
 
   while ($view = db_fetch_object($result)) {
     // Skip over any non-argument views
-    if (strrpos($view->url, '$arg') == FALSE) {
+    if (strrpos($view->url, '$arg') === FALSE) {
       continue;
     }
     // unpack the array
@@ -419,7 +419,7 @@ function views_reset_inline_args_cache($locale = 'en') {
 
   foreach ($default_views as $name => $view) {
     if ($view->page && !$used[$name] && ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-      if (strrpos($view->url, '$arg')) {
+      if (strrpos($view->url, '$arg') !== FALSE) {
         $views_with_inline_args[$view->name] = $view;
       }
     }
