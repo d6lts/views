@@ -102,3 +102,5 @@ Views 5.x-1.4-rc1
     o 103649: allow customizing date interval granularity
 
 Views --dev
+  Bugs fixed:
+    o 109456: Match API documentation on 'field' definition on fields.

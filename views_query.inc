@@ -90,7 +90,7 @@ function _views_view_build_filters(&$query, &$view) {
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
         $id = $expose['id'];
-        
+
         if (isset($view->exposed_filter_offset)) {
           $count += $view->exposed_filter_offset;
         }
@@ -125,7 +125,7 @@ function _views_view_build_filters(&$query, &$view) {
 
     $replace = array('&gt;' => '>', '&lt;' => '<');
     $filter['operator'] = strtr($filter['operator'], $replace);
-    
+
     if (function_exists($filterinfo['handler'])) {
       $filterinfo['handler']('handler', $filter, $filterinfo, $query);
     }
@@ -223,7 +223,12 @@ function _views_view_build_fields(&$query, &$view) {
     }
 
     if (!$fieldinfo['notafield']) {
-      $query->add_field($field['field'], $field['tablename'], $field['queryname']);
+      if ($fieldinfo['field']) {
+        $query->add_field($fieldinfo['field'], $field['tablename'], $field['queryname']);
+      }
+      else {
+        $query->add_field($field['field'], $field['tablename'], $field['queryname']);
+      }
     }
     // special handling
     if (is_array($fieldinfo['addlfields'])) {
@@ -232,7 +237,7 @@ function _views_view_build_fields(&$query, &$view) {
     }
   }
   $plugins = _views_get_style_plugins();
-  if (($view->page && $plugins[$view->page_type]['needs_table_header']) || 
+  if (($view->page && $plugins[$view->page_type]['needs_table_header']) ||
       ($view->block && $plugins[$view->block_type]['needs_table_header'])) { // table only
     $view->table_header = _views_construct_header($view, $fields);
     $query->set_header($view->table_header);
@@ -568,14 +573,14 @@ class _views_query {
 
       $joininfo = (!$this->joins[$table][$table_num] ?
         $table_data[$table]['join'] : $this->joins[$table][$table_num]);
-        
+
       $left_table_alias = isset($joininfo['left']['alias']) ? $joininfo['left']['alias'] : $tinfo['alias_prefix'];
       $left_table_alias .= $joininfo['left']['table'];
 
       // the { is a special character which seems to be treated differently
       // in PHP5 than PHP4 so we do this a little oddly.
       $join_type = $joininfo['type'] == 'inner' ? 'INNER' : 'LEFT';
-      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $left_table_alias .".". 
+      $joins .= " $join_type JOIN {" . $table_real . "} $table_alias ON " . $left_table_alias .".".
         $joininfo['left']['field'] . " = $table_alias." . $joininfo['right']['field'];
 
       if (isset($joininfo['extra'])) {
