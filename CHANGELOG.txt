@@ -94,3 +94,4 @@ Views 4.7.x-dev
     o 104854: Fixed $arg at the beginning of the URL *again*
     o 107855: Removed double check_plain in RSS feed titles.
     o 107723: Removed use of IDs on table fields -- this might require your CSS files to be adjusted!
+    o 107713: Popular recent and popular alltime are now disabled by default.

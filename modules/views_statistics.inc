@@ -64,6 +64,7 @@ function statistics_views_arguments() {
 function statistics_views_default_views() {
   $view = new stdClass();
   $view->name = 'popular_recent';
+  $view->disabled = TRUE;
   $view->description = t('Nodes sorted by recent page-views');
   $view->access = array (
 );
@@ -152,6 +153,7 @@ function statistics_views_default_views() {
 
   $view = new stdClass();
   $view->name = 'popular_alltime';
+  $view->disabled = TRUE;
   $view->description = t('Nodes sorted by total page-views');
   $view->access = array (
 );
