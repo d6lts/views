@@ -110,9 +110,9 @@ function theme_views_rss_feed($view, $nodes, $type) {
   global $base_url;
 
   $channel = array(
-    'title'       => check_plain(views_get_title($view, 'page')),
+    'title'       => views_get_title($view, 'page'),
     'link'        => url($view->real_url, NULL, NULL, true),
-    'description' => check_plain($view->description),
+    'description' => $view->description,
   );
 
   $item_length = variable_get('feed_item_length', 'teaser');
