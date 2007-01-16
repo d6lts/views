@@ -90,3 +90,4 @@ Views 4.7.x-1.4
 Views 4.7.x-dev
   Bugs fixed:
     o 109456: Match API documentation on 'field' definition on fields.
+    o 104459: Correct theme wizard field names.
