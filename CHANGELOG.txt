@@ -105,4 +105,5 @@ Views --dev
   Bugs fixed:
     o 109456: Match API documentation on 'field' definition on fields.
     o 104459: Correct theme wizard field names.
-
+    o 104854: Fixed $arg at the beginning of the URL *again*
+    o 107855: Removed double check_plain in RSS feed titles.
