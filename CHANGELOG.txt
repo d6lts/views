@@ -109,3 +109,4 @@ Views --dev
     o 107855: Removed double check_plain in RSS feed titles.
     o 107723: Removed use of IDs on table fields -- this might require your CSS files to be adjusted!
     o 107713: Popular recent and popular alltime are now disabled by default.
+    o 106460: Update of module weight was not run on install of 1.4, causing taxonomy/term view to not override Drupal default.
