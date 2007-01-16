@@ -1,6 +1,15 @@
 <?php
 // $Id$
 
+/**
+ * TODO:
+ * 
+ * Separate wizard into plugins. Give each one a sub tab.
+ * Restrict list wizard to only views that actually are lists.
+ * Create a table wizard.
+ * Add grouping based upon sort criteria.
+ */
+
 function views_theme_wizard_help($section = 'admin/help#views_theme_wizard') {
   $output = '';
   switch ($section) {

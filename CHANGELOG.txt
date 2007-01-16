@@ -88,3 +88,5 @@ Views 4.7.x-1.4
     o 103649: allow customizing date interval granularity
 
 Views 4.7.x-dev
+  Bugs fixed:
+    o 109456: Match API documentation on 'field' definition on fields.
