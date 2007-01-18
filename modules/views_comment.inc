@@ -141,7 +141,7 @@ function comment_views_tables() {
         'value' => views_handler_filter_date_value_form(),
         'handler' => 'views_handler_filter_timestamp',
         'option' => 'string',
-        'help' => t('This filter allows nodes to be filtered by the last comment timestamp. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+        'help' => t('This filter allows nodes to be filtered by the timestamp for the last comment or node edit. The "Value" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word "NOW" to use the current time. You may enter a positive or negative number in the "Option" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with "NOW". If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
       ),
       'last_changed' => array(
         'name' => t('Comment: Last Changed Time'),
@@ -149,7 +149,7 @@ function comment_views_tables() {
         'value' => views_handler_filter_date_value_form(),
         'handler' => 'views_handler_filter_last_changed',
         'option' => 'string',
-        'help' => t('This filter allows nodes to be filtered by the timestamp for the last comment or node edit. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+        'help' => t('This filter allows nodes to be filtered by the timestamp for the last comment or node edit. The "Value" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word "NOW" to use the current time. You may enter a positive or negative number in the "Option" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with "NOW". If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
       ),
 
     ),
