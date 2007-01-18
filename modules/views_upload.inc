@@ -157,6 +157,7 @@ function views_handler_file_filename_download($fieldinfo, $fielddata, $value, $d
 function views_handler_file_filter_fid_exist($op, $filter, $filterdata, &$query) {
   switch ($op) {
     case 'handler':
+      $query->ensure_table('file_revisions');
       if ($filter['value']) {
         $query->add_where('file_revisions.fid');
       }
