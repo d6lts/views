@@ -249,13 +249,14 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
     foreach ($terms as $term) {
       $links[] = check_plain($term->name);
     }
+    $links = !empty($links) ? implode(' | ', $links) : '';
   }
   else {
     $node = new stdClass();
     $node->taxonomy = $terms;
-    $links = taxonomy_link('taxonomy terms', $node);
+    $links = theme('links', taxonomy_link('taxonomy terms', $node));
   }
-  return !empty($links) ? implode(' | ', $links) : '';
+  return $links;
 }
 
 /**
