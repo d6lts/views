@@ -99,3 +99,6 @@ Views 4.7.x-dev
     o 107974: Ensure file_revisions table is added to query when using 'node has files' filter.
     o 107371: Correct spelling of 'weather' to 'whether'.
     o 107218, 107217: Fixed some E_NOTICE errors.
+
+  New features:
+    o 105620: New (undocumented) hook_views_tables_alter and hook_views_arguments_alter.
