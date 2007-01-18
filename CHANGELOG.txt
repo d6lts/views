@@ -115,3 +115,7 @@ Views --dev
     o 107218: 107217: Fixed some E_NOTICE errors.
     o 106464: Taxonomy links showed up as Array | Array | Array rather than the taxonomy terms.
 
+  New features:
+    o 105620: New (undocumented) hook_views_tables_alter and hook_views_arguments_alter.
+
+
