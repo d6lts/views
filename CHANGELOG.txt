@@ -111,3 +111,4 @@ Views --dev
     o 107713: Popular recent and popular alltime are now disabled by default.
     o 106460: Update of module weight was not run on install of 1.4, causing taxonomy/term view to not override Drupal default.
     o 107974: Ensure file_revisions table is added to query when using 'node has files' filter.
+    o 107371: Correct spelling of 'weather' to 'whether'.

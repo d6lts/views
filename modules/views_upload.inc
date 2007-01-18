@@ -37,14 +37,14 @@ function upload_views_tables() {
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
         'handler' => 'views_handler_file_filter_fid_exist',
-        'help' => t('Filter weather the node has files for download'),
+        'help' => t('Filter whether the node has files for download'),
       ),
       'list' => array(
         'name' => t('File: Listed in file downloads'),
         'operator' => array('=' => t('Equals')),
         'list' => 'views_handler_operator_yesno',
         'list-type' => 'select',
-        'help' => t('Filter weather the file is listed in downloads'),
+        'help' => t('Filter whether the file is listed in downloads'),
       ),
     ),
   );
