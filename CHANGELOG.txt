@@ -98,4 +98,4 @@ Views 4.7.x-dev
     o 106460: Update of module weight was not run on install of 1.4, causing taxonomy/term view to not override Drupal default.
     o 107974: Ensure file_revisions table is added to query when using 'node has files' filter.
     o 107371: Correct spelling of 'weather' to 'whether'.
-    o 107218: Fixed some E_NOTICE errors.
+    o 107218, 107217: Fixed some E_NOTICE errors.

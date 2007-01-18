@@ -628,7 +628,6 @@ function _views_check_ops(&$view, $op, $form) {
     $view->new_field['id'] = $form['field']['add']['id']['#value'];
     $view->new_field['tablename'] = $fieldbits[0];
     $view->new_field['field'] = $fieldbits[1];
-    $view->new_field['label'] = $fieldnames[$form['field']['add']['id']['#value']];
     $view->new_field['queryname'] = "$fieldbits[0]_$fieldbits[1]";
     return 'field';
   }
