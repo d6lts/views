@@ -349,7 +349,7 @@ function views_import_view_submit($formid, $form) {
   ob_end_clean();
 
   $tables = array_keys(_views_get_tables());
-  if ($view) {
+  if (isset($view)) {
     if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
       views_sanitize_view($view);
       drupal_set_title(t('Add a View'));
@@ -679,6 +679,7 @@ function _views_view_form($view, $op = '') {
   _views_check_arrays($view); // make sure arrays that might be empty get set
 
   // Put in all our add buttons, then process them to see if they've been hit.
+  $form = array();
   views_ui_add_add_button($form, 'field', _views_get_fields(true), t('Add Field'));
   views_ui_add_add_button($form, 'argument', _views_get_arguments(true), t('Add Argument'));
   views_ui_add_add_button($form, 'filter', _views_get_filters(true), t('Add Filter'));
