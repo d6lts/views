@@ -251,6 +251,7 @@ function views_handler_field_allterms($fieldinfo, $fielddata, $value, $data) {
     }
   }
   else {
+    $node = new stdClass();
     $node->taxonomy = $terms;
     $links = taxonomy_link('taxonomy terms', $node);
   }

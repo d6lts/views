@@ -335,7 +335,7 @@ function views_ui_admin_import_submit($formid, $form) {
   ob_end_clean();
 
   $tables = array_keys(_views_get_tables());
-  if ($view) {
+  if (isset($view)) {
     if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
       views_sanitize_view($view);
       drupal_set_title(t('Add a View'));
