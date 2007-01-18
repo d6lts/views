@@ -117,5 +117,5 @@ Views --dev
 
   New features:
     o 105620: New (undocumented) hook_views_tables_alter and hook_views_arguments_alter.
-
+    o 107471: Spiffy new theme wizard features. Thanks Crell!!
 
