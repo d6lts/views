@@ -228,6 +228,7 @@
       break;
   } // End case
 
+  db_query("UPDATE {system} SET weight = 10 WHERE name = 'views'");
   if ($success) {
     module_enable(array('views_ui'));
     drupal_set_message(t('Views module installed tables successfully.'));
@@ -349,6 +350,13 @@ function views_update_9() {
 }
 
 function views_update_10() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'views'");
+  return $ret;
+}
+
+function views_update_11() {
+  // running this again because fresh installs of 1.4 didn't get it.
   $ret = array();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'views'");
   return $ret;
