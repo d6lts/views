@@ -34,9 +34,6 @@ function _views_get_arguments($titles = false) {
     }
     else {
       $arguments = module_invoke_all('views_arguments');
-      // allow modules to alter the arguments supplied others
-      $arguments = module_invoke_all('views_arguments_alter', $arguments);
-      
       uasort($arguments, '_views_sort_arrays');
       foreach ($arguments as $name => $arg) {
         if ($arg['option'] && !is_array($arg['option'])) {
@@ -74,8 +71,6 @@ function _views_get_tables($full = false) {
     }
     else {
       $table_data = module_invoke_all('views_tables');
-      // allow modules to alter the definitions supplied others
-      $table_data = module_invoke_all('views_tables_alter', $table_data);
       $views_tables['tables'] = $table_data;
 
       foreach ($table_data as $name => $table) {
