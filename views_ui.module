@@ -335,7 +335,7 @@ function views_ui_admin_import_submit($formid, $form) {
   ob_end_clean();
 
   $tables = array_keys(_views_get_tables());
-  if ($view) {
+  if (isset($view)) {
     if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
       views_sanitize_view($view);
       drupal_set_title(t('Add a View'));
@@ -622,7 +622,6 @@ function _views_check_ops(&$view, $op, $form) {
     $view->new_field['id'] = $form['field']['add']['id']['#value'];
     $view->new_field['tablename'] = $fieldbits[0];
     $view->new_field['field'] = $fieldbits[1];
-    $view->new_field['label'] = $fieldnames[$form['field']['add']['id']['#value']];
     $view->new_field['queryname'] = "$fieldbits[0]_$fieldbits[1]";
     return 'field';
   }
