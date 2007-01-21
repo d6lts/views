@@ -257,7 +257,6 @@ function _views_view_build_fields(&$query, &$view) {
  * this calls handlers.
  */
 function _views_build_summary(&$query, $argtype, $option, $self_sort) {
-
   $arginfo = _views_get_arguments();
   if (!function_exists($arginfo[$argtype]['handler'])) {
     return false;
@@ -276,6 +275,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   if ($self_sort) {
     $arginfo[$argtype]['handler']('sort', $query, $self_sort);
   }
+  $query->no_distinct = TRUE; // prevent DISTINCT from mucking up summaries.
 }
 
 // ---------------------------------------------------------------------------
@@ -341,7 +341,7 @@ class _views_query {
    * Set the base field to be distinct.
    */
   function set_distinct() {
-    if (count($this->fields) && substr($this->fields[0], 0, 7) != 'DISTINCT') {
+    if (count($this->fields) && substr($this->fields[0], 0, 8) != 'DISTINCT') {
       $field = $this->fields[0];
       $this->fields[0] = "DISTINCT($field)";
       $this->count_field = "DISTINCT($field)";

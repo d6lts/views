@@ -720,8 +720,10 @@ function views_handler_filter_nodetype($op) {
  * Set a query to be distinct as a filter handler
  */
 function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
-  $query->set_distinct();
-  $query->add_groupby('node.nid');
+  if (!$query->no_distinct) {
+    $query->set_distinct();
+    $query->add_groupby('node.nid');
+  }
 }
 
 /*
