@@ -937,8 +937,8 @@ function views_edit_view($view, $op = '') {
     '#type' => 'textfield',
     '#title' => t('Nodes per Block'),
     '#default_value' => $view->nodes_per_block,
-    '#size' => 2,
-    '#maxlength' => 2,
+    '#size' => 3,
+    '#maxlength' => 3,
     '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
     '#attributes' => NULL,
   );
@@ -1054,6 +1054,10 @@ function views_edit_view($view, $op = '') {
   $form['save'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
+  );
+  $form['save_and_edit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save and edit'),
   );
   if ($view->vid) {
     $form['delete'] = array(
@@ -1602,8 +1606,9 @@ function views_ui_render_section_add(&$form, $items,  $label) {
  * Validate that a view sent via form is OK.
  */
 function views_edit_view_validate($form_id, $view, $form) {
-  $op = $_POST['op'];
-  if ($op != t('Save')) {
+  $op = $view['op'];
+
+  if ($op != t('Save') && $op != t('Save and edit')) {
     return; // only validate on saving!
   }
 
@@ -1711,7 +1716,10 @@ function views_edit_view_submit($form_id, $form) {
     drupal_set_message(t('View successfully added.'));
   }
 
-  return 'admin/build/views';
+  if ($form['op'] == t('Save')) {
+    return 'admin/build/views';
+  }
+  
 }
 
 /**

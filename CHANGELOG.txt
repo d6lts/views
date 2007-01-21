@@ -115,7 +115,8 @@ Views --dev
     o 107218: 107217: Fixed some E_NOTICE errors.
     o 106464: Taxonomy links showed up as Array | Array | Array rather than the taxonomy terms.
     o 110212: Text patch to clarify date fields.
+    o 110299: Change nodes per block max size from 2 chars wide to 3, as it was meant to be.
 
   New features:
     o 107471: Spiffy new theme wizard features. Thanks Crell!!
-
+    o 105081: Save and edit button to save but not go change screens.
