@@ -117,7 +117,8 @@ Views --dev
     o 110212: Text patch to clarify date fields.
     o 110299: Change nodes per block max size from 2 chars wide to 3, as it was meant to be.
     o 110648: Block title not showing up in admin if view only provides block.
-
+    o 110462: set_distinct didn't properly check to see if the query was already distinct.
+    o Distinct filter could mess up summary queries by making them distinct on nid which isn't what is supposed to happen there.
   New features:
     o 107471: Spiffy new theme wizard features. Thanks Crell!!
     o 105081: Save and edit button to save but not go change screens.
