@@ -943,8 +943,8 @@ function _views_view_form($view, $op = '') {
     '#type' => 'textfield',
     '#title' => t('Nodes per Block'),
     '#default_value' => $view->nodes_per_block,
-    '#size' => 2,
-    '#maxlength' => 2,
+    '#size' => 3,
+    '#maxlength' => 3,
     '#description' => t('If using a block, the maximum number of items to display in the block. Pagers are not used in blocks.'),
     '#attributes' => NULL,
   );
