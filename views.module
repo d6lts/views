@@ -1858,3 +1858,16 @@ function theme_view($view_name, $limit = NULL, $use_pager = NULL, $type = 'embed
   }
 }
 
+
+/**
+ * This function is used as a central place to manage some translatable text strings
+ * that are used in different places.
+ * @param $text
+ *   which string to return.
+ */
+function views_t_strings($text) {
+  switch ($text) {
+    case 'filter date':
+      return t('The "Value" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word "now" to use the current time. You may enter a positive or negative number in the "Option" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with "now". If you have the jscalendar module from jstools installed, you can use a popup date picker here.');
+  }
+}
