@@ -203,7 +203,7 @@ function views_ui_admin_page() {
     }
     $items[] = array(
       $view->name, 
-      views_get_title($view, 'menu'), 
+      views_get_title($view, 'admin'), 
       $view->description, 
       implode(', ', $provides), 
       $url, 

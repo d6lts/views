@@ -101,3 +101,4 @@ Views 4.7.x-dev
     o 107218, 107217: Fixed some E_NOTICE errors.
     o 110212: Text patch to clarify date fields.
     o 110299: Change nodes per block max size from 2 chars wide to 3, as it was meant to be.
+    o 110648: Block title not showing up in admin if view only provides block.
