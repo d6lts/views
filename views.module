@@ -618,7 +618,7 @@ function views_get_url($view, $args) {
  * Figure out what the title of a view should be.
  */
 function views_get_title($view, $context = 'menu', $args = NULL) {
-  if ($context == 'menu' && $view->menu_title)
+  if (($context == 'menu' || $context == 'admin' )&& $view->menu_title)
     return $view->menu_title;
 
   if ($context == 'block-info') {
@@ -640,11 +640,11 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
     }
   }
 
-  if (!$title && ($context == 'menu' || $context == 'page')) {
+  if (!$title && ($context == 'menu' || $context == 'page' || $context == 'admin')) {
     $title = $view->page_title;
   }
 
-  if (!$title && $context == 'block') {
+  if (!$title && $context == 'block' || $context == 'admin') {
     $title = $view->block_title;
   }
 
@@ -1858,3 +1858,16 @@ function theme_view($view_name, $limit = NULL, $use_pager = NULL, $type = 'embed
   }
 }
 
+
+/**
+ * This function is used as a central place to manage some translatable text strings
+ * that are used in different places.
+ * @param $text
+ *   which string to return.
+ */
+function views_t_strings($text) {
+  switch ($text) {
+    case 'filter date':
+      return t('The "Value" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word "now" to use the current time. You may enter a positive or negative number in the "Option" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with "now". If you have the jscalendar module from jstools installed, you can use a popup date picker here.');
+  }
+}

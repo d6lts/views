@@ -211,7 +211,8 @@ function node_views_tables() {
         'value' => views_handler_filter_date_value_form(),
         'handler' => 'views_handler_filter_timestamp',
         'option' => 'string',
-        'help' => t('This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+        'help' => t('This filter allows nodes to be filtered by their creation date.')
+          .' '. views_t_strings('filter date'),
       ),
       'changed' => array(
         'name' => t('Node: Updated Time'),
@@ -219,7 +220,8 @@ function node_views_tables() {
         'value' => views_handler_filter_date_value_form(),
         'handler' => 'views_handler_filter_timestamp',
         'option' => 'string',
-        'help' => t('This filter allows nodes to be filtered by their creation date. Enter dates in the format: CCYY-MM-DD HH:MM:SS. Enter \'now\' to use the current time. You may enter a delta (in seconds) to the option that will be added to the time; this is most useful when combined with now. If you have the jscalendar module from jstools installed, you can use a popup date picker here.'),
+        'help' => t('This filter allows nodes to be filtered by the time they were updated.')
+          .' '. views_t_strings('filter date'),
       ),
       'body' => array(
         'name' => t('Node: Body'),
@@ -718,8 +720,10 @@ function views_handler_filter_nodetype($op) {
  * Set a query to be distinct as a filter handler
  */
 function views_handler_filter_distinct($op, $filter, $filterinfo, &$query) {
-  $query->set_distinct();
-  $query->add_groupby('node.nid');
+  if (!$query->no_distinct) {
+    $query->set_distinct();
+    $query->add_groupby('node.nid');
+  }
 }
 
 /*
