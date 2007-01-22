@@ -87,7 +87,7 @@ Views 4.7.x-1.4
     o 89421: New last changed sort / filter / field
     o 103649: allow customizing date interval granularity
 
-Views 4.7.x-dev
+Views 4.7.x-1.5
   Bugs fixed:
     o 109456: Match API documentation on 'field' definition on fields.
     o 104459: Correct theme wizard field names.
@@ -104,3 +104,5 @@ Views 4.7.x-dev
     o 110648: Block title not showing up in admin if view only provides block.
     o 110462: set_distinct didn't properly check to see if the query was already distinct.
     o Distinct filter could mess up summary queries by making them distinct on nid which isn't what is supposed to happen there.
+
+Views 4.7.x-dev
