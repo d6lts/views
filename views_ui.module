@@ -1708,6 +1708,7 @@ function views_edit_view_submit($form_id, $form) {
   }
 
   _views_save_view($view);
+  views_invalidate_cache();
   menu_rebuild();
   if ($form['vid']) {
     drupal_set_message(t('View successfully saved.'));
@@ -1718,8 +1719,7 @@ function views_edit_view_submit($form_id, $form) {
 
   if ($form['op'] == t('Save')) {
     return 'admin/build/views';
-  }
-  
+  } 
 }
 
 /**
