@@ -461,12 +461,12 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
     $clause = "'" . implode("','", $value) . "'";
     $where = "$tablename.tid IN ($clause)";
 
-    // for each depth > 0, add the next child in term_hierarchy to the join
+    // for each depth > 0, add the next parent in term_hierarchy to the join
+    $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
+    $tablename = $query->get_table_name('term_hierarchy', $thnum);
     for ($i = 0; $i < $depth; $i++) {
-      $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
-      $thname = $query->get_table_name('term_hierarchy', $thnum);
-      $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $thname, 'field' => 'parent'), 'right' => array('field' => 'tid')));
-      $tablename = $query->get_table_name('term_data', $num);
+      $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'parent'), 'right' => array('field' => 'tid')));
+      $tablename = $query->get_table_name('term_hierarchy', $thnum);
       $where .= " OR $tablename.tid IN ($clause)";
     }
     $query->add_where($where);
@@ -487,12 +487,12 @@ function _views_add_taxonomy($op, $value, $depth, &$query) {
       $tablename = $query->get_table_name('term_node', $num);
       $where = "$tablename.tid = '$tid'";
 
-      // for each depth > 0, add the next child in term_hierarchy to the join
+      // for each depth > 0, add the next parent in term_hierarchy to the join
+      $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
+      $tablename = $query->get_table_name('term_hierarchy', $thnum);
       for ($i = 0; $i < $depth; $i++) {
-        $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
-        $thname = $query->get_table_name('term_hierarchy', $thnum);
-        $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $thname, 'field' => 'parent'), 'right' => array('field' => 'tid')));
-        $tablename = $query->get_table_name('term_data', $num);
+        $thnum = $query->add_table('term_hierarchy', false, 1, array('left' => array('table' => $tablename, 'field' => 'parent'), 'right' => array('field' => 'tid')));
+        $tablename = $query->get_table_name('term_hierarchy', $thnum);
         $where .= " OR $tablename.tid = '$tid'";
       }
       $query->add_where($where);
