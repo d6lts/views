@@ -272,6 +272,7 @@ function _views_build_summary(&$query, $argtype, $option, $self_sort) {
   $query->add_field("count($primary_field)", '', 'num_nodes');
   $query->add_groupby($fieldinfo['field']);
   $query->set_count_field("DISTINCT($fieldinfo[field])");
+
   if ($self_sort) {
     $arginfo[$argtype]['handler']('sort', $query, $self_sort);
   }
@@ -339,13 +340,12 @@ class _views_query {
   /*
    * Set the base field to be distinct.
    */
-  function set_distinct() {
-    if (count($this->fields) && substr($this->fields[0], 0, 8) != 'DISTINCT') {
-      $field = $this->fields[0];
-      $this->fields[0] = "DISTINCT($field)";
-      $this->count_field = "DISTINCT($field)";
+  function set_distinct($value = TRUE) {
+    if (!($this->no_distinct && $value)) {
+      $this->distinct = $value;
     }
   }
+
   /*
    * Remove all fields that may've been added; primarily used for summary
    * mode where we're changing the query because we didn't get data we needed.
@@ -566,6 +566,15 @@ class _views_query {
    */
   function query($getcount = false) {
     $table_data = _views_get_tables();
+
+    // Set distinct
+    if (!$this->no_distinct && $this->distinct && count($this->fields)) {
+      $field = $this->fields[0];
+      $this->fields[0] = "DISTINCT($field)";
+      $this->count_field = "DISTINCT($this->count_field)";
+      //this is only needed once
+      $this->no_distinct = TRUE;
+    }
 
     // Add all the tables to the query via joins. We assume all LEFT joins.
     foreach ($this->tablequeue as $tinfo) {
