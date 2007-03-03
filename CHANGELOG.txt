@@ -131,3 +131,4 @@ Views --dev
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
+    o #74541: Improved handling of role filtering.

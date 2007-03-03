@@ -694,18 +694,6 @@ function views_handler_filter_isnew($op, $filter, $filterinfo, &$query) {
 }
 
 /*
- * Create a list of roles.
- */
-function views_handler_filter_role() {
-  $rids = array();
-  $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
-  while ($obj = db_fetch_object($result)) {
-    $rids[$obj->rid] = $obj->name;
-  }
-  return $rids;
-}
-
-/*
  * Create a list of node types.
  */
 function views_handler_filter_nodetype($op) {

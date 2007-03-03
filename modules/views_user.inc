@@ -69,6 +69,7 @@ function user_views_tables() {
         'name' => t('Role: Author Role'),
         'operator' => 'views_handler_operator_andor',
         'list' => 'views_handler_filter_role',
+        'handler' => 'views_handler_filter_role_custom',
         'value-type' => 'array',
         'help' => t('Include the node only if the author is a member of the selected role.'),
       ),
@@ -332,15 +333,6 @@ function views_handler_filter_usercurrent() {
 }
 
 /*
- * Custom filter for current user.
- */
-function views_handler_filter_usercurrent_custom($op, $filter, $filterinfo, &$query) {
-  global $user;
-  $query->ensure_table('users');
-  $query->add_where("users.uid $filter[operator] '$user->uid'");
-}
-
-/*
  * Add special info to see if a user either authored OR commented on a post
  */
 function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
@@ -357,4 +349,94 @@ function views_handler_filter_uid_touched($op, $filter, $filterinfo, &$query) {
 
   $query->set_distinct(); // once you do this, there's just one node.
   $query->add_where("node.uid = '%s' OR $table.uid = '%s'", $filter['value'], $filter['value']);
+}
+
+/*
+ * Create a list of roles.
+ */
+function views_handler_filter_role() {
+  $rids = array();
+  $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
+  while ($obj = db_fetch_object($result)) {
+    $rids[$obj->rid] = $obj->name;
+  }
+  return $rids;
+}
+
+/*
+ * Custom filter for roles
+ */
+function views_handler_filter_role_custom($op, $filter, $filterinfo, &$query) {
+  $table = $filterinfo['table'];
+  $field = $filterinfo['field'];
+
+  //filter for role authenticated users
+  if (in_array(DRUPAL_AUTHENTICATED_RID, $filter['value'])) {
+    if ($filter['operator'] == 'OR') {
+      //filter for anonymous users too -> return all
+      if (in_array(DRUPAL_ANONYMOUS_RID, $filter['value'])) {
+        return;
+      }
+      $query->add_where("node.uid != 0");
+      return;
+    }
+    else if ($filter['operator'] == 'NOR') {
+      //filter for anonymous users too?
+      if (in_array(DRUPAL_ANONYMOUS_RID, $filter['value'])) {
+        $query->ensure_table($table);
+        $query->add_where("%s.%s = '0'", $table, $field); //this will get no results
+        return;
+      }
+      else {
+        $query->add_where("node.uid = 0");
+        return;
+      }
+    }
+    else if ($filter['operator'] == 'AND' && !in_array(DRUPAL_ANONYMOUS_RID, $filter['value'])) {
+      $key = array_search(DRUPAL_AUTHENTICATED_RID, $filter['value']);
+      unset($filter['value'][$key]);
+      //if there are other roles left the default filter handling is ok
+      //else we must exclude the anonymous user
+      if (count($filter['value']) == 0) {
+        $query->add_where("node.uid != 0");
+        return;
+      }
+    }
+  }
+  //filter for role anonymous users
+  else if (in_array(DRUPAL_ANONYMOUS_RID, $filter['value'])) {
+    if ($filter['operator'] == 'OR') {
+      $key = array_search(DRUPAL_ANONYMOUS_RID, $filter['value']);
+      unset($filter['value'][$key]);
+      
+      if (count($filter['value']) == 0) {
+        $query->add_where("node.uid = 0");
+        return;
+      }
+      else {
+        //we need to do the join to users_roles here manually
+        $table_data = _views_get_tables();
+        $joininfo = $table_data[$table]['join'];
+        $joininfo['extra']['rid'] = array_map('intval', $filter['value']);
+        $num = $query->add_table($table, false, 1, $joininfo);
+        $tablename = $query->get_table_name($table, $num);
+        //and allow anonymous nodes
+        $query->add_where("node.uid = 0 OR %s.%s IS NOT NULL", $tablename, $field);
+        return;
+      }
+    }
+    else if ($filter['operator'] == 'NOR') {
+      $query->add_where("node.uid != 0");
+    }
+    else if ($filter['operator'] == 'AND') {
+      $query->add_where("node.uid = 0");
+      if (count($filter['value']) == 1) {
+        //no need to run the default filter handler any more
+        return;
+      }
+    }
+  }
+  if ($filter['value']) {
+    views_handler_filter_default($op, $filter, $filterinfo, $query);
+  }
 }
