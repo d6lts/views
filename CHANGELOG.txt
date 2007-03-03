@@ -126,3 +126,6 @@ Views --dev
   Bugs fixed:
     o Capitalization and t() fixes to recent popular content and all time popular content views.
     o #123986: documentation fix in argument handling code
+    o #111881: change 'user' table to use INNER join because every node has an author
+
+
