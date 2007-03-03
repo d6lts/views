@@ -133,6 +133,7 @@ Views --dev
     o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
     o #111936: Allow search keyword to be optional.
     o #116985: Fix channel link in RSS feeds.
+    o #122103: Fix blank titles of blocks exported by views.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
