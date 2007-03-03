@@ -319,7 +319,6 @@ class _views_query {
 
     // We check for this specifically because we don't want to add it aliased.
     if ($table == $query->primary_table && $field == $view->primary_field) {
-      dprint('..');
       return;
     }
 

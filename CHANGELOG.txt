@@ -106,3 +106,4 @@ Views 4.7.x-1.5
     o Distinct filter could mess up summary queries by making them distinct on nid which isn't what is supposed to happen there.
 
 Views 4.7.x-dev
+    o #111881: change 'user' table to use INNER join because every node has an author

@@ -10,6 +10,7 @@ function user_views_tables() {
     'name' => 'users',
     'provider' => 'internal', // won't show up in external list.
     'join' => array(
+      'type' => 'inner',
       'left' => array(
         'table' => 'node',
         'field' => 'uid'
