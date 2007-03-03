@@ -112,9 +112,11 @@ Views 4.7.x-dev
     o #103649: Documentation fix fix for date granularity
     o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
     o #111936: Allow search keyword to be optional.
+    o #116985: Fix channel link in RSS feeds.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
     o #111210: Create user filter by role to make it easier to manage users.
     o #115125: Allow use of file descriptions rather than just file names in attached files
     o #115856: Allow use of autocomplete for freetagging taxonomies.
+    o Allow RSS channel description to be set as part of the argument option.

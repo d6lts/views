@@ -33,7 +33,8 @@ function views_rss_views_arguments() {
     'rss_feed' => array(
       'name' => t('RSS: RSS Feed Selector'),
       'handler' => 'views_handler_arg_rss_feed',
-      'help' => t('This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds.'),
+      'option' => 'string',
+      'help' => t('This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds. You may enter the title the feed will advertise in the title field here, and the description of the feed in the option field here.'),
     ),
   );
   return $arguments;
@@ -52,7 +53,7 @@ function views_handler_arg_rss_feed($op, &$query, $argtype, $arg = '') {
     case 'filter':
       // This is a clone of the default selector, but it just invokes ours
       // rather than calling all of them.
-      views_rss_views_feed_argument('argument', $GLOBALS['current_view'], $arg);
+      views_rss_views_feed_argument('argument', $GLOBALS['current_view'], $arg, $argtype);
   }
 }
 
@@ -77,9 +78,29 @@ function views_rss_views_post_view($view, $items, $output) {
  * the 4th argument isn't part of the hook, but we use it to differentiate
  * when called as a hook or when called manually from views_rss_views_post_view
  */
-function views_rss_views_feed_argument($op, &$view, $arg) {
+function views_rss_views_feed_argument($op, &$view, $arg, $argdata = NULL) {
   if ($op == 'argument' && $arg == 'feed') {
     $view->page_type = 'views_rss';
+
+    if ($argdata['options']) {
+      $view->description = $argdata['options'];
+    }
+
+    // reset the 'real url' to the URL without the feed argument.
+    $view_args = array();
+    $max = count($view->args);
+    foreach ($view->args as $id => $view_arg) {
+      ++$count;
+      if ($view_arg == $arg && $view->argument[$id]['id'] == $argdata['id']) {
+        if ($count != $max) {
+          $view_args[] = $argdata['wildcard'];
+        }
+      }
+      else {
+        $view_args[] = $view_arg;
+      }
+    }
+    $view->feed_url = views_get_url($view, $view_args);
   }
   else if ($op == 'post_view') {
     $args = views_post_view_make_args($view, $arg, 'feed');
@@ -111,7 +132,7 @@ function theme_views_rss_feed($view, $nodes, $type) {
 
   $channel = array(
     'title'       => views_get_title($view, 'page'),
-    'link'        => url($view->real_url, NULL, NULL, true),
+    'link'        => url($view->feed_url ? $view->feed_url : $view->real_url, NULL, NULL, true),
     'description' => $view->description,
   );
 
@@ -170,9 +191,6 @@ function theme_views_rss_feed($view, $nodes, $type) {
 
   $channel_defaults = array(
     'version'     => '2.0',
-    'title'       => variable_get('site_name', 'drupal') .' - '. variable_get('site_slogan', ''),
-    'link'        => $base_url,
-    'description' => variable_get('site_mission', ''),
     'language'    => $GLOBALS['locale'],
   );
   $channel = array_merge($channel_defaults, $channel);
