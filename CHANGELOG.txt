@@ -130,6 +130,7 @@ Views --dev
     o #102716: Reduced the number of JOINs for taxonomy hierarchy queries
     o #103649: Documentation fix fix for date granularity
     o #115519: Restrict width of select items in UI.
+    o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
