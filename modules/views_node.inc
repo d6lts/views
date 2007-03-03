@@ -317,7 +317,8 @@ function node_views_arguments() {
     'node_feed' => array(
       'name' => t('Node: Feed Selector'),
       'handler' => 'views_handler_arg_node_feed',
-      'help' => t('This argument allows pluggable "feed" selectors. If using views_rss module, "feed" will turn the view into an RSS feed. Other modules may provide their own feeds.'),
+      'option' => 'string',
+      'help' => t('This argument allows pluggable "feed" selectors. If using views_rss module, "feed" will turn the view into an RSS feed. Other modules may provide their own feeds. You may enter the title the feed will advertise in the title field here. If the feed type offers a description, enter the description of the feed in the option field here.'),
     ),
   );
   return $arguments;
@@ -356,8 +357,8 @@ function node_views_default_views() {
     array (
       'type' => 'node_feed',
       'argdefault' => '2',
-      'title' => '',
-      'options' => '',
+      'title' => variable_get('site_name', 'drupal') .' - '. variable_get('site_slogan', ''),
+      'options' => variable_get('site_mission', ''),
       'wildcard' => '',
       'wildcard_substitution' => '',
     ),
@@ -758,7 +759,7 @@ function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
       // $view.
       foreach (module_implements('views_feed_argument') as $name) {
         $function = $name .'_views_feed_argument';
-        $function('argument', $GLOBALS['current_view'], $arg);
+        $function('argument', $GLOBALS['current_view'], $arg, $argtype);
       }
   }
 }
