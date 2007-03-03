@@ -112,3 +112,4 @@ Views 4.7.x-dev
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
+    o #111210: Create user filter by role to make it easier to manage users.
