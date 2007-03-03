@@ -1070,6 +1070,8 @@ function views_edit_view($view, $op = '') {
     '#value' => t('Cancel'),
   );
 
+  // Add the css file for form display.
+  drupal_add_css(drupal_get_path('module', 'views_ui') . '/views_ui.css');
   return $form;
 }
 
