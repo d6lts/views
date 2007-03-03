@@ -51,6 +51,36 @@ function user_views_tables() {
       ),
     )
   );
+  
+  // Get the list of non-default user roles indexed by rid.  
+  $user_roles = user_roles(TRUE);
+  unset($user_roles[DRUPAL_AUTHENTICATED_RID]);
+  
+  foreach ($user_roles as $rid => $name) {
+    $tables["users_role_$rid"] = array(
+      'name' => 'users',
+      'provider' => 'internal', // won't show up in external list.
+      'join' => array(
+        'left' => array(
+          'table' => 'node',
+          'field' => 'uid'
+        ),
+        'right' => array(
+          'field' => 'uid'
+        ),
+      ),
+      'filters' => array(
+        'uid' => array(
+          'name' => t('Node: Authors in role %role-name', array('%role-name' => $name)),
+          'list' => 'views_handler_filter_username',
+          'value-type' => 'array',
+          'operator' => 'views_handler_operator_or',
+          'rid' => $rid,
+          'help' => t("Only users in role %role-name will appear in the select box for this filter.", array('%role-name' => theme('placeholder', $name))),
+        ),
+      )
+    );
+  }
 
   $tables['users_roles'] = array(
     'name' => 'users_roles',
@@ -309,9 +339,14 @@ function views_handler_arg_username($op, &$query, $argtype, $arg = '') {
  * But then, why would large sites create a filter for one particular user?
  * Better to go with roles.
  */
-function views_handler_filter_username() {
+function views_handler_filter_username($op, $filterinfo) {
   $uids = array();
-  $result = db_query("SELECT u.uid, u.name FROM {users} u WHERE uid != 0 ORDER BY u.name");
+  if ($filterinfo && $filterinfo['rid']) {
+    $result = db_query("SELECT u.uid, u.name FROM {users} u JOIN {users_roles} ur ON u.uid = ur.uid WHERE u.uid != 0 AND ur.rid = %d", $filterinfo['rid']);
+  }
+  else {
+    $result = db_query("SELECT u.uid, u.name FROM {users} u WHERE uid != 0 ORDER BY u.name");
+  }
   while ($obj = db_fetch_object($result)) {
     $uids[$obj->uid] = $obj->name;
   }
