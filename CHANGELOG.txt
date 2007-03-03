@@ -100,7 +100,7 @@ Views 5.x-1.4-rc1
     o 89421: New last changed sort / filter / field
     o 103649: allow customizing date interval granularity
 
-Views 5.x-1.4-rc1
+Views 5.x-1.5
   Bugs fixed:
     o 109456: Match API documentation on 'field' definition on fields.
     o 104459: Correct theme wizard field names.
@@ -125,3 +125,4 @@ Views 5.x-1.4-rc1
 Views --dev
   Bugs fixed:
     o Capitalization and t() fixes to recent popular content and all time popular content views.
+    o #123986: documentation fix in argument handling code
