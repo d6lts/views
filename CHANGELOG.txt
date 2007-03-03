@@ -111,6 +111,7 @@ Views 4.7.x-dev
     o #74541: Improved handling of role filtering.
     o #103649: Documentation fix fix for date granularity
     o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
+    o #111936: Allow search keyword to be optional.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

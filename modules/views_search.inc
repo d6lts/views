@@ -30,7 +30,6 @@ function search_views_handler_search_index($op, $filter, $filterdata, &$query) {
       $select2 = 'i.relevance AS score';
       $search = search_parse_query($filter['value']);
       if ($search === NULL || $search[0] == '' || $search[2] == '') {
-        $query->add_where("0");
         return;
       }
 
@@ -41,7 +40,6 @@ function search_views_handler_search_index($op, $filter, $filterdata, &$query) {
       // Calculate maximum relevance, to normalize it
       $normalize = db_result(db_query('SELECT MAX(relevance) FROM temp_search_sids'));
       if (!$normalize) {
-        $query->add_where("0");
         return;
       }
       $select2 = str_replace('i.relevance', '('. (1.0 / $normalize) .' * i.relevance)', $select2);
