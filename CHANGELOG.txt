@@ -109,6 +109,7 @@ Views 4.7.x-dev
     o #111881: change 'user' table to use INNER join because every node has an author
     o #102716: Reduced the number of JOINs for taxonomy hierarchy queries
     o #74541: Improved handling of role filtering.
+    o #103649: Documentation fix fix for date granularity
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

@@ -37,14 +37,16 @@ function node_views_tables() {
         'sortable' => true,
         'handler' => views_handler_field_dates(),
         'option' => 'string',
-        'help' => t('Display the post time of the node.'),
+        'help' => t('Display the post time of the node.').' '.
+                  t('The option field may be used to specify the custom date format as it\'s required by the date() function or if "as time ago" has been chosen to customize the granularity of the time interval.'),
       ),
       'changed' => array(
         'name' => t('Node: Updated Time'),
         'sortable' => true,
         'handler' => views_handler_field_dates(),
         'option' => 'string',
-        'help' => t('Display the last time the node was updated.'),
+        'help' => t('Display the last time the node was updated.').' '.
+                  t('The option field may be used to specify the custom date format as it\'s required by the date() function or if "as time ago" has been chosen to customize the granularity of the time interval.'),
       ),
       'type' => array(
         'name' => t('Node: Type'),
