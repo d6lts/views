@@ -516,7 +516,8 @@ function views_block($op = 'list', $delta = 0) {
     foreach ($default_views as $name => $view) {
       if (!isset($block[$name]) && $view->block &&
         ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-        $block[$name]['info'] = filter_xss_admin(views_get_title($view, 'block'));
+        $title = filter_xss_admin(views_get_title($view, 'block'));
+        $block[$name]['info'] = empty($title) ? $name : $title;
       }
     }
     return $block;
