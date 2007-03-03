@@ -70,9 +70,12 @@ function upload_views_tables() {
         'option' => array(
           '#type' => 'select',
           '#options' => array(
-            'link' => t('With links'), 
-            'nolink' => t('Without links'),
-           )),
+            // kept original behind-the-scenes names link/nolink so patch to add description wouldn't affect existing Views
+            'link' => t('File names with links'),
+            'nolink' => t('File names without links'),
+            'linkdesc' => t('File descriptions with links'),
+            'nolinkdesc' => t('File descriptions without links'),
+          )),
         'sortable' => false,
         'help' => t('Display all attached files in one field.'),
       ),
@@ -180,13 +183,18 @@ function views_handler_file_all_files($fieldinfo, $fielddata, $value, $data, $li
   }
   $links = array();
 
-  $result = db_query("SELECT f.* FROM {file_revisions} fr INNER JOIN {files} f ON f.fid = fr.fid WHERE fr.vid = %d $and", $data->vid);
-    while ($file = db_fetch_object($result)) {
-    if ($fielddata['options'] == 'nolink') {
-      $links[] = check_plain($file->filename);
+  $result = db_query("SELECT f.*, fr.* FROM {file_revisions} fr INNER JOIN {files} f ON f.fid = fr.fid WHERE fr.vid = %d $and", $data->vid);
+  while ($file = db_fetch_object($result)) {
+    // link/nolink use file filename; linkdesc/nolinkdesc use file description
+    if ($fielddata['options'] == 'link' || $fielddata['options'] == 'nolink') {
+      $display_string = $file->filename;
+    } else {
+      $display_string = $file->description;
     }
-    else {
-      $links[] = l($file->filename, check_url(file_create_url($file->filepath)));
+    if ($fielddata['options'] == 'nolink' || $fielddata['options'] == 'nolinkdesc') {
+      $links[] = check_plain($display_string);
+    } else {
+      $links[] = l($display_string, check_url(file_create_url($file->filepath)));
     }
   }
   return implode(' | ', $links);
