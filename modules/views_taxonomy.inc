@@ -65,11 +65,13 @@ function taxonomy_views_tables() {
         'filters' => array(
           'tid' => array(
             'name' => t('Taxonomy: Terms for @voc-name', array('@voc-name' => $voc->name)),
-            'list' => 'views_handler_filter_tid_by_voc',
-            'value-type' => 'array',
-            'option' => 'string',
+            'value' => views_taxonomy_form($voc),
+            //views does handle this as array regardless what we state here due to the operators
+            'value-type' => 'array', 
+            'tags' => $voc->tags,
             'operator' => 'views_handler_operator_andor',
             'handler' => 'views_handler_filter_tid_custom',
+            'option' => 'string',
             'vocabulary' => $voc->vid,
             'help' => t("Only terms associated with %voc-name will appear in the select box for this filter. When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information.", array('%voc-name' => $voc->name)),
           ),
@@ -224,6 +226,46 @@ function taxonomy_views_default_views() {
   $views[$view->name] = $view;
   return $views;
 }
+
+
+function views_taxonomy_form(&$vocabulary) {
+  if ($vocabulary->tags) {
+    if ($vocabulary->help) {
+      $help = $vocabulary->help;
+    }
+    else {
+      $help = t('A comma-separated list of terms describing this content. Example: funny, bungee jumping, "Company, Inc.".');
+    }
+    $form = array('#type' => 'textfield',
+      '#description' => $help,
+      '#autocomplete_path' => 'taxonomy/autocomplete/'. $vocabulary->vid,
+      '#process' => array('views_taxonomy_process_form' => array()),
+      '#maxlength' => 255,
+    );
+  }
+  else { 
+    $form = taxonomy_form($vocabulary->vid, 0, $vocabulary->help);
+    unset($form['#title']);
+    unset($form['#options'][0]);
+  }
+  return $form;
+}
+
+/*
+ * Due to the operators AND/OR/NOT views does handle this alway as array,
+ * however the autocomplete field needs its string as default_value,
+ * so this undoes the views default_value conversion for arrays in this case
+ */
+function views_taxonomy_process_form($element) {
+  if ($element['#type'] == 'textfield' && is_array($element['#default_value'])) {
+    $element['#default_value'] = implode(',', $element['#default_value']);
+  }
+  if ($element['#type'] == 'textfield' && is_array($element['#value'])) {
+    $element['#value'] = implode(',', $element['#value']);
+  }
+  return $element;
+}
+
 
 /**
  * invalidate the views cache when taxonomy vocabulary changes.
@@ -399,28 +441,37 @@ function views_handler_filter_tid($op, $filterinfo) {
   return $tids;
 }
 
-/**
- * Create a tree list of terms for a single vocabulary
- */
-function views_handler_filter_tid_by_voc($op, $filterinfo) {
-  $tree = taxonomy_get_tree($filterinfo[vocabulary]);
-  $options = array();
-
-  if ($tree) {
-    foreach ($tree as $term) {
-      $options[$term->tid] = str_repeat('-', $term->depth) . $term->name;
-    }
-  }
-  return $options;
-}
-
 /*
  * add custom WHERE clauses and joins to a query based on taxonomy.
  */
 function views_handler_filter_tid_custom($op, $filter, $filterinfo, &$query) {
-  // When filtering via depth, we have to add a chain. If it's an or query
-  // we add 1 chain, but in an and query we actually basically have to add
-  // a 2 dimensional array.
+  //if there is an autocomplete field, we have to transform the string values into the tids
+  if ($filterinfo['tags']) {
+    // This regexp allows the following types of user input:
+    // this, "somecmpany, llc", "and ""this"" w,o.rks", foo bar
+    $regexp = '%(?:^|,\ *)("(?>[^"]*)(?>""[^"]* )*"|(?: [^",]*))%x';
+    preg_match_all($regexp, $filter['value'][0], $matches);
+    $typed_terms = array_unique($matches[1]);
+    
+    $filter['value'] = array();
+    foreach ($typed_terms as $typed_term) {
+      // If a user has escaped a term (to demonstrate that it is a group,
+      // or includes a comma or quote character), we remove the escape
+      // formatting like taxonomye_node_save()
+      $typed_term = str_replace('""', '"', preg_replace('/^"(.*)"$/', '\1', $typed_term));
+      $typed_term = trim($typed_term);
+      if ($typed_term == "") { continue; }
+
+      // See if the term exists in the chosen vocabulary
+      // and return the tid, otherwise, add a new record.
+      $possibilities = taxonomy_get_term_by_name($typed_term);
+      foreach ($possibilities as $possibility) {
+        if ($possibility->vid == $filterinfo['vocabulary']) {
+          $filter['value'][] = $possibility->tid;
+        }
+      }
+    }
+  }
 
   _views_add_taxonomy($filter['operator'], $filter['value'], $filter['options'], $query);
 

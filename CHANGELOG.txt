@@ -136,3 +136,4 @@ Views --dev
     o #74541: Improved handling of role filtering.
     o #111210: Create user filter by role to make it easier to manage users.
     o #115125: Allow use of file descriptions rather than just file names in attached files
+    o #115856: Allow use of autocomplete for freetagging taxonomies.
