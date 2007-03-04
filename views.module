@@ -103,7 +103,7 @@ function _views_get_tables($full = false) {
               }
             }
             if ($data['list']) {
-              $data['value'] = array('#type' => 'select', '#options' => $data['list']);
+              $data['value'] = array('#type' => 'select', '#options' => $data['list'], '#validate' => array('views_filter_validate_array' => $data['name']));
               if ($data['list-type'] != 'select') {
                 $data['value']['#multiple'] = TRUE;
               }
@@ -2053,6 +2053,22 @@ function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
   }
   $query->ensure_table($table);
   $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
+}
+
+/**
+ * Provide validation for filters with array values. The $name
+ * must be provided by whatever added the validator to the
+ * form gadget.
+ */
+function views_filter_validate_array($form, $name) {
+  $op = $_POST['op'];
+  if ($op != t('Save')) {
+    return; // only validate on saving!
+  }
+
+  if (empty($form['#value'])) {
+    form_error($form, t('@filter must have a value!', array('@filter' => $name)));
+  }
 }
 
 /**
