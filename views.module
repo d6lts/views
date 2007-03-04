@@ -1781,6 +1781,22 @@ function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
 }
 
 /**
+ * Provide validation for filters with array values. The $name
+ * must be provided by whatever added the validator to the
+ * form gadget.
+ */
+function views_filter_validate_array($form, $name) {
+  $op = $_POST['op'];
+
+  if ($op != t('Save') && $op != t('Save and edit')) {
+    return; // only validate on saving!
+  }
+  if (empty($form['#value'])) {
+    form_error($form, t('@filter must have a value!', array('@filter' => $name)));
+  }
+}
+
+/**
  * Provide a form gadget for dates.
  */
 function views_handler_filter_date_value_form() {

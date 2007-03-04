@@ -136,6 +136,7 @@ Views --dev
     o #122103: Fix blank titles of blocks exported by views.
     o #118069: Move the query cache into the real cache. This should clear up a few caching problems.
     o #122818: Incorrect use of fullname when queryname should have been used
+    o #108523: Properly validate that filter values need values selected.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
