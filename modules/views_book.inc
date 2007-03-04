@@ -128,7 +128,7 @@ function views_handler_field_book_parent_title_nl($fieldinfo, $fielddata, $value
 
 function views_handler_filter_book_parent_zero() {
   $parents = array();
-  $result = db_query("SELECT DISTINCT parent FROM {book} INNER JOIN {node} n ON book.vid = n.vid ORDER BY parent");
+  $result = db_query("SELECT DISTINCT parent FROM {book} b INNER JOIN {node} n ON b.vid = n.vid ORDER BY parent");
   while ($obj = db_fetch_object($result)) {
     $parents[$obj->parent] = "$obj->parent";
   }

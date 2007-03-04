@@ -118,6 +118,7 @@ Views 4.7.x-dev
     o #122818: Incorrect use of fullname when queryname should have been used
     o #108523: Properly validate that filter values need values selected.
     o #122063: Prevent strtotime from choking on empty timestamps
+    o #116190: Book parent didn't work with prefixes
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
