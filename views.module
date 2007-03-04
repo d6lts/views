@@ -273,6 +273,43 @@ function _views_sort_arrays($a, $b) {
   return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
+function _views_get_query(&$view, $args) {
+  if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name))) {
+    $info = unserialize($cached->data);
+
+    $plugins = _views_get_style_plugins();
+    if ($plugins[$view->type]['needs_table_header']) {
+      $view->table_header = _views_construct_header($view, _views_get_fields());
+    }
+  }
+  else {
+    views_load_query();
+    $info = _views_build_query($view, $args);
+    if ($view->is_cacheable) {
+      $data = array(
+        'query' => _views_replace_args($info['query'], $info['args']),
+        'countquery' => _views_replace_args($info['countquery'], $info['args']),
+      );
+      cache_set('views_query:' . $view->name, serialize($data));
+    }
+  }
+
+  // Run-time replacement so we can do cacheing
+  $replacements = module_invoke_all('views_query_substitutions', $view);
+  foreach ($replacements as $src => $dest) {
+    $info['query'] = str_replace($src, $dest, $info['query']);
+    $info['countquery'] = str_replace($src, $dest, $info['countquery']);
+
+    if (is_array($info['args'])) {
+      foreach ($info['args'] as $id => $arg) {
+        $info['args'][$id] = str_replace($src, $dest, $arg);
+      }
+    }
+  }
+
+  return $info;
+}
+
 /**
  * Return the style plugins; construct one if we haven't already. The
  * array is cached in a static variable so that arguments
@@ -562,7 +599,9 @@ function views_get_view($view_name) {
   $default_views = _views_get_default_views();
 
   if (isset($default_views[$view_name])) {
-    return $default_views[$view_name];
+    $view = $default_views[$view_name];
+    $view->is_cacheable = _views_is_cacheable($view);
+    return $view;
   }
 }
 
@@ -688,50 +727,18 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     ob_end_clean();
   }
 
-  $plugins = _views_get_style_plugins();
-
-  // Call a hook that'll let modules modify the view query before it is created
-  foreach (module_implements('views_pre_query') as $module) {
-    $function = $module .'_views_pre_query';
-    $output .= $function($view);
+  $info = _views_get_query($view, $args);
+  
+  if ($info['fail']) {
+    return FALSE;
   }
-
-  if ($view->query) {
-    $info['query'] = $view->query;
-    $info['countquery'] = $view->countquery;
-
-    if ($plugins[$view->type]['needs_table_header']) {
-      $view->table_header = _views_construct_header($view, _views_get_fields());
-    }
-  }
-  else {
-    $path = drupal_get_path('module', 'views');
-    require_once("./$path/views_query.inc");
-
-    $info = _views_build_query($view, $args);
-    if ($info['fail']) {
-      return FALSE;
-    }
-  }
-
-  // Run-time replacement so we can do cacheing
-  $replacements = module_invoke_all('views_query_substitutions', $view);
-  foreach ($replacements as $src => $dest) {
-    $info['query'] = str_replace($src, $dest, $info['query']);
-    $info['countquery'] = str_replace($src, $dest, $info['countquery']);
-
-    if (is_array($info['args'])) {
-      foreach ($info['args'] as $id => $arg) {
-        $info['args'][$id] = str_replace($src, $dest, $arg);
-      }
-    }
-  }
-
-  $query = db_rewrite_sql($info['query'], 'node');
   
   if ($type == 'queries') {
     return $info;
   }
+ 
+  $query = db_rewrite_sql($info['query'], 'node');
+ 
   
   if ($use_pager) {
     $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
@@ -780,6 +787,14 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
 
 // ---------------------------------------------------------------------------
 // Utility
+
+/**
+ * Load the query sub-module
+ */
+function views_load_query() {
+  $path = drupal_get_path('module', 'views');
+  require_once("./$path/views_query.inc");
+}
 
 /**
  * Easily theme any item to a view.
@@ -969,7 +984,7 @@ function _views_is_cacheable(&$view) {
  * Provide all the fields in a view.
  */
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'query', 'countquery', 'view_args_php');
+  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'view_args_php', 'is_cacheable');
 }
 
 /**
@@ -985,6 +1000,8 @@ function _views_delete_view($view) {
   db_query("DELETE FROM {view_sort} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_argument} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
+
+  cache_clear_all('views_query:' . $view->name);
 }
 
 /**
@@ -1090,19 +1107,7 @@ function _views_load_view($arg) {
 function _views_save_view($view) {
   _views_check_arrays($view);
 
-  // cache the query
-  if (_views_is_cacheable($view)) {
-    $path = drupal_get_path('module', 'views');
-    require_once("./$path/views_query.inc");
-
-    $info = _views_build_query($view);
-    $view->query = _views_replace_args($info['query'], $info['args']);
-    $view->countquery = _views_replace_args($info['countquery'], $info['args']);
-  }
-  else {
-    $view->query = NULL;
-    $view->countquery = NULL;
-  }
+  $view->is_cacheable = _views_is_cacheable($view);
 
   $view->access = implode(', ', $view->access);
 
@@ -1125,6 +1130,8 @@ function _views_save_view($view) {
     db_query("DELETE from {view_tablefield} WHERE vid='$view->vid'");
     db_query("DELETE from {view_filter} WHERE vid='$view->vid'");
     db_query("DELETE from {view_exposed_filter} WHERE vid='$view->vid'");
+
+    cache_clear_all('views_query:' . $view->name);
   }
   else {
     // insert

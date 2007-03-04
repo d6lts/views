@@ -49,9 +49,8 @@
         breadcrumb_no_home int(1), -- true means start breadcrumb trail from 'Home'.
         -- other
         changed int(11),
-        query longtext,
-        countquery longtext,
         view_args_php longtext,
+        is_cacheable int(1),
         PRIMARY KEY (vid),
         KEY (name)
       ) /*!40100 DEFAULT CHARACTER SET utf8 */");
@@ -160,9 +159,8 @@
         breadcrumb_no_home smallint, -- true means start breadcrumb trail from 'Home'.
         -- other
         changed integer,
-        query text,
-        countquery text,
         view_args_php text,
+        is_cacheable smallint,
         PRIMARY KEY (vid)
       )");
       db_query("CREATE INDEX {view_view}_name_idx ON {view_view} (name)");
@@ -349,5 +347,23 @@ function views_update_11() {
   // running this again because fresh installs of 1.4 didn't get it.
   $ret = array();
   $ret[] = update_sql("UPDATE {system} SET weight = 10 WHERE name = 'views'");
+  return $ret;
+}
+
+function views_update_12() {
+  $ret = array();
+
+  db_add_column($ret, 'view_view', 'is_cacheable', 'int(1)');
+
+  include_once('./'. drupal_get_path('module', 'views') .'/views.module');
+  $result = db_query("SELECT name FROM {view_view} ORDER BY name");
+  while ($row = db_fetch_array($result)) {
+    $view = views_get_view($row['name']);
+    $ret[] = update_sql("UPDATE {view_view} SET is_cacheable = " . (_views_is_cacheable($view) ? "1" : "0") . " WHERE vid = ". $view->vid);
+  }
+
+  $ret[] = update_sql("ALTER TABLE {view_view} DROP query");
+  $ret[] = update_sql("ALTER TABLE {view_view} DROP countquery");
+
   return $ret;
 }
