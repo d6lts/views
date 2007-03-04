@@ -261,6 +261,43 @@ function _views_sort_arrays($a, $b) {
   return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
+function _views_get_query(&$view, $args) {
+  if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name, 'cache'))) {
+    $info = unserialize($cached->data);
+
+    $plugins = _views_get_style_plugins();
+    if ($plugins[$view->type]['needs_table_header']) {
+      $view->table_header = _views_construct_header($view, _views_get_fields());
+    }
+  }
+  else {
+    views_load_query();
+    $info = _views_build_query($view, $args);
+    if ($view->is_cacheable) {
+      $data = array(
+        'query' => _views_replace_args($info['query'], $info['args']),
+        'countquery' => _views_replace_args($info['countquery'], $info['args']),
+      );
+      cache_set('views_query:' . $view->name, 'cache', serialize($data));
+    }
+  }
+
+  // Run-time replacement so we can do cacheing
+  $replacements = module_invoke_all('views_query_substitutions', $view);
+  foreach ($replacements as $src => $dest) {
+    $info['query'] = str_replace($src, $dest, $info['query']);
+    $info['countquery'] = str_replace($src, $dest, $info['countquery']);
+
+    if (is_array($info['args'])) {
+      foreach ($info['args'] as $id => $arg) {
+        $info['args'][$id] = str_replace($src, $dest, $arg);
+      }
+    }
+  }
+
+  return $info;
+}
+
 /**
  * Return the style plugins; construct one if we haven't already. The
  * array is cached in a static variable so that arguments

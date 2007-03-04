@@ -134,6 +134,7 @@ Views --dev
     o #111936: Allow search keyword to be optional.
     o #116985: Fix channel link in RSS feeds.
     o #122103: Fix blank titles of blocks exported by views.
+    o #118069: Move the query cache into the real cache. This should clear up a few caching problems.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
