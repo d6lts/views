@@ -143,3 +143,4 @@ Views --dev
     o #115125: Allow use of file descriptions rather than just file names in attached files
     o #115856: Allow use of autocomplete for freetagging taxonomies.
     o Allow RSS channel description to be set as part of the argument option.
+    o #115849: Use dedicated cache table for views caching
