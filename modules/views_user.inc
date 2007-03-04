@@ -143,7 +143,7 @@ function user_views_default_views() {
   $view->nodes_per_page = '25';
 
   $view->menu = true;
-  $view->menu_title = 'recent posts';
+  $view->menu_title = t('recent posts');
   $view->block = false;
   $view->field = array (
     array (
