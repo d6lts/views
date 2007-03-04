@@ -138,6 +138,8 @@ Views --dev
     o #122818: Incorrect use of fullname when queryname should have been used
     o #108523: Properly validate that filter values need values selected.
     o #122063: Prevent strtotime from choking on empty timestamps
+    o Serious cleanup of inline argument code
+    o #116190: Book parent didn't work with prefixes
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
@@ -147,3 +149,7 @@ Views --dev
     o #115856: Allow use of autocomplete for freetagging taxonomies.
     o Allow RSS channel description to be set as part of the argument option.
     o #115849: Use dedicated cache table for views caching
+    o New $arg (inline argument) variants: $node, $node-TYPE, $user
+    o #102489: Allow edit tabs on views (for admins).
+
+
