@@ -20,7 +20,6 @@ function views_help($section) {
  */
 function views_menu($may_cache) {
   $items = array();
-  global $locale;
 
   if ($may_cache) {
     views_load_cache();
@@ -29,111 +28,172 @@ function views_menu($may_cache) {
     if (arg(0) == 'admin' && arg(2) == 'modules') {
       views_invalidate_cache();
     }
-
-    $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
-
-    while ($view = db_fetch_object($result)) {
-      // Skip views with arguments.
-      if (strrpos($view->url, '$arg') !== FALSE) {
-        continue;
-      }
-
-      // unpack the array
-      $view->access = ($view->access ? explode(', ', $view->access) : array());
-
-      // This happens before the next check; even if it's put off for later
-      // it is still used.
-      $used[$view->name] = true;
-
-      _views_create_menu_item($items, $view, $view->url);
-    }
-    $default_views = _views_get_default_views();
-    $views_status = variable_get('views_defaults', array());
-
-    foreach ($default_views as $name => $view) {
-      if ($view->page && !$used[$name] &&
-       ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-
-        if (strrpos($view->url, '$arg') !== FALSE) {
-          continue;
-        }
-
-        _views_create_menu_item($items, $view, $view->url);
-      }
-    }
+    
+    views_menu_standard_items($items);
   }
   else {
-    $data = cache_get("views_with_inline_args:$locale", 'cache_views');
-    if ($data == 0) {
-      // There's no cache for our language, regenerate it.
-      views_reset_inline_args_cache($locale);
-      $data = cache_get("views_with_inline_args:$locale", 'cache_views');
-    }
-
-    $views = unserialize($data->data);
-    if (is_array($views)) {
-      foreach ($views as $view) {
-        // Do substitution on args.
-        $view_args = array();
-        $menu_path = array();
-        foreach (explode('/', $view->url) as $num => $element) {
-          if ($element == '$arg') {
-            $menu_path[] = arg($num);
-            $view_args[] = arg($num);
-            $view->args[] = arg($num);
-          }
-          else {
-            $menu_path[] = $element;
-          }
-        }
-        $path = implode('/', $menu_path);
-        _views_create_menu_item($items, $view, $path, MENU_CALLBACK, $view_args);
-      }
-    }
+    views_menu_inline_items($items);
   }
   return $items;
 }
 
 /**
- * Reset the views with inline arguments cache for a locale.
+ * Add the menu items for all non-inline views to the menu
  */
-function views_reset_inline_args_cache($locale = 'en') {
+function views_menu_standard_items(&$items) {
   $result = db_query("SELECT * FROM {view_view} WHERE page = 1");
-  $views_with_inline_args = array();
 
   while ($view = db_fetch_object($result)) {
-    // Skip over any non-argument views
-    if (strrpos($view->url, '$arg') === FALSE) {
-      continue;
-    }
-    // unpack the array
-    $view->access = ($view->access ? explode(', ', $view->access) : array());
-
     // This happens before the next check; even if it's put off for later
     // it is still used.
     $used[$view->name] = true;
 
-
-    $arg_result = db_query("SELECT * FROM {view_argument} WHERE vid = %d", $view->vid);
-    while ($arg = db_fetch_array($arg_result)) {
-      $view->argument[] = $arg;
+    // Skip views with inline arguments.
+    if ($view->url{0} == '$' || strpos($view->url, '/$') !== FALSE) {
+      continue;
     }
 
-    $views_with_inline_args[$view->name] = $view;
-  }
+    // unpack the array
+    $view->access = ($view->access ? explode(', ', $view->access) : array());
 
-  views_load_cache();
+    _views_create_menu_item($items, $view, $view->url);
+  }
   $default_views = _views_get_default_views();
   $views_status = variable_get('views_defaults', array());
 
+  // Process default views
   foreach ($default_views as $name => $view) {
-    if ($view->page && !$used[$name] && ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
-      if (strrpos($view->url, '$arg') !== FALSE) {
-        $views_with_inline_args[$view->name] = $view;
+    if ($view->page && !$used[$name] &&
+     ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
+
+      // skip views with inline args
+      if ($view->url{0} == '$' || strpos($view->url, '/$') !== FALSE) {
+        continue;
+      }
+
+      _views_create_menu_item($items, $view, $view->url);
+    }
+  }
+}
+
+function views_menu_inline_items(&$items) {
+  // I don't think we gain anything by caching these, there should never
+  // be all that many, and caching == a database hit.
+  $tokens = module_invoke_all('views_url_tokens');
+
+  $args = explode('/', $_GET['q']);
+  $urls = views_get_all_urls();
+  foreach ($urls as $view_name => $url) {
+    if ($url{0} != '$' && strpos($url, '/$') === FALSE) {
+      if (module_exists('views_ui') && user_access('administer views')) {
+        $view_args = $args;
+
+        foreach (explode('/', $url) as $num => $element) {
+          if ($element != $args[$num]) {
+            continue 2;
+          }
+          unset($view_args[$num]);
+        }
+        views_menu_admin_items($items, $view_name, $view_args, $args);
+      }
+    }
+    else {
+      // Do substitution on args.
+      $use_view = $use_menu = FALSE;
+      $view_args = $menu_path = array();
+
+      foreach (explode('/', $url) as $num => $element) {
+        if ($element{0} == '$') {
+          // If we pass the token check, this view is definitely being used.
+          list($token, $argument) = explode('-', $element);
+          if ($tokens[$token] && function_exists($tokens[$token])) {
+            if (!($use_view = $use_menu = $tokens[$token]($element, $argument, arg($num)))) {
+              break;
+            }
+          }
+          $menu_path[] = $view_args[] = arg($num);
+        }
+        else {
+          $menu_path[] = $element;
+          if ($element != arg($num)) {
+            $use_menu = FALSE;
+          }
+        }
+        // we are only using views that match our URL, up to the
+        // point where we hit an inline arg.
+        if (!$use_view && $element != arg($num)) {
+          break;
+        }
+
+        unset($menu_args[$num]);
+      }
+      if ($use_view) {
+        $path = implode('/', $menu_path);
+        $view = views_get_view($view_name);
+        $view->args = $view_args;
+        _views_create_menu_item($items, $view, $path, MENU_CALLBACK, $view_args);
+      }
+
+      if (module_exists('views_ui') && user_access('administer views') && $use_menu) {
+        views_menu_admin_items($items, $view_name, $menu_args, $args);
       }
     }
   }
-  cache_set("views_with_inline_args:$locale", 'cache_views', serialize($views_with_inline_args));
+}
+
+/**
+ * Add the adminstrative items to a view.
+ */
+function views_menu_admin_items(&$items, $view_name, $view_args, $args) {
+  // See what the last arg is.
+  $last_arg = array_pop($args);
+  if (in_array($last_arg, array('edit', 'view', 'clone', 'export'))) {
+    array_pop($view_args);
+  }
+  else {
+    $args[] = $last_arg;
+  }
+
+  $path = implode('/', $args);
+  $view = views_get_view($view_name);
+  views_ui_add_menu_items($items, $view, $path, $path != $_GET['q'] && !empty($view_args), $view_args);
+}
+
+/**
+ * Load all of the URLs we use; this is cached in a special manner
+ * in an attempt to make the menu system both flexible and yet not
+ * overly intensive.
+ */
+function views_get_all_urls() {
+  $cache = cache_get("views_urls", 'cache_views');
+  if ($cache == 0) {
+    $views = array();
+    $used = array();
+    $result = db_query("SELECT name, url FROM {view_view} WHERE page = 1");
+
+    while ($view = db_fetch_object($result)) {
+      $used[$view->name] = TRUE;
+      $views[$view->name] = $view->url;
+    }
+
+    views_load_cache();
+    $default_views = _views_get_default_views();
+    $views_status = variable_get('views_defaults', array());
+
+    foreach ($default_views as $name => $view) {
+      if ($view->page && !$used[$name] && ($views_status[$name] == 'enabled' || (!$view->disabled && $views_status[$name] != 'disabled'))) {
+        if ($view->url{0} == '$' || strpos($view->url, '/$') !== FALSE) {
+          $views[$view->name] = $view->url;
+        }
+      }
+    }
+    cache_set("views_urls", 'cache_views', serialize($views));
+  }
+  else {
+    $views = unserialize($cache->data);
+  }
+
+  return $views;
 }
 
 /**
@@ -141,16 +201,22 @@ function views_reset_inline_args_cache($locale = 'en') {
  */
 function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
   static $roles = NULL;
-  if ($roles == NULL) {
+  if ($roles === NULL) {
     global $user;
     $roles = array_keys($user->roles);
+    if ($user->uid) {
+      $roles[] = DRUPAL_AUTHENTICATED_RID;
+    }
+    else {
+      $roles[] = DRUPAL_ANONYMOUS_RID;
+    }
   }
   $title = views_get_title($view, 'menu');
   $type = _views_menu_type($view);
   if ($type == MENU_LOCAL_TASK || $type == MENU_DEFAULT_LOCAL_TASK) {
     $weight = $view->menu_tab_weight;
   }
-  $access = !$view->access || array_intersect($view->access, $roles);
+  $access = user_access('access all views') || !$view->access || array_intersect($view->access, $roles);
   $items[] = _views_menu_item($path, $title, $view, $args, $access, $type, $weight);
 
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
@@ -195,6 +261,13 @@ function _views_menu_type($view) {
     $type = MENU_CALLBACK;
   }
   return $type;
+}
+
+/**
+ * Implementation of hook_perm
+ */
+function views_perm() {
+  return array('access all views');
 }
 
 /**
@@ -1386,25 +1459,6 @@ function views_get_summary_link($argtype, $item, $base) {
 }
 
 /**
- * In a summary view, each entry links to a more specific entry
- * in that view. Construct the base of that link.
- */
-/*
-function views_get_summary_link_base($argtype, $url, $level, $args) {
-  $arginfo = _views_get_arguments();
-  if (!function_exists($arginfo[$argtype]['handler'])) {
-    return NULL;
-  }
-
-  $arg = $url;
-  for ($i = 0; $i < $level; $i++) {
-    $arg .= "/$args[$i]";
-  }
-
-  return $arg;
-}
-*/
-/**
  * Display a summary version of a view.
  */
 function theme_views_summary($view, $type, $level, $nodes, $args) {
@@ -1678,6 +1732,57 @@ function views_views_style_plugins() {
       'weight' => -7,
     ),
   );
+}
+
+/**
+ * Default Views URL tokens
+ */
+function views_views_url_tokens() {
+  return array(
+    '$arg' => 'views_url_arg',
+    '$node' => 'views_url_node',
+    '$user' => 'views_url_user',
+  );
+}
+
+/**
+ * Handle '$arg' in a URL. Any non-empty value is true.
+ */
+function views_url_arg($token, $argument, $arg) {
+  return $arg !== '' && $arg !== NULL;
+}
+
+/**
+ * Handle '$node' in a URL. Any valid node wil ldo.
+ */
+function views_url_node($token, $argument, $arg) {
+  if (!is_numeric($arg)) {
+    return FALSE;
+  }
+
+  $node = node_load($arg);
+  if (!$node) {
+    return FALSE;
+  }
+  
+  if ($argument && $node->type != $argument) {
+    return FALSE;
+  }
+
+  // if a node loads, return true.
+  return TRUE;
+}
+
+/**
+ * Handle '$user' in a URL. Any valid user wil ldo.
+ */
+function views_url_user($token, $argument, $arg) {
+  if (!is_numeric($arg)) {
+    return FALSE;
+  }
+
+  // if a user loads, return true.
+  return (bool) user_load($arg);
 }
 
 /**

@@ -109,27 +109,11 @@ function views_ui_menu($may_cache) {
       'callback' => 'views_ui_admin_add_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
-    $items[] = array('path' => 'admin/build/views/clone',
-      'title' => t('Clone'),
-      'callback' => 'views_ui_admin_clone_page',
-      'access' => user_access('administer views'),
-      'type' => MENU_CALLBACK);
-    $items[] = array('path' => 'admin/build/views/edit',
-      'title' => t('Edit view'),
-      'callback' => 'views_ui_admin_edit_page',
-      'access' => user_access('administer views'),
-      'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/import',
       'title' => t('Import'),
       'callback' => 'views_ui_admin_import_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
-    $items[] = array('path' => 'admin/build/views/export',
-      'title' => t('Export view'),
-      'callback' => 'drupal_get_form',
-      'callback arguments' => array('views_ui_admin_export_page'),
-      'access' => user_access('administer views'),
-      'type' => MENU_CALLBACK);
     $items[] = array('path' => 'admin/build/views/delete',
       'title' => t('Edit view'),
       'callback' => 'drupal_get_form',
@@ -144,9 +128,61 @@ function views_ui_menu($may_cache) {
       'callback' => 'views_ui_admin_disable_page',
       'access' => user_access('administer views'),
       'type' => MENU_CALLBACK);
-
+  }
+  else {
+    if (user_access('administer views') && 
+        arg(0) == 'admin' && 
+        arg(1) == 'build' && 
+        arg(2) == 'views') {
+      $view = views_load_view(arg(3));
+      if ($view) {
+        views_ui_add_menu_items($items, $view, 'admin/build/views/' . arg(3), TRUE);
+      }
+    }
   }
   return $items;
+}
+
+function views_ui_add_menu_items(&$items, $view, $url, $base = TRUE, $args = array()) {
+  if (user_access('administer views')) {
+    if ($base) {
+      // we also have to add the administrative 'view' of the view in some
+      // cases
+      $items[] = array('path' => $url,
+        'title' => t('View'),
+        'callback' => 'views_page',
+        'callback arguments' => array_merge(array($view->name), $args),
+        'access' => user_access('administer views'),
+        'type' => MENU_CALLBACK);
+    }
+
+    $items[] = array('path' => "$url/view",
+      'title' => t('View'),
+      'callback' => 'views_page',
+      'callback arguments' => array_merge(array($view->name), $args),
+      'access' => user_access('administer views'),
+      'weight' => -10,
+      'type' => MENU_DEFAULT_LOCAL_TASK);
+    $items[] = array('path' => "$url/edit",
+      'title' => t('Edit'),
+      'callback' => 'views_ui_admin_edit_page',
+      'callback arguments' => array($view->name),
+      'access' => user_access('administer views'),
+      'weight' => -5,
+      'type' => MENU_LOCAL_TASK);
+    $items[] = array('path' => "$url/export",
+      'title' => t('Export'),
+      'callback' => 'drupal_get_form',
+      'callback arguments' => array('views_ui_admin_export_page', $view->name),
+      'access' => user_access('administer views'),
+      'type' => MENU_LOCAL_TASK);
+    $items[] = array('path' => "$url/clone",
+      'title' => t('Clone'),
+      'callback' => 'views_ui_admin_clone_page',
+      'callback arguments' => array($view->name),
+      'access' => user_access('administer views'),
+      'type' => MENU_LOCAL_TASK);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -183,10 +219,10 @@ function views_ui_admin_page() {
       implode(', ', $provides), 
       $url, 
       theme('links', array(
-        array('title' => t('Edit'), 'href' => "admin/build/views/edit/$view->vid"), 
-        array('title' => t('Export'), 'href' => "admin/build/views/export/$view->vid"), 
+        array('title' => t('Edit'), 'href' => "admin/build/views/$view->vid/edit"), 
+        array('title' => t('Export'), 'href' => "admin/build/views/$view->vid/export"), 
         array('title' => t('Delete'), 'href' => "admin/build/views/delete/$view->vid"),
-        array('title' => t('Clone'), 'href' => "admin/build/views/clone/$view->vid"),
+        array('title' => t('Clone'), 'href' => "admin/build/views/$view->vid/clone"),
       ))
     );
   }
@@ -1720,7 +1756,9 @@ function views_edit_view_submit($form_id, $form) {
   }
 
   if ($form['op'] == t('Save')) {
-    return 'admin/build/views';
+    $args = explode('/', $_GET['q']);
+    array_pop($args);
+    return implode('/', $args);
   } 
 }
 
