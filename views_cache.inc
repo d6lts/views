@@ -27,7 +27,7 @@ function _views_get_arguments($titles = false) {
   global $locale;
 
   if (!$views_arguments) {
-    $data = cache_get("views_arguments:$locale", 'cache');
+    $data = cache_get("views_arguments:$locale", 'cache_views');
     $cache = unserialize($data->data);
     if (is_array($cache)) {
       $views_arguments = $cache;
@@ -54,7 +54,7 @@ function _views_get_arguments($titles = false) {
         $views_arguments['title'][$name] = $arg;
       }
       $cache = $views_arguments;
-      cache_set("views_arguments:$locale", 'cache', serialize($cache));
+      cache_set("views_arguments:$locale", 'cache_views', serialize($cache));
     }
   }
   return ($titles ? $views_arguments['base'] : $views_arguments['title']);
@@ -69,7 +69,7 @@ function _views_get_tables($full = false) {
   global $locale;
 
   if (!$views_tables) {
-    $data = cache_get("views_tables:$locale", 'cache');
+    $data = cache_get("views_tables:$locale", 'cache_views');
     $cache = unserialize($data->data);
 
     if (is_array($cache)) {
@@ -141,7 +141,7 @@ function _views_get_tables($full = false) {
           }
         }
       }
-      cache_set("views_tables:$locale", 'cache', serialize($views_tables));
+      cache_set("views_tables:$locale", 'cache_views', serialize($views_tables));
     }
   }
   return ($full ? $views_tables : $views_tables['tables']);
@@ -221,7 +221,7 @@ function _views_get_default_views() {
   global $locale;
 
   if (!$views_default_views) {
-    $data = cache_get("views_default_views:$locale", 'cache');
+    $data = cache_get("views_default_views:$locale", 'cache_views');
     $cache = unserialize($data->data);
 
     if (is_array($cache)) {
@@ -240,7 +240,7 @@ function _views_get_default_views() {
           $views_default_views[$i] = $view;
         }
       }
-      cache_set("views_default_views:$locale", 'cache', serialize($views_default_views));
+      cache_set("views_default_views:$locale", 'cache_views', serialize($views_default_views));
     }
   }
   return $views_default_views;
@@ -262,7 +262,7 @@ function _views_sort_arrays($a, $b) {
 }
 
 function _views_get_query(&$view, $args) {
-  if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name, 'cache'))) {
+  if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name, 'cache_views'))) {
     $info = unserialize($cached->data);
 
     $plugins = _views_get_style_plugins();
@@ -278,7 +278,7 @@ function _views_get_query(&$view, $args) {
         'query' => _views_replace_args($info['query'], $info['args']),
         'countquery' => _views_replace_args($info['countquery'], $info['args']),
       );
-      cache_set('views_query:' . $view->name, 'cache', serialize($data));
+      cache_set('views_query:' . $view->name, 'cache_views', serialize($data));
     }
   }
 
@@ -308,7 +308,7 @@ function _views_get_style_plugins($titles = false) {
   global $locale;
 
   if (!$views_style_plugins) {
-    $data = cache_get("views_style_plugins:$locale", 'cache');
+    $data = cache_get("views_style_plugins:$locale", 'cache_views');
     $cache = unserialize($data->data);
     if (is_array($cache)) {
       $views_style_plugins = $cache;
@@ -324,7 +324,7 @@ function _views_get_style_plugins($titles = false) {
         $views_style_plugins['base'][$name] = $arg;
       }
       $cache = $views_style_plugins;
-      cache_set("views_style_plugins:$locale", 'cache', serialize($cache));
+      cache_set("views_style_plugins:$locale", 'cache_views', serialize($cache));
     }
   }
   return ($titles ? $views_style_plugins['title'] : $views_style_plugins['base']);

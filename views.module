@@ -63,11 +63,11 @@ function views_menu($may_cache) {
     }
   }
   else {
-    $data = cache_get("views_with_inline_args:$locale", 'cache');
+    $data = cache_get("views_with_inline_args:$locale", 'cache_views');
     if ($data == 0) {
       // There's no cache for our language, regenerate it.
       views_reset_inline_args_cache($locale);
-      $data = cache_get("views_with_inline_args:$locale");
+      $data = cache_get("views_with_inline_args:$locale", 'cache_views');
     }
 
     $views = unserialize($data->data);
@@ -133,7 +133,7 @@ function views_reset_inline_args_cache($locale = 'en') {
       }
     }
   }
-  cache_set("views_with_inline_args:$locale", 'cache', serialize($views_with_inline_args));
+  cache_set("views_with_inline_args:$locale", 'cache_views', serialize($views_with_inline_args));
 }
 
 /**
@@ -682,7 +682,7 @@ function _views_is_cacheable(&$view) {
  * Invalidate the views cache, forcing a rebuild on the next grab of table data.
  */
 function views_invalidate_cache() {
-  cache_clear_all('views_', 'cache', true);
+  cache_clear_all('*', 'cache_views', true);
 }
 
 // ---------------------------------------------------------------------------
@@ -709,7 +709,7 @@ function _views_delete_view($view) {
   db_query("DELETE FROM {view_argument} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
 
-  cache_clear_all('views_query:' . $view->name, 'cache');
+  cache_clear_all('views_query:' . $view->name, 'cache_views');
 }
 
 /**
@@ -840,7 +840,7 @@ function _views_save_view($view) {
     db_query("DELETE from {view_filter} WHERE vid='$view->vid'");
     db_query("DELETE from {view_exposed_filter} WHERE vid='$view->vid'");
 
-    cache_clear_all('views_query:' . $view->name, 'cache');
+    cache_clear_all('views_query:' . $view->name, 'cache_views');
   }
   else {
     // insert
