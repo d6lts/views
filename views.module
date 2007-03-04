@@ -1768,7 +1768,10 @@ function views_handler_field_filesize($fieldinfo, $fielddata, $value, $data) {
  * Handle a timestamp filter.
  */
 function views_handler_filter_timestamp($op, $filter, $filterinfo, &$query) {
-  $value = $filter['value'] == 'now' ? "***CURRENT_TIME***" : strtotime($filter['value']);
+  $value = 0;
+  if ($filter['value']) {
+    $value = $filter['value'] == 'now' ? "***CURRENT_TIME***" : strtotime($filter['value']);
+  }
 
   $table = $filterinfo['table'];
   $column = $filterinfo['field'];
