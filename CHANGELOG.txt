@@ -115,6 +115,7 @@ Views 4.7.x-dev
     o #116985: Fix channel link in RSS feeds.
     o #122103: Fix blank titles of blocks exported by views.
     o #118069: Move the query cache into the real cache. This should clear up a few caching problems.
+    o #122818: Incorrect use of fullname when queryname should have been used
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

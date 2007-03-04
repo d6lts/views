@@ -1387,7 +1387,7 @@ function _views_construct_header($view, $fields) {
         $header['field'] = $info['sort_handler']($field, $info);
       }
       else {
-        $header['field'] = $field['fullname'];
+        $header['field'] = $field['queryname'];
       }
     }
     else if ($field['label']) {
