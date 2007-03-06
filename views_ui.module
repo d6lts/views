@@ -109,6 +109,11 @@ function views_ui_menu($may_cache) {
       'callback' => 'views_ui_admin_add_page',
       'access' => user_access('administer views'),
       'type' => MENU_LOCAL_TASK);
+    $items[] = array('path' => 'admin/views/tools',
+      'title' => t('tools'),
+      'callback' => 'views_ui_admin_tools',
+      'access' => user_access('administer views'),
+      'type' => MENU_LOCAL_TASK);
     $items[] = array('path' => 'admin/views/clone',
       'title' => t('clone'),
       'callback' => 'views_ui_admin_clone_page',
@@ -286,6 +291,26 @@ function views_ui_admin_page() {
   }
 
   return $output;
+}
+
+function views_ui_admin_tools() {
+  $form['markup'] = array(
+    '#value' => t('<p>Occasionally, something or other can cause the Views cache to contain stale data; this is particularly true after module updates and sometimes true after taxonomy and profile updates. If you are having problems with Views creating malformed queries, the first thing you should always do is clear the Views cache to see if that is the problem.</p>'),
+  );
+
+  $form['clear'] = array(
+    '#type' => 'submit',
+    '#value' => t('Clear views cache'),
+  );
+
+  return drupal_get_form('views_ui_admin_tools', $form);
+}
+
+function views_ui_admin_tools_submit($form_id, $form) {
+  if ($_POST['op'] == t('Clear views cache')) {
+    views_invalidate_cache();
+    drupal_set_message("The Views cache has been cleared.");
+  }
 }
 
 /*
