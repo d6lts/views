@@ -266,16 +266,6 @@ function views_taxonomy_process_form($element) {
   return $element;
 }
 
-
-/**
- * invalidate the views cache when taxonomy vocabulary changes.
- */
-function views_taxonomy($op, $type, $object = NULL) {
-  if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
-    views_invalidate_cache();
-  }
-}
-
 /**
  * Display all the terms for a given vocabulary
  */

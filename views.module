@@ -2153,3 +2153,12 @@ function views_t_strings($text) {
       return t('The "Value" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word "now" to use the current time. You may enter a positive or negative number in the "Option" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with "now". If you have the jscalendar module from jstools installed, you can use a popup date picker here.');
   }
 }
+
+/**
+ * invalidate the views cache when taxonomy vocabulary changes.
+ */
+function views_taxonomy($op, $type, $object = NULL) {
+  if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
+    views_invalidate_cache();
+  }
+}
