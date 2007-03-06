@@ -220,7 +220,7 @@ function views_ui_admin_page() {
 
     $items[] = array(
       $view->name, 
-      views_get_title($view, 'admin'), 
+      filter_xss_admin(views_get_title($view, 'admin')), 
       $view->description, 
       implode(', ', $provides), 
       $url, 
@@ -293,7 +293,15 @@ function views_ui_admin_page() {
       $links[] = array('title' => t('Enable'), 'href' => "admin/build/views/enable/$view->name");
     }
 
-    $items[] = array($view->name, views_get_title($view, 'menu'), $view->description, implode(', ', $provides), $url, $status, theme('links', $links));
+    $items[] = array(
+      $view->name, 
+      filter_xss_admin(views_get_title($view, 'menu')),
+      $view->description, 
+      implode(', ', $provides), 
+      $url, 
+      $status, 
+      theme('links', $links)
+    );
   }
 
   if ($items) {

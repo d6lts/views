@@ -210,7 +210,7 @@ function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_
       $roles[] = DRUPAL_ANONYMOUS_RID;
     }
   }
-  $title = views_get_title($view, 'menu');
+  $title = filter_xss_admin(views_get_title($view, 'menu'));
   $type = _views_menu_type($view);
   if ($type == MENU_LOCAL_TASK || $type == MENU_DEFAULT_LOCAL_TASK) {
     $weight = $view->menu_tab_weight;
@@ -1361,7 +1361,7 @@ function views_set_breadcrumb($view) {
     $where = 1;
     foreach ($view->args as $level => $arg) {
       if ($view->argument[$level]['argdefault'] != 1) {
-        $breadcrumb[] = l(views_get_title($view, 'page', $args), $url);
+        $breadcrumb[] = l(filter_xss_admin(views_get_title($view, 'page', $args)), $url, NULL, NULL, NULL, NULL, TRUE);
         // For next round.
       }
       $args[] = $arg;
@@ -1402,7 +1402,7 @@ function theme_views_view($view, $type, $nodes, $level = NULL, $args = NULL) {
   $num_nodes = count($nodes);
 
   if ($type == 'page') {
-    drupal_set_title(views_get_title($view, 'page'));
+    drupal_set_title(filter_xss_admin(views_get_title($view, 'page')));
     views_set_breadcrumb($view);
   }
 
