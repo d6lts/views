@@ -149,6 +149,7 @@ Views --dev
     o #119921: Recent comments block had incorrect filter, causing nodes with just 1 comment not to show up.
     o #119463: Double check_plain on breadcrumbs for Views' titles.
     o #104941: Inline args URL cache not getting cleared when a view is saved.
+    o #124789: Disable delete button on filters that have been exposed so people stop trying to delete them.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
