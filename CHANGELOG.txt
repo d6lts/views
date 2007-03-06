@@ -151,5 +151,5 @@ Views --dev
     o #115849: Use dedicated cache table for views caching
     o New $arg (inline argument) variants: $node, $node-TYPE, $user
     o #102489: Allow edit tabs on views (for admins).
-
+    o New 'tools' page in UI to clear the views cache.
 
