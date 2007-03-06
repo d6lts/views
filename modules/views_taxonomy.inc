@@ -384,7 +384,7 @@ function views_handler_arg_vocid($op, &$query, $argtype, $arg = '') {
     case 'title':
       $result = db_query("SELECT name FROM {vocabulary} WHERE vid = %d", $query);
       $voc = db_fetch_object($result);
-      return check_plain($voc->name);
+      return $voc->name? check_plain($voc->name) : t('Uncatgorized');
   }
 }
 

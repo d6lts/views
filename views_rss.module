@@ -94,7 +94,7 @@ function views_rss_views_feed_argument($op, &$view, $arg, $argdata = NULL) {
     }
     $view->feed_url = views_get_url($view, $view_args);
   }
-  else if ($op == 'post_view') {
+  else if ($op == 'post_view' && $view->build_type != 'block') {
     $args = views_post_view_make_args($view, $arg, 'feed');
     $url = views_get_url($view, $args);
     $title = views_get_title($view, 'page', $args);

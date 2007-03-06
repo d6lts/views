@@ -140,6 +140,11 @@ Views --dev
     o #122063: Prevent strtotime from choking on empty timestamps
     o Serious cleanup of inline argument code
     o #116190: Book parent didn't work with prefixes
+    o Fixed theme code for popular/popular all-time blocks.
+    o Moved implementation of hook_taxonomy so it'll trigger.
+    o #115699: Don't show RSS feeds on block views (again)
+    o #88947: If NULL query don't try to run it at all.
+    o #113332: NULL entries for vocabulary summaries with nodes without terms.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
