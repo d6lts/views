@@ -123,6 +123,7 @@ Views 4.7.x-dev
     o #88947: If NULL query don't try to run it at all.
     o #113332: NULL entries for vocabulary summaries with nodes without terms.
     o #119082: Fixed a problem with view titles on the admin page.
+    o #119921: Recent comments block had incorrect filter, causing nodes with just 1 comment not to show up.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
