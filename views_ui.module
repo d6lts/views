@@ -206,6 +206,7 @@ function views_ui_admin_page() {
     if ($view->menu) {
       $provides[] = 'Menu';
     }
+
     $items[] = array(
       $view->name, 
       views_get_title($view, 'admin'), 
