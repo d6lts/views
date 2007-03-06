@@ -1591,6 +1591,10 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
   foreach ($order as $key => $i) {
     $row = array();
     foreach ($items as $item) {
+      // Hide the delete button on exposed filters.
+      if ($item == 'delete' && $section == 'filters' && empty($form[$i]['expose'])) {
+        $form[$i][$item]['#printed'] = true;
+      }
       if (($key == 0 && ($item == 'up' || $item == 'top')) ||
           ($key == $count && ($item == 'down' || $item == 'bottom'))) {
         $form[$i][$item]['#printed'] = true;
