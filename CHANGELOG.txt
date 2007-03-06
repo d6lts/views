@@ -124,6 +124,7 @@ Views 4.7.x-dev
     o #113332: NULL entries for vocabulary summaries with nodes without terms.
     o #119082: Fixed a problem with view titles on the admin page.
     o #119921: Recent comments block had incorrect filter, causing nodes with just 1 comment not to show up.
+    o #119463: Double check_plain on breadcrumbs for Views' titles.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

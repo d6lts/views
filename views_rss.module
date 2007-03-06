@@ -105,7 +105,7 @@ function views_rss_views_feed_argument($op, &$view, $arg, $argdata = NULL) {
   else if ($op == 'post_view') {
     $args = views_post_view_make_args($view, $arg, 'feed');
     $url = views_get_url($view, $args);
-    $title = views_get_title($view, 'page', $args);
+    $title = filter_xss_admin(views_get_title($view, 'page', $args));
 
     if ($view->used_filters) {
       $filters = drupal_query_string_encode($view->used_filters);
@@ -131,7 +131,7 @@ function theme_views_rss_feed($view, $nodes, $type) {
   global $base_url;
 
   $channel = array(
-    'title'       => views_get_title($view, 'page'),
+    'title'       => filter_xss_admin(views_get_title($view, 'page')),
     'link'        => url($view->feed_url ? $view->feed_url : $view->real_url, NULL, NULL, true),
     'description' => $view->description,
   );
