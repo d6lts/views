@@ -1175,6 +1175,7 @@ function _views_save_view($view) {
   foreach ($view->exposed_filter as $i => $arg) {
     db_query("INSERT INTO {view_exposed_filter} (vid, field, label, optional, is_default, single, operator, position) VALUES (%d, '%s', '%s', %d, %d, %d, %d, %d)", $view->vid, $arg['field'], $arg['label'], $arg['optional'], $arg['is_default'], $arg['single'], $arg['operator'], $i);
   }
+  cache_clear_all('views_with_inline_args:');
 }
 
 // ---------------------------------------------------------------------------
