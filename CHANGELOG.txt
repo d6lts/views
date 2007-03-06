@@ -145,6 +145,7 @@ Views --dev
     o #115699: Don't show RSS feeds on block views (again)
     o #88947: If NULL query don't try to run it at all.
     o #113332: NULL entries for vocabulary summaries with nodes without terms.
+    o #119082: Fixed a problem with view titles on the admin page.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
