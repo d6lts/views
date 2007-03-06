@@ -100,7 +100,7 @@ function views_menu_inline_items(&$items) {
     else {
       // Do substitution on args.
       $use_view = $use_menu = FALSE;
-      $view_args = $menu_path = array();
+      $menu_args = $view_args = $menu_path = array();
 
       foreach (explode('/', $url) as $num => $element) {
         if ($element{0} == '$') {

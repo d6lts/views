@@ -155,7 +155,6 @@ function views_ui_add_menu_items(&$items, $view, $url, $base = TRUE, $args = arr
         'access' => user_access('administer views'),
         'type' => MENU_CALLBACK);
     }
-
     $items[] = array('path' => "$url/view",
       'title' => t('View'),
       'callback' => 'views_page',
@@ -196,7 +195,7 @@ function views_ui_admin_page() {
 
   $numViews = 25;
 
-  drupal_set_title(t('administer views'));
+  drupal_set_title(t('Administer views'));
 
   $result = pager_query("SELECT vid, name, description, menu_title, page_title, block_title, url, page, menu, block FROM {view_view} ORDER BY name", $numViews);
 
@@ -219,10 +218,10 @@ function views_ui_admin_page() {
       implode(', ', $provides), 
       $url, 
       theme('links', array(
-        array('title' => t('Edit'), 'href' => "admin/build/views/$view->vid/edit"), 
-        array('title' => t('Export'), 'href' => "admin/build/views/$view->vid/export"), 
+        array('title' => t('Edit'), 'href' => "admin/build/views/$view->name/edit"), 
+        array('title' => t('Export'), 'href' => "admin/build/views/$view->name/export"), 
         array('title' => t('Delete'), 'href' => "admin/build/views/delete/$view->vid"),
-        array('title' => t('Clone'), 'href' => "admin/build/views/$view->vid/clone"),
+        array('title' => t('Clone'), 'href' => "admin/build/views/$view->name/clone"),
       ))
     );
   }
@@ -1757,6 +1756,9 @@ function views_edit_view_submit($form_id, $form) {
 
   if ($form['op'] == t('Save')) {
     $args = explode('/', $_GET['q']);
+    if ($args[0] == 'admin' && $args[1] == 'build' && $args [2] == 'views') {
+      return 'admin/build/views';
+    }
     array_pop($args);
     return implode('/', $args);
   } 
