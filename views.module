@@ -738,25 +738,26 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   }
  
   $query = db_rewrite_sql($info['query'], 'node');
- 
-  
-  if ($use_pager) {
-    $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
-    $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
-    $view->total_rows = $GLOBALS['pager_total_items'][$use_pager - 1];
-  }
-  else {
-    $result = ($limit ? db_query_range($query, $info['args'], $page * $limit + $offset, $limit) : db_query($query, $info['args']));
-  }
-  $view->num_rows = db_num_rows($result);
-  if ($type == 'result') {
-    $info['result'] = $result;
-    return $info;
-  }
-
   $items = array();
-  while ($item = db_fetch_object($result)) {
-    $items[] = $item;
+ 
+  if ($query) {
+    if ($use_pager) {
+      $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
+      $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
+      $view->total_rows = $GLOBALS['pager_total_items'][$use_pager - 1];
+    }
+    else {
+      $result = ($limit ? db_query_range($query, $info['args'], $page * $limit + $offset, $limit) : db_query($query, $info['args']));
+    }
+    $view->num_rows = db_num_rows($result);
+    if ($type == 'result') {
+      $info['result'] = $result;
+      return $info;
+    }
+
+    while ($item = db_fetch_object($result)) {
+      $items[] = $item;
+    }
   }
 
   if ($type == 'items') {
