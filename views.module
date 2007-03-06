@@ -114,6 +114,7 @@ function views_menu_inline_items(&$items) {
           $menu_path[] = $view_args[] = arg($num);
         }
         else {
+          unset($menu_args[$num]);
           $menu_path[] = $element;
           if ($element != arg($num)) {
             $use_menu = FALSE;
@@ -124,8 +125,6 @@ function views_menu_inline_items(&$items) {
         if (!$use_view && $element != arg($num)) {
           break;
         }
-
-        unset($menu_args[$num]);
       }
       if ($use_view) {
         $path = implode('/', $menu_path);
