@@ -328,7 +328,7 @@ function comment_views_default_views() {
     array (
       'tablename' => 'node_comment_statistics',
       'field' => 'comment_count',
-      'operator' => '>',
+      'operator' => '>=',
       'options' => '',
       'value' => '1',
     ),
