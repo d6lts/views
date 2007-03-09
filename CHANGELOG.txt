@@ -127,6 +127,7 @@ Views 4.7.x-dev
     o #119463: Double check_plain on breadcrumbs for Views' titles.
     o #104941: Inline args URL cache not getting cleared when a view is saved.
     o #124789: Disable delete button on filters that have been exposed so people stop trying to delete them.
+    o #126135: Restore missing views_pre_query (may never have made it into this version?)
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
