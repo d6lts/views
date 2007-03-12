@@ -330,3 +330,7 @@ function _views_get_style_plugins($titles = false) {
   return ($titles ? $views_style_plugins['title'] : $views_style_plugins['base']);
 }
 
+// An implementation of hook_devel_caches() from devel.module
+function views_devel_caches() {
+  return array('cache_views');
+}

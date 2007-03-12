@@ -462,7 +462,7 @@ function &views_get_current_view() {
  *   If $use_pager == false, skip the first $offset results. Does not work
  *   with pager.
  *   without paging on.
-*/
+ */
 function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0, $offset = 0) {
   views_load_cache();
 
