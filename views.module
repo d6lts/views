@@ -199,23 +199,12 @@ function views_get_all_urls() {
  * Helper function to add a menu item for a view.
  */
 function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_NORMAL_ITEM, $args = array()) {
-  static $roles = NULL;
-  if ($roles === NULL) {
-    global $user;
-    $roles = array_keys($user->roles);
-    if ($user->uid) {
-      $roles[] = DRUPAL_AUTHENTICATED_RID;
-    }
-    else {
-      $roles[] = DRUPAL_ANONYMOUS_RID;
-    }
-  }
   $title = filter_xss_admin(views_get_title($view, 'menu'));
   $type = _views_menu_type($view);
   if ($type == MENU_LOCAL_TASK || $type == MENU_DEFAULT_LOCAL_TASK) {
     $weight = $view->menu_tab_weight;
   }
-  $access = user_access('access all views') || !$view->access || array_intersect($view->access, $roles);
+  $access = views_access($view);
   $items[] = _views_menu_item($path, $title, $view, $args, $access, $type, $weight);
 
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
@@ -267,6 +256,35 @@ function _views_menu_type($view) {
  */
 function views_perm() {
   return array('access all views');
+}
+
+/**
+ * Determine if the specified user has access to a view.
+ */
+function views_access($view, $account = NULL) {
+  if (!$account) {
+    global $user;
+    $account = $user;
+  }
+
+  // Administrator privileges
+  if (user_access('access all views', $account)) {
+    return TRUE;
+  }
+
+  // All views with an empty access setting are available to all roles.
+  if (!$view->access) { 
+    return TRUE;
+  }
+
+  // Otherwise, check roles
+  static $roles = array();
+  if (!isset($roles[$account->uid])) {
+    $roles[$account->uid] = array_keys($account->roles);
+    $roles[$account->uid][] = $account->uid ? DRUPAL_AUTHENTICATED_RID : DRUPAL_ANONYMOUS_RID;
+  }
+
+  return array_intersect($view->access, $roles[$account->uid]);
 }
 
 /**
@@ -388,7 +406,7 @@ function views_view_block($vid) {
   }
 
   $roles = array_keys($user->roles);
-  if ($view->access && !array_intersect($roles, $view->access)) {
+  if (!views_access($view)) {
     return NULL;
   }
 
