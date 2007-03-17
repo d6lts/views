@@ -1487,6 +1487,8 @@ function views_filters_form($view) {
 
     if ($expose['single']) {
       unset($item['#multiple']);
+      // On multi-select categories the #size element is in the form by default.  We remove it to allow the single-select drop-down filter to work.
+      unset($item['#size']);
     }
     if ($expose['optional'] && is_array($item['#options'])) {
       $item['#options'] = array('**ALL**' => t('<All>')) + $item['#options'];

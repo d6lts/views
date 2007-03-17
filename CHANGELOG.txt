@@ -27,6 +27,7 @@ Views 4.7.x-dev
     o #124789: Disable delete button on filters that have been exposed so people stop trying to delete them.
     o #126135: Restore missing views_pre_query (may never have made it into this version?)
     o #101275: Fixed broken check which is meant to prevent node.nid from appearing twice in a query.
+    o #126428: (by scott.mclewin) Force single didn't work in all cases.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
