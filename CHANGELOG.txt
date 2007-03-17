@@ -31,6 +31,7 @@ Views --dev
     o #104941: Inline args URL cache not getting cleared when a view is saved.
     o #124789: Disable delete button on filters that have been exposed so people stop trying to delete them.
     o #101275: Fixed broken check which is meant to prevent node.nid from appearing twice in a query.
+    o #126428: (by scott.mclewin) Force single didn't work in all cases.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
