@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2006-07-26 18:54-0400\n"
-"PO-Revision-Date: 2007-04-08 22:56+0100\n"
+"PO-Revision-Date: 2007-04-08 23:12+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -173,19 +173,19 @@ msgstr "nie"
 
 #: views.module:1509
 msgid "As Short Date"
-msgstr "Als kurzes Datumsformat"
+msgstr "als kurzes Datumsformat"
 
 #: views.module:1510
 msgid "As Medium Date"
-msgstr "Als mittleres Datumsformat"
+msgstr "als mittleres Datumsformat"
 
 #: views.module:1511
 msgid "As Long Date"
-msgstr "Als langes Datumsformat"
+msgstr "als langes Datumsformat"
 
 #: views.module:1512
 msgid "As Custom Date"
-msgstr "Als angepasstes Datumsformat"
+msgstr "als angepasstes Datumsformat"
 
 #: views.module:1513
 msgid "As Time Ago"
@@ -638,7 +638,7 @@ msgstr ""
 
 #: modules/views_node.inc:179
 msgid "Node: Author is Current User"
-msgstr "Node: Autor ist der derzeitige Benutzer"
+msgstr "Node: Autor ist der aktuelle Benutzer"
 
 #: modules/views_node.inc:183
 msgid "This allows you to filter by whether or not the node was authored by the logged in user of the view."
@@ -1457,7 +1457,7 @@ msgstr ""
 
 #: views_ui.module:879
 msgid "Make Default Menu Tab"
-msgstr "Standard Menü zum Karteireiter machen"
+msgstr "Standard Menü als Karteireiter bereitstellen"
 
 #: views_ui.module:882
 msgid "If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. For tabs to work properly, one tab in the group must be set as the default."
@@ -1465,7 +1465,7 @@ msgstr ""
 
 #: views_ui.module:887
 msgid "Tab Weight"
-msgstr "Tabulator Gewicht"
+msgstr "Karteireitergewichtung"
 
 #: views_ui.module:890
 msgid "If this is a menu tab, select the weight; lower numbers will be further to the left."
@@ -1654,7 +1654,7 @@ msgstr "Unter-Platzhalter"
 
 #: views_ui.module:1514
 msgid "Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility."
-msgstr "Argumente werden direkt aus der URL geparsed. Diese sind nicht notwenig für eine bestimmte Ansicht, aber erlauben Flexibilität."
+msgstr "Argumente werden direkt aus der URL geparsed. Diese sind nicht notwendig für eine bestimmte Ansicht, aber erlauben Flexibilität."
 
 #: views_ui.module:1515
 msgid "Arguments"
