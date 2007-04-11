@@ -33,6 +33,7 @@ Views --dev
     o #101275: Fixed broken check which is meant to prevent node.nid from appearing twice in a query.
     o #126428: (by scott.mclewin) Force single didn't work in all cases.
     o #134703: Fixed problem with validation causing valid values to appear invalid (such as in moderate and sticky filters)
+    o #134375: (by vhmauery) Postgres fix, adds orderby to groupby if there is already a groupby.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
