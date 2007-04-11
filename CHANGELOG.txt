@@ -34,6 +34,7 @@ Views 4.7.x-dev
     o #130139: (simplymenotu) change changelog to top-down format.
     o #130196: (the greenman) Views filters improperly ignored table aliasing.
     o #130381: (mgull) Clear the page cache after a view is saved or deleted so that anonymous users will see changes.
+    o #133144: views filters weren't getting deleted when a view was deleted, causing cruft buildup.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

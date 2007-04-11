@@ -1035,6 +1035,8 @@ function _views_delete_view($view) {
   db_query("DELETE FROM {view_sort} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_argument} where vid=%d", $view->vid);
   db_query("DELETE FROM {view_tablefield} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_filter} where vid=%d", $view->vid);
+  db_query("DELETE FROM {view_exposed_filter} where vid=%d", $view->vid);
 
   cache_clear_all(); // in Drupal 4.7 this clears everything.
 }
