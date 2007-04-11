@@ -156,7 +156,7 @@ function views_ui_add_menu_items(&$items, $view, $url, $base = TRUE, $args = arr
       // cases
       $items[] = array('path' => $url,
         'title' => t('View'),
-        'callback' => 'views_page',
+        'callback' => 'views_view_page',
         'callback arguments' => array_merge(array($view->name), $args),
         'access' => user_access('administer views'),
         'type' => MENU_CALLBACK);
