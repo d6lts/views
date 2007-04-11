@@ -38,6 +38,7 @@ Views 4.7.x-dev
     o #115856: Allow use of autocomplete for freetagging taxonomies.
     o Allow RSS channel description to be set as part of the argument option.
     o New 'tools' page in UI to clear the views cache.
+    o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
 
 Views 4.7.x-1.5
   Bugs fixed:
