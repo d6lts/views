@@ -46,6 +46,7 @@ Views --dev
     o New $arg (inline argument) variants: $node, $node-TYPE, $user
     o #102489: Allow edit tabs on views (for admins).
     o New 'tools' page in UI to clear the views cache.
+    o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
 
 Views 5.x-1.5
   Bugs fixed:
