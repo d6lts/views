@@ -53,6 +53,7 @@ Views --dev
     o New 'tools' page in UI to clear the views cache.
     o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
     o #125973: (mfredrickson) allow exposed filters to come from other sources.
+    o #133454: (sarvab) Move some pager variables around so that they're on the $view object and more easily modified.
 
 Views 5.x-1.5
   Bugs fixed:

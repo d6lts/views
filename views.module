@@ -514,6 +514,11 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     ob_end_clean();
   }
 
+  $view->use_pager = $use_pager;
+  $view->pager_limit = $limit;
+  $view->page = $page;
+  $view->offset = $offset;
+
   // Call a hook that'll let modules modify the view query before it is created
   foreach (module_implements('views_pre_query') as $module) {
     $function = $module .'_views_pre_query';
@@ -534,13 +539,13 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
 
   $items = array();
   if ($query) {
-    if ($use_pager) {
+    if ($view->use_pager) {
       $cquery = db_rewrite_sql($info['countquery'], 'node', 'nid', $info['rewrite_args']);
-      $result = pager_query($query, $limit, $use_pager - 1, $cquery, $info['args']);
-      $view->total_rows = $GLOBALS['pager_total_items'][$use_pager - 1];
+      $result = pager_query($query, $view->pager_limit, $view->use_pager - 1, $cquery, $info['args']);
+      $view->total_rows = $GLOBALS['pager_total_items'][$view->use_pager - 1];
     }
     else {
-      $result = ($limit ? db_query_range($query, $info['args'], $page * $limit + $offset, $limit) : db_query($query, $info['args']));
+      $result = ($view->pager_limit ? db_query_range($query, $info['args'], $view->page * $view->pager_limit + $view->offset, $view->pager_limit) : db_query($query, $info['args']));
     }
     $view->num_rows = db_num_rows($result);
     if ($type == 'result') {
@@ -566,8 +571,6 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
 
   $view->real_url = views_get_url($view, $args);
 
-  $view->use_pager = $use_pager;
-  $view->pager_limit = $limit;
   $output .= views_theme('views_view', $view, $type, $items, $info['level'], $args);
 
   // Call a hook that'll let modules modify the view just after it is displayed.
