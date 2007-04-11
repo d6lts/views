@@ -232,6 +232,16 @@
       )");
       db_query("CREATE INDEX {view_exposed_filter}_vid_idx ON {view_exposed_filter} (vid)");
 
+      db_query("CREATE TABLE {cache_views} (
+        cid varchar(255),
+        data bytea,
+        expire integer,
+        created integer,
+        headers text
+      )");
+      db_query("CREATE INDEX {cache_views}_cid_idx ON {cache_views} (cid)");
+      db_query("CREATE INDEX {cache_views}_expire_idx ON {cache_views} (expire)");
+
       $success = TRUE;
       break;
   } // End case
