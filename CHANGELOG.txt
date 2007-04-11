@@ -28,6 +28,7 @@ Views 4.7.x-dev
     o #126135: Restore missing views_pre_query (may never have made it into this version?)
     o #101275: Fixed broken check which is meant to prevent node.nid from appearing twice in a query.
     o #126428: (by scott.mclewin) Force single didn't work in all cases.
+    o #134703: Fixed problem with validation causing valid values to appear invalid (such as in moderate and sticky filters)
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

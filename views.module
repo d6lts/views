@@ -2103,7 +2103,7 @@ function views_filter_validate_array($form, $name) {
     return; // only validate on saving!
   }
 
-  if (empty($form['#value'])) {
+  if (!isset($form['#value']) || $form['#value'] == array()) {
     form_error($form, t('@filter must have a value!', array('@filter' => $name)));
   }
 }
