@@ -43,6 +43,7 @@ Views 4.7.x-dev
     o Allow RSS channel description to be set as part of the argument option.
     o New 'tools' page in UI to clear the views cache.
     o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
+    o #133454: (sarvab) Move some pager variables around so that they're on the $view object and more easily modified.
 
 Views 4.7.x-1.5
   Bugs fixed:
