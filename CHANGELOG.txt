@@ -39,6 +39,7 @@ Views --dev
     o #130139: (simplymenotu) change changelog to top-down format.
     o #130196: (the greenman) Views filters improperly ignored table aliasing.
     o #130381: (mgull) Clear the page cache after a view is saved or deleted so that anonymous users will see changes.
+    o #130746: Save and edit went to the wrong place if view didn't previously exist.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments

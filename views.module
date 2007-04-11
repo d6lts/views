@@ -992,6 +992,7 @@ function _views_save_view($view) {
   }
   cache_clear_all('views_urls', 'cache_views');
   cache_clear_all(); // clear the page cache as well.
+  return $view->vid;
 }
 
 // ---------------------------------------------------------------------------
@@ -1996,7 +1997,6 @@ function theme_view($view_name, $limit = NULL, $use_pager = NULL, $type = 'embed
     return views_build_view($type, $view, $view_args, $use_pager, $limit);
   }
 }
-
 
 /**
  * This function is used as a central place to manage some translatable text strings

@@ -1783,9 +1783,12 @@ function views_edit_view_submit($form_id, $form) {
     views_ui_reorder($view->$section);
   }
 
-  _views_save_view($view);
+  $view_is_new = !$view->vid;
+
+  $vid = _views_save_view($view);
   views_invalidate_cache();
   menu_rebuild();
+
   if ($form['vid']) {
     drupal_set_message(t('View successfully saved.'));
   }
@@ -1800,7 +1803,10 @@ function views_edit_view_submit($form_id, $form) {
     }
     array_pop($args);
     return implode('/', $args);
-  } 
+  }
+  if ($form['op'] == t('Save and edit') && $view_is_new) {
+    return "admin/build/views/$vid/edit";
+  }
 }
 
 /**
