@@ -4,11 +4,11 @@
 /*
  * This builds a query for the view.
  */
-function _views_build_query(&$view, $args = array()) {
+function _views_build_query(&$view, $args = array(), $filters = array()) {
   $query = new _views_query('node', 'nid', !empty($view->use_alias_prefix) ? $view->use_alias_prefix : '');
 
-  // Process static filters
-  _views_view_build_filters($query, $view);
+  // Process static filters and exposed filters
+  _views_view_build_filters($query, $view, $filters);
 
   // Process arguments.
   $view->args = $args; // we'll need these later.
@@ -74,7 +74,7 @@ function _views_build_query(&$view, $args = array()) {
 /*
  * Take all the filters in a view and add them to the query object.
  */
-function _views_view_build_filters(&$query, &$view) {
+function _views_view_build_filters(&$query, &$view, $exposed_filter_values) {
   $filters = _views_get_filters();
   $view->used_filters = array();
 
@@ -95,28 +95,28 @@ function _views_view_build_filters(&$query, &$view) {
           $count += $view->exposed_filter_offset;
         }
 
-        if (!$expose['operator'] && $_GET["op$count"]) {
-          $filter['operator'] = check_plain($_GET["op$count"]);
-          $view->used_filters["op$count"] = $_GET["op$count"];
+        if (!$expose['operator'] && $exposed_filter_values[$count]['op']) {
+          $filter['operator'] = check_plain($exposed_filter_values[$count]['op']);
+          $view->used_filters["op$count"] = $exposed_filter_values[$count]['op'];
         }
 
         if ($expose['optional']) {
-          if ((!isset($_GET["filter$count"]) || $_GET["filter$count"] == '') && !$expose['is_default']) {
+          if ((!isset($exposed_filter_values[$count]['filter']) || $exposed_filter_values[$count]['filter'] == '') && !$expose['is_default']) {
             continue 2; // skip
           }
-          if ($_GET["filter$count"] == '**ALL**' ||
-            (is_array($_GET["filter$count"]) && in_array('**ALL**', $_GET["filter$count"]))) {
-            $view->used_filters["filter$count"] = $_GET["filter$count"];
+          if ($exposed_filter_values[$count]['filter'] == '**ALL**' ||
+            (is_array($exposed_filter_values[$count]['filter']) && in_array('**ALL**', $exposed_filter_values[$count]['filter']))) {
+            $view->used_filters["filter$count"] = $exposed_filter_values[$count]['filter'];
             continue 2; // skip this filter entirely.
           }
         }
-        if (isset($_GET["filter$count"]) && $_GET["filter$count"] != '') {
-          $value = $_GET["filter$count"];
+        if (isset($exposed_filter_values[$count]['filter']) && $exposed_filter_values[$count]['filter'] != '') {
+          $value = $exposed_filter_values[$count]['filter'];
           if ($filterinfo['value-type'] == 'array' && !is_array($value)) {
             $value = array($value);
           }
           $filter['value'] = $value;
-          $view->used_filters["filter$count"] = $_GET["filter$count"];
+          $view->used_filters["filter$count"] = $exposed_filter_values[$count]['filter'];
         }
         break;
       }

@@ -261,7 +261,7 @@ function _views_sort_arrays($a, $b) {
   return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
-function _views_get_query(&$view, $args) {
+function _views_get_query(&$view, $args, $filters) {
   if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name, 'cache_views'))) {
     $info = unserialize($cached->data);
 
@@ -272,7 +272,7 @@ function _views_get_query(&$view, $args) {
   }
   else {
     views_load_query();
-    $info = _views_build_query($view, $args);
+    $info = _views_build_query($view, $args, $filters);
     if ($view->is_cacheable) {
       $data = array(
         'query' => _views_replace_args($info['query'], $info['args']),

@@ -34,6 +34,7 @@ Views --dev
     o #126428: (by scott.mclewin) Force single didn't work in all cases.
     o #134703: Fixed problem with validation causing valid values to appear invalid (such as in moderate and sticky filters)
     o #134375: (by vhmauery) Postgres fix, adds orderby to groupby if there is already a groupby.
+    o #127099 (Crell) Fix to views argument handling in RSS that made the RSS feeds fail in panels and viewfield.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
@@ -47,6 +48,7 @@ Views --dev
     o #102489: Allow edit tabs on views (for admins).
     o New 'tools' page in UI to clear the views cache.
     o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
+    o #125973: (mfredrickson) allow exposed filters to come from other sources.
 
 Views 5.x-1.5
   Bugs fixed:

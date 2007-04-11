@@ -790,7 +790,7 @@ function views_post_view_make_url($view, $feed_id, $arg) {
   // assemble the URL
   $args = array();
   foreach ($view->argument as $id => $argdata) {
-    if (isset($view->args[$id])) {
+    if (!empty($view->args[$id])) {
       $args[] = $view->args[$id];
     } else {
       if ($argdata['id'] == $feed_id) {
@@ -814,7 +814,7 @@ function views_post_view_make_args($view, $feed_id, $arg) {
   // assemble the URL
   $args = array();
   foreach ($view->argument as $id => $argdata) {
-    if (isset($view->args[$id])) {
+    if (!empty($view->args[$id])) {
       $args[] = $view->args[$id];
     } else {
       if ($argdata['id'] == $feed_id) {
