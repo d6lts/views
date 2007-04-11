@@ -36,6 +36,8 @@ Views --dev
     o #134375: (by vhmauery) Postgres fix, adds orderby to groupby if there is already a groupby.
     o #127099: (Crell) Fix to views argument handling in RSS that made the RSS feeds fail in panels and viewfield.
     o #128301: (dww) Fix .install file to uninstall tables even if using postgres.
+    o #130139: (simplymenotu) change changelog to top-down format.
+    o #130196: (the greenman) Views filters improperly ignored table aliasing.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
