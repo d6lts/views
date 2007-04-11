@@ -411,6 +411,9 @@ class _views_query {
       }
       $this->add_field($f, $table, $as);
       $this->orderby[] = "$as $order";
+      if ($this->groupby) {
+        $this->add_groupby($as);
+      }
     }
   }
 
