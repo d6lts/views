@@ -31,6 +31,8 @@ Views 4.7.x-dev
     o #134703: Fixed problem with validation causing valid values to appear invalid (such as in moderate and sticky filters)
     o #134375: (by vhmauery) Postgres fix, adds orderby to groupby if there is already a groupby.
     o #127099 (Crell) Fix to views argument handling in RSS that made the RSS feeds fail in panels and viewfield.
+    o #130139: (simplymenotu) change changelog to top-down format.
+    o #130196: (the greenman) Views filters improperly ignored table aliasing.
 
   New features:
     o #105620: (Attempt 2) allow modules to alter views tables + arguments
