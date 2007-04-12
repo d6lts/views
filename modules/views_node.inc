@@ -105,6 +105,7 @@ function node_views_tables() {
       'nid' => array(
         'name' => t('Node: ID'),
         'help' => t('Sort by the database ID of the node.'),
+        'handler' => 'views_node_sort_handler_nid',
        ),
       'created' => array(
         'name' => t('Node: Created Time'),
@@ -638,7 +639,6 @@ function views_handler_arg_fulldate($op, &$query, $argtype, $arg = '') {
 function views_handler_arg_nid($op, &$query, $argtype, $arg = '') {
   switch($op) {
     case 'summary':
-      $query->add_field('nid');
       $query->add_field("title");
       $fieldinfo['field'] = 'node.nid';
       return $fieldinfo;
@@ -750,6 +750,10 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
       $query->add_orderby('', "random()", "ASC", 'random_sort');
       break;
   }
+}
+
+function views_node_sort_handler_nid($action, &$query, $sortinfo, $sort) {
+  $query->add_orderby(NULL, 'nid', $sort['sortorder'], 'nid');
 }
 
 function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
