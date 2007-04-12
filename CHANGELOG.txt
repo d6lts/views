@@ -2,7 +2,18 @@ CHANGELOG for Views for Drupal 5
 
 (Note: Order has been reversed to newest first which is more common.)
 
-Views --dev
+Views 5.x-1.6-beta
+  Highlights:
+    o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
+    o #118069: Move the query cache into the real cache. This should clear up a few caching problems.
+    o Serious cleanup of inline argument code
+    o Fixed theme code for popular/popular all-time blocks.
+    o Moved implementation of hook_taxonomy so it'll trigger.
+
+    o New $arg (inline argument) variants: $node, $node-TYPE, $user
+    o #102489: Allow edit tabs on views (for admins).
+    o New 'tools' page in UI to clear the views cache.
+
   Bugs fixed:
     o Capitalization and t() fixes to recent popular content and all time popular content views.
     o #123986: documentation fix in argument handling code
@@ -10,18 +21,13 @@ Views --dev
     o #102716: Reduced the number of JOINs for taxonomy hierarchy queries
     o #103649: Documentation fix fix for date granularity
     o #115519: Restrict width of select items in UI.
-    o #119742: Improved handling of DISTINCT; allow DISTINCT to not kill summaries.
     o #111936: Allow search keyword to be optional.
     o #116985: Fix channel link in RSS feeds.
     o #122103: Fix blank titles of blocks exported by views.
-    o #118069: Move the query cache into the real cache. This should clear up a few caching problems.
     o #122818: Incorrect use of fullname when queryname should have been used
     o #108523: Properly validate that filter values need values selected.
     o #122063: Prevent strtotime from choking on empty timestamps
-    o Serious cleanup of inline argument code
     o #116190: Book parent didn't work with prefixes
-    o Fixed theme code for popular/popular all-time blocks.
-    o Moved implementation of hook_taxonomy so it'll trigger.
     o #115699: Don't show RSS feeds on block views (again)
     o #88947: If NULL query don't try to run it at all.
     o #113332: NULL entries for vocabulary summaries with nodes without terms.
@@ -51,9 +57,6 @@ Views --dev
     o #115856: Allow use of autocomplete for freetagging taxonomies.
     o Allow RSS channel description to be set as part of the argument option.
     o #115849: Use dedicated cache table for views caching
-    o New $arg (inline argument) variants: $node, $node-TYPE, $user
-    o #102489: Allow edit tabs on views (for admins).
-    o New 'tools' page in UI to clear the views cache.
     o #135273: (josh_k) Allow 'edit' handler option to return to view after editing.
     o #125973: (mfredrickson) allow exposed filters to come from other sources.
     o #133454: (sarvab) Move some pager variables around so that they're on the $view object and more easily modified.
