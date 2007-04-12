@@ -30,6 +30,8 @@ function node_views_tables() {
       'nid' => array(
         'name' => t('Node: ID'),
         'sortable' => true,
+        'notafield' => true,
+        'handler' => 'views_handler_node_nid',
         'help' => t('Display the NID of a node.'),
       ),
       'created' => array(
@@ -874,4 +876,11 @@ function views_handler_node_delete($fieldinfo, $fielddata, $value, $data) {
     $link_text = $fielddata['options'] ? $fielddata['options'] : t('Delete');
     return l($link_text, "node/$data->nid/delete");
   }
+}
+
+/**
+ * Display a node's nid, which is a little bit special.
+ */
+function views_handler_node_nid($fieldinfo, $fielddata, $value, $data) {
+  return $data->nid;
 }

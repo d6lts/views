@@ -281,6 +281,7 @@ class _views_query {
    */
   function _views_query($primary_table = 'node', $primary_field = 'nid', $alias_prefix = '') {
     $this->primary_table = $primary_table;
+    $this->primary_field = $primary_field;
     $this->joins = array();
     $this->where = array();
     $this->orderby = array();
