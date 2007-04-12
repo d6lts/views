@@ -367,3 +367,10 @@ function views_update_12() {
 
   return $ret;
 }
+
+function views_update_13() {
+  $ret = array();
+  $ret[] = update_sql("DELETE FROM {cache}");
+  return $ret;
+}
+
