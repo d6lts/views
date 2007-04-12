@@ -514,11 +514,6 @@ function views_access($view, $account = NULL) {
 
   // All views with an empty access setting are available to all roles.
   if (!$view->access) { 
-  $view->use_pager = $use_pager;
-  $view->pager_limit = $limit;
-  $view->page = $page;
-  $view->offset = $offset;
-
     return TRUE;
   }
 
@@ -756,6 +751,11 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     ob_end_clean();
   }
 
+  $view->use_pager = $use_pager;
+  $view->pager_limit = $limit;
+  $view->current_page = $page;
+  $view->offset = $offset;
+
   // Call a hook that'll let modules modify the view query before it is created
   foreach (module_implements('views_pre_query') as $module) {
     $function = $module .'_views_pre_query';
@@ -782,7 +782,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
       $view->total_rows = $GLOBALS['pager_total_items'][$view->use_pager - 1];
     }
     else {
-      $result = ($view->pager_limit ? db_query_range($query, $info['args'], $view->page * $view->pager_limit + $view->offset, $view->pager_limit) : db_query($query, $info['args']));
+      $result = ($view->pager_limit ? db_query_range($query, $info['args'], $view->current_page * $view->pager_limit + $view->offset, $view->pager_limit) : db_query($query, $info['args']));
     }
     $view->num_rows = db_num_rows($result);
     if ($type == 'result') {
