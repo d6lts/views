@@ -1232,6 +1232,7 @@ function theme_views_display_filters($view) {
 
 function views_filters($view) {
   $form = _views_build_filters_form($view);
+  $form['#view_name'] = $view->name;
   $form['#method'] = 'get';
   $form['#process'] = array('views_filters_process' => array());
   $form['#action'] = url($view->real_url ? $view->real_url : $view->url, NULL, NULL, true);
