@@ -412,7 +412,7 @@ function views_ui_admin_export_page($vid = '') {
 function views_ui_admin_add_page($template = NULL) {
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
-    return 'admin/views';
+    drupal_goto('admin/views');
   }
 
   $view = _views_get_default_view($template);
@@ -428,7 +428,7 @@ function views_ui_admin_add_page($template = NULL) {
 function views_ui_admin_clone_page($viewname) {
   $op = $_POST['op'];
   if ($op == t('Cancel')) {
-    return 'admin/views';
+    drupal_goto('admin/views');
   }
 
   $view = views_load_view($viewname);
