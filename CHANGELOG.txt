@@ -3,7 +3,8 @@ CHANGELOG for Views for Drupal 4.7
 (Note: Order of changelog has been reversed to newest first, which is more
 common).
 
-Views 4.7.x-dev
+Views 4.7.x-1.6-beta
+  Bugs fixed:
     o #111881: change 'user' table to use INNER join because every node has an author
     o #102716: Reduced the number of JOINs for taxonomy hierarchy queries
     o #74541: Improved handling of role filtering.
