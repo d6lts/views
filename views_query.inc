@@ -80,12 +80,10 @@ function _views_view_build_filters(&$query, &$view) {
 
   foreach ($view->filter as $i => $filter) {
     $filterinfo = $filters[$filter['field']]; // shortcut
-    $field = $filterinfo['field'];
-    if (!$field) {
+    if (!$filterinfo['field']) {
       $fieldbits = explode('.', $filter['field']);
-      $field = $fieldbits[1];
+      $filterinfo['field'] = $fieldbits[1];
     }
-    $filterinfo['field'] = $field;
 
     foreach($view->exposed_filter as $count => $expose) {
       if ($filter['id'] == $expose['id']) {
@@ -128,47 +126,55 @@ function _views_view_build_filters(&$query, &$view) {
       }
     }
 
-    $table = $filterinfo['table'];
-
     $replace = array('&gt;' => '>', '&lt;' => '<');
     $filter['operator'] = strtr($filter['operator'], $replace);
 
-    if (function_exists($filterinfo['handler'])) {
-      $filterinfo['handler']('handler', $filter, $filterinfo, $query);
+    if (!function_exists($filterinfo['handler'])) {
+      $filterinfo['handler'] = 'views_handler_filter_default';
     }
-    else if (is_array($filter['value']) && count($filter['value'])) {
-      if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
-        $query->ensure_table($table);
-        $where_args = array_merge(array($query->use_alias_prefix . $table, $field), $filter['value']);
-        $placeholder = array_fill(0, count($filter['value']), '%s');
-        if ($filter['operator'] == 'OR') {
-          $query->add_where("%s.%s IN ('". implode("','", $placeholder) ."')", $where_args);
-        }
-        else {
-          $where_args[] = $where_args[0];
-          $where_args[] = $where_args[1];
-          $query->add_where("(%s.%s NOT IN ('". implode("','", $placeholder) ."') OR %s.%s IS NULL)", $where_args);
-        }
+    $filterinfo['handler']('handler', $filter, $filterinfo, $query);
+  }
+}
+
+/*
+ * Default handler for filters
+ */
+function views_handler_filter_default($op, $filter, $filterinfo, &$query) {
+  $table = $filterinfo['table'];
+  $field = $filterinfo['field'];
+
+  if (is_array($filter['value']) && count($filter['value'])) {
+    if ($filter['operator'] == 'OR' || $filter['operator'] == 'NOR') {
+      $query->ensure_table($table);
+      $where_args = array_merge(array($query->use_alias_prefix . $table, $field), $filter['value']);
+      $placeholder = array_fill(0, count($filter['value']), '%s');
+      if ($filter['operator'] == 'OR') {
+        $query->add_where("%s.%s IN ('". implode("','", $placeholder) ."')", $where_args);
       }
       else {
-        $howmany = count($filter['value']);
-        $high_table = $query->add_table($table, true, $howmany);
-        if (!$high_table) { // couldn't add the table
-          break;
-        }
-
-        $table_num = $high_table - $howmany;
-        foreach ($filter['value'] as $item) {
-          $table_num++;
-          $tn = $query->get_table_name($table, $table_num);
-          $query->add_where("%s.%s = '%s'", $tn, $field, $item);
-        }
+        $where_args[] = $where_args[0];
+        $where_args[] = $where_args[1];
+        $query->add_where("(%s.%s NOT IN ('". implode("','", $placeholder) ."') OR %s.%s IS NULL)", $where_args);
       }
     }
     else {
-      $query->ensure_table("$table");
-      $query->add_where("%s.%s %s '%s'", $query->use_alias_prefix . $table, $field, $filter['operator'], $filter['value']);
+      $howmany = count($filter['value']);
+      $high_table = $query->add_table($table, true, $howmany);
+      if (!$high_table) { // couldn't add the table
+        return;
+      }
+
+      $table_num = $high_table - $howmany;
+      foreach ($filter['value'] as $item) {
+        $table_num++;
+        $tn = $query->get_table_name($table, $table_num);
+        $query->add_where("%s.%s = '%s'", $tn, $field, $item);
+      }
     }
+  }
+  else {
+    $query->ensure_table("$table");
+    $query->add_where("%s.%s %s '%s'", $query->use_alias_prefix . $table, $field, $filter['operator'], $filter['value']);
   }
 }
 
