@@ -755,7 +755,7 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
 }
 
 function views_node_sort_handler_nid($action, &$query, $sortinfo, $sort) {
-  $query->add_orderby(NULL, 'nid', $sort['sortorder'], 'nid');
+  $query->orderby[] = "{node}.nid $sort[sortorder]";
 }
 
 function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
