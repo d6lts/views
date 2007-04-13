@@ -409,8 +409,31 @@ function views_update_12() {
 
   $ret[] = update_sql("ALTER TABLE {view_view} DROP query");
   $ret[] = update_sql("ALTER TABLE {view_view} DROP countquery");
+  views_make_cache_table(&$ret);
+  return $ret;
+}
 
-  $ret[] = update_sql("CREATE TABLE {cache_views} (
+function views_update_13() {
+  $ret = array();
+  views_make_cache_table(&$ret);
+  $ret[] = update_sql("DELETE FROM {cache_views}");
+  return $ret;
+}
+
+function views_update_14() {
+  $ret = array();
+  views_make_cache_table(&$ret); 
+  $ret[] = update_sql("DELETE FROM {cache_views}");
+  return $ret;
+}
+
+/**
+ * This should go in every update to ensure that it's there from a 4.7 -> 5.x
+ * update.
+ */
+function views_make_cache_table(&$ret) {
+  if (!db_table_exists('view_view')) {
+    $ret[] = update_sql("CREATE TABLE {cache_views} (
         cid varchar(255) NOT NULL default '',
         data longblob,
         expire int NOT NULL default '0',
@@ -419,12 +442,5 @@ function views_update_12() {
         PRIMARY KEY (cid),
         INDEX expire (expire)
       ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
-
-  return $ret;
-}
-
-function views_update_13() {
-  $ret = array();
-  $ret[] = update_sql("DELETE FROM {cache_views}");
-  return $ret;
+  }
 }

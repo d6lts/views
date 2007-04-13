@@ -798,7 +798,47 @@ function views_invalidate_cache() {
  * Provide all the fields in a view.
  */
 function _views_view_fields() {
-  return array('vid', 'name', 'description', 'access', 'page', 'page_title', 'page_header', 'page_header_format', 'page_footer', 'page_footer_format', 'page_empty', 'page_empty_format', 'page_type', 'use_pager', 'nodes_per_page', 'url', 'menu', 'menu_tab', 'menu_tab_default', 'menu_tab_weight', 'menu_title', 'block', 'block_title', 'block_use_page_header', 'block_header', 'block_header_format', 'block_use_page_footer', 'block_footer', 'block_footer_format', 'block_use_page_empty', 'block_empty', 'block_empty_format', 'block_type', 'nodes_per_block', 'block_more', 'url', 'breadcrumb_no_home', 'changed', 'view_args_php', 'is_cacheable');
+  return array(
+    'vid' => '%d', 
+    'name' => "'%s'", 
+    'description' => "'%s'", 
+    'access' => "'%s'", 
+    'page' => '%d', 
+    'page_title' => "'%s'", 
+    'page_header' => "'%s'", 
+    'page_header_format' => '%d', 
+    'page_footer' => "'%s'", 
+    'page_footer_format' => '%d', 
+    'page_empty' => "'%s'", 
+    'page_empty_format' => '%d', 
+    'page_type' => "'%s'", 
+    'use_pager' => '%d', 
+    'nodes_per_page' => '%d', 
+    'url' => "'%s'", 
+    'menu' => '%d', 
+    'menu_tab' => '%d', 
+    'menu_tab_default' => '%d', 
+    'menu_tab_weight' => '%d', 
+    'menu_title' => "'%s'", 
+    'block' => '%d', 
+    'block_title' => "'%s'", 
+    'block_use_page_header' => '%d', 
+    'block_header' => "'%s'", 
+    'block_header_format' => '%d', 
+    'block_use_page_footer' => '%d', 
+    'block_footer' => "'%s'", 
+    'block_footer_format' => '%d', 
+    'block_use_page_empty' => '%d', 
+    'block_empty' => "'%s'", 
+    'block_empty_format' => '%d', 
+    'block_type' => "'%s'", 
+    'nodes_per_block' => '%d', 
+    'block_more' => '%d', 
+    'breadcrumb_no_home' => '%d', 
+    'changed' => '%d', 
+    'view_args_php' => "'%s'", 
+    'is_cacheable' => '%d',
+  );
 }
 
 /**
@@ -935,8 +975,8 @@ function _views_save_view($view) {
     // update
     // Prepare the query:
     foreach ($view as $key => $value) {
-      if (in_array($key, $fields)) {
-        $q[] = db_escape_string($key) ." = '%s'";
+      if (array_key_exists($key, $fields)) {
+        $q[] = db_escape_string($key) ." = $fields[$key]";
         $v[] = $value;
       }
     }
@@ -960,10 +1000,10 @@ function _views_save_view($view) {
 
     // Prepare the query:
     foreach ($view as $key => $value) {
-      if (in_array((string) $key, $fields)) {
+      if (array_key_exists((string) $key, $fields)) {
         $k[] = db_escape_string($key);
         $v[] = $value;
-        $s[] = is_numeric($value) ? '%d' : "'%s'";
+        $s[] = $fields[$key];
       }
     }
 

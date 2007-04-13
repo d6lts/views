@@ -3,7 +3,8 @@ CHANGELOG for Views for Drupal 5
 Views 5.x-beta3
   Bugs fixed:
     o Reverting #130196: The original behavior was correct.
-   
+    o #135829: Changed a bit how view table fields are defined to help prevent type confusion.
+
 Views 5.x-beta2
   Bugs fixed:
     o #135881: Broken test for 'visible' caused all list fields to disappear.
