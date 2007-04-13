@@ -409,20 +409,20 @@ function views_update_12() {
 
   $ret[] = update_sql("ALTER TABLE {view_view} DROP query");
   $ret[] = update_sql("ALTER TABLE {view_view} DROP countquery");
-  views_make_cache_table(&$ret);
+  views_make_cache_table($ret);
   return $ret;
 }
 
 function views_update_13() {
   $ret = array();
-  views_make_cache_table(&$ret);
+  views_make_cache_table($ret);
   $ret[] = update_sql("DELETE FROM {cache_views}");
   return $ret;
 }
 
 function views_update_14() {
   $ret = array();
-  views_make_cache_table(&$ret); 
+  views_make_cache_table($ret); 
   $ret[] = update_sql("DELETE FROM {cache_views}");
   return $ret;
 }

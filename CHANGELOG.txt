@@ -1,5 +1,8 @@
 CHANGELOG for Views for Drupal 5
 
+Views 5.x-dev
+    o #136179: Invalid pass-by-reference in views.install fixed.
+
 Views 5.x-beta3
   Bugs fixed:
     o Reverting #130196: The original behavior was correct.
