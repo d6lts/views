@@ -1342,7 +1342,7 @@ function theme_views_view_list($view, $nodes, $type) {
   foreach ($nodes as $node) {
     $item = '';
     foreach ($view->field as $field) {
-      if (isset($fields[$field['id']]['visible']) && $fields[$field['id']]['visible'] !== FALSE) {
+      if (!isset($fields[$field['id']]['visible']) && $fields[$field['id']]['visible'] !== FALSE) {
         if ($field['label']) {
           $item .= "<div class='view-label ". views_css_safe('view-label-'. $field['queryname']) ."'>" . $field['label'] . "</div>";
         }
