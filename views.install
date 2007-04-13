@@ -374,3 +374,9 @@ function views_update_13() {
   return $ret;
 }
 
+// This is mostly to keep it up to date with the 5.x version.
+function views_update_14() {
+  $ret = array();
+  $ret[] = update_sql("DELETE FROM {cache}");
+  return $ret;
+}
