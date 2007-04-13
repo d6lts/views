@@ -1,10 +1,13 @@
 CHANGELOG for Views for Drupal 5
 
-(Note: Order has been reversed to newest first which is more common.)
-
-View 5.x-dev
+Views 5.x-beta3
+  Bugs fixed:
+    o Reverting #130196: The original behavior was correct.
+   
+Views 5.x-beta2
   Bugs fixed:
     o #135881: Broken test for 'visible' caused all list fields to disappear.
+    o Reverting #130196: The original behavior was correct.
 
 Views 5.x-1.6-beta
   Highlights:
