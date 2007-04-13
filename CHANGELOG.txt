@@ -3,6 +3,12 @@ CHANGELOG for Views for Drupal 4.7
 (Note: Order of changelog has been reversed to newest first, which is more
 common).
 
+Views 4.7.x-1.6-beta3
+    o Reverting #130196: The original behavior was correct.
+
+Views 4.7.x-1.6-beta2
+    o Another fix for sort by nid
+
 Views 4.7.x-1.6-beta
   Bugs fixed:
     o #111881: change 'user' table to use INNER join because every node has an author
