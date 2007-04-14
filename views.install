@@ -432,7 +432,7 @@ function views_update_14() {
  * update.
  */
 function views_make_cache_table(&$ret) {
-  if (!db_table_exists('view_view')) {
+  if (!db_table_exists('cache_views')) {
     $ret[] = update_sql("CREATE TABLE {cache_views} (
         cid varchar(255) NOT NULL default '',
         data longblob,
