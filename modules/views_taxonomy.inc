@@ -241,6 +241,7 @@ function views_taxonomy_form(&$vocabulary) {
     unset($form['#title']);
     unset($form['#description']);
     unset($form['#options'][0]);
+    $form['#multiple'] = TRUE;
   }
   return $form;
 }
