@@ -8,6 +8,7 @@ Views 5.x-dev
     o #136330: Fix problems with views_cache table not existing when updating from 1.5 -> 1.6-beta.
     o #138510: Multi-select for taxonomy had disappeared.
     o #117365: Comment: Last Changed Time wasn't ensuring node_comment_statistics is in the query.
+    o #136794: Sort by nid via click-sorting was also broken
 
 Views 5.x-beta3
   Bugs fixed:

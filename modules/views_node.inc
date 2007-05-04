@@ -32,6 +32,7 @@ function node_views_tables() {
         'sortable' => true,
         'notafield' => true,
         'handler' => 'views_handler_node_nid',
+        'sort_handler' => 'views_node_query_handler_nid',
         'help' => t('Display the NID of a node.'),
       ),
       'created' => array(
@@ -754,6 +755,10 @@ function views_handler_sort_random($action, &$query, $sortinfo, $sort) {
 
 function views_node_sort_handler_nid($action, &$query, $sortinfo, $sort) {
   $query->orderby[] = "node.nid $sort[sortorder]";
+}
+
+function views_node_query_handler_nid($fielddata, $fieldinfo) {
+  return "node.nid";
 }
 
 function views_handler_arg_node_feed($op, &$query, $argtype, $arg = '') {
