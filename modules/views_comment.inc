@@ -178,6 +178,7 @@ function comment_views_tables() {
 }
 
 function views_query_handler_field_last_changed($field, $fieldinfo, &$query) {
+  $query->ensure_table('node_comment_statistics');
   $query->add_field('GREATEST(node.changed, node_comment_statistics.last_comment_timestamp)', '', $field['tablename'] . '_last_changed');
 }
 
@@ -190,7 +191,6 @@ function views_handler_filter_last_changed($op, $filter, $filterinfo, &$query) {
   $query->ensure_table($table);
   $query->add_where("%s %s %s + %d", $field, $filter['operator'], $value, $filter['options']);
 }
-
 
 function views_handler_sort_last_changed($action, &$query, $sortinfo, $sort) {
   $query->ensure_table('node_comment_statistics');
