@@ -4,6 +4,8 @@ Views 5.x-dev
   Bugs fixed:
     o #136179: Invalid pass-by-reference in views.install fixed.
     o #140431: Taxonomy select boxes were improperly showing descriptions.
+    o #137971: Fix .install file for PGSQL. Again. Still.
+    o #136330: Fix problems with views_cache table not existing when updating from 1.5 -> 1.6-beta.
 
 Views 5.x-beta3
   Bugs fixed:

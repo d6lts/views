@@ -425,6 +425,7 @@ function views_update_12() {
       break;
   }
 
+  views_make_cache_table($ret);
   include_once('./'. drupal_get_path('module', 'views') .'/views.module');
   $result = db_query("SELECT name FROM {view_view} ORDER BY name");
   while ($row = db_fetch_array($result)) {
