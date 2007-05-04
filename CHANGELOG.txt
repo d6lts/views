@@ -1,7 +1,9 @@
 CHANGELOG for Views for Drupal 5
 
 Views 5.x-dev
+  Bugs fixed:
     o #136179: Invalid pass-by-reference in views.install fixed.
+    o #140431: Taxonomy select boxes were improperly showing descriptions.
 
 Views 5.x-beta3
   Bugs fixed:

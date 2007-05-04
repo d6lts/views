@@ -2068,3 +2068,12 @@ function _views_get_filter_values() {
   }
   return $values;
 }
+
+/**
+ * Invalidate the views cache when taxonomy vocabulary changes.
+ */
+function views_taxonomy($op, $type, $object = NULL) {
+  if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
+    views_invalidate_cache();
+  }
+}
