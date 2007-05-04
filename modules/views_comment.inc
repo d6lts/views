@@ -178,6 +178,7 @@ function comment_views_tables() {
 }
 
 function views_query_handler_field_last_changed($field, $fieldinfo, &$query) {
+  $query->ensure_table('node_comment_statistics');
   $query->add_field('GREATEST(node.changed, node_comment_statistics.last_comment_timestamp)', '', $field['tablename'] . '_last_changed');
 }
 

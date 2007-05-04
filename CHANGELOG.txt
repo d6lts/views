@@ -7,6 +7,7 @@ Views 5.x-dev
     o #137971: Fix .install file for PGSQL. Again. Still.
     o #136330: Fix problems with views_cache table not existing when updating from 1.5 -> 1.6-beta.
     o #138510: Multi-select for taxonomy had disappeared.
+    o #117365: Comment: Last Changed Time wasn't ensuring node_comment_statistics is in the query.
 
 Views 5.x-beta3
   Bugs fixed:
