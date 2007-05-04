@@ -237,9 +237,9 @@
         data bytea,
         expire integer,
         created integer,
-        headers text
+        headers text,
+        PRIMARY KEY (cid)
       )");
-      db_query("CREATE INDEX {cache_views}_cid_idx ON {cache_views} (cid)");
       db_query("CREATE INDEX {cache_views}_expire_idx ON {cache_views} (expire)");
 
       $success = TRUE;
@@ -338,16 +338,25 @@ function views_update_3() {
 
 function views_update_4() {
   $ret = array();
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $small = 'int(4)';
+      $tiny = 'int(1)';
+    case 'pgsql':
+      $small = $tiny = 'smallint';
+      break;
+  }
   db_add_column($ret, 'view_view', 'page_footer', 'longtext');
-  db_add_column($ret, 'view_view', 'page_footer_format', 'int(4)', array('default' => 0));
-  db_add_column($ret, 'view_view', 'block_use_page_footer', 'int(1)');
+  db_add_column($ret, 'view_view', 'page_footer_format', $small, array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_use_page_footer', $tiny);
   db_add_column($ret, 'view_view', 'block_footer', 'longtext');
-  db_add_column($ret, 'view_view', 'block_footer_format', 'int(4)', array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_footer_format', $small, array('default' => 0));
   db_add_column($ret, 'view_view', 'page_empty', 'longtext');
-  db_add_column($ret, 'view_view', 'page_empty_format', 'int(4)', array('default' => 0));
-  db_add_column($ret, 'view_view', 'block_use_page_empty', 'int(1)');
+  db_add_column($ret, 'view_view', 'page_empty_format', $small, array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_use_page_empty', $tiny);
   db_add_column($ret, 'view_view', 'block_empty', 'longtext');
-  db_add_column($ret, 'view_view', 'block_empty_format', 'int(4)', array('default' => 0));
+  db_add_column($ret, 'view_view', 'block_empty_format', $small, array('default' => 0));
   return $ret;
 }
 
@@ -371,7 +380,16 @@ function views_update_7() {
 
 function views_update_8() {
   $ret = array();
-  $ret[] = update_sql("ALTER TABLE {view_view} MODIFY nodes_per_page int(5)");
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      $ret[] = update_sql("ALTER TABLE {view_view} MODIFY nodes_per_page int(5)");
+      break;
+    case 'pgsql':
+      $ret[] = update_sql("ALTER TABLE {view_view} MODIFY nodes_per_page smallint");
+      break;
+  }
+  
   return $ret;
 }
 
@@ -397,8 +415,15 @@ function views_update_11() {
 
 function views_update_12() {
   $ret = array();
-
-  db_add_column($ret, 'view_view', 'is_cacheable', 'int(1)');
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_add_column($ret, 'view_view', 'is_cacheable', 'int(1)');
+      break;
+    case 'pgsql':
+      db_add_column($ret, 'view_view', 'is_cacheable', 'smallint');
+      break;
+  }
 
   include_once('./'. drupal_get_path('module', 'views') .'/views.module');
   $result = db_query("SELECT name FROM {view_view} ORDER BY name");
@@ -433,14 +458,30 @@ function views_update_14() {
  */
 function views_make_cache_table(&$ret) {
   if (!db_table_exists('cache_views')) {
-    $ret[] = update_sql("CREATE TABLE {cache_views} (
-        cid varchar(255) NOT NULL default '',
-        data longblob,
-        expire int NOT NULL default '0',
-        created int NOT NULL default '0',
-        headers text,
-        PRIMARY KEY (cid),
-        INDEX expire (expire)
-      ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
+    switch ($GLOBALS['db_type']) {
+      case 'mysql':
+      case 'mysqli':
+        $ret[] = update_sql("CREATE TABLE {cache_views} (
+            cid varchar(255) NOT NULL default '',
+            data longblob,
+            expire int NOT NULL default '0',
+            created int NOT NULL default '0',
+            headers text,
+            PRIMARY KEY (cid),
+            INDEX expire (expire)
+          ) /*!40100 DEFAULT CHARACTER SET UTF8 */ ");
+        break;
+      case 'pgsql':
+        $ret[] = update_sql("CREATE TABLE {cache_views} (
+            cid varchar(255),
+            data bytea,
+            expire integer,
+            created integer,
+            headers text,
+            PRIMARY KEY (cid)
+          )");
+        $ret[] = update_sql("CREATE INDEX {cache_views}_expire_idx ON {cache_views} (expire)");
+        break;
+    }
   }
 }
