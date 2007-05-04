@@ -2235,7 +2235,7 @@ function views_t_strings($text) {
 }
 
 /**
- * invalidate the views cache when taxonomy vocabulary changes.
+ * Invalidate the views cache when taxonomy vocabulary changes.
  */
 function views_taxonomy($op, $type, $object = NULL) {
   if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
