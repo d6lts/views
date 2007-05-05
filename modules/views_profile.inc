@@ -94,6 +94,13 @@ function profile_views_add_field(&$table, $field) {
         'handler' => 'views_handler_field_profile_checkbox',
       );
        break;
+    case 'textarea':
+      $help = t('Other types based profile field help');
+      $others = array(
+        'sortable' => true,
+        'handler' => 'views_handler_field_profile_textarea',
+      );
+      break;
     default:
       $help = t('Other types based profile field help');
       $others = array(
@@ -226,6 +233,14 @@ function views_handler_field_profile_selection($fieldinfo, $fielddata, $value, $
   $value = (unserialize($value) === false) ? $value : unserialize($value);
   if ( !is_array($value)) { $value = array($value); } // handles cases where values were set before this new profile module was put in place
   return check_plain(implode(', ',$value));
+}
+
+/**
+ * Default display method for a profile field
+ */
+function views_handler_field_profile_textarea($fieldinfo, $fielddata, $value, $data) {
+  $value = (unserialize($value) === false) ? $value : unserialize($value);
+  return check_markup($value);
 }
 
 /**

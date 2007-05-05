@@ -11,6 +11,7 @@ Views 4.7.x-dev
     o #136794: Sort by nid via click-sorting was also broken
     o #125973: (mfrederickson) Backport of internal views filter changes to 4.7 version.
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
+    o #130019: Use the correct filter on textarea profile fields.
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.
