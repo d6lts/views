@@ -12,6 +12,9 @@ Views 4.7.x-dev
     o #125973: (mfrederickson) Backport of internal views filter changes to 4.7 version.
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
 
+  New features:
+    o #132825: (lyricnz) Allow 'add comment' link as field.
+
 Views 4.7.x-1.6-beta3
     o Reverting #130196: The original behavior was correct.
     o #135829: Changed a bit how view table fields are defined to help prevent type confusion.
