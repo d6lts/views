@@ -2270,3 +2270,10 @@ function _views_get_filter_values() {
 
   return $values;
 }
+
+
+function views_form_alter($form_id, &$form) {
+  if ($form_id == 'profile_field_form') {
+    views_invalidate_cache();
+  }
+}
