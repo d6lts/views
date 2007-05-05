@@ -9,7 +9,8 @@ Views 4.7.x-dev
     o #138510: Multi-select for taxonomy had disappeared.
     o #117365: Comment: Last Changed Time wasn't ensuring node_comment_statistics is in the query.
     o #136794: Sort by nid via click-sorting was also broken
-    o #125973: Backported of internal views filter changes to 4.7 version.
+    o #125973: (mfrederickson) Backport of internal views filter changes to 4.7 version.
+    o #138481: (fago) Allow 'delete' link to return to view like edit link does.
 
 Views 4.7.x-1.6-beta3
     o Reverting #130196: The original behavior was correct.
