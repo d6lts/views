@@ -13,6 +13,7 @@ Views 5.x-dev
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
     o #124610: (KarenS) Allows other modules to add custom tabs to view admin.
     o #137952: (dww) Fix some problems by not having enough options on default menu tabs.
+    o #130019: Use the correct filter on textarea profile fields.
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.
