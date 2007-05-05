@@ -9,6 +9,7 @@ Views 5.x-dev
     o #138510: Multi-select for taxonomy had disappeared.
     o #117365: Comment: Last Changed Time wasn't ensuring node_comment_statistics is in the query.
     o #136794: Sort by nid via click-sorting was also broken
+    o #141205: (by mfrederickson) Add an argument to _views_get_filter_values() to let other code use it.
 
 Views 5.x-beta3
   Bugs fixed:

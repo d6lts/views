@@ -400,6 +400,7 @@ function views_ui_admin_import() {
  * Handle the submit button on importing a view.
  */
 function views_ui_admin_import_submit($formid, $form) {
+  views_load_cache();
   ob_start();
   eval($form['view']);
   ob_end_clean();

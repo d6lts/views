@@ -497,7 +497,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   
   // if no filter values are passed in, get them from the $_GET array
   if ($filters == NULL) {
-    $filters = _views_get_filter_values();
+    $filters = views_get_filter_values();
   }
 
   views_set_current_view($view);
@@ -2057,9 +2057,12 @@ function views_t_strings($text) {
 /**
  * This function fetches filter values from the $_GET object
  */
-function _views_get_filter_values() {
+function views_get_filter_values($input = NULL) {
+  if (!isset($input)) {
+    $input = $_GET;
+  }
   $values = array();
-  foreach($_GET as $key => $value) {
+  foreach($input as $key => $value) {
     if(strpos($key, 'op') === 0) { // starts with op
       $values[substr($key, 2)]['op'] = $value; // two letters in op
     } elseif (strpos($key, 'filter') === 0) { // starts with op
