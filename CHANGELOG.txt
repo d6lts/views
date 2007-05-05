@@ -11,6 +11,7 @@ Views 5.x-dev
     o #136794: Sort by nid via click-sorting was also broken
     o #141205: (by mfrederickson) Add an argument to views_get_filter_values() to let other code use it.
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
+    o #124610: (KarenS) Allows other modules to add custom tabs to view admin.
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.

@@ -27,7 +27,7 @@ function views_menu($may_cache) {
     if (arg(0) == 'admin' && arg(2) == 'modules') {
       views_invalidate_cache();
     }
-    
+
     views_menu_standard_items($items);
   }
   else {
@@ -140,20 +140,36 @@ function views_menu_inline_items(&$items) {
 }
 
 /**
+ * Implementation of hook_views_tabs().
+ */
+function views_views_tabs($op) {
+  switch ($op) {
+    case 'names':
+      return array('edit', 'view', 'clone', 'export');
+      break;
+  }
+}
+
+/**
  * Add the adminstrative items to a view.
  */
 function views_menu_admin_items(&$items, $view_name, $view_args, $args) {
+  // Remove args that are tabs from $args.
+  $tabs = array();
+  foreach (module_implements('views_tabs') as $module) {
+    $function = $module .'_views_tabs';
+    $tabs = array_merge($tabs, (array) $function('names'));
+  }
   // See what the last arg is.
   $last_arg = array_pop($args);
-  if (in_array($last_arg, array('edit', 'view', 'clone', 'export'))) {
+  if (in_array($last_arg, $tabs)) {
     array_pop($view_args);
   }
   else {
     $args[] = $last_arg;
   }
-
-  $path = implode('/', $args);
   $view = views_get_view($view_name);
+  $path = implode('/', $args);
   views_ui_add_menu_items($items, $view, $path, $path != $_GET['q'] && !empty($view_args), $view_args);
 }
 
@@ -666,7 +682,7 @@ function _views_get_timezone() {
     if (!$already_set) {
       if ($GLOBALS['db_type'] == 'mysqli' || version_compare(mysql_get_server_info(), '4.1.3', '>=')) {
         db_query("SET @@session.time_zone = '+00:00'");
-      } 
+      }
       $already_set = true;
     }
   }
@@ -1850,7 +1866,7 @@ function views_url_node($token, $argument, $arg) {
   if (!$node) {
     return FALSE;
   }
-  
+
   if ($argument && $node->type != $argument) {
     return FALSE;
   }
