@@ -12,6 +12,7 @@ Views 4.7.x-dev
     o #125973: (mfrederickson) Backport of internal views filter changes to 4.7 version.
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
     o #130019: Use the correct filter on textarea profile fields.
+    o #139381: (whalebeach) Invalid call to strpos fixed in views_set_breadcrumb
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.
