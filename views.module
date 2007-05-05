@@ -1488,7 +1488,7 @@ function views_set_breadcrumb($view) {
         // For next round.
       }
       $args[] = $arg;
-      if ($where && $where = strpos('$arg', $url)) {
+      if ($where && $where = strpos($url, '$arg')) {
         $url = substr_replace($url, $arg, $where, 4);
       }
       else {

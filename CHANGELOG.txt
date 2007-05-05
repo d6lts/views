@@ -14,6 +14,7 @@ Views 5.x-dev
     o #124610: (KarenS) Allows other modules to add custom tabs to view admin.
     o #137952: (dww) Fix some problems by not having enough options on default menu tabs.
     o #130019: Use the correct filter on textarea profile fields.
+    o #139381: (whalebeach) Invalid call to strpos fixed in views_set_breadcrumb
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.
