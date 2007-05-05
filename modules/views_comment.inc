@@ -61,6 +61,13 @@ function comment_views_tables() {
         'addlfields' => array('uid'),
         'help' => t('This will display the author of the node.'),
       ),
+      'add' => array(
+        'name' => t('Comment: Add link'),
+        'handler' => 'views_handler_comment_add',
+        'notafield' => TRUE,
+        'option' => 'string',
+        'help' => t('Display a link to add a comment to the node. Enter the text of this link into the option field; if blank the default "Comment" will be used.'),
+      ),
     ),
     'filters' => array(
       'status' => array(
@@ -349,3 +356,12 @@ function comment_views_default_views() {
   return $views;
 }
 
+/**
+ * display a link to add a comment to a node
+ */
+function views_handler_comment_add($fieldinfo, $fielddata, $value, $data) {
+  if (user_access('post comments')) {
+    $link_text = $fielddata['options'] ? $fielddata['options'] : t('Comment');
+    return l($link_text, 'comment/reply/' . $data->nid, NULL, NULL, 'comment-form');
+  }
+}

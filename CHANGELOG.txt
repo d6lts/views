@@ -12,6 +12,9 @@ Views 5.x-dev
     o #141205: (by mfrederickson) Add an argument to views_get_filter_values() to let other code use it.
     o #138481: (fago) Allow 'delete' link to return to view like edit link does.
 
+  New features:
+    o #132825: (lyricnz) Allow 'add comment' link as field.
+
 Views 5.x-beta3
   Bugs fixed:
     o Reverting #130196: The original behavior was correct.
