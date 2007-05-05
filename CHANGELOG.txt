@@ -15,6 +15,8 @@ Views 5.x-dev
     o #137952: (dww) Fix some problems by not having enough options on default menu tabs.
     o #130019: Use the correct filter on textarea profile fields.
     o #139381: (whalebeach) Invalid call to strpos fixed in views_set_breadcrumb
+    o #86577: Added a form_alter to check for the profile form so that Views will invalidate its cache when profile fields are added/edited.
+    o #138217: Made the menu tabs work properly for default views as well.
 
   New features:
     o #132825: (lyricnz) Allow 'add comment' link as field.

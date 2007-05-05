@@ -168,13 +168,24 @@ function views_ui_add_menu_items(&$items, $view, $url, $base = TRUE, $args = arr
       'access' => user_access('administer views'),
       'weight' => -10,
       'type' => MENU_DEFAULT_LOCAL_TASK);
-    $items[] = array('path' => "$url/edit",
-      'title' => t('Edit'),
-      'callback' => 'views_ui_admin_edit_page',
-      'callback arguments' => array($view->name),
-      'access' => user_access('administer views'),
-      'weight' => -5,
-      'type' => MENU_LOCAL_TASK);
+    if (isset($view->is_default)) {
+      $items[] = array('path' => "$url/add",
+        'title' => t('Override'),
+        'callback' => 'views_ui_admin_add_page',
+        'callback arguments' => array($view->name),
+        'access' => user_access('administer views'),
+        'weight' => -5,
+        'type' => MENU_LOCAL_TASK);
+    }
+    else {
+      $items[] = array('path' => "$url/edit",
+        'title' => t('Edit'),
+        'callback' => 'views_ui_admin_edit_page',
+        'callback arguments' => array($view->name),
+        'access' => user_access('administer views'),
+        'weight' => -5,
+        'type' => MENU_LOCAL_TASK);
+    }
     $items[] = array('path' => "$url/export",
       'title' => t('Export'),
       'callback' => 'drupal_get_form',
@@ -468,7 +479,7 @@ function views_ui_admin_clone_page($viewname) {
     drupal_goto('admin/build/views');
   }
 
-  $view = views_load_view($viewname);
+  $view = views_get_view($viewname);
   if (!$view) {
     return drupal_not_found();
   }
@@ -1893,7 +1904,7 @@ function views_tf($val) {
  * This function creates view code for a view.
  */
 function views_create_view_code($vid) {
-  $view = _views_load_view($vid);
+  $view = views_get_view($vid);
   if (!$view) {
     return t("View '%vid' not found.", array('%vid' => $vid));
   }

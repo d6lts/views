@@ -237,6 +237,7 @@ function _views_get_default_views() {
       foreach ($views as $i => $view) {
         if (!is_array($view->requires) || !array_diff($view->requires, $tables)) {
           views_sanitize_view($view);
+          $view->is_default = TRUE;
           $views_default_views[$i] = $view;
         }
       }
