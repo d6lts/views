@@ -3,7 +3,7 @@ CHANGELOG for Views for Drupal 4.7
 (Note: Order of changelog has been reversed to newest first, which is more
 common).
 
-Views 4.7.x-dev
+Views 4.7.x-1.6-beta5
   Bugs fixed:
     o #140431: Taxonomy select boxes were improperly showing descriptions.
     o #138510: Multi-select for taxonomy had disappeared.
