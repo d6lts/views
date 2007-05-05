@@ -273,7 +273,7 @@ function _views_sort_arrays($a, $b) {
   return ($a['weight'] > $b['weight']) ? -1 : 1;
 }
 
-function _views_get_query(&$view, $args) {
+function _views_get_query(&$view, $args, $filters) {
   if ($view->is_cacheable && ($cached = cache_get('views_query:' . $view->name))) {
     $info = unserialize($cached->data);
 
@@ -284,7 +284,7 @@ function _views_get_query(&$view, $args) {
   }
   else {
     views_load_query();
-    $info = _views_build_query($view, $args);
+    $info = _views_build_query($view, $args, $filters);
     if ($view->is_cacheable) {
       $data = array(
         'query' => _views_replace_args($info['query'], $info['args']),
@@ -730,12 +730,24 @@ function views_view_block($vid) {
  *   $use_pager is false, and $limit is !0, $page tells it what page to start
  *   on, in case for some reason a particular section of view is needed,
  *   without paging on.
+ * @param $filters
+ *   An array of exposed filter ops and values to use with the exposed filter system
+ *   Array has the form:
+ *     [0] => array('op' => 'foo', 'value' => 'bar'),
+ *     [1] => array('value' => 'zoo'), // for a locked operator, e.g.
+ *   If no array is passed in, views will look in the $_GET array for potential filters
 */
-function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0, $offset = 0) {
+function views_build_view($type, &$view, $args = array(), $use_pager = false, $limit = 0, $page = 0, $offset = 0, $filters = NULL) {
+
   // Fix a number of annoying whines when NULL is passed in..
   if ($args == NULL) {
     $args = array();
   }
+
+	// if no filter values are passed in, get them from the $_GET array
+	if ($filters == NULL) {
+   	$filters = _views_get_filter_values();
+ 	}
 
   $GLOBALS['current_view'] = &$view;
 
@@ -762,7 +774,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
     $output .= $function($view);
   }
 
-  $info = _views_get_query($view, $args);
+  $info = _views_get_query($view, $args, $filters);
   
   if ($info['fail']) {
     return FALSE;
@@ -2241,4 +2253,20 @@ function views_taxonomy($op, $type, $object = NULL) {
   if ($type == 'vocabulary' && $op == 'delete' || $op == 'insert' || $op == 'update') {
     views_invalidate_cache();
   }
+}
+
+/**
+ * This function fetches filter values from the $_GET object
+ */
+function _views_get_filter_values() {
+  $values = array();
+  foreach($_GET as $key => $value) {
+    if(strpos($key, 'op') === 0) { // starts with op
+      $values[substr($key, 2)]['op'] = $value; // two letters in op
+    } elseif (strpos($key, 'filter') === 0) { // starts with op
+      $values[substr($key, 6)]['filter'] = $value; // six letters in filter
+    }
+  }
+
+  return $values;
 }
