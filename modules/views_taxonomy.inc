@@ -545,7 +545,7 @@ function _views_add_vocabulary($op, $value, $depth, &$query) {
   if ($op == 'OR' || $op == 'NOR') {
     $num = $query->add_table('term_node');
     $tablename1 = $query->get_table_name('term_node', $num);
-    $joininfo = array('left' => array('table' => $tablename1, 'field' => 'tid'), 'right' => array('field' => 'tid'));
+    $joininfo = array('left' => array('table' => $tablename1, 'field' => 'tid', 'alias' => ''), 'right' => array('field' => 'tid'));
     $joininfo['extra'] = array('vid' => $value);
     $num = $query->add_table('term_data', false, 1, $joininfo);
     $tablename2 = $query->get_table_name('term_data', $num);
@@ -562,7 +562,7 @@ function _views_add_vocabulary($op, $value, $depth, &$query) {
       // For every vocabulary we have to match, add a views_get_title table
       $num = $query->add_table('term_node');
       $tablename = $query->get_table_name('term_node', $num);
-      $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid'), 'right' => array('field' => 'tid')));
+      $num = $query->add_table('term_data', false, 1, array('left' => array('table' => $tablename, 'field' => 'tid', 'alias' => ''), 'right' => array('field' => 'tid')));
       $tablename = $query->get_table_name('term_data', $num);
       $query->add_where("$tablename.vid = '$vid'");
     }
