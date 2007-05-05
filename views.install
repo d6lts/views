@@ -27,9 +27,12 @@
         -- menu fields
         menu int(1),
         menu_tab int(1),
-        menu_tab_default int(1),
         menu_tab_weight int(4),
         menu_title varchar(255),
+        menu_tab_default int(1),
+        menu_tab_default_parent_type varchar(10),
+        menu_parent_title varchar(255),
+        menu_parent_tab_weight int(4),
         -- block fields
         block int(1),
         block_title varchar(255),
@@ -147,9 +150,12 @@
         -- menu fields
         menu smallint,
         menu_tab smallint,
-        menu_tab_default smallint,
         menu_tab_weight smallint,
         menu_title varchar(255),
+        menu_tab_default smallint,
+        menu_tab_default_parent_type varchar(10),
+        menu_parent_title varchar(255),
+        menu_parent_tab_weight smallint,
         -- block fields
         block smallint,
         block_title varchar(255),
@@ -450,6 +456,22 @@ function views_update_14() {
   $ret = array();
   views_make_cache_table($ret); 
   $ret[] = update_sql("DELETE FROM {cache_views}");
+  return $ret;
+}
+
+function views_update_15() {
+  $ret = array();
+  db_add_column($ret, 'view_view', 'menu_tab_default_parent_type', 'varchar(10)');
+  db_add_column($ret, 'view_view', 'menu_parent_title', 'varchar(255)');
+  switch ($GLOBALS['db_type']) {
+    case 'mysql':
+    case 'mysqli':
+      db_add_column($ret, 'view_view', 'menu_parent_tab_weight', 'int(4)');
+      break;
+    case 'pgsql':
+      db_add_column($ret, 'view_view', 'menu_parent_tab_weight', 'smallint');
+      break;
+  }
   return $ret;
 }
 

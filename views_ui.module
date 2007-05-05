@@ -945,14 +945,6 @@ function views_edit_view($view, $op = '') {
     '#description' => t("If checked this view's menu entry will be provided as a tab rather than in the main menu system."),
   );
 
-  $form['page-info']['menu-info']['menu_tab_default'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Make Default Menu Tab'),
-    '#return_value' => 1,
-    '#default_value' => $view->menu_tab_default,
-    '#description' => t("If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. For tabs to work properly, one tab in the group must be set as the default."),
-  );
-
   $form['page-info']['menu-info']['menu_tab_weight'] = array(
     '#type' => 'textfield',
     '#title' => t('Tab Weight'),
@@ -968,6 +960,50 @@ function views_edit_view($view, $op = '') {
     '#size' => 60,
     '#maxlength' => 255,
     '#description' => t('Enter the title to use for the menu entry or tab. If blank, the page title will be used.'),
+  );
+
+  $form['page-info']['menu-info']['default-tab'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+    '#title' => t('Default Menu Tab'),
+  );
+
+  $form['page-info']['menu-info']['default-tab']['menu_tab_default'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Make Default Menu Tab'),
+    '#return_value' => 1,
+    '#default_value' => $view->menu_tab_default,
+    '#description' => t("If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. The following settings allow you to customize the parent item, for example 'tracker'. For tabs to work properly, one tab in the group must be set as the default."),
+  );
+
+  $form['page-info']['menu-info']['default-tab']['menu_tab_default_parent_type'] = array(
+    '#type' => 'select',
+    '#title' => t('Parent Menu Item Type'),
+    '#default_value' => $view->menu_tab_default_parent_type,
+    '#options' => array(
+      'tab' => t("Tab"),
+      'normal' => t("Normal menu item"),
+      'existing' => t("Already exists (don't create)"),
+    ),
+    '#description' => t("Select type of parent item to use for this default menu tab. You can either specify the parent should be a tab (the default), a normal menu item, or to use the menu item that already exists at the specified URL. For example, if the URL for the default tab is 'tracker/all', then 'tracker' would already have to be a valid menu item to use this final choice."),
+  );
+
+  $form['page-info']['menu-info']['default-tab']['menu_parent_tab_weight'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Tab Weight'),
+    '#default_value' => $view->menu_parent_tab_weight,
+    '#width' => 10,
+    '#description' => t('If the parent menu item is a tab, select the weight; lower numbers will be further to the left.'),
+  );
+
+  $form['page-info']['menu-info']['default-tab']['menu_parent_title'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Parent Menu Item Title'),
+    '#default_value' => $view->menu_parent_title,
+    '#size' => 60,
+    '#maxlength' => 255,
+    '#description' => t('If the Parent Menu Item is being defined by this view (if you set the %type_field to either %tab or %menu), you can specify its title here.  If blank, the menu title will be used if that is defined, or the page title if not.', array('%type_field' => t('Parent Menu Item Type'), '%tab' => t('Tab'), '%menu' => t('Normal menu item'))),
   );
 
   // block info
@@ -1889,8 +1925,11 @@ function views_create_view_code($vid) {
       $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
       $output .= "  \$view->menu_title = " . var_export($view->menu_title, true) . ";\n";
       $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
-      $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
       $output .= "  \$view->menu_tab_weight = " . var_export($view->menu_tab_weight, true) . ";\n";
+      $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
+      $output .= "  \$view->menu_tab_default_parent = " . var_export($view->menu_tab_default_parent, true) . ";\n";
+      $output .= "  \$view->menu_parent_tab_weight = " . var_export($view->menu_parent_tab_weight, true) . ";\n";
+      $output .= "  \$view->menu_parent_title = " . var_export($view->menu_parent_title, true) . ";\n";
     }
   }
   if ($view->block) {

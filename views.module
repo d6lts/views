@@ -223,7 +223,22 @@ function _views_create_menu_item(&$items, $view, $path, $local_task_type = MENU_
   $items[] = _views_menu_item($path, $title, $view, $args, $access, $type, $weight);
 
   if ($type == MENU_DEFAULT_LOCAL_TASK) {
-    $items[] = _views_menu_item(dirname($path), $title, $view, $args, $access, $local_task_type, $weight);
+    switch ($view->menu_tab_default_parent_type) {
+      case 'tab':
+        $parent_type = MENU_LOCAL_TASK;
+        break;
+      case 'normal':
+        $parent_type = MENU_NORMAL_ITEM;
+        break;
+      case 'existing':
+        $parent_type = 0;
+        break;
+    }
+    if ($parent_type) {
+      $title = filter_xss_admin(views_get_title($view, 'menu-parent'));
+      $weight = $view->menu_parent_tab_weight;
+      $items[] = _views_menu_item(dirname($path), $title, $view, $args, $access, $parent_type, $weight);
+    }
   }
 }
 
@@ -717,8 +732,12 @@ function views_get_url($view, $args) {
  * Figure out what the title of a view should be.
  */
 function views_get_title($view, $context = 'menu', $args = NULL) {
-  if (($context == 'menu' || $context == 'admin') && $view->menu_title)
+  if ($context == 'menu-parent' && $view->menu_parent_title) {
+    return $view->menu_parent_title;
+  }
+  if (($context == 'menu' || $context == 'menu-parent' || $context == 'admin') && $view->menu_title) {
     return $view->menu_title;
+  }
 
   if ($context == 'block-info') {
     return $view->description ? $view->description : $view->name;
@@ -739,7 +758,7 @@ function views_get_title($view, $context = 'menu', $args = NULL) {
     }
   }
 
-  if (!$title && ($context == 'menu' || $context == 'page' || $context == 'admin')) {
+  if (!$title && ($context == 'menu' || $context == 'menu-parent' || $context == 'page' || $context == 'admin')) {
     $title = $view->page_title;
   }
 
@@ -835,6 +854,9 @@ function _views_view_fields() {
     'menu_tab_default' => '%d', 
     'menu_tab_weight' => '%d', 
     'menu_title' => "'%s'", 
+    'menu_tab_default_parent_type' => "'%s'",
+    'menu_parent_title' => "'%s'", 
+    'menu_parent_tab_weight' => '%d', 
     'block' => '%d', 
     'block_title' => "'%s'", 
     'block_use_page_header' => '%d', 
