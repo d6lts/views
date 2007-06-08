@@ -183,7 +183,8 @@ function views_get_all_urls() {
   if ($cache == 0) {
     $views = array();
     $used = array();
-    $result = db_query("SELECT name, url FROM {view_view} WHERE page = 1");
+    // avoid creating empty path items by requiring an URL to be set
+    $result = db_query("SELECT name, url FROM {view_view} WHERE page = 1 AND LENGTH(url) > 0");
 
     while ($view = db_fetch_object($result)) {
       $used[$view->name] = TRUE;
