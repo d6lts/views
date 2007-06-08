@@ -1919,30 +1919,29 @@ function views_create_view_code($vid) {
     $output .= "  \$view->view_args_php = " . var_export($view->view_args_php, true) . ";\n";
   }
   // page items
-  if ($view->page) {
-    $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
-    $output .= "  \$view->page_title = " . var_export($view->page_title, true) . ";\n";
-    $output .= "  \$view->page_header = " . var_export($view->page_header, true) .";\n";
-    $output .= "  \$view->page_header_format = " . var_export($view->page_header_format, true) . ";\n";
-    $output .= "  \$view->page_footer = " . var_export($view->page_footer, true) .";\n";
-    $output .= "  \$view->page_footer_format = " . var_export($view->page_footer_format, true) . ";\n";
-    $output .= "  \$view->page_empty = " . var_export($view->page_empty, true) .";\n";
-    $output .= "  \$view->page_empty_format = " . var_export($view->page_empty_format, true) . ";\n";
-    $output .= "  \$view->page_type = " . var_export($view->page_type, true) . ";\n";
-    $output .= "  \$view->url = " . var_export($view->url, true) . ";\n";
-    $output .= "  \$view->use_pager = " . views_tf($view->use_pager) . ";\n";
-    $output .= "  \$view->nodes_per_page = " . var_export($view->nodes_per_page, true) . ";\n";
-    if ($view->menu) {
-      $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
-      $output .= "  \$view->menu_title = " . var_export($view->menu_title, true) . ";\n";
-      $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
-      $output .= "  \$view->menu_tab_weight = " . var_export($view->menu_tab_weight, true) . ";\n";
-      $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
-      $output .= "  \$view->menu_tab_default_parent = " . var_export($view->menu_tab_default_parent, true) . ";\n";
-      $output .= "  \$view->menu_tab_default_parent_type = " . var_export($view->menu_tab_default_parent_type, true) . ";\n";
-      $output .= "  \$view->menu_parent_tab_weight = " . var_export($view->menu_parent_tab_weight, true) . ";\n";
-      $output .= "  \$view->menu_parent_title = " . var_export($view->menu_parent_title, true) . ";\n";
-    }
+  // Always emit these - needed for rendering embedded views, even if page is disabled.
+  $output .= "  \$view->page = " . views_tf($view->page) . ";\n";
+  $output .= "  \$view->page_title = " . var_export($view->page_title, true) . ";\n";
+  $output .= "  \$view->page_header = " . var_export($view->page_header, true) .";\n";
+  $output .= "  \$view->page_header_format = " . var_export($view->page_header_format, true) . ";\n";
+  $output .= "  \$view->page_footer = " . var_export($view->page_footer, true) .";\n";
+  $output .= "  \$view->page_footer_format = " . var_export($view->page_footer_format, true) . ";\n";
+  $output .= "  \$view->page_empty = " . var_export($view->page_empty, true) .";\n";
+  $output .= "  \$view->page_empty_format = " . var_export($view->page_empty_format, true) . ";\n";
+  $output .= "  \$view->page_type = " . var_export($view->page_type, true) . ";\n";
+  $output .= "  \$view->url = " . var_export($view->url, true) . ";\n";
+  $output .= "  \$view->use_pager = " . views_tf($view->use_pager) . ";\n";
+  $output .= "  \$view->nodes_per_page = " . var_export($view->nodes_per_page, true) . ";\n";
+  if ($view->menu) {
+    $output .= "  \$view->menu = " . views_tf($view->menu) . ";\n";
+    $output .= "  \$view->menu_title = " . var_export($view->menu_title, true) . ";\n";
+    $output .= "  \$view->menu_tab = " . views_tf($view->menu_tab) . ";\n";
+    $output .= "  \$view->menu_tab_weight = " . var_export($view->menu_tab_weight, true) . ";\n";
+    $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
+    $output .= "  \$view->menu_tab_default_parent = " . var_export($view->menu_tab_default_parent, true) . ";\n";
+    $output .= "  \$view->menu_tab_default_parent_type = " . var_export($view->menu_tab_default_parent_type, true) . ";\n";
+    $output .= "  \$view->menu_parent_tab_weight = " . var_export($view->menu_parent_tab_weight, true) . ";\n";
+    $output .= "  \$view->menu_parent_title = " . var_export($view->menu_parent_title, true) . ";\n";
   }
   if ($view->block) {
     $output .= "  \$view->block = " . views_tf($view->block) . ";\n";
