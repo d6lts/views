@@ -1939,6 +1939,7 @@ function views_create_view_code($vid) {
       $output .= "  \$view->menu_tab_weight = " . var_export($view->menu_tab_weight, true) . ";\n";
       $output .= "  \$view->menu_tab_default = " . views_tf($view->menu_tab_default) . ";\n";
       $output .= "  \$view->menu_tab_default_parent = " . var_export($view->menu_tab_default_parent, true) . ";\n";
+      $output .= "  \$view->menu_tab_default_parent_type = " . var_export($view->menu_tab_default_parent_type, true) . ";\n";
       $output .= "  \$view->menu_parent_tab_weight = " . var_export($view->menu_parent_tab_weight, true) . ";\n";
       $output .= "  \$view->menu_parent_title = " . var_export($view->menu_parent_title, true) . ";\n";
     }
