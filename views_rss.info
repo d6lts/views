@@ -1,6 +1,5 @@
 ; $Id$
 name = Views RSS
 description = RSS plugin for the views feed selector argument.
-version = "$Name$"
 package = Views
 dependencies = views
