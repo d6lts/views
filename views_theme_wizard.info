@@ -1,6 +1,5 @@
 ; $Id$
 name = Views Theme Wizard
 description = The views theme wizard helps create stub theming for views.
-version = "$Name$"
 package = Views
 dependencies = views
