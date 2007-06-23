@@ -2122,3 +2122,8 @@ function views_form_alter($form_id, &$form) {
     views_invalidate_cache();
   }
 }
+
+// An implementation of hook_devel_caches() from devel.module. Must be in views.module so it always is included.
+function views_devel_caches() {
+  return array('cache_views');
+}
