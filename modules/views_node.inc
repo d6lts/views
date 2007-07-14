@@ -460,6 +460,21 @@ function views_handler_field_body($fieldinfo, $fielddata, $value, $data) {
   }
   // Allow modules to change $node->body before viewing.
   node_invoke_nodeapi($node, 'view', $teaser, TRUE);
+  
+  // Set the proper node part, then unset unused $node part so that a bad
+  // theme can not open a security hole.
+  $content = drupal_render($node->content);
+  if ($teaser) {
+    $node->teaser = $content;
+    unset($node->body);
+  }
+  else {
+    $node->body = $content;
+    unset($node->teaser);
+  }
+
+  // Allow modules to modify the fully-built node.
+  node_invoke_nodeapi($node, 'alter', $teaser, $page);
 
   return $teaser ? $node->teaser : $node->body;
 }

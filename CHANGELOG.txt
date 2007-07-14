@@ -5,6 +5,9 @@ Views 5.x-1.6-dev
     o #154272: (adrianr) Uncacheable queries did not get substitutions properly run on them.
     o #146776: (Moxide) Unnecessary drupal_goto in views_ui_admin_confirm_form_submit removed.
     o #142504: (mfrederickson) added proper is_null filter.
+    o #142347: (yhager) Fix Views losing the first taxonomy term on optional vocabularies.
+    o #147821: (TimK and gnassar) Fix broken filtering on full node with RSS feeds.
+    o #149276: (profix898) fix node body mishandling due to changes in Drupal 5 node rendering.
 
 Views 5.x-1.6-beta5
   Bugs fixed:
