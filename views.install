@@ -475,6 +475,12 @@ function views_update_15() {
   return $ret;
 }
 
+function views_update_16() {
+  $ret = array();
+  $ret[] = update_sql("UPDATE {view_view} SET menu_tab_default_parent_type = 'normal' WHERE menu_tab_default_parent_type = '' OR menu_tab_default_parent_type IS NULL");
+  return $ret;
+}
+
 /**
  * This should go in every update to ensure that it's there from a 4.7 -> 5.x
  * update.
@@ -508,3 +514,4 @@ function views_make_cache_table(&$ret) {
     }
   }
 }
+
