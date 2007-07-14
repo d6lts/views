@@ -8,6 +8,7 @@ Views 5.x-1.6-dev
     o #142347: (yhager) Fix Views losing the first taxonomy term on optional vocabularies.
     o #147821: (TimK and gnassar) Fix broken filtering on full node with RSS feeds.
     o #149276: (profix898) fix node body mishandling due to changes in Drupal 5 node rendering.
+    o #142997: (dww) Clear Views cache more often on modules page.
 
 Views 5.x-1.6-beta5
   Bugs fixed:
