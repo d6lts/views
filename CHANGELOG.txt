@@ -2,8 +2,9 @@ CHANGELOG for Views for Drupal 5
 
 Views 5.x-1.6-dev
   Bugs fixed:
-    o #154272: Uncacheable queries did not get substitutions properly run on them.
-    o #146776: Unnecessary drupal_goto in views_ui_admin_confirm_form_submit removed.
+    o #154272: (adrianr) Uncacheable queries did not get substitutions properly run on them.
+    o #146776: (Moxide) Unnecessary drupal_goto in views_ui_admin_confirm_form_submit removed.
+    o #142504: (mfrederickson) added proper is_null filter.
 
 Views 5.x-1.6-beta5
   Bugs fixed:

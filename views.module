@@ -1986,6 +1986,23 @@ function views_handler_filter_like($op, $filter, $filterinfo, &$query) {
 }
 
 /**
+ * Custom filter for IS NULL and IS NOT NULL operations
+ * Operator must be 'IS' or 'IS NOT'
+ */
+function views_handler_filter_null($op, $filter, $filterinfo, &$query) {
+  switch($op) {
+    case 'handler':
+      $table = $filterinfo['table'];
+      $column = $filterinfo['field'];
+      $field = "$table.$column";
+      $query->ensure_table($table);
+      $operator = $filter['operator'];
+      $query->add_where("$field $operator NULL");
+      break;
+  }  
+}
+
+/**
  * Format a field as file size.
  */
 function views_handler_field_filesize($fieldinfo, $fielddata, $value, $data) {
