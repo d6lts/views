@@ -5,8 +5,7 @@ common).
 
 Views 4.7.x-1.6
   Bugs fixed:
-    o #138642: Fix summary sorting for taxonomy letter and node letter arguments.
-    
+    o #138642: Fix summary sorting for taxonomy letter and node letter arguments.  
 
 Views 4.7.x-1.6-beta5
   Bugs fixed:
