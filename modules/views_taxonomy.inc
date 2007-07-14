@@ -373,11 +373,12 @@ function views_handler_arg_vocid($op, &$query, $argtype, $arg = '') {
 }
 
 function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
+  static $field;
   switch($op) {
     case 'summary':
       $query->add_table('term_data', true);
       $len = intval($arg);
-      $fieldinfo['field'] = ($len <= 0 ? "term_data.name" : "LEFT(term_data.name, $len)");
+      $field = $fieldinfo['field'] = ($len <= 0 ? "term_data.name" : "LEFT(term_data.name, $len)");
 
       $fieldinfo['fieldname'] = 'letter';
       $query->add_field('tid', 'term_data');
@@ -385,7 +386,7 @@ function views_handler_arg_taxletter($op, &$query, $argtype, $arg = '') {
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby('term_data', 'name', $argtype);
+      $query->add_orderby('', $field, $argtype, 'letter');
       break;
     case 'filter':
       $len = intval($argtype['options']);

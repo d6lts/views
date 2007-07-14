@@ -499,15 +499,16 @@ function views_handler_arg_nodetype($op, &$query, $argtype, $arg = '') {
 }
 
 function views_handler_arg_nodeletter($op, &$query, $argtype, $arg = '') {
+  static $field;
   switch($op) {
     case 'summary':
       $len = intval($arg);
-      $fieldinfo['field'] = ($len <= 0 ? "node.title" : $fieldinfo['field'] = "LEFT(node.title, $len)");
+      $field = $fieldinfo['field'] = ($len <= 0 ? "node.title" : $fieldinfo['field'] = "LEFT(node.title, $len)");
       $fieldinfo['fieldname'] = 'letter';
       return $fieldinfo;
       break;
     case 'sort':
-      $query->add_orderby('node', 'title', $argtype);
+      $query->add_orderby('', $field, $argtype, 'letter');
       break;
     case 'filter':
       $len = intval($argtype['options']);
