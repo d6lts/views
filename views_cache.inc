@@ -77,12 +77,14 @@ function _views_get_tables($full = false) {
     }
     else {
       $table_data = module_invoke_all('views_tables');
-      $views_tables['tables'] = $table_data;
+      
       // allow modules to alter the definitions supplied others
       foreach (module_implements('views_tables_alter') as $module) {
         $function = $module . '_views_tables_alter';
         $function($table_data);
       }
+      
+      $views_tables['tables'] = $table_data;
 
       foreach ($table_data as $name => $table) {
         if (is_array($table['filters'])) {
