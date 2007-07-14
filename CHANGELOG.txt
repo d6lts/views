@@ -10,6 +10,7 @@ Views 5.x-1.6-dev
     o #149276: (profix898) fix node body mishandling due to changes in Drupal 5 node rendering.
     o #142997: (dww) Clear Views cache more often on modules page.
     o #142383: (mfrederickson) hook_views_alter couldn't add new tables
+    o #138642: Fix summary sorting for taxonomy letter and node letter arguments.
 
 Views 5.x-1.6-beta5
   Bugs fixed:
