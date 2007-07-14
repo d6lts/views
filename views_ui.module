@@ -841,7 +841,7 @@ function views_edit_view($view, $op = '') {
     '#default_value' => $view->url,
     '#size' => 60,
     '#maxlength' => 255,
-    '#description' => t('Enter the URL to use for this view in the form of \'dir/dir\'. Do not begin or end the URL with a /. Example: \'view/tracker\'. This is required if providing a page view. You can also add $arg as a placeholder for arguments passed in the URL, for example \'user/$arg/tracker\' or \'view/taxonomy/$arg\'. Note that any arguments listed here will be required, even if they are listed as optional below.  You do not need to list arguments at the end of the path.'),
+    '#description' => t('Enter the URL to use for this view in the form of \'dir/dir\'. Do not begin or end the URL with a /. Example: \'view/tracker\'. This is required if providing a page view. You can also add $arg as a placeholder for arguments passed in the URL, for example \'user/$arg/tracker\' or \'node/$arg/related\'. Note that any arguments listed here will be required, even if they are listed as optional below. You do not need to list arguments at the end of the path. Do not try to use URLs such as taxonomy/term/$arg.'),
   );
 
   $form['page-info']['page_type'] = array(
