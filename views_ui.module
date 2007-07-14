@@ -540,7 +540,6 @@ function views_ui_admin_delete_confirm($vid = '') {
 function views_ui_admin_delete_confirm_submit($form_id, $form) {
   _views_delete_view((object) $form);
   menu_rebuild();
-  drupal_goto('admin/build/views');
 }
 
 /*

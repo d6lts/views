@@ -1,5 +1,10 @@
 CHANGELOG for Views for Drupal 5
 
+Views 5.x-1.6-dev
+  Bugs fixed:
+    o #154272: Uncacheable queries did not get substitutions properly run on them.
+    o #146776: Unnecessary drupal_goto in views_ui_admin_confirm_form_submit removed.
+
 Views 5.x-1.6-beta5
   Bugs fixed:
     o #136179: Invalid pass-by-reference in views.install fixed.
