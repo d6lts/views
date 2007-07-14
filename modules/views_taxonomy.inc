@@ -240,7 +240,10 @@ function views_taxonomy_form(&$vocabulary) {
     $form = taxonomy_form($vocabulary->vid, 0, $vocabulary->help);
     unset($form['#title']);
     unset($form['#description']);
-    unset($form['#options'][0]);
+    if (!$vocabulary->required) {
+      unset($form['#options'][0]);
+    }
+    unset($form['#default_value']);
     $form['#multiple'] = TRUE;
   }
   return $form;
