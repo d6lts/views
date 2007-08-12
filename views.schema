@@ -1,0 +1,388 @@
+<?php
+// $Id$
+/**
+ * @file views.schema
+ * Defines the schema for tables used in Views.
+ */
+
+/**
+ * Implementation of hook_schema
+ */
+function views_schema() {
+  $schema['views_view'] = array(
+    'description' => t('Stores the general data for a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'serial', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'description' => t('The view ID of the field, defined by the database.'),
+      ),
+      'name' => array(
+        'type' => 'varchar', 
+        'length' => '32', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The unique name of the view. This is the primary field views are loaded from, and is used so that views may be internal and not necessarily in the database. May only be alphanumeric characters plus underscores.'),
+      ),
+      'description' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'default' => '',
+        'description' => t('A description of the view for the admin interface.'),
+      ),
+      'view_php' => array(
+        'type' => 'blob', 
+        'default' => '',
+        'description' => t('A chunk of PHP code that can be used to provide modifications to the view prior to building.'),
+      ),
+      'base_table' => array(
+        'type' => 'varchar', 
+        'length' => '32', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('What table this view is based on, such as node, user, comment, or term.'),
+      ),
+      'is_cacheable' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => t('A boolean to indicate whether or not this view may have its query cached.'),
+      ),
+    ),
+    'primary key' => array('vid'),
+    'unique key' => array('name' => array('name')),
+  );
+
+  $schema['views_displays'] = array(
+    'description' => t('Stores information about each display attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'type' => array(
+        'type' => 'varchar', 
+        'length' => '64', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
+      ),
+      'access' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'description' => t('A serialized array describing who can access this display of the view.'),
+        'serialize' => TRUE,
+      ),
+      'output_type' => array(
+        'type' => 'varchar', 
+        'length' => '64', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The output type of the display. Usually list, table, teasers or nodes, but is pluggable so may be other things.'),
+      ),
+      'title' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The title to use for this display.'),
+      ),
+      'header' => array(
+        'type' => 'blob', 
+        'description' => t('Text to display for the header.'),
+      ),
+      'header_format' => array(
+        'type' => 'int',
+        'description' => t('The output format for the header.'),
+      ),
+      'header_hide_empty' => array(
+        'type' => 'int', 
+        'default' => 1,
+        'size' => 'tiny',
+        'description' => t('If true, hide the header when the view has no records to display.'),
+      ),
+      'footer' => array(
+        'type' => 'blob', 
+        'description' => t('Text to display for the footer.'),
+      ),
+      'footer_format' => array(
+        'type' => 'int',
+        'description' => t('The output format for the footer.'),
+      ),
+      'footer_hide_empty' => array(
+        'type' => 'int', 
+        'default' => 1,
+        'size' => 'tiny',
+        'description' => t('If true, hide the footer when the view has no records to display.'),
+      ),
+      'empty' => array(
+        'type' => 'blob', 
+        'description' => t('Text to display if the view produces no records.'),
+      ),
+      'empty_format' => array(
+        'type' => 'int',
+        'description' => t('The output format for the empty text.'),
+      ),
+      'use_pager' => array(
+        'type' => 'int', 
+        'default' => 1,
+        'size' => 'tiny',
+        'description' => t('If true, this display will utilize the pager.'),
+      ),
+      'url' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The URL of the display, if applicable.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this display is loaded.'),
+      ),
+      'display_options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this display; it contains options that are generally only pertinent to that display type.'),
+        'serialize' => TRUE,
+      ),
+      'output_options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this display\'s output type; it contains options that are generally only pertinent to that type.'),
+        'serialize' => TRUE,
+      ),
+      'filter_options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this display\'s exposed filters.'),
+        'serialize' => TRUE,
+      ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  $schema['views_arguments'] = array(
+    'description' => t('Stores information about each argument attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this information is loaded.'),
+      ),
+      'type' => array(
+        'type' => 'varchar', 
+        'length' => '64', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
+      ),
+      'default_action' => array(
+        'type' => 'varchar', 
+        'length' => '32', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('What to do if this argument is not present.'),
+      ),
+      'title' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The title to use if this argument is present.'),
+      ),
+      'wildcard' => array(
+        'type' => 'varchar', 
+        'length' => '32', 
+        'default' => '*',
+        'description' => t('What to use for a wildcard in the URL for this argument.'),
+      ),
+      'wildcard_text' => array(
+        'type' => 'varchar', 
+        'length' => '64',
+        'default' => t('All'),
+        'description' => t('The textual representation of the argument, for use in titles. For example, if the argument is *, the text represnation might be "all".'),
+      ),
+      'options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this field.'),
+        'serialize' => TRUE,
+      ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  $schema['views_fields'] = array(
+    'description' => t('Stores information about each field attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this information is loaded.'),
+      ),
+      'table' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the table this field is attached to.'),
+      ),
+      'field' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the field.'),
+      ),
+      'handler' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('Which handler to use.'),
+      ),
+      'options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this field.'),
+        'serialize' => TRUE,
+      ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  $schema['views_sorts'] = array(
+    'description' => t('Stores information about each sort criterion attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this information is loaded.'),
+      ),
+      'table' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the table this field is attached to.'),
+      ),
+      'field' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the field.'),
+      ),
+      'order' => array(
+        'type' => 'varchar', 
+        'length' => '4', 
+        'description' => t('Either ASC or DESC.'),
+      ),
+      'options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this field.'),
+        'serialize' => TRUE,
+      ),      
+      'exposed' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => t('True if this sort is exposed in the UI.'),
+      ),
+      'exposed_options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for exposed sorts.'),
+        'serialize' => TRUE,
+      ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  $schema['views_filters'] = array(
+    'description' => t('Stores information about each filter attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this information is loaded.'),
+      ),
+      'group' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('Which filter group this filter belongs to, so that AND and OR can be separated properly.'),
+      ),
+      'table' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the table this field is attached to.'),
+      ),
+      'field' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the field.'),
+      ),
+      'operator' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The operator for this filter. For example, == or > or <.'),
+      ),
+      'value' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The value being tested for this filter.'),
+        'serialize' => TRUE,
+      ),
+      'options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for this field.'),
+        'serialize' => TRUE,
+      ),      
+      'exposed' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'size' => 'tiny',
+        'description' => t('True if this filter is exposed in the UI.'),
+      ),
+      'exposed_options' => array(
+        'type' => 'blob', 
+        'description' => t('A serialized array of options for exposed filters.'),
+        'serialize' => TRUE,
+      ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  // This is unfortunately cut & pasted from system.module since cache has no way of
+  // telling us what the proper schema is.
+  $schema['cache_views'] = array(
+    'fields' => array(
+      'cid'        => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
+      'data'       => array('type' => 'blob', 'not null' => FALSE, 'size' => 'big'),
+      'expire'     => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+      'created'    => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
+      'headers'    => array('type' => 'text', 'not null' => FALSE),
+      'serialized' => array('type' => 'int', 'size' => 'small', 'not null' => TRUE, 'default' => 0)
+    ),
+    'indexes' => array('expire' => array('expire')),
+    'primary key' => array('cid'),
+  );
+
+  return $schema;
+}

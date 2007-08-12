@@ -1,0 +1,769 @@
+<?php
+// $Id$
+/**
+ * @file query.inc
+ * Defines the query object which is the underlying layer in a View.
+ */
+
+/**
+ * Object used to create a SELECT query.
+ */
+class views_query {
+
+  /**
+   * A list of tables in the order they should be added, keyed by alias.
+   */
+  var $table_queue = array();
+
+  /**
+   * Holds an array of tables and counts added so that we can create aliases
+   */
+  var $tables = array();
+
+  /**
+   * Holds an array of relationships, which are aliases of the primary
+   * table that represent different ways to join the same table in.
+   */
+  var $relationships = array();
+
+  /**
+   * An array of sections of the WHERE query. Each section is in itself
+   * an array of pieces and a flag as to whether or not it should be AND
+   * or OR.
+   */
+  var $where = array();
+  var $group_operator = 'AND';
+
+  var $orderby = array();
+  var $groupby = array();
+
+  var $where_args = array();
+  var $header = array();
+
+  var $distinct = FALSE;
+
+  /*
+   * Create the basic query object and fill with default values.
+   */
+  function views_query($primary_table = 'node', $primary_field = 'nid') {
+    $this->primary_table = $primary_table;
+    $this->primary_field = $primary_field;
+    $this->relationships[$primary_table] = array('link' => NULL, 'table' => $primary_table);
+
+    // Seed the table queue with our primary table.
+    $this->table_queue[$primary_table] = array(
+      'alias' => $primary_table,
+      'table' => $primary_table,
+      'relationship' => $primary_table,
+      'join' => NULL,
+    );
+
+    if ($primary_field) {
+      $this->fields[$primary_field] = array(
+        'table' => $primary_table,
+        'field' => $primary_field,
+        'alias' => $primary_field,
+      );
+    }
+
+    $this->count_field = array(
+      'table' => $primary_table,
+      'field' => $primary_field,
+      'alias' => $primary_field,
+      'count' => TRUE,
+    );
+  }
+
+  // ----------------------------------------------------------------
+  // Utility sets
+
+  /*
+   * Set the base field to be distinct.
+   */
+  function set_distinct($value = TRUE) {
+    if (!(isset($this->no_distinct) && $value)) {
+      $this->distinct = $value;
+    }
+  }
+
+  /*
+   * Set what field the query will count() on for paging.
+   */
+  function set_count_field($field) {
+    $this->count_field = $field;
+  }
+
+  /*
+   * Set the table header; used for click-sorting because it's needed
+   * info to modify the ORDER BY clause.
+   */
+  function set_header($header) {
+    $this->header = $header;
+  }
+
+  // ----------------------------------------------------------------
+  // Table/join adding
+
+  /**
+   * A relationship is an alternative endpoint to a series of table
+   * joins. Relationships must be aliases of the primary table and
+   * they must join either to the primary table or to a pre-existing
+   * relationship.
+   *
+   * An example of a relationship would be a nodereference table.
+   * If you have a nodereference named 'book_parent' which links to a
+   * parent node, you could set up a relationship 'node_book_parent'
+   * to 'node'. Then, anything that links to 'node' can link to
+   * 'node_book_parent' instead, thus allowing all properties of
+   * both nodes to be available in the query.
+   *
+   * @param $alias
+   *   What this relationship will be called, and is also the alias
+   *   for the table.
+   * @param $table
+   *   The real table in the relationship. This will be ensured to be in
+   *   the path.
+   * @param $join
+   *   A views_join object (or derived object) to join the alias in.
+   * @param $link_point
+   *   If this relationship links to something other than the primary
+   *   table, specify that table here. For example, a 'track' node
+   *   might have a relationship to an 'album' node, which might
+   *   have a relationship to an 'artist' node.
+   */
+  function add_relationship($alias, $join, $link_point = NULL) {
+    if (empty($link_point)) {
+      $link_point = $this->primary_table;
+    }
+    else if (!array_key_exists($link_point, $this->relationships)) {
+      return FALSE;
+    }
+    
+    $join = $this->adjust_join($join, $link_point);
+    if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
+      $this->relationships[$alias] = array('link' => $link_point, 'table' => $join->table);
+      return $alias;
+    }
+  }
+
+  /*
+   * This function will add a table to the query.
+   *
+   * This function will test to ensure that the path back to the primary
+   * table is valid and exists; if you do not wish for this testing to
+   * occur, use $query->queue_table() instead.
+   *
+   * @param $table
+   *   The name of the table to add. It needs to exist in the global table
+   *   array.
+   * @param $relationship
+   *   An alias of a table; if this is set, the path back to this table will
+   *   be tested prior to adding the table, making sure that all intermediary
+   *   tables exist and are properly aliased. If set to NULL the path to
+   *   the primary table will be ensured. If the path cannot be made, the
+   *   table will NOT be added.
+   * @param $join
+   *   In some join configurations this table may actually join back through
+   *   a different method; this is most likely to be used when tracing
+   *   a hierarchy path. (node->parent->parent2->parent3). This parameter
+   *   will specify how this table joins if it is not the default.
+   * @param $alias
+   *   A specific alias to use, rather than the default alias.
+   * 
+   * @return $alias
+   *   The alias of the table; this alias can be used to access information
+   *   about the table and should always be used to refer to the table when
+   *   adding parts to the query. Or FALSE if the table was not able to be
+   *   added.
+   */
+  function add_table($table, $relationship = NULL, $join = NULL, $alias = NULL) {
+    if (!$this->ensure_path($table, $relationship, $join)) {
+      return FALSE;
+    }
+
+    return $this->queue_table($table, $relationship, $join, $alias);
+  }
+
+  /*
+   * This function will add a table to the query.
+   *
+   * This function will test to ensure that the path back to the primary
+   * table is valid and exists; if you do not wish for this testing to
+   * occur, use $query->queue_table() instead.
+   *
+   * @param $table
+   *   The name of the table to add. It needs to exist in the global table
+   *   array.
+   * @param $relationship
+   *   The primary table alias this table is related to. If not set, the
+   *   primary table will be used.
+   * @param $join
+   *   In some join configurations this table may actually join back through
+   *   a different method; this is most likely to be used when tracing
+   *   a hierarchy path. (node->parent->parent2->parent3). This parameter
+   *   will specify how this table joins if it is not the default.
+   * @param $alias
+   *   A specific alias to use, rather than the default alias.
+   * 
+   * @return $alias
+   *   The alias of the table; this alias can be used to access information
+   *   about the table and should always be used to refer to the table when
+   *   adding parts to the query. Or FALSE if the table was not able to be
+   *   added.
+   */
+  function queue_table($table, $relationship = NULL, $join = NULL, $alias = NULL) {
+    // If the alias is set, make sure it doesn't already exist.
+    if (isset($this->table_queue[$alias])) {
+      return FALSE;
+    }
+
+    if (empty($relationship)) {
+      $relationship = $this->primary_table;
+    }
+
+    if (!array_key_exists($relationship, $this->relationships)) {
+      return FALSE;
+    }
+
+    // Mark that this table has been added.
+    if (empty($this->tables[$relationship][$table])) {
+      if (!isset($alias)) {
+        $alias = '';
+        if ($relationship != $this->primary_table) {
+          // double underscore will help prevent accidental name
+          // space collisions.
+          $alias = $relationship . '__';
+        }
+        $alias .= $table;
+      }
+      $this->tables[$relationship][$table] = array(
+        'count' => 1,
+        'alias' => $alias,
+      );
+    }
+    else {
+      $this->tables[$relationship][$table]['count']++;
+    }
+
+    // If no alias is specified, give it the default.
+    if (!isset($alias)) {
+      $alias = $this->tables[$relationship][$table]['alias'] . $this->tables[$relationship][$table]['count'];
+    }
+
+    // If no join is specified, pull it from the table data.
+    if (!isset($join)) {
+      $join = $this->get_join_data($table);
+      if (empty($join)) {
+        return FALSE;
+      }
+
+      $join = $this->adjust_join($join, $relationship);
+    }
+
+    $this->table_queue[$alias] = array(
+      'table' => $table, 
+      'num' => $this->tables[$relationship][$table]['count'],
+      'alias' => $alias,
+      'join' => $join,
+      'relationship' => $relationship,
+    );
+
+    return $alias;
+  }
+
+  /*
+   * Ensure a table exists in the queue; if it already exists it won't
+   * do anything, but if it doesn't it will add the table queue. It will ensure
+   * a path leads back to the relationship table.
+   *
+   * @param $table
+   *   The unaliased name of the table to ensure.
+   * @param $relationship
+   *   The relationship to ensure the table links to. Each relationship will
+   *   get a unique instance of the table being added. If not specified,
+   *   will be the primary table.
+   * @param $join
+   *   A views_join object (or derived object) to join the alias in.
+   *
+   * @return
+   *   The alias used to refer to this specific table, or NULL if the table
+   *   cannot be ensured.
+   */
+  function ensure_table($table, $relationship = NULL, $join = NULL) {
+    if (empty($relationship)) {
+      $relationship = $this->primary_table;
+    }
+
+    if (!array_key_exists($relationship, $this->relationships)) {
+      return FALSE;
+    }
+
+    if (isset($this->tables[$relationship][$table]['alias'])) {
+      return $this->tables[$relationship][$table]['alias'];
+    }
+
+    if (!empty($join)) {
+      $join = $this->adjust_join($join, $relationship);
+    }
+
+    if ($this->ensure_path($table, $relationship, $join)) {
+      return $this->queue_table($table, $relationship, $join);
+    }
+  }
+
+  /*
+   * Make sure that the specified table can be properly linked to the primary
+   * table in the JOINs. This function uses recursion. If the tables
+   * needed to complete the path back to the primary table are not in the
+   * query they will be added, but additional copies will NOT be added
+   * if the table is already there.
+   */
+  function ensure_path($table, $relationship = NULL, $join = NULL, $traced = array(), $add = array()) {
+    if (!isset($relationship)) {
+      $relationship = $this->primary_table;
+    }
+
+    if (!array_key_exists($relationship, $this->relationships)) {
+      return FALSE;
+    }
+
+    if (!isset($join)) {
+      $join = $this->get_join_data($table);
+    }
+
+    // Does it end at our link table?
+    if ($join->left_table == $relationship || $join->left_table == $this->relationships[$relationship]['table']) {
+      // Make sure that we're linking to the correct table for our relationship.
+      foreach (array_reverse($add) as $table => $join) {
+        $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship));
+      }
+      return true;
+    }
+
+    // Have we been this way?
+    if (isset($traced[$join->left_table])) {
+      // we looped. Broked.
+      return false;
+    }
+
+    // Do we have to add this table?
+    $left_join = $this->get_join_data($join->left_table);
+    if (!isset($this->tables[$relationship][$join->left_table])) {
+      $add[$join->left_table] = $left_join;
+    }
+
+    // Keep looking.
+    $traced[$join->left_table] = TRUE;
+    return $this->ensure_path($join->left_table, $relationship, $left_join, $traced, $add);
+  }
+
+  /**
+   * Fix a join to adhere to the proper relationship; the left table can vary
+   * based upon what relationship items are joined in on.
+   */
+  function adjust_join($join, $relationship) {
+    // Adjusts the left table for our relationship.
+    if ($relationship != $this->primary_table) {
+      // If we're linking to the primary table, the relationship to use will
+      // be the prior relationship. Unless it's a direct link.
+      
+      // Safety! Don't modify an original here.
+      $join = drupal_clone($join);
+
+      // First, if this is our link point/anchor table, just use the relationship
+      if ($join->left_table == $this->relationships[$relationship]['table']) { 
+        $join->left_table = $relationship;
+      }
+      // then, try the base alias.
+      else if (isset($this->tables[$relationship][$join->left_table]['alias'])) {
+        $join->left_table = $this->tables[$relationship][$join->left_table]['alias'];
+      }
+      // But if we're already looking at an alias, use that instead.
+      else if (isset($this->table_queue[$relationship]['alias'])) {
+        $join->left_table = $this->table_queue[$relationship]['alias'];
+      }
+    }
+    return $join;
+  }
+
+  /**
+   * Retrieve join data from the larger join data cache.
+   *
+   * @return
+   *   A keyed array containing the following information:
+   *   - 'alias': The alias used to refer to the table in the query.
+   *   - 'table': The real table in the query.
+   *   - 'relationship': What relationship this join is part of.
+   *   - 'join': The join object used to create the join.
+   */
+  function get_join_data($table) {
+    // Check to see if we're linking to a known alias. If so, get the real
+    // table's data instead.
+    if (!empty($this->table_queue[$table])) {
+      $table = $this->table_queue[$table]['table'];
+    }
+    return views_get_table_join($table, $this->primary_table);
+
+  }
+
+  /**
+   * Get the information associated with a table. 
+   *
+   * If you need the alias of a table with a particular relationship, use
+   * ensure_table().
+   */
+  function get_table_info($table) {
+    if (!empty($this->table_queue[$table])) {
+      return $this->table_queue[$table];
+    }
+  }
+
+  /*
+   * Add a field to the query table, possibly with an alias. This will
+   * automatically call ensure_table to make sure the required table
+   * exists, *unless* $table is unset.
+   *
+   * @param $table
+   *   The table this field is attached to. If NULL, it is assumed this will
+   *   be a formula; otherwise, ensure_table is used to make sure the
+   *   table exists.
+   * @param $field
+   *   The name of the field to add. This may be a real field or a formula.
+   * @param $alias
+   *   The alias to create. If not specified, the alias will be $table_$field
+   *   unless $table is NULL. When adding formulae, it is recommended that an
+   *   alias be used.
+   *
+   * @return $name
+   *   The name that this field can be referred to as. Usually this is the alias.
+   */
+  function add_field($table, $field, $alias = '') {
+
+    // We check for this specifically because we don't want to add it aliased.
+    if ($table == $this->primary_table && $field == $this->primary_field) {
+      return $this->primary_field;
+    }
+
+    if ($table) {
+      $this->ensure_table($table);
+    }
+
+    if (!$alias && $table) {
+      $alias = $table . '_' . $field;
+    }
+
+    $name = $alias ? $alias : $field;
+
+    if (empty($this->fields[$alias])) {
+      $this->fields[$name] = array(
+        'field' => $field,
+        'table' => $table,
+        'alias' => $alias,
+      );
+    }
+    return $name;
+  }
+
+  /*
+   * Remove all fields that may've been added; primarily used for summary
+   * mode where we're changing the query because we didn't get data we needed.
+   */
+  function clear_fields() {
+    $this->fields = array();
+  }
+
+  /**
+   * Create a new grouping for the WHERE clause.
+   *
+   * @param $type
+   *   Either 'AND' or 'OR'. All items within this group will be added
+   *   to the WHERE c
+   * @param $group
+   *   An ID to use for this group. If unspecified, an ID will be generated.
+   *
+   * @return $group
+   *   The group ID generated.
+   */
+  function set_where_group($type = 'AND', $group = NULL) {
+    if (!isset($group)) {
+      $group = max(array_keys($this->where)) + 1;
+    }
+
+    // Create an empty group
+    if (empty($this->where[$group])) {
+      $this->where[$group] = array('clauses' => array(), 'args' => array());
+    }
+
+    $this->where[$group]['type'] = strtoupper($type);
+    return $group;
+  }
+
+  /**
+   * Control how all WHERE groups are put together.
+   *
+   * @param $type
+   *   Either 'AND' or 'OR'
+   */
+  function set_group_operator($type = 'AND') {
+    $this->group_operator = strtoupper($type);
+  }
+
+  /*
+   * Add a simple WHERE clause to the query. The caller is responsible for
+   * ensuring that all fields are fully qualified (TABLE.FIELD) and that
+   * the table already exists in the query.
+   *
+   * @param $group
+   *   The WHERE group to add these to; groups are used to create AND/OR
+   *   sections. Groups cannot be nested. Use 0 as the default group.
+   *   If the group does not yet exist it will be created as an AND group.
+   * @param $clause
+   *   The actual clause to add. When adding a where clause it is important
+   *   that all tables are addressed by the alias provided by add_table or
+   *   ensure_table and that all fields are addressed by their alias wehn
+   *   possible. Please use %d and %s for arguments.
+   * @param ...
+   *   A number of arguments as used in db_query(). May be many args or one
+   *   array full of args.
+   */
+  function add_where($group, $clause) {
+    $args = func_get_args();
+    array_shift($args); // ditch $group
+    array_shift($args); // ditch $clause
+
+    // Expand an array of args if it came in.
+    if (count($args) == 1 && is_array(reset($args))) {
+      $args = current($args);
+    }
+
+    // Check for a group.
+    if (!isset($this->where[$group])) {
+      $this->set_where_group('AND', $group);
+    }
+
+    // Add the clause and the args.
+    if (is_array($args)) {
+      $this->where[$group]['clauses'][] = $clause;
+      $this->where[$group]['args'] = array_merge($this->where[$group]['args'], $args);
+    }
+  }
+
+  /*
+   * Add multiple an orderby's. Right now I'm not sure why this function
+   * is separate from add_orderby above; I don't think it needs to
+   * be.
+   *
+   * @param $table
+   *   The table this field is part of. If a formula, enter NULL.
+   * @param $field
+   *   The field or formula to sort on.
+   * @param $order
+   *   Either ASC or DESC.
+   * @param $alias
+   *   The alias to add the field as. In SQL, all fields in the order by
+   *   must also be in the SELECT portion. If an $alias isn't specified
+   *   one will be generated for from the $field; however, if the
+   *   $field is a formula, this alias will likely fail.
+   *
+   * @return $alias
+   *   The alias created.
+   */
+  function add_orderby($table, $field, $order, $alias = '') {
+    if ($table) {
+      $this->ensure_table($table);
+    }
+
+    // Only fill out this aliasing if there is a table;
+    // otherwise we assume it is a formula.
+    if (!$alias && $table) {
+      $as = $table . '_' . $f;
+    }
+    else {
+      $as = $alias;
+    }
+
+    $this->add_field($table, $field, $as);
+    $this->orderby[] = "$as $order";
+
+    // If grouping, all items in the order by must also be in the
+    // group by clause.
+    if ($this->groupby) {
+      $this->add_groupby($as);
+    }
+  }
+
+  /*
+   * Add a simple GROUP BY clause to the query. The caller is responsible
+   * for ensuring that the fields are fully qualified and the table is properly
+   * added.
+   */
+  function add_groupby($clause) {
+    $this->groupby[] = $clause;
+  }
+
+  /*
+   * Generate a query and a countquery from all of the information supplied
+   * to the object.
+   *
+   * @param $get_count
+   *   Provide a countquery if this is true, otherwise provide a normal query.
+   */
+  function query($get_count = false) {
+    // Check query distinct value.
+    if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
+      $this->fields[$this->primary_field]['distinct'] = TRUE;
+      $this->count_field['distinct'] = TRUE;
+    }
+
+    $joins = $fields = $where = $orderby = $groupby = '';
+    // Add all the tables to the query via joins. We assume all LEFT joins.
+    foreach ($this->table_queue as $table) {
+      if (is_object($table['join'])) {
+        $joins .= $table['join']->join($table, $this) . "\n";
+      }
+    }
+
+    // If it's not a count query, add our fields
+    $fields_array = $get_count ? $this->count_field : $this->fields;
+    foreach ($fields_array as $field) {
+      if ($fields) {
+        $fields .= ', ';
+      }
+      $string = '';
+      if ($field['table']) {
+        $string .= $field['table'] . '.';
+      }
+      $string .= $field['field'];
+      if (isset($field['distinct'])) {
+        $string = "DISTINCT($string)";
+      }
+      if (isset($field['count'])) {
+        $string = "COUNT($string)";
+      }
+      if ($field['alias']) {
+        $string .= " AS $field[alias]";
+      }
+      $fields .= $string;
+    }
+
+    if (!$get_count) {
+      // we only add the groupby if we're not counting.
+      if ($this->groupby) {
+        $groupby = "GROUP BY " . implode(', ', $this->groupby) . "\n";
+      }
+
+      // ok, tablesort_sql is really, really (really) annoying.
+      // 1) it insists on adding the ORDER BY clause.
+      // 2) You're supposed to give it your stuff as $before, but
+      // 3) You have to add the comma and
+      // 4) if it doesn't have anything to add, it returns NOTHING.
+      // 5) So I'm just going to get what it sends back and chop off
+      //    the orderby, cause otherwise my code is too ugly with
+      //    various checks.
+      if ($this->header) {
+        $result = tablesort_sql($this->header);
+        if ($result) {
+          $this->orderby[] = str_replace('ORDER BY ', '', $result);
+        }
+      }
+
+      if ($this->orderby) {
+        $orderby = "ORDER BY " . implode(', ', $this->orderby) . "\n";
+      }
+    }
+    else {
+      $fields = "COUNT($this->count_field)";
+    }
+
+    $clauses = array();
+    foreach ($this->where as $group => $info) {
+      $clauses[] = '(' . implode(") " . $info['type'] . " (", $info['clauses']) . ')';
+    }
+
+    if ($clauses) {
+      $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ')';
+    }
+
+    $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $orderby";
+
+    $replace = array('&gt;' => '>', '&lt;' => '<');
+    $query = strtr($query, $replace);
+
+    return $query;
+  }
+
+  /**
+   * Get the arguments attached to the WHERE clauses of this query.
+   */
+  function get_where_args() {
+    $args = array();
+    foreach ($this->where as $group => $where) {
+      $args = array_merge($args, $where['args']);
+    }
+    return $args;
+  }
+}
+
+/**
+ * A function class to represent a join and create the SQL necessary
+ * to implement the join.
+ * 
+ * This is the Delegation pattern. If we had PHP5 exclusively, we would
+ * declare this an interface.
+ *
+ * Extensions of this class can be used to create more interesting joins.
+ */
+class views_join {
+  /**
+   * Construct the views_join object.
+   */
+  function views_join($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+    $this->table = $table;
+    $this->left_table = $left_table;
+    $this->left_field = $left_field;
+    $this->field = $field;
+    $this->extra = $extra;
+    $this->type = strtoupper($type);
+  }
+
+  /**
+   * Build the SQL for the join this object represents.
+   */
+  function join($table, &$query) {
+    $left = $query->get_table_info($this->left_table);
+    $output = " $this->type JOIN {" . $this->table . "} $table[alias] ON $left[alias].$this->left_field = $table[alias].$this->field";
+
+    // Tack on the extra.
+    if (isset($extra)) {
+      foreach ($extra as $field => $value) {
+        $output .= " AND $table[alias].$this->field";
+        if (is_array($value) && !empty($value)) {
+          $output .= " IN ('". implode("','", $value) ."')";
+        }
+        else if ($value !== NULL) {
+          $output .= " = '$value'";
+        }
+      }
+    }
+    return $output;    
+  }
+}
+
+// Here is how you do complex joins:
+
+/*
+class views_join_complex extends views_join {
+  // PHP 4 doesn't call constructors of the base class automatically from a 
+  // constructor of a derived class. It is your responsibility to propagate 
+  // the call to constructors upstream where appropriate.
+  function views_complex_join($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+    parent::views_join($left_table, $left_field, $field, $extra, $type);
+  }
+
+  function join($table, &$query) {
+    $output = parent::join($table, $query);
+  }
+  $output .= "AND foo.bar = baz.boing";
+  return $output;
+}
+*/

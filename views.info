@@ -1,5 +1,5 @@
 ; $Id$
 name = Views
-description = The views module creates customized views of node lists.
+description = Create customized lists and queries from your database.
 package = Views
-
+core = 6.x
