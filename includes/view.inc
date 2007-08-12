@@ -14,6 +14,7 @@ class view {
   var $field = array();
   var $sort = array();
   var $filter = array();
+  var $relationship = array();
 
   var $base_table = 'node';
 
@@ -70,6 +71,7 @@ class view {
     $this->_load_row('field');
     $this->_load_row('sort');
     $this->_load_row('filter');
+    $this->_load_row('relationship');
   }
 
   /**
@@ -100,6 +102,7 @@ class view {
       db_query("DELETE from {views_fields} WHERE vid = %d", $this->vid);
       db_query("DELETE from {views_sorts} WHERE vid = %d", $this->vid);
       db_query("DELETE from {views_filters} WHERE vid = %d", $this->vid);
+      db_query("DELETE from {views_relationships} WHERE vid = %d", $this->vid);
     }
 
     _views_save_query('views_view', $this, !empty($this->vid) ? 'vid' : FALSE);
@@ -108,6 +111,7 @@ class view {
     $this->_save_rows('field');
     $this->_save_rows('sort');
     $this->_save_rows('filter');
+    $this->_save_rows('relationship');
 
     cache_clear_all('views_urls', 'cache_views');
     cache_clear_all(); // clear the page cache as well.
@@ -132,6 +136,7 @@ class view {
     db_query("DELETE FROM {views_fields} where vid = %d", $view->vid);
     db_query("DELETE FROM {views_sorts} where vid = %d", $view->vid);
     db_query("DELETE FROM {views_filters} where vid = %d", $view->vid);
+    db_query("DELETE FROM {views_relationships} where vid = %d", $view->vid);
 
     cache_clear_all('views_query:' . $view->name, 'cache_views');
     cache_clear_all(); // In Drupal 5.0 and later this clears the page cache only.
@@ -209,6 +214,13 @@ class views_display {
   var $filters_type = ''; // 'table', 'list'
   var $filters_location = ''; // 'view', 'block'
 }
+
+class views_relationship {
+  var $relationship = '';
+  var $link = '';
+  var $position = 0;
+}
+
 
 // build an insert/update query based upon schema info.
 function _views_save_query($table, &$object, $update = NULL) {

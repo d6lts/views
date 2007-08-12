@@ -244,6 +244,11 @@ function views_schema() {
         'length' => '255', 
         'description' => t('The name of the field.'),
       ),
+      'relationship' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The relationship this field belongs to.'),
+      ),
       'handler' => array(
         'type' => 'varchar', 
         'length' => '255', 
@@ -282,6 +287,11 @@ function views_schema() {
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The name of the field.'),
+      ),
+      'relationship' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The relationship this field belongs to.'),
       ),
       'order' => array(
         'type' => 'varchar', 
@@ -338,6 +348,11 @@ function views_schema() {
         'length' => '255', 
         'description' => t('The name of the field.'),
       ),
+      'relationship' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The relationship this field belongs to.'),
+      ),
       'operator' => array(
         'type' => 'varchar', 
         'length' => '255', 
@@ -365,6 +380,35 @@ function views_schema() {
         'description' => t('A serialized array of options for exposed filters.'),
         'serialize' => TRUE,
       ),      
+    ),
+    'indexes' => array('vid' => array('vid', 'position')),
+  );
+
+  $schema['views_relationships'] = array(
+    'description' => t('Stores information about each filter attached to a view.'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'int', 
+        'unsigned' => TRUE, 
+        'not null' => TRUE, 
+        'default' => 0,
+        'description' => t('The view this display is attached to.'),
+      ),
+      'position' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The order in which this information is loaded.'),
+      ),
+      'relationship' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The actual relationship used.'),
+      ),
+      'link' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The relationship this links back to.'),
+      ),
     ),
     'indexes' => array('vid' => array('vid', 'position')),
   );
