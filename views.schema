@@ -177,6 +177,21 @@ function views_schema() {
         'default' => 0,
         'description' => t('The order in which this information is loaded.'),
       ),
+      'table' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the table this field is attached to.'),
+      ),
+      'field' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The name of the field.'),
+      ),
+      'relationship' => array(
+        'type' => 'varchar', 
+        'length' => '255', 
+        'description' => t('The relationship this field belongs to.'),
+      ),
       'type' => array(
         'type' => 'varchar', 
         'length' => '64', 
@@ -248,11 +263,6 @@ function views_schema() {
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The relationship this field belongs to.'),
-      ),
-      'handler' => array(
-        'type' => 'varchar', 
-        'length' => '255', 
-        'description' => t('Which handler to use.'),
       ),
       'options' => array(
         'type' => 'blob', 

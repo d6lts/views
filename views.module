@@ -2,6 +2,11 @@
 // $Id$
 
 /**
+ * @file views.module
+ * Query and view site content
+ */
+
+/**
  * Implementation of hook_menu
  */
 function views_menu() {
@@ -11,13 +16,88 @@ function views_menu() {
     'title' => 'Views test',
     'type' => MENU_NORMAL_ITEM,
   );
+  $items['views/test/1'] = array(
+    'page callback' => 'views_test_1',
+    'access callback' => TRUE,
+    'title' => 'Views test 1',
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['views/test/2'] = array(
+    'page callback' => 'views_test_2',
+    'access callback' => TRUE,
+    'title' => 'Views test 2',
+    'type' => MENU_NORMAL_ITEM,
+  );
+
 
   return $items;
 }
 
+
 function views_test() {
-/*
   views_include_view();
+  views_include_query();
+
+  $output = '';
+
+  $view = views_get_view('views_test');
+  if (!$view) {
+    $view = new view;
+    $view->name = 'views_test';
+    $view->description = 'A view being used to test some handlers.';
+    $view->set_page_size(3);
+
+    $field = new views_field;
+    $field->table = 'node';
+    $field->field = 'title';
+    $view->field[] = drupal_clone($field);
+
+    $field->field = 'created';
+    $view->field[] = drupal_clone($field);
+    
+    $field->table = 'users';
+    $field->field = 'name';
+    $view->field[] = $field;
+
+    $sort = new views_sort;
+    $sort->table = 'node';
+    $sort->field = 'created';
+    $sort->order = 'ASC';
+    $view->sort[] = $sort;
+
+/*
+    $filter = new views_filter;
+    $filter->table = 'node';
+    $filter->field = 'nid';
+    $filter->operator = '=';
+    $filter->value = 3;
+    $view->filter[] = $filter;
+*/
+
+    $argument = new views_argument;
+    $argument->table = 'node';
+    $argument->field = 'nid';
+    $argument->default_action = 'summary asc';
+    $view->argument[] = $argument;
+
+    $view->save();
+  }
+
+  $view->build();
+  $view2 = views_get_view('views_test');
+  $view2->args = array('1');
+  $view2->build();
+  $output = '<pre>';
+  $output .= print_r($view->build_info, 1);
+  $output .= print_r($view2->build_info, 1);
+  $output .= '</pre>';
+  return $output;
+}
+
+
+function views_test_1() {
+  views_include_view();
+
   $view = new view;
   $view->name = 'foo';
   $view->description = 'foobar';
@@ -44,7 +124,10 @@ function views_test() {
   $output .= var_export($view, 1);
   $output .= var_export($view2, 1);
   $output .= '</pre>';
-*/
+  return $output;
+}
+
+function views_test_2() {
 
   views_include_query();
   $query = new views_query;
@@ -102,9 +185,18 @@ function views_include_view() {
  * Include query.inc
  */
 function views_include_query() {
+  views_include_handlers();
   require_once drupal_get_path('module', 'views') . '/includes/query.inc';
 }
 
+/**
+ * Include handlers.inc
+ */
+function views_include_handlers() {
+  require_once drupal_get_path('module', 'views') . '/includes/handlers.inc';
+}
+
+// STUB FUNCTION -- temporary data so there's something to test with.
 function views_get_table_join($table, $primary_table) {
   // temp hack
   static $cache = array();
@@ -121,4 +213,34 @@ function views_get_table_join($table, $primary_table) {
 
 //  if ($table == 'node') { drupal_set_message('<pre>'.var_export(debug_backtrace(), 1)); }
   return $cache[$table];
+}
+
+// STUB FUNCTION -- temporary data so there's something to test with.
+function views_get_handler($table, $field, $key) {
+  switch ($key) {
+    case 'field':
+      switch ($field) {
+        case 'title':
+          return new views_handler_field(TRUE);
+        case 'name':
+          return new views_handler_field(TRUE);
+        case 'created':
+          return new views_handler_field_date(TRUE);
+      }
+      break;
+    case 'sort':
+      switch ($field) {
+        case 'created':
+          return new views_handler_sort();
+      }
+      break;
+    case 'filter':
+      switch ($field) {
+        case 'nid':
+          return new views_handler_filter();
+      }
+      break;
+    case 'argument':
+      return new views_handler_argument('title');
+  }
 }

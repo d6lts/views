@@ -5,6 +5,39 @@
  * Provides the view object type and associated methods.
  */
 
+/**
+ * Returns an array of objects in a view.
+ */
+function views_objects() {
+  return array('argument', 'field', 'sort', 'filter', 'relationship');
+}
+
+/**
+ * Returns the complete list of objects in a view, including the display which is
+ * often special.
+ */
+function views_objects_all() {
+  return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
+}
+
+/**
+ * Get a view from the database or from default views.
+ *
+ * @param $name
+ *   The name of the view.
+ */
+function views_get_view($name) {
+  $view = new view;
+  if ($view->load($name)) {
+    return $view;
+  }
+  // TODO: check for default views in cache.
+}
+
+/**
+ * An object to contain all of the data to generate a view, plus the member
+ * functions to build the view query, execute the query and render the output.
+ */
 class view {
   var $vid = 0;
   var $name = '';
@@ -52,8 +85,111 @@ class view {
     $this->display = $display_id;
   }
 
-  function build($display_id = NULL) { }
-  function render() { }
+  function build($display_id = NULL) { 
+    if (!empty($this->built)) {
+      return;
+    }
+
+    $this->display_id = $display_id;
+
+    // Attempt to load from cache.
+    // TODO: Load a build_info from cache.
+
+
+    // Call a module hook and see if it wants to present us with a
+    // pre-built query or instruct us not to build the query for
+    // some reason.
+    // TODO: Implement this.  
+   
+    // If that fails, let's build!
+    $this->build_info = array();
+
+    $this->query = new views_query();
+    $this->_seed_handlers();
+
+    $this->_build('filter');
+
+    $this->build_sort = $this->build_fields = TRUE;
+
+    // build arguments.
+    foreach ($this->argument as $id => $argument) {
+      if (isset($this->args[$id])) {
+        // handle argument that is present.
+        // TODO: Do we want to put in argument placeholders here
+        // So that we can try to cache queries with arguments too?
+        $argument->handler->argument = $this->args[$id];
+        $argument->handler->query();
+      }
+      else {
+        // determine default condition and handle.
+        $argument->handler->default_action();
+      }
+    }
+
+    // Build our sort criteria if we were instructed to do so.
+    if (!empty($this->build_sort)) {
+      $this->_build('sort');
+    }
+
+    // TODO: Test display to see if it needs fields.
+    if (!empty($this->build_fields)) {
+      $this->_build('field');
+    }
+
+    $this->build_info['query'] = $this->query->query();
+    $this->build_info['count_query'] = $this->query->query(TRUE);
+    $this->build_info['query_args'] = $this->query->get_where_args();
+    $this->built = TRUE;
+  }
+
+  /**
+   * Internal method to build an individual set of handlers.
+   */
+  function _build($key) {
+    foreach ($this->$key as $data) {
+      $data->handler->query();
+    }  
+  }
+
+  /**
+   * Acquire and attach all of the handlers.
+   */
+  function _seed_handlers() {
+    if (empty($this->seeded)) {
+      foreach (views_objects() as $key) {
+        $this->_seed_handler($key);
+      }
+      $this->seeded = TRUE;
+    }
+  }
+
+  /**
+   * Attach all of the handlers for each type.
+   * 
+   * @param $key
+   *   One of 'argument', 'field', 'sort', 'filter', 'relationship'
+   */
+  function _seed_handler($key) {
+    foreach ($this->$key as $data) {
+      $handler = views_get_handler($data->table, $data->field, $key);
+      if (is_object($handler)) {
+        $handler->seed($this, $data);
+        $data->handler = $handler;
+      }
+    }
+  }
+
+  /**
+   * Render this view for display.
+   */
+  function render($display_id = NULL) {
+    if (empty($this->built)) {
+      $this->build($display_id);
+    }
+    // Check to see if the build failed.
+
+    // Check for cached output.  
+  }
 
   function get_title($context) { }
   function get_url() { }
@@ -65,13 +201,18 @@ class view {
   function load($arg) {    
     $where = (is_numeric($arg) ? "vid =  %d" : "name = '%s'");
     $data = db_fetch_object(db_query("SELECT * FROM {views_view} WHERE $where", $arg));
+    if (empty($data)) {
+      return FALSE;
+    }
+
     _views_unpack_schema($this, 'views_view', $data);
-    $this->_load_row('display');
-    $this->_load_row('argument');
-    $this->_load_row('field');
-    $this->_load_row('sort');
-    $this->_load_row('filter');
-    $this->_load_row('relationship');
+
+    // Load all of our subtables.
+    foreach (views_objects_all() as $key) {
+      $this->_load_row($key);
+    }
+    $view->loaded = TRUE;
+    return TRUE;
   }
 
   /**
@@ -97,26 +238,27 @@ class view {
   function save() {
     if (!empty($this->vid)) {
       // remove existing table entries
-      db_query("DELETE from {views_displays} WHERE vid = %d", $this->vid);
-      db_query("DELETE from {views_arguments} WHERE vid = %d", $this->vid);
-      db_query("DELETE from {views_fields} WHERE vid = %d", $this->vid);
-      db_query("DELETE from {views_sorts} WHERE vid = %d", $this->vid);
-      db_query("DELETE from {views_filters} WHERE vid = %d", $this->vid);
-      db_query("DELETE from {views_relationships} WHERE vid = %d", $this->vid);
+      foreach (views_objects_all() as $key) {
+        db_query("DELETE from {views_" . $key . "s} WHERE vid = %d", $this->vid);
+        $this->_load_row($key);
+      }
     }
 
     _views_save_query('views_view', $this, !empty($this->vid) ? 'vid' : FALSE);
-    $this->_save_rows('display');
-    $this->_save_rows('argument');
-    $this->_save_rows('field');
-    $this->_save_rows('sort');
-    $this->_save_rows('filter');
-    $this->_save_rows('relationship');
+
+    // Save all of our subtables.
+    foreach (views_objects_all() as $key) {
+      $this->_save_rows($key);
+    }
 
     cache_clear_all('views_urls', 'cache_views');
     cache_clear_all(); // clear the page cache as well.
   }
 
+  /**
+   * Save a row to the database for the given key, which is one of the
+   * keys from views_objects_all()
+   */
   function _save_rows($key) {
     foreach ($this->$key as $position => $object) {
       $object->position = $position;
@@ -125,20 +267,22 @@ class view {
     }
   }
 
+  /**
+   * Delete the view from the database.
+   */
   function delete() { 
-    if (empty($view->vid)) {
+    if (empty($this->vid)) {
       return;
     }
 
-    db_query("DELETE FROM {views_view} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_displays} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_arguments} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_fields} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_sorts} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_filters} where vid = %d", $view->vid);
-    db_query("DELETE FROM {views_relationships} where vid = %d", $view->vid);
+    db_query("DELETE FROM {views_view} WHERE vid = %d", $this->vid);
+    // Delete from all of our subtables as well.
+    foreach (views_objects_all() as $key) {
+      db_query("DELETE from {views_" . $key . "s} WHERE vid = %d", $this->vid);
+      $this->_load_row($key);
+    }
 
-    cache_clear_all('views_query:' . $view->name, 'cache_views');
+    cache_clear_all('views_query:' . $this->name, 'cache_views');
     cache_clear_all(); // In Drupal 5.0 and later this clears the page cache only.
   
   }
@@ -149,7 +293,13 @@ class view {
   }
 }
 
+/**
+ * An argument in a view.
+ */
 class views_argument {
+  var $table = '';
+  var $field = '';
+  var $relationship = '';
   var $type = '';
   var $default_action = '';
   var $title = '';
@@ -160,17 +310,22 @@ class views_argument {
   var $position = 0;
 }
 
+/**
+ * A field in a view.
+ */
 class views_field {
   var $table = '';
   var $field = '';
   var $label = '';
-  var $handler = '';
   var $position = 0;
   // Options contains things like: Sortable, default sort, column, etc.
   // Based upon the needs of the output type.
   var $options = array();
 }
 
+/**
+ * A sort criterion in a view.
+ */
 class views_sort {
   var $table = '';
   var $field = '';
@@ -179,6 +334,9 @@ class views_sort {
   var $position = 0;
 }
 
+/**
+ * A filter in a view.
+ */
 class views_filter {
   var $table = '';
   var $field = '';
@@ -191,6 +349,9 @@ class views_filter {
   var $position = 0;
 }
 
+/**
+ * A display type in a view.
+ */
 class views_display {
   var $type = '';
   var $output_type = '';
@@ -215,6 +376,9 @@ class views_display {
   var $filters_location = ''; // 'view', 'block'
 }
 
+/**
+ * A relationship in a view.
+ */
 class views_relationship {
   var $relationship = '';
   var $link = '';
@@ -222,7 +386,9 @@ class views_relationship {
 }
 
 
-// build an insert/update query based upon schema info.
+/**
+ * Build an insert/update query based upon schema info.
+ */
 function _views_save_query($table, &$object, $update = NULL) {
   $schema = drupal_get_schema($table);
   $fields = $defs = $values = $serials = array();
@@ -267,7 +433,7 @@ function _views_save_query($table, &$object, $update = NULL) {
   }
   $query = '';
   if (!$update) {
-    $query = "INSERT INTO {$table} (" . implode(', ', $fields) . ') VALUES (' . implode(', ', $defs) . ')';
+    $query = "INSERT INTO {$table} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
   }
   else {
     $query = '';

@@ -59,13 +59,13 @@ class views_query {
    */
   var $distinct = FALSE;
 
-  /*
+  /**
    * Create the basic query object and fill with default values.
    */
   function views_query($primary_table = 'node', $primary_field = 'nid') {
     $this->primary_table = $primary_table;
     $this->primary_field = $primary_field;
-    $this->relationships[$primary_table] = array('link' => NULL, 'table' => $primary_table);
+    $this->relationships[$primary_table] = array('link' => NULL, 'table' => $primary_table, 'alias' => $primary_table);
 
     // Seed the table queue with our primary table.
     $this->table_queue[$primary_table] = array(
@@ -73,6 +73,12 @@ class views_query {
       'table' => $primary_table,
       'relationship' => $primary_table,
       'join' => NULL,
+    );
+
+    // Seed the tables with our primary table
+    $this->tables[$primary_table][$primary_table] = array(
+      'count' => 1,
+      'alias' => $primary_table,
     );
 
     if ($primary_field) {
@@ -94,7 +100,7 @@ class views_query {
   // ----------------------------------------------------------------
   // Utility methods to set flags and data.
 
-  /*
+  /**
    * Set the base field to be distinct.
    */
   function set_distinct($value = TRUE) {
@@ -103,14 +109,22 @@ class views_query {
     }
   }
 
-  /*
+  /**
    * Set what field the query will count() on for paging.
    */
-  function set_count_field($field) {
-    $this->count_field = $field;
+  function set_count_field($table, $field, $alias = NULL) {
+    if (empty($alias)) {
+      $alias = $table . '_' . $field;
+    }
+    $this->count_field = array(
+      'table' => $table, 
+      'field' => $field,
+      'alias' => $alias,
+      'count' => TRUE,
+    );
   }
 
-  /*
+  /**
    * Set the table header; used for click-sorting because it's needed
    * info to modify the ORDER BY clause.
    */
@@ -137,9 +151,6 @@ class views_query {
    * @param $alias
    *   What this relationship will be called, and is also the alias
    *   for the table.
-   * @param $table
-   *   The real table in the relationship. This will be ensured to be in
-   *   the path.
    * @param $join
    *   A views_join object (or derived object) to join the alias in.
    * @param $link_point
@@ -163,8 +174,8 @@ class views_query {
     }
   }
 
-  /*
-   * This function will add a table to the query.
+  /**
+   * Add a table to the query, ensuring the path exists.
    *
    * This function will test to ensure that the path back to the primary
    * table is valid and exists; if you do not wish for this testing to
@@ -201,8 +212,8 @@ class views_query {
     return $this->queue_table($table, $relationship, $join, $alias);
   }
 
-  /*
-   * This function will add a table to the query.
+  /**
+   * Add a table to the query, without ensuring the path.
    *
    * This function will test to ensure that the path back to the primary
    * table is valid and exists; if you do not wish for this testing to
@@ -288,7 +299,7 @@ class views_query {
     return $alias;
   }
 
-  /*
+  /**
    * Ensure a table exists in the queue; if it already exists it won't
    * do anything, but if it doesn't it will add the table queue. It will ensure
    * a path leads back to the relationship table.
@@ -328,7 +339,7 @@ class views_query {
     }
   }
 
-  /*
+  /**
    * Make sure that the specified table can be properly linked to the primary
    * table in the JOINs. This function uses recursion. If the tables
    * needed to complete the path back to the primary table are not in the
@@ -348,8 +359,10 @@ class views_query {
       $join = $this->get_join_data($table);
     }
 
-    // Does it end at our link table?
-    if ($join->left_table == $relationship || $join->left_table == $this->relationships[$relationship]['table']) {
+    // Does a table along this path exist?
+    if (isset($this->tables[$relationship][$table]) ||
+      $join->left_table == $relationship || 
+      $join->left_table == $this->relationships[$relationship]['table']) {
       // Make sure that we're linking to the correct table for our relationship.
       foreach (array_reverse($add) as $table => $join) {
         $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship));
@@ -435,7 +448,7 @@ class views_query {
     }
   }
 
-  /*
+  /**
    * Add a field to the query table, possibly with an alias. This will
    * automatically call ensure_table to make sure the required table
    * exists, *unless* $table is unset.
@@ -455,10 +468,9 @@ class views_query {
    *   The name that this field can be referred to as. Usually this is the alias.
    */
   function add_field($table, $field, $alias = '') {
-
-    // We check for this specifically because we don't want to add it aliased.
-    if ($table == $this->primary_table && $field == $this->primary_field) {
-      return $this->primary_field;
+    // We check for this specifically because it gets a special alias.
+    if ($table == $this->primary_table && $field == $this->primary_field && empty($alias)) {
+      $alias = $this->primary_field;
     }
 
     if ($table) {
@@ -481,7 +493,7 @@ class views_query {
     return $name;
   }
 
-  /*
+  /**
    * Remove all fields that may've been added; primarily used for summary
    * mode where we're changing the query because we didn't get data we needed.
    */
@@ -494,7 +506,7 @@ class views_query {
    *
    * @param $type
    *   Either 'AND' or 'OR'. All items within this group will be added
-   *   to the WHERE c
+   *   to the WHERE clause with this logical operator.
    * @param $group
    *   An ID to use for this group. If unspecified, an ID will be generated.
    *
@@ -525,7 +537,7 @@ class views_query {
     $this->group_operator = strtoupper($type);
   }
 
-  /*
+  /**
    * Add a simple WHERE clause to the query. The caller is responsible for
    * ensuring that all fields are fully qualified (TABLE.FIELD) and that
    * the table already exists in the query.
@@ -553,6 +565,12 @@ class views_query {
       $args = current($args);
     }
 
+    // Ensure all variants of 0 are actually 0. Thus '', 0 and NULL are all 
+    // the default group.
+    if (empty($group)) {
+      $group = 0;
+    }
+
     // Check for a group.
     if (!isset($this->where[$group])) {
       $this->set_where_group('AND', $group);
@@ -565,7 +583,7 @@ class views_query {
     }
   }
 
-  /*
+  /**
    * Add multiple an orderby's. Right now I'm not sure why this function
    * is separate from add_orderby above; I don't think it needs to
    * be.
@@ -573,7 +591,8 @@ class views_query {
    * @param $table
    *   The table this field is part of. If a formula, enter NULL.
    * @param $field
-   *   The field or formula to sort on.
+   *   The field or formula to sort on. If already a field, enter NULL
+   *   and put in the alias.
    * @param $order
    *   Either ASC or DESC.
    * @param $alias
@@ -593,13 +612,16 @@ class views_query {
     // Only fill out this aliasing if there is a table;
     // otherwise we assume it is a formula.
     if (!$alias && $table) {
-      $as = $table . '_' . $f;
+      $as = $table . '_' . $field;
     }
     else {
       $as = $alias;
     }
 
-    $this->add_field($table, $field, $as);
+    if ($field) {
+      $this->add_field($table, $field, $as);
+    }
+
     $this->orderby[] = "$as $order";
 
     // If grouping, all items in the order by must also be in the
@@ -609,16 +631,19 @@ class views_query {
     }
   }
 
-  /*
+  /**
    * Add a simple GROUP BY clause to the query. The caller is responsible
    * for ensuring that the fields are fully qualified and the table is properly
    * added.
    */
   function add_groupby($clause) {
-    $this->groupby[] = $clause;
+    // Only add it if it's already in there.
+    if (!in_array($clause, $this->groupby)) {
+      $this->groupby[] = $clause;
+    }
   }
 
-  /*
+  /**
    * Generate a query and a countquery from all of the information supplied
    * to the object.
    *
@@ -641,10 +666,10 @@ class views_query {
     }
 
     // If it's not a count query, add our fields
-    $fields_array = $get_count ? $this->count_field : $this->fields;
+    $fields_array = $get_count ? array($this->count_field) : $this->fields;
     foreach ($fields_array as $field) {
       if ($fields) {
-        $fields .= ', ';
+        $fields .= ",\n   ";
       }
       $string = '';
       if ($field['table']) {
@@ -688,9 +713,6 @@ class views_query {
         $orderby = "ORDER BY " . implode(', ', $this->orderby) . "\n";
       }
     }
-    else {
-      $fields = "COUNT($this->count_field)";
-    }
 
     $clauses = array();
     foreach ($this->where as $group => $info) {
@@ -698,7 +720,7 @@ class views_query {
     }
 
     if ($clauses) {
-      $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ')';
+      $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ")\n";
     }
 
     $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $orderby";
@@ -721,66 +743,3 @@ class views_query {
   }
 }
 
-/**
- * A function class to represent a join and create the SQL necessary
- * to implement the join.
- * 
- * This is the Delegation pattern. If we had PHP5 exclusively, we would
- * declare this an interface.
- *
- * Extensions of this class can be used to create more interesting joins.
- */
-class views_join {
-  /**
-   * Construct the views_join object.
-   */
-  function views_join($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
-    $this->table = $table;
-    $this->left_table = $left_table;
-    $this->left_field = $left_field;
-    $this->field = $field;
-    $this->extra = $extra;
-    $this->type = strtoupper($type);
-  }
-
-  /**
-   * Build the SQL for the join this object represents.
-   */
-  function join($table, &$query) {
-    $left = $query->get_table_info($this->left_table);
-    $output = " $this->type JOIN {" . $this->table . "} $table[alias] ON $left[alias].$this->left_field = $table[alias].$this->field";
-
-    // Tack on the extra.
-    if (isset($extra)) {
-      foreach ($extra as $field => $value) {
-        $output .= " AND $table[alias].$this->field";
-        if (is_array($value) && !empty($value)) {
-          $output .= " IN ('". implode("','", $value) ."')";
-        }
-        else if ($value !== NULL) {
-          $output .= " = '$value'";
-        }
-      }
-    }
-    return $output;    
-  }
-}
-
-// Here is how you do complex joins:
-
-/*
-class views_join_complex extends views_join {
-  // PHP 4 doesn't call constructors of the base class automatically from a 
-  // constructor of a derived class. It is your responsibility to propagate 
-  // the call to constructors upstream where appropriate.
-  function views_complex_join($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
-    parent::views_join($left_table, $left_field, $field, $extra, $type);
-  }
-
-  function join($table, &$query) {
-    $output = parent::join($table, $query);
-  }
-  $output .= "AND foo.bar = baz.boing";
-  return $output;
-}
-*/
