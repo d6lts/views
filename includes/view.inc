@@ -13,8 +13,8 @@ function views_objects() {
 }
 
 /**
- * Returns the complete list of objects in a view, including the display which is
- * often special.
+ * Returns the complete list of objects in a view, including the display which
+ * is often special.
  */
 function views_objects_all() {
   return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
