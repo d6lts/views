@@ -77,52 +77,159 @@ class view {
     $this->offset = $offset;
   }
 
+  /**
+   * Set the exposed filters input to an array. If unset they will be taken
+   * from $_GET when the time comes.
+   */
   function set_filter_input($filters) {
     $this->filter_input = $filters;
   }
 
-  function set_display($display_id) {
-    $this->display = $display_id;
+  function get_fields($display_id = NULL) {
+    if (!isset($display_id)) {
+      $display_id = $this->current_display;
+    }
+
+    // TODO: Fix this:
+    return $this->field;
   }
+
+  /**
+   * Set the display for this view, and initialize the display handler.
+   */
+  function set_display($display_id = NULL) {
+    // The default display is always the first one in the list.
+    if (isset($this->current_display)) {
+      return TRUE;
+    }
+
+    $this->default_display = 0;
+    if (!isset($display_id)) {
+      $this->current_display = 0;
+    }
+  
+    foreach ($this->display as $id => $display) {
+      if ($display->id == $display_id) {
+        $this->current_display = $id;
+      }
+    }
+
+    // If the id was invalid, then just use the default display.
+    if (!isset($this->current_display)) {
+      $this->current_display = 0;
+    }
+
+    if (!isset($this->display[$this->current_display])) {
+      return FALSE;
+    }
+
+    // Fetch the display handler data and instantiate an object.
+    $display_data = $this->display[$this->current_display];
+    $this->display_handler = views_get_plugin('display', $display_data->display_plugin);
+    if (empty($this->display_handler)) {
+      return FALSE;
+    }
+
+    // Seed the new display handler with data.
+    $this->display_handler->seed($this, $display_data);
+    
+    // If this is NOT the default display handler, let it know which is
+    // since it may well utilize some data from the default.
+    if ($this->current_display != $this->default_display) {
+      $this->display_handler->default_display = $this->display[$this->default_display];
+    }
+
+    // Find and initialize the style plugin. Note that arguments may have changed
+    // which style plugin we use, so check the view object first, then ask
+    // the display handler.
+    if (!isset($this->style_plugin)) {
+      $this->style_plugin = $display_data->style_plugin;
+    }
+
+    $this->style_handler = views_get_plugin('style', $this->style_plugin);
+    if (empty($this->style_handler)) {
+      return FALSE;
+    }
+
+    // Seed the new display handler with data.
+    $this->style_handler->seed($this, $display_data);
+
+    return TRUE;
+  }
+
 
   function build($display_id = NULL) { 
     if (!empty($this->built)) {
       return;
     }
 
-    $this->display_id = $display_id;
+    if (!$this->set_display($display_id)) {
+      return FALSE;
+    }
 
+    // Execute the initial PHP code that a view can have.
+    if ($this->view_args_php) {
+      ob_start();
+      $result = eval($this->view_args_php);
+      if (is_array($result)) {
+        $this->args = $result;
+      }
+      ob_end_clean();
+    }
+   
     // Attempt to load from cache.
     // TODO: Load a build_info from cache.
 
+
+
+    // If that fails, let's build!
+    $this->build_info = array();
+
+    $views_data = views_fetch_data($this->base_table);
+    $this->base_field = $views_data['table']['base']['field'];
+    $this->query = new views_query($this->base_table, $this->base_field);
 
     // Call a module hook and see if it wants to present us with a
     // pre-built query or instruct us not to build the query for
     // some reason.
     // TODO: Implement this.  
-   
-    // If that fails, let's build!
-    $this->build_info = array();
 
-    $this->query = new views_query();
+    // Run through our handlers and ensure they have necessary information.
     $this->_seed_handlers();
 
+    // Build all the filters.
     $this->_build('filter');
 
     $this->build_sort = $this->build_fields = TRUE;
 
+    $argument_title = '';
     // build arguments.
-    foreach ($this->argument as $id => $argument) {
+    foreach ($this->argument as $id => $arg) {
+      unset ($argument);
+      $argument = &$this->argument[$id];
+
+      if (!is_object($argument->handler)) {
+        // TODO: Set some kind of warning.
+        continue;
+      }
+
       if (isset($this->args[$id])) {
         // handle argument that is present.
         // TODO: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
         $argument->handler->argument = $this->args[$id];
         $argument->handler->query();
+
+        // Test to see if we should use this argument's title
+        if (!empty($argument->title)) {
+          $argument_title = $id;
+        }
       }
       else {
         // determine default condition and handle.
-        $argument->handler->default_action();
+        if (!$argument->handler->default_action()) {
+          return;
+        }
       }
     }
 
@@ -140,15 +247,20 @@ class view {
     $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
+    return TRUE;
   }
 
   /**
    * Internal method to build an individual set of handlers.
    */
   function _build($key) {
-    foreach ($this->$key as $data) {
-      $data->handler->query();
-    }  
+    $array = &$this->$key;
+    foreach ($array as $id => $data) {
+      // TODO: we should report an error here if this is not an object.
+      if (is_object($array[$id]->handler)) {
+        $array[$id]->handler->query();
+      }
+    }
   }
 
   /**
@@ -171,7 +283,7 @@ class view {
    */
   function _seed_handler($key) {
     foreach ($this->$key as $data) {
-      $handler = views_get_handler($data->table, $data->field, $key);
+      $handler = views_get_handler($data->tablename, $data->field, $key);
       if (is_object($handler)) {
         $handler->seed($this, $data);
         $data->handler = $handler;
@@ -180,19 +292,66 @@ class view {
   }
 
   /**
+   * Execute the view's query.
+   */
+  function execute($display_id = NULL) {
+    if (!empty($this->executed)) {
+      return TRUE;
+    }
+
+    if (empty($this->built)) {
+      if (!$this->build($display_id)) {
+        return FALSE;
+      }
+    }
+
+    $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field);
+    $args = $this->build_info['query_args'];
+
+    // TODO: Fill in execution defaults if they are not set.
+    // use_pager, page_size, offset
+
+    $items = array();
+    if ($query) {
+      if (!empty($this->use_pager)) {
+        $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
+        $this->result = pager_query($query, $view->page_size, $view->use_pager - 1, $count_query, $args);
+        $this->total_rows = $GLOBALS['pager_total_items'][$this->use_pager - 1];
+      }
+      else if (!empty($this->page_size)) {
+        $offset = $this->current_page * $this->page_size + $this->offset;
+        $this->result = db_query_range($query, $args, $offset, $this->page_size);
+      }
+      else {
+        $this->result = db_query($query, $args);
+      }
+    }
+
+    $this->executed = TRUE;
+  }
+
+  /**
    * Render this view for display.
    */
   function render($display_id = NULL) {
-    if (empty($this->built)) {
-      $this->build($display_id);
-    }
-    // Check to see if the build failed.
-
     // Check for cached output.  
+    // TODO: Implement this
+    
+    // Make sure the query has already executed.
+    if (empty($this->executed)) {
+      $this->execute($display_id);
+    }
+
+    // Check to see if the build failed.
+    if (empty($this->result)) {
+      return;
+    }
+
+    return $this->display_handler->render();
   }
 
   function get_title($context) { }
-  function get_url() { }
+  function get_url($args = NULL) { }
   function is_cacheable() { }
 
   /**
@@ -220,7 +379,7 @@ class view {
    */
   function _load_row($key) {
     $object_name = "views_$key";
-    $table = $object_name . 's';
+    $table = $object_name;
     $result = db_query("SELECT * FROM {$table} WHERE vid = %d ORDER BY position", $this->vid);
 
     while ($data = db_fetch_object($result)) {
@@ -239,7 +398,7 @@ class view {
     if (!empty($this->vid)) {
       // remove existing table entries
       foreach (views_objects_all() as $key) {
-        db_query("DELETE from {views_" . $key . "s} WHERE vid = %d", $this->vid);
+        db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
         $this->_load_row($key);
       }
     }
@@ -263,7 +422,7 @@ class view {
     foreach ($this->$key as $position => $object) {
       $object->position = $position;
       $object->vid = $this->vid;
-      _views_save_query("views_" . $key . "s", $object);
+      _views_save_query("views_" . $key, $object);
     }
   }
 
@@ -278,7 +437,7 @@ class view {
     db_query("DELETE FROM {views_view} WHERE vid = %d", $this->vid);
     // Delete from all of our subtables as well.
     foreach (views_objects_all() as $key) {
-      db_query("DELETE from {views_" . $key . "s} WHERE vid = %d", $this->vid);
+      db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
       $this->_load_row($key);
     }
 

@@ -7,240 +7,291 @@
  */
 
 /**
- * Implementation of hook_menu
+ * Register views theming functions.
  */
-function views_menu() {
-  $items['views/test'] = array(
-    'page callback' => 'views_test',
-    'access callback' => TRUE,
-    'title' => 'Views test',
-    'type' => MENU_NORMAL_ITEM,
-  );
-  $items['views/test/1'] = array(
-    'page callback' => 'views_test_1',
-    'access callback' => TRUE,
-    'title' => 'Views test 1',
-    'type' => MENU_NORMAL_ITEM,
-  );
-  $items['views/test/2'] = array(
-    'page callback' => 'views_test_2',
-    'access callback' => TRUE,
-    'title' => 'Views test 2',
-    'type' => MENU_NORMAL_ITEM,
+function views_theme() {
+  $path = drupal_get_path('module', 'views');
+  include_once "$path/theme/theme.inc";
+
+  // Some quasi clever array merging here.
+  $base = array(
+//    'file' => 'theme.inc',
+    'path' => "$path/theme",
   );
 
+  $arguments = array(
+    'display' => array('view' => NULL),
+    'style' => array('view' => NULL, 'rows' => NULL),
+    'row' => array('view' => NULL, 'row' => NULL),
+  );
 
-  return $items;
-}
+  // Default view themes
+  $hooks['views_view'] = $base + array(
+    'file' => 'views-view',
+//    'template' => 'views-view',
+    'pattern' => 'views_view__',
+    'arguments' => $arguments['display'],
+  );
+  $hooks['views_view_rows'] = $base + array(
+    'file' => 'views-view-rows',
+//    'template' => 'views-view-rows',
+    'pattern' => 'views_view_rows__',
+    'arguments' => $arguments['style'],
+  );
+  $hooks['views_view_row'] = $base + array(
+    'file' => 'views-view-row',
+//    'template' => 'views-view-row',
+    'pattern' => 'views_view_row__',
+    'arguments' => $arguments['row'],
+  );
+  $hooks['views_view_field'] = $base + array(
+    'pattern' => 'views_view_field__',
+    'arguments' => array('view' => NULL, 'field' => NULL, 'row' => NULL),
+  );
 
+  $plugins = views_fetch_plugin_data();
 
-function views_test() {
-  views_include_view();
-  views_include_query();
-
-  $output = '';
-
-  $view = views_get_view('views_test');
-  if (!$view) {
-    $view = new view;
-    $view->name = 'views_test';
-    $view->description = 'A view being used to test some handlers.';
-    $view->set_page_size(3);
-
-    $field = new views_field;
-    $field->table = 'node';
-    $field->field = 'title';
-    $view->field[] = drupal_clone($field);
-
-    $field->field = 'created';
-    $view->field[] = drupal_clone($field);
-    
-    $field->table = 'users';
-    $field->field = 'name';
-    $view->field[] = $field;
-
-    $sort = new views_sort;
-    $sort->table = 'node';
-    $sort->field = 'created';
-    $sort->order = 'ASC';
-    $view->sort[] = $sort;
-
-/*
-    $filter = new views_filter;
-    $filter->table = 'node';
-    $filter->field = 'nid';
-    $filter->operator = '=';
-    $filter->value = 3;
-    $view->filter[] = $filter;
-*/
-
-    $argument = new views_argument;
-    $argument->table = 'node';
-    $argument->field = 'nid';
-    $argument->default_action = 'summary asc';
-    $view->argument[] = $argument;
-
-    $view->save();
+  // Register theme functions for all style plugins
+  foreach ($plugins as $type => $info) {
+    foreach ($info as $plugin => $def) {
+      if (isset($def['theme'])) {
+        $hooks[$def['theme']] = array(
+          'pattern' => $def['theme'] . '__',
+//          'file' => $def['file'],
+          'path' => $def['path'],
+          'arguments' => $arguments[$type],
+        );
+        if (!function_exists('theme_' . $def['theme'])) {
+          $hooks[$def['theme']]['file'] = views_css_safe($def['theme']);
+//          $hooks[$def['theme']]['template'] = views_css_safe($def['theme']);
+        }
+      }
+    }
   }
 
-  $view->build();
-  $view2 = views_get_view('views_test');
-  $view2->args = array('1');
-  $view2->build();
-  $output = '<pre>';
-  $output .= print_r($view->build_info, 1);
-  $output .= print_r($view2->build_info, 1);
-  $output .= '</pre>';
-  return $output;
-}
-
-
-function views_test_1() {
-  views_include_view();
-
-  $view = new view;
-  $view->name = 'foo';
-  $view->description = 'foobar';
-  $view->set_page_size(3);
-
-  $argument = new views_argument;
-  $argument->type = 'node_nid';
-  $argument->default_action = 'not_found';
-  $argument->title = '%1';
-
-  $view->argument[] = drupal_clone($argument);
-  $argument->default_action = 'summary, ascended';
-  $view->argument[] = $argument;
-
-  $view->save();
-
-  $view2 = new view;
-  $view2->load($view->vid);
-
-  $output = '<pre>';
-  $array = array();
-  $output .= "Array test: " . (array_push($array, 'foo'));
-  $output .= "\n";
-  $output .= var_export($view, 1);
-  $output .= var_export($view2, 1);
-  $output .= '</pre>';
-  return $output;
-}
-
-function views_test_2() {
-
-  views_include_query();
-  $query = new views_query;
-
-
-
-  $book_parent = $query->add_relationship('book_parent', new views_join('node', 'book', 'pid', 'nid'));
-  $book_parent_users = $query->ensure_table('users', 'book_parent');
-
-  $book_parent_parent = $query->add_relationship('book_parent_parent', new views_join('node', 'book', 'pid', 'nid'), 'book_parent');
-  $book_parent_parent_users = $query->ensure_table('users', 'book_parent_parent');
-
-
-
-  $query->add_relationship('term_hierarchy_1', new views_join('term_hierarchy', 'term_hierarchy', 'parent', 'tid'));
-  $query->add_relationship('term_hierarchy_2', new views_join('term_hierarchy', 'term_hierarchy', 'parent', 'tid'), 'term_hierarchy_1');
-  $book_parent_users = $query->ensure_table('term_data');
-  $book_parent_users = $query->ensure_table('term_data', 'term_hierarchy_1', new views_join('term_data', 'term_hierarchy', 'tid', 'tid'));
-  $book_parent_users = $query->ensure_table('term_data_x', 'term_hierarchy_2');
-
-  $query->add_field('bar', 'baz');
-  $query->add_field('node', 'title');
-  $query->add_field(NULL, 'unix_timestamp(some_value)');
-
-  $query->set_where_group('or', 'or');
-  $query->add_where(0, 'froot_loops = 1', 'froot', 'loops');
-  $query->add_where(0, 'gay = yes', 'gay', 'yes');
-  $query->add_where('or', 'foo = bar');
-  $query->add_where('or', 'bar = baz', 'bar', 'baz');
-
-  $output = '';
-
-  $output .= '<pre>';
-  $output .= $query->query() . "\n";
-  $output .= var_export($query->get_where_args(), true) . "\n";
-/*
-  $output .= "book_parent: <b>$book_parent</b>\n";
-  $output .= "book_parent_users: <b>$book_parent_users</b>\n";
-  $output .= "book_parent_parent: <b>$book_parent_parent</b>\n";
-  $output .= "book_parent_parent_users: <b>$book_parent_parent_users</b>\n";
-*/
-  $output .= var_export($query, 1);
-  $output .= '</pre>';
-  return $output;
+  return $hooks;
 }
 
 /**
- * Include view.inc
+ * Include views .inc files as necessary.
  */
-function views_include_view() {
-  require_once drupal_get_path('module', 'views') . '/includes/view.inc';
+function views_include($file) {
+  require_once drupal_get_path('module', 'views') . "/includes/$file.inc";
 }
 
 /**
- * Include query.inc
- */
-function views_include_query() {
-  views_include_handlers();
-  require_once drupal_get_path('module', 'views') . '/includes/query.inc';
-}
-
-/**
- * Include handlers.inc
+ * Load views files on behalf of modules.
  */
 function views_include_handlers() {
-  require_once drupal_get_path('module', 'views') . '/includes/handlers.inc';
-}
-
-// STUB FUNCTION -- temporary data so there's something to test with.
-function views_get_table_join($table, $primary_table) {
-  // temp hack
-  static $cache = array();
-  if (empty($cache)) {
-    $cache['users'] = new views_join('users', 'node', 'uid', 'uid');
-    $cache['term_node'] = new views_join('term_node', 'node', 'nid', 'nid');
-    $cache['term_data'] = new views_join('term_data', 'term_node', 'tid', 'tid');
-    $cache['term_data_x'] = new views_join('term_data', 'term_hierarchy', 'tid', 'tid');
-    $cache['term_hierarchy'] = new views_join('term_hierachy', 'term_node', 'tid', 'tid');
-    $cache['book'] = new views_join('book', 'node', 'nid', 'nid');
-    $cache['foo'] = new views_join('foo', 'node', 'nid', 'nid');
-    $cache['bar'] = new views_join('bar', 'foo', 'baz', 'baz');
+  static $finished = FALSE;
+  // Ensure this only gets run once.
+  if ($finished) {
+    return;
   }
 
-//  if ($table == 'node') { drupal_set_message('<pre>'.var_export(debug_backtrace(), 1)); }
-  return $cache[$table];
+  views_include('handlers');
+  $views_path = drupal_get_path('module', 'views') . '/modules';
+  foreach (module_list() as $module) {
+    $module_path = drupal_get_path('module', $module);
+    if (file_exists("$module_path/$module.views.inc")) {
+      include_once "$module_path/$module.views.inc";
+    }
+    else if (file_exists("$views_path/$module.views.inc")) {
+      include_once "$views_path/$module.views.inc";
+    }
+  }
+  $finished = TRUE;
 }
 
-// STUB FUNCTION -- temporary data so there's something to test with.
+/**
+ * Fetch Views' data from the cache
+ */
+function views_fetch_data($table = NULL) {
+  static $cache = NULL;
+  if (!isset($cache)) {
+    $start = microtime();
+    // NOTE: This happens whether we retrieve them from cache or otherwise.
+    views_include_handlers();
+    $cache = module_invoke_all('views_data');
+    if (module_exists('devel')) {
+      dsm('Views data build time: ' . (microtime() - $start) * 1000 . ' ms');
+    }
+  }
+
+  if (!$table) {
+    return $cache;
+  }
+  if (isset($cache[$table])) {
+    return $cache[$table];
+  }
+  // Return an empty array if there is no match.
+  return array();
+}
+
+/**
+ * Fetch a handler to join one table to a primary table from the data cache
+ */
+function views_get_table_join($table, $primary_table) {
+  $data = views_fetch_data($table);
+  if (isset($data['table']['join'][$primary_table])) {
+    $h = $data['table']['join'][$primary_table];
+    $handler = new $h['handler'];
+    if (isset($h['arguments'])) {
+      call_user_func_array(array($handler, 'construct'), $h['arguments']);
+    }
+    return $handler;
+  }
+  // DEBUG -- identify missing handlers
+  dsm("join: $table $primary_table");
+}
+
+/**
+ * Instantiate and construct a new handler
+ */
+function _views_create_handler($definition) {
+//  dpr('Instantiating handler ' . $definition['handler']);
+  $handler = new $definition['handler'];
+  if (isset($definition['arguments'])) {
+    call_user_func_array(array($handler, 'construct'), $definition['arguments']);
+  }
+
+  $handler->set_definition($definition);
+  return $handler;
+}
+
+/**
+ * Prepare a handler's data by checking defaults and such.
+ */
+function _views_prepare_handler($definition, $data, $field) {
+  foreach (array('group', 'title', 'help') as $key) {
+    // First check the field level
+    if (!isset($definition[$key]) && !empty($data[$field][$key])) {
+      $definition[$key] = $data[$field][$key];
+    }
+    // Then if that doesn't work, check the table level
+    if (!isset($definition['table'][$key]) && !empty($data['table'][$key])) {
+      $definition[$key] = $data['table'][$key];
+    }
+  }
+
+  return _views_create_handler($definition);
+}
+
+/**
+ * Fetch a handler from the data cache.
+ */
 function views_get_handler($table, $field, $key) {
-  switch ($key) {
-    case 'field':
-      switch ($field) {
-        case 'title':
-          return new views_handler_field(TRUE);
-        case 'name':
-          return new views_handler_field(TRUE);
-        case 'created':
-          return new views_handler_field_date(TRUE);
+  $data = views_fetch_data($table);
+  if (isset($data[$field][$key])) {
+    return _views_prepare_handler($data[$field][$key], $data, $field);
+  }
+  // DEBUG -- identify missing handlers
+  dsm("$table $field $key");
+}
+
+function views_discover_plugins() {
+  $cache = array('display' => array(), 'style' => array(), 'row' => array());
+  // Get plugins from all mdoules.
+  foreach (module_implements('views_plugins') as $module) {
+    $function = $module . '_views_plugins';
+    $result = $function();
+    if (!is_array($result)) {
+      continue;
+    }
+    // Setup automatic path/file finding for theme registration
+    if (isset($result['module']) && $result['module'] == 'views') {
+      $path = drupal_get_path('module', $module) . '/theme';
+      $file = 'theme.inc';
+    }
+    else {
+      $path = drupal_get_path('module', $module);
+      $file = "$module.views.inc";
+    }
+    foreach ($result as $type => $info) {
+      if ($type == 'module') {
+        continue;
       }
-      break;
-    case 'sort':
-      switch ($field) {
-        case 'created':
-          return new views_handler_sort();
+      foreach ($info as $plugin => $def) {
+        if (isset($def['theme']) && !isset($def['path'])) {
+          $def['path'] = $path;
+          $def['file'] = $file;
+        }
+        // merge the new data in
+        $cache[$type][$plugin] = $def;
       }
-      break;
-    case 'filter':
-      switch ($field) {
-        case 'nid':
-          return new views_handler_filter();
-      }
-      break;
-    case 'argument':
-      return new views_handler_argument('title');
+    }
+  }
+  return $cache;
+}
+
+/**
+ * Fetch the plugin data from cache.
+ */
+function views_fetch_plugin_data($type = NULL, $plugin = NULL) {
+  static $cache = NULL;
+  if (!isset($cache)) {
+    $start = microtime();
+    views_include('plugins');
+    views_include_handlers();
+
+    $cache = views_discover_plugins();
+
+    if (module_exists('devel')) {
+      dsm('Views plugins build time: ' . (microtime() - $start) * 1000 . ' ms');
+    }
+  }
+
+  if (!$type && !$plugin) {
+    return $cache;
+  }
+  else if (!$plugin) {
+    // Not in the if above so the else below won't run
+    if (isset($cache[$type])) {
+      return $cache[$type];
+    }
+  }
+  else if (isset($cache[$type][$plugin])) {
+    return $cache[$type][$plugin];
+  }
+
+  // Return an empty array if there is no match.
+  return array();
+}
+
+/**
+ * Get a handler for a plugin
+ */
+function views_get_plugin($type, $plugin) {
+  $definition = views_fetch_plugin_data($type, $plugin);
+  if (!empty($definition)) {
+    return _views_create_handler($definition);
+  }
+}
+
+/**
+ * Prepare the specified string for use as a CSS identifier.
+ */
+function views_css_safe($string) {
+  return str_replace('_', '-', $string);
+}
+
+/**
+ * Basic definition for many views objects
+ */
+class views_object {
+  /**
+   * Views handlers use a special construct function so that we can more
+   * easily construct them with variable arguments.
+   */
+  function construct() { }
+
+  /**
+   * Let the handler know what its full definition is.
+   */
+  function set_definition($definition) {
+    $this->definition = $definition;
+    if (isset($definition['field'])) {
+      $this->real_field = $definition['field'];
+    }
   }
 }

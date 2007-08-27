@@ -54,7 +54,7 @@ function views_schema() {
     'unique key' => array('name' => array('name')),
   );
 
-  $schema['views_displays'] = array(
+  $schema['views_display'] = array(
     'description' => t('Stores information about each display attached to a view.'),
     'fields' => array(
       'vid' => array(
@@ -64,12 +64,19 @@ function views_schema() {
         'default' => 0,
         'description' => t('The view this display is attached to.'),
       ),
-      'type' => array(
+      'display_plugin' => array(
         'type' => 'varchar', 
         'length' => '64', 
         'default' => '',
         'not null' => TRUE, 
         'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
+      ),
+      'id' => array(
+        'type' => 'varchar', 
+        'length' => '64', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('An identifier for this display; usually generated from the display_plugin, so should be something like page or page_1 or block_2, etc.'),
       ),
       'access' => array(
         'type' => 'varchar',
@@ -77,7 +84,7 @@ function views_schema() {
         'description' => t('A serialized array describing who can access this display of the view.'),
         'serialize' => TRUE,
       ),
-      'output_type' => array(
+      'style_plugin' => array(
         'type' => 'varchar', 
         'length' => '64', 
         'default' => '',
@@ -145,12 +152,12 @@ function views_schema() {
       ),
       'display_options' => array(
         'type' => 'blob', 
-        'description' => t('A serialized array of options for this display; it contains options that are generally only pertinent to that display type.'),
+        'description' => t('A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type.'),
         'serialize' => TRUE,
       ),
-      'output_options' => array(
+      'style_options' => array(
         'type' => 'blob', 
-        'description' => t('A serialized array of options for this display\'s output type; it contains options that are generally only pertinent to that type.'),
+        'description' => t('A serialized array of options for this display\'s style plugin; it contains options that are generally only pertinent to that type.'),
         'serialize' => TRUE,
       ),
       'filter_options' => array(
@@ -162,7 +169,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  $schema['views_arguments'] = array(
+  $schema['views_argument'] = array(
     'description' => t('Stores information about each argument attached to a view.'),
     'fields' => array(
       'vid' => array(
@@ -177,7 +184,7 @@ function views_schema() {
         'default' => 0,
         'description' => t('The order in which this information is loaded.'),
       ),
-      'table' => array(
+      'tablename' => array(
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The name of the table this field is attached to.'),
@@ -193,6 +200,13 @@ function views_schema() {
         'description' => t('The relationship this field belongs to.'),
       ),
       'type' => array(
+        'type' => 'varchar', 
+        'length' => '64', 
+        'default' => '',
+        'not null' => TRUE, 
+        'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
+      ),
+      'style' => array(
         'type' => 'varchar', 
         'length' => '64', 
         'default' => '',
@@ -234,7 +248,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  $schema['views_fields'] = array(
+  $schema['views_field'] = array(
     'description' => t('Stores information about each field attached to a view.'),
     'fields' => array(
       'vid' => array(
@@ -249,7 +263,12 @@ function views_schema() {
         'default' => 0,
         'description' => t('The order in which this information is loaded.'),
       ),
-      'table' => array(
+      'display_id' => array(
+        'type' => 'int', 
+        'default' => 0,
+        'description' => t('The display for which these fields are valid.'),
+      ),
+      'tablename' => array(
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The name of the table this field is attached to.'),
@@ -273,7 +292,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  $schema['views_sorts'] = array(
+  $schema['views_sort'] = array(
     'description' => t('Stores information about each sort criterion attached to a view.'),
     'fields' => array(
       'vid' => array(
@@ -288,7 +307,7 @@ function views_schema() {
         'default' => 0,
         'description' => t('The order in which this information is loaded.'),
       ),
-      'table' => array(
+      'tablename' => array(
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The name of the table this field is attached to.'),
@@ -328,7 +347,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  $schema['views_filters'] = array(
+  $schema['views_filter'] = array(
     'description' => t('Stores information about each filter attached to a view.'),
     'fields' => array(
       'vid' => array(
@@ -348,7 +367,7 @@ function views_schema() {
         'default' => 0,
         'description' => t('Which filter group this filter belongs to, so that AND and OR can be separated properly.'),
       ),
-      'table' => array(
+      'tablename' => array(
         'type' => 'varchar', 
         'length' => '255', 
         'description' => t('The name of the table this field is attached to.'),
@@ -394,7 +413,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  $schema['views_relationships'] = array(
+  $schema['views_relationship'] = array(
     'description' => t('Stores information about each filter attached to a view.'),
     'fields' => array(
       'vid' => array(

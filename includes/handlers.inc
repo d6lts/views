@@ -17,8 +17,8 @@
  *   // PHP 4 doesn't call constructors of the base class automatically from a 
  *   // constructor of a derived class. It is your responsibility to propagate 
  *   // the call to constructors upstream where appropriate.
- *   function views_complex_join($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
- *     parent::views_join($left_table, $left_field, $field, $extra, $type);
+ *   function construct($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+ *     parent::construct($left_table, $left_field, $field, $extra, $type);
  *   }
  *
  *   function join($table, &$query) {
@@ -42,7 +42,7 @@ class views_join {
   /**
    * Construct the views_join object.
    */
-  function views_join($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+  function construct($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
     $this->table = $table;
     $this->left_table = $left_table;
     $this->left_field = $left_field;
@@ -89,7 +89,7 @@ class views_join {
  * This class would be abstract in PHP5, but PHP4 doesn't understand that.
  * 
  */
-class views_handler {
+class views_handler extends views_object {
   /**
    * Seed the handler with necessary data.
    * @param $view
@@ -112,12 +112,15 @@ class views_handler {
     }
 
     // This exist on most handlers, but not all. So they are still optional.
-    if (isset($data->table)) {
-      $this->table = $data->table;
+    if (isset($data->tablename)) {
+      $this->table = $data->tablename;
     }
 
     if (isset($data->field)) {
       $this->field = $data->field;
+      if (!isset($this->real_field)) {
+        $this->real_field = $data->field;
+      }
     }
 
     if (isset($data->relationship)) {
@@ -151,6 +154,17 @@ class views_handler {
    * If we were using PHP5, this would be abstract.
    */
   function query() { }
+
+  /**
+   * Ensure the main table for this handler is in the query. This is used
+   * a lot.
+   */
+  function ensure_my_table() {
+    if (!isset($this->alias)) {
+      $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
+    }
+    return $this->table_alias;
+  }
 }
 
 /**
@@ -169,7 +183,7 @@ class views_handler_relationship extends views_handler {
    */
   function query() {
     $alias = $this->table . '_' . $this->field . '_' . $this->relationship;
-    return $this->query->add_relationship($alias, new views_join($this->view->primary_table, $this->table, $this->field, $this->primary_field), $this->relationship);
+    return $this->query->add_relationship($alias, new views_join($this->view->primary_table, $this->table, $this->real_field, $this->primary_field), $this->relationship);
   }
 }
 
@@ -181,6 +195,7 @@ class views_handler_relationship extends views_handler {
  * @defgroup views_field_handlers Views' field handlers
  * @{
  * Handlers to tell Views how to build and display fields.
+ *
  */
 
 /**
@@ -191,7 +206,7 @@ class views_handler_field extends views_handler {
   /**
    * Construct a new field handler.
    */
-  function views_handler_field($click_sortable = FALSE, $additional_fields = array()) {
+  function construct($click_sortable = FALSE, $additional_fields = array()) {
     $this->click_sortable = $click_sortable;
     $this->additional_fields = $additional_fields;
   }
@@ -200,14 +215,14 @@ class views_handler_field extends views_handler {
    * Called to add the field to a query.
    */
   function query() {
-    // Ensure the requested table is part of the query, and get the proper alias fori t.
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
+    $this->ensure_my_table();
     // Add the field.
-    $this->field_alias = $this->query->add_field($alias, $this->field);
+    $this->field_alias = $this->query->add_field($this->table_alias, $this->real_field);
+    dpr("alias: $this->field_alias");
     // Add any additional fields we are given.
     if (!empty($this->additional_fields) && is_array($this->additional_fields)) {
-      foreach ($this->additional_fields as $this->field) {
-        $this->query->add_field($alias, $this->field);
+      foreach ($this->additional_fields as $field) {
+        $this->aliases[$field] = $this->query->add_field($this->table_alias, $field);
       }
     }
   }
@@ -216,9 +231,7 @@ class views_handler_field extends views_handler {
    * Called to determine what to tell the clicksorter.
    */
   function click_sort() {
-    // Ensure the requested table is part of the query, and get the proper alias for it.
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
-    return "$alias.$this->field";
+    return "$this->field_alias";
   }
 
   /**
@@ -240,8 +253,8 @@ class views_handler_field_date extends views_handler_field {
   /**
    * Constructor; calls to base object constructor.
    */
-  function views_handler_field_date($click_sortable = FALSE, $additional_fields = array()) {
-    parent::views_handler_field($click_sortable, $additional_fields);
+  function construct($click_sortable = FALSE, $additional_fields = array()) {
+    parent::construct($click_sortable, $additional_fields);
   }
 
   function options_form(&$form) {
@@ -267,8 +280,10 @@ class views_handler_field_date extends views_handler_field {
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    $format = $this->options['date_format'];
-    $custom_format = $this->options['custom_date_format'];
+    $format = !empty($this->options['date_format']) ? $this->options['date_format'] : 'medium';
+    if ($format == 'custom') {
+      $custom_format = $this->options['custom_date_format'];
+    }
 
     switch ($format) {
       case 'time ago':
@@ -298,10 +313,9 @@ class views_handler_sort extends views_handler {
    * Called to add the sort to a query.
    */
   function query() {
-    // Ensure the requested table is part of the query, and get the proper alias for it.
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
+    $this->ensure_my_table();
     // Add the field.
-    $this->query->add_orderby($alias, $this->field, $this->data->order);
+    $this->query->add_orderby($this->table_alias, $this->real_field, $this->data->order);
   }
 }
 
@@ -316,7 +330,7 @@ class views_handler_sort_formula extends views_handler_sort {
    *   The formula used to sort. If an array, may be keyed by database type. If
    *   used, 'default' MUST be defined.
    */
-  function views_handler_sort_formula($formula) {
+  function construct($formula) {
     $this->formula = $formula;
     if (is_array($formula) && !isset($formula['default'])) {
       $this->error = t('views_handler_sort_formula missing default: @formula', array('@formula' => var_export($formula, TRUE)));
@@ -338,10 +352,9 @@ class views_handler_sort_formula extends views_handler_sort {
     else {
       $formula = $this->formula;
     }
-    // Ensure the requested table is part of the query, and get the proper alias for it.
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
+    $this->ensure_my_table();
     // Add the field.
-    $this->add_orderby(NULL, $this->formula, $this->data->order, $alias . '_' . $this->field);
+    $this->add_orderby(NULL, $this->formula, $this->data->order, $this->table_alias . '_' . $this->field);
   }
 }
 
@@ -395,8 +408,8 @@ class views_handler_filter extends views_handler {
    * Add this filter to the query.
    */
   function query() {
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
-    $this->query->add_where($this->data->group, "$alias.$this->field " . $this->data->operator . " '%s'", $this->data->value);
+    $this->ensure_my_table();
+    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator . " '%s'", $this->data->value);
   }
 }
 
@@ -417,7 +430,7 @@ class views_handler_argument extends views_handler {
   /**
    * Constructor
    */
-  function views_handler_argument($name_field = NULL) {
+  function construct($name_field = NULL) {
     $this->name_field = $name_field;
   }
 
@@ -434,24 +447,34 @@ class views_handler_argument extends views_handler {
    *   The alias used to get the number of records (count) for this entry.
    */
   function summary_query() {
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
+    $this->ensure_my_table();
     // Add the field.
-    $this->base_alias = $this->query->add_field($alias, $this->field);    
+    $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);    
     
     // Add the 'name' field. For example, if this is a uid argument, the
     // name field would be 'name' (i.e, the username).
     if (isset($this->name_field)) {
-      $this->name_alias = $this->query->add_field($alias, $this->name_field);
+      $this->name_alias = $this->query->add_field($this->table_alias, $this->name_field);
     }
     else {
       $this->name_alias = $this->base_alias;
     }
+    
+    return $this->summary_basics();
+  }
 
+  /**
+   * Some basic summary behavior that doesn't need to be repeated as much as
+   * code that goes into summary_query()
+   */
+  function summary_basics($count_field = TRUE) {
     // Add the number of nodes counter
     $count_alias = $this->query->add_field(NULL, 'COUNT(' . $this->query->primary_field . ')', 'num_records');
     $this->query->add_groupby($this->base_alias);
 
-    $this->query->set_count_field($alias, $this->field);
+    if ($count_field) {
+      $this->query->set_count_field($this->table_alias, $this->real_field);
+    }
 
     return $count_alias;
   }
@@ -477,7 +500,8 @@ class views_handler_argument extends views_handler {
    *   The base URL to use.
    */
   function summary_link($data, $url) {
-    return l($data->{$this->name_alias}, "$url/$this->base_field");
+    $value = $data->{$this->base_alias};
+    return l($data->{$this->name_alias}, "$url/$value");
   }
 
   /**
@@ -545,6 +569,7 @@ class views_handler_argument extends views_handler {
         // Summaries have their own sorting and fields, so tell the View not
         // to build these.
         $this->view->build_sort = $this->view->build_fields = FALSE;
+        return TRUE;
     }
   }
 
@@ -554,11 +579,8 @@ class views_handler_argument extends views_handler {
    * The argument sent may be found at $this->argument.
    */
   function query() {
-    // Ensure the requested table is part of the query, and get the proper alias fori t.
-    $alias = $this->query->ensure_table($this->table, $this->relationship);
-    // Add the field.
-    $field = $this->query->add_field($alias, $this->field);
-    $this->query->add_where(0, "$field = '%s'", $this->argument);
+    $this->ensure_my_table();
+    $this->query->add_where(0, "$this->table_alias.$this->real_field = '%s'", $this->argument);
   }
 
   /**
@@ -566,16 +588,128 @@ class views_handler_argument extends views_handler {
    *
    * This usually needs to be overridden to provide a proper title.
    */
-  function title($argument) {
-    return check_plain($argument);
+  function title() {
+    return check_plain($this->argument);
   }
 }
 
 /**
- * Argument handler for simple formulae.
+ * Abstract argument handler for simple formulae.
+ *
+ * Child classes of this object should implement summary_link, at least.
  */
-class views_handler_argument_date extends views_handler_argument {
-  
+class views_handler_argument_formula extends views_handler_argument {
+  /**
+   * Constructor
+   */
+  function construct($formula) {
+    $this->formula = $formula;
+  }
+
+  /**
+   * Build the summary query based on a formula
+   */
+  function summary_query() {
+    $this->ensure_my_table();
+    $field_alias = $alias . '_' . $this->field;
+    // Add the field.
+    $this->base_alias = $this->query->add_field(NULL, $this->formula, $field_alias);  
+    $this->query->set_count_field(NULL, $this->formula, $field_alias);
+    
+    return $this->summary_basics(FALSE);
+  }
+
+  /**
+   * Build the query based upon the formula
+   */
+  function query() {
+    $this->ensure_my_table();
+    $field_alias = $alias . '_' . $this->field;
+    // Add the field.
+    $this->name_alias = $this->query->add_field(NULL, $this->formula, $field_alias);  
+    $this->query->add_where(0, "$field = '%s'", $this->argument);
+  }
+}
+
+/**
+ * Argument handler for a year (CCYY)
+ */
+class views_handler_argument_date_year extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula = "YEAR(FROM_UNIXTIME(node.created+$timezone))";
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    return l($value, "$url/$value");
+  }
+}
+
+/**
+ * Argument handler for a year plus month (CCYYMM)
+ */
+class views_handler_argument_date_year_month extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')";
+    $this->format = 'F, Y';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    $created = $data->{$this->name_alias};
+    return l(format_date($created, 'custom', $this->format), "$url/$value");
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title($data, $url) {
+    return format_date(strtotime($this->argument . "15"), 'custom', $this->format, 0);
+  }
+}
+
+/**
+ * Argument handler for a month (MM)
+ */
+class views_handler_argument_date_month extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "MONTH(FROM_UNIXTIME(node.created+$timezone))";
+    $this->format = 'F';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    $created = $data->{$this->name_alias};
+    return l(format_date($created, 'custom', $this->format), "$url/$value");
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title($data, $url) {
+    return format_date(strtotime("2005" . $this->argument . "15"), 'custom', $this->format, 0);
+  }
 }
 
 /**
