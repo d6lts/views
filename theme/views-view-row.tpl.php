@@ -1,7 +1,8 @@
 <?php 
 // $Id$
 /**
- * @file Default simple view template to display a list of rows.
+ * @file views-view-row.tpl.php
+ * Default simple view template to display a list of rows.
  */
 ?>
 <?php foreach ($fields as $name => $css): ?>

@@ -1,7 +1,8 @@
 <?php 
 // $Id$
 /**
- * @file Built in plugins for Views output handling.
+ * @file plugins.inc
+ * Built in plugins for Views output handling.
  *
  */
 

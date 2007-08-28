@@ -1,7 +1,8 @@
 <?php 
 // $Id$
 /**
- * @file Main view template
+ * @file views-view.tpl.php
+ * Main view template
  *
  */
 ?>

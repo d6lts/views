@@ -639,7 +639,7 @@ class views_db_object {
    *
    * @param $identifier
    *   The variable to assign the PHP code for this object to.
-   * @param $ident
+   * @param $indent
    *   An optional indentation for prettifying nested code.
    */
   function export_row($identifier = NULL, $indent = '') {
