@@ -17,6 +17,7 @@ function views_schema() {
         'unsigned' => TRUE, 
         'not null' => TRUE, 
         'description' => t('The view ID of the field, defined by the database.'),
+        'no export' => TRUE,
       ),
       'name' => array(
         'type' => 'varchar', 
@@ -63,6 +64,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'display_plugin' => array(
         'type' => 'varchar', 
@@ -83,6 +85,7 @@ function views_schema() {
         'length' => 255,
         'description' => t('A serialized array describing who can access this display of the view.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),
       'style_plugin' => array(
         'type' => 'varchar', 
@@ -154,16 +157,19 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),
       'style_options' => array(
         'type' => 'blob', 
         'description' => t('A serialized array of options for this display\'s style plugin; it contains options that are generally only pertinent to that type.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),
       'filter_options' => array(
         'type' => 'blob', 
         'description' => t('A serialized array of options for this display\'s exposed filters.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
     ),
     'indexes' => array('vid' => array('vid', 'position')),
@@ -178,6 +184,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'position' => array(
         'type' => 'int', 
@@ -243,6 +250,7 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for this field.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
     ),
     'indexes' => array('vid' => array('vid', 'position')),
@@ -257,6 +265,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'position' => array(
         'type' => 'int', 
@@ -287,6 +296,7 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for this field.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
     ),
     'indexes' => array('vid' => array('vid', 'position')),
@@ -301,6 +311,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'position' => array(
         'type' => 'int', 
@@ -331,6 +342,7 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for this field.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
       'exposed' => array(
         'type' => 'int', 
@@ -342,6 +354,7 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for exposed sorts.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
     ),
     'indexes' => array('vid' => array('vid', 'position')),
@@ -356,6 +369,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'position' => array(
         'type' => 'int', 
@@ -392,11 +406,13 @@ function views_schema() {
         'length' => '255', 
         'description' => t('The value being tested for this filter.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),
       'options' => array(
         'type' => 'blob', 
         'description' => t('A serialized array of options for this field.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
       'exposed' => array(
         'type' => 'int', 
@@ -408,6 +424,7 @@ function views_schema() {
         'type' => 'blob', 
         'description' => t('A serialized array of options for exposed filters.'),
         'serialize' => TRUE,
+        'serialized default' => 'a:0:{}',
       ),      
     ),
     'indexes' => array('vid' => array('vid', 'position')),
@@ -422,6 +439,7 @@ function views_schema() {
         'not null' => TRUE, 
         'default' => 0,
         'description' => t('The view this display is attached to.'),
+        'no export' => TRUE,
       ),
       'position' => array(
         'type' => 'int', 

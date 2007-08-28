@@ -6,73 +6,92 @@
  */
 
 /**
- * Returns an array of objects in a view.
+ * @defgroup views_objects Objects that represent a View or part of a view.
+ * @{
+ * These objects are the core of Views do the bulk of the direction and
+ * storing of data. All database activity is in these objects.
  */
-function views_objects() {
-  return array('argument', 'field', 'sort', 'filter', 'relationship');
-}
-
-/**
- * Returns the complete list of objects in a view, including the display which
- * is often special.
- */
-function views_objects_all() {
-  return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
-}
-
-/**
- * Get a view from the database or from default views.
- *
- * @param $name
- *   The name of the view.
- */
-function views_get_view($name) {
-  $view = new view;
-  if ($view->load($name)) {
-    return $view;
-  }
-  // TODO: check for default views in cache.
-}
 
 /**
  * An object to contain all of the data to generate a view, plus the member
  * functions to build the view query, execute the query and render the output.
  */
-class view {
-  var $vid = 0;
-  var $name = '';
-  var $description = '';
-  var $display = array();
-  var $argument = array();
-  var $field = array();
-  var $sort = array();
-  var $filter = array();
-  var $relationship = array();
-
+class view extends views_db_object {
+  var $db_table = 'views_view';
   var $base_table = 'node';
 
-  var $view_args_php = '';
-
   // State variables
-  var $is_built = FALSE;
+  var $built = FALSE;
+  var $executed = FALSE;
   
   var $args = array();
+  var $build_info = array();
 
-  var $query = NULL;
-  var $count_query = NULL;
+  // pager variables
+  var $use_pager = FALSE;
+  var $page_size = 25;
+  var $pager_element = 0;
+  var $offset = 0;
 
+  /**
+   * Constructor
+   */
+  function view() {
+    parent::init();
+    // Make sure all of our sub objects are arrays.
+    foreach ($this->objects_all() as $object) {
+      $this->$object = array();
+    }
+  }
+
+  /**
+   * Returns an array of objects in a view.
+   */
+  function objects() {
+    return array('argument', 'field', 'sort', 'filter', 'relationship');
+  }
+
+  /**
+   * Returns the complete list of objects in a view, including the display which
+   * is often special.
+   */
+  function objects_all() {
+    return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
+  }
+
+  /**
+   * Set the arguments that come to this view. Usually from the URL
+   * but possibly from elsewhere.
+   */
   function set_args($args) {
     $this->args = $args;
   }
 
+  /**
+   * Set the page size for ranged or pager queries
+   */
   function set_page_size($page_size) { 
     $this->page_size = $page_size;
   }
 
+  /**
+   * Whether or not the pager should be used.
+   */
   function set_use_pager($use_pager) {
     $this->use_pager = $use_pager;
   }
 
+  /**
+   * The pager element id to use if use_apger is on
+   */
+  function set_pager_element($pager_element) {
+    $this->pager_element = $pager_element;
+  }
+
+  /**
+   * How many records to skip. This does not function if use_pager is
+   * set.
+   */
   function set_offset($offset) { 
     $this->offset = $offset;
   }
@@ -85,6 +104,9 @@ class view {
     $this->filter_input = $filters;
   }
 
+  /**
+   * Get an array of fields for the given display.
+   */
   function get_fields($display_id = NULL) {
     if (!isset($display_id)) {
       $display_id = $this->current_display;
@@ -157,7 +179,9 @@ class view {
     return TRUE;
   }
 
-
+  /**
+   * Build the query for the view.
+   */
   function build($display_id = NULL) { 
     if (!empty($this->built)) {
       return;
@@ -268,7 +292,7 @@ class view {
    */
   function _seed_handlers() {
     if (empty($this->seeded)) {
-      foreach (views_objects() as $key) {
+      foreach ($this->objects() as $key) {
         $this->_seed_handler($key);
       }
       $this->seeded = TRUE;
@@ -350,9 +374,23 @@ class view {
     return $this->display_handler->render();
   }
 
+  /**
+   * Get the view's current title. This can change depending upon how it
+   * was built.
+   */
   function get_title($context) { }
+
+  /**
+   * Get the URL for the current view.
+   */
   function get_url($args = NULL) { }
-  function is_cacheable() { }
+
+  /**
+   * Is this view cacheable?
+   */
+  function is_cacheable() { 
+    return $this->is_cacheable;
+  }
 
   /**
    * Load a view from the database based upon either vid or name.
@@ -364,10 +402,10 @@ class view {
       return FALSE;
     }
 
-    _views_unpack_schema($this, 'views_view', $data);
+    $this->load_row($data);
 
     // Load all of our subtables.
-    foreach (views_objects_all() as $key) {
+    foreach ($this->objects_all() as $key) {
       $this->_load_row($key);
     }
     $view->loaded = TRUE;
@@ -383,11 +421,10 @@ class view {
     $result = db_query("SELECT * FROM {$table} WHERE vid = %d ORDER BY position", $this->vid);
 
     while ($data = db_fetch_object($result)) {
-      $object = new $object_name;
-      _views_unpack_schema($object, $table, $data);
+      $object = new $object_name(FALSE);
+      $object->load_row($data);
       array_push($this->$key, $object);
     }
-
   }
 
   /**
@@ -397,16 +434,16 @@ class view {
   function save() {
     if (!empty($this->vid)) {
       // remove existing table entries
-      foreach (views_objects_all() as $key) {
+      foreach ($this->objects_all() as $key) {
         db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
         $this->_load_row($key);
       }
     }
 
-    _views_save_query('views_view', $this, !empty($this->vid) ? 'vid' : FALSE);
+    $this->save_row(!empty($this->vid) ? 'vid' : FALSE);
 
     // Save all of our subtables.
-    foreach (views_objects_all() as $key) {
+    foreach ($this->objects_all() as $key) {
       $this->_save_rows($key);
     }
 
@@ -416,13 +453,13 @@ class view {
 
   /**
    * Save a row to the database for the given key, which is one of the
-   * keys from views_objects_all()
+   * keys from view::objects_all()
    */
   function _save_rows($key) {
     foreach ($this->$key as $position => $object) {
       $object->position = $position;
       $object->vid = $this->vid;
-      _views_save_query("views_" . $key, $object);
+      $object->save_row();
     }
   }
 
@@ -436,7 +473,7 @@ class view {
 
     db_query("DELETE FROM {views_view} WHERE vid = %d", $this->vid);
     // Delete from all of our subtables as well.
-    foreach (views_objects_all() as $key) {
+    foreach ($this->objects_all() as $key) {
       db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
       $this->_load_row($key);
     }
@@ -446,179 +483,256 @@ class view {
   
   }
 
+  /**
+   * Export a view as PHP code.
+   */
   function export() {
-    require_once drupal_get_path('module', 'views') . '/includes/export.inc';
-    views_export_view($this);
+    $output = '';
+    $output .= $this->export_row('view');
+    foreach ($this->objects_all() as $key) {
+      $output .= '$view->' . $key . ' = array()' . ";\n";
+      foreach ($this->$key as $object) {
+        $output .= $object->export_row($key, '  ');
+        $output .= '$view->' . $key . '[] = $' . $key . ";\n";
+      }
+    }
+    return $output;
+  }
+}
+
+/**
+ * Base class for views' database objects.
+ */
+class views_db_object {
+  /**
+   * Initialize this object, setting values from schema defaults.
+   *
+   * @param $init
+   *   If an array, this is a set of values from db_fetch_object to
+   *   load. Otherwse, if TRUE values will be filled in from schema
+   *   defaults.
+   */
+  function init($init = TRUE) {
+    if (is_array($init)) {
+      return $this->load_row($init);
+    }
+
+    if (!$init) {
+      return;
+    }
+
+    $schema = drupal_get_schema($this->db_table);
+    // Go through our schema and build correlations.
+    foreach ($schema['fields'] as $field => $info) {
+      if ($info['type'] == 'serial') {
+        $this->$field = NULL;
+      }
+      if (!isset($this->$field)) {
+        if (!empty($info['serialize']) && isset($info['serialized default'])) {
+          $this->$field = unserialize($info['serialized default']);
+        }
+        else if (isset($info['default'])) {
+          $this->$field = $info['default'];
+        }
+        else {
+          $this->$field = '';
+        }
+      }
+    }
+  }
+
+  /**
+   * Write the row to the database.
+   *
+   * @param $update
+   *   If true this will be an UPDATE query. Otherwise it will be an INSERT.
+   */
+  function save_row($update = NULL) {
+    $schema = drupal_get_schema($this->db_table);
+    $fields = $defs = $values = $serials = array();
+
+    // Go through our schema and build correlations.
+    foreach ($schema['fields'] as $field => $info) {
+      // special case -- skip serial types if we are updating.
+      if ($info['type'] == 'serial' && $update) {
+        continue;
+      }
+      $fields[] = $field;
+      switch ($info['type']) {
+        case 'serial':
+          $defs[] = '%s';
+          $this->$field = 'NULL';
+          $serials[] = $field;
+          break;
+        case 'int':
+          $defs[] = '%d';
+          break;
+        case 'float':
+        case 'numeric':
+          $defs[] = '%f';
+          break;
+        default:
+          $defs[] = "'%s'";
+      }
+      if (empty($info['serialize'])) {
+        $values[] = $this->$field;
+      }
+      else {
+        $values[] = serialize($this->$field);
+      }
+    }
+    $query = '';
+    if (!$update) {
+      $query = "INSERT INTO {$this->db_table} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
+    }
+    else {
+      $query = '';
+      foreach ($fields as $id => $field) {
+        if ($query) {
+          $query .= ', ';
+        }
+        $query .= $field . ' = ' . $defs[$id];
+      }
+      $query = "UPDATE {$this->db_table} SET " . $query . " WHERE $update = " . $this->$update;
+    }
+    db_query($query, $values);
+
+    if ($serials) {
+      // get last insert ids and fill them in.
+      foreach ($serials as $field) {
+        $this->$field = db_last_insert_id($this->db_table, $field);
+      }
+    }
+  }
+
+  /**
+   * Load the object with a row from the database.
+   *
+   * @param $data
+   *   An object from db_fetch_object. It should contain all of the fields
+   *   that are in the schema.
+   */
+  function load_row($data) {
+    $schema = drupal_get_schema($this->db_table);
+
+    // Go through our schema and build correlations.
+    foreach ($schema['fields'] as $field => $info) {
+      $this->$field = empty($info['serialize']) ? $data->$field : unserialize($data->$field);
+    }
+  }
+
+  /**
+   * Generate PHP code for a single field.
+   */
+  function _export_field($field) {
+    if (is_array($this->$field) && empty($this->$field)) {
+      return 'array()';
+    }
+    if (is_bool($this->$field)) {
+      return $this->$field ? 'TRUE' : 'FALSE';
+    }
+    return var_export($this->$field, TRUE);
+  }
+
+  /**
+   * Export a loaded row to PHP code.
+   *
+   * @param $identifier
+   *   The variable to assign the PHP code for this object to.
+   * @param $ident
+   *   An optional indentation for prettifying nested code.
+   */
+  function export_row($identifier = NULL, $indent = '') {
+    if (!$identifier) {
+      $identifier = $this->db_table;
+    }
+    $schema = drupal_get_schema($this->db_table);
+
+    $output = $indent . '$' . $identifier . ' = new ' . get_class($this) . ";\n";
+    // Go through our schema and build correlations.
+    foreach ($schema['fields'] as $field => $info) {
+      if (!empty($info['no export'])) {
+        continue;
+      }
+      if (!isset($this->$field)) {
+        if (isset($info['default'])) {
+          $this->$field = $info['default'];
+        }
+        else {
+          $this->$field = '';
+        }
+
+        // serialized defaults must be set as serialized.
+        if (isset($info['serialize'])) {
+          $this->$field = unserialize($this->$field);
+        }
+      }
+      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . $this->_export_field($field) . ";\n";
+    }
+    return $output;
   }
 }
 
 /**
  * An argument in a view.
  */
-class views_argument {
-  var $table = '';
-  var $field = '';
-  var $relationship = '';
-  var $type = '';
-  var $default_action = '';
-  var $title = '';
-  var $wildcard = '';
-  var $wildcard_text = '';
-  var $summary_format;
-  var $options = array();
-  var $position = 0;
+class views_argument extends views_db_object {
+  var $db_table = 'views_argument';
+  function views_argument($init = TRUE) {
+    parent::init($init);
+  }
 }
 
 /**
  * A field in a view.
  */
-class views_field {
-  var $table = '';
-  var $field = '';
-  var $label = '';
-  var $position = 0;
-  // Options contains things like: Sortable, default sort, column, etc.
-  // Based upon the needs of the output type.
-  var $options = array();
+class views_field extends views_db_object {
+  var $db_table = 'views_field';
+  function views_field($init = TRUE) {
+    parent::init($init);
+  }
 }
 
 /**
  * A sort criterion in a view.
  */
-class views_sort {
-  var $table = '';
-  var $field = '';
-  var $order = '';
-  var $options = array();
-  var $position = 0;
+class views_sort extends views_db_object {
+  var $db_table = 'views_sort';
+  function views_sort($init = TRUE) {
+    parent::init($init);
+  }
 }
 
 /**
  * A filter in a view.
  */
-class views_filter {
-  var $table = '';
-  var $field = '';
-  var $group = '';
-  var $operator = '';
-  var $value = '';
-  var $options = '';
-  var $exposed = FALSE;
-  var $exposed_settings = array();
-  var $position = 0;
+class views_filter extends views_db_object {
+  var $db_table = 'views_filter';
+  function views_filter($init = TRUE) {
+    parent::init($init);
+  }
 }
 
 /**
  * A display type in a view.
  */
-class views_display {
-  var $type = '';
-  var $output_type = '';
-  var $access = '';
-  var $title = '';
-  var $header = '';
-  var $header_format = '';
-  var $header_hide_if_empty = '';
-  var $footer = '';
-  var $footer_format = '';
-  var $footer_hide_if_empty = '';
-  var $empty = '';
-  var $empty_format = '';
-  var $use_pager = '';
-  var $page_size = '';
-  var $url = '';
-  var $display_options = array();
-  var $output_options = array();
-  var $position = 0;
-
-  var $filters_type = ''; // 'table', 'list'
-  var $filters_location = ''; // 'view', 'block'
+class views_display extends views_db_object {
+  var $db_table = 'views_display';
+  function views_display($init = TRUE) {
+    parent::init($init);
+  }
 }
 
 /**
  * A relationship in a view.
  */
-class views_relationship {
-  var $relationship = '';
-  var $link = '';
-  var $position = 0;
+class views_relationship extends views_db_object {
+  var $db_table = 'views_relationship';
+  function views_relationship($init = TRUE) {
+    parent::init($init);
+  }
 }
-
 
 /**
- * Build an insert/update query based upon schema info.
+ * @}
  */
-function _views_save_query($table, &$object, $update = NULL) {
-  $schema = drupal_get_schema($table);
-  $fields = $defs = $values = $serials = array();
-
-  // Go through our schema and build correlations.
-  foreach ($schema['fields'] as $field => $info) {
-    if (!isset($object->$field)) {
-      if (isset($info['default'])) {
-        $object->$field = $info['default'];
-      }
-      else {
-        $object->$field = '';
-      }
-    }
-    // special case -- skip serial types if we are updating.
-    if ($info['type'] == 'serial' && $update) {
-      continue;
-    }
-    $fields[] = $field;
-    switch ($info['type']) {
-      case 'serial':
-        $defs[] = '%s';
-        $object->$field = 'NULL';
-        $serials[] = $field;
-        break;
-      case 'int':
-        $defs[] = '%d';
-        break;
-      case 'float':
-      case 'numeric':
-        $defs[] = '%f';
-        break;
-      default:
-        $defs[] = "'%s'";
-    }
-    if (empty($info['serialize'])) {
-      $values[] = $object->$field;
-    }
-    else {
-      $values[] = serialize($object->$field);
-    }
-  }
-  $query = '';
-  if (!$update) {
-    $query = "INSERT INTO {$table} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
-  }
-  else {
-    $query = '';
-    foreach ($fields as $id => $field) {
-      if ($query) {
-        $query .= ', ';
-      }
-      $query .= $field . ' = ' . $defs[$id];
-    }
-    $query = "UPDATE {$table} SET " . $query . " WHERE $update = " . $object->$update;
-  }
-  db_query($query, $values);
-
-  if ($serials) {
-    // get last insert ids and fill them in.
-    foreach ($serials as $field) {
-      $object->$field = db_last_insert_id($table, $field);
-    }
-  }
-}
-
-function _views_unpack_schema(&$object, $table, $data) {
-  $schema = drupal_get_schema($table);
-  // Go through our schema and build correlations.
-
-  foreach ($schema['fields'] as $field => $info) {
-    $object->$field = empty($info['serialize']) ? $data->$field : unserialize($data->$field);
-  }
-}

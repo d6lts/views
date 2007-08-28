@@ -295,3 +295,18 @@ class views_object {
     }
   }
 }
+
+/**
+ * Get a view from the database or from default views.
+ *
+ * @param $name
+ *   The name of the view.
+ */
+function views_get_view($name) {
+  views_include('view');
+  $view = new view;
+  if ($view->load($name)) {
+    return $view;
+  }
+  // TODO: check for default views in cache.
+}
