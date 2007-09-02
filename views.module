@@ -15,7 +15,7 @@ function views_theme() {
 
   // Some quasi clever array merging here.
   $base = array(
-//    'file' => 'theme.inc',
+    'file' => 'theme.inc',
     'path' => "$path/theme",
   );
 
@@ -27,20 +27,17 @@ function views_theme() {
 
   // Default view themes
   $hooks['views_view'] = $base + array(
-    'file' => 'views-view',
-//    'template' => 'views-view',
+    'template' => 'views-view',
     'pattern' => 'views_view__',
     'arguments' => $arguments['display'],
   );
   $hooks['views_view_rows'] = $base + array(
-    'file' => 'views-view-rows',
-//    'template' => 'views-view-rows',
+    'template' => 'views-view-rows',
     'pattern' => 'views_view_rows__',
     'arguments' => $arguments['style'],
   );
   $hooks['views_view_row'] = $base + array(
-    'file' => 'views-view-row',
-//    'template' => 'views-view-row',
+    'template' => 'views-view-row',
     'pattern' => 'views_view_row__',
     'arguments' => $arguments['row'],
   );
@@ -51,19 +48,19 @@ function views_theme() {
 
   $plugins = views_fetch_plugin_data();
 
+
   // Register theme functions for all style plugins
   foreach ($plugins as $type => $info) {
     foreach ($info as $plugin => $def) {
       if (isset($def['theme'])) {
         $hooks[$def['theme']] = array(
           'pattern' => $def['theme'] . '__',
-//          'file' => $def['file'],
+          'file' => $def['file'],
           'path' => $def['path'],
           'arguments' => $arguments[$type],
         );
         if (!function_exists('theme_' . $def['theme'])) {
-          $hooks[$def['theme']]['file'] = views_css_safe($def['theme']);
-//          $hooks[$def['theme']]['template'] = views_css_safe($def['theme']);
+          $hooks[$def['theme']]['template'] = views_css_safe($def['theme']);
         }
       }
     }
