@@ -17,11 +17,13 @@ function views_views_plugins() {
         'title' => t('Page'),
         'help' => t('Creates a page with a URL, menu links, etc.'),
         'handler' => 'views_display_plugin_page',
+        'uses_hook_menu' => TRUE,
       ),
       'block' => array(
-         'title' => t('Block'),
-         'help' => t('Creates a block that can be used from the block administration page.'),
-         'handler' => 'views_display_plugin_block',
+        'title' => t('Block'),
+        'help' => t('Creates a block that can be used from the block administration page.'),
+        'handler' => 'views_display_plugin_block',
+        'uses_hook_block' => TRUE,
       ),
       'embed' => array(
         'title' => t('Embedded'),
@@ -127,35 +129,51 @@ class views_display_plugin extends views_object {
   function render_more_link() { }
 
   /**
-   * Not all display plugins will have a feed icon, nor will they
-   * put it in the same place.
+   * Not all display plugins will have a feed icon.
    */ 
   function render_feed_icon() { }
 
   /**
    * Render the view's title for display
+   * TODO: Necessary? Hm.
    */
   function render_title() { }
 
-  function render_header() { }
-  function render_footer() { }
-  function render_empty() { return 'empty text'; }
+  function render_textarea($area) {
+    $format_string = $area . '_format';
+    return check_markup($this->display->$area, $this->display->$format_string);
+  }
+
+  /**
+   * Render the header of the view.
+   */
+  function render_header() { return $this->render_textarea('header'); }
+
+  /**
+   * Render the footer of the view.
+   */
+  function render_footer() { return $this->render_textarea('footer'); }
+
+  /**
+   * Render the empty text of the view.
+   */
+  function render_empty() { return $this->render_textarea('empty'); }
   /**
    * If this display creates a block, implement one of these.
    */
-//  function hook_block($op = 'list', $delta = 0, $edit = array()) {}
+  function hook_block($op = 'list', $delta = 0, $edit = array()) { return array(); }
 
   /**
    * If this display creates a page with a menu item, implement it here.
    */
-//  function hook_menu() {}
+  function hook_menu() { return array(); }
 
   /**
    * Render this display.
    */
   function render() {
     // TODO: Remove this when the 'file' tag on theme registry is fixed.
-    include_once drupal_get_path('module', 'views') . '/theme/theme.inc';
+//    include_once drupal_get_path('module', 'views') . '/theme/theme.inc';
     $themes = array(
       'views_view__' . $this->display->id . '__' . $this->view->name,
       'views_view__' . $this->display->id,
@@ -167,6 +185,17 @@ class views_display_plugin extends views_object {
     return theme($themes, $this->view);
   }
 
+  /**
+   * Determine if the user has access to this display of the view.
+   *
+   * TODO: Implement this.
+   */
+  function access($account) { return TRUE; }
+  /** 
+   * When used externally, this is how a view gets run and returns
+   * data in the format required.
+   */
+  function execute() { }
 }
 
 /**
@@ -175,9 +204,43 @@ class views_display_plugin extends views_object {
 class views_display_plugin_page extends views_display_plugin {
   var $uses_hook_menu = TRUE;
 
-  function hook_menu() {}
+  function execute_hook_menu() {
+    $items = array();
+    // Replace % with the link to our standard views argument loader
+    // views_arg_load -- which lives in views.module
+    $url = str_replace('%', '%views_arg', $this->display->url);
 
-  function render_page() {}
+    // NOTE: This is the very simple 'menu normal item' version. The
+    // tab version needs to come later. Maybe it should be its own plugin.
+    $items[$url] = array(
+      // default views page entry
+      'page callback' => 'views_page', 
+      'page arguments' => array($this->view->name, $this->display->id),
+      // Default access check (per display)
+      'access callback' => 'views_access',
+      'access arguments' => array(array($this->view->name, $this->display->id)),
+      // Identify URL embedded arguments and correlate them to a handler
+      'load arguments'  => array($this->view->name, '%index'),
+      // Basic menu title
+      'title' => $this->display->title,
+      'type' => MENU_NORMAL_ITEM,
+    );
+    return $items;
+  }
+
+  /**
+   * The display page handler returns a normal view, but it also does
+   * a drupal_set_title for the page, and does a views_set_page_view
+   * on the view.
+   */
+  function execute() {
+    views_set_page_view($this);
+    // Prior to this being called, the $view should already be set to this
+    // display, and arguments should be set on the view.
+    $this->view->build();
+    drupal_set_title(filter_xss_admin($this->view->get_title('page')));
+    return $this->view->render();
+  }
 }
 
 /**
@@ -185,10 +248,30 @@ class views_display_plugin_page extends views_display_plugin {
  */
 class views_display_plugin_block extends views_display_plugin {
   var $uses_hook_block = TRUE;
+
   /**
-   * If this display creates a block, implement one of these.
+   * The default block handler doesn't support configurable items,
+   * but extended block handlers might be able to do interesting
+   * stuff with it.
    */
-  function hook_block($op = 'list', $delta = 0, $edit = array()) {}
+  function hook_block($op = 'list', $delta = 0, $edit = array()) {
+    if ($op == 'list') {
+      $delta = $this->view->name . '-' . $this->display->id;
+      return array($delta => array('info' => $this->display->block_description));
+    }
+  }
+
+  /**
+   * The display block handler returns the structure necessary for a block.
+   */
+  function execute() {
+    drupal_set_page_view($this);
+    // Prior to this being called, the $view should already be set to this
+    // display, and arguments should be set on the view.
+    $info['content'] = $this->view->render();
+    $info['subject'] = filter_xss_admin($this->view->get_title('page'));
+    return $info;
+  }
 }
 
 /**
@@ -230,7 +313,13 @@ class views_style_plugin_default extends views_style_plugin {
     // provide an option form to select from our list of node renderers
   }
 
+  /**
+   * Render the given style.
+   */
   function render() {
+    // TODO: This needs to be able to support either a database resource OR
+    // an array, because our input format doesn't actually have to be from
+    // a query.
     $plugin = new views_row_plugin;
     $rows = '';
     while ($row = db_fetch_object($this->view->result)) {

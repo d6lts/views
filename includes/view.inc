@@ -32,7 +32,7 @@ class view extends views_db_object {
   var $page_size = 25;
   var $pager_element = 0;
   var $offset = 0;
-
+  var $current_page = 0;
   /**
    * Constructor
    */
@@ -63,7 +63,7 @@ class view extends views_db_object {
    * Set the arguments that come to this view. Usually from the URL
    * but possibly from elsewhere.
    */
-  function set_args($args) {
+  function set_arguments($args) {
     $this->args = $args;
   }
 
@@ -192,7 +192,7 @@ class view extends views_db_object {
     }
 
     // Execute the initial PHP code that a view can have.
-    if ($this->view_args_php) {
+    if (!empty($this->view_args_php)) {
       ob_start();
       $result = eval($this->view_args_php);
       if (is_array($result)) {
@@ -211,6 +211,7 @@ class view extends views_db_object {
 
     $views_data = views_fetch_data($this->base_table);
     $this->base_field = $views_data['table']['base']['field'];
+    views_include('query');
     $this->query = new views_query($this->base_table, $this->base_field);
 
     // Call a module hook and see if it wants to present us with a
@@ -219,7 +220,7 @@ class view extends views_db_object {
     // TODO: Implement this.  
 
     // Run through our handlers and ensure they have necessary information.
-    $this->_seed_handlers();
+    $this->seed_handlers();
 
     // Build all the filters.
     $this->_build('filter');
@@ -237,7 +238,7 @@ class view extends views_db_object {
         continue;
       }
 
-      if (isset($this->args[$id])) {
+      if (isset($this->args[$id]) && $argument->handler->validate($this->args[$id])) {
         // handle argument that is present.
         // TODO: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
@@ -256,6 +257,9 @@ class view extends views_db_object {
         }
       }
     }
+
+    // TODO: if $argument_title is set, get the argument and
+    // set it in the build info.
 
     // Build our sort criteria if we were instructed to do so.
     if (!empty($this->build_sort)) {
@@ -290,7 +294,7 @@ class view extends views_db_object {
   /**
    * Acquire and attach all of the handlers.
    */
-  function _seed_handlers() {
+  function seed_handlers() {
     if (empty($this->seeded)) {
       foreach ($this->objects() as $key) {
         $this->_seed_handler($key);
@@ -375,6 +379,51 @@ class view extends views_db_object {
   }
 
   /**
+   * To be called externally. Execute the given display, with
+   * the given arguments.
+   */
+  function execute_display($display_id = NULL, $args = array()) {
+    // Prepare the view with the information we have.
+    $this->set_arguments($args);
+    $this->set_display($display_id);
+
+    // Execute the view
+    if (isset($this->display_handler)) {
+      return $this->display_handler->execute();
+    }
+  }
+
+  /**
+   * Called to get hook_menu information from the view and the
+   * named display handler.
+   */
+  function execute_hook_menu($display_id = NULL) {
+    // Prepare the view with the information we have.
+    $this->set_display($display_id);
+
+    // Execute the view
+    if (isset($this->display_handler)) {
+      return $this->display_handler->execute_hook_menu();
+    }
+  }
+
+  /**
+   * Determine if the given user has access to the view. Note that
+   * this sets the display handler if it hasn't been.
+   */
+  function access($account) {
+    if (empty($this->display_handler) && !$this->set_display()) {
+      return FALSE;
+    }
+
+    if (!$account) {
+      $account = $GLOBALS['user'];
+    }
+
+    return $this->display_handler->access($account);
+  }
+
+  /**
    * Get the view's current title. This can change depending upon how it
    * was built.
    */
@@ -395,7 +444,8 @@ class view extends views_db_object {
   /**
    * Load a view from the database based upon either vid or name.
    */
-  function load($arg) {    
+  function load($arg) {
+    // TODO: Move caching to here, make this a factory method.
     $where = (is_numeric($arg) ? "vid =  %d" : "name = '%s'");
     $data = db_fetch_object(db_query("SELECT * FROM {views_view} WHERE $where", $arg));
     if (empty($data)) {
@@ -408,8 +458,44 @@ class view extends views_db_object {
     foreach ($this->objects_all() as $key) {
       $this->_load_row($key);
     }
-    $view->loaded = TRUE;
+    $this->loaded = TRUE;
     return TRUE;
+  }
+
+  /**
+   * Static factory method to load a list of views based upon a $where clause.
+   */
+  function load_views($where, $join = '') {
+    // TODO: Integrate this in with caching.
+    $result = db_query("SELECT DISTINCT v.* FROM {views_view} v $join WHERE $where");
+    $views = array();
+
+    // Load all the views.
+    while ($data = db_fetch_object($result)) {
+      $view = new view;
+      $view->load_row($data);
+      $view->loaded = TRUE;
+      $views[$view->vid] = $view;
+    }
+
+    // Stop if we didn't get any views.
+    if (!$views) {
+      return array();
+    }
+
+    $vids = implode(', ', array_keys($views));
+    // Now load all the subtables:
+    foreach (view::objects_all() as $key) {
+      $object_name = "views_$key";
+      $result = db_query("SELECT * FROM {$object_name} WHERE vid IN ($vids) ORDER BY vid, position");
+
+      while ($data = db_fetch_object($result)) {
+        $object = new $object_name(FALSE);
+        $object->load_row($data);
+        array_push($views[$object->vid]->$key, $object);
+      }
+    }
+    return $views;
   }
 
   /**
@@ -417,8 +503,7 @@ class view extends views_db_object {
    */
   function _load_row($key) {
     $object_name = "views_$key";
-    $table = $object_name;
-    $result = db_query("SELECT * FROM {$table} WHERE vid = %d ORDER BY position", $this->vid);
+    $result = db_query("SELECT * FROM {$object_name} WHERE vid = %d ORDER BY position", $this->vid);
 
     while ($data = db_fetch_object($result)) {
       $object = new $object_name(FALSE);

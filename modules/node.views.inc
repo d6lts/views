@@ -1,4 +1,8 @@
 <?php
+/**
+ * @file
+ * Provides views data and handlers for node.module
+ */
 function node_views_data() {
   // Basic table information.
   $data['node']['table'] = array(
@@ -81,6 +85,8 @@ function node_views_data() {
 
 /**
  * Field handler to provide simple renderer that allows linking to a node.
+ *
+ * @ingroup views_field_handlers
  */
 class views_handler_field_node extends views_handler_field {
   /**
@@ -124,6 +130,8 @@ class views_handler_field_node extends views_handler_field {
 
 /**
  * Field handler to translate a node type into its readable form.
+ *
+ * @ingroup views_field_handlers
  */
 class views_handler_field_node_type extends views_handler_field_node {
   function render($values) {

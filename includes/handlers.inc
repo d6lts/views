@@ -202,6 +202,7 @@ class views_handler_relationship extends views_handler {
  * Base field handler that has no options and renders an unformatted field.
  */
 class views_handler_field extends views_handler {
+  var $field_alias = 'unknown';
 
   /**
    * Construct a new field handler.
@@ -218,7 +219,7 @@ class views_handler_field extends views_handler {
     $this->ensure_my_table();
     // Add the field.
     $this->field_alias = $this->query->add_field($this->table_alias, $this->real_field);
-    dpr("alias: $this->field_alias");
+
     // Add any additional fields we are given.
     if (!empty($this->additional_fields) && is_array($this->additional_fields)) {
       foreach ($this->additional_fields as $field) {
@@ -590,6 +591,13 @@ class views_handler_argument extends views_handler {
    */
   function title() {
     return check_plain($this->argument);
+  }
+
+  /**
+   * Validate that this argument works. By default, all arguments are valid.
+   */
+  function validate($arg) {
+    return TRUE;
   }
 }
 

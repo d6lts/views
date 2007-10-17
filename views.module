@@ -48,7 +48,6 @@ function views_theme() {
 
   $plugins = views_fetch_plugin_data();
 
-
   // Register theme functions for all style plugins
   foreach ($plugins as $type => $info) {
     foreach ($info as $plugin => $def) {
@@ -67,6 +66,134 @@ function views_theme() {
   }
 
   return $hooks;
+}
+
+/**
+ * Implementation of hook_menu
+ *
+ * This probably needs to actually be hook_menu_alter or something.
+ */
+function views_menu() {
+  $items = array();
+  foreach (views_get_page_views() as $data) {
+    list($view, $display_id) = $data;
+    $items += $view->execute_hook_menu($display_id);
+  }
+  return $items;
+}
+
+/**
+ * Helper function for menu loading. This will automatically be 
+ * called in order to 'load' a views argument; primarily it
+ * will be used to perform validation.
+ *
+ * @param $value
+ *   The actual value passed.
+ * @param $name
+ *   The name of the view. This needs to be specified in the 'load function'
+ *   of the menu entry.
+ * @param $index
+ *   The menu argument index. This counts from 1. 
+ */
+function views_arg_load($value, $name, $index) {
+  if ($view = views_get_view($name)) {
+    $view->seed_handlers();
+    if (isset($view->argument[$index - 1])) {
+      return $view->argument[$index - 1]->handler->validate($value);
+    }
+  }
+}
+
+/**
+ * Page callback entry point; requires a view and a display id, then
+ * passes control to the display handler.
+ */
+function views_page() {
+  $args = func_get_args();
+  $name = array_shift($args);
+  $display_id = array_shift($args);
+
+  // Load the view
+  if ($view = views_get_view($name)) {
+    return $view->execute_display($display_id, $args);
+  }
+
+  // Fallback; if we get here no view was found or handler was not valid.
+  return drupal_not_found();
+}
+
+/**
+ * Implementation of hook_block
+ */
+function views_block($op = 'list', $delta = 0, $edit = array()) {
+  switch ($op) {
+    case 'list':
+      $items = array();
+      foreach (views_get_block_views() as $data) {
+        list($view, $display_id) = $data;
+        $items += $view->execute_hook_block($display_id);
+      }
+      return $items;
+    case 'configure':
+    case 'list':
+    case 'view':
+      list($name, $display_id) = explode('-', $delta);
+      // Load the view
+      if ($view = views_get_view($name)) {
+        if ($op == 'view') {
+          return $view->execute_display($display_id, $args);
+        }
+        else {
+          return $view->execute_hook_block($display_id, $op, $delta, $edit);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Determine if the given user has access to the view + display.
+ */
+function views_access($view, $account = NULL) {
+  if (is_array($view)) {
+    list($name, $display_id) = $view;
+    $view = views_get_view($name);
+    if (!$view) {
+      return FALSE;
+    }
+    $view->set_display($display_id);
+  }
+
+  if (is_string($view)) {
+    $view = views_get_view($name);
+    if (!$view) {
+      return FALSE;
+    }
+  }
+
+  return $view->access($account);
+}
+
+/**
+ * Set the current 'page view' that is being displayed so that it is easy
+ * for other modules or the theme to identify.
+ */
+function &views_set_page_view($view = NULL) {
+  static $cache = NULL;
+  if (isset($view)) {
+    $cache = $view;
+  }
+
+  return $cache;
+}
+
+/**
+ * Find out what, if any, page view is currently in use. Please note that
+ * this returns a reference, so be careful! You can unintentionally modify the
+ * $view object.
+ */
+function &views_get_page_view() {
+  return views_set_page_view();
 }
 
 /**
@@ -298,12 +425,82 @@ class views_object {
  *
  * @param $name
  *   The name of the view.
+ * @param $reset
+ *   If TRUE, reset this entry in the load cache.
+ * @return &$view
+ *   A reference to the $view object. Use $reset if you're sure you want
+ *   a fresh one.
  */
-function views_get_view($name) {
-  views_include('view');
-  $view = new view;
-  if ($view->load($name)) {
-    return $view;
+function &views_get_view($name, $reset = FALSE) {
+  static $cache = array();
+  if (!array_key_exists($name, $cache)) {
+    // Ensure we at least have a NULL.
+    $cache[$name] = NULL;
+    views_include('view');
+    $view = new view;
+    if ($view->load($name)) {
+      $cache[$name] = $view;
+    }
+    // TODO: check for default views in cache.
   }
-  // TODO: check for default views in cache.
+  return $cache[$name];
+}
+
+/**
+ * Get a list of all views and the display plugins that provide
+ * page support to the Drupal menu system. Since views can appear
+ * in this list multiple times, the return of this function is an
+ * array of arrays.
+ *
+ * @return
+ * @code 
+ * array(
+ *   array($view, $display_id),
+ *   array($view, $display_id),
+ * );
+ */
+function views_get_page_views() {
+  // First, get all applicable views.
+  views_include('view');
+  $views = view::load_views("d.url IS NOT NULL AND d.url <> ''", "INNER JOIN {views_display} d ON v.vid = d.vid");
+
+  $result = array();
+  foreach ($views as $view) {
+    foreach ($view->display as $display) {
+      $plugin = views_fetch_plugin_data('display', $display->display_plugin);
+      if (!empty($plugin['uses_hook_menu'])) {
+        // This view uses hook menu. Clone it so that different handlers
+        // don't trip over each other, and add it to the list.
+        $v = drupal_clone($view);
+        $v->set_display($display->id);
+        $result[] = array($v, $display->id);
+      }
+    }
+  }
+  return $result;
+}
+
+/**
+ * Get a list of all views and the display plugins that provide
+ * page support to the Drupal menu system. Since views can appear
+ * in this list multiple times, the return of this function is an
+ * array of arrays.
+ *
+ * See @see views_get_page_views
+ */
+function views_get_block_views() {
+  // First, get all applicable views.
+  views_include('view');
+  $views = view::load_views("d.block = 1", "INNER JOIN {views_display} d ON v.vid = d.vid");
+
+  $result = array();
+  foreach ($views as $view) {
+    $view->seed_handlers();
+    foreach ($view->display as $display) {
+      if ($display->handler && $display->handler->uses_hook_menu) {
+        $result[] = array($view, $display->id);
+      }
+    }
+  }
+  return $result;
 }
