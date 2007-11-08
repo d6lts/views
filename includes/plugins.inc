@@ -77,8 +77,10 @@ class views_display_plugin extends views_object {
 
   /**
    * Fill this plugin in with the view, display, etc.
+   * 
+   * @todo LG: This function needs to be renamed to something that sounds less like a randomizer.
    */
-  function seed(&$view, $display) {
+  function seed(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
   }
@@ -100,7 +102,7 @@ class views_display_plugin extends views_object {
     if (isset($this->default_display->display_options[$option])) {
       return $this->default_display->display_options[$option];
     }
-  }  
+  }
 
   /**
    * Provide the default form for setting options.
@@ -188,7 +190,7 @@ class views_display_plugin extends views_object {
   /**
    * Determine if the user has access to this display of the view.
    *
-   * TODO: Implement this.
+   * @todo Implement this.
    */
   function access($account) { return TRUE; }
   /** 
@@ -281,7 +283,7 @@ class views_style_plugin extends views_object {
   var $needs_fields = FALSE;
   var $needs_headers = FALSE;
 
-  function seed(&$view, $display) {
+  function seed(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
     $this->options = $display->style_options;

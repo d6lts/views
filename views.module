@@ -228,6 +228,35 @@ function views_include_handlers() {
 }
 
 /**
+ * Load default views files on behalf of modules.
+ */
+function views_include_default_views() {
+  static $finished = FALSE;
+  // Ensure this only gets run once.
+  if ($finished) {
+    return;
+  }
+
+  // Default views hooks may be in the normal handler file,
+  // or in a separate views_default file at the discretion of
+  // the module author.  
+  views_include_handlers();
+  
+  // Now include the views_default files specifically.
+  $views_path = drupal_get_path('module', 'views') . '/modules';
+  foreach (module_list() as $module) {
+    $module_path = drupal_get_path('module', $module);
+    if (file_exists("$module_path/$module.views_default.inc")) {
+      include_once "$module_path/$module.views_default.inc";
+    }
+    else if (file_exists("$views_path/$module.views_default.inc")) {
+      include_once "$views_path/$module.views_default.inc";
+    }
+  }
+  $finished = TRUE;
+}
+
+/**
  * Fetch Views' data from the cache
  */
 function views_fetch_data($table = NULL) {
@@ -236,6 +265,8 @@ function views_fetch_data($table = NULL) {
     $start = microtime();
     // NOTE: This happens whether we retrieve them from cache or otherwise.
     views_include_handlers();
+    
+    // @todo: We can probably cache the views_data longer than just the current page run.
     $cache = module_invoke_all('views_data');
     if (module_exists('devel')) {
       dsm('Views data build time: ' . (microtime() - $start) * 1000 . ' ms');
@@ -313,6 +344,11 @@ function views_get_handler($table, $field, $key) {
   dsm("$table $field $key");
 }
 
+/**
+ * Builds and return a list of all plugins available in the system.
+ *
+ * @return Nested array of plugins, grouped by type and 
+ */
 function views_discover_plugins() {
   $cache = array('display' => array(), 'style' => array(), 'row' => array());
   // Get plugins from all mdoules.
@@ -423,6 +459,9 @@ class views_object {
 /**
  * Get a view from the database or from default views.
  *
+ * This function is just a static wrapper around views::load().
+ * 
+ * @todo LG: Shouldn't this be called views_load() to parallel node_load() et al?
  * @param $name
  *   The name of the view.
  * @param $reset
@@ -432,18 +471,125 @@ class views_object {
  *   a fresh one.
  */
 function &views_get_view($name, $reset = FALSE) {
+  views_include('view');
+  return view::load($name, $reset);
+}
+
+/**
+ * Get a view from the default views defined by modules.
+ * 
+ * Default views are cached per-language.  This function will rescan the 
+ * default_views hook if necessary.
+ *
+ * @param $view_name
+ *  The name of the view to load.
+ * @return A view object or NULL if it is not available.
+ */
+function &views_get_default_view($view_name) {
   static $cache = array();
-  if (!array_key_exists($name, $cache)) {
-    // Ensure we at least have a NULL.
-    $cache[$name] = NULL;
-    views_include('view');
-    $view = new view;
-    if ($view->load($name)) {
+  global $language;
+  
+  // We need to ensure that the view class is defined before we de-serialize the 
+  // cached view(s), or else it gets cast to a stdClass object.
+  views_include('view');
+  
+  if (empty($cache[$view_name])) {
+    // Try to get the view (for this language) from the cache.  
+    $view = views_cache_get('views_default_views:'. $view_name, TRUE);
+    
+    // If we found the view in the cache, just use that.  If not, try to find it from
+    // module hooks.
+    if ($view) {
+      $cache[$view_name] = $view->data;
+    }
+    else {
+      // We may as well rebuild the cache while we're at it, since we need to pull all 
+      // of the data anyway.  We pick out the one we want along the way.
+      $cache = discover_default_views();
+    }
+  }
+  
+  return $cache[$view_name];
+}
+
+/**
+ * Scan all modules for default views and rebuild the default views cache.
+ *
+ * @return An associative array of all known default views.
+ */
+function views_discover_default_views() {
+  global $language;
+  static $cache = array();
+  
+  if (empty($cache)) {
+    views_include_default_views();
+    $defaults = module_invoke_all('views_default_views');
+    foreach ($defaults as $name => $view) {
+      if ($should_cache) {
+        views_cache_set('views_default_views:'. $name, $view, TRUE);
+      }
       $cache[$name] = $view;
     }
-    // TODO: check for default views in cache.
   }
-  return $cache[$name];
+  return $cache;
+}
+
+/**
+ * Set a cached item in the views cache.
+ * 
+ * This is just a convenience wrapper around cache_set().
+ * 
+ * @param $cid
+ *   The cache ID of the data to store.
+ * @param $data
+ *   The data to store in the cache. Complex data types will be automatically serialized before insertion.
+ *   Strings will be stored as plain text and not serialized.
+ * @param $use_language
+ *   If TRUE, the data will be cached specific to the currently active language.
+ */
+function views_cache_set($cid, $data, $use_language = FALSE) {
+  global $language;
+  
+  if (variable_get('views_skip_cache', FALSE)) {
+    return;
+  }
+  if ($use_language) {
+    $cid .= ':'. $language->language;
+  }
+  cache_set($cid, $data, 'cache_views');
+}
+
+/**
+ * Return data from the persistent views cache. 
+ *
+ * This is just a convenience wrapper around cache_get().
+ * 
+ * @param $cid
+ *   The cache ID of the data to retrieve.
+ * @param $use_language
+ *   If TRUE, the data will be requested specific to the currently active language.
+ */
+function views_cache_get($cid, $use_language = FALSE) {
+  global $language;
+  
+  if (variable_get('views_skip_cache', FALSE)) {
+    return 0;
+  }
+  if ($use_language) {
+    $cid .= ':'. $language->language;
+  }
+  
+  return cache_get($cid, 'cache_views');
+}
+
+/**
+ * Implementation of hook_devel_caches().
+ * 
+ * When the devel cache is cleared, clear cached views, too.  That
+ * makes development a bit easier.
+ */
+function views_devel_caches() {
+  return array('cache_views');
 }
 
 /**
@@ -460,9 +606,19 @@ function &views_get_view($name, $reset = FALSE) {
  * );
  */
 function views_get_page_views() {
-  // First, get all applicable views.
+  // First, get all applicable views that are defined in the database.
   views_include('view');
   $views = view::load_views("d.url IS NOT NULL AND d.url <> ''", "INNER JOIN {views_display} d ON v.vid = d.vid");
+
+  // Now get all applicable views that are defined in a default_views hook.
+  foreach (views_discover_default_views() as $name => $view) {
+    foreach ($view->display as $display) {
+      if ($display->display_plugin == 'page') {
+        $views[$view->name] = &$view;
+        break;
+      }
+    }
+  }
 
   $result = array();
   foreach ($views as $view) {

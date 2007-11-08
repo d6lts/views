@@ -45,15 +45,18 @@ class view extends views_db_object {
   }
 
   /**
-   * Returns an array of objects in a view.
+   * Returns a list of the sub-object types used by this view.
    */
   function objects() {
     return array('argument', 'field', 'sort', 'filter', 'relationship');
   }
 
   /**
-   * Returns the complete list of objects in a view, including the display which
-   * is often special.
+   * Returns the complete list of dependent objects in a view, including 
+   * the display which is often special.
+   * 
+   * @todo LG: special how?  This needs to be doc'ed more.
+   * @todo Convert all references to this method to be static, not dynamic.
    */
   function objects_all() {
     return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
@@ -69,6 +72,8 @@ class view extends views_db_object {
 
   /**
    * Set the page size for ranged or pager queries
+   * 
+   * @todo move all pager properties into a pager object
    */
   function set_page_size($page_size) { 
     $this->page_size = $page_size;
@@ -118,6 +123,8 @@ class view extends views_db_object {
 
   /**
    * Set the display for this view, and initialize the display handler.
+   * 
+   * @todo Determine if this is meant to be called only once, and if so, document that.
    */
   function set_display($display_id = NULL) {
     // The default display is always the first one in the list.
@@ -230,7 +237,7 @@ class view extends views_db_object {
     $argument_title = '';
     // build arguments.
     foreach ($this->argument as $id => $arg) {
-      unset ($argument);
+      unset ($argument);  // TODO: LG: Is this necessary, or is this because of the non-bug with reference reassignment?
       $argument = &$this->argument[$id];
 
       if (!is_object($argument->handler)) {
@@ -366,7 +373,7 @@ class view extends views_db_object {
     // TODO: Implement this
     
     // Make sure the query has already executed.
-    if (empty($this->executed)) {
+    if (empty($this->executed)) { // TODO: Remove this, since ->execute() is already doing it for us.
       $this->execute($display_id);
     }
 
@@ -399,7 +406,7 @@ class view extends views_db_object {
    */
   function execute_hook_menu($display_id = NULL) {
     // Prepare the view with the information we have.
-    $this->set_display($display_id);
+    $this->set_display($display_id);  // Wasn't this just done already in the menu hook in views_get_page_views()?
 
     // Execute the view
     if (isset($this->display_handler)) {
@@ -443,27 +450,55 @@ class view extends views_db_object {
 
   /**
    * Load a view from the database based upon either vid or name.
+   * 
+   * This is a static factory method that implements internal caching for 
+   * view objects.  
+   * 
+   * @param $arg
+   *  The name of the view or its internal view id (vid)
+   * @param $reset
+   *  If TRUE, reset this entry in the load cache.
+   * @return A view object or NULL if it was not available.
    */
-  function load($arg) {
-    // TODO: Move caching to here, make this a factory method.
-    $where = (is_numeric($arg) ? "vid =  %d" : "name = '%s'");
-    $data = db_fetch_object(db_query("SELECT * FROM {views_view} WHERE $where", $arg));
-    if (empty($data)) {
-      return FALSE;
+  function &load($arg, $reset = FALSE) {
+    static $cache = array();
+    
+    // We want a NULL value to return TRUE here, so we can't use isset() or empty().
+    if (!array_key_exists($arg, $cache) || $reset) {
+      $where = (is_numeric($arg) ? "vid =  %d" : "name = '%s'");
+      $data = db_fetch_object(db_query("SELECT * FROM {views_view} WHERE $where", $arg));
+      if (empty($data)) {
+        $cache[$arg] = NULL;
+      }
+      else {
+        $view =& new view();
+        $view->load_row($data);
+        // Load all of our subtables.
+        foreach ($view->objects_all() as $key) {
+          $view->_load_sub_row($key);
+        }
+        $view->loaded = TRUE;
+        $cache[$arg] = $view;
+      }
     }
-
-    $this->load_row($data);
-
-    // Load all of our subtables.
-    foreach ($this->objects_all() as $key) {
-      $this->_load_row($key);
+    
+    // If the view is not defined in the database, check the default_views hook.
+    if (is_null($cache[$arg]) && !is_numeric($arg)) {
+      $cache[$arg] = views_get_default_view($arg);
     }
-    $this->loaded = TRUE;
-    return TRUE;
+    
+    return $cache[$arg];
   }
 
   /**
    * Static factory method to load a list of views based upon a $where clause.
+   * 
+   * Although this method could be implemented to simply iterate over views::load(),
+   * that would be very slow.  Buiding the views externally from unified queries is
+   * much faster.
+   * 
+   * @todo FROM LG: We should document why this is passing in literal query fragments
+   *  since it's bound to confuse someone else as much as it did/does me. :-)
    */
   function load_views($where, $join = '') {
     // TODO: Integrate this in with caching.
@@ -487,7 +522,7 @@ class view extends views_db_object {
     // Now load all the subtables:
     foreach (view::objects_all() as $key) {
       $object_name = "views_$key";
-      $result = db_query("SELECT * FROM {$object_name} WHERE vid IN ($vids) ORDER BY vid, position");
+      $result = db_query("SELECT * FROM {{$object_name}} WHERE vid IN ($vids) ORDER BY vid, position");
 
       while ($data = db_fetch_object($result)) {
         $object = new $object_name(FALSE);
@@ -501,14 +536,14 @@ class view extends views_db_object {
   /**
    * Load one of our sub tables.
    */
-  function _load_row($key) {
+  function _load_sub_row($key) {
     $object_name = "views_$key";
     $result = db_query("SELECT * FROM {$object_name} WHERE vid = %d ORDER BY position", $this->vid);
 
     while ($data = db_fetch_object($result)) {
       $object = new $object_name(FALSE);
       $object->load_row($data);
-      array_push($this->$key, $object);
+      array_push($this->$key, $object); // TODO: Why is this array_push instead of just []?
     }
   }
 
@@ -521,7 +556,7 @@ class view extends views_db_object {
       // remove existing table entries
       foreach ($this->objects_all() as $key) {
         db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
-        $this->_load_row($key);
+        $this->_load_sub_row($key);
       }
     }
 
@@ -560,7 +595,7 @@ class view extends views_db_object {
     // Delete from all of our subtables as well.
     foreach ($this->objects_all() as $key) {
       db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
-      $this->_load_row($key);
+      $this->_load_sub_row($key);
     }
 
     cache_clear_all('views_query:' . $this->name, 'cache_views');
@@ -693,6 +728,10 @@ class views_db_object {
   /**
    * Load the object with a row from the database.
    *
+   * This method is separate from the constructor in order to give us
+   * more flexibility in terms of how the view object is built in different
+   * contexts.
+   * 
    * @param $data
    *   An object from db_fetch_object. It should contain all of the fields
    *   that are in the schema.
@@ -722,6 +761,7 @@ class views_db_object {
   /**
    * Export a loaded row to PHP code.
    *
+   * @todo LG: I don't understand what a "row" is in this context.  
    * @param $identifier
    *   The variable to assign the PHP code for this object to.
    * @param $indent
@@ -765,6 +805,7 @@ class views_argument extends views_db_object {
   var $db_table = 'views_argument';
   function views_argument($init = TRUE) {
     parent::init($init);
+    $this->default_argument = 'ignore';
   }
 }
 
