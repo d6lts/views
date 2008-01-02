@@ -14,8 +14,8 @@
  *
  * @code
  * class views_join_complex extends views_join {
- *   // PHP 4 doesn't call constructors of the base class automatically from a 
- *   // constructor of a derived class. It is your responsibility to propagate 
+ *   // PHP 4 doesn't call constructors of the base class automatically from a
+ *   // constructor of a derived class. It is your responsibility to propagate
  *   // the call to constructors upstream where appropriate.
  *   function construct($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
  *     parent::construct($left_table, $left_field, $field, $extra, $type);
@@ -32,7 +32,7 @@
 /**
  * A function class to represent a join and create the SQL necessary
  * to implement the join.
- * 
+ *
  * This is the Delegation pattern. If we had PHP5 exclusively, we would
  * declare this an interface.
  *
@@ -70,7 +70,7 @@ class views_join {
         }
       }
     }
-    return $output;    
+    return $output;
   }
 }
 
@@ -79,7 +79,7 @@ class views_join {
  */
 
 /**
- * Base handler, from which all the other handlers are derived. 
+ * Base handler, from which all the other handlers are derived.
  * It creates a common interface to create consistency amongst
  * handlers and data.
  *
@@ -87,18 +87,18 @@ class views_join {
  * parent::views_handler() here.
  *
  * This class would be abstract in PHP5, but PHP4 doesn't understand that.
- * 
+ *
  */
 class views_handler extends views_object {
   /**
-   * Seed the handler with necessary data.
+   * init the handler with necessary data.
    * @param $view
    *   The $view object this handler is attached to.
    * @param $data
    *   The item from the database; the actual contents of this will vary
    *   based upon the type of handler.
    */
-  function seed(&$view, &$data) {
+  function init(&$view, &$data) {
     $this->view = &$view;
     $this->data = &$data;
 
@@ -136,7 +136,7 @@ class views_handler extends views_object {
    * Provide a form for setting options.
    */
   function options_form(&$form) { }
-  
+
   /**
    * Validate the options form.
    */
@@ -377,7 +377,7 @@ class views_handler_filter extends views_handler {
    * Provide a form for setting the operator.
    */
   function operator_form(&$form) { }
-  
+
   /**
    * Validate the operator form.
    */
@@ -393,7 +393,7 @@ class views_handler_filter extends views_handler {
    * Provide a form for setting options.
    */
   function value_form(&$form) { }
-  
+
   /**
    * Validate the options form.
    */
@@ -423,7 +423,7 @@ class views_handler_filter extends views_handler {
  * @{
  */
 /**
- * Base class for arguments. 
+ * Base class for arguments.
  *
  * The basic argument works for very simple arguments such as nid and uid
  */
@@ -444,14 +444,14 @@ class views_handler_argument extends views_handler {
    *   be a count on $view->primary_field
    * - set_count_field: Reset the count field so we get the right paging.
    *
-   * @return 
+   * @return
    *   The alias used to get the number of records (count) for this entry.
    */
   function summary_query() {
     $this->ensure_my_table();
     // Add the field.
-    $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);    
-    
+    $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);
+
     // Add the 'name' field. For example, if this is a uid argument, the
     // name field would be 'name' (i.e, the username).
     if (isset($this->name_field)) {
@@ -460,7 +460,7 @@ class views_handler_argument extends views_handler {
     else {
       $this->name_alias = $this->base_alias;
     }
-    
+
     return $this->summary_basics();
   }
 
@@ -477,13 +477,13 @@ class views_handler_argument extends views_handler {
       $this->query->set_count_field($this->table_alias, $this->real_field);
     }
 
-    return $count_alias;
+    $this->count_alias = $count_alias;
   }
 
   /**
    * Sorts the summary based upon the user's selection. The base variant of
    * this is usually adequte.
-   * 
+   *
    * @param $order
    *   The order selected in the UI.
    */
@@ -502,7 +502,7 @@ class views_handler_argument extends views_handler {
    */
   function summary_link($data, $url) {
     $value = $data->{$this->base_alias};
-    return l($data->{$this->name_alias}, "$url/$value");
+    return url("$url/$value");
   }
 
   /**
@@ -551,10 +551,21 @@ class views_handler_argument extends views_handler {
         $this->view->build_info['summary'] = TRUE;
         $this->view->build_info['summary_level'] = $this->data->position;
 
+        // Change the display style to the summary style for this
+        // argument.
+        $this->view->style_plugin = isset($this->options['style_plugin']) ? $this->options['style_plugin'] : 'default_summary';
+
+        // Give it the style's options, too.
+        // @todo
+
+
         // Clear out the normal primary field and whatever else may have
         // been added and let the summary do the work.
         $this->query->clear_fields();
         $this->summary_query();
+
+        // Allow the new style to add additional fields if it wants.
+        // @todo
 
         // Cut 'summary' out of our action to see how, if at all, we should
         // sort.
@@ -564,8 +575,9 @@ class views_handler_argument extends views_handler {
         }
 
         // DISTINCT can cause the summaries to fail.
-        // TODO: This may not be true anymore.
+        // @todo: This may not be true anymore.
 //        $this->query->no_distinct = TRUE;
+
 
         // Summaries have their own sorting and fields, so tell the View not
         // to build these.
@@ -621,9 +633,9 @@ class views_handler_argument_formula extends views_handler_argument {
     $this->ensure_my_table();
     $field_alias = $alias . '_' . $this->field;
     // Add the field.
-    $this->base_alias = $this->query->add_field(NULL, $this->formula, $field_alias);  
+    $this->base_alias = $this->query->add_field(NULL, $this->formula, $field_alias);
     $this->query->set_count_field(NULL, $this->formula, $field_alias);
-    
+
     return $this->summary_basics(FALSE);
   }
 
@@ -634,7 +646,7 @@ class views_handler_argument_formula extends views_handler_argument {
     $this->ensure_my_table();
     $field_alias = $alias . '_' . $this->field;
     // Add the field.
-    $this->name_alias = $this->query->add_field(NULL, $this->formula, $field_alias);  
+    $this->name_alias = $this->query->add_field(NULL, $this->formula, $field_alias);
     $this->query->add_where(0, "$field = '%s'", $this->argument);
   }
 }

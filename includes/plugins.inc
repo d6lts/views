@@ -1,4 +1,4 @@
-<?php 
+<?php
 // $Id$
 /**
  * @file plugins.inc
@@ -6,7 +6,7 @@
  *
  */
 
-/** 
+/**
  * Implementation of hook_views_plugins
  */
 function views_views_plugins() {
@@ -36,7 +36,7 @@ function views_views_plugins() {
         'title' => t('Default'),
         'help' => t('Displays rows one after another.'),
         'handler' => 'views_style_plugin_default',
-        'theme' => 'views_view_rows',
+        'theme' => 'views_view_summary',
       ),
       'list' => array(
         'title' => t('List'),
@@ -50,6 +50,13 @@ function views_views_plugins() {
         'handler' => 'views_style_plugin_table',
         'theme' => 'views_view_table',
       ),
+      'default_summary' => array(
+        'summary' => TRUE, // only shows up as a summary style
+        'title' => t('Default'),
+        'help' => t('Displays the default summary view'),
+        'handler' => 'views_style_plugin_summary',
+        'theme' => 'views_view_summary',
+      ),
     ),
     'row' => array(
       'fields' => array(
@@ -58,10 +65,27 @@ function views_views_plugins() {
         'handler' => 'views_row_plugin',
         'theme' => 'views_view_row',
       ),
+      'fields_summary' => array(
+        'title' => t('Summary'),
+        'help' => t('Displays the link to the argument and the node count.'),
+        'handler' => 'views_row_plugin_summary',
+        'theme' => 'views_view_row_summary',
+      ),
     ),
   );
 
 }
+
+/**
+ * @defgroup views_display_plugins Views' display plugins
+ * @{
+ * Display plugins control how Views interact with the rest of Drupal.
+ *
+ * They can handle creating Views from a Drupal page hook; they can
+ * handle creating Views from a Drupal block hook. They can also
+ * handle creating Views from an external module source, such as
+ * a Panels pane, or an insert view, or a CCK field type.
+ */
 
 /**
  * The default display plugin handler. Display plugins handle options and
@@ -77,10 +101,8 @@ class views_display_plugin extends views_object {
 
   /**
    * Fill this plugin in with the view, display, etc.
-   * 
-   * @todo LG: This function needs to be renamed to something that sounds less like a randomizer.
    */
-  function seed(&$view, &$display) {
+  function init(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
   }
@@ -97,7 +119,7 @@ class views_display_plugin extends views_object {
       return;
     }
     if (empty($this->display_options[$option . '_default'])) {
-      return;      
+      return;
     }
     if (isset($this->default_display->display_options[$option])) {
       return $this->default_display->display_options[$option];
@@ -108,7 +130,7 @@ class views_display_plugin extends views_object {
    * Provide the default form for setting options.
    */
   function options_form(&$form) { }
-  
+
   /**
    * Validate the options form.
    */
@@ -132,12 +154,12 @@ class views_display_plugin extends views_object {
 
   /**
    * Not all display plugins will have a feed icon.
-   */ 
+   */
   function render_feed_icon() { }
 
   /**
    * Render the view's title for display
-   * TODO: Necessary? Hm.
+   * @todo: Necessary? Hm.
    */
   function render_title() { }
 
@@ -174,8 +196,6 @@ class views_display_plugin extends views_object {
    * Render this display.
    */
   function render() {
-    // TODO: Remove this when the 'file' tag on theme registry is fixed.
-//    include_once drupal_get_path('module', 'views') . '/theme/theme.inc';
     $themes = array(
       'views_view__' . $this->display->id . '__' . $this->view->name,
       'views_view__' . $this->display->id,
@@ -193,7 +213,7 @@ class views_display_plugin extends views_object {
    * @todo Implement this.
    */
   function access($account) { return TRUE; }
-  /** 
+  /**
    * When used externally, this is how a view gets run and returns
    * data in the format required.
    */
@@ -216,7 +236,7 @@ class views_display_plugin_page extends views_display_plugin {
     // tab version needs to come later. Maybe it should be its own plugin.
     $items[$url] = array(
       // default views page entry
-      'page callback' => 'views_page', 
+      'page callback' => 'views_page',
       'page arguments' => array($this->view->name, $this->display->id),
       // Default access check (per display)
       'access callback' => 'views_access',
@@ -277,13 +297,29 @@ class views_display_plugin_block extends views_display_plugin {
 }
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup views_style_plugins Views' style plugins
+ * @{
+ * Style plugins control how a view is rendered. For example, they
+ * can choose to display a collection of fields, node_view() output,
+ * table output, or any kind of crazy output they want.
+ *
+ * Many style plugins can have an optional 'row' plugin, that displays
+ * a single record. Not all style plugins can utilize this, so it is
+ * up to the plugin to set this up and call through to the row plugin.
+ */
+
+/**
  * Base class to define a style plugin handler.
  */
 class views_style_plugin extends views_object {
   var $needs_fields = FALSE;
   var $needs_headers = FALSE;
 
-  function seed(&$view, &$display) {
+  function init(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
     $this->options = $display->style_options;
@@ -293,7 +329,7 @@ class views_style_plugin extends views_object {
    * Provide a form for setting options.
    */
   function options_form(&$form) { }
-  
+
   /**
    * Validate the options form.
    */
@@ -308,6 +344,10 @@ class views_style_plugin extends views_object {
   function render($rows) { }
 }
 
+/**
+ * Default style plugin to render rows one after another with no
+ * decorations.
+ */
 class views_style_plugin_default extends views_style_plugin {
   // TEMP HACK
   var $row_plugin = 'views_row_plugin';
@@ -319,17 +359,58 @@ class views_style_plugin_default extends views_style_plugin {
    * Render the given style.
    */
   function render() {
-    // TODO: This needs to be able to support either a database resource OR
+    // @todo: This needs to be able to support either a database resource OR
     // an array, because our input format doesn't actually have to be from
     // a query.
-    $plugin = new views_row_plugin;
+    $plugin = new $this->row_plugin;
     $rows = '';
     while ($row = db_fetch_object($this->view->result)) {
+      // @todo: Include separator as an option.
       $rows .= $plugin->render($this->view, $row);
     }
     return theme(array('views_view_rows__' . $this->view->name, 'views_view_rows'), $this->view, $rows);
   }
 }
+
+/**
+ * The default style plugin for summaries.
+ */
+class views_style_plugin_summary extends views_style_plugin {
+  // TEMP HACK
+  var $row_plugin = 'views_row_plugin_summary';
+  function options_form(&$form) {
+    // provide an option form to select from our list of node renderers
+  }
+
+  /**
+   * Render the given style.
+   */
+  function render() {
+    // @todo: This needs to be able to support either a database resource OR
+    // an array, because our input format doesn't actually have to be from
+    // a query.
+    $plugin = new $this->row_plugin;
+    $rows = array();
+    while ($row = db_fetch_object($this->view->result)) {
+      // @todo: Include separator as an option.
+      $rows[] = $plugin->render($this->view, $row);
+    }
+    return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $rows);
+  }
+}
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup views_row_plugins Views' row plugins
+ * @{
+ *
+ * Row plugins control how Views outputs an individual record. They are
+ * tightly coupled to style plugins, in that a style plugin is what calls
+ * the row plugin.
+ */
 
 /**
  * Default plugin to view a single row of a table. This is really just a wrapper around
@@ -340,3 +421,17 @@ class views_row_plugin extends views_object {
     return theme(array('views_view_row__' . $view->name, 'views_view_row'), $view, $row);
   }
 }
+
+/**
+ * Default plugin to view a single row of a table. This is really just a wrapper around
+ * a theme function.
+ */
+class views_row_plugin_summary extends views_object {
+  function render(&$view, $row) {
+    return theme(array('views_view_row_summary__' . $view->name, 'views_view_row_summary'), $view, $row);
+  }
+}
+
+/**
+ * @}
+ */

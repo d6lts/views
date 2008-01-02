@@ -41,7 +41,7 @@ function node_views_data() {
     'arguments' => array(TRUE),
   );
 
-  // nid 
+  // nid
   $data['node']['nid'] = array(
     'title' => t('Nid'),
     'help' => t('The node ID of the node'), // The help that appears on the UI,
@@ -90,10 +90,10 @@ function node_views_data() {
  */
 class views_handler_field_node extends views_handler_field {
   /**
-   * Override seed function to provide generic option to link to node.
+   * Override init function to provide generic option to link to node.
    */
-  function seed(&$view, &$data) {
-    parent::seed($view, $data);
+  function init(&$view, &$data) {
+    parent::init($view, $data);
     if (isset($data->options['link_to_node']) && $view->base_table != 'node') {
       $this->additional_fields[] = $nid;
       $this->nid_field = 'node_nid';

@@ -67,7 +67,7 @@ class views_query {
     $this->primary_field = $primary_field;
     $this->relationships[$primary_table] = array('link' => NULL, 'table' => $primary_table, 'alias' => $primary_table);
 
-    // Seed the table queue with our primary table.
+    // init the table queue with our primary table.
     $this->table_queue[$primary_table] = array(
       'alias' => $primary_table,
       'table' => $primary_table,
@@ -75,7 +75,7 @@ class views_query {
       'join' => NULL,
     );
 
-    // Seed the tables with our primary table
+    // init the tables with our primary table
     $this->tables[$primary_table][$primary_table] = array(
       'count' => 1,
       'alias' => $primary_table,
@@ -117,7 +117,7 @@ class views_query {
       $alias = $table . '_' . $field;
     }
     $this->count_field = array(
-      'table' => $table, 
+      'table' => $table,
       'field' => $field,
       'alias' => $alias,
       'count' => TRUE,
@@ -166,7 +166,7 @@ class views_query {
     else if (!array_key_exists($link_point, $this->relationships)) {
       return FALSE;
     }
-    
+
     $join = $this->adjust_join($join, $link_point);
     if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
       $this->relationships[$alias] = array('link' => $link_point, 'table' => $join->table);
@@ -197,7 +197,7 @@ class views_query {
    *   will specify how this table joins if it is not the default.
    * @param $alias
    *   A specific alias to use, rather than the default alias.
-   * 
+   *
    * @return $alias
    *   The alias of the table; this alias can be used to access information
    *   about the table and should always be used to refer to the table when
@@ -232,7 +232,7 @@ class views_query {
    *   will specify how this table joins if it is not the default.
    * @param $alias
    *   A specific alias to use, rather than the default alias.
-   * 
+   *
    * @return $alias
    *   The alias of the table; this alias can be used to access information
    *   about the table and should always be used to refer to the table when
@@ -289,7 +289,7 @@ class views_query {
     }
 
     $this->table_queue[$alias] = array(
-      'table' => $table, 
+      'table' => $table,
       'num' => $this->tables[$relationship][$table]['count'],
       'alias' => $alias,
       'join' => $join,
@@ -361,7 +361,7 @@ class views_query {
 
     // Does a table along this path exist?
     if (isset($this->tables[$relationship][$table]) ||
-      $join->left_table == $relationship || 
+      $join->left_table == $relationship ||
       $join->left_table == $this->relationships[$relationship]['table']) {
       // Make sure that we're linking to the correct table for our relationship.
       foreach (array_reverse($add) as $table => $join) {
@@ -396,12 +396,12 @@ class views_query {
     if ($relationship != $this->primary_table) {
       // If we're linking to the primary table, the relationship to use will
       // be the prior relationship. Unless it's a direct link.
-      
+
       // Safety! Don't modify an original here.
       $join = drupal_clone($join);
 
       // First, if this is our link point/anchor table, just use the relationship
-      if ($join->left_table == $this->relationships[$relationship]['table']) { 
+      if ($join->left_table == $this->relationships[$relationship]['table']) {
         $join->left_table = $relationship;
       }
       // then, try the base alias.
@@ -437,7 +437,7 @@ class views_query {
   }
 
   /**
-   * Get the information associated with a table. 
+   * Get the information associated with a table.
    *
    * If you need the alias of a table with a particular relationship, use
    * ensure_table().
@@ -565,7 +565,7 @@ class views_query {
       $args = current($args);
     }
 
-    // Ensure all variants of 0 are actually 0. Thus '', 0 and NULL are all 
+    // Ensure all variants of 0 are actually 0. Thus '', 0 and NULL are all
     // the default group.
     if (empty($group)) {
       $group = 0;
@@ -668,7 +668,7 @@ class views_query {
     // If it's not a count query, add our fields
     $fields_array = $get_count ? array($this->count_field) : $this->fields;
     foreach ($fields_array as $field) {
-      if ($fields) {        // TODO: LG: This would be cleaner as an array that gets imploded.
+      if ($fields) {        // @todo: LG: This would be cleaner as an array that gets imploded.
         $fields .= ",\n   ";
       }
       $string = '';

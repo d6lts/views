@@ -1,6 +1,6 @@
 <?php
 // $Id$
-/** 
+/**
  * @file view.inc
  * Provides the view object type and associated methods.
  */
@@ -23,7 +23,7 @@ class view extends views_db_object {
   // State variables
   var $built = FALSE;
   var $executed = FALSE;
-  
+
   var $args = array();
   var $build_info = array();
 
@@ -52,9 +52,9 @@ class view extends views_db_object {
   }
 
   /**
-   * Returns the complete list of dependent objects in a view, including 
+   * Returns the complete list of dependent objects in a view, including
    * the display which is often special.
-   * 
+   *
    * @todo LG: special how?  This needs to be doc'ed more.
    * @todo Convert all references to this method to be static, not dynamic.
    */
@@ -72,10 +72,10 @@ class view extends views_db_object {
 
   /**
    * Set the page size for ranged or pager queries
-   * 
+   *
    * @todo move all pager properties into a pager object
    */
-  function set_page_size($page_size) { 
+  function set_page_size($page_size) {
     $this->page_size = $page_size;
   }
 
@@ -97,7 +97,7 @@ class view extends views_db_object {
    * How many records to skip. This does not function if use_pager is
    * set.
    */
-  function set_offset($offset) { 
+  function set_offset($offset) {
     $this->offset = $offset;
   }
 
@@ -117,13 +117,13 @@ class view extends views_db_object {
       $display_id = $this->current_display;
     }
 
-    // TODO: Fix this:
+    // @todo: Fix this:
     return $this->field;
   }
 
   /**
    * Set the display for this view, and initialize the display handler.
-   * 
+   *
    * @todo Determine if this is meant to be called only once, and if so, document that.
    */
   function set_display($display_id = NULL) {
@@ -136,7 +136,7 @@ class view extends views_db_object {
     if (!isset($display_id)) {
       $this->current_display = 0;
     }
-  
+
     foreach ($this->display as $id => $display) {
       if ($display->id == $display_id) {
         $this->current_display = $id;
@@ -159,37 +159,43 @@ class view extends views_db_object {
       return FALSE;
     }
 
-    // Seed the new display handler with data.
-    $this->display_handler->seed($this, $display_data);
-    
+    // init the new display handler with data.
+    $this->display_handler->init($this, $display_data);
+
     // If this is NOT the default display handler, let it know which is
     // since it may well utilize some data from the default.
     if ($this->current_display != $this->default_display) {
       $this->display_handler->default_display = $this->display[$this->default_display];
     }
 
-    // Find and initialize the style plugin. Note that arguments may have changed
-    // which style plugin we use, so check the view object first, then ask
-    // the display handler.
+    return TRUE;
+  }
+
+  /**
+   * Find and initialize the style plugin.
+   *
+   * Note that arguments may have changed which style plugin we use, so
+   * check the view object first, then ask the display handler.
+   */
+  function init_style() {
     if (!isset($this->style_plugin)) {
-      $this->style_plugin = $display_data->style_plugin;
+      $this->style_plugin = $this->display[$this->current_display]->style_plugin;
     }
 
+    dsm("Init_style: $this->style_plugin");
     $this->style_handler = views_get_plugin('style', $this->style_plugin);
     if (empty($this->style_handler)) {
       return FALSE;
     }
 
-    // Seed the new display handler with data.
-    $this->style_handler->seed($this, $display_data);
-
-    return TRUE;
+    // init the new display handler with data.
+    $this->style_handler->init($this, $this->display[$this->current_display]);
   }
 
   /**
    * Build the query for the view.
    */
-  function build($display_id = NULL) { 
+  function build($display_id = NULL) {
     if (!empty($this->built)) {
       return;
     }
@@ -207,9 +213,9 @@ class view extends views_db_object {
       }
       ob_end_clean();
     }
-   
+
     // Attempt to load from cache.
-    // TODO: Load a build_info from cache.
+    // @todo: Load a build_info from cache.
 
 
 
@@ -224,30 +230,32 @@ class view extends views_db_object {
     // Call a module hook and see if it wants to present us with a
     // pre-built query or instruct us not to build the query for
     // some reason.
-    // TODO: Implement this.  
+    // @todo: Implement this.
 
     // Run through our handlers and ensure they have necessary information.
-    $this->seed_handlers();
+    $this->init_handlers();
 
     // Build all the filters.
     $this->_build('filter');
 
+    // Initially, we want to build sorts and fields. This can change, though,
+    // if we get a summary view.
     $this->build_sort = $this->build_fields = TRUE;
 
     $argument_title = '';
     // build arguments.
     foreach ($this->argument as $id => $arg) {
-      unset ($argument);  // TODO: LG: Is this necessary, or is this because of the non-bug with reference reassignment?
+      unset ($argument);  // @todo: LG: Is this necessary, or is this because of the non-bug with reference reassignment?
       $argument = &$this->argument[$id];
 
       if (!is_object($argument->handler)) {
-        // TODO: Set some kind of warning.
+        // @todo: Set some kind of warning.
         continue;
       }
 
       if (isset($this->args[$id]) && $argument->handler->validate($this->args[$id])) {
         // handle argument that is present.
-        // TODO: Do we want to put in argument placeholders here
+        // @todo: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
         $argument->handler->argument = $this->args[$id];
         $argument->handler->query();
@@ -265,7 +273,7 @@ class view extends views_db_object {
       }
     }
 
-    // TODO: if $argument_title is set, get the argument and
+    // @todo: if $argument_title is set, get the argument and
     // set it in the build info.
 
     // Build our sort criteria if we were instructed to do so.
@@ -273,7 +281,7 @@ class view extends views_db_object {
       $this->_build('sort');
     }
 
-    // TODO: Test display to see if it needs fields.
+    // @todo: Test display to see if it needs fields.
     if (!empty($this->build_fields)) {
       $this->_build('field');
     }
@@ -291,7 +299,7 @@ class view extends views_db_object {
   function _build($key) {
     $array = &$this->$key;
     foreach ($array as $id => $data) {
-      // TODO: we should report an error here if this is not an object.
+      // @todo: we should report an error here if this is not an object.
       if (is_object($array[$id]->handler)) {
         $array[$id]->handler->query();
       }
@@ -301,26 +309,26 @@ class view extends views_db_object {
   /**
    * Acquire and attach all of the handlers.
    */
-  function seed_handlers() {
-    if (empty($this->seeded)) {
+  function init_handlers() {
+    if (empty($this->inited)) {
       foreach ($this->objects() as $key) {
-        $this->_seed_handler($key);
+        $this->_init_handler($key);
       }
-      $this->seeded = TRUE;
+      $this->inited = TRUE;
     }
   }
 
   /**
    * Attach all of the handlers for each type.
-   * 
+   *
    * @param $key
    *   One of 'argument', 'field', 'sort', 'filter', 'relationship'
    */
-  function _seed_handler($key) {
+  function _init_handler($key) {
     foreach ($this->$key as $data) {
       $handler = views_get_handler($data->tablename, $data->field, $key);
       if (is_object($handler)) {
-        $handler->seed($this, $data);
+        $handler->init($this, $data);
         $data->handler = $handler;
       }
     }
@@ -343,7 +351,7 @@ class view extends views_db_object {
     $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field);
     $args = $this->build_info['query_args'];
 
-    // TODO: Fill in execution defaults if they are not set.
+    // @todo: Fill in execution defaults if they are not set.
     // use_pager, page_size, offset
 
     $items = array();
@@ -369,18 +377,18 @@ class view extends views_db_object {
    * Render this view for display.
    */
   function render($display_id = NULL) {
-    // Check for cached output.  
-    // TODO: Implement this
-    
-    // Make sure the query has already executed.
-    if (empty($this->executed)) { // TODO: Remove this, since ->execute() is already doing it for us.
-      $this->execute($display_id);
-    }
+    // Check for cached output.
+    // @todo: Implement this
+
+    $this->execute($display_id);
 
     // Check to see if the build failed.
     if (empty($this->result)) {
       return;
     }
+
+    // Initialize the style plugin.
+    $this->init_style();
 
     return $this->display_handler->render();
   }
@@ -433,27 +441,31 @@ class view extends views_db_object {
   /**
    * Get the view's current title. This can change depending upon how it
    * was built.
+   *
+   * @todo: Implement this.
    */
   function get_title($context) { }
 
   /**
    * Get the URL for the current view.
+   *
+   * @todo: Implement this.
    */
   function get_url($args = NULL) { }
 
   /**
    * Is this view cacheable?
    */
-  function is_cacheable() { 
+  function is_cacheable() {
     return $this->is_cacheable;
   }
 
   /**
    * Load a view from the database based upon either vid or name.
-   * 
-   * This is a static factory method that implements internal caching for 
-   * view objects.  
-   * 
+   *
+   * This is a static factory method that implements internal caching for
+   * view objects.
+   *
    * @param $arg
    *  The name of the view or its internal view id (vid)
    * @param $reset
@@ -462,7 +474,7 @@ class view extends views_db_object {
    */
   function &load($arg, $reset = FALSE) {
     static $cache = array();
-    
+
     // We want a NULL value to return TRUE here, so we can't use isset() or empty().
     if (!array_key_exists($arg, $cache) || $reset) {
       $where = (is_numeric($arg) ? "vid =  %d" : "name = '%s'");
@@ -481,27 +493,27 @@ class view extends views_db_object {
         $cache[$arg] = $view;
       }
     }
-    
+
     // If the view is not defined in the database, check the default_views hook.
     if (is_null($cache[$arg]) && !is_numeric($arg)) {
       $cache[$arg] = views_get_default_view($arg);
     }
-    
+
     return $cache[$arg];
   }
 
   /**
    * Static factory method to load a list of views based upon a $where clause.
-   * 
+   *
    * Although this method could be implemented to simply iterate over views::load(),
    * that would be very slow.  Buiding the views externally from unified queries is
    * much faster.
-   * 
+   *
    * @todo FROM LG: We should document why this is passing in literal query fragments
    *  since it's bound to confuse someone else as much as it did/does me. :-)
    */
   function load_views($where, $join = '') {
-    // TODO: Integrate this in with caching.
+    // @todo: Integrate this in with caching.
     $result = db_query("SELECT DISTINCT v.* FROM {views_view} v $join WHERE $where");
     $views = array();
 
@@ -543,12 +555,12 @@ class view extends views_db_object {
     while ($data = db_fetch_object($result)) {
       $object = new $object_name(FALSE);
       $object->load_row($data);
-      array_push($this->$key, $object); // TODO: Why is this array_push instead of just []?
+      array_push($this->$key, $object); // @todo: Why is this array_push instead of just []?
     }
   }
 
   /**
-   * Save the view to the database. If the view does not already exist, 
+   * Save the view to the database. If the view does not already exist,
    * A vid will be assigned to the view and also returned from this function.
    */
   function save() {
@@ -586,7 +598,7 @@ class view extends views_db_object {
   /**
    * Delete the view from the database.
    */
-  function delete() { 
+  function delete() {
     if (empty($this->vid)) {
       return;
     }
@@ -600,7 +612,7 @@ class view extends views_db_object {
 
     cache_clear_all('views_query:' . $this->name, 'cache_views');
     cache_clear_all(); // In Drupal 5.0 and later this clears the page cache only.
-  
+
   }
 
   /**
@@ -731,7 +743,7 @@ class views_db_object {
    * This method is separate from the constructor in order to give us
    * more flexibility in terms of how the view object is built in different
    * contexts.
-   * 
+   *
    * @param $data
    *   An object from db_fetch_object. It should contain all of the fields
    *   that are in the schema.
@@ -761,7 +773,7 @@ class views_db_object {
   /**
    * Export a loaded row to PHP code.
    *
-   * @todo LG: I don't understand what a "row" is in this context.  
+   * @todo LG: I don't understand what a "row" is in this context.
    * @param $identifier
    *   The variable to assign the PHP code for this object to.
    * @param $indent

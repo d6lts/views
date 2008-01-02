@@ -50,7 +50,6 @@ function template_preprocess_views_view_row(&$vars) {
     // CSS classes should be.
     $vars['fields'][$field->handler->field_alias] = views_css_safe($field->handler->field_alias);
   }
-  // Collect all of the fields in the record, then display them in the template.
 }
 
 /**
@@ -63,3 +62,17 @@ function template_preprocess_views_view_row(&$vars) {
 function theme_views_view_field($view, $field, $row) {
   return $field->handler->render($row);
 }
+
+/**
+ * Preprocess theme function to print a single record from a row, with fields
+ */
+function template_preprocess_views_view_row_summary(&$vars) {
+  $view     = $vars['view'];
+  $row      = $vars['row'];
+  $argument = $view->argument[$view->build_info['summary_level']]->handler;
+
+  $vars['link'] = check_plain($row->{$argument->name_alias});
+  $vars['url'] = $argument->summary_link($row, $view->get_url());
+  $vars['count'] = intval($row->{$argument->count_alias});
+}
+
