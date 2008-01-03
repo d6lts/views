@@ -39,16 +39,6 @@ function node_views_data() {
       'arguments' => array('node', 'node_revisions', 'nid', 'nid'),
      ),
   );
-  // Provide output plugins specifically for this base type.
-  $data['node']['table']['plugins'] = array(
-    'row' => array(
-      'node' => array(
-        'title' => t('Node'),
-        'help' => t('Display the node with standard node view.'),
-        'handler' => 'views_row_plugin_node_view',
-      ),
-    ),
-  );
 
   // ----------------------------------------------------------------
   // Fields
@@ -329,6 +319,59 @@ class views_handler_argument_node_nid extends views_handler_argument {
 
     return check_plain();
   }
+}
+
+
+/**
+ * Implementation of hook_views_plugins
+ */
+function node_views_plugins() {
+  return array(
+    'module' => 'views', // This just tells our themes are elsewhere.
+    'row' => array(
+      'node' => array(
+        'title' => t('Node'),
+        'help' => t('Display the node with standard node view.'),
+        'handler' => 'views_row_plugin_node_view',
+        'theme' => 'views_view_row_node',
+        'base' => array('node'), // only works with 'node' as base.
+      ),
+    ),
+  );
+}
+
+/**
+ * Plugin which performs a node_view on the resulting object.
+ *
+ * @ingroup views_row_plugins
+ */
+class views_row_plugin_node_view extends views_object {
+  /**
+   * Override the behavior of the render() function.
+   */
+  function render(&$view, $row) {
+    return theme(array('views_view_row_node__' . $view->name, 'views_view_row_node'), $view, $row);
+  }
+}
+
+/**
+ * Template helper for theme_views_view_row_node
+ */
+function template_preprocess_views_view_row_node(&$vars) {
+  $vars['node'] = ''; // make sure var is defined.
+  $nid = $vars['row']->nid;
+  if (!is_numeric($nid)) {
+    return;
+  }
+
+  $node = node_load($nid);
+
+  if (empty($node)) {
+    return;
+  }
+
+  // @todo add settings so that this can choose teaser, links, etc.
+  $vars['node'] = node_view($node, TRUE);
 }
 
 /**

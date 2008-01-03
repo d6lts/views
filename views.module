@@ -358,13 +358,15 @@ function views_discover_plugins() {
     if (!is_array($result)) {
       continue;
     }
+
+    $module_dir = isset($result['module']) ? $result['module'] : $module;
     // Setup automatic path/file finding for theme registration
-    if (isset($result['module']) && $result['module'] == 'views') {
-      $path = drupal_get_path('module', $module) . '/theme';
+    if ($module_dir == 'views') {
+      $path = drupal_get_path('module', $module_dir) . '/theme';
       $file = 'theme.inc';
     }
     else {
-      $path = drupal_get_path('module', $module);
+      $path = drupal_get_path('module', $module_dir);
       $file = "$module.views.inc";
     }
     foreach ($result as $type => $info) {

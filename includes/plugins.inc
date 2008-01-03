@@ -67,7 +67,7 @@ function views_views_plugins() {
       ),
       'fields_summary' => array(
         'title' => t('Summary'),
-        'help' => t('Displays the link to the argument and the node count.'),
+        'help' => t('Displays the link to the argument and the row count.'),
         'handler' => 'views_row_plugin_summary',
         'theme' => 'views_view_row_summary',
       ),
@@ -351,6 +351,7 @@ class views_style_plugin extends views_object {
 class views_style_plugin_default extends views_style_plugin {
   // TEMP HACK
   var $row_plugin = 'views_row_plugin';
+//  var $row_plugin = 'views_row_plugin_node_view';
   function options_form(&$form) {
     // provide an option form to select from our list of node renderers
   }
