@@ -298,6 +298,58 @@ class views_handler_field_date extends views_handler_field {
 }
 
 /**
+ * A handler to provide proper displays for dates.
+ *
+ * Allows for display of true/false, yes/no, on/off.
+ */
+class views_handler_field_boolean extends views_handler_field {
+  /**
+   * Constructor; calls to base object constructor.
+   */
+  function construct($click_sortable = FALSE, $additional_fields = array()) {
+    parent::construct($click_sortable, $additional_fields);
+  }
+
+  function options_form(&$form) {
+    $form['type'] = array(
+      '#type' => 'select',
+      '#title' => t('Date format'),
+      '#options' => array(
+        'yes-no' => t('Yes/No'),
+        'true-false' => t('True/False'),
+        'on-off' => t('On/Off'),
+      ),
+      '#default_value' => isset($this->options['type']) ? $this->options['type'] : 'yes-no',
+    );
+    $form['not'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Reverse'),
+      '#description' => t('If checked, true will be displayed as false.'),
+      '#default_value' => !empty($this->options['not']),
+    );
+  }
+
+  function render($values) {
+    $value = $values->{$this->field_alias};
+    if (!empty($this->options['not'])) {
+      $value = !$value;
+    }
+
+    $format = isset($this->options['type']) ? $this->options['type'] : 'yes';
+
+    switch ($format) {
+      case 'yes-no':
+      default:
+        return $value ? t('Yes') : t('No');
+      case 'true-false':
+        return $value ? t('True') : t('False');
+      case 'yes-no':
+        return $value ? t('On') : t('Off');
+    }
+  }
+}
+
+/**
  * @}
  */
 
@@ -428,6 +480,7 @@ class views_handler_filter extends views_handler {
  * The basic argument works for very simple arguments such as nid and uid
  */
 class views_handler_argument extends views_handler {
+  var $name_field = NULL;
   /**
    * Constructor
    */
@@ -505,6 +558,16 @@ class views_handler_argument extends views_handler {
     return url("$url/$value");
   }
 
+  /**
+   * Provides the name to use for the summary. By default this is just
+   * the name field.
+   *
+   * @param $data
+   *   The query results for the row.
+   */
+  function summary_name($data) {
+    return check_plain($data->{$this->name_alias});
+  }
   /**
    * Provide a list of default behaviors for this argument if the argument
    * is not present.

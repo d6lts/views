@@ -451,7 +451,9 @@ class view extends views_db_object {
    *
    * @todo: Implement this.
    */
-  function get_url($args = NULL) { }
+  function get_url($args = NULL) {
+    return $_GET['q'];
+  }
 
   /**
    * Is this view cacheable?

@@ -505,7 +505,7 @@ function &views_get_default_view($view_name) {
     else {
       // We may as well rebuild the cache while we're at it, since we need to pull all
       // of the data anyway.  We pick out the one we want along the way.
-      $cache = discover_default_views();
+      $cache = views_discover_default_views();
     }
   }
 

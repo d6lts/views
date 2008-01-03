@@ -1,8 +1,10 @@
-<?php 
+<?php
 // $Id$
 /**
  * @file views-view-row.tpl.php
  * Default simple view template to display a list of rows.
+ *
+ * @ingroup views_templates
  */
 ?>
 <?php foreach ($fields as $name => $css): ?>
