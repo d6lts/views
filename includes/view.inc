@@ -300,7 +300,7 @@ class view extends views_db_object {
     $array = &$this->$key;
     foreach ($array as $id => $data) {
       // @todo: we should report an error here if this is not an object.
-      if (is_object($array[$id]->handler)) {
+      if (!empty($array[$id]->handler) && is_object($array[$id]->handler)) {
         $array[$id]->handler->query();
       }
     }

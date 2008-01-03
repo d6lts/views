@@ -341,7 +341,7 @@ function views_get_handler($table, $field, $key) {
     return _views_prepare_handler($data[$field][$key], $data, $field);
   }
   // DEBUG -- identify missing handlers
-  dsm("$table $field $key");
+  dsm("Missing handler: $table $field $key");
 }
 
 /**

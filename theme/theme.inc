@@ -38,17 +38,19 @@ function template_preprocess_views_view_row(&$vars) {
 
   // Loop through the fields for this view.
   foreach ($view->get_fields($view->current_display) as $field) {
-    $themes = array(
-      'views_view_field__' . $view->name . '__' . $field->handler->field_alias,
-      'views_view_field__' . $view->name,
-      'views_view_field__' . $field->handler->field_alias,
-      'views_view_field',
-    );
-    // Add the field into a variable named after the field. field_alias will be unique.
-    $vars[$field->handler->field_alias] = theme($themes, $view, $field, $vars['row']);
-    // Create a second variable so we can easily find what fields we have and what the
-    // CSS classes should be.
-    $vars['fields'][$field->handler->field_alias] = views_css_safe($field->handler->field_alias);
+    if (!empty($field->handler) && is_object($field->handler)) {
+      $themes = array(
+        'views_view_field__' . $view->name . '__' . $field->handler->field_alias,
+        'views_view_field__' . $view->name,
+        'views_view_field__' . $field->handler->field_alias,
+        'views_view_field',
+      );
+      // Add the field into a variable named after the field. field_alias will be unique.
+      $vars[$field->handler->field_alias] = theme($themes, $view, $field, $vars['row']);
+      // Create a second variable so we can easily find what fields we have and what the
+      // CSS classes should be.
+      $vars['fields'][$field->handler->field_alias] = views_css_safe($field->handler->field_alias);
+    }
   }
 }
 

@@ -350,6 +350,34 @@ class views_handler_field_boolean extends views_handler_field {
 }
 
 /**
+ * A handler to run a field through check_markup, using a companion
+ * format field.
+ *
+ * Allows for display of true/false, yes/no, on/off.
+ */
+class views_handler_field_markup extends views_handler_field {
+  /**
+   * Constructor; calls to base object constructor.
+   */
+  function construct($format) {
+    $this->format = $format;
+
+    $addl_fields = array();
+    if (!is_numeric($format)) {
+      $addl_fields[] = $format;
+    }
+
+    parent::construct(FALSE, $addl_fields);
+  }
+
+  function render($values) {
+    $value = $values->{$this->field_alias};
+    $format = is_numeric($this->format) ? $this->format : $values->{$this->aliases[$this->format]};
+    return check_markup($value, $format, FALSE);
+  }
+}
+
+/**
  * @}
  */
 

@@ -35,6 +35,7 @@ function node_views_data() {
       'arguments' => array('node', 'users', 'uid', 'uid'),
      ),
     'node_revisions' => array(
+      'handler' => 'views_join', // this is actually optional
       'arguments' => array('node', 'node_revisions', 'nid', 'nid'),
      ),
   );
@@ -76,7 +77,7 @@ function node_views_data() {
     ),
     // Information for accepting a nid as an argument
     'argument' => array(
-      'handler' => 'views_handler_argument',
+      'handler' => 'views_handler_argument_nid',
       'arguments' => array('title'),
     ),
     // Information for accepting a nid as a filter
@@ -172,20 +173,22 @@ function node_views_data() {
 
   // Define the base group of this table. Fields that don't
   // have a group defined will go into this field by default.
-  $data['node']['table']['group']  = t('Node');
+  $data['node_revisions']['table']['group']  = t('Node');
 
   // Advertise this table as a possible base table
-  $data['node']['table']['base'] = array(
+  $data['node_revisions']['table']['base'] = array(
     'field' => 'vid',
     'title' => t('Node revisions'),
   );
 
   // For other base tables, explain how we join
-  $data['node']['table']['join'] = array(
+  $data['node_revisions']['table']['join'] = array(
     'node' => array(
+      'handler' => 'views_join', // this is actually optional
       'arguments' => array('node_revisions', 'node', 'vid', 'vid'),
      ),
     'user' => array(
+      'handler' => 'views_join', // this is actually optional
       'arguments' => array('node_revisions', 'node', 'vid', 'vid'),
      ),
   );
@@ -193,15 +196,25 @@ function node_views_data() {
   // Body field
   $data['node_revisions']['body'] = array(
     'title' => t('Body'), // The item it appears as on the UI,
-    'help' => t('The actual, full data in the body field.'), // The help that appears on the UI,
+    'help' => t('The actual, full data in the body field; this may not be valid data on all node types.'), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
-      'field' => 'body', // the real field
-      'group' => t('Node'), // The group it appears in on the UI,
       'handler' => 'views_handler_field_markup',
-      'arguments' => array(FALSE, 'format'), // arguments to the handler
+      'arguments' => array('format'), // arguments to the handler
      ),
   );
+
+  // Teaser field
+  $data['node_revisions']['teaser'] = array(
+    'title' => t('Teaser'), // The item it appears as on the UI,
+    'help' => t('The stored teaser field. This may not be valid or useful data on all node types.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'handler' => 'views_handler_field_markup',
+      'arguments' => array('format'), // arguments to the handler
+     ),
+  );
+
   return $data;
 }
 
@@ -268,7 +281,6 @@ class views_handler_field_node_type extends views_handler_field_node {
  * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_type extends views_handler_argument {
-  // No constructor is necessary.
   function construct() {
     parent::construct('type');
   }
@@ -295,6 +307,27 @@ class views_handler_argument_node_type extends views_handler_argument {
       $output = t('Unknown node type');
     }
     return check_plain($output);
+  }
+}
+
+/**
+ * Argument handler to accept a node id.
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_node_nid extends views_handler_argument {
+  // No constructor is necessary.
+
+  /**
+   * Override the behavior of title(). Get the title of the node.
+   */
+  function title() {
+    $title = db_fetch_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d"), $this->argument));
+    if (empty($title)) {
+      return t('No title');
+    }
+
+    return check_plain();
   }
 }
 
