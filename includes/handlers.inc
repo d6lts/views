@@ -6,6 +6,61 @@
  */
 
 /**
+ * Instantiate and construct a new handler
+ *
+ * @todo: move to handlers.inc
+ */
+function _views_create_handler($definition) {
+//  dpr('Instantiating handler ' . $definition['handler']);
+  $handler = new $definition['handler'];
+  if (isset($definition['arguments'])) {
+    call_user_func_array(array($handler, 'construct'), $definition['arguments']);
+  }
+
+  $handler->set_definition($definition);
+  return $handler;
+}
+
+/**
+ * Prepare a handler's data by checking defaults and such.
+ *
+ * @todo: move to handlers.inc
+ */
+function _views_prepare_handler($definition, $data, $field) {
+  foreach (array('group', 'title', 'help') as $key) {
+    // First check the field level
+    if (!isset($definition[$key]) && !empty($data[$field][$key])) {
+      $definition[$key] = $data[$field][$key];
+    }
+    // Then if that doesn't work, check the table level
+    if (!isset($definition['table'][$key]) && !empty($data['table'][$key])) {
+      $definition[$key] = $data['table'][$key];
+    }
+  }
+
+  return _views_create_handler($definition);
+}
+
+/**
+ * Fetch a handler to join one table to a primary table from the data cache
+ *
+ * @todo: move to cache.inc (maybe)
+ */
+function views_get_table_join($table, $primary_table) {
+  $data = views_fetch_data($table);
+  if (isset($data['table']['join'][$primary_table])) {
+    $h = $data['table']['join'][$primary_table];
+    $handler = new $h['handler'];
+    if (isset($h['arguments'])) {
+      call_user_func_array(array($handler, 'construct'), $h['arguments']);
+    }
+    return $handler;
+  }
+  // DEBUG -- identify missing handlers
+  dsm("missing join: $table $primary_table");
+}
+
+/**
  * @defgroup views_join_handlers Views' join handlers
  * @{
  * Handlers to tell Views how to join tables together.

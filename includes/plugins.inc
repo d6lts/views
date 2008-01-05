@@ -77,6 +77,48 @@ function views_views_plugins() {
 }
 
 /**
+ * Builds and return a list of all plugins available in the system.
+ *
+ * @return Nested array of plugins, grouped by type and
+ */
+function views_discover_plugins() {
+  $cache = array('display' => array(), 'style' => array(), 'row' => array());
+  // Get plugins from all mdoules.
+  foreach (module_implements('views_plugins') as $module) {
+    $function = $module . '_views_plugins';
+    $result = $function();
+    if (!is_array($result)) {
+      continue;
+    }
+
+    $module_dir = isset($result['module']) ? $result['module'] : $module;
+    // Setup automatic path/file finding for theme registration
+    if ($module_dir == 'views') {
+      $path = drupal_get_path('module', $module_dir) . '/theme';
+      $file = 'theme.inc';
+    }
+    else {
+      $path = drupal_get_path('module', $module_dir);
+      $file = "$module.views.inc";
+    }
+    foreach ($result as $type => $info) {
+      if ($type == 'module') {
+        continue;
+      }
+      foreach ($info as $plugin => $def) {
+        if (isset($def['theme']) && !isset($def['path'])) {
+          $def['path'] = $path;
+          $def['file'] = $file;
+        }
+        // merge the new data in
+        $cache[$type][$plugin] = $def;
+      }
+    }
+  }
+  return $cache;
+}
+
+/**
  * @defgroup views_display_plugins Views' display plugins
  * @{
  * Display plugins control how Views interact with the rest of Drupal.
@@ -159,7 +201,7 @@ class views_display_plugin extends views_object {
 
   /**
    * Render the view's title for display
-   * @todo: Necessary? Hm.
+   * @todo Necessary? Hm.
    */
   function render_title() { }
 
