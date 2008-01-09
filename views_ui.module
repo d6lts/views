@@ -1,0 +1,168 @@
+<?php
+// $Id$
+
+/**
+ * @file views_ui.module
+ *
+ * Provide administrative interface to create and manipulate Views.
+ */
+
+function views_ui_menu() {
+  $items = array();
+
+  $items['admin/build/views'] = array(
+    'title' => t('Views'),
+    'page callback' => 'views_ui_list_views',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'description' => t('Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented.'),
+    'type' => MENU_NORMAL_ITEM
+  );
+  $items['admin/build/views/list'] = array(
+    'title' => t('List'),
+    'page callback' => 'views_ui_list_views',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => '-1'
+  );
+  $items['admin/build/views/add'] = array(
+    'title' => t('Add'),
+    'page callback' => 'views_ui_add_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_LOCAL_TASK
+  );
+  $items['admin/build/views/import'] = array(
+    'title' => t('Import'),
+    'page callback' => 'views_ui_admin_import_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_LOCAL_TASK
+  );
+  $items['admin/build/views/tools'] = array(
+    'title' => t('Tools'),
+    'page callback' => 'drupal_get_form',
+    'callback arguments' => array('views_ui_admin_tools'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_LOCAL_TASK
+  );
+  $items['admin/build/views/delete'] = array(
+    'title' => t('Edit view'),
+    'page callback' => 'drupal_get_form',
+    'callback arguments' => array('views_ui_admin_delete_confirm'),
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_CALLBACK
+  );
+  $items['admin/build/views/enable'] = array(
+    'page callback' => 'views_ui_admin_enable_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_CALLBACK
+  );
+  $items['admin/build/views/disable'] = array(
+    'page callback' => 'views_ui_admin_disable_page',
+    'access callback' => 'user_access',
+    'access arguments' => array('administer views'),
+    'type' => MENU_CALLBACK
+  );
+  return $items;
+}
+
+/*
+ * Implementation of hook_perm()
+ */
+function views_ui_perm() {
+  return array('administer views');
+}
+
+/**
+ * Page callback to list views in the system.
+ */
+function views_ui_list_views() {
+  $items = array();
+  $sorts = array();
+
+  $header = array(
+    array('data' => t('View name'), 'field' => 'name', 'sort' => 'asc'),
+    array('data' => t('Description')),
+    array('data' => t('Title'), 'field' => 'title'),
+    array('data' => t('Type'), 'field' => 'type'),
+    array('data' => t('URL'), 'field' => 'url'),
+    array('data' => t('Operations')),
+  );
+
+  foreach (views_get_all_views() as $view) {
+    $ops = array();
+    if (empty($view->disabled)) {
+      $ops[] = l(t('Edit'), "admin/build/views/edit/$view->name");
+      $ops[] = l(t('Export'), "admin/build/views/$view->name/export");
+    }
+    if ($view->type != t('Default')) {
+      $text = $view->type == t('Overridden') ? t('Revert') : t('Delete');
+      $ops[] = l($text, "admin/build/views/$view->name/delete");
+    }
+    else {
+      if (empty($view->disabled)) {
+        $ops[] = l(t('Disable'), "admin/build/views/disable/$view->name", NULL, drupal_get_destination());
+      }
+      else {
+        $ops[] = l(t('Enable'), "admin/build/views/enable/$view->name", NULL, drupal_get_destination());
+      }
+    }
+
+  $path = 'Todo: path';
+//    $path = empty($view->disabled) && strpos($view->path, '%') === FALSE ? l($view->path, $view->path) : check_plain($view->path);
+    $item = array();
+    $item[] = check_plain($view->name);
+    $item[] = check_plain($view->description);
+    $item[] = check_plain($view->get_title());
+    $item[] = $view->type; // this is safe as it's always programmatic
+
+    $item[] = $path;
+    $item[] = implode(' | ', $ops);
+    $items[] = $item;
+
+    $ts = tablesort_init($header);
+    switch ($ts['sql']) {
+      case 'name':
+      default:
+        $sorts[] = $item[0];
+        break;
+      case 'title':
+        $sorts[] = $item[1];
+        break;
+      case 'url':
+        $sorts[] = 'todo: path'; // $path;
+        break;
+      case 'type':
+        $sorts[] = $view->type . $item[0];
+        break;
+    }
+  }
+
+  if (strtolower($ts['sort']) == 'desc') {
+    arsort($sorts);
+  }
+  else {
+    asort($sorts);
+  }
+
+  $i = array();
+  foreach ($sorts as $id => $title) {
+    $i[] = $items[$id];
+  }
+
+  $output = theme('table', $header, $i);
+  return $output;
+}
+
+/**
+ * Page callback to add a new view.
+ */
+function views_ui_add_page() {
+  $output = 'foo';
+  return $output;
+}

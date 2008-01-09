@@ -444,7 +444,7 @@ class view extends views_db_object {
    *
    * @todo: Implement this.
    */
-  function get_title($context) { }
+  function get_title($context = 'menu') { }
 
   /**
    * Get the URL for the current view.
@@ -514,9 +514,9 @@ class view extends views_db_object {
    * @todo FROM LG: We should document why this is passing in literal query fragments
    *  since it's bound to confuse someone else as much as it did/does me. :-)
    */
-  function load_views($where, $join = '') {
+  function load_views() {
     // @todo: Integrate this in with caching.
-    $result = db_query("SELECT DISTINCT v.* FROM {views_view} v $join WHERE $where");
+    $result = db_query("SELECT DISTINCT v.* FROM {views_view} v");
     $views = array();
 
     // Load all the views.
@@ -524,6 +524,7 @@ class view extends views_db_object {
       $view = new view;
       $view->load_row($data);
       $view->loaded = TRUE;
+      $view->type = t('Normal');
       $views[$view->vid] = $view;
     }
 
@@ -773,9 +774,8 @@ class views_db_object {
   }
 
   /**
-   * Export a loaded row to PHP code.
+   * Export a loaded row, such as an argument, field or the view itself to PHP code.
    *
-   * @todo LG: I don't understand what a "row" is in this context.
    * @param $identifier
    *   The variable to assign the PHP code for this object to.
    * @param $indent

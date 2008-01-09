@@ -459,9 +459,25 @@ function views_get_all_views() {
     views_include('view');
     $views = view::load_views();
 
-    // Merge in default views; this construct will not overwrite any keys that
-    // are already set.
-    $views += views_discover_default_views();
+    // Get all default views.
+    $status = variable_get('panel_page_defaults', array());
+
+    foreach (views_discover_default_views() as $view) {
+      // Determine if default view is enabled or disabled.
+      if (isset($status[$view->name])) {
+        $view->disabled = $status[$view->name];
+      }
+
+      // If overridden, also say so.
+      if (!empty($views[$view->name])) {
+        $views[$view->name]->type = t('Overridden');
+      }
+      else {
+        $view->type = t('Default');
+        $views[$view->name] = $view;
+      }
+    }
+
   }
   return $views;
 }
