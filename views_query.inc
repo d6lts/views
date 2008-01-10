@@ -659,16 +659,3 @@ class _views_query {
     return $query;
   }
 }
-
-/*
- * Support db_query() style argument replacement in a clause.
- */
-
-function _views_replace_args($clause, $args) {
-  // cut & pasted directly from db_query.
-  if (isset($args[0]) and is_array($args[0])) { // 'All arguments in one array' syntax
-    $args = $args[0];
-  }
-  _db_query_callback($args, TRUE);
-  return preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $clause);
-}
