@@ -1695,10 +1695,10 @@ function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
       $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%m%%d')";
       break;
     case 'month':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%m%)";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%m')";
       break;
     case 'year':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%')";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y')";
       break;
   }
   $alias = $as = $sortinfo['table'] . '_' . $sortinfo['field'];
