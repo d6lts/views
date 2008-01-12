@@ -302,7 +302,7 @@ function views_access($view, $account = NULL) {
   }
 
   // All views with an empty access setting are available to all roles.
-  if (!$view->access) { 
+  if (!$view->access) {
     return TRUE;
   }
 
@@ -523,7 +523,7 @@ function views_build_view($type, &$view, $args = array(), $use_pager = false, $l
   if ($args == NULL) {
     $args = array();
   }
-  
+
   // if no filter values are passed in, get them from the $_GET array
   if ($filters == NULL) {
     $filters = views_get_filter_values();
@@ -832,47 +832,47 @@ function views_invalidate_cache() {
  */
 function _views_view_fields() {
   return array(
-    'vid' => '%d', 
-    'name' => "'%s'", 
-    'description' => "'%s'", 
-    'access' => "'%s'", 
-    'page' => '%d', 
-    'page_title' => "'%s'", 
-    'page_header' => "'%s'", 
-    'page_header_format' => '%d', 
-    'page_footer' => "'%s'", 
-    'page_footer_format' => '%d', 
-    'page_empty' => "'%s'", 
-    'page_empty_format' => '%d', 
-    'page_type' => "'%s'", 
-    'use_pager' => '%d', 
-    'nodes_per_page' => '%d', 
-    'url' => "'%s'", 
-    'menu' => '%d', 
-    'menu_tab' => '%d', 
-    'menu_tab_default' => '%d', 
-    'menu_tab_weight' => '%d', 
-    'menu_title' => "'%s'", 
+    'vid' => '%d',
+    'name' => "'%s'",
+    'description' => "'%s'",
+    'access' => "'%s'",
+    'page' => '%d',
+    'page_title' => "'%s'",
+    'page_header' => "'%s'",
+    'page_header_format' => '%d',
+    'page_footer' => "'%s'",
+    'page_footer_format' => '%d',
+    'page_empty' => "'%s'",
+    'page_empty_format' => '%d',
+    'page_type' => "'%s'",
+    'use_pager' => '%d',
+    'nodes_per_page' => '%d',
+    'url' => "'%s'",
+    'menu' => '%d',
+    'menu_tab' => '%d',
+    'menu_tab_default' => '%d',
+    'menu_tab_weight' => '%d',
+    'menu_title' => "'%s'",
     'menu_tab_default_parent_type' => "'%s'",
-    'menu_parent_title' => "'%s'", 
-    'menu_parent_tab_weight' => '%d', 
-    'block' => '%d', 
-    'block_title' => "'%s'", 
-    'block_use_page_header' => '%d', 
-    'block_header' => "'%s'", 
-    'block_header_format' => '%d', 
-    'block_use_page_footer' => '%d', 
-    'block_footer' => "'%s'", 
-    'block_footer_format' => '%d', 
-    'block_use_page_empty' => '%d', 
-    'block_empty' => "'%s'", 
-    'block_empty_format' => '%d', 
-    'block_type' => "'%s'", 
-    'nodes_per_block' => '%d', 
-    'block_more' => '%d', 
-    'breadcrumb_no_home' => '%d', 
-    'changed' => '%d', 
-    'view_args_php' => "'%s'", 
+    'menu_parent_title' => "'%s'",
+    'menu_parent_tab_weight' => '%d',
+    'block' => '%d',
+    'block_title' => "'%s'",
+    'block_use_page_header' => '%d',
+    'block_header' => "'%s'",
+    'block_header_format' => '%d',
+    'block_use_page_footer' => '%d',
+    'block_footer' => "'%s'",
+    'block_footer_format' => '%d',
+    'block_use_page_empty' => '%d',
+    'block_empty' => "'%s'",
+    'block_empty_format' => '%d',
+    'block_type' => "'%s'",
+    'nodes_per_block' => '%d',
+    'block_more' => '%d',
+    'breadcrumb_no_home' => '%d',
+    'changed' => '%d',
+    'view_args_php' => "'%s'",
     'is_cacheable' => '%d',
   );
 }
@@ -1314,7 +1314,7 @@ function views_filters($view) {
   $form['#action'] = url($view->real_url ? $view->real_url : $view->url, NULL, NULL, true);
   $form['view'] = array('#type' => 'value', '#value' => $view);
   $form['submit'] = array('#type' => 'button', '#name' => '', '#value' => t('Submit'));
-  
+
   // clean URL get forms breaks if we don't give it a 'q'.
   if (!(bool)variable_get('clean_url', '0')) {
     $form['q'] = array(
@@ -1386,7 +1386,7 @@ function _views_build_filters_form($view) {
     }
     $form["filter$count"] = $item;
   }
-  
+
   return $form;
 }
 
@@ -1678,6 +1678,7 @@ function views_handler_sort_date_options() {
 }
 
 function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
+  $timezone = _views_get_timezone();
   switch($sort['options']) {
     case 'normal':
     default:
@@ -1685,19 +1686,19 @@ function views_handler_sort_date($op, &$query, $sortinfo, $sort) {
       $field = $sortinfo['field'];
       break;
     case 'minute':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d%H%m')";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d%H%i')";
       break;
     case 'hour':
       $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d%H')";
       break;
     case 'day':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%%d')";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%m%%d')";
       break;
     case 'month':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%m%)";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%m%)";
       break;
     case 'year':
-      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]), '%Y%')";
+      $field = "DATE_FORMAT(FROM_UNIXTIME($sortinfo[table].$sortinfo[field]+$timezone), '%Y%')";
       break;
   }
   $alias = $as = $sortinfo['table'] . '_' . $sortinfo['field'];
@@ -1999,7 +2000,7 @@ function views_handler_filter_null($op, $filter, $filterinfo, &$query) {
       $operator = $filter['operator'];
       $query->add_where("$field $operator NULL");
       break;
-  }  
+  }
 }
 
 /**
