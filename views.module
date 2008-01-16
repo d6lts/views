@@ -248,6 +248,16 @@ function views_include($file) {
 }
 
 /**
+ * Prepare the specified string for use as a CSS identifier.
+ */
+function views_css_safe($string) {
+  return str_replace('_', '-', $string);
+}
+
+// -----------------------------------------------------------------------
+// Views handler functions
+
+/**
  * Load views files on behalf of modules.
  */
 function views_include_handlers() {
@@ -303,6 +313,29 @@ function views_fetch_data($table = NULL) {
 }
 
 /**
+ * Fetch a list of all base tables available
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
+ */
+function views_fetch_base_table_names() {
+  static $base_tables = array();
+  if (empty($base_tables)) {
+    $data = views_fetch_data();
+    foreach ($data as $table => $info) {
+      if (!empty($info['table']['base'])) {
+        $base_tables[$table] = $info['table']['base']['title'];
+      }
+    }
+  }
+
+  return $base_tables;
+}
+
+// -----------------------------------------------------------------------
+// Views plugin functions
+
+/**
  * Fetch the plugin data from cache.
  */
 function views_fetch_plugin_data($type = NULL, $plugin = NULL) {
@@ -321,18 +354,44 @@ function views_get_plugin($type, $plugin) {
 }
 
 /**
- * Prepare the specified string for use as a CSS identifier.
+ * Fetch a list of all base tables available
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
  */
-function views_css_safe($string) {
-  return str_replace('_', '-', $string);
+function views_fetch_plugin_names($type) {
+  static $plugins = array();
+  if (empty($plugins)) {
+    $data = views_fetch_plugin_data();
+
+    foreach ($data as $plugin_type => $plugs) {
+      // Skip some info data
+      if (!is_array($plugs)) {
+        continue;
+      }
+      foreach ($plugs as $id => $plugin) {
+        $plugins[$plugin_type][$id] = $plugin['title'];
+      }
+    }
+  }
+
+  if (!empty($plugins[$type])) {
+    return $plugins[$type];
+  }
+  // fall-through
+  return array();
 }
+
+// -----------------------------------------------------------------------
+// Views database functions
 
 /**
  * Get a view from the database or from default views.
  *
- * This function is just a static wrapper around views::load().
+ * This function is just a static wrapper around views::load(). This function
+ * isn't called 'views_load()' primarily because it might get a view
+ * from the default views which aren't technically loaded from the database.
  *
- * @todo LG: Shouldn't this be called views_load() to parallel node_load() et al?
  * @param $name
  *   The name of the view.
  * @param $reset
@@ -343,7 +402,13 @@ function views_css_safe($string) {
  */
 function &views_get_view($name, $reset = FALSE) {
   views_include('view');
-  return view::load($name, $reset);
+  $view = view::load($name, $reset);
+
+  if (empty($view)) {
+    $view = views_get_default_view($name);
+  }
+
+  return $view;
 }
 
 /**
@@ -353,15 +418,33 @@ function &views_get_view($name, $reset = FALSE) {
  * default_views hook if necessary.
  *
  * @param $view_name
- *  The name of the view to load.
- * @return A view object or NULL if it is not available.
+ *   The name of the view to load.
+ * @return
+ *   A view object or NULL if it is not available.
  */
 function &views_get_default_view($view_name) {
+  $null = NULL;
   $cache = views_discover_default_views();
 
   if (isset($cache[$view_name])) {
     return $cache[$view_name];
   }
+  return $null;
+}
+
+/**
+ * Create an empty view to work with.
+ *
+ * @return
+ *   A fully formed, empty $view object. This object must be populated before
+ *   it can be successfully saved.
+ */
+function views_new_view() {
+  views_include('view');
+  $view = new view();
+  $view->vid = 'new';
+
+  return $view;
 }
 
 /**
@@ -391,6 +474,7 @@ function views_discover_default_views() {
  *   array($view, $display_id),
  *   array($view, $display_id),
  * );
+ * @endcode
  */
 function views_get_page_views() {
   return views_get_applicable_views('uses_hook_menu');
@@ -408,6 +492,7 @@ function views_get_page_views() {
  *   array($view, $display_id),
  *   array($view, $display_id),
  * );
+ * @endcode
  */
 function views_get_block_views() {
   return views_get_applicable_views('uses_hook_block');
@@ -423,6 +508,7 @@ function views_get_block_views() {
  *   array($view, $display_id),
  *   array($view, $display_id),
  * );
+ * @endcode
  */
 function views_get_applicable_views($type) {
   $result = array();

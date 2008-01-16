@@ -496,11 +496,6 @@ class view extends views_db_object {
       }
     }
 
-    // If the view is not defined in the database, check the default_views hook.
-    if (is_null($cache[$arg]) && !is_numeric($arg)) {
-      $cache[$arg] = views_get_default_view($arg);
-    }
-
     return $cache[$arg];
   }
 
@@ -567,7 +562,8 @@ class view extends views_db_object {
    * A vid will be assigned to the view and also returned from this function.
    */
   function save() {
-    if (!empty($this->vid)) {
+    // If we have no vid or our vid is a string, this is a new view.
+    if (!empty($this->vid) || !is_numeric($this->vid)) {
       // remove existing table entries
       foreach ($this->objects_all() as $key) {
         db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
@@ -657,6 +653,7 @@ class views_db_object {
     }
 
     $schema = drupal_get_schema($this->db_table);
+
     // Go through our schema and build correlations.
     foreach ($schema['fields'] as $field => $info) {
       if ($info['type'] == 'serial') {
@@ -809,6 +806,48 @@ class views_db_object {
       $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . $this->_export_field($field) . ";\n";
     }
     return $output;
+  }
+
+  /**
+   * Add a new display handler to the view, automatically creating an id.
+   *
+   * @param $type
+   *   The plugin type from the views plugin data. Defaults to 'page'.
+   * @param $style
+   *   The style plugin from the views plugin data. Defaults to 'default'.
+   *
+   * @return
+   *   The key to the display in $view->display, so that the new display
+   *   can be easily located.
+   */
+  function add_display($type = 'page', $style = 'default') {
+    // Get all existing IDs so we can feel confident that we have a unique
+    // one for the new display.
+    foreach ($this->display as $d) {
+      $ids[$d->id] = TRUE;
+    }
+
+    $id = $type;
+    $count = 0;
+
+    // Loop through IDs based upon our style plugin name until
+    // we find one that is unused.
+    while (!empty($ids[$id])) {
+      $id = $type . '_' . ++$count;
+    }
+
+    // Create the new display object
+    $display = new views_display;
+    $display->display_plugin = $type;
+    $display->style_plugin = $style;
+    $display->id = $id;
+
+    // @todo Should the display plugin have some kind of constructor
+    // to fill in default values here? That seems very logical.
+
+    // Add the new display object to the view.
+    $this->display[] = $display;
+    return max(array_keys($this->display));
   }
 }
 

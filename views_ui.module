@@ -163,6 +163,72 @@ function views_ui_list_views() {
  * Page callback to add a new view.
  */
 function views_ui_add_page() {
-  $output = 'foo';
-  return $output;
+  $view = views_new_view();
+  return drupal_get_form('views_ui_add_form', $view);
+}
+
+/**
+ * Form constructor callback to create the views Add Form, phase 1.
+ */
+function views_ui_add_form(&$form_state, $view) {
+  $form = array();
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View name'),
+    '#description' => t('This is the unique name of the view. It must contain only alphanumeric characters and underscores; it is used to identify the view internally and to generate unique theming template names for this view. If overriding a module provided view, the name must not be changed or instead a new view will be created.'),
+    '#default_value' => $view->name,
+    '#required' => TRUE,
+  );
+
+  $form['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View description'),
+    '#description' => t('This description will appear on the Views administrative UI to tell you what the view is about.'),
+    '#default_value' => $view->description,
+  );
+
+  $form['tag'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View tag'),
+    '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
+    '#default_value' => $view->tag,
+    // TODO: This should be an autocomplete field.
+  );
+
+  $form['base_table'] = array(
+    '#type' => 'select',
+    '#title' => t('Base table'),
+    '#description' => t('The base table is the primary table for which information is being retrieved. The base table controls what arguments, fields, sort criteria and filters are available, so once this is set it cannot be changed.'),
+    '#options' => views_fetch_base_table_names(),
+    '#default_value' => $view->base_table,
+    '#disabled' => !empty($view->vid) && $view->vid != 'new',
+  );
+
+  if (empty($view->vid) || $view->vid == 'new') {
+    $form['displays'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Initial displays'),
+      '#description' => t('Select which displays you would like to have automatically created with this view.'),
+      '#options' => views_fetch_plugin_names('display'),
+      '#required' => TRUE,
+    );
+  }
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Next'),
+    '#submit' => array('views_ui_add_form_submit'),
+  );
+
+  $form_state['view'] = $view;
+  return $form;
+}
+
+/**
+ * Submit handler for the ui add form
+ */
+function views_ui_add_form_submit($form, &$form_state) {
+
+  views_include('cache');
+  views_object_cache_set('view', $view->name, $view);
 }
