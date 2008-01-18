@@ -3,6 +3,7 @@ function user_views_data() {
   $data['users']['table']['base'] = array(
     'field' => 'uid',
     'title' => t('User'),
+    'help' => t('The node type allows views of your site\'s users.'),
   );
 
   $data['users']['table']['join']['node']['handler'] = 'views_join';

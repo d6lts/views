@@ -324,7 +324,7 @@ function views_fetch_base_table_names() {
     $data = views_fetch_data();
     foreach ($data as $table => $info) {
       if (!empty($info['table']['base'])) {
-        $base_tables[$table] = $info['table']['base']['title'];
+        $base_tables[$table] = $info['table']['base']['title'] . '<br /><div class="description">' . $info['table']['base']['help'] . "</div>\n";
       }
     }
   }
