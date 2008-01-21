@@ -460,7 +460,7 @@ function views_handler_field_body($fieldinfo, $fielddata, $value, $data) {
   }
   // Allow modules to change $node->body before viewing.
   node_invoke_nodeapi($node, 'view', $teaser, TRUE);
-  
+
   // Set the proper node part, then unset unused $node part so that a bad
   // theme can not open a security hole.
   $content = drupal_render($node->content);
@@ -831,7 +831,7 @@ function views_post_view_make_url($view, $feed_id, $arg) {
       }
     }
   }
-  
+
   return views_get_url($view, $args);
 }
 
@@ -851,11 +851,11 @@ function views_post_view_make_args($view, $feed_id, $arg) {
         $args[] = $arg;
       }
       else if ($argdata['argdefault'] != 1) {
-        $args[] = '*';
+        $args[] = $argdata['wildcard'];
       }
     }
   }
-  
+
   return $args;
 }
 

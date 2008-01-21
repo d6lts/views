@@ -157,7 +157,7 @@ function theme_views_rss_feed($view, $nodes, $type) {
         $namespaces = array_merge($namespaces, $element['namespace']);
       }
     }
-    
+
     // Prepare the item description
     switch ($item_length) {
       case 'fulltext':
@@ -194,5 +194,5 @@ function theme_views_rss_feed($view, $nodes, $type) {
   drupal_set_header('Content-Type: text/xml; charset=utf-8');
   print $output;
   module_invoke_all('exit');
-  exit; 
+  exit;
 }
