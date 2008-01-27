@@ -214,7 +214,7 @@ function views_object_cache_get($obj, $name, $skip_cache = FALSE) {
   }
 
   if (!array_key_exists($key, $cache)) {
-    $data = db_fetch_object(db_query("SELECT * FROM {views_object_cache} WHERE sid = '%s' AND obj = '%s' AND name = %d", session_id(), $obj, $name));
+    $data = db_fetch_object(db_query("SELECT * FROM {views_object_cache} WHERE sid = '%s' AND obj = '%s' AND name = '%s'", session_id(), $obj, $name));
     if ($data) {
       $cache[$key] = unserialize($data->data);
     }
@@ -248,7 +248,7 @@ function views_object_cache_set($obj, $name, $cache) {
  *   The name of the view (or other object) being stored.
  */
 function views_object_cache_clear($obj, $name) {
-  db_query("DELETE FROM {views_object_cache} WHERE sid = '%s' AND obj = '%s' AND name = %d", session_id(), $obj, $name);
+  db_query("DELETE FROM {views_object_cache} WHERE sid = '%s' AND obj = '%s' AND name = '%s'", session_id(), $obj, $name);
 }
 
 /**

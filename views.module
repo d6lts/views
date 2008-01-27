@@ -248,6 +248,24 @@ function views_include($file) {
 }
 
 /**
+ * Include views .css files.
+ */
+function views_add_css($file) {
+  drupal_add_css(drupal_get_path('module', 'views') . "/css/$file.css");
+}
+
+/**
+ * Include views .js files.
+ */
+function views_add_js($file) {
+  static $base = TRUE;
+  if ($base) {
+    drupal_add_js(drupal_get_path('module', 'views') . "/js/base.js");
+  }
+  drupal_add_js(drupal_get_path('module', 'views') . "/js/$file.js");
+}
+
+/**
  * Prepare the specified string for use as a CSS identifier.
  */
 function views_css_safe($string) {

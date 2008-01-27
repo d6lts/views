@@ -75,6 +75,23 @@ function views_ui_perm() {
   return array('administer views');
 }
 
+function views_ui_theme() {
+  return array(
+    'views_ui_edit_view' => array(
+      'arguments' => array('form'),
+      'file' => '/includes/admin.inc',
+    ),
+    'views_tabset' => array(
+      'arguments' => array('tabs'),
+      'file' => '/includes/tabs.inc',
+    ),
+    'views_tab' => array(
+      'arguments' => array('body'),
+      'file' => '/includes/tabs.inc',
+    ),
+  );
+}
+
 /**
  * Specialized menu callback to load a view either out of the cache or just
  * load it.
@@ -83,6 +100,7 @@ function views_ui_cache_load($name) {
   views_include('cache');
   views_include('view');
   $view = views_object_cache_get('view', $name);
+
   if (empty($view)) {
     $view = views_get_view($name);
   }
