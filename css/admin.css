@@ -1,0 +1,97 @@
+/* $Id$ */
+
+.views-tabset .views-tab fieldset { 
+  margin-top: 0; 
+}
+
+.views-tabset .views-tabs ul {
+  list-style-type: none !important;
+  list-style-image: none !important;
+  border: 1px solid black;
+  margin: 0;
+  padding: 0;
+}
+
+.views-tabset .views-tabs ul li {
+  list-style-type: none;
+  list-style-image: none;
+  background: none;
+  margin-left: 0;
+}
+
+.views-tabset .views-tabs ul li.active {
+  background: #ccc;
+  margin-left: 0;
+}
+
+
+.views-tabset .views-tabs {
+  float: left;
+  width: 120px;
+}
+
+.views-tabset .extra {
+  text-align: center;
+}
+
+.views-tabset .extra input {
+  margin-top: 0;
+}
+
+.views-tabset .views-tab-area {
+  border: 1px solid black;
+  margin-left: 119px; /* 120 -1 causes borders to overlap */
+  min-height: 300px;
+  _height: 300px; /* stupid IE hack */
+}
+
+.views-tab-area .tab-section {
+  width: 33%;
+  padding: 0;
+  margin: 0;
+  float: left;
+  min-height: 300px;
+  _height: 300px;
+}
+
+.views-tab-area .tab-section .inside {
+  margin: 0;
+  padding: 2px 5px;
+}
+
+.views-tab-area .tab-section .links {
+  float: right;
+}
+
+.views-tab-area .tab-section .links a {
+  font-size: small;
+}
+
+.views-tab-area .middle {
+  width: 34%;
+  background-color: #ccc;
+}
+
+.views-tab-area dl {
+  margin: 0;
+}
+
+.views-basic-info {
+  border: 1px solid black;
+  padding: 2px 5px;
+  background-color: #eee;
+}
+
+.views-ajax-pad {
+  border: 1px solid black;
+  margin-top: 10px;
+  min-height: 200px;
+  _height: 200px; /* stupid IE */
+}
+
+.views-ajax-pad .message {
+  margin-top: 75px;
+  text-align: center;
+}
+
+
