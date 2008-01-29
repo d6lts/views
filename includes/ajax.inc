@@ -88,7 +88,7 @@ function views_ajax_form($form_id) {
   $output = theme('status_messages');
   $output .= drupal_render_form($form_id, $form);
   $title = empty($form['#title']) ? '' : $form['#title'];
-  $url = empty($form['#url']) ? $_GET['q'] : $form['#url'];
+  $url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
   views_ajax_render($output, $title, $url);
 }
 
