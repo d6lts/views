@@ -187,45 +187,11 @@ function views_ui_add_form_submit($form, &$form_state) {
 function views_ui_edit_page($view) {
   drupal_set_title(t('Edit view "%view"', array('%view' => $view->name)));
 
-  return drupal_get_form('views_ui_edit_view', $view);
+//  return drupal_get_form('views_ui_edit_view', $view);
+  return theme('views_ui_edit_view', $view);
 }
 
 function views_ui_edit_view(&$form_state, $view) {
-
-/*
-  $form['info'] = array(
-    '#prefix' => '<div class="clear-block">',
-    '#suffix' => '</div>',
-  );
-  $form['info']['base_table'] = array(
-    '#type' => 'markup',
-    '#value' => t('<b>View type:</b> @base', array('@base' => $base_table)),
-    '#size' => 20,
-  );
-
-  if (!empty($table['table']['base']['help'])) {
-    $form['info']['base_table_description'] = array(
-      '#type' => 'markup',
-      '#value' => '<div class="description">' . $table['table']['base']['help'] . '</div>',
-      '#size' => 20,
-    );
-  }
-
-  $form['info']['description'] = array(
-    '#type' => 'textfield',
-    '#title' => t('Description'),
-    '#description' => t('This description will appear on the Views administrative UI to tell you what the view is about.'),
-    '#default_value' => $view->description,
-  );
-
-  $form['info']['tag'] = array(
-    '#type' => 'textfield',
-    '#title' => t('View tag'),
-    '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
-    '#default_value' => $view->tag,
-    // TODO: This should be an autocomplete field.
-  );
-*/
 
   $form['display']['display'] = array(
     '#type' => 'select',
@@ -258,9 +224,47 @@ function views_ui_edit_view(&$form_state, $view) {
     );
   }
 
-  // The form_state isn't available
-  $form['#view'] = $view;
+  $form_state['view'] = $view;
   return $form;
+}
+
+/**
+ * Form to add a display to a view.
+ */
+function views_ui_add_display_form(&$form_state, $view) {
+  $form['js'] = array(
+    '#type' => 'hidden',
+    '#value' => FALSE,
+  );
+
+  $form['display']['display'] = array(
+    '#type' => 'select',
+    '#options' => views_fetch_plugin_names('display'),
+  );
+
+  $form['display']['add_display'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add display'),
+    '#submit' => array('views_ui_add_display_form_submit'),
+  );
+
+  $form['#id'] = 'views-add-display-form';
+  $form['#attributes'] = array('class' => 'views-ajax-form');
+  drupal_add_js(array('views' => array('forms' => array('views-add-display-form' => url('admin/build/views/add-display/' . $view->name, array('absolute' => true))))), 'setting');
+
+  $form_state['view'] = $view;
+  return $form;
+}
+
+/**
+ * Submit handler to add a display to a view.
+ */
+function views_ui_add_display_form_submit($form, &$form_state) {
+  dsm('form submitted');
+  $plugin = $form_state['values']['display'];
+  $form_state['id'] = $form_state['view']->add_display($plugin);
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = array($_GET['q'], array('fragment' => 'views-tab-' . $form_state['id']));
 }
 
 /**
@@ -269,9 +273,10 @@ function views_ui_edit_view(&$form_state, $view) {
  * Since this form is more of a summary than a form, there's a lot more work
  * here than you might find in most forms.
  */
-function theme_views_ui_edit_view($form) {
+function theme_views_ui_edit_view($view) {
+  // Do this first so the form will get processed right away if necessary:
+  $display_button = drupal_get_form('views_ui_add_display_form', $view);
   $output = '';
-  $view = $form['#view'];
 
   if (!empty($view->changed)) {
     if (!is_numeric($view->vid)) {
@@ -288,61 +293,209 @@ function theme_views_ui_edit_view($form) {
     $table['table']['base']['title'] : t('Unknown or missing table name');
 
   $output .= '<div class="views-basic-info">';
-  $output .= t('View <b>@name</b>, displaying items of type <b>@base</b>.',
-    array('@name' => $view->name, '@base' => $base_table));
+  $link = l($view->name, "admin/build/views/details/$view->name/nojs", array('attributes' => array('class' => 'views-ajax-link')));
+  $output .= t('View !name, displaying items of type <b>@base</b>.',
+    array('!name' => $link, '@base' => $base_table));
   $output .= '</div>';
   views_include('tabs');
   $tabs = new views_tabset;
 
   foreach ($view->display as $display) {
-    $plugin = views_fetch_plugin_data('display', $display->display_plugin);
-    if (empty($plugin)) {
-      $output .= t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin));
-      continue;
-    }
-    // TODO: We probably need this settable on the display object itself.
-    $title = $plugin['title'];
-
+    list($title, $body) = views_ui_print_display($view, $display);
     // The first display is the default.
     if (empty($default_display)) {
       $title .= t(' (Default)');
       $default_display = TRUE;
     }
-
-    $left = $middle = $right = '';
-
-    $left = t('Basic display info goes here (TBD)');
-
-    $middle = '<dl>';
-    $middle .= views_ui_add_info('relationship', $view);
-    $middle .= views_ui_add_info('argument', $view);
-    $middle .= views_ui_add_info('filter', $view);
-    $middle .= '</dl>';
-
-    $right = '<dl>';
-    $right .= views_ui_add_info('field', $view);
-    $right .= views_ui_add_info('sort', $view);
-    $right .= '</dl>';
-
-    $body = '<div class="left tab-section"><div class="inside">' . $left . '</div></div>';
-    $body .= '<div class="middle tab-section"><div class="inside">' . $middle . '</div></div>';
-    $body .= '<div class="right tab-section"><div class="inside">' . $right . '</div></div>';
     $tabs->set($display->id, $title, $body);
   }
 
   // This is the area that will render beneath the links
-  $tabs->add_extra(drupal_render($form['display']));
+  $tabs->add_extra($display_button);
+
   $output .= $tabs->render();
 
-  $output .= '<div class="views-ajax-pad">';
-  $output .= '<div class="message">' . t("Click on an item to edit that item's details.") . '</div>';
+  $message = '<div class="message">' . t("Click on an item to edit that item's details.") . '</div>';
+  $output .= '<div id="views-ajax-title">&nbsp;</div>';
+  $output .= '<div id="views-ajax-pad">';
+  $output .= $message;
   $output .= '</div>';
 
   // Render any of the form that is extra.
-  $output .= drupal_render($form);
+//  $output .= drupal_render($form);
 
   views_add_css('admin');
+  views_add_js('ajax');
+  drupal_add_js('misc/jquery.form.js');
+
+  $settings = array('views' => array('ajax' => array(
+    'id' => '#views-ajax-pad',
+    'title' => '#views-ajax-title',
+    'defaultForm' => $message,
+  )));
+  drupal_add_js($settings, 'setting');
+
   return $output;
+}
+
+function views_ui_print_display($view, $display) {
+  $plugin = views_fetch_plugin_data('display', $display->display_plugin);
+  if (empty($plugin)) {
+    return array(t('Invalid'), t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
+  }
+  // TODO: We probably need this settable on the display object itself.
+  $title = $plugin['title'];
+
+
+  $left = $middle = $right = '';
+
+  $left = t('Basic display info goes here ') . $title;
+
+  $middle = '<dl>';
+  $middle .= views_ui_add_info('relationship', $view);
+  $middle .= views_ui_add_info('argument', $view);
+  $middle .= views_ui_add_info('filter', $view);
+  $middle .= '</dl>';
+
+  $right = '<dl>';
+  $right .= views_ui_add_info('field', $view);
+  $right .= views_ui_add_info('sort', $view);
+  $right .= '</dl>';
+
+  $body = '<div class="left tab-section"><div class="inside">' . $left . '</div></div>';
+  $body .= '<div class="middle tab-section"><div class="inside">' . $middle . '</div></div>';
+  $body .= '<div class="right tab-section"><div class="inside">' . $right . '</div></div>';
+
+  return array($title, $body);
+}
+
+function views_ui_regenerate_tabs() {
+  $object = new stdClass;
+  $object->replace = array('#a' => 'b');
+  views_ajax_render($object);
+}
+
+/**
+ * Provide standard buttons for the forms to make it easy. Also provide
+ * a hidden op operator because the forms plugin doesn't seem to properly
+ * provide which button was clicked.
+ */
+function views_ui_standard_form_buttons(&$form, $form_id) {
+  $form['buttons'] = array(
+    '#prefix' => '<div class="form-buttons">',
+    '#suffix' => '</div>',
+  );
+  $form['buttons']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Accept'),
+    '#submit' => array($form_id . '_submit'),
+  );
+  $form['buttons']['cancel'] = array(
+    '#type' => 'submit',
+    '#value' => t('Cancel'),
+    '#submit' => array($form_id . '_cancel'),
+  );
+}
+
+// --------------------------------------------------------------------------
+// Various subforms for editing the pieces of a view.
+
+/**
+ * Page callback to edit details of a view.
+ */
+function views_ui_edit_details($view, $js) {
+  if ($js == 'nojs') {
+    return drupal_get_form('views_ui_edit_details_form', $view);
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_edit_details_form', $view);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs();
+  }
+}
+
+/**
+ * Form constructor callback to edit details of a view
+ */
+function views_ui_edit_details_form(&$form_state, $view) {
+  $form['description'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View description'),
+    '#description' => t('This description will appear on the Views administrative UI to tell you what the view is about.'),
+    '#default_value' => $view->description,
+  );
+
+  $form['tag'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View tag'),
+    '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
+    '#default_value' => $view->tag,
+    // TODO: This should be an autocomplete field.
+  );
+
+  $form_state['view'] = $view;
+  views_ui_standard_form_buttons($form, 'views_ui_edit_details_form');
+  return $form;
+}
+
+/**
+ * Submit handler for views_ui_edit_details_form
+ */
+function views_ui_edit_details_form_submit($form, &$form_state) {
+  $form_state['view']->description = $form_state['values']['description'];
+  $form_state['view']->tag = $form_state['values']['tag'];
+  views_ui_cache_set($form_state['view']);
+  if (empty($form_state['ajax'])) {
+    drupal_set_message(t('Your changes have been saved.'));
+    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  }
+}
+
+/**
+ * AJAX callback to add a display.
+ */
+function views_ui_add_display($view) {
+  views_include('ajax');
+  $form_state = views_ajax_form('views_ui_add_display_form', $view);
+  $view = $form_state['view'];
+  $id = $form_state['id'];
+
+  list($title, $body) = views_ui_print_display($view, $view->display[$id]);
+
+//  $body = '<div id="views-tab-' . $id . '" class="views-tab">' . $body . "</div>\n";
+  $output = new stdClass;
+  $output->tab = array('#views-tab-' . $id => array('title' => $title, 'body' => $body));
+
+  views_ajax_render($output);
+}
+
+/**
+ * Page callback to rearrange a section.
+ */
+function views_ui_rearrange_section($view, $js, $section, $display_id) {
+  if ($js == 'nojs') {
+    return drupal_get_form('views_ui_rearrange_form', $view, $section, $display_id);
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_rearrange_form', t('Rearrange @section', array('@section' => $section)), $_GET['q'], $view, $section, $display_id);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs();
+  }
+}
+
+function views_ui_rearrange_form($view, $section, $display_id) {
+  $form['#title'] = t('Rearrange @section', array('@section' => $section));
+
+  $form['markup'] = array('#value' => '<p>' . t('rearrange form here') . '</p>');
+
+  views_ui_standard_form_buttons($form, 'views_ui_rearrange_form');
+  return $form;
+}
+
+function views_ui_rearrange_form_submit($form, &$form_state) {
+  dsm('submitted');
 }
 
 function views_ui_add_info($type, $view) {
@@ -362,7 +515,7 @@ function views_ui_add_info($type, $view) {
     $output = '<p>' . t('None defined.') . '</p>';
   }
 
-  $links = "<div class=\"links\">" . l(t('Add'), '') . " · " . l(t('Rearrange'), '') . '</div>';
+  $links = "<div class=\"links\">" . l(t('Add'), '') . " · " . l(t('Rearrange'), "admin/build/views/rearrange/$view->name/nojs/$type/display_id", array('attributes' => array('class' => 'views-ajax-link'))) . '</div>';
 
   return $links . '<dt>' . ucwords($type) . '</dt><dd>' . $output . '</dd>';
 }

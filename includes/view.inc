@@ -846,8 +846,8 @@ class views_db_object {
     // to fill in default values here? That seems very logical.
 
     // Add the new display object to the view.
-    $this->display[] = $display;
-    return max(array_keys($this->display));
+    $this->display[$id] = $display;
+    return $id;
   }
 }
 

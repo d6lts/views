@@ -17,6 +17,8 @@ function views_ui_menu() {
     'file' => 'includes/admin.inc',
   );
 
+  $callback = $base + array('type' => MENU_CALLBACK);
+
   $items['admin/build/views'] = $base + array(
     'title' => t('Views'),
     'page callback' => 'views_ui_list_views',
@@ -34,11 +36,10 @@ function views_ui_menu() {
     'page callback' => 'views_ui_add_page',
     'type' => MENU_LOCAL_TASK
   );
-  $items['admin/build/views/edit/%views_ui_cache'] = $base + array(
+  $items['admin/build/views/edit/%views_ui_cache'] = $callback + array(
     'title' => t('Edit'),
     'page callback' => 'views_ui_edit_page',
     'page arguments' => array(4),
-    'type' => MENU_CALLBACK
   );
   $items['admin/build/views/import'] = $base + array(
     'title' => t('Import'),
@@ -51,19 +52,30 @@ function views_ui_menu() {
     'callback arguments' => array('views_ui_admin_tools'),
     'type' => MENU_LOCAL_TASK
   );
-  $items['admin/build/views/delete'] = $base + array(
+  $items['admin/build/views/delete'] = $callback + array(
     'title' => t('Edit view'),
     'page callback' => 'drupal_get_form',
     'callback arguments' => array('views_ui_admin_delete_confirm'),
-    'type' => MENU_CALLBACK
   );
-  $items['admin/build/views/enable'] = $base + array(
+  $items['admin/build/views/enable'] = $callback + array(
     'page callback' => 'views_ui_admin_enable_page',
-    'type' => MENU_CALLBACK
   );
-  $items['admin/build/views/disable'] = $base + array(
+  $items['admin/build/views/disable'] = $callback + array(
     'page callback' => 'views_ui_admin_disable_page',
-    'type' => MENU_CALLBACK
+  );
+
+  // lots of little edit form pieces.
+  $items['admin/build/views/details/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_edit_details',
+    'page arguments' => array(4),
+  );
+  $items['admin/build/views/add-display/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_add_display',
+    'page arguments' => array(4),
+  );
+  $items['admin/build/views/rearrange/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_rearrange_section',
+    'page arguments' => array(4),
   );
   return $items;
 }

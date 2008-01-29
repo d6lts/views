@@ -1,5 +1,10 @@
+// $Id$
+
 /**
+ * @file tabs.js
  * jQuery UI Tabs (Tabs 3)
+ * 
+ * This is nothing more than the pure jquery UI tabs implementation.
  */
 (function($) {
  

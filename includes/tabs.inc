@@ -3,20 +3,20 @@
 class views_tabset {
   var $tabs = array();
   var $extra = '';
+  var $selected = NULL;
 
   function add($name, $title = '', $body = '') {
     if (is_object($name) && is_subclass_of($name, 'views_tab')) {
       $this->add_tab($name);
     }
-
-    if (is_array($name)) {
+    elseif (is_array($name)) {
       foreach ($name as $real_tab) {
         $this->add($real_tab);
       }
-      return;
     }
-
-    $this->add_tab(new views_tab($name, $title, $body));
+    else {
+      $this->add_tab(new views_tab($name, $title, $body));
+    }
   }
 
   function add_tab($tab) {
@@ -53,10 +53,21 @@ class views_tabset {
     }
   }
 
+  function set_selected($name) {
+    $this->selected = $name;
+  }
+
   function render() {
     views_add_js('tabs');
     views_add_css('tabs');
-    return theme('views_tabset', $this->tabs, $this->extra);
+
+    if (empty($this->selected)) {
+      $keys = array_keys($this->tabs);
+      $this->selected = array_shift($keys);
+    }
+
+    drupal_alter('views_tabset', $this);
+    return theme('views_tabset', $this->tabs, $this->extra, $this->selected);
   }
 }
 
@@ -76,14 +87,13 @@ class views_tab {
   }
 }
 
-function theme_views_tabset($tabs, $extra = NULL) {
-  $link_output = "<div class=\"views-tabs\"><ul>\n";
+function theme_views_tabset($tabs, $extra = NULL, $selected = NULL) {
+  $link_output = "<div class=\"views-tabs\"><ul id=\"views-tabset\">\n";
   $tab_output = "<div class=\"views-tab-area\">\n";
-  $active_tab = 0;
-  foreach ($tabs as $tab) {
-    $link_output .= '<li' . (!$active_tab ? ' class="active"': '') . '><a href="#views-tab-' . $tab->name . '">' . $tab->title . '</a></li>' . "\n";
+
+  foreach ($tabs as $name => $tab) {
+    $link_output .= '<li' . ($name == $selected ? ' class="active"': '') . '><a href="#views-tab-' . $tab->name . '">' . $tab->title . '</a></li>' . "\n";
     $tab_output .= '<div id="views-tab-' . $tab->name . '" class="views-tab">' . $tab->render() . "</div>\n";
-    $active_tab = 1;
   }
   $link_output .= "</ul>\n";
 
