@@ -92,7 +92,7 @@ function theme_views_tabset($tabs, $extra = NULL, $selected = NULL) {
   $tab_output = "<div class=\"views-tab-area\">\n";
 
   foreach ($tabs as $name => $tab) {
-    $link_output .= '<li' . ($name == $selected ? ' class="active"': '') . '><a href="#views-tab-' . $tab->name . '">' . $tab->title . '</a></li>' . "\n";
+    $link_output .= '<li' . ($name == $selected ? ' class="active"': '') . '><a href="#views-tab-' . $tab->name . '" id="views-tab-title-' . $tab->name . '">' . check_plain($tab->title) . '</a></li>' . "\n";
     $tab_output .= '<div id="views-tab-' . $tab->name . '" class="views-tab">' . $tab->render() . "</div>\n";
   }
   $link_output .= "</ul>\n";
@@ -108,16 +108,4 @@ function theme_views_tabset($tabs, $extra = NULL, $selected = NULL) {
 
 function theme_views_tab($body) {
   return $body;
-}
-
-function views_tabs_fieldsets($fieldsets = "") {
-  $tabset = new views_tabset;
-  foreach ($fieldsets as $fieldset) {
-    $title = $fieldset['#title'];
-    unset($fieldset['#title']);
-    $body = drupal_render($fieldset);
-    $name = preg_replace('/[^a-zA-Z0-9_]/', '_', $title);
-    $tabset->add(new views_tab($name, $title, $body));
-  }
-  return $tabset->render();
 }

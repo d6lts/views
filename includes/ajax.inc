@@ -6,7 +6,7 @@
  *
  * Handles the server side AJAX interactions of Views.
  *
- * @defgroup ajax
+ * @defgroup ajax Views ajax library
  * @{
  */
 

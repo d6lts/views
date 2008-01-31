@@ -178,7 +178,9 @@ function views_access($view, $account = NULL) {
     if (!$view) {
       return FALSE;
     }
-    $view->set_display($display_id);
+    if (!$view->init_display($display_id)) {
+      return FALSE;
+    }
   }
 
   if (is_string($view)) {
@@ -388,7 +390,9 @@ function views_fetch_plugin_names($type) {
         continue;
       }
       foreach ($plugs as $id => $plugin) {
-        $plugins[$plugin_type][$id] = $plugin['title'];
+        if (empty($plugin['no ui'])) {
+          $plugins[$plugin_type][$id] = $plugin['title'];
+        }
       }
     }
   }
@@ -461,6 +465,7 @@ function views_new_view() {
   views_include('view');
   $view = new view();
   $view->vid = 'new';
+  $view->add_display('default');
 
   return $view;
 }
@@ -544,8 +549,9 @@ function views_get_applicable_views($type) {
         // This view uses hook menu. Clone it so that different handlers
         // don't trip over each other, and add it to the list.
         $v = drupal_clone($view);
-        $v->set_display($display->id);
-        $result[] = array($v, $display->id);
+        if ($v->init_display($display->id)) {
+          $result[] = array($v, $display->id);
+        }
       }
     }
   }

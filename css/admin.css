@@ -38,41 +38,66 @@
   margin-top: 0;
 }
 
-.views-tabset .views-tab-area {
+.views-tabset .views-display {
   border: 1px solid black;
   margin-left: 119px; /* 120 -1 causes borders to overlap */
   min-height: 300px;
   _height: 300px; /* stupid IE hack */
 }
+.views-tabset .views-display-deleted {
+  background-color: #eee;
+}
 
-.views-tab-area .tab-section {
+.views-tabset .views-display .top {
+  padding: 2px 5px;
+  border-left: 1px solid black;
+  border-right: 1px solid black;
+  border-bottom: 2px solid black;
+}
+
+.views-tabset .views-display .top .display-description {
+  margin-left: 1em;
+  font-style: italic;
+  overflow: hide;
+  white-space: nowrap;
+}
+
+.views-display .tab-section {
   width: 33%;
   padding: 0;
   margin: 0;
   float: left;
-  min-height: 300px;
-  _height: 300px;
+  min-height: 273px;
+  _height: 274px;
 }
 
-.views-tab-area .tab-section .inside {
+.views-display .tab-section .inside {
   margin: 0;
   padding: 2px 5px;
 }
 
-.views-tab-area .tab-section .links {
+.views-display .tab-section .links {
   float: right;
 }
 
-.views-tab-area .tab-section .links a {
+.views-display .tab-section .links a {
   font-size: small;
 }
 
-.views-tab-area .middle {
+.views-display .form-submit {
+  margin: 0;
+}
+
+.views-display #views-add-display-form {
+  float: right;
+}
+
+.views-display .middle {
   width: 34%;
   background-color: #ccc;
 }
 
-.views-tab-area dl {
+.views-display dl {
   margin: 0;
 }
 
@@ -99,3 +124,10 @@
   float: right;
 }
 
+#views-ajax-pad {
+  display: none;
+}
+
+html.js #views-ajax-pad {
+  display: block;
+}

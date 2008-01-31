@@ -128,7 +128,8 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
   $('form.views-ajax-form:not(.views-processed)').addClass('views-processed').submit(function() {
     // Translate the href on the link to the ajax href. That way this degrades
     // into a nice, normal link.
-    var url = Drupal.settings.views.forms[$(this).attr('id')];
+    var url = $(this).attr('action');
+    url = url.replace('nojs', 'ajax');
 
     $(this).ajaxSubmit({
       url: url,

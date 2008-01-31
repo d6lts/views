@@ -65,17 +65,26 @@ function views_ui_menu() {
   );
 
   // lots of little edit form pieces.
-  $items['admin/build/views/details/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_details',
-    'page arguments' => array(4),
+    'page arguments' => array(3, 5),
   );
-  $items['admin/build/views/add-display/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/%views_ui_js/add-display/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_add_display',
-    'page arguments' => array(4),
+    'page arguments' => array(3, 5),
   );
-  $items['admin/build/views/rearrange/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/%views_ui_js/remove-display/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_remove_display',
+    'page arguments' => array(3, 5),
+  );
+  $items['admin/build/views/%views_ui_js/rearrange/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_rearrange_section',
-    'page arguments' => array(4),
+    'page arguments' => array(3, 5),
+  );
+  // display specific parameters
+  $items['admin/build/views/%views_ui_js/display/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_edit_display',
+    'page arguments' => array(3, 5),
   );
   return $items;
 }
@@ -124,6 +133,16 @@ function views_ui_cache_load($name) {
   else {
     return $view;
   }
+}
+
+/**
+ * Check to see if the incoming menu item is js capable or not.
+ */
+function views_ui_js_load($js) {
+  if ($js == 'ajax') {
+    return TRUE;
+  }
+  return 0;
 }
 
 /**

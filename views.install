@@ -82,19 +82,26 @@ function views_schema() {
         'description' => t('The view this display is attached to.'),
         'no export' => TRUE,
       ),
-      'display_plugin' => array(
-        'type' => 'varchar',
-        'length' => '64',
-        'default' => '',
-        'not null' => TRUE,
-        'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
-      ),
       'id' => array(
         'type' => 'varchar',
         'length' => '64',
         'default' => '',
         'not null' => TRUE,
         'description' => t('An identifier for this display; usually generated from the display_plugin, so should be something like page or page_1 or block_2, etc.'),
+      ),
+      'display_title' => array(
+        'type' => 'varchar',
+        'length' => '64',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => t('The title of the display, viewable by the administrator.'),
+      ),
+      'display_plugin' => array(
+        'type' => 'varchar',
+        'length' => '64',
+        'default' => '',
+        'not null' => TRUE,
+        'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
       ),
       'access' => array(
         'type' => 'varchar',
@@ -115,7 +122,7 @@ function views_schema() {
         'length' => '255',
         'default' => '',
         'not null' => TRUE,
-        'description' => t('The title to use for this display.'),
+        'description' => t('The title of the view use for this display.'),
       ),
       'header' => array(
         'type' => 'blob',

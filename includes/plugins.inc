@@ -13,23 +13,32 @@ function views_views_plugins() {
   return array(
     'module' => 'views', // This just tells our themes are elsewhere.
     'display' => array(
+      'default' => array(
+        'title' => t('Defaults'),
+        'help' => t('Default settings for this view.'),
+        'handler' => 'views_display_plugin_default',
+        'no ui' => TRUE,
+        'no remove' => TRUE,
+      ),
       'page' => array(
         'title' => t('Page'),
-        'help' => t('Creates a page with a URL, menu links, etc.'),
+        'help' => t('Display the view as a page, with a URL and menu links.'),
         'handler' => 'views_display_plugin_page',
         'uses_hook_menu' => TRUE,
       ),
       'block' => array(
         'title' => t('Block'),
-        'help' => t('Creates a block that can be used from the block administration page.'),
+        'help' => t('Display the view as a block.'),
         'handler' => 'views_display_plugin_block',
         'uses_hook_block' => TRUE,
       ),
+/*
       'embed' => array(
         'title' => t('Embedded'),
         'help' => t('Creates a view that is used from other code. By itself an embedded view does not do anything.'),
         'handler' => 'views_display_plugin',
       ),
+*/
     ),
     'style' => array(
       'default' => array(
@@ -132,10 +141,6 @@ function views_discover_plugins() {
 /**
  * The default display plugin handler. Display plugins handle options and
  * basic mechanisms for different output methods.
- *
- * -- hook_menu
- * -- hook_menu
- * -- render_page
  */
 class views_display_plugin extends views_object {
   var $uses_hook_block = FALSE;
@@ -169,9 +174,39 @@ class views_display_plugin extends views_object {
   }
 
   /**
+   * Because forms may be split up into sections, this provides
+   * an easy URL to exactly the right section. Don't override this.
+   */
+  function option_link($text, $section) {
+    return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link')));
+  }
+
+  /**
+   * Provide the default summary for options in the views UI.
+   * The summary is part of a <dl> set, so be sure to put
+   * everything in <dt>/<dd> blocks.
+   */
+  function options_summary() {
+    $output = '';
+    $output .= '<dt>' . t('Admin title: !title', array('!title' => $this->option_link($this->display->display_title, 'display_title'))) . '</dt>';
+    return $output;
+  }
+
+  /**
    * Provide the default form for setting options.
    */
-  function options_form(&$form) { }
+  function options_form(&$form, &$form_state) {
+    switch ($form_state['section']) {
+      case 'display_title':
+        $form['display_title'] = array(
+          '#type' => 'textfield',
+          '#title' => t('Display title'),
+          '#description' => t('This title will appear only in the administrative interface for the View.'),
+          '#default_value' => $this->display->display_title,
+        );
+        break;
+    }
+  }
 
   /**
    * Validate the options form.
@@ -182,7 +217,13 @@ class views_display_plugin extends views_object {
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
-  function options_submit($form, &$form_state) { }
+  function options_submit($form, &$form_state) {
+    switch ($form_state['section']) {
+      case 'display_title':
+        $this->display->display_title = $form_state['values']['display_title'];
+        break;
+    }
+  }
 
   /**
    * Not all display plugins will support filtering
@@ -263,6 +304,44 @@ class views_display_plugin extends views_object {
 }
 
 /**
+ * A plugin to handle defaults on a view.
+ */
+class views_display_plugin_default extends views_display_plugin {
+  /**
+   * The default execute handler fully renders the view.
+   *
+   * For the simplest use:
+   * @code
+   *   $output = $view->execute_display('default', $args);
+   * @endcode
+   *
+   * For more complex usages, a view can be partially built:
+   * @code
+   *   $view->set_arguments($args);
+   *   $view->build('default'); // Build the query
+   *   $view->execute(); // Run the query
+   *   $output = $view->render(); // Render the view
+   * @endcode
+   *
+   * If short circuited at any point, look in $view->build_info for
+   * information about the query. After execute, look in $view->result
+   * for the object returned from db_query.
+   *
+   * You can also do:
+   * @code
+   *   $view->set_arguments($args);
+   *   $output = $view->render('default'); // Render the view
+   * @endcode
+   *
+   * This illustrates that render is smart enough to call build and execute
+   * if these items have not already been accomplished.
+   */
+  function execute() {
+    return $this->view->render();
+  }
+}
+
+/**
  * The plugin that handles a full page.
  */
 class views_display_plugin_page extends views_display_plugin {
@@ -329,7 +408,6 @@ class views_display_plugin_block extends views_display_plugin {
    * The display block handler returns the structure necessary for a block.
    */
   function execute() {
-    drupal_set_page_view($this);
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $info['content'] = $this->view->render();

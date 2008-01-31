@@ -53,10 +53,11 @@ class view extends views_db_object {
 
   /**
    * Returns the complete list of dependent objects in a view, including
-   * the display which is often special.
+   * the display which is often special and needs to be handled in a less
+   * generic manner.
    *
-   * @todo LG: special how?  This needs to be doc'ed more.
-   * @todo Convert all references to this method to be static, not dynamic.
+   * Note: In PHP5 this should be static, but PHP4 doesn't support static
+   * methods.
    */
   function objects_all() {
     return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
@@ -122,51 +123,42 @@ class view extends views_db_object {
   }
 
   /**
-   * Set the display for this view, and initialize the display handler.
-   *
-   * @todo Determine if this is meant to be called only once, and if so, document that.
+   * Set the display for this view and initialize the display handler.
    */
-  function set_display($display_id = NULL) {
+  function init_display($display_id = 'default') {
     // The default display is always the first one in the list.
     if (isset($this->current_display)) {
       return TRUE;
     }
 
-    $this->default_display = 0;
-    if (!isset($display_id)) {
-      $this->current_display = 0;
-    }
-
-    foreach ($this->display as $id => $display) {
-      if ($display->id == $display_id) {
-        $this->current_display = $id;
+    if (empty($this->display[$display_id])) {
+      $display_id = 'default';
+      if (empty($this->display[$display_id])) {
+        // @todo: Log an error here?
+        return FALSE;
       }
     }
 
-    // If the id was invalid, then just use the default display.
-    if (!isset($this->current_display)) {
-      $this->current_display = 0;
-    }
-
-    if (!isset($this->display[$this->current_display])) {
-      return FALSE;
-    }
+    $this->current_display = $display_id;
 
     // Fetch the display handler data and instantiate an object.
-    $display_data = $this->display[$this->current_display];
-    $this->display_handler = views_get_plugin('display', $display_data->display_plugin);
-    if (empty($this->display_handler)) {
+    $display = &$this->display[$this->current_display];
+    $display->handler = views_get_plugin('display', $display->display_plugin);
+    if (empty($display->handler)) {
       return FALSE;
     }
 
     // init the new display handler with data.
-    $this->display_handler->init($this, $display_data);
+    $display->handler->init($this, $display);
 
     // If this is NOT the default display handler, let it know which is
     // since it may well utilize some data from the default.
-    if ($this->current_display != $this->default_display) {
-      $this->display_handler->default_display = $this->display[$this->default_display];
+    if ($this->current_display != 'default') {
+      $display->handler->default_display = $this->display['default'];
     }
+
+    // Set a shortcut
+    $this->display_handler = &$display->handler;
 
     return TRUE;
   }
@@ -200,7 +192,7 @@ class view extends views_db_object {
       return;
     }
 
-    if (!$this->set_display($display_id)) {
+    if (!$this->init_display($display_id)) {
       return FALSE;
     }
 
@@ -245,7 +237,6 @@ class view extends views_db_object {
     $argument_title = '';
     // build arguments.
     foreach ($this->argument as $id => $arg) {
-      unset ($argument);  // @todo: LG: Is this necessary, or is this because of the non-bug with reference reassignment?
       $argument = &$this->argument[$id];
 
       if (!is_object($argument->handler)) {
@@ -400,12 +391,12 @@ class view extends views_db_object {
   function execute_display($display_id = NULL, $args = array()) {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
-    $this->set_display($display_id);
+    if (!$this->init_display($display_id)) {
+      return FALSE;
+    }
 
     // Execute the view
-    if (isset($this->display_handler)) {
-      return $this->display_handler->execute();
-    }
+    return $this->display_handler->execute();
   }
 
   /**
@@ -414,7 +405,11 @@ class view extends views_db_object {
    */
   function execute_hook_menu($display_id = NULL) {
     // Prepare the view with the information we have.
-    $this->set_display($display_id);  // Wasn't this just done already in the menu hook in views_get_page_views()?
+
+    // This was probably already called, but it's good to be safe.
+    if (!$this->init_display($display_id)) {
+      return FALSE;
+    }
 
     // Execute the view
     if (isset($this->display_handler)) {
@@ -427,7 +422,7 @@ class view extends views_db_object {
    * this sets the display handler if it hasn't been.
    */
   function access($account) {
-    if (empty($this->display_handler) && !$this->set_display()) {
+    if (empty($this->display_handler) && !$this->init_display()) {
       return FALSE;
     }
 
@@ -537,7 +532,19 @@ class view extends views_db_object {
       while ($data = db_fetch_object($result)) {
         $object = new $object_name(FALSE);
         $object->load_row($data);
-        array_push($views[$object->vid]->$key, $object);
+
+        // Because it can get complicated with this much indirection,
+        // make a shortcut reference.
+        $location = &$views[$object->vid]->$key;
+
+        // If we have a basic id field, load the item onto the view based on
+        // this ID, otherwise push it on.
+        if (!empty($object->id)) {
+          $location[$data->id] = $object;
+        }
+        else {
+          $location[] = $object;
+        }
       }
     }
     return $views;
@@ -821,23 +828,30 @@ class views_db_object {
    *   can be easily located.
    */
   function add_display($type = 'page', $style = 'default') {
-    // Get all existing IDs so we can feel confident that we have a unique
-    // one for the new display.
-    foreach ($this->display as $d) {
-      $ids[$d->id] = TRUE;
+    if (empty($type)) {
+      return FALSE;
+    }
+
+    $plugin = views_fetch_plugin_data('display', $type);
+    if (empty($plugin)) {
+      return FALSE;
     }
 
     $id = $type;
+    $title = $plugin['title'];
+
     $count = 0;
 
     // Loop through IDs based upon our style plugin name until
     // we find one that is unused.
-    while (!empty($ids[$id])) {
+    while (!empty($this->display[$id])) {
       $id = $type . '_' . ++$count;
+      $title = $plugin['title'] . ' ' . $count;
     }
 
     // Create the new display object
     $display = new views_display;
+    $display->display_title = $title;
     $display->display_plugin = $type;
     $display->style_plugin = $style;
     $display->id = $id;
