@@ -103,83 +103,6 @@ function views_schema() {
         'not null' => TRUE,
         'description' => t('The type of the display. Usually page, block or embed, but is pluggable so may be other things.'),
       ),
-      'access' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'description' => t('A serialized array describing who can access this display of the view.'),
-        'serialize' => TRUE,
-        'serialized default' => 'a:0:{}',
-      ),
-      'style_plugin' => array(
-        'type' => 'varchar',
-        'length' => '64',
-        'default' => '',
-        'not null' => TRUE,
-        'description' => t('The output type of the display. Usually list, table, teasers or nodes, but is pluggable so may be other things.'),
-      ),
-      'title' => array(
-        'type' => 'varchar',
-        'length' => '255',
-        'default' => '',
-        'not null' => TRUE,
-        'description' => t('The title of the view use for this display.'),
-      ),
-      'header' => array(
-        'type' => 'blob',
-        'description' => t('Text to display for the header.'),
-      ),
-      'header_format' => array(
-        'type' => 'int',
-        'default' => FILTER_FORMAT_DEFAULT,
-        'description' => t('The output format for the header.'),
-      ),
-      'header_hide_empty' => array(
-        'type' => 'int',
-        'default' => 1,
-        'size' => 'tiny',
-        'description' => t('If true, hide the header when the view has no records to display.'),
-      ),
-      'footer' => array(
-        'type' => 'blob',
-        'description' => t('Text to display for the footer.'),
-      ),
-      'footer_format' => array(
-        'type' => 'int',
-        'default' => FILTER_FORMAT_DEFAULT,
-        'description' => t('The output format for the footer.'),
-      ),
-      'footer_hide_empty' => array(
-        'type' => 'int',
-        'default' => 1,
-        'size' => 'tiny',
-        'description' => t('If true, hide the footer when the view has no records to display.'),
-      ),
-      'empty' => array(
-        'type' => 'blob',
-        'description' => t('Text to display if the view produces no records.'),
-      ),
-      'empty_format' => array(
-        'type' => 'int',
-        'default' => FILTER_FORMAT_DEFAULT,
-        'description' => t('The output format for the empty text.'),
-      ),
-      'use_pager' => array(
-        'type' => 'int',
-        'default' => 1,
-        'size' => 'tiny',
-        'description' => t('If true, this display will utilize the pager.'),
-      ),
-      'url' => array(
-        'type' => 'varchar',
-        'length' => '255',
-        'description' => t('The URL of the display, if applicable.'),
-      ),
-      'block' => array(
-        'type' => 'int',
-        'size' => 'tiny',
-        'default' => 0,
-        'description' => t('True if the display responds to hook_block; false otherwise.'),
-      ),
       'position' => array(
         'type' => 'int',
         'default' => 0,
@@ -188,18 +111,6 @@ function views_schema() {
       'display_options' => array(
         'type' => 'blob',
         'description' => t('A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type.'),
-        'serialize' => TRUE,
-        'serialized default' => 'a:0:{}',
-      ),
-      'style_options' => array(
-        'type' => 'blob',
-        'description' => t('A serialized array of options for this display\'s style plugin; it contains options that are generally only pertinent to that type.'),
-        'serialize' => TRUE,
-        'serialized default' => 'a:0:{}',
-      ),
-      'filter_options' => array(
-        'type' => 'blob',
-        'description' => t('A serialized array of options for this display\'s exposed filters.'),
         'serialize' => TRUE,
         'serialized default' => 'a:0:{}',
       ),

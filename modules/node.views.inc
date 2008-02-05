@@ -338,6 +338,7 @@ function node_views_plugins() {
         'handler' => 'views_row_plugin_node_view',
         'theme' => 'views_view_row_node',
         'base' => array('node'), // only works with 'node' as base.
+        'uses options' => TRUE,
       ),
     ),
   );

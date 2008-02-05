@@ -81,6 +81,10 @@ function views_ui_menu() {
     'page callback' => 'views_ui_rearrange_section',
     'page arguments' => array(3, 5),
   );
+  $items['admin/build/views/%views_ui_js/add-item/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_add_item',
+    'page arguments' => array(3, 5),
+  );
   // display specific parameters
   $items['admin/build/views/%views_ui_js/display/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_display',
@@ -152,5 +156,14 @@ function views_ui_js_load($js) {
 function views_ui_cache_set($view) {
   views_include('cache');
   $view->changed = TRUE; // let any future object know that this view has changed.
+
+  // Unset handlers; we don't want to write these into the cache
+  unset($view->display_handler);
+  unset($view->current_display);
+  unset($view->default_display);
+  foreach (array_keys($view->display) as $id) {
+    unset($view->display[$id]->handler);
+    unset($view->display[$id]->default_display);
+  }
   views_object_cache_set('view', $view->name, $view);
 }

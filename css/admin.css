@@ -48,14 +48,14 @@
   background-color: #eee;
 }
 
-.views-tabset .views-display .top {
+.views-display .top {
   padding: 2px 5px;
   border-left: 1px solid black;
   border-right: 1px solid black;
   border-bottom: 2px solid black;
 }
 
-.views-tabset .views-display .top .display-description {
+.views-display .top .display-description {
   margin-left: 1em;
   font-style: italic;
   overflow: hide;
@@ -78,13 +78,16 @@
 
 .views-display .tab-section .links {
   float: right;
+  font-size: 6pt;
 }
 
 .views-display .tab-section .links a {
-  font-size: small;
+  font-size: 6pt;
+  font-style: italic;
 }
 
-.views-display .form-submit {
+.views-display .form-submit, 
+#views-ajax-pad .form-submit {
   margin: 0;
 }
 
@@ -122,6 +125,17 @@
 
 #views-ajax-pad .form-buttons {
   float: right;
+  margin: 0;
+  padding: 0;
+}
+
+#views-ajax-pad .form-buttons .form-submit {
+  margin: 0 .5em 0 0;
+  padding: 0;
+}
+
+#views-ajax-pad .form-item {
+  margin-top: 0;
 }
 
 #views-ajax-pad {
@@ -130,4 +144,48 @@
 
 html.js #views-ajax-pad {
   display: block;
+}
+
+#views-ajax-pad .views-override .form-submit {
+  float: right;
+  margin: 0 .5em 0 1em;
+}
+
+#views-ajax-pad .views-override .description {
+  margin-bottom: .25em;
+}
+
+#views-ajax-pad .views-left-10 {
+  float: left;
+  width: 10%;
+}
+
+#views-ajax-pad .views-left-20 {
+  float: left;
+  width: 20%;
+}
+
+#views-ajax-pad .views-left-25 {
+  float: left;
+  width: 25%;
+}
+
+#views-ajax-pad .views-left-30 {
+  float: left;
+  width: 30%;
+}
+
+#views-ajax-pad .views-left-40 {
+  float: left;
+  width: 40%;
+}
+
+#views-ajax-pad .views-left-50 {
+  float: left;
+  width: 50%;
+}
+
+#views-ajax-pad .views-radio-box {
+  overflow: auto;
+  max-height: 180px;
 }

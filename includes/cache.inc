@@ -52,9 +52,7 @@ function _views_fetch_data($table = NULL) {
 
     // @todo: We can probably cache the views_data longer than just the current page run.
     $cache = module_invoke_all('views_data');
-    if (module_exists('devel')) {
-      dsm('Views data build time: ' . (microtime() - $start) * 1000 . ' ms');
-    }
+    vpr('Views data build time: ' . (microtime() - $start) * 1000 . ' ms');
   }
 
   if (!$table) {
@@ -79,9 +77,7 @@ function _views_fetch_plugin_data($type = NULL, $plugin = NULL) {
 
     $cache = views_discover_plugins();
 
-    if (module_exists('devel')) {
-      dsm('Views plugins build time: ' . (microtime() - $start) * 1000 . ' ms');
-    }
+    vpr('Views plugins build time: ' . (microtime() - $start) * 1000 . ' ms');
   }
 
   if (!$type && !$plugin) {

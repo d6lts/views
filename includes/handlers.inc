@@ -51,7 +51,7 @@ function views_get_table_join($table, $primary_table) {
     return $handler;
   }
   // DEBUG -- identify missing handlers
-  dsm("missing join: $table $primary_table");
+  vpr("Missing join: $table $primary_table");
 }
 
 /**

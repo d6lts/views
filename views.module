@@ -321,7 +321,7 @@ function views_get_handler($table, $field, $key) {
     return _views_prepare_handler($data[$field][$key], $data, $field);
   }
   // DEBUG -- identify missing handlers
-  dsm("Missing handler: $table $field $key");
+  vpr("Missing handler: $table $field $key");
 }
 
 /**
@@ -352,6 +352,73 @@ function views_fetch_base_table_names() {
   return $base_tables;
 }
 
+/**
+ * Fetch a list of all base tables available
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
+ */
+function views_fetch_field_names($base, $type) {
+  static $fields = array();
+  if (empty($fields)) {
+    $data = views_fetch_data();
+    $start = microtime();
+    foreach ($data as $table => $table_data) {
+      $bases = array();
+      $strings = array();
+      foreach ($table_data as $field => $info) {
+        // Collect table data from this table
+        if ($field == 'table') {
+          // calculate what tables this table can join to.
+          if (!empty($info['join'])) {
+            $bases = array_keys($info['join']);
+          }
+          // And if this table IS a base table it obviously joins to itself.
+          if (!empty($info['base'])) {
+            $bases[] = $table;
+          }
+          continue;
+        }
+        foreach (array('field', 'sort', 'filter', 'argument') as $key) {
+          if (!empty($info[$key])) {
+            foreach (array('title', 'group', 'help') as $string) {
+              // First, try the lowest possible level
+              if (!empty($info[$key][$string])) {
+                $strings[$field][$key][$string] = $info[$key][$string];
+              }
+              // Then try the field level
+              elseif (!empty($info[$string])) {
+                $strings[$field][$key][$string] = $info[$string];
+              }
+              // Finally, try the table level
+              elseif (!empty($table_data['table'][$string])) {
+                $strings[$field][$key][$string] = $table_data['table'][$string];
+              }
+              else {
+                $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+              }
+            }
+          }
+        }
+      }
+      foreach ($bases as $base_name) {
+        foreach ($strings as $field => $field_strings) {
+          foreach ($field_strings as $type_name => $type_strings) {
+            $fields[$base_name][$type_name]["$table.$field"] = t('@group: @field<div class="description">@help</div>', array('@group' => $type_strings['group'], '@field' => $type_strings['title'], '@help' => $type_strings['help']));
+          }
+        }
+      }
+    }
+//    vsm('Views UI data build time: ' . (microtime() - $start) * 1000 . ' ms');
+  }
+
+  if (isset($fields[$base][$type])) {
+    asort($fields[$base][$type]);
+    return $fields[$base][$type];
+  }
+  return array();
+}
+
 // -----------------------------------------------------------------------
 // Views plugin functions
 
@@ -379,7 +446,7 @@ function views_get_plugin($type, $plugin) {
  * @return
  *   A keyed array of in the form of 'base_table' => 'Description'.
  */
-function views_fetch_plugin_names($type) {
+function views_fetch_plugin_names($type, $key = NULL, $empty = FALSE) {
   static $plugins = array();
   if (empty($plugins)) {
     $data = views_fetch_plugin_data();
@@ -390,10 +457,15 @@ function views_fetch_plugin_names($type) {
         continue;
       }
       foreach ($plugs as $id => $plugin) {
+        // Skip plugins that don't conform to our key.
+        if ($key && (($empty && empty($plugin[$key])) || (!$empty && !empty($plugin[$key])))) {
+          continue;
+        }
         if (empty($plugin['no ui'])) {
           $plugins[$plugin_type][$id] = $plugin['title'];
         }
       }
+      asort($plugins[$plugin_type]);
     }
   }
 
@@ -500,7 +572,7 @@ function views_discover_default_views() {
  * @endcode
  */
 function views_get_page_views() {
-  return views_get_applicable_views('uses_hook_menu');
+  return views_get_applicable_views('uses hook menu');
 }
 
 /**
@@ -518,7 +590,7 @@ function views_get_page_views() {
  * @endcode
  */
 function views_get_block_views() {
-  return views_get_applicable_views('uses_hook_block');
+  return views_get_applicable_views('uses hook block');
 }
 
 /**
@@ -610,5 +682,30 @@ class views_object {
     if (isset($definition['field'])) {
       $this->real_field = $definition['field'];
     }
+  }
+}
+
+/**
+ * Provide debug output for Views. This relies on devel.module
+ */
+function views_debug($message) {
+  if (module_exists('devel')) {
+    drupal_set_content('footer', dpr($message, TRUE));
+  }
+}
+
+/**
+ * Shortcut to views_debug()
+ */
+function vpr($message) {
+  views_debug($message);
+}
+
+/**
+ * Debug messages
+ */
+function vsm($message) {
+  if (module_exists('devel')) {
+    dsm($message);
   }
 }

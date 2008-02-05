@@ -131,6 +131,7 @@ class view extends views_db_object {
       return TRUE;
     }
 
+    // Ensure the requested display exists.
     if (empty($this->display[$display_id])) {
       $display_id = 'default';
       if (empty($this->display[$display_id])) {
@@ -139,23 +140,33 @@ class view extends views_db_object {
       }
     }
 
+    // Instantiate all displays
+    foreach (array_keys($this->display) as $id) {
+      $display = &$this->display[$id];
+      $display->handler = views_get_plugin('display', $display->display_plugin);
+      if (!empty($display->handler)) {
+        // Initialize the new display handler with data.
+        $display->handler->init($this, $display);
+        // If this is NOT the default display handler, let it know which is
+        // since it may well utilize some data from the default.
+        // This assumes that the 'default' handler is always first. It always
+        // is. Make sure of it.
+        if ($id != 'default') {
+          $display->handler->default_display = &$this->display['default']->handler;
+        }
+      }
+    }
+
+    // Set the current display.
     $this->current_display = $display_id;
 
-    // Fetch the display handler data and instantiate an object.
-    $display = &$this->display[$this->current_display];
-    $display->handler = views_get_plugin('display', $display->display_plugin);
-    if (empty($display->handler)) {
+    // Ensure requested display has a working handler.
+    if (empty($this->display[$display_id]->handler)) {
       return FALSE;
     }
 
-    // init the new display handler with data.
-    $display->handler->init($this, $display);
-
-    // If this is NOT the default display handler, let it know which is
-    // since it may well utilize some data from the default.
-    if ($this->current_display != 'default') {
-      $display->handler->default_display = $this->display['default'];
-    }
+    // Create a shortcut
+    $display = &$this->display[$display_id];
 
     // Set a shortcut
     $this->display_handler = &$display->handler;
@@ -171,10 +182,10 @@ class view extends views_db_object {
    */
   function init_style() {
     if (!isset($this->style_plugin)) {
-      $this->style_plugin = $this->display[$this->current_display]->style_plugin;
+      $this->style_plugin = $this->display[$this->current_display]->get_option('style_plugin');
     }
 
-    dsm("Init_style: $this->style_plugin");
+    vpr("Init_style: $this->style_plugin");
     $this->style_handler = views_get_plugin('style', $this->style_plugin);
     if (empty($this->style_handler)) {
       return FALSE;
@@ -820,14 +831,12 @@ class views_db_object {
    *
    * @param $type
    *   The plugin type from the views plugin data. Defaults to 'page'.
-   * @param $style
-   *   The style plugin from the views plugin data. Defaults to 'default'.
    *
    * @return
    *   The key to the display in $view->display, so that the new display
    *   can be easily located.
    */
-  function add_display($type = 'page', $style = 'default') {
+  function add_display($type = 'page') {
     if (empty($type)) {
       return FALSE;
     }
@@ -851,13 +860,7 @@ class views_db_object {
 
     // Create the new display object
     $display = new views_display;
-    $display->display_title = $title;
-    $display->display_plugin = $type;
-    $display->style_plugin = $style;
-    $display->id = $id;
-
-    // @todo Should the display plugin have some kind of constructor
-    // to fill in default values here? That seems very logical.
+    $display->construct($type, $id, $title);
 
     // Add the new display object to the view.
     $this->display[$id] = $display;
@@ -913,6 +916,16 @@ class views_display extends views_db_object {
   var $db_table = 'views_display';
   function views_display($init = TRUE) {
     parent::init($init);
+  }
+
+  function construct($type, $id, $title) {
+    $this->display_plugin = $type;
+    $this->id = $id;
+    $this->display_title = $title;
+
+    // Create a handler to fill in default values.
+    $handler = views_get_plugin('display', $type);
+    $handler->construct($this);
   }
 }
 

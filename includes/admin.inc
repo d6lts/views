@@ -226,6 +226,7 @@ function theme_views_ui_edit_view($view) {
   views_include('tabs');
   $tabs = new views_tabset;
 
+  $view->init_display('default');
   foreach ($view->display as $display) {
     list($title, $body) = views_ui_display_tab($view, $display);
     // The first display is the default.
@@ -251,6 +252,18 @@ function theme_views_ui_edit_view($view) {
   views_add_js('ajax');
   drupal_add_js('misc/jquery.form.js');
 
+  // Also add any js files required by plugins:
+  $plugins = views_fetch_plugin_data();
+  foreach ($plugins as $type => $type_plugins) {
+    foreach ($type_plugins as $name => $plugin) {
+      if (!empty($plugin['js'])) {
+        foreach ($plugin['js'] as $file) {
+          drupal_add_js($file);
+        }
+      }
+    }
+  }
+
   $settings = array('views' => array('ajax' => array(
     'id' => '#views-ajax-pad',
     'title' => '#views-ajax-title',
@@ -261,20 +274,18 @@ function theme_views_ui_edit_view($view) {
   return $output;
 }
 
+/**
+ * Generate the summary output for a single display to render in a tab.
+ */
 function views_ui_display_tab($view, &$display) {
   $plugin = views_fetch_plugin_data('display', $display->display_plugin);
   if (empty($plugin)) {
     return array(t('Invalid'), t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
   }
 
+  // The display should always be initialized prior to this call.
   if (empty($display->handler)) {
-    $display->handler = views_get_plugin('display', $display->display_plugin);
-    if (empty($display->handler)) {
-      return FALSE;
-    }
-
-    // init the new display handler with data.
-    $display->handler->init($view, $display);
+    return FALSE;
   }
 
   $top = $left = $middle = $right = '';
@@ -299,18 +310,36 @@ function views_ui_display_tab($view, &$display) {
     $left .= '<dt>' . t('View tag: !tag', array('!tag' => l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link'))))) . '</dt>';
   }
 
-  $left .= $display->handler->options_summary();
+  $options = $display->handler->options_summary();
+  if (!empty($options)) {
+    if (!is_array($options)) {
+      $left .= '<dt>' . $options . '</dt>';
+    }
+    else {
+      foreach ($options as $term => $definition) {
+        // numeric terms mean they were just appended so use the def
+        // for the dt.
+        if (is_numeric($term)) {
+          $left .= '<dt>' . $definition . '</dt>';
+        }
+        else {
+          $left .= '<dt>' . $term . '</dt>';
+          $left .= '<dd>' . $definition . '</dd>';
+        }
+      }
+    }
+  }
 
   $left .= '</dl>';
   $middle .= '<dl>';
-  $middle .= views_ui_add_info('relationship', $view);
-  $middle .= views_ui_add_info('argument', $view);
-  $middle .= views_ui_add_info('filter', $view);
+  $middle .= views_ui_add_info('relationship', $view, $display);
+  $middle .= views_ui_add_info('argument', $view, $display);
+  $middle .= views_ui_add_info('filter', $view, $display);
   $middle .= '</dl>';
 
   $right .= '<dl>';
-  $right .= views_ui_add_info('field', $view);
-  $right .= views_ui_add_info('sort', $view);
+  $right .= views_ui_add_info('field', $view, $display);
+  $right .= views_ui_add_info('sort', $view, $display);
   $right .= '</dl>';
 
 
@@ -323,18 +352,26 @@ function views_ui_display_tab($view, &$display) {
   return array($display->display_title, $body);
 }
 
-function views_ui_regenerate_tabs($view, $display_id = NULL) {
+function views_ui_regenerate_tabs($view, $display_id = NULL, $object = NULL) {
   if (empty($display_id)) {
     $displays = array_keys($view->display);
   }
   elseif (!is_array($display_id)) {
     $displays = array($display_id);
+    if ($display_id != 'default') {
+      $displays[] = 'default';
+    }
   }
   else {
     $displays = $display_id;
   }
 
-  $object = new stdClass;
+  $view->init_display();
+
+  if (!is_object($object)) {
+    $object = new stdClass();
+  }
+
   $object->replace = array();
   foreach ($displays as $id) {
     list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
@@ -349,14 +386,18 @@ function views_ui_regenerate_tabs($view, $display_id = NULL) {
  * a hidden op operator because the forms plugin doesn't seem to properly
  * provide which button was clicked.
  */
-function views_ui_standard_form_buttons(&$form, $form_id) {
+function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL) {
   $form['buttons'] = array(
-    '#prefix' => '<div class="form-buttons">',
-    '#suffix' => '</div>',
+    '#prefix' => '<div class="clear-block"><div class="form-buttons">',
+    '#suffix' => '</div></div>',
   );
+
+  if (empty($name)) {
+    $name = t('Update');
+  }
   $form['buttons']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Accept'),
+    '#value' => $name,
     '#submit' => array($form_id . '_submit'),
   );
 
@@ -388,6 +429,7 @@ function views_ui_add_display($js, $view) {
   $view = $form_state['view'];
   $id = $form_state['id'];
 
+  $view->init_display();
   list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
 
   $output = new stdClass;
@@ -578,7 +620,14 @@ function views_ui_edit_display($js, $view, $display_id, $section) {
   else {
     views_include('ajax');
     $form_state = views_ajax_form('views_ui_edit_display_form', $view, $display_id, $section);
-    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+
+    // Sometimes we need to re-generate the form for multi-step type operations.
+    $object = NULL;
+    if (!empty($form_state['regenerate form'])) {
+      $object = views_render_ajax_form('views_ui_edit_display_form', $form_state['view'], $display_id, $section);
+    }
+    // regenerate all tabs because changes to the default tab could ripple.
+    return views_ui_regenerate_tabs($form_state['view'], NULL, $object);
   }
 }
 
@@ -586,16 +635,8 @@ function views_ui_edit_display($js, $view, $display_id, $section) {
  * Form constructor callback to edit display of a view
  */
 function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) {
+  $view->init_display($display_id);
   $display = &$view->display[$display_id];
-  if (empty($display->handler)) {
-    $display->handler = views_get_plugin('display', $display->display_plugin);
-    if (empty($display->handler)) {
-      return array();
-    }
-
-    // init the new display handler with data.
-    $display->handler->init($view, $display);
-  }
 
   $form_state['view'] = $view;
   $form_state['display_id'] = $display_id;
@@ -605,6 +646,9 @@ function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) 
   return $form;
 }
 
+/**
+ * Validate handler for views_ui_edit_display_form
+ */
 function views_ui_edit_display_form_validate($form, &$form_state) {
   $display = &$form_state['view']->display[$form_state['display_id']];
   $display->handler->options_validate($form, $form_state);
@@ -617,26 +661,34 @@ function views_ui_edit_display_form_submit($form, &$form_state) {
   $display = &$form_state['view']->display[$form_state['display_id']];
   $display->handler->options_submit($form, $form_state);
 
-  // Remove the handler so that it doesn't get saved into the cache.
-  unset($display->handler);
   views_ui_cache_set($form_state['view']);
-  if (empty($form_state['ajax'])) {
-    drupal_set_message(t('Your changes have been saved.'));
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
+  // @todo: Need a safe function to use for drupal_set_message in an ajax environ.
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Override handler for views_ui_edit_display_form
+ */
+function views_ui_edit_display_form_override($form, &$form_state) {
+  $display = &$form_state['233view']->display[$form_state['display_id']];
+  $display->handler->options_override($form, $form_state);
+
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  $form_state['regenerate form'] = TRUE;
 }
 
 /**
  * Page callback to rearrange a section.
  */
-function views_ui_rearrange_section($js, $view, $section, $display_id) {
+function views_ui_rearrange_section($js, $view, $display_id, $section) {
   if (!$js) {
     $output = drupal_get_form('views_ui_rearrange_form', $view, $section, $display_id);
     return $output;
   }
   else {
     views_include('ajax');
-    $form_state = views_ajax_form('views_ui_rearrange_form', t('Rearrange @section', array('@section' => $section)), $_GET['q'], $view, $section, $display_id);
+    $form_state = views_ajax_form('views_ui_rearrange_form', $view, $display_id, $section);
     // regenerate the tabset, set it to replace
     return views_ui_regenerate_tabs($form_state['view'], $display_id);
   }
@@ -645,7 +697,7 @@ function views_ui_rearrange_section($js, $view, $section, $display_id) {
 /**
  * Form to rearrange items in the views UI.
  */
-function views_ui_rearrange_form(&$form_state, $view, $section, $display_id) {
+function views_ui_rearrange_form(&$form_state, $view, $display_id, $section) {
   $form['#title'] = t('Rearrange @section', array('@section' => $section));
   $form['markup'] = array('#value' => '<p>' . t('rearrange form here') . '</p>');
 
@@ -659,10 +711,58 @@ function views_ui_rearrange_form(&$form_state, $view, $section, $display_id) {
  */
 function views_ui_rearrange_form_submit($form, &$form_state) {
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  dsm('submitted');
 }
 
-function views_ui_add_info($type, $view) {
+/**
+ * Page callback to add_item a section.
+ */
+function views_ui_add_item($js, $view, $display_id, $section) {
+  if (!$js) {
+    $output = drupal_get_form('views_ui_add_item_form', $view, $section, $display_id);
+    return $output;
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_add_item_form', $view, $display_id, $section);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+  }
+}
+
+/**
+ * Form to add_item items in the views UI.
+ */
+function views_ui_add_item_form(&$form_state, $view, $display_id, $section) {
+  $view->init_display($display_id);
+  $display = &$view->display[$display_id];
+
+  $form_state['view'] = $view;
+  $form_state['display_id'] = $display_id;
+  $form_state['section'] = $section;
+  
+  $form['name'] = array(
+    '#prefix' => '<div class="views-radio-box">',
+    '#suffix' => '</div>',
+    '#type' => 'radios',
+    '#title' => $section,
+    '#options' => views_fetch_field_names($view->base_table, $section),
+  );
+  
+  views_ui_standard_form_buttons($form, 'views_ui_edit_display_form', t('Add'));
+  return $form;
+}
+
+/**
+ * Submit handler for rearranging form
+ */
+function views_ui_add_item_form_submit($form, &$form_state) {
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Add information about a section to a display.
+ */
+function views_ui_add_info($type, $view, $display) {
   $output = '';
 
   foreach ($view->$type as $field) {
@@ -679,7 +779,27 @@ function views_ui_add_info($type, $view) {
     $output = '<p>' . t('None defined.') . '</p>';
   }
 
-  $links = "<div class=\"links\">" . l(t('Add'), '') . " · " . l(t('Rearrange'), "admin/build/views/nojs/rearrange/$view->name/$type/display_id", array('attributes' => array('class' => 'views-ajax-link'))) . '</div>';
+  $links = "<div class=\"links\">";
+  $links .= l(t('Add'), "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
+  $links .= " · ";
+  $links .= l(t('Rearrange'), "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
+  $links .= '</div>';
 
   return $links . '<dt>' . ucwords($type) . '</dt><dd>' . $output . '</dd>';
+}
+
+/**
+ * Get a list of roles in the system.
+ */
+function views_ui_get_roles() {
+  static $roles = NULL;
+  if (!isset($roles)) {
+    $roles = array();
+    $result = db_query("SELECT r.rid, r.name FROM {role} r ORDER BY r.name");
+    while ($obj = db_fetch_object($result)) {
+      $roles[$obj->rid] = $obj->name;
+    }
+  }
+
+  return $roles;
 }

@@ -93,5 +93,43 @@ function views_ajax_form($form_id) {
 }
 
 /**
+ * Sometimes we need to render a form but explicitly not process it.
+ */
+function views_render_ajax_form($form_id) {
+  $args = func_get_args();
+
+  // Insert a placeholder for the form state so we can then assign a reference to it.
+  array_splice($args, 1, 0, array(NULL));
+
+  // Create the empty form state object.
+  $form_state = array('storage' => NULL, 'submitted' => FALSE, 'post' => $_POST, 'ajax' => TRUE);
+
+  // Replace the URL with the empty form state object as a reference:
+  $args[1] = &$form_state;
+
+  $form = call_user_func_array('drupal_retrieve_form', $args);
+
+  // Prepare the form. My Drupal 5 code didn't do this, so I'm not sure
+  // if it is necessary in D6 or not.
+  $form_build_id = 'form-'. md5(mt_rand());
+  $form['#build_id'] = $form_build_id;
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  // Process the form our own selves so we don't get some extra batch handling
+  // that we don't want.
+  $form['#post'] = array();
+  $form_state['values'] = array();
+  $form = form_builder($form_id, $form, $form_state);
+
+  // Render the form and return the object data.
+  $output = new stdClass();
+  $output->display = theme('status_messages');
+  $output->display .= drupal_render_form($form_id, $form);
+  $output->title = empty($form['#title']) ? '' : $form['#title'];
+  $output->url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
+  return $output;
+}
+
+/**
  * @}
  */
