@@ -240,9 +240,11 @@ function theme_views_ui_edit_view($view) {
   $output .= $tabs->render();
 
   $message = '<div class="message">' . t("Click on an item to edit that item's details.") . '</div>';
-  $output .= '<div id="views-ajax-title">&nbsp;</div>';
+  $output .= '<div id="views-ajax-form">';
+  $output .= '<div id="views-ajax-title"></div>';
   $output .= '<div id="views-ajax-pad">';
   $output .= $message;
+  $output .= '</div>';
   $output .= '</div>';
 
   // Render the actual form here
@@ -307,25 +309,42 @@ function views_ui_display_tab($view, &$display) {
   // If this is the default display, add some basic stuff here.
   if ($display->id == 'default') {
     $tag = empty($view->tag) ? t('None') : $view->tag;
-    $left .= '<dt>' . t('View tag: !tag', array('!tag' => l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link'))))) . '</dt>';
+    $left .= '<dt>' . t('View settings') . '</dt>';
+    $left .= '<dd class="views-item-details">' . t('Tag') . ': ' . l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link'))) . '</dd>';
   }
 
-  $options = $display->handler->options_summary();
-  if (!empty($options)) {
-    if (!is_array($options)) {
-      $left .= '<dt>' . $options . '</dt>';
+  $options = $categories = array();
+  $display->handler->options_summary($categories, $options);
+
+  // Build all of the options we were returned and put them into the
+  // category data fields.
+  foreach ($options as $id => $option) {
+    if (empty($categories[$option['category']]['data'])) {
+      $categories[$option['category']]['data'] = array();
     }
-    else {
-      foreach ($options as $term => $definition) {
-        // numeric terms mean they were just appended so use the def
-        // for the dt.
-        if (is_numeric($term)) {
-          $left .= '<dt>' . $definition . '</dt>';
-        }
-        else {
-          $left .= '<dt>' . $term . '</dt>';
-          $left .= '<dd>' . $definition . '</dd>';
-        }
+    $data = &$categories[$option['category']]['data'];
+    $data[$id] = '';
+
+    // If there are optional links, build them first so they float properly.
+    if (!empty($option['links'])) {
+      $links = array();
+      foreach ($option['links'] as $link_id => $link_value) {
+        $links[] = $display->handler->option_link($link_value, $link_id, 'views-button-configure');
+      }
+      $data[$id] .= implode(' ', $links);
+    }
+    if (!empty($option['title'])) {
+      $data[$id] .= $option['title'] . ': ';
+    }
+    $data[$id] .= $display->handler->option_link($option['value'], $id);
+  }
+
+  // Once the data is built up, display the categories.
+  foreach ($categories as $id => $category) {
+    $left .= '<dt class="views-category-' . $id . '">' . $category['title'] . '</dt>';
+    if (!empty($category['data'])) {
+      foreach ($category['data'] as $cid => $cdata) {
+        $left .= '<dd class="views-item-' . $cid . '">' . $cdata . '</dd>';
       }
     }
   }
@@ -477,7 +496,7 @@ function views_ui_add_display_form_submit($form, &$form_state) {
 }
 
 /**
- * AJAX callback to add a display.
+ * AJAX callback to remove a display.
  */
 function views_ui_remove_display($js, $view, $display_id) {
   if (!$js) {
@@ -492,7 +511,7 @@ function views_ui_remove_display($js, $view, $display_id) {
 }
 
 /**
- * Form to add a display to a view.
+ * Form to remove a display from a view.
  */
 function views_ui_remove_display_form(&$form_state, $view, $display_id) {
   if (empty($view->display[$display_id]->deleted)) {
@@ -531,7 +550,7 @@ function views_ui_remove_display_form(&$form_state, $view, $display_id) {
  */
 function views_ui_remove_display_form_submit($form, &$form_state) {
   // Create the new display
-  $plugin = views_fetch_plugin_data('display', $form_state['view']->display[$id]->display_plugin);
+  $plugin = views_fetch_plugin_data('display', $form_state['view']->display[$form_state['display_id']]->display_plugin);
   if (empty($plugin['no remove'])) {
     $id = $form_state['display_id'];
     $form_state['view']->display[$id]->deleted = TRUE;
@@ -577,6 +596,7 @@ function views_ui_edit_details($js, $view) {
  * Form constructor callback to edit details of a view
  */
 function views_ui_edit_details_form(&$form_state, $view) {
+  $form['#title'] = t('View details');
   $form['description'] = array(
     '#type' => 'textfield',
     '#title' => t('View description'),
@@ -641,6 +661,8 @@ function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) 
   $form_state['view'] = $view;
   $form_state['display_id'] = $display_id;
   $form_state['section'] = $section;
+
+  // Get form from the handler.
   $display->handler->options_form($form, $form_state);
   views_ui_standard_form_buttons($form, 'views_ui_edit_display_form');
   return $form;
@@ -670,7 +692,7 @@ function views_ui_edit_display_form_submit($form, &$form_state) {
  * Override handler for views_ui_edit_display_form
  */
 function views_ui_edit_display_form_override($form, &$form_state) {
-  $display = &$form_state['233view']->display[$form_state['display_id']];
+  $display = &$form_state['view']->display[$form_state['display_id']];
   $display->handler->options_override($form, $form_state);
 
   views_ui_cache_set($form_state['view']);
@@ -679,83 +701,447 @@ function views_ui_edit_display_form_override($form, &$form_state) {
 }
 
 /**
- * Page callback to rearrange a section.
+ * Page callback to rearrange a type.
  */
-function views_ui_rearrange_section($js, $view, $display_id, $section) {
+function views_ui_rearrange_type($js, $view, $display_id, $type) {
   if (!$js) {
-    $output = drupal_get_form('views_ui_rearrange_form', $view, $section, $display_id);
+    $output = drupal_get_form('views_ui_rearrange_form', $view, $type, $display_id);
     return $output;
   }
   else {
     views_include('ajax');
-    $form_state = views_ajax_form('views_ui_rearrange_form', $view, $display_id, $section);
+    $form_state = views_ajax_form('views_ui_rearrange_form', $view, $display_id, $type);
+    // Sometimes we need to re-generate the form for multi-step type operations.
+    $object = NULL;
+    if (!empty($form_state['regenerate form'])) {
+      $object = views_render_ajax_form('views_ui_rearrange_form', $form_state['view'], $display_id, $type);
+    }
+
     // regenerate the tabset, set it to replace
-    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+    return views_ui_regenerate_tabs($form_state['view'], $display_id, $object);
   }
 }
 
 /**
  * Form to rearrange items in the views UI.
  */
-function views_ui_rearrange_form(&$form_state, $view, $display_id, $section) {
-  $form['#title'] = t('Rearrange @section', array('@section' => $section));
-  $form['markup'] = array('#value' => '<p>' . t('rearrange form here') . '</p>');
+function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
+  $types = views_object_types();
+  $form['#title'] = t('Rearrange @type', array('@type' => $types[$type]['title']));
+  $types = views_object_types();
+  $view->init_display($display_id);
+  $display = &$view->display[$display_id];
+
+  if ($display->handler->defaultable_sections($types[$type]['plural'])) {
+    $display->handler->add_override_button($form, $types[$type]['plural']);
+    $form_state['section'] = $types[$type]['plural'];
+  }
+
+  $count = 0;
+
+  foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
+    $form[$id] = array('#tree' => TRUE);
+    $form[$id]['weight'] = array(
+      '#type' => 'weight',
+      '#delta' => 10,
+      '#default_value' => ++$count,
+    );
+    $handler = views_get_handler($field->table, $field->field, $type);
+    if ($handler) {
+      $handler->init($view, $field);
+      $form[$id]['name'] = array(
+        '#value' => t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title'])) . ' ' . $handler->admin_summary(),
+      );
+      $form[$id]['removed'] = array(
+        '#type' => 'checkbox',
+        '#id' => 'views-removed-' . $id,
+        '#attributes' => array('class' => 'views-remove-checkbox'),
+        '#default_value' => 0,
+      );
+
+    }
+    else {
+      $form[$id]['name'] = array('#value' => t('Broken field @id', $id));
+    }
+  }
 
   $form_state['view'] = $view;
+  $form_state['display_id'] = $display_id;
+  $form_state['type'] = $type;
+
+  // Add javascript settings that will be added via $.extend for tabledragging
+  $form['#js']['tableDrag']['arrange']['weight'][0] = array(
+    'target' => 'weight',
+    'source' => NULL,
+    'relationship' => 'sibling',
+    'action' => 'order',
+    'hidden' => TRUE,
+    'limit' => 0,
+  );
+
   views_ui_standard_form_buttons($form, 'views_ui_rearrange_form');
   return $form;
+}
+
+/**
+ * Turn the rearrange form into a proper table
+ */
+function theme_views_ui_rearrange_form($form) {
+  $rows = array();
+  foreach (element_children($form) as $id) {
+    if (isset($form[$id]['name'])) {
+      $row = array();
+      $row[] = drupal_render($form[$id]['name']);
+      $form[$id]['weight']['#attributes']['class'] = 'weight';
+      $row[] = drupal_render($form[$id]['weight']);
+      $row[] = drupal_render($form[$id]['removed']) . l('<span>' . t('Remove') . '</span>', 'javascript:void()', array('attributes' => array('id' => 'views-remove-link-' . $id, 'class' => 'views-button-remove views-remove-link', 'alt' => t('Remove this item'), 'title' => t('Remove this item')), 'html' => true));  
+
+      $rows[] = array('data' => $row, 'class' => 'draggable', 'id' => 'views-row-' . $id);
+    }
+  }
+  if (empty($rows)) {
+    $rows[] = array(array('data' => t('No fields available.'), 'colspan' => '2'));
+  }
+
+  $header = array('', t('Weight'), t('Remove'));
+  drupal_add_tabledrag('arrange', 'order', 'sibling', 'weight');
+  $output = drupal_render($form['override']);
+  $output .= theme('table', $header, $rows, array('id' => 'arrange'));
+  $output .= drupal_render($form);
+  return $output;
+
 }
 
 /**
  * Submit handler for rearranging form
  */
 function views_ui_rearrange_form_submit($form, &$form_state) {
+  $types = views_object_types();
+  $display = &$form_state['view']->display[$form_state['display_id']];
+
+  $old_fields = $display->handler->get_option($types[$form_state['type']]['plural']);
+  $new_fields = $order = array();
+
+  // Make an array with the weights
+  foreach ($form_state['values'] as $field => $info) {
+    // add each value that is a field with a weight to our list, but only if
+    // it has had its 'removed' checkbox checked.
+    if (is_array($info) && isset($info['weight']) && empty($info['removed'])) {
+      $order[$field] = $info['weight'];
+    }
+  }
+
+  // Sort the array
+  asort($order);
+
+  // Create a new list of fields in the new order.
+  foreach (array_keys($order) as $field) {
+    $new_fields[$field] = $old_fields[$field];
+  }
+  $display->handler->set_option($types[$form_state['type']]['plural'], $new_fields);
+
+  // Store in cache
+  views_ui_cache_set($form_state['view']);
+
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
- * Page callback to add_item a section.
+ * Page callback to add_item a type.
  */
-function views_ui_add_item($js, $view, $display_id, $section) {
+function views_ui_add_item($js, $view, $display_id, $type) {
   if (!$js) {
-    $output = drupal_get_form('views_ui_add_item_form', $view, $section, $display_id);
+    $output = drupal_get_form('views_ui_add_item_form', $view, $display_id, $type);
     return $output;
   }
   else {
     views_include('ajax');
-    $form_state = views_ajax_form('views_ui_add_item_form', $view, $display_id, $section);
+    $form_state = views_ajax_form('views_ui_add_item_form', $view, $display_id, $type);
     // regenerate the tabset, set it to replace
-    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+    if (!empty($form_state['id'])) {
+      $object = views_render_ajax_form('views_ui_config_item_form', $form_state['view'], $display_id, $type, $form_state['id']);
+      // This form is at a different URL than $_GET['q'] so we have to pass via the object.
+      $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
+    }
+    return views_ui_regenerate_tabs($form_state['view'], $display_id, $object);
   }
 }
 
 /**
  * Form to add_item items in the views UI.
  */
-function views_ui_add_item_form(&$form_state, $view, $display_id, $section) {
+function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
   $view->init_display($display_id);
   $display = &$view->display[$display_id];
 
-  $form_state['view'] = $view;
+  $types = views_object_types();
+  $form['#title'] = t('Add @type', array('@type' => $types[$type]['title']));
+
+  $form_state['view'] = &$view;
   $form_state['display_id'] = $display_id;
-  $form_state['section'] = $section;
-  
-  $form['name'] = array(
-    '#prefix' => '<div class="views-radio-box">',
-    '#suffix' => '</div>',
-    '#type' => 'radios',
-    '#title' => $section,
-    '#options' => views_fetch_field_names($view->base_table, $section),
-  );
-  
-  views_ui_standard_form_buttons($form, 'views_ui_edit_display_form', t('Add'));
+  $form_state['type'] = $type;
+
+  $options = views_fetch_field_names($view->base_table, $type);
+
+  if (!empty($options)) {
+    $form['name'] = array(
+      '#prefix' => '<div class="views-radio-box">',
+      '#suffix' => '</div>',
+      '#type' => 'checkboxes',
+      '#options' => $options,
+    );
+
+    views_ui_standard_form_buttons($form, 'views_ui_add_item_form', t('Add'));
+  }
+  else {
+    $form['markup'] = array(
+      '#value' => t('There are no @types available to add.', array('@types' =>  strtolower($types[$type]['title']))),
+    );
+  }
+
   return $form;
 }
 
 /**
- * Submit handler for rearranging form
+ * Submit handler for adding new item(s) to a view.
  */
 function views_ui_add_item_form_submit($form, &$form_state) {
+  $type = $form_state['type'];
+  $types = views_object_types();
+
+  // Loop through each of the items that were checked and add them to the view.
+  foreach (array_keys(array_filter($form_state['values']['name'])) as $field) {
+    list($table, $field) = explode('.', $field, 2);
+    $id = $form_state['view']->add_item($form_state['display_id'], $type, $table, $field);
+    if (empty($form_state['id'])) {
+      $form_state['id'] = $id;
+    }
+  }
+
+  // Store in cache
+  views_ui_cache_set($form_state['view']);
+
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Page callback to configure an item
+ */
+function views_ui_config_item($js, $view, $display_id, $type, $id) {
+  if (!$js) {
+    $output = drupal_get_form('views_ui_config_item_form', $view, $display_id, $type, $id);
+    return $output;
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_config_item_form', $view, $display_id, $type, $id);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+  }
+}
+
+/**
+ * Form to config_item items in the views UI.
+ */
+function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id) {
+  $form = array('options' => array('#tree' => TRUE));
+  $view->init_display($display_id);
+  $item = $view->get_item($display_id, $type, $id);
+
+  if ($item) {
+    $handler = views_get_handler($item->table, $item->field, $type);
+    if (empty($handler)) {
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      break;
+    }
+    $handler->init($view, $item);
+    $types = views_object_types();
+    $form['#title'] = t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+
+    // Get form from the handler.
+    $handler->options_form($form['options'], $form_state);
+    $form_state['view'] = &$view;
+    $form_state['display_id'] = $display_id;
+    $form_state['type'] = $type;
+    $form_state['id'] = $id;
+    $form_state['handler'] = &$handler;
+
+    views_ui_standard_form_buttons($form, 'views_ui_config_item_form');
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_config_item_form_validate($form, &$form_state) {
+  $form_state['handler']->options_validate($form['options'], $form_state);
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_config_item_form_submit($form, &$form_state) {
+  // Run it through the handler's submit function.
+  $form_state['handler']->options_submit($form['options'], $form_state);
+  $item = $form_state['handler']->data;
+
+  // Store the data we're given.
+  foreach ($form_state['values']['options'] as $key => $value) {
+    $item->$key = $value;
+  }
+
+  // Store the item back on the view
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
+
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Page callback to change the summary style of an argument
+ */
+function views_ui_change_style($js, $view, $display_id, $type, $id) {
+  if (!$js) {
+    $output = drupal_get_form('views_ui_change_style_form', $view, $display_id, $type, $id);
+    return $output;
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_change_style_form', $view, $display_id, $type, $id);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+  }
+}
+
+/**
+ * Form to change_style items in the views UI.
+ */
+function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id) {
+  $form = array('options' => array('#tree' => TRUE));
+  $view->init_display($display_id);
+  $item = $view->get_item($display_id, $type, $id);
+
+  if ($item) {
+    $handler = views_get_handler($item->table, $item->field, $type);
+    if (empty($handler)) {
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      break;
+    }
+    $handler->init($view, $item);
+    $types = views_object_types();
+    $form['#title'] = t('Change summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+
+    $form['style_plugin'] =  array(
+      '#type' => 'radios',
+      '#options' => views_fetch_plugin_names('style', 'summary', TRUE),
+      '#default_value' => $item->style_plugin,
+    );
+
+    $form_state['view'] = &$view;
+    $form_state['display_id'] = $display_id;
+    $form_state['type'] = $type;
+    $form_state['id'] = $id;
+    $form_state['handler'] = &$handler;
+
+    views_ui_standard_form_buttons($form, 'views_ui_change_style_form');
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_change_style_form_submit($form, &$form_state) {
+  // Run it through the handler's submit function.
+  $form_state['handler']->options_submit($form['options'], $form_state);
+  $item = $form_state['handler']->data;
+
+  // Store the data we're given.
+  $item->style_plugin = $form_state['values']['style_plugin'];
+
+  // Store the item back on the view
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
+
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Page callback to config the summary style of an argument
+ */
+function views_ui_config_style($js, $view, $display_id, $type, $id) {
+  if (!$js) {
+    $output = drupal_get_form('views_ui_config_style_form', $view, $display_id, $type, $id);
+    return $output;
+  }
+  else {
+    views_include('ajax');
+    $form_state = views_ajax_form('views_ui_config_style_form', $view, $display_id, $type, $id);
+    // regenerate the tabset, set it to replace
+    return views_ui_regenerate_tabs($form_state['view'], $display_id);
+  }
+}
+
+/**
+ * Form to config_style items in the views UI.
+ */
+function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id) {
+  $form = array('options' => array('#tree' => TRUE));
+  $view->init_display($display_id);
+  $item = $view->get_item($display_id, $type, $id);
+
+  if ($item) {
+    $handler = views_get_handler($item->table, $item->field, $type);
+    if (empty($handler)) {
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      break;
+    }
+    $handler->init($view, $item);
+    $types = views_object_types();
+    $form['#title'] = t('Configure summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+
+    $plugin = views_get_plugin('style', $item->style_plugin);
+    if ($plugin) {
+      $form['style_options'] = array(
+        '#tree' => TRUE,
+      );
+      $plugin->init($view, $view->display[$display_id]);
+      // Override the options since it thinks it's getting them from the display.
+      $plugin->options = $item->style_options;
+
+      $plugin->options_form($form['style_options'], $form_state);
+    }
+
+    $form_state['view'] = &$view;
+    $form_state['display_id'] = $display_id;
+    $form_state['type'] = $type;
+    $form_state['id'] = $id;
+    $form_state['handler'] = &$handler;
+
+    views_ui_standard_form_buttons($form, 'views_ui_config_style_form');
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_config_style_form_submit($form, &$form_state) {
+  // Run it through the handler's submit function.
+  $form_state['handler']->options_submit($form['style_options'], $form_state);
+  $item = $form_state['handler']->data;
+
+  // Store the data we're given.
+  $item->style_options = $form_state['values']['style_options'];
+
+  // Store the item back on the view
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
+
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
@@ -763,29 +1149,46 @@ function views_ui_add_item_form_submit($form, &$form_state) {
  * Add information about a section to a display.
  */
 function views_ui_add_info($type, $view, $display) {
+  $types = views_object_types();
+
   $output = '';
+  $output .= l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));  
+  $output .= l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link'), 'html' => true));
 
-  foreach ($view->$type as $field) {
-    $handler = views_get_handler($field->tablename, $field->field, $type);
 
+  $output .= '<dt>' . $types[$type]['title'] . '</dt>';
+
+  $fields = '';
+  foreach ($display->handler->get_option($types[$type]['plural']) as $field) {
+    $handler = views_get_handler($field->table, $field->field, $type);
     if (empty($handler)) {
-      $output .= t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->tablename, '@field' => $field->field));
+      $output .= t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->tablename, '@field' => $field->field)) . '<br/>';
       continue;
     }
-    $output .= t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title'])) . '<br />';
+    $handler->init($view, $field);
+
+    $f = t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+    $form = $form_state = array();
+    $handler->options_form($form, $form_state);
+    if (!empty($form)) {
+      $f = l($f, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-ajax-link')));
+    }
+    $fields .=  '<dd class="views-item-' . $type . '-' . $field->id . '">' . $f . ' ' . $handler->admin_summary() . '</dt>';
+
+    if ($handler->needs_style_plugin()) {
+      $style_plugin = views_fetch_plugin_data('style', $handler->data->style_plugin);
+      $style_title = empty($style_plugin['title']) ? t('Missing style plugin') : $style_plugin['title'];
+
+      if (!empty($style_plugin['uses options'])) {
+        $fields .= l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-button-configure views-ajax-link'), 'html' => true));
+      }
+
+      $fields .= '<dd class="views-item-style-plugin">' . t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-ajax-link'))))) . '</dd>';
+    }
   }
 
-  if (empty($output)) {
-    $output = '<p>' . t('None defined.') . '</p>';
-  }
-
-  $links = "<div class=\"links\">";
-  $links .= l(t('Add'), "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
-  $links .= " · ";
-  $links .= l(t('Rearrange'), "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
-  $links .= '</div>';
-
-  return $links . '<dt>' . ucwords($type) . '</dt><dd>' . $output . '</dd>';
+  $output .= empty($fields) ? ('<dd>' . t('None defined.') . '</dd>') : $fields;
+  return $output;
 }
 
 /**

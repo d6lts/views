@@ -13,7 +13,7 @@
 /**
  * Simple render function to make sure output is what we want.
  */
-function views_ajax_render($output = NULL, $title = NULL, $url = NULL) {
+function views_ajax_render($output = NULL, $title = NULL, $url = NULL, $js = NULL) {
   if (empty($output)) {
     $output->display = t('Server reports invalid input error.');
     $output->title = t('Error');
@@ -25,6 +25,10 @@ function views_ajax_render($output = NULL, $title = NULL, $url = NULL) {
     $temp->url = $url;
     $output = $temp;
   }
+  if (!empty($js)) {
+    $output->js = $js;
+  }
+
   drupal_set_header('Content-Type: text/javascript; charset=utf-8');
   print drupal_to_js($output);
   exit;
@@ -89,7 +93,9 @@ function views_ajax_form($form_id) {
   $output .= drupal_render_form($form_id, $form);
   $title = empty($form['#title']) ? '' : $form['#title'];
   $url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
-  views_ajax_render($output, $title, $url);
+  $js = empty($form['#js']) ? NULL : $form['#js'];
+
+  views_ajax_render($output, $title, $url, $js);
 }
 
 /**

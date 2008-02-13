@@ -447,29 +447,22 @@ function views_get_plugin($type, $plugin) {
  *   A keyed array of in the form of 'base_table' => 'Description'.
  */
 function views_fetch_plugin_names($type, $key = NULL, $empty = FALSE) {
-  static $plugins = array();
-  if (empty($plugins)) {
-    $data = views_fetch_plugin_data();
+  $data = views_fetch_plugin_data();
 
-    foreach ($data as $plugin_type => $plugs) {
-      // Skip some info data
-      if (!is_array($plugs)) {
-        continue;
-      }
-      foreach ($plugs as $id => $plugin) {
-        // Skip plugins that don't conform to our key.
-        if ($key && (($empty && empty($plugin[$key])) || (!$empty && !empty($plugin[$key])))) {
-          continue;
-        }
-        if (empty($plugin['no ui'])) {
-          $plugins[$plugin_type][$id] = $plugin['title'];
-        }
-      }
-      asort($plugins[$plugin_type]);
+  $plugins[$type] = array();
+
+  foreach ($data[$type] as $id => $plugin) {
+    // Skip plugins that don't conform to our key.
+    if ($key && (($empty && empty($plugin[$key])) || (!$empty && !empty($plugin[$key])))) {
+      continue;
+    }
+    if (empty($plugin['no ui'])) {
+      $plugins[$type][$id] = $plugin['title'];
     }
   }
 
   if (!empty($plugins[$type])) {
+    asort($plugins[$type]);
     return $plugins[$type];
   }
   // fall-through
@@ -708,4 +701,39 @@ function vsm($message) {
   if (module_exists('devel')) {
     dsm($message);
   }
+}
+
+function views_object_types() {
+  return array(
+    'field' => array(
+      'title' => t('Fields'),
+      'stitle' => t('Field'),
+      'plural' => 'fields',
+      'object' => 'views_field',
+    ),
+    'argument' => array(
+      'title' => t('Arguments'),
+      'stitle' => t('Argument'),
+      'plural' => 'arguments',
+      'object' => 'views_argument',
+    ),
+    'sort' => array(
+      'title' => t('Sort criteria'),
+      'stitle' => t('Sort criterion'),
+      'plural' => 'sorts',
+      'object' => 'views_sort',
+    ),
+    'filter' => array(
+      'title' => t('Filters'),
+      'stitle' => t('Filter'),
+      'plural' => 'filters',
+      'object' => 'views_filter',
+    ),
+    'relationship' => array(
+      'title' => t('Relationships'),
+      'stitle' => t('Relationship'),
+      'plural' => 'relationships',
+      'object' => 'views_relationship',
+    ),
+  );
 }

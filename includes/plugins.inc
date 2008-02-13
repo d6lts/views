@@ -19,7 +19,7 @@ function views_views_plugins() {
         'handler' => 'views_display_plugin_default',
         'no ui' => TRUE,
         'no remove' => TRUE,
-        'js' => array('misc/collapse.js', 'misc/textarea.js'),
+        'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js'),
       ),
       'page' => array(
         'title' => t('Page'),
@@ -72,7 +72,6 @@ function views_views_plugins() {
         'handler' => 'views_style_plugin_summary',
         'theme' => 'views_view_summary',
         'summary' => TRUE, // only shows up as a summary style
-        'uses row plugin' => TRUE,
         'uses options' => TRUE,
       ),
     ),
@@ -191,7 +190,9 @@ class views_display_plugin extends views_object {
       'style_options' => array('style_plugin', 'style_options', 'row_plugin', 'row_options'),
       'row_plugin' => array('style_plugin', 'style_options', 'row_plugin', 'row_options'),
       'row_options' => array('style_plugin', 'style_options', 'row_plugin', 'row_options'),
+
       // These guys are special
+      'relationships' => array('relationships'),
       'fields' => array('fields'),
       'sorts' => array('sorts'),
       'arguments' => array('arguments'),
@@ -241,11 +242,18 @@ class views_display_plugin extends views_object {
       'row_plugin' => TRUE,
       'row_options' => TRUE,
 
+      'relationships' => TRUE,
       'fields' => TRUE,
       'sorts' => TRUE,
       'arguments' => TRUE,
       'filters' => TRUE,
     );
+
+    $display->display_options['relationships'] = array();
+    $display->display_options['fields'] = array();
+    $display->display_options['sorts'] = array();
+    $display->display_options['arguments'] = array();
+    $display->display_options['filters'] = array();
   }
 
   /**
@@ -278,8 +286,12 @@ class views_display_plugin extends views_object {
    * Because forms may be split up into sections, this provides
    * an easy URL to exactly the right section. Don't override this.
    */
-  function option_link($text, $section) {
-    return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link')));
+  function option_link($text, $section, $class = '') {
+    if (!empty($class)) {
+      $text = '<span>' . $text . '</span>';
+    }
+
+    return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link ' . $class), 'html' => TRUE));
   }
 
   /**
@@ -287,36 +299,57 @@ class views_display_plugin extends views_object {
    *
    * This output is returned as an array.
    */
-  function options_summary() {
-    $output = array();
-    $output[] = t('Name: !field', array('!field' => $this->option_link($this->display->display_title, 'display_title')));
+  function options_summary(&$categories, &$options) {
+    $categories['basic'] = array(
+      'title' => t('Basic settings'),
+    );
+
+    $options['display_title'] = array(
+      'category' => 'basic',
+      'title' => t('Name'),
+      'value' => $this->display->display_title,
+    );
 
     $title = $this->get_option('title');
     if (!$title) {
       $title = t('None');
     }
-    $output[] = t('Title: !field', array('!field' => $this->option_link($title, 'title')));
+
+    $options['title'] = array(
+      'category' => 'basic',
+      'title' => t('Title'),
+      'value' => $title,
+    );
 
     $style_plugin = views_fetch_plugin_data('style', $this->get_option('style_plugin'));
     $style_title = empty($style_plugin['title']) ? t('Missing style plugin') : $style_plugin['title'];
 
     $style = '';
-    if (!empty($style_plugin['uses options'])) {
-      $style = '<div class="links">' . $this->option_link(t('Settings'), 'style_options') . '</div>';
-    }
 
-    $output[] = $style . t('Style: !field', array('!field' => $this->option_link($style_title, 'style_plugin'), ));
+    $options['style_plugin'] = array(
+      'category' => 'basic',
+      'title' => t('Style'),
+      'value' => $style_title,
+    );
+
+    // This adds a 'Settings' link to the style_options setting if the style has options.
+    if (!empty($style_plugin['uses options'])) {
+      $options['style_plugin']['links']['style_options'] = t('Settings');
+    }
 
     if (!empty($style_plugin['uses row plugin'])) {
       $row_plugin = views_fetch_plugin_data('row', $this->get_option('row_plugin'));
       $row_title = empty($row_plugin['title']) ? t('Missing style plugin') : $row_plugin['title'];
 
-      $row = '';
+      $options['row_plugin'] = array(
+        'category' => 'basic',
+        'title' => t('Row style'),
+        'value' => $row_title,
+      );
+      // This adds a 'Settings' link to the row_options setting if the row style has options.
       if (!empty($row_plugin['uses options'])) {
-        $row = '<div class="links">' . $this->option_link(t('Settings'), 'row_options') . '</div>';
+        $options['row_plugin']['links']['row_options'] = t('Settings');
       }
-
-      $output[] = $row . t('Row style: !field', array('!field' => $this->option_link($row_title, 'row_plugin')));
     }
 
     $access = $this->get_option('access');
@@ -343,7 +376,12 @@ class views_display_plugin extends views_object {
         }
         break;
     }
-    $output[] = t('Access: !field', array('!field' => $this->option_link($access_str, 'access')));
+
+    $options['access'] = array(
+      'category' => 'basic',
+      'title' => t('Access'),
+      'value' => $access_str,
+    );
 
     foreach (array('header' => t('Header'), 'footer' => t('Footer'), 'empty' => t('Empty text')) as $type => $name) {
       if (!$this->get_option($type)) {
@@ -361,9 +399,12 @@ class views_display_plugin extends views_object {
       }
 
       $output[] = t('!name: !field', array('!name' => $name, '!field' => $this->option_link($field, $type)));
+      $options[$type] = array(
+        'category' => 'basic',
+        'title' => $name,
+        'value' => $field,
+      );
     }
-
-    return $output;
   }
 
   /**
@@ -373,25 +414,27 @@ class views_display_plugin extends views_object {
     if ($this->defaultable_sections($form_state['section'])) {
       $this->add_override_button($form, $form_state['section']);
     }
+    $form['#title'] = check_plain($this->display->display_title) . ': ';
 
     switch ($form_state['section']) {
       case 'display_title':
+        $form['#title'] .= t('The name of this display');
         $form['display_title'] = array(
           '#type' => 'textfield',
-          '#title' => t('The name of this display'),
           '#description' => t('This title will appear only in the administrative interface for the View.'),
           '#default_value' => $this->display->display_title,
         );
         break;
       case 'title':
+        $form['#title'] .= t('The title of this view');
         $form['title'] = array(
           '#type' => 'textfield',
-          '#title' => t('The title of this view'),
           '#description' => t('This title will be displayed with the view, wherever titles are normally displayed; i.e, as the page title, block title, etc.'),
           '#default_value' => $this->get_option('title'),
         );
         break;
       case 'access':
+        $form['#title'] .= t('Access restrictions');
         $form['access'] = array(
           '#prefix' => '<div class="clear-block">',
           '#suffix' => '</div>',
@@ -438,6 +481,7 @@ class views_display_plugin extends views_object {
         );
         break;
       case 'header':
+        $form['#title'] .= t('Header');
         $form['header_empty'] = array(
           '#type' => 'checkbox',
           '#title' => t('Display even if view has no result'),
@@ -445,7 +489,6 @@ class views_display_plugin extends views_object {
         );
         $form['header'] = array(
           '#type' => 'textarea',
-          '#title' => t('Header'),
           '#default_value' => $this->get_option('header'),
           '#rows' => 6,
           '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
@@ -454,6 +497,7 @@ class views_display_plugin extends views_object {
         $form['header_format'] = filter_form($this->get_option('header_format'), NULL, array('header_format'));
         break;
       case 'footer':
+        $form['#title'] .= t('Footer');
         $form['footer_empty'] = array(
           '#type' => 'checkbox',
           '#title' => t('Display even if view has no result'),
@@ -461,7 +505,6 @@ class views_display_plugin extends views_object {
         );
         $form['footer'] = array(
           '#type' => 'textarea',
-          '#title' => t('Footer'),
           '#default_value' => $this->get_option('footer'),
           '#rows' => 6,
           '#description' => t('Text to display beneath the view. May contain an explanation or links or whatever you like. Optional.'),
@@ -470,9 +513,9 @@ class views_display_plugin extends views_object {
         $form['footer_format'] = filter_form($this->get_option('footer_format'), NULL, array('footer_format'));
         break;
       case 'empty':
+        $form['#title'] .= t('Empty text');
         $form['empty'] = array(
           '#type' => 'textarea',
-          '#title' => t('Empty'),
           '#default_value' => $this->get_option('empty'),
           '#rows' => 6,
           '#description' => t('Text to display if the view has no results. Optional.'),
@@ -481,29 +524,33 @@ class views_display_plugin extends views_object {
         $form['empty_format'] = filter_form($this->get_option('empty_format'), NULL, array('empty_format'));
         break;
       case 'style_plugin':
+        $form['#title'] .= t('How should this view be styled');
         $form['style_plugin'] =  array(
-          '#title' => t('How should this view be styled'),
           '#type' => 'radios',
           '#options' => views_fetch_plugin_names('style', 'summary', FALSE),
           '#default_value' => $this->get_option('style_plugin'),
         );
         break;
       case 'style_options':
+        $form['#title'] .= t('Style options');
         $style = TRUE;
       case 'row_options':
         // if row, $style will be empty.
+        if (empty($style)) {
+          $form['#title'] .= t('Row style options');
+        }
         $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option('style_plugin'));
         if ($plugin) {
           $form[$form_state['section']] = array(
             '#tree' => TRUE,
           );
           $plugin->init($this->view, $this);
-          $plugin->options_form($form[$form_state['section']]);
+          $plugin->options_form($form[$form_state['section']], $form_state);
         }
         break;
       case 'row_plugin':
+        $form['#title'] .= t('How should each row in this view be styled');
         $form['row_plugin'] =  array(
-          '#title' => t('How should each row in this view be styled'),
           '#type' => 'radios',
           '#options' => views_fetch_plugin_names('row', 'summary', FALSE),
           '#default_value' => $this->get_option('row_plugin'),
@@ -733,7 +780,13 @@ class views_display_plugin_default extends views_display_plugin {
     $display->display_options['style_options'] = array();
     $display->display_options['row_plugin'] = 'fields';
     $display->display_options['row_options'] = array();
+    $display->display_options['relationships'] = array();
+    $display->display_options['fields'] = array();
+    $display->display_options['sorts'] = array();
+    $display->display_options['arguments'] = array();
+    $display->display_options['filters'] = array();
   }
+
   /**
    * The default execute handler fully renders the view.
    *
@@ -776,11 +829,11 @@ class views_display_plugin_page extends views_display_plugin {
     $items = array();
     // Replace % with the link to our standard views argument loader
     // views_arg_load -- which lives in views.module
-    $url = str_replace('%', '%views_arg', $this->display->url);
+    $path = str_replace('%', '%views_arg', $this->get_option('path'));
 
     // NOTE: This is the very simple 'menu normal item' version. The
     // tab version needs to come later. Maybe it should be its own plugin.
-    $items[$url] = array(
+    $items[$path] = array(
       // default views page entry
       'page callback' => 'views_page',
       'page arguments' => array($this->view->name, $this->display->id),
@@ -809,6 +862,90 @@ class views_display_plugin_page extends views_display_plugin {
     drupal_set_title(filter_xss_admin($this->view->get_title('page')));
     return $this->view->render();
   }
+
+  /**
+   * Provide the summary for page options in the views UI.
+   *
+   * This output is returned as an array.
+   */
+  function options_summary(&$categories, &$options) {
+    // It is very important to call the parent function here:
+    parent::options_summary($categories, $options);
+
+    $categories['page'] = array(
+      'title' => t('Page settings'),
+    );
+
+    $path = $this->get_option('path');
+    if (empty($path)) {
+      $path = t('None');
+    }
+
+    if (strlen($path) > 16) {
+      $path = substr($path, 0, 16) . '...';
+    }
+
+    $options['path'] = array(
+      'category' => 'page',
+      'title' => t('Path'),
+      'value' => $path,
+    );
+
+    $options['menu'] = array(
+      'category' => 'page',
+      'title' => t('Menu'),
+      'value' => 'TODO',
+    );
+  }
+
+  /**
+   * Provide the default form for setting options.
+   */
+  function options_form(&$form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_form($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'path':
+        $form['#title'] .= t('The menu path or URL of this view');
+        $form['path'] = array(
+          '#type' => 'textfield',
+          '#description' => t('This view will be displayed by visiting this path on your site.'),
+          '#default_value' => block_description,
+        );
+        break;
+    }
+  }
+
+  /**
+   * Validate the options form.
+   */
+  function options_validate($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_validate($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'path':
+        // @todo: validate the path against other views
+
+        // @todo: validate the path against aliases.
+        break;
+    }
+  }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_submit($form, $form_state);
+    switch ($form_state['section']) {
+      case 'path':
+        $this->set_option('path', $form_state['values']['path']);
+        break;
+    }
+  }
 }
 
 /**
@@ -823,7 +960,7 @@ class views_display_plugin_block extends views_display_plugin {
   function hook_block($op = 'list', $delta = 0, $edit = array()) {
     if ($op == 'list') {
       $delta = $this->view->name . '-' . $this->display->id;
-      return array($delta => array('info' => $this->display->block_description));
+      return array($delta => array('info' => $this->get_option('block_description')));
     }
   }
 
@@ -834,8 +971,86 @@ class views_display_plugin_block extends views_display_plugin {
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $info['content'] = $this->view->render();
-    $info['subject'] = filter_xss_admin($this->view->get_title('page'));
+    $info['subject'] = filter_xss_admin($this->view->get_title());
     return $info;
+  }
+
+  /**
+   * Provide the summary for page options in the views UI.
+   *
+   * This output is returned as an array.
+   */
+  function options_summary(&$categories, &$options) {
+    // It is very important to call the parent function here:
+    parent::options_summary($categories, $options);
+
+    $categories['block'] = array(
+      'title' => t('Block settings'),
+    );
+
+    $block_description = $this->get_option('block_description');
+    if (empty($block_description)) {
+      $block_description = t('None');
+    }
+
+    if (strlen($block_description) > 16) {
+      $block_description = substr($block_description, 0, 16) . '...';
+    }
+
+    $options['block_description'] = array(
+      'category' => 'block',
+      'title' => t('Admin'),
+      'value' => $block_description,
+    );
+  }
+
+  /**
+   * Provide the default form for setting options.
+   */
+  function options_form(&$form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_form($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'block_description':
+        $form['#title'] .= t('Block admin description');
+        $form['block_description'] = array(
+          '#type' => 'textfield',
+          '#description' => t('This will appear as the name of this block in administer >> site building >> blocks.'),
+          '#default_value' => $this->get_option('block_description'),
+        );
+        break;
+    }
+  }
+
+  /**
+   * Validate the options form.
+   */
+  function options_validate($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_validate($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'block_description':
+        // @todo: validate the block_description against other views
+
+        // @todo: validate the block_description against aliases.
+        break;
+    }
+  }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_submit($form, $form_state);
+    switch ($form_state['section']) {
+      case 'block_description':
+        $this->set_option('block_description', $form_state['values']['block_description']);
+        break;
+    }
   }
 }
 
@@ -868,7 +1083,7 @@ class views_style_plugin extends views_object {
   function init(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
-    $this->options = $display->get_option('style_options');
+    $this->options = $display->handler->get_option('style_options');
 
     if ($this->uses_row_plugin) {
       $this->row_plugin = views_get_plugin('row', $display->get_options('row_plugin'));
@@ -889,7 +1104,7 @@ class views_style_plugin extends views_object {
   /**
    * Provide a form for setting options.
    */
-  function options_form(&$form) { }
+  function options_form(&$form, &$form_state) { }
 
   /**
    * Validate the options form.
@@ -946,7 +1161,7 @@ class views_style_plugin_list extends views_style_plugin {
   /**
    * Render the given style.
    */
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
     $form['type'] = array(
       '#type' => 'radios',
       '#title' => t('List type'),
@@ -987,7 +1202,7 @@ class views_style_plugin_table extends views_style_plugin {
   /**
    * Render the given style.
    */
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
     $form['markup'] = array(
       '#default_value' => 'ToDo',
     );
@@ -1010,18 +1225,18 @@ class views_style_plugin_table extends views_style_plugin {
  * The default style plugin for summaries.
  */
 class views_style_plugin_summary extends views_style_plugin {
-  function options_form(&$form) {
-    // provide an option form to select from our list of node renderers
+  function options_form(&$form, &$form_state) {
+    $form['count'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => !empty($this->options['count']),
+      '#title' => t('Display record count with link'),
+    );
   }
 
   /**
    * Render the given style.
    */
   function render() {
-    if (empty($this->row_plugin)) {
-      // @todo: Log some form of error here?
-      return;
-    }
     // @todo: This needs to be able to support either a database resource OR
     // an array, because our input format doesn't actually have to be from
     // a query.

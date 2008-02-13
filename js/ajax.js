@@ -32,6 +32,13 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
     alert(data.debug);
   }
 
+  // See if we have any settings to extend. Do this first so that behaviors
+  // can access the new settings easily.
+
+  if (data.js) {
+    $.extend(Drupal.settings, data.js);
+  }
+
   // Check the 'display' for data.
   if (data.display) {
     Drupal.Views.Ajax.setForm(data.title, data.display);
@@ -89,8 +96,10 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
   // Go through and add any requested tabs
   if (data.tab) {
     for (id in data.tab) {
+      console.log(data.tab[id]['title']);
       $('#views-tabset').addTab(id, data.tab[id]['title'], 0);
       $(id).html(data.tab[id]['body']);
+      $(id).addClass('views-tab');
       Drupal.attachBehaviors(id);
 
       // This is kind of annoying, but we have to actually to find where the new
@@ -141,6 +150,6 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
     });
 
     return false;   
-  });  
+  });
 
 }

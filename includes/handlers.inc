@@ -151,15 +151,6 @@ class views_handler extends views_object {
     $this->view = &$view;
     $this->data = &$data;
 
-    // Mostly this exists to make things easier to reference. $this->options['...']
-    // is a little easier than $this->data->options['...'];
-    if (isset($data->options)) {
-      $this->options = $data->options;
-    }
-    else {
-      $this->options = array();
-    }
-
     // This exist on most handlers, but not all. So they are still optional.
     if (isset($data->tablename)) {
       $this->table = $data->tablename;
@@ -182,9 +173,14 @@ class views_handler extends views_object {
   }
 
   /**
+   * Provide defaults for the handler.
+   */
+  function options(&$option) { }
+
+  /**
    * Provide a form for setting options.
    */
-  function options_form(&$form) { }
+  function options_form(&$form, &$form_state) { }
 
   /**
    * Validate the options form.
@@ -214,6 +210,18 @@ class views_handler extends views_object {
     }
     return $this->table_alias;
   }
+
+  /**
+   * Provide text for the administrative summary
+   */
+  function admin_summary() { }
+
+  /**
+   * Determine if the argument needs a style plugin.
+   *
+   * @return TRUE/FALSE
+   */
+  function needs_style_plugin() { return FALSE; }
 }
 
 /**
@@ -307,7 +315,12 @@ class views_handler_field_date extends views_handler_field {
     parent::construct($click_sortable, $additional_fields);
   }
 
-  function options_form(&$form) {
+  function options(&$item) {
+    $item->date_format = 'small';
+    $item->custom_date_format = '';
+  }
+
+  function options_form(&$form, &$form_state) {
     $form['date_format'] = array(
       '#type' => 'select',
       '#title' => t('Date format'),
@@ -318,21 +331,21 @@ class views_handler_field_date extends views_handler_field {
         'custom' => t('Custom'),
         'time ago' => t('Time ago'),
       ),
-      '#default_value' => isset($this->options['date_format']) ? $this->options['date_format'] : 'small',
+      '#default_value' => isset($this->data->date_format) ? $this->data->date_format : 'small',
     );
     $form['custom_date_format'] = array(
       '#type' => 'textfield',
       '#title' => t('Custom date format'),
       '#description' => t('If "Custom", see <a href="http://us.php.net/manual/en/function.date.php">the PHP docs</a> for date formats. If "Time ago" this is the the number of different units to display, which defaults to two.'),
-      '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
+      '#default_value' => isset($this->data->custom_date_format) ? $this->data->custom_date_format : '',
     );
   }
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    $format = !empty($this->options['date_format']) ? $this->options['date_format'] : 'medium';
+    $format = $this->data->date_format;
     if ($format == 'custom') {
-      $custom_format = $this->options['custom_date_format'];
+      $custom_format = $this->custom_date_format;
     }
 
     switch ($format) {
@@ -359,40 +372,43 @@ class views_handler_field_boolean extends views_handler_field {
     parent::construct($click_sortable, $additional_fields);
   }
 
-  function options_form(&$form) {
+  function options(&$item) {
+    $item->type = 'yes-no';
+    $item->not = FALSE;
+  }
+
+  function options_form(&$form, &$form_state) {
     $form['type'] = array(
       '#type' => 'select',
-      '#title' => t('Date format'),
+      '#title' => t('Output format'),
       '#options' => array(
         'yes-no' => t('Yes/No'),
         'true-false' => t('True/False'),
         'on-off' => t('On/Off'),
       ),
-      '#default_value' => isset($this->options['type']) ? $this->options['type'] : 'yes-no',
+      '#default_value' => $this->data->type,
     );
     $form['not'] = array(
       '#type' => 'checkbox',
       '#title' => t('Reverse'),
       '#description' => t('If checked, true will be displayed as false.'),
-      '#default_value' => !empty($this->options['not']),
+      '#default_value' => $this->data->not,
     );
   }
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    if (!empty($this->options['not'])) {
+    if (!empty($this->data->not)) {
       $value = !$value;
     }
 
-    $format = isset($this->options['type']) ? $this->options['type'] : 'yes';
-
-    switch ($format) {
+    switch ($this->data->type) {
       case 'yes-no':
       default:
         return $value ? t('Yes') : t('No');
       case 'true-false':
         return $value ? t('True') : t('False');
-      case 'yes-no':
+      case 'on-off':
         return $value ? t('On') : t('Off');
     }
   }
@@ -446,6 +462,43 @@ class views_handler_sort extends views_handler {
     $this->ensure_my_table();
     // Add the field.
     $this->query->add_orderby($this->table_alias, $this->real_field, $this->data->order);
+  }
+
+  /**
+   * Set defaults for new handler
+   */
+  function options(&$options) {
+    $options->order = 'ASC';
+  }
+
+  /**
+   * Display whether or not the sort order is ascending or descending
+   */
+  function admin_summary() {
+    switch ($this->data->order) {
+      case 'ASC':
+      case 'asc':
+      default:
+        $type = t('asc');
+        break;
+      case 'DESC';
+      case 'desc';
+        $type = t('desc');
+        break;
+    }
+    return '<span class="views-ascending"><span>' . $type . '</span></span>';
+  }
+
+  /**
+   * Basic options for all sort criteria
+   */
+  function options_form(&$form, &$form_state) {
+    $form['order'] = array(
+      '#type' => 'radios',
+      '#title' => t('Sort order'),
+      '#options' => array('ASC' => t('Ascending'), 'DESC' => t('Descending')),
+      '#default_value' => $this->data->order,
+    );
   }
 }
 
@@ -503,9 +556,57 @@ class views_handler_sort_formula extends views_handler_sort {
  */
 class views_handler_filter extends views_handler {
   /**
+   * Provide a simple default initializer -- should be overridden.
+   */
+  function options(&$item) {
+    $item->operator = array('operator' => '=');
+    $item->value = array('value' => '');
+  }
+
+  function admin_summary() {
+    return check_plain($this->data->operator['operator']) . ' ' . check_plain($this->data->value['value']);
+  }
+
+  /**
+   * Provide the basic form which calls through to subforms.
+   * If overridden, it is best to call through to the parent.
+   */
+  function options_form(&$form, &$form_state) {
+    $form['operator'] = array(
+      '#prefix' => '<div class="views-left-30">',
+      '#suffix' => '</div>',
+    );
+
+    $this->operator_form($form['operator'], $form_state);
+
+    $form['value'] = array(
+      '#prefix' => '<div class="views-left-50">',
+      '#suffix' => '</div>',
+    );
+
+    $this->value_form($form['value'], $form_state);
+  }
+
+  /**
+   * Simple validate handler
+   */
+  function options_validate(&$form, &$form_state) {
+    $this->operator_validate($form['operator'], $form_state);
+    $this->value_validate($form['value'], $form_state);
+  }
+
+  /**
+   * Simple submit handler
+   */
+  function options_submit(&$form, &$form_state) {
+    $this->operator_submit($form['operator'], $form_state);
+    $this->value_submit($form['value'], $form_state);
+  }
+
+  /**
    * Provide a form for setting the operator.
    */
-  function operator_form(&$form) { }
+  function operator_form(&$form, &$form_state) { }
 
   /**
    * Validate the operator form.
@@ -521,7 +622,7 @@ class views_handler_filter extends views_handler {
   /**
    * Provide a form for setting options.
    */
-  function value_form(&$form) { }
+  function value_form(&$form, &$form_state) { }
 
   /**
    * Validate the options form.
@@ -536,10 +637,42 @@ class views_handler_filter extends views_handler {
 
   /**
    * Add this filter to the query.
+   *
+   * Due to the nature of fapi, the value and the operator have an unintended
+   * level of indirection. You will find them in $this->data->operator['operator']
+   * and $this->data->value['value'] respectively.
    */
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator . " '%s'", $this->data->value);
+    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . " '%s'", $this->data->value['value']);
+  }
+}
+
+/**
+ * Simple filter to handle equal to / not equal to filters
+ */
+class views_handler_filter_equality extends views_handler_filter {
+  /**
+   * Provide simple equality operator
+   */
+  function operator_form(&$form, &$form_state) {
+    $form['operator'] = array(
+      '#type' => 'radios',
+      '#title' => t('Operator'),
+      '#default_value' => $this->data->operator['operator'],
+      '#options' => array(
+        '=' => t('Is equal to'),
+        '!=' => t('Is not equal to'),
+      ),
+    );
+  }
+
+  function value_form(&$form, &$form_state) {
+    $form['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Value'),
+      '#default_value' => $this->data->value['value'],
+    );
   }
 }
 
@@ -563,6 +696,191 @@ class views_handler_argument extends views_handler {
    */
   function construct($name_field = NULL) {
     $this->name_field = $name_field;
+  }
+
+  /**
+   * Provide defaults for the argument when a new one is created.
+   */
+  function options(&$item) {
+    $item->default_action = 'ignore';
+    $item->style_plugin = 'default_summary';
+    $item->style_options = array();
+    $item->wildcard = 'all';
+    $item->wildcard_substitution = t('All');
+  }
+
+  /**
+   * Provide a default options form for the argument.
+   */
+  function options_form(&$form, &$form_state) {
+    $defaults = $this->default_actions();
+    foreach ($defaults as $id => $info) {
+      $options[$id] = $info['title'];
+    }
+    $form['default_action'] = array(
+      '#prefix' => '<div class="views-left-50">',
+      '#suffix' => '</div>',
+      '#type' => 'radios',
+      '#title' => t('Action to take if argument is not present'),
+      '#options' => $options,
+      '#default_value' => $this->data->default_action,
+    );
+    $form['wildcard'] = array(
+      '#prefix' => '<div class="views-left-40">',
+      // prefix and no suffix means these two items will be grouped together.
+      '#type' => 'textfield',
+      '#title' => t('Wildcard'),
+      '#size' => 20,
+      '#default_value' => $this->data->wildcard,
+      '#description' => t('If this value is received as an argument, the argument will be ignored; i.e, "all values"'),
+    );
+    $form['wildcard_substitution'] = array(
+      '#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Wildcard title'),
+      '#size' => 20,
+      '#default_value' => $this->data->wildcard_substitution,
+      '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
+    );
+  }
+
+  /**
+   * Provide a list of default behaviors for this argument if the argument
+   * is not present.
+   *
+   * Override this method to provide additional (or fewer) default behaviors.
+   */
+  function default_actions($which = NULL) {
+    $defaults = array(
+      'ignore' => array(
+        'title' => t('Display all values'),
+        'method' => 'default_ignore',
+      ),
+      'not found' => array(
+        'title' => t('Display page not found'),
+        'method' => 'default_not_found',
+      ),
+      'empty' => array(
+        'title' => t('Display empty text'),
+        'method' => 'default_empty',
+      ),
+      'summary asc' => array(
+        'title' => t('Summary, sorted ascending'),
+        'method' => 'default_summary',
+        'method args' => array('asc'),
+        'style plugin' => TRUE,
+      ),
+      'summary desc' => array(
+        'title' => t('Summary, sorted descending'),
+        'method' => 'default_summary',
+        'method args' => array('desc'),
+        'style plugin' => TRUE,
+      ),
+    );
+
+    if ($which) {
+      if (!empty($defaults[$which])) {
+        return $defaults[$which];
+      }
+    }
+    else {
+      return $defaults;
+    }
+  }
+
+  /**
+   * Determine if the argument needs a style plugin.
+   *
+   * @return TRUE/FALSE
+   */
+  function needs_style_plugin() {
+    $info = $this->default_actions($this->data->default_action);
+    return !empty($info['style plugin']);
+  }
+
+  /**
+   * Handle the default action, which means our argument wasn't present.
+   *
+   * Override this method only with extreme care.
+   *
+   * @return
+   *   A boolean value; if TRUE, continue building this view. If FALSE,
+   *   building the view will be aborted here.
+   */
+  function default_action() {
+    $info = $this->default_actions($this->data->default_action);
+    if (!$info) {
+      return FALSE;
+    }
+
+    if (!empty($info['method args'])) {
+      return call_user_func_array(array($this, $info['method']), $info['method args']);
+    }
+    else {
+      return $this->{$info['method']};
+    }
+  }
+
+  /**
+   * Default action: ignore.
+   *
+   * If an argument was expected and was not given, in this case, simply
+   * ignore the argument entirely.
+   */
+  function default_ignore() {
+    return TRUE;
+  }
+
+  /**
+   * Default action: not found.
+   *
+   * If an argument was expected and was not given, in this case, report
+   * the view as 'not found' or hide it.
+   */
+  function default_not_found() {
+    // Set a failure condition and let the display manager handle it.
+    $this->view->build_info['fail'] = TRUE;
+    return FALSE;
+  }
+
+  /**
+   * Default action: empty
+   *
+   * If an argument was expected and was not given, in this case, display
+   * the view's empty text
+   */
+  function default_empty() {
+    // We return with no query; this will force the empty text.
+    $this->view->built = TRUE;
+    return FALSE;
+  }
+
+  /**
+   * Default action: summary.
+   *
+   * If an argument was expected and was not given, in this case, display
+   * a summary query.
+   */
+  function default_summary($order) {
+    $this->view->build_info['summary'] = TRUE;
+    $this->view->build_info['summary_level'] = $this->data->position;
+
+    // Change the display style to the summary style for this
+    // argument.
+    $this->view->style_plugin = $this->style_plugin;
+    $this->view->style_options = $this->style_options;
+
+    // Clear out the normal primary field and whatever else may have
+    // been added and let the summary do the work.
+    $this->query->clear_fields();
+    $this->summary_query();
+
+    $argument->handler->summary_sort($order);
+
+    // Summaries have their own sorting and fields, so tell the View not
+    // to build these.
+    $this->view->build_sort = $this->view->build_fields = FALSE;
+    return TRUE;
   }
 
   /**
@@ -645,86 +963,6 @@ class views_handler_argument extends views_handler {
   function summary_name($data) {
     return check_plain($data->{$this->name_alias});
   }
-  /**
-   * Provide a list of default behaviors for this argument if the argument
-   * is not present.
-   *
-   * Override this method to provide additional (or fewer) default behaviors.
-   */
-  function defaults() {
-    return array(
-      'ignore' => t('Display all values'),
-      'not found' => t('Display page not found'),
-      'empty' => t('Display empty text'),
-      'summary asc' => t('Summary, sorted ascending'),
-      'summary desc' => t('Summary, sorted descending'),
-    );
-  }
-
-  /**
-   * Handle the default action, which means our argument wasn't present.
-   *
-   * Override this method only with extreme care.
-   *
-   * @return
-   *   A boolean value; if TRUE, continue building this view. If FALSE,
-   *   building the view will be aborted here.
-   */
-  function default_action() {
-    $action = $this->data->default_action;
-    switch ($action) {
-      default:
-      case 'ignore':
-        // Do nothing at all.
-        return TRUE;
-      case 'not found':
-        // Set a failure condition and let the display manager handle it.
-        $this->view->build_info['fail'] = TRUE;
-        return FALSE;
-      case 'empty':
-        // We return with no query; this will force the empty text.
-        $this->view->built = TRUE;
-        return FALSE;
-      case 'summary':
-      case 'summary asc':
-      case 'summary desc':
-        $this->view->build_info['summary'] = TRUE;
-        $this->view->build_info['summary_level'] = $this->data->position;
-
-        // Change the display style to the summary style for this
-        // argument.
-        $this->view->style_plugin = isset($this->options['style_plugin']) ? $this->options['style_plugin'] : 'default_summary';
-
-        // Give it the style's options, too.
-        // @todo
-
-
-        // Clear out the normal primary field and whatever else may have
-        // been added and let the summary do the work.
-        $this->query->clear_fields();
-        $this->summary_query();
-
-        // Allow the new style to add additional fields if it wants.
-        // @todo
-
-        // Cut 'summary' out of our action to see how, if at all, we should
-        // sort.
-        $order = trim(str_replace($action, 'summary', ''));
-        if ($order) {
-          $argument->handler->summary_sort($order);
-        }
-
-        // DISTINCT can cause the summaries to fail.
-        // @todo: This may not be true anymore.
-//        $this->query->no_distinct = TRUE;
-
-
-        // Summaries have their own sorting and fields, so tell the View not
-        // to build these.
-        $this->view->build_sort = $this->view->build_fields = FALSE;
-        return TRUE;
-    }
-  }
 
   /**
    * Set up the query for this argument.
@@ -788,87 +1026,6 @@ class views_handler_argument_formula extends views_handler_argument {
     // Add the field.
     $this->name_alias = $this->query->add_field(NULL, $this->formula, $field_alias);
     $this->query->add_where(0, "$field = '%s'", $this->argument);
-  }
-}
-
-/**
- * Argument handler for a year (CCYY)
- */
-class views_handler_argument_date_year extends views_handler_argument_formula {
-  /**
-   * Constructor implementation
-   */
-  function construct() {
-    $timezone = views_get_timezone();
-    $this->formula = "YEAR(FROM_UNIXTIME(node.created+$timezone))";
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    return l($value, "$url/$value");
-  }
-}
-
-/**
- * Argument handler for a year plus month (CCYYMM)
- */
-class views_handler_argument_date_year_month extends views_handler_argument_formula {
-  /**
-   * Constructor implementation
-   */
-  function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')";
-    $this->format = 'F, Y';
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    $created = $data->{$this->name_alias};
-    return l(format_date($created, 'custom', $this->format), "$url/$value");
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function title($data, $url) {
-    return format_date(strtotime($this->argument . "15"), 'custom', $this->format, 0);
-  }
-}
-
-/**
- * Argument handler for a month (MM)
- */
-class views_handler_argument_date_month extends views_handler_argument_formula {
-  /**
-   * Constructor implementation
-   */
-  function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "MONTH(FROM_UNIXTIME(node.created+$timezone))";
-    $this->format = 'F';
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    $created = $data->{$this->name_alias};
-    return l(format_date($created, 'custom', $this->format), "$url/$value");
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function title($data, $url) {
-    return format_date(strtotime("2005" . $this->argument . "15"), 'custom', $this->format, 0);
   }
 }
 

@@ -866,6 +866,69 @@ class views_db_object {
     $this->display[$id] = $display;
     return $id;
   }
+  /**
+   * Add an item with a handler to the view.
+   *
+   * These items may be fields, filters, sort criteria, or arguments.
+   */
+  function add_item($display_id, $type, $table, $field) {
+    $types = views_object_types();
+    $this->init_display($display_id);
+
+    $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
+
+    $count = 0;
+    $id = $field;
+    while (!empty($fields[$id])) {
+      $id = $field . '_' . ++$count;
+    }
+    $object = new $types[$type]['object'];
+    $object->id = $id;
+    $object->table = $table;
+    $object->field = $field;
+
+    $handler = views_get_handler($table, $field, $type);
+    $handler->options($object);
+
+    $fields[$id] = $object;
+    $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);
+
+    return $id;
+  }
+
+  /**
+   * Get the configuration of an item (field/sort/filter/etc) on a given
+   * display.
+   */
+  function get_item($display_id, $type, $id) {
+    // Get info about the types so we can get the right data.
+    $types = views_object_types();
+    // Initialize the display
+    $this->init_display($display_id);
+
+    // Get the existing configuration
+    $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
+
+    return isset($fields[$id]) ? $fields[$id] : NULL;
+  }
+
+  /**
+   * Get the configuration of an item (field/sort/filter/etc) on a given
+   * display.
+   */
+  function set_item($display_id, $type, $id, $item) {
+    // Get info about the types so we can get the right data.
+    $types = views_object_types();
+    // Initialize the display
+    $this->init_display($display_id);
+
+    // Get the existing configuration
+    $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
+    $fields[$id] = $item;
+
+    // Store.
+    $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);
+  }
 }
 
 /**

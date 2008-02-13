@@ -74,7 +74,7 @@ function node_views_data() {
     ),
     // Information for accepting a nid as a filter
     'filter' => array(
-      'handler' => 'views_handler_filter',
+      'handler' => 'views_handler_filter_equality',
     ),
     // Information for sorting on a nid.
     'sort' => array(
@@ -222,7 +222,7 @@ class views_handler_field_node extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data->options['link_to_node']) && $view->base_table != 'node') {
+    if (isset($data->data->link_to_node) && $view->base_table != 'node') {
       $this->additional_fields[] = $nid;
       $this->nid_field = 'node_nid';
     }
@@ -234,16 +234,16 @@ class views_handler_field_node extends views_handler_field {
   /**
    * Provide link to node option
    */
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
     $form['link_to_node'] = array(
       '#title' => t('Link this field to its node'),
       '#type' => 'checkbox',
-      '#default_value' => $this->data->options['link_to_node'],
+      '#default_value' => !empty($this->data->link_to_node),
     );
   }
 
   function render_link($data, $values) {
-    if (!empty($this->data->options['link_to_node'])) {
+    if (!empty($this->data->link_to_node)) {
       return l($data, "node/" . $values->{$this->node_field}, array('html' => TRUE));
     }
     else {
@@ -324,6 +324,89 @@ class views_handler_argument_node_nid extends views_handler_argument {
   }
 }
 
+/**
+ * Argument handler for a year (CCYY)
+ */
+class views_handler_argument_node_date_year extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   *
+   * @todo node.created should instead know about table aliases otherwise this
+   * will explode in relationships.
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula = "YEAR(FROM_UNIXTIME(node.created+$timezone))";
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    return l($value, "$url/$value");
+  }
+}
+
+/**
+ * Argument handler for a year plus month (CCYYMM)
+ */
+class views_handler_argument_date_year_month extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')";
+    $this->format = 'F, Y';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    $created = $data->{$this->name_alias};
+    return l(format_date($created, 'custom', $this->format), "$url/$value");
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title($data, $url) {
+    return format_date(strtotime($this->argument . "15"), 'custom', $this->format, 0);
+  }
+}
+
+/**
+ * Argument handler for a month (MM)
+ */
+class views_handler_argument_date_month extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "MONTH(FROM_UNIXTIME(node.created+$timezone))";
+    $this->format = 'F';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    $created = $data->{$this->name_alias};
+    return l(format_date($created, 'custom', $this->format), "$url/$value");
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title($data, $url) {
+    return format_date(strtotime("2005" . $this->argument . "15"), 'custom', $this->format, 0);
+  }
+}
 
 /**
  * Implementation of hook_views_plugins
