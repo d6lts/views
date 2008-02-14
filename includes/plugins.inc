@@ -709,7 +709,7 @@ class views_display_plugin extends views_object {
 
   function render_textarea($area) {
     $format_string = $area . '_format';
-    return check_markup($this->display->$area, $this->display->$format_string);
+    return check_markup($this->get_option($area), $this->get_option($format_string));
   }
 
   /**
@@ -843,7 +843,7 @@ class views_display_plugin_page extends views_display_plugin {
       // Identify URL embedded arguments and correlate them to a handler
       'load arguments'  => array($this->view->name, '%index'),
       // Basic menu title
-      'title' => $this->display->title,
+      'title' => $this->display->handler->get_option('title'),
       'type' => MENU_NORMAL_ITEM,
     );
     return $items;
@@ -1075,18 +1075,26 @@ class views_display_plugin_block extends views_display_plugin {
  */
 class views_style_plugin extends views_object {
   /**
-   * This is set both here and in the plugin settings because
-   * the object may not have access to the plugin settings.
+   * Initialize a style plugin.
+   *
+   * @param $view
+   * @param $display
+   * @param $options
+   *   The style options might come externally as the style can be sourced
+   *   from at least two locations. If it's not included, look on the display.
    */
-  var $uses_row_plugin = FALSE;
-
-  function init(&$view, &$display) {
+  function init(&$view, &$display, $options = NULL) {
     $this->view = $view;
     $this->display = $display;
-    $this->options = $display->handler->get_option('style_options');
+    if (isset($options)) {
+      $this->options = $options;
+    }
+    else {
+      $this->options = $display->handler->get_option('style_options');
+    }
 
-    if ($this->uses_row_plugin) {
-      $this->row_plugin = views_get_plugin('row', $display->get_options('row_plugin'));
+    if ($this->uses_row_plugin()) {
+      $this->row_plugin = views_get_plugin('row', $display->handler->get_option('row_plugin'));
       // initialize the row plugin.
       if ($this->row_plugin) {
         $this->row_plugin->init($view, $display);
@@ -1094,10 +1102,14 @@ class views_style_plugin extends views_object {
     }
   }
 
+  function uses_row_plugin() {
+    return !empty($this->definition['uses row plugin']);
+  }
+
   /**
    * Static member function to set default options.
    */
-  function construct($display) {
+  function options(&$display) {
     return array();
   }
 
@@ -1130,7 +1142,7 @@ class views_style_plugin_default extends views_style_plugin {
    */
   function render() {
     if (empty($this->row_plugin)) {
-      // @todo: Log some form of error here?
+      vpr('views_style_plugin_default: Missing row plugin');
       return;
     }
     // @todo: This needs to be able to support either a database resource OR
@@ -1273,7 +1285,7 @@ class views_row_plugin extends views_object {
   function init(&$view, &$display) {
     $this->view = $view;
     $this->display = $display;
-    $this->options = $display->get_options('row_options');
+    $this->options = $display->handler->get_option('row_options');
   }
 
   /**

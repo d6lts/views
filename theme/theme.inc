@@ -37,7 +37,7 @@ function template_preprocess_views_view_row(&$vars) {
   $view = $vars['view'];
 
   // Loop through the fields for this view.
-  foreach ($view->get_fields($view->current_display) as $field) {
+  foreach ($view->field as $field) {
     if (!empty($field->handler) && is_object($field->handler)) {
       $themes = array(
         'views_view_field__' . $view->name . '__' . $field->handler->field_alias,

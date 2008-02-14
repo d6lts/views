@@ -178,7 +178,7 @@ function views_access($view, $account = NULL) {
     if (!$view) {
       return FALSE;
     }
-    if (!$view->init_display($display_id)) {
+    if (!$view->set_display($display_id)) {
       return FALSE;
     }
   }
@@ -614,7 +614,7 @@ function views_get_applicable_views($type) {
         // This view uses hook menu. Clone it so that different handlers
         // don't trip over each other, and add it to the list.
         $v = drupal_clone($view);
-        if ($v->init_display($display->id)) {
+        if ($v->set_display($display->id)) {
           $result[] = array($v, $display->id);
         }
       }

@@ -39,28 +39,28 @@ class view extends views_db_object {
   function view() {
     parent::init();
     // Make sure all of our sub objects are arrays.
-    foreach ($this->objects_all() as $object) {
+    foreach ($this->db_objects() as $object) {
       $this->$object = array();
     }
   }
 
   /**
-   * Returns a list of the sub-object types used by this view.
+   * Returns a list of the sub-object types used by this view. These types are
+   * stored on the display, and are used in the build process.
    */
-  function objects() {
+  function display_objects() {
     return array('argument', 'field', 'sort', 'filter', 'relationship');
   }
 
   /**
-   * Returns the complete list of dependent objects in a view, including
-   * the display which is often special and needs to be handled in a less
-   * generic manner.
+   * Returns the complete list of dependent objects in a view, for the purpose
+   * of initialization and loading/saving to/from the database.
    *
    * Note: In PHP5 this should be static, but PHP4 doesn't support static
    * methods.
    */
-  function objects_all() {
-    return array('display', 'argument', 'field', 'sort', 'filter', 'relationship');
+  function db_objects() {
+    return array('display');
   }
 
   /**
@@ -111,33 +111,12 @@ class view extends views_db_object {
   }
 
   /**
-   * Get an array of fields for the given display.
-   */
-  function get_fields($display_id = NULL) {
-    if (!isset($display_id)) {
-      $display_id = $this->current_display;
-    }
-
-    // @todo: Fix this:
-    return $this->field;
-  }
-
-  /**
    * Set the display for this view and initialize the display handler.
    */
-  function init_display($display_id = 'default') {
+  function init_display() {
     // The default display is always the first one in the list.
     if (isset($this->current_display)) {
       return TRUE;
-    }
-
-    // Ensure the requested display exists.
-    if (empty($this->display[$display_id])) {
-      $display_id = 'default';
-      if (empty($this->display[$display_id])) {
-        // @todo: Log an error here?
-        return FALSE;
-      }
     }
 
     // Instantiate all displays
@@ -154,6 +133,30 @@ class view extends views_db_object {
         if ($id != 'default') {
           $display->handler->default_display = &$this->display['default']->handler;
         }
+      }
+    }
+
+    return TRUE;
+  }
+
+  /**
+   * Set the display as current.
+   *
+   * @param $display_id
+   *   The id of the display to mark as current.
+   */
+  function set_display($display_id = 'default') {
+    // If we have not already initialized the display, do so. But be careful.
+    if (empty($this->current_display)) {
+      $this->init_display();
+    }
+
+    // Ensure the requested display exists.
+    if (empty($this->display[$display_id])) {
+      $display_id = 'default';
+      if (empty($this->display[$display_id])) {
+        // @todo: Log an error here?
+        return FALSE;
       }
     }
 
@@ -182,7 +185,8 @@ class view extends views_db_object {
    */
   function init_style() {
     if (!isset($this->style_plugin)) {
-      $this->style_plugin = $this->display[$this->current_display]->get_option('style_plugin');
+      $this->style_plugin = $this->display_handler->get_option('style_plugin');
+      $this->style_options = $this->display_handler->get_option('style_options');
     }
 
     vpr("Init_style: $this->style_plugin");
@@ -192,7 +196,41 @@ class view extends views_db_object {
     }
 
     // init the new display handler with data.
-    $this->style_handler->init($this, $this->display[$this->current_display]);
+    $this->style_handler->init($this, $this->display[$this->current_display], $this->style_options);
+  }
+
+  /**
+   * Acquire and attach all of the handlers.
+   */
+  function init_handlers() {
+    if (empty($this->inited)) {
+      foreach (views_object_types() as $key => $info) {
+        $this->_init_handler($key, $info);
+      }
+      $this->inited = TRUE;
+    }
+  }
+
+  /**
+   * Attach all of the handlers for each type.
+   *
+   * @param $key
+   *   One of 'argument', 'field', 'sort', 'filter', 'relationship'
+   */
+  function _init_handler($key, $info) {
+    // Load the requested items from the display onto the object.
+    $this->$key = $this->display_handler->get_option($info['plural']);
+
+    // Then run through and initialize a handler for each item.
+    foreach ($this->$key as $data) {
+      $handler = views_get_handler($data->table, $data->field, $key);
+      if (is_object($handler)) {
+        // Clone the data because init takes a reference and we don't
+        // want that here.
+        $handler->init($this, drupal_clone($data));
+        $data->handler = $handler;
+      }
+    }
   }
 
   /**
@@ -203,7 +241,7 @@ class view extends views_db_object {
       return;
     }
 
-    if (!$this->init_display($display_id)) {
+    if (!$this->set_display($display_id)) {
       return FALSE;
     }
 
@@ -218,7 +256,7 @@ class view extends views_db_object {
     }
 
     // Attempt to load from cache.
-    // @todo: Load a build_info from cache.
+    // @todo Load a build_info from cache.
 
 
 
@@ -309,34 +347,6 @@ class view extends views_db_object {
   }
 
   /**
-   * Acquire and attach all of the handlers.
-   */
-  function init_handlers() {
-    if (empty($this->inited)) {
-      foreach ($this->objects() as $key) {
-        $this->_init_handler($key);
-      }
-      $this->inited = TRUE;
-    }
-  }
-
-  /**
-   * Attach all of the handlers for each type.
-   *
-   * @param $key
-   *   One of 'argument', 'field', 'sort', 'filter', 'relationship'
-   */
-  function _init_handler($key) {
-    foreach ($this->$key as $data) {
-      $handler = views_get_handler($data->tablename, $data->field, $key);
-      if (is_object($handler)) {
-        $handler->init($this, $data);
-        $data->handler = $handler;
-      }
-    }
-  }
-
-  /**
    * Execute the view's query.
    */
   function execute($display_id = NULL) {
@@ -402,7 +412,7 @@ class view extends views_db_object {
   function execute_display($display_id = NULL, $args = array()) {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
-    if (!$this->init_display($display_id)) {
+    if (!$this->set_display($display_id)) {
       return FALSE;
     }
 
@@ -418,7 +428,7 @@ class view extends views_db_object {
     // Prepare the view with the information we have.
 
     // This was probably already called, but it's good to be safe.
-    if (!$this->init_display($display_id)) {
+    if (!$this->set_display($display_id)) {
       return FALSE;
     }
 
@@ -433,7 +443,7 @@ class view extends views_db_object {
    * this sets the display handler if it hasn't been.
    */
   function access($account) {
-    if (empty($this->display_handler) && !$this->init_display()) {
+    if (empty($this->display_handler) && !$this->set_display()) {
       return FALSE;
     }
 
@@ -494,9 +504,29 @@ class view extends views_db_object {
         $view =& new view();
         $view->load_row($data);
         // Load all of our subtables.
-        foreach ($view->objects_all() as $key) {
-          $view->_load_sub_row($key);
+        foreach ($view->db_objects() as $key) {
+          $object_name = "views_$key";
+          $result = db_query("SELECT * FROM {{$object_name}} WHERE vid = %d ORDER BY position", $view->vid);
+
+          while ($data = db_fetch_object($result)) {
+            $object = new $object_name(FALSE);
+            $object->load_row($data);
+
+            // Because it can get complicated with this much indirection,
+            // make a shortcut reference.
+            $location = &$view->$key;
+
+            // If we have a basic id field, load the item onto the view based on
+            // this ID, otherwise push it on.
+            if (!empty($object->id)) {
+              $location[$object->id] = $object;
+            }
+            else {
+              $location[] = $object;
+            }
+          }
         }
+
         $view->loaded = TRUE;
         $cache[$arg] = $view;
       }
@@ -511,9 +541,6 @@ class view extends views_db_object {
    * Although this method could be implemented to simply iterate over views::load(),
    * that would be very slow.  Buiding the views externally from unified queries is
    * much faster.
-   *
-   * @todo FROM LG: We should document why this is passing in literal query fragments
-   *  since it's bound to confuse someone else as much as it did/does me. :-)
    */
   function load_views() {
     // @todo: Integrate this in with caching.
@@ -536,7 +563,7 @@ class view extends views_db_object {
 
     $vids = implode(', ', array_keys($views));
     // Now load all the subtables:
-    foreach (view::objects_all() as $key) {
+    foreach (view::db_objects() as $key) {
       $object_name = "views_$key";
       $result = db_query("SELECT * FROM {{$object_name}} WHERE vid IN ($vids) ORDER BY vid, position");
 
@@ -551,7 +578,7 @@ class view extends views_db_object {
         // If we have a basic id field, load the item onto the view based on
         // this ID, otherwise push it on.
         if (!empty($object->id)) {
-          $location[$data->id] = $object;
+          $location[$object->id] = $object;
         }
         else {
           $location[] = $object;
@@ -562,37 +589,26 @@ class view extends views_db_object {
   }
 
   /**
-   * Load one of our sub tables.
-   */
-  function _load_sub_row($key) {
-    $object_name = "views_$key";
-    $result = db_query("SELECT * FROM {$object_name} WHERE vid = %d ORDER BY position", $this->vid);
-
-    while ($data = db_fetch_object($result)) {
-      $object = new $object_name(FALSE);
-      $object->load_row($data);
-      array_push($this->$key, $object); // @todo: Why is this array_push instead of just []?
-    }
-  }
-
-  /**
    * Save the view to the database. If the view does not already exist,
    * A vid will be assigned to the view and also returned from this function.
    */
   function save() {
+    if ($this->vid == 'new') {
+      $this->vid = NULL;
+    }
+
     // If we have no vid or our vid is a string, this is a new view.
-    if (!empty($this->vid) || !is_numeric($this->vid)) {
+    if (!empty($this->vid)) {
       // remove existing table entries
-      foreach ($this->objects_all() as $key) {
+      foreach ($this->db_objects() as $key) {
         db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
-        $this->_load_sub_row($key);
       }
     }
 
     $this->save_row(!empty($this->vid) ? 'vid' : FALSE);
 
     // Save all of our subtables.
-    foreach ($this->objects_all() as $key) {
+    foreach ($this->db_objects() as $key) {
       $this->_save_rows($key);
     }
 
@@ -602,7 +618,7 @@ class view extends views_db_object {
 
   /**
    * Save a row to the database for the given key, which is one of the
-   * keys from view::objects_all()
+   * keys from view::db_objects()
    */
   function _save_rows($key) {
     foreach ($this->$key as $position => $object) {
@@ -622,9 +638,8 @@ class view extends views_db_object {
 
     db_query("DELETE FROM {views_view} WHERE vid = %d", $this->vid);
     // Delete from all of our subtables as well.
-    foreach ($this->objects_all() as $key) {
+    foreach ($this->db_objects() as $key) {
       db_query("DELETE from {views_" . $key . "} WHERE vid = %d", $this->vid);
-      $this->_load_sub_row($key);
     }
 
     cache_clear_all('views_query:' . $this->name, 'cache_views');
@@ -638,7 +653,7 @@ class view extends views_db_object {
   function export() {
     $output = '';
     $output .= $this->export_row('view');
-    foreach ($this->objects_all() as $key) {
+    foreach ($this->db_objects() as $key) {
       $output .= '$view->' . $key . ' = array()' . ";\n";
       foreach ($this->$key as $object) {
         $output .= $object->export_row($key, '  ');
@@ -866,6 +881,7 @@ class views_db_object {
     $this->display[$id] = $display;
     return $id;
   }
+
   /**
    * Add an item with a handler to the view.
    *
@@ -873,7 +889,7 @@ class views_db_object {
    */
   function add_item($display_id, $type, $table, $field) {
     $types = views_object_types();
-    $this->init_display($display_id);
+    $this->set_display($display_id);
 
     $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
 
@@ -897,6 +913,21 @@ class views_db_object {
   }
 
   /**
+   * Get an array of items for the current display.
+   */
+  function get_items($type, $display_id = NULL) {
+    $this->set_display($display_id);
+
+    if (!isset($display_id)) {
+      $display_id = $this->current_display;
+    }
+
+    // Get info about the types so we can get the right data.
+    $types = views_object_types();
+    return $this->display[$display_id]->handler->get_option($types[$type]['plural']);
+  }
+
+  /**
    * Get the configuration of an item (field/sort/filter/etc) on a given
    * display.
    */
@@ -904,7 +935,7 @@ class views_db_object {
     // Get info about the types so we can get the right data.
     $types = views_object_types();
     // Initialize the display
-    $this->init_display($display_id);
+    $this->set_display($display_id);
 
     // Get the existing configuration
     $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
@@ -920,7 +951,7 @@ class views_db_object {
     // Get info about the types so we can get the right data.
     $types = views_object_types();
     // Initialize the display
-    $this->init_display($display_id);
+    $this->set_display($display_id);
 
     // Get the existing configuration
     $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);

@@ -152,8 +152,8 @@ class views_handler extends views_object {
     $this->data = &$data;
 
     // This exist on most handlers, but not all. So they are still optional.
-    if (isset($data->tablename)) {
-      $this->table = $data->tablename;
+    if (isset($data->table)) {
+      $this->table = $data->table;
     }
 
     if (isset($data->field)) {

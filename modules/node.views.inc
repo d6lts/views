@@ -244,7 +244,7 @@ class views_handler_field_node extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->data->link_to_node)) {
-      return l($data, "node/" . $values->{$this->node_field}, array('html' => TRUE));
+      return l($data, "node/" . $values->{$this->nid_field}, array('html' => TRUE));
     }
     else {
       return $data;

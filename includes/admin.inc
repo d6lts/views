@@ -196,6 +196,23 @@ function views_ui_edit_view_form(&$form_state, $view) {
 }
 
 /**
+ * Submit handler for the edit view form.
+ */
+function views_ui_edit_view_form_submit($form, &$form_state) {
+  $form_state['view']->save();
+  drupal_set_message(t('The view has been saved.'));
+
+  // Make sure menu items get rebuilt as neces
+  menu_rebuild();
+
+  // Clear the views cache.
+  cache_clear_all('*', 'cache_views');
+
+  // Clear the page cache.
+  cache_clear_all();
+}
+
+/**
  * Display the edit view form.
  *
  * Since this form is more of a summary than a form, there's a lot more work
@@ -205,28 +222,33 @@ function theme_views_ui_edit_view($view) {
   $output = '';
   $save_button = drupal_get_form('views_ui_edit_view_form', $view);
 
-  if (!empty($view->changed)) {
-    if (!is_numeric($view->vid)) {
-      $warning = t('This view has not yet been created and will not be entered into the database until you click <b>Save</b>, below.');
-    }
-    else {
-      $warning = t('This view has been modified and changes will not saved to the database until you click <b>Save</b>, below.');
-    }
-    $output .= '<div class="warning">' . $warning . "</div>\n";
-  }
-
   $table = views_fetch_data($view->base_table);
   $base_table = !empty($table['table']['base']['title']) ?
     $table['table']['base']['title'] : t('Unknown or missing table name');
 
   $output .= '<div class="views-basic-info">';
+  if (!empty($view->changed)) {
+    if (!is_numeric($view->vid)) {
+      $output .= '<div class="view-changed view-new">' . t('New view') . '</div>';
+    }
+    else {
+      $output .= '<div class="view-changed">' . t('Changed view') . '</div>';
+    }
+  }
+  else {
+    $output .= '<div class="view-changed view-hide">' . t('Changed view') . '</div>';
+  }
   $output .= t('View %name, displaying items of type <b>@base</b>.',
     array('%name' => $view->name, '@base' => $base_table));
   $output .= '</div>';
+
   views_include('tabs');
   $tabs = new views_tabset;
 
-  $view->init_display('default');
+  if (!$view->set_display('default')) {
+    views_ajax_render(t('Invalid display id'));
+  }
+
   foreach ($view->display as $display) {
     list($title, $body) = views_ui_display_tab($view, $display);
     // The first display is the default.
@@ -385,7 +407,9 @@ function views_ui_regenerate_tabs($view, $display_id = NULL, $object = NULL) {
     $displays = $display_id;
   }
 
-  $view->init_display();
+  if (!$view->set_display('default')) {
+    views_ajax_render(t('Invalid display id'));
+  }
 
   if (!is_object($object)) {
     $object = new stdClass();
@@ -448,7 +472,10 @@ function views_ui_add_display($js, $view) {
   $view = $form_state['view'];
   $id = $form_state['id'];
 
-  $view->init_display();
+  if (!$view->set_display('default')) {
+    views_ajax_render(t('Invalid display id'));
+  }
+
   list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
 
   $output = new stdClass;
@@ -652,7 +679,9 @@ function views_ui_edit_display($js, $view, $display_id, $section) {
  * Form constructor callback to edit display of a view
  */
 function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) {
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $display = &$view->display[$display_id];
 
   $form_state['view'] = $view;
@@ -726,7 +755,9 @@ function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
   $types = views_object_types();
   $form['#title'] = t('Rearrange @type', array('@type' => $types[$type]['title']));
   $types = views_object_types();
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $display = &$view->display[$display_id];
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
@@ -868,7 +899,9 @@ function views_ui_add_item($js, $view, $display_id, $type) {
  * Form to add_item items in the views UI.
  */
 function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $display = &$view->display[$display_id];
 
   $types = views_object_types();
@@ -942,13 +975,15 @@ function views_ui_config_item($js, $view, $display_id, $type, $id) {
  */
 function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id) {
   $form = array('options' => array('#tree' => TRUE));
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
     $handler = views_get_handler($item->table, $item->field, $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
       break;
     }
     $handler->init($view, $item);
@@ -1017,13 +1052,15 @@ function views_ui_change_style($js, $view, $display_id, $type, $id) {
  */
 function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id) {
   $form = array('options' => array('#tree' => TRUE));
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
     $handler = views_get_handler($item->table, $item->field, $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
       break;
     }
     $handler->init($view, $item);
@@ -1087,13 +1124,15 @@ function views_ui_config_style($js, $view, $display_id, $type, $id) {
  */
 function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id) {
   $form = array('options' => array('#tree' => TRUE));
-  $view->init_display($display_id);
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id'));
+  }
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
     $handler = views_get_handler($item->table, $item->field, $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->tablename, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
       break;
     }
     $handler->init($view, $item);
@@ -1105,9 +1144,7 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
       $form['style_options'] = array(
         '#tree' => TRUE,
       );
-      $plugin->init($view, $view->display[$display_id]);
-      // Override the options since it thinks it's getting them from the display.
-      $plugin->options = $item->style_options;
+      $plugin->init($view, $view->display[$display_id], $item->style_options);
 
       $plugin->options_form($form['style_options'], $form_state);
     }
@@ -1159,7 +1196,7 @@ function views_ui_add_info($type, $view, $display) {
   foreach ($display->handler->get_option($types[$type]['plural']) as $field) {
     $handler = views_get_handler($field->table, $field->field, $type);
     if (empty($handler)) {
-      $output .= t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->tablename, '@field' => $field->field)) . '<br/>';
+      $output .= t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->table, '@field' => $field->field)) . '<br/>';
       continue;
     }
     $handler->init($view, $field);

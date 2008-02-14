@@ -343,3 +343,11 @@ html.js a.views-button-remove {
 #arrange .form-item {
   padding: 0;
 }
+
+div.views-basic-info div.view-changed {
+  float: right;
+}
+
+div.views-basic-info div.view-hide {
+  display: none;
+}
