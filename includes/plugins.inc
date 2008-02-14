@@ -73,7 +73,7 @@ function views_views_plugins() {
         'title' => t('Fields'),
         'help' => t('Displays the fields with an optional template.'),
         'handler' => 'views_row_plugin',
-        'theme' => 'views_view_row',
+        'theme' => 'views_view_fields',
         'uses fields' => TRUE,
       ),
     ),
@@ -1154,7 +1154,7 @@ class views_style_plugin_default extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows .= $this->row_plugin->render($row);
     }
-    return theme(array('views_view_unformatted__' . $this->view->name, 'views_view_unformatted'), $this->view, $rows);
+    return theme(array('views_view_unformatted__' . $this->view->name, 'views_view_unformatted'), $this->view, $this->options, $rows);
   }
 }
 
@@ -1196,7 +1196,7 @@ class views_style_plugin_list extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows .= $this->row_plugin->render($row);
     }
-    return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $rows);
+    return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $this->options, $rows);
   }
 }
 
@@ -1256,10 +1256,9 @@ class views_style_plugin_summary extends views_style_plugin {
     $rows = array();
     while ($row = db_fetch_object($this->view->result)) {
       // @todo: Include separator as an option.
-//      $rows[] = theme(array('views_view_row_summary__' . $this->view->name, 'views_view_row_summary'), $this->view, $row);
         $rows[] = $row;
     }
-    return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $rows);
+    return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $this->options, $rows);
   }
 }
 
@@ -1299,7 +1298,7 @@ class views_row_plugin extends views_object {
    * of some form, but not always.
    */
   function render($row) {
-    return theme(array('views_view_row__' . $this->view->name, 'views_view_row'), $this->view, $row);
+    return theme(array('views_view_fields__' . $this->view->name, 'views_view_fields'), $this->view, $this->options, $row);
   }
 }
 

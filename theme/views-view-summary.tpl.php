@@ -10,7 +10,10 @@
 <div class="item-list">
   <ul>
   <?php foreach ($rows as $row): ?>
-    <li><a href="<?php print $row->url; ?>"><?php print $row->link; ?></a> (<?php print $row->count?>)
+    <li><a href="<?php print $row->url; ?>"><?php print $row->link; ?></a>
+    <?php if (!empty($options['count'])): ?>
+      (<?php print $row->count?>)
+    <?php endif; ?>
   <?php endforeach; ?>
   </ul>
 </div>

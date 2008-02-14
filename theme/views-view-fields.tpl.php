@@ -1,8 +1,8 @@
 <?php
 // $Id$
 /**
- * @file views-view-row.tpl.php
- * Default simple view template to display a list of rows.
+ * @file views-view-fields.tpl.php
+ * Default simple view template to all the fields as a row.
  *
  * @ingroup views_templates
  */

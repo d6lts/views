@@ -160,6 +160,16 @@ function node_views_data() {
     ),
   );
 
+  // Bogus fields for aliasing purposes.
+
+  $data['node']['year_month'] = array(
+    'title' => t('Year + month'),
+    'help' => t('In the form of YYYYMM'),
+    'argument' => array(
+      'handler' => 'views_handler_argument_date_year_month',
+    ),
+  );
+
   // ----------------------------------------------------------------------
   // Node revisions table
 

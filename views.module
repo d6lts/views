@@ -22,8 +22,8 @@ function views_theme() {
 
   $arguments = array(
     'display' => array('view' => NULL),
-    'style' => array('view' => NULL, 'rows' => NULL),
-    'row' => array('view' => NULL, 'row' => NULL),
+    'style' => array('view' => NULL, 'options' => NULL, 'rows' => NULL),
+    'row' => array('view' => NULL, 'options' => NULL, 'row' => NULL),
   );
 
   // Default view themes

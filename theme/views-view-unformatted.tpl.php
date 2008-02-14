@@ -1,7 +1,7 @@
 <?php
 // $Id$
 /**
- * @file views-view-rows.tpl.php
+ * @file views-view-unformatted.tpl.php
  * Default simple view template to display a list of rows.
  *
  * @ingroup views_templates

@@ -965,45 +965,40 @@ class views_db_object {
   }
 }
 
+class views_sub_object {
+  var $table = '';
+  var $field = '';
+  var $relationship = '';
+}
+
 /**
  * An argument in a view.
  */
-class views_argument extends views_db_object {
-  var $db_table = 'views_argument';
-  function views_argument($init = TRUE) {
-    parent::init($init);
-    $this->default_argument = 'ignore';
-  }
+class views_argument extends views_sub_object {
 }
 
 /**
  * A field in a view.
  */
-class views_field extends views_db_object {
-  var $db_table = 'views_field';
-  function views_field($init = TRUE) {
-    parent::init($init);
-  }
+class views_field  extends views_sub_object  {
 }
 
 /**
  * A sort criterion in a view.
  */
-class views_sort extends views_db_object {
-  var $db_table = 'views_sort';
-  function views_sort($init = TRUE) {
-    parent::init($init);
-  }
+class views_sort  extends views_sub_object {
 }
 
 /**
  * A filter in a view.
  */
-class views_filter extends views_db_object {
-  var $db_table = 'views_filter';
-  function views_filter($init = TRUE) {
-    parent::init($init);
-  }
+class views_filter  extends views_sub_object {
+}
+
+/**
+ * A relationship in a view.
+ */
+class views_relationship  extends views_sub_object {
 }
 
 /**
@@ -1026,15 +1021,6 @@ class views_display extends views_db_object {
   }
 }
 
-/**
- * A relationship in a view.
- */
-class views_relationship extends views_db_object {
-  var $db_table = 'views_relationship';
-  function views_relationship($init = TRUE) {
-    parent::init($init);
-  }
-}
 
 /**
  * @}
