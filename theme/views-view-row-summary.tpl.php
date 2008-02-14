@@ -7,4 +7,4 @@
  * @ingroup views_templates
  */
 ?>
-<a href="<?php print $url; ?>"><?php print $link; ?></a> (<?php print $count?>)
+

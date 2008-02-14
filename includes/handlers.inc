@@ -863,19 +863,19 @@ class views_handler_argument extends views_handler {
    */
   function default_summary($order) {
     $this->view->build_info['summary'] = TRUE;
-    $this->view->build_info['summary_level'] = $this->data->position;
+    $this->view->build_info['summary_level'] = $this->data->id;
 
     // Change the display style to the summary style for this
     // argument.
-    $this->view->style_plugin = $this->style_plugin;
-    $this->view->style_options = $this->style_options;
+    $this->view->style_plugin = $this->data->style_plugin;
+    $this->view->style_options = $this->data->style_options;
 
     // Clear out the normal primary field and whatever else may have
     // been added and let the summary do the work.
     $this->query->clear_fields();
     $this->summary_query();
 
-    $argument->handler->summary_sort($order);
+    $this->summary_sort($order);
 
     // Summaries have their own sorting and fields, so tell the View not
     // to build these.
@@ -936,7 +936,7 @@ class views_handler_argument extends views_handler {
    *   The order selected in the UI.
    */
   function summary_sort($order) {
-    $query->add_orderby(NULL, NULL, $order, $this->base_alias);
+    $this->query->add_orderby(NULL, NULL, $order, $this->base_alias);
   }
 
   /**

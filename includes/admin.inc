@@ -210,6 +210,17 @@ function views_ui_edit_view_form_submit($form, &$form_state) {
 
   // Clear the page cache.
   cache_clear_all();
+
+  // Remove this view from cache so we can edit it properly.
+  views_object_cache_clear('view', $form_state['view']->name);
+}
+
+/**
+ * Submit handler for the edit view form.
+ */
+function views_ui_edit_view_form_cancel($form, &$form_state) {
+  // Remove this view from cache so edits will be lost.
+  views_object_cache_clear('view', $form_state['view']->name);
 }
 
 /**
@@ -371,15 +382,24 @@ function views_ui_display_tab($view, &$display) {
     }
   }
 
+  // Fetch style plugin info because it has some effect on how/what we render.
+  $style_plugin = views_get_plugin('style', $display->handler->get_option('style_plugin'));
+  if ($style_plugin) {
+    $style_plugin->init($view, $display);
+  }
+
+
   $left .= '</dl>';
   $middle .= '<dl>';
   $middle .= views_ui_add_info('relationship', $view, $display);
   $middle .= views_ui_add_info('argument', $view, $display);
-  $middle .= views_ui_add_info('filter', $view, $display);
+  if ($style_plugin->uses_fields()) {
+    $middle .= views_ui_add_info('field', $view, $display);
+  }
   $middle .= '</dl>';
 
   $right .= '<dl>';
-  $right .= views_ui_add_info('field', $view, $display);
+  $right .= views_ui_add_info('filter', $view, $display);
   $right .= views_ui_add_info('sort', $view, $display);
   $right .= '</dl>';
 

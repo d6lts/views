@@ -69,7 +69,7 @@ function node_views_data() {
     ),
     // Information for accepting a nid as an argument
     'argument' => array(
-      'handler' => 'views_handler_argument_nid',
+      'handler' => 'views_handler_argument_node_nid',
       'arguments' => array('title'),
     ),
     // Information for accepting a nid as a filter
@@ -320,7 +320,7 @@ class views_handler_argument_node_nid extends views_handler_argument {
       return t('No title');
     }
 
-    return check_plain();
+    return check_plain($title);
   }
 }
 
@@ -432,12 +432,12 @@ function node_views_plugins() {
  *
  * @ingroup views_row_plugins
  */
-class views_row_plugin_node_view extends views_object {
+class views_row_plugin_node_view extends views_row_plugin {
   /**
    * Override the behavior of the render() function.
    */
-  function render(&$view, $row) {
-    return theme(array('views_view_row_node__' . $view->name, 'views_view_row_node'), $view, $row);
+  function render($row) {
+    return theme(array('views_view_row_node__' . $this->view->name, 'views_view_row_node'), $this->view, $row);
   }
 }
 

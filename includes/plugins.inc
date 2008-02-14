@@ -34,20 +34,13 @@ function views_views_plugins() {
         'handler' => 'views_display_plugin_block',
         'uses hook block' => TRUE,
       ),
-/*
-      'embed' => array(
-        'title' => t('Embedded'),
-        'help' => t('Creates a view that is used from other code. By itself an embedded view does not do anything.'),
-        'handler' => 'views_display_plugin',
-      ),
-*/
     ),
     'style' => array(
       'default' => array(
         'title' => t('Unformatted'),
         'help' => t('Displays rows one after another.'),
         'handler' => 'views_style_plugin_default',
-        'theme' => 'views_view_summary',
+        'theme' => 'views_view_unformatted',
         'uses row plugin' => TRUE,
       ),
       'list' => array(
@@ -81,14 +74,6 @@ function views_views_plugins() {
         'help' => t('Displays the fields with an optional template.'),
         'handler' => 'views_row_plugin',
         'theme' => 'views_view_row',
-        'uses fields' => TRUE,
-      ),
-      'fields_summary' => array(
-        'title' => t('Summary'),
-        'help' => t('Displays the link to the argument and the row count.'),
-        'handler' => 'views_row_plugin_summary',
-        'theme' => 'views_view_row_summary',
-        'summary' => TRUE, // only shows up as a summary style
         'uses fields' => TRUE,
       ),
     ),
@@ -1102,8 +1087,24 @@ class views_style_plugin extends views_object {
     }
   }
 
+  /**
+   * Return TRUE if this style also uses a row plugin.
+   */
   function uses_row_plugin() {
     return !empty($this->definition['uses row plugin']);
+  }
+
+  /**
+   * Return TRUE if this style also uses fields.
+   */
+  function uses_fields() {
+    // If we use a row plugin, ask the row plugin. Chances are, we don't
+    // care, it does.
+    if ($this->uses_row_plugin()) {
+      return $this->row_plugin->uses_fields();
+    }
+    // Otherwise, maybe we do.
+    return !empty($this->definition['uses fields']);
   }
 
   /**
@@ -1153,7 +1154,7 @@ class views_style_plugin_default extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows .= $this->row_plugin->render($row);
     }
-    return theme(array('views_view_rows__' . $this->view->name, 'views_view_rows'), $this->view, $rows);
+    return theme(array('views_view_unformatted__' . $this->view->name, 'views_view_unformatted'), $this->view, $rows);
   }
 }
 
@@ -1195,7 +1196,7 @@ class views_style_plugin_list extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows .= $this->row_plugin->render($row);
     }
-    return theme(array('views_view_rows__' . $this->view->name, 'views_view_rows'), $this->view, $rows);
+    return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $rows);
   }
 }
 
@@ -1255,7 +1256,8 @@ class views_style_plugin_summary extends views_style_plugin {
     $rows = array();
     while ($row = db_fetch_object($this->view->result)) {
       // @todo: Include separator as an option.
-      $rows[] = $this->row_plugin->render($row);
+//      $rows[] = theme(array('views_view_row_summary__' . $this->view->name, 'views_view_row_summary'), $this->view, $row);
+        $rows[] = $row;
     }
     return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $rows);
   }
@@ -1288,22 +1290,16 @@ class views_row_plugin extends views_object {
     $this->options = $display->handler->get_option('row_options');
   }
 
+  function uses_fields() {
+    return !empty($this->definition['uses fields']);
+  }
+
   /**
    * Render a row object. This usually passes through to a theme template
    * of some form, but not always.
    */
   function render($row) {
     return theme(array('views_view_row__' . $this->view->name, 'views_view_row'), $this->view, $row);
-  }
-}
-
-/**
- * Default plugin to view a single row of a table. This is really just a wrapper around
- * a theme function.
- */
-class views_row_plugin_summary extends views_object {
-  function render($row) {
-    return theme(array('views_view_row_summary__' . $this->view->name, 'views_view_row_summary'), $this->view, $row);
   }
 }
 
