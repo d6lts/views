@@ -33,7 +33,7 @@ function template_preprocess_views_view(&$vars) {
 /**
  * Preprocess theme function to print a single record from a row, with fields
  */
-function template_preprocess_views_view_row(&$vars) {
+function template_preprocess_views_view_fields(&$vars) {
   $view = $vars['view'];
 
   // Loop through the fields for this view.

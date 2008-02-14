@@ -1009,10 +1009,9 @@ class views_handler_argument_formula extends views_handler_argument {
    */
   function summary_query() {
     $this->ensure_my_table();
-    $field_alias = $alias . '_' . $this->field;
     // Add the field.
-    $this->base_alias = $this->query->add_field(NULL, $this->formula, $field_alias);
-    $this->query->set_count_field(NULL, $this->formula, $field_alias);
+    $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $this->formula, $this->field);
+    $this->query->set_count_field(NULL, $this->formula, $this->field);
 
     return $this->summary_basics(FALSE);
   }
@@ -1022,10 +1021,7 @@ class views_handler_argument_formula extends views_handler_argument {
    */
   function query() {
     $this->ensure_my_table();
-    $field_alias = $alias . '_' . $this->field;
-    // Add the field.
-    $this->name_alias = $this->query->add_field(NULL, $this->formula, $field_alias);
-    $this->query->add_where(0, "$field = '%s'", $this->argument);
+    $this->query->add_where(0, "$this->formula = '%s'", $this->argument);
   }
 }
 

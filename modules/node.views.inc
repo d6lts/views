@@ -162,11 +162,30 @@ function node_views_data() {
 
   // Bogus fields for aliasing purposes.
 
-  $data['node']['year_month'] = array(
-    'title' => t('Year + month'),
+  $data['node']['created_year_month'] = array(
+    'title' => t('Created year + month'),
     'help' => t('In the form of YYYYMM'),
     'argument' => array(
       'handler' => 'views_handler_argument_date_year_month',
+      'arguments' => array(), // this is required to make sure construct is called.
+    ),
+  );
+
+  $data['node']['created_year'] = array(
+    'title' => t('Created year'),
+    'help' => t('In the form of YYYY'),
+    'argument' => array(
+      'handler' => 'views_handler_argument_date_year',
+      'arguments' => array(), // this is required to make sure construct is called.
+    ),
+  );
+
+  $data['node']['created_month'] = array(
+    'title' => t('Created month'),
+    'help' => t('In the form of MM 01 - 12'),
+    'argument' => array(
+      'handler' => 'views_handler_argument_date_month',
+      'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
 
@@ -374,10 +393,9 @@ class views_handler_argument_date_year_month extends views_handler_argument_form
   /**
    * Provide a link to the next level of the view
    */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
+  function summary_name($data) {
     $created = $data->{$this->name_alias};
-    return l(format_date($created, 'custom', $this->format), "$url/$value");
+    return format_date(strtotime($created . "15"), 'custom', $this->format, 0);
   }
 
   /**
