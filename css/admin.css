@@ -1,7 +1,7 @@
 /* $Id$ */
 
 .views-tabset {
-  background: #E0E5E8;
+  background: transparent;
 }
 
 .views-tabset .views-tab fieldset { 
@@ -12,8 +12,8 @@
   list-style-type: none !important;
   list-style-image: none !important;
   border-bottom: #5C707E 1px solid;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 .views-tabset .views-tabs ul li {
@@ -22,7 +22,7 @@
   background: #B3BEC6;
   border-top: #5C707E 1px solid;
   border-right: #5C707E 1px solid;
-  border-left: #5C707E 1px solid;
+  border-left: #5C707E 0px solid;
   margin: 0;
   padding: 3px 3px 3px 6px;
 }
@@ -38,8 +38,10 @@
 
 
 .views-tabset .views-tabs {
-  float: left;
-  width: 119px;
+  border-bottom: #5C707E 1px solid;
+  border-left: #5C707E 1px solid;
+  background: #E0E5E8;  float: left;
+  width: 118px;
 }
 
 .views-tabset .extra {
@@ -52,6 +54,7 @@
 
 .views-tabset .views-display {
   border: #5C707E 1px solid;
+  border-bottom: 0px;
   margin-left: 118px; /* 120 -1 causes borders to overlap */
   min-height: 302px;
   _height: 300px; /* stupid IE hack */
@@ -124,10 +127,10 @@
 }
 
 .views-basic-info {
-  margin-top: 0.75em;
-  padding: 0.25em;
+  margin: 0.5em 0em 0 0;
+  padding: 0.5em;
   font-weight: bold;
-  background: #E0E5E8;
+  background: transparent;
 }
 
 .views-display dl {
@@ -158,23 +161,40 @@
 
 
 #views-ajax-pad {
-  background: #E0E5E8;
+  background: transparent;
   margin-top: 0px;
   min-height: 200px;
   _height: 200px; /* stupid IE */
 
 }
 
+#views-ajax-title {
+  background: transparent;
+  margin-top: 0;
+  margin-left: 118px;
+  padding: 0.25em 1em;
+  border-left: #5C707E 1px solid;
+  border-right: #5C707E 1px solid;
+  font-weight: bold;
+}
+
 #views-ajax-pad .message {
-  padding-top: 75px;
+  margin-left: 118px;
+  border: #5C707E 1px solid;
+  padding: 3em 0em;
   text-align: center;
+  background: #ffd;
 }
 
 #views-ajax-pad form {
   background: #ffd;
   margin-left: 118px;
   border: #5C707E 1px solid;
-  border-top: #D1D8DD 4px solid;  
+  border-top: #D1D8DD 1px solid;  
+}
+
+.views-override {
+  padding: 0.5em 1em 0em 1em;
 }
 
 #views-ajax-pad .form-buttons {
@@ -197,21 +217,6 @@
 
 #views-ajax-pad {
   display: none;
-}
-
-#views-ajax-title {
-  margin-left: 118px;
-  padding-left: 5px;
-  border-left: 1px solid black;
-  border-right: 1px solid black;
-  height: 1.5em;
-  white-space: nowrap;
-  overflow: hide;
-  font-weight: bold;
-}
-
-#views-ajax-form {
-  background-color: #E0E5E8;
 }
 
 html.js #views-ajax-pad {

@@ -96,7 +96,6 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
   // Go through and add any requested tabs
   if (data.tab) {
     for (id in data.tab) {
-      console.log(data.tab[id]['title']);
       $('#views-tabset').addTab(id, data.tab[id]['title'], 0);
       $(id).html(data.tab[id]['body']);
       $(id).addClass('views-tab');

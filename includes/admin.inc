@@ -624,10 +624,7 @@ function views_ui_edit_details_form_submit($form, &$form_state) {
   $form_state['view']->description = $form_state['values']['description'];
   $form_state['view']->tag = $form_state['values']['tag'];
   views_ui_cache_set($form_state['view']);
-  if (empty($form_state['ajax'])) {
-    drupal_set_message(t('Your changes have been saved.'));
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
@@ -794,7 +791,7 @@ function theme_views_ui_rearrange_form($form) {
       $row[] = drupal_render($form[$id]['name']);
       $form[$id]['weight']['#attributes']['class'] = 'weight';
       $row[] = drupal_render($form[$id]['weight']);
-      $row[] = drupal_render($form[$id]['removed']) . l('<span>' . t('Remove') . '</span>', 'javascript:void()', array('attributes' => array('id' => 'views-remove-link-' . $id, 'class' => 'views-button-remove views-remove-link', 'alt' => t('Remove this item'), 'title' => t('Remove this item')), 'html' => true));  
+      $row[] = drupal_render($form[$id]['removed']) . l('<span>' . t('Remove') . '</span>', 'javascript:void()', array('attributes' => array('id' => 'views-remove-link-' . $id, 'class' => 'views-button-remove views-remove-link', 'alt' => t('Remove this item'), 'title' => t('Remove this item')), 'html' => true));
 
       $rows[] = array('data' => $row, 'class' => 'draggable', 'id' => 'views-row-' . $id);
     }
@@ -1152,7 +1149,7 @@ function views_ui_add_info($type, $view, $display) {
   $types = views_object_types();
 
   $output = '';
-  $output .= l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));  
+  $output .= l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));
   $output .= l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link'), 'html' => true));
 
 

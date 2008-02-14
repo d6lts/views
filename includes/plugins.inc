@@ -911,7 +911,7 @@ class views_display_plugin_page extends views_display_plugin {
         $form['path'] = array(
           '#type' => 'textfield',
           '#description' => t('This view will be displayed by visiting this path on your site.'),
-          '#default_value' => block_description,
+          '#default_value' => $this->get_option('path'),
         );
         break;
     }
