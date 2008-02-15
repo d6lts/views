@@ -166,7 +166,7 @@ function node_views_data() {
     'title' => t('Created year + month'),
     'help' => t('In the form of YYYYMM'),
     'argument' => array(
-      'handler' => 'views_handler_argument_date_year_month',
+      'handler' => 'views_handler_argument_node_created_year_month',
       'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
@@ -175,7 +175,7 @@ function node_views_data() {
     'title' => t('Created year'),
     'help' => t('In the form of YYYY'),
     'argument' => array(
-      'handler' => 'views_handler_argument_date_year',
+      'handler' => 'views_handler_argument_node_created_year',
       'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
@@ -184,7 +184,7 @@ function node_views_data() {
     'title' => t('Created month'),
     'help' => t('In the form of MM 01 - 12'),
     'argument' => array(
-      'handler' => 'views_handler_argument_date_month',
+      'handler' => 'views_handler_argument_node_created_month',
       'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
@@ -356,7 +356,7 @@ class views_handler_argument_node_nid extends views_handler_argument {
 /**
  * Argument handler for a year (CCYY)
  */
-class views_handler_argument_node_date_year extends views_handler_argument_formula {
+class views_handler_argument_node_created_year extends views_handler_argument_formula {
   /**
    * Constructor implementation
    *
@@ -380,7 +380,7 @@ class views_handler_argument_node_date_year extends views_handler_argument_formu
 /**
  * Argument handler for a year plus month (CCYYMM)
  */
-class views_handler_argument_date_year_month extends views_handler_argument_formula {
+class views_handler_argument_node_created_year_month extends views_handler_argument_formula {
   /**
    * Constructor implementation
    */
@@ -409,7 +409,7 @@ class views_handler_argument_date_year_month extends views_handler_argument_form
 /**
  * Argument handler for a month (MM)
  */
-class views_handler_argument_date_month extends views_handler_argument_formula {
+class views_handler_argument_node_created_month extends views_handler_argument_formula {
   /**
    * Constructor implementation
    */

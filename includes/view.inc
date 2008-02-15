@@ -145,10 +145,21 @@ class view extends views_db_object {
    * @param $display_id
    *   The id of the display to mark as current.
    */
-  function set_display($display_id = 'default') {
+  function set_display($display_id = NULL) {
     // If we have not already initialized the display, do so. But be careful.
     if (empty($this->current_display)) {
       $this->init_display();
+
+      // If handlers were not initialized, and no argument was sent, set up
+      // to the default display.
+      if (empty($display_id)) {
+        $display_id = 'default';
+      }
+    }
+
+    // If no display id sent in and one wasn't chosen above, we're finished.
+    if (empty($display_id)) {
+      return TRUE;
     }
 
     // Ensure the requested display exists.
@@ -437,6 +448,24 @@ class view extends views_db_object {
     // Execute the view
     if (isset($this->display_handler)) {
       return $this->display_handler->execute_hook_menu();
+    }
+  }
+
+  /**
+   * Called to get hook_block information from the view and the
+   * named display handler.
+   */
+  function execute_hook_block($display_id = NULL) {
+    // Prepare the view with the information we have.
+
+    // This was probably already called, but it's good to be safe.
+    if (!$this->set_display($display_id)) {
+      return FALSE;
+    }
+
+    // Execute the view
+    if (isset($this->display_handler)) {
+      return $this->display_handler->execute_hook_block();
     }
   }
 
@@ -958,7 +987,12 @@ class views_db_object {
 
     // Get the existing configuration
     $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
-    $fields[$id] = $item;
+    if (isset($item)) {
+      $fields[$id] = $item;
+    }
+    else {
+      unset($fields[$id]);
+    }
 
     // Store.
     $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);

@@ -89,13 +89,17 @@ function views_ajax_form($form_id) {
   }
 
   // If the form wasn't submitted successfully, render the form.
-  $output = theme('status_messages');
-  $output .= drupal_render_form($form_id, $form);
-  $title = empty($form['#title']) ? '' : $form['#title'];
-  $url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
-  $js = empty($form['#js']) ? NULL : $form['#js'];
+  $object = new stdClass();
+  $object->display = theme('status_messages');
+  $object->display .= drupal_render_form($form_id, $form);
+  $object->title = empty($form['#title']) ? '' : $form['#title'];
+  $object->url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
+  $object->js = empty($form['#js']) ? NULL : $form['#js'];
+  if (!empty($form['#section'])) {
+    $object->hilite = '.' . views_ui_item_css($form['#section']);
+  }
 
-  views_ajax_render($output, $title, $url, $js);
+  views_ajax_render($object);
 }
 
 /**
@@ -133,6 +137,10 @@ function views_render_ajax_form($form_id) {
   $output->display .= drupal_render_form($form_id, $form);
   $output->title = empty($form['#title']) ? '' : $form['#title'];
   $output->url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
+  if ($form['#section']) {
+    $output->hilite = '.' . views_ui_item_css($form['#section']);
+  }
+
   return $output;
 }
 

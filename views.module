@@ -141,12 +141,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       list($name, $display_id) = explode('-', $delta);
       // Load the view
       if ($view = views_get_view($name)) {
-        if ($op == 'view') {
-          return $view->execute_display($display_id, $args);
-        }
-        else {
-          return $view->execute_hook_block($display_id, $op, $delta, $edit);
-        }
+        return $view->execute_display($display_id);
       }
       break;
   }

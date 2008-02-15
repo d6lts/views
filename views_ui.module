@@ -114,21 +114,25 @@ function views_ui_perm() {
 }
 
 function views_ui_theme() {
+  $path = drupal_get_path('module', 'views');
+  include_once "$path/includes/admin.inc";
+
   return array(
     'views_ui_edit_view' => array(
-      'arguments' => array('form'),
-      'file' => '/includes/admin.inc',
+      'arguments' => array('view' => NULL),
+      'template' => 'views-ui-edit-view',
+      'path' => "$path/theme",
     ),
     'views_ui_rearrange_form' => array(
-      'arguments' => array('form'),
+      'arguments' => array('form' => NULL),
       'file' => '/includes/admin.inc',
     ),
     'views_tabset' => array(
-      'arguments' => array('tabs'),
+      'arguments' => array('tabs' => NULL),
       'file' => '/includes/tabs.inc',
     ),
     'views_tab' => array(
-      'arguments' => array('body'),
+      'arguments' => array('body' => NULL),
       'file' => '/includes/tabs.inc',
     ),
   );

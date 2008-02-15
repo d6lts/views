@@ -401,6 +401,16 @@ class views_display_plugin extends views_object {
     }
     $form['#title'] = check_plain($this->display->display_title) . ': ';
 
+    // Set the 'section' to hilite on the form.
+    // If it's the item we're looking at is pulling from the default display,
+    // reflect that.
+    if (!empty($this->display->display_options['defaults'][$form_state['section']])) {
+      $form['#section'] = 'default-' . $form_state['section'];
+    }
+    else {
+      $form['#section'] = $this->display->id . '-' . $form_state['section'];
+    }
+
     switch ($form_state['section']) {
       case 'display_title':
         $form['#title'] .= t('The name of this display');
@@ -562,6 +572,11 @@ class views_display_plugin extends views_object {
           $plugin->options_validate($form[$form_state['section']], $form_state);
         }
         break;
+      case 'access':
+        $access = $form_state['values']['access'];
+        if ($access['type'] == 'role' && !array_filter($access['role'])) {
+          form_error($form, t('You must select at least one role if type is "by role"'));
+        }
     }
   }
 
@@ -577,6 +592,8 @@ class views_display_plugin extends views_object {
         break;
       case 'title':
       case 'access':
+        $this->set_option($section, $form_state['values'][$section]);
+        break;
       case 'row_plugin':
         // This if prevents resetting options to default if they don't change
         // the plugin.
@@ -955,10 +972,15 @@ class views_display_plugin_block extends views_display_plugin {
    * but extended block handlers might be able to do interesting
    * stuff with it.
    */
-  function hook_block($op = 'list', $delta = 0, $edit = array()) {
+  function execute_hook_block($op = 'list', $delta = 0, $edit = array()) {
     if ($op == 'list') {
       $delta = $this->view->name . '-' . $this->display->id;
-      return array($delta => array('info' => $this->get_option('block_description')));
+      $desc = $this->get_option('block_description');
+
+      if (empty($desc)) {
+        $desc = $this->view->name;
+      }
+      return array($delta => array('info' => $desc));
     }
   }
 
@@ -1162,10 +1184,10 @@ class views_style_plugin_default extends views_style_plugin {
     // @todo: This needs to be able to support either a database resource OR
     // an array, because our input format doesn't actually have to be from
     // a query.
-    $rows = '';
+    $rows = array();
     while ($row = db_fetch_object($this->view->result)) {
       // @todo: Include separator as an option.
-      $rows .= $this->row_plugin->render($row);
+      $rows[] = $this->row_plugin->render($row);
     }
     return theme(array('views_view_unformatted__' . $this->view->name, 'views_view_unformatted'), $this->view, $this->options, $rows);
   }
@@ -1204,10 +1226,9 @@ class views_style_plugin_list extends views_style_plugin {
     // @todo: This needs to be able to support either a database resource OR
     // an array, because our input format doesn't actually have to be from
     // a query.
-    $rows = '';
+    $rows = array();
     while ($row = db_fetch_object($this->view->result)) {
-      // @todo: Include separator as an option.
-      $rows .= $this->row_plugin->render($row);
+      $rows[] = $this->row_plugin->render($row);
     }
     return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $this->options, $rows);
   }

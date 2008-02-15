@@ -30,7 +30,7 @@
   <?php endif; ?>
 
   <?php if ($rows): ?>
-    <div class="content">
+    <div class="view-content">
       <?php print $rows; ?>
     </div>
   <?php elseif ($empty): ?>

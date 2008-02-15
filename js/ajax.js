@@ -107,7 +107,15 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
       $('#views-tabset').clickTab(instance.$tabs.length);
     }
   }
+  
+  if (data.hilite) {
+    $('.hilited').removeClass('hilited');
+    $(data.hilite).addClass('hilited');
+  }
 
+  if (data.changed) {
+    $('div.views-basic-info').addClass('changed');
+  }
 }
 
 Drupal.behaviors.ViewsAjaxLinks = function() {

@@ -344,10 +344,23 @@ html.js a.views-button-remove {
   padding: 0;
 }
 
-div.views-basic-info div.view-changed {
+div.changed {
+  background: #ffd;
+}
+
+div.view-changed {
+  display: none;
   float: right;
 }
 
-div.views-basic-info div.view-hide {
-  display: none;
+div.changed div.view-changed {
+  display: block;
+}
+
+.hilited {
+  background: #ffd;
+}
+
+.overridden {
+  font-style: italic;
 }
