@@ -123,6 +123,16 @@ function views_ui_theme() {
       'template' => 'views-ui-edit-view',
       'path' => "$path/theme",
     ),
+    'views_ui_edit_tab' => array(
+      'arguments' => array('view' => NULL, 'display' => NULL),
+      'template' => 'views-ui-edit-tab',
+      'path' => "$path/theme",
+    ),
+    'views_ui_edit_item' => array(
+      'arguments' => array('type' => NULL, 'view' => NULL, 'display' => NULL),
+      'template' => 'views-ui-edit-item',
+      'path' => "$path/theme",
+    ),
     'views_ui_rearrange_form' => array(
       'arguments' => array('form' => NULL),
       'file' => '/includes/admin.inc',

@@ -199,6 +199,13 @@ function views_ui_edit_view_form(&$form_state, $view) {
  * Submit handler for the edit view form.
  */
 function views_ui_edit_view_form_submit($form, &$form_state) {
+  // Go through and remove displayed scheduled for removal.
+  foreach ($form_state['view']->display as $id => $display) {
+    if (!empty($display->deleted)) {
+      unset($form_state['view']->display[$id]);
+    }
+  }
+
   $form_state['view']->save();
   drupal_set_message(t('The view has been saved.'));
 
@@ -281,43 +288,35 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   drupal_add_js($settings, 'setting');
 }
 
-/**
- * Generate the summary output for a single display to render in a tab.
- */
-function views_ui_display_tab($view, &$display) {
-  $plugin = views_fetch_plugin_data('display', $display->display_plugin);
-  if (empty($plugin)) {
-    return array(t('Invalid'), t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
-  }
-
-  // The display should always be initialized prior to this call.
-  if (empty($display->handler)) {
-    return FALSE;
-  }
+function template_preprocess_views_ui_edit_tab(&$vars) {
+  $view = $vars['view'];
+  $display = $vars['display'];
+  $plugin = $display->handler->definition;
 
   $top = $left = $middle = $right = '';
 
   // If this form was submitted it was already handled, so force it not to
   // submit again.
 
+  $vars['remove'] = '';
   if (empty($plugin['no remove'])) {
     if (!empty($_POST['form_id']) && $_POST['form_id'] == 'views_ui_remove_display_form') {
       unset($_POST['form_id']);
     }
-    $top .= drupal_get_form('views_ui_remove_display_form', $view, $display->id);
+    $vars['remove'] = drupal_get_form('views_ui_remove_display_form', $view, $display->id);
   }
 
-  $top .= '<span class="display-title">' . check_plain($display->display_title) . '</span>';
-  $top .= '<span class="display-description">' . check_plain($plugin['help']) . '</span>';
+  // basic fields
+  $vars['title'] = check_plain($display->display_title);
+  $vars['description'] = check_plain($plugin['help']);
 
-  $left .= '<dl>';
-  // If this is the default display, add some basic stuff here.
-  if ($display->id == 'default') {
-    $tag = empty($view->tag) ? t('None') : $view->tag;
-    $left .= '<dt>' . t('View settings') . '</dt>';
-    $left .= '<dd class="' . views_ui_item_css('details') . '">' . t('Tag') . ': ' . l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link'))) . '</dd>';
-  }
+  // Special fields if tihs is the default display.
+  $vars['default'] = ($display->id == 'default');
+  $vars['details_class'] = views_ui_item_css('details');
+  $tag = empty($view->tag) ? t('None') : $view->tag;
+  $vars['details'] = t('Tag') . ': ' . l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link')));
 
+  // Calculate options from display plugin.
   $options = $categories = array();
   $display->handler->options_summary($categories, $options);
 
@@ -327,42 +326,34 @@ function views_ui_display_tab($view, &$display) {
     if (empty($categories[$option['category']]['data'])) {
       $categories[$option['category']]['data'] = array();
     }
-    $data = &$categories[$option['category']]['data'];
-    $data[$id] = '';
+    $categories[$option['category']]['data'][$id] = array();
+    $data = &$categories[$option['category']]['data'][$id];
+    $data['content'] = '';
+    $data['links'] = '';
 
     // If there are optional links, build them first so they float properly.
     if (!empty($option['links'])) {
-      $links = array();
       foreach ($option['links'] as $link_id => $link_value) {
-        $links[] = $display->handler->option_link($link_value, $link_id, 'views-button-configure');
+        $data['links'] .= $display->handler->option_link($link_value, $link_id, 'views-button-configure');
       }
-      $data[$id] .= implode(' ', $links);
     }
     if (!empty($option['title'])) {
-      $data[$id] .= $option['title'] . ': ';
+      $data['content'] .= $option['title'] . ': ';
     }
-    $data[$id] .= $display->handler->option_link($option['value'], $id);
-  }
-
-  // Once the data is built up, display the categories.
-  foreach ($categories as $id => $category) {
-    $left .= '<dt class="views-category-' . $id . '">' . $category['title'] . '</dt>';
-    if (!empty($category['data'])) {
-      foreach ($category['data'] as $cid => $cdata) {
-        $override = '';
-        if (!empty($display->display_options['defaults'][$cid])) {
-          $display_id = 'default';
-        }
-        else {
-          $display_id = $display->id;
-          if ($display->handler->defaultable_sections($cid) && !$display->handler->is_default_display()) {
-            $override = ' overridden';
-          }
-        }
-        $left .= '<dd class="' . views_ui_item_css($display_id . '-' . $cid) . $override . '">' . $cdata . '</dd>';
+    $data['content'] .= $display->handler->option_link($option['value'], $id);
+    if (!empty($display->display_options['defaults'][$id])) {
+      $display_id = 'default';
+    }
+    else {
+      $display_id = $display->id;
+      if ($display->handler->defaultable_sections($id) && !$display->handler->is_default_display()) {
+        $data['overridden'] = TRUE;
       }
     }
+    $data['class'] = views_ui_item_css($display_id . '-' . $id);
   }
+
+  $vars['categories'] = $categories;
 
   // Fetch style plugin info because it has some effect on how/what we render.
   $style_plugin = views_get_plugin('style', $display->handler->get_option('style_plugin'));
@@ -370,78 +361,87 @@ function views_ui_display_tab($view, &$display) {
     $style_plugin->init($view, $display);
   }
 
-
-  $left .= '</dl>';
-  $middle .= '<dl>';
-  $middle .= views_ui_add_info('relationship', $view, $display);
-  $middle .= views_ui_add_info('argument', $view, $display);
+  $vars['fields'] = '';
   if ($style_plugin->uses_fields()) {
-    $middle .= views_ui_add_info('field', $view, $display);
+    $vars['fields'] = theme('views_ui_edit_item', 'field', $view, $display);
   }
-  $middle .= '</dl>';
 
-  $right .= '<dl>';
-  $right .= views_ui_add_info('filter', $view, $display);
-  $right .= views_ui_add_info('sort', $view, $display);
-  $right .= '</dl>';
+  $vars['relationships'] = theme('views_ui_edit_item', 'relationship', $view, $display);
+  $vars['arguments'] = theme('views_ui_edit_item', 'argument', $view, $display);
+  $vars['filters'] = theme('views_ui_edit_item', 'filter', $view, $display);
+  $vars['sorts'] = theme('views_ui_edit_item', 'sort', $view, $display);
+}
 
+/**
+ * Generate the summary output for a single display to render in a tab.
+ */
+function views_ui_display_tab($view, $display) {
+  $plugin = $display->handler->definition;
+  if (empty($plugin)) {
+    return array(t('Invalid'), t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
+  }
 
-  $body = '<div class="top"><div class="inside">' . $top . '</div></div>';
-  $body .= '<div class="left tab-section"><div class="inside">' . $left . '</div></div>';
-  $body .= '<div class="middle tab-section"><div class="inside">' . $middle . '</div></div>';
-  $body .= '<div class="right tab-section"><div class="inside">' . $right . '</div></div>';
+  // The display should always be initialized prior to this call.
+  if (empty($display->handler)) {
+    return FALSE;
+  }
 
-  $body = '<div class="views-display views-display-' . $display->id . (empty($display->deleted) ? '' : ' views-display-deleted') . '">' . $body . '</div>';
+  $body = theme('views_ui_edit_tab', $view, $display);
   return array($display->display_title, $body);
 }
 
 /**
  * Add information about a section to a display.
  */
-function views_ui_add_info($type, $view, $display) {
+function template_preprocess_views_ui_edit_item(&$vars) {
+  $type = $vars['type'];
+  $view = $vars['view'];
+  $display = $vars['display'];
   $types = views_object_types();
 
-  $output = '';
-  $output .= l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));
-  $output .= l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link'), 'html' => true));
+  $vars['rearrange'] = l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));
 
-  $overridden = '';
-  if (!$display->handler->is_default_display() && empty($display->display_options['defaults'][$types[$type]['plural']])) {
-    $overridden = ' class="overridden"';
-  }
+  $vars['add'] = l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link'), 'html' => true));
 
-  $title = l($types[$type]['title'], "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
+  $vars['overridden'] = (!$display->handler->is_default_display() && empty($display->display_options['defaults'][$types[$type]['plural']]));
 
-  $output .= "<dt$overridden>" . $title . '</dt>';
+  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
 
-  $fields = '';
-  foreach ($display->handler->get_option($types[$type]['plural']) as $field) {
+  $fields = array();
+
+  foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
+    $fields[$id] = array();
     $handler = views_get_handler($field->table, $field->field, $type);
     if (empty($handler)) {
-      $output .= t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->table, '@field' => $field->field)) . '<br/>';
+      $fields[$id]['class'] = 'broken';
+      $fields[$id]['title'] = t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->table, '@field' => $field->field));
+      $fields[$id]['info'] = '';
       continue;
     }
     $handler->init($view, $field);
 
-    $f = t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
-    $f = l($f, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-ajax-link')));
+    $field_name = t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
 
-    $fields .=  '<dd class="' . views_ui_item_css($display->id . '-' . $type . '-' . $field->id) . '">' . $f . ' ' . $handler->admin_summary() . '</dt>';
+    $fields[$id]['title'] = l($field_name, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')));
+    $fields[$id]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $id);
+    $fields[$id]['info'] = $handler->admin_summary();
 
     if ($handler->needs_style_plugin()) {
       $style_plugin = views_fetch_plugin_data('style', $handler->data->style_plugin);
       $style_title = empty($style_plugin['title']) ? t('Missing style plugin') : $style_plugin['title'];
+      $pid = $id . '-style-plugin';
 
       if (!empty($style_plugin['uses options'])) {
-        $fields .= l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-button-configure views-ajax-link'), 'html' => true));
+        $fields[$pid]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link'), 'html' => true));
       }
 
-      $fields .= '<dd class="' . views_ui_item_css($display->id . '-' . $type . '-' . $field->id . '-style-plugin') . '">' . t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$field->id", array('attributes' => array('class' => 'views-ajax-link'))))) . '</dd>';
+      $fields[$pid]['title'] = t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));
+      $fields[$pid]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $pid);
+      $fields[$pid]['info'] = '';
     }
   }
 
-  $output .= empty($fields) ? ('<dd>' . t('None defined.') . '</dd>') : $fields;
-  return $output;
+  $vars['fields'] = $fields;
 }
 
 function views_ui_regenerate_tabs($view, $display_id = NULL, $object = NULL) {

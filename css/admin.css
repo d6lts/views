@@ -59,7 +59,10 @@
   min-height: 302px;
   _height: 300px; /* stupid IE hack */
 }
-.views-tabset .views-display-deleted {
+
+div.views-display-deleted,
+div.views-display-deleted div.top,
+div.views-display-deleted div.tab-section {
   background-color: #eee;
 }
 
