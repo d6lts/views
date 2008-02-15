@@ -28,11 +28,14 @@ class view extends views_db_object {
   var $build_info = array();
 
   // pager variables
-  var $use_pager = FALSE;
-  var $page_size = 25;
-  var $pager_element = 0;
-  var $offset = 0;
-  var $current_page = 0;
+  var $pager = array(
+    'use_pager' => FALSE,
+    'items_per_page' => 10,
+    'element' => 0,
+    'offset' => 0,
+    'current_page' => 0,
+  );
+
   /**
    * Constructor
    */
@@ -76,22 +79,22 @@ class view extends views_db_object {
    *
    * @todo move all pager properties into a pager object
    */
-  function set_page_size($page_size) {
-    $this->page_size = $page_size;
+  function set_items_per_page($items_per_page) {
+    $this->pager['items_per_page'] = $items_per_page;
   }
 
   /**
    * Whether or not the pager should be used.
    */
   function set_use_pager($use_pager) {
-    $this->use_pager = $use_pager;
+    $this->pager['use_pager'] = $use_pager;
   }
 
   /**
    * The pager element id to use if use_apger is on
    */
   function set_pager_element($pager_element) {
-    $this->pager_element = $pager_element;
+    $this->pager['element'] = $pager_element;
   }
 
   /**
@@ -99,7 +102,7 @@ class view extends views_db_object {
    * set.
    */
   function set_offset($offset) {
-    $this->offset = $offset;
+    $this->pager['offset'] = $offset;
   }
 
   /**
@@ -376,19 +379,24 @@ class view extends views_db_object {
     $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field);
     $args = $this->build_info['query_args'];
 
-    // @todo: Fill in execution defaults if they are not set.
-    // use_pager, page_size, offset
+    vpr($query);
 
     $items = array();
     if ($query) {
-      if (!empty($this->use_pager)) {
+      if (!empty($this->pager['use_pager'])) {
         $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
-        $this->result = pager_query($query, $view->page_size, $view->use_pager - 1, $count_query, $args);
-        $this->total_rows = $GLOBALS['pager_total_items'][$this->use_pager - 1];
+
+        $this->result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
+        $this->total_rows = $GLOBALS['pager_total_items'][$this->pager['element']];
       }
-      else if (!empty($this->page_size)) {
-        $offset = $this->current_page * $this->page_size + $this->offset;
-        $this->result = db_query_range($query, $args, $offset, $this->page_size);
+      else if (!empty($this->pager['items_per_page'])) {
+        $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
+        $this->result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
+
+        // Rewrite and run the count query so we can store how many items this would have
+        // matched.
+        $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
+        $this->total_rows = db_result(db_query($count_query));
       }
       else {
         $this->result = db_query($query, $args);
@@ -423,11 +431,17 @@ class view extends views_db_object {
    * the given arguments.
    */
   function execute_display($display_id = NULL, $args = array()) {
-    // Prepare the view with the information we have.
-    $this->set_arguments($args);
     if (!$this->set_display($display_id)) {
       return FALSE;
     }
+
+    // Prepare the view with the information we have.
+    $this->set_arguments($args);
+
+    $this->set_use_pager($this->display_handler->get_option('use_pager'));
+    $this->set_items_per_page($this->display_handler->get_option('items_per_page'));
+    $this->set_pager_element($this->display_handler->get_option('pager_element'));
+    $this->set_offset($this->display_handler->get_option('offset'));
 
     // Execute the view
     return $this->display_handler->execute();

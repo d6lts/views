@@ -24,8 +24,8 @@ function template_preprocess_views_view(&$vars) {
   $vars['feed_icon']  = $view->display_handler->render_feed_icon();
 
   $vars['pager']      = '';
-  if (!empty($view->use_pager)) {
-    $vars['pager']    = theme('pager', array(), $view->page_size, $view->page_element);
+  if (!empty($view->pager['use_pager'])) {
+    $vars['pager']    = theme('pager', array(), $view->pager['items_per_page'], $view->pager['element']);
   }
 
 }
