@@ -8,20 +8,20 @@
 ?>
 <?php print $rearrange; ?>
 <?php print $add; ?>
-<dt<?php if ($overridden) { print ' class="overridden"'; }?>>
+<div class="views-category-title" <?php if ($overridden) { print ' class="overridden"'; }?>>
   <?php print $title; ?>
-</dt>  
+</div>  
 
 <?php if (empty($fields)): ?>
-  <dd><?php print t('None defined'); ?></dd>
+  <div><?php print t('None defined'); ?></div>
 <?php else: ?>
   <?php foreach ($fields as $field): ?>
     <?php if (!empty($fields['links'])): ?>
       <?php print $field['links']; ?>
     <?php endif; ?>
-    <dd class="<?php print $field['class']; ?>">
+    <div class="<?php print $field['class']; ?>">
       <?php print $field['title']; ?>
       <?php print $field['info']; ?>
-    </dd>
+    </div>
   <?php endforeach; ?>
 <?php endif; ?>
