@@ -107,7 +107,7 @@ function _views_discover_default_views() {
 
   if (!isset($cache)) {
     global $language;
-    $data = cache_get('views_default_views:' . $language, 'cache_views');
+    $data = cache_get('views_default_views:' . $language->language, 'cache_views');
 
     if (isset($data->data)) {
       $cache = $data->data;
@@ -120,7 +120,7 @@ function _views_discover_default_views() {
       foreach ($defaults as $name => $view) {
         $cache[$name] = $view;
       }
-      cache_set('views_default_views:' . $language, $cache, 'cache_views');
+      cache_set('views_default_views:' . $language->language, $cache, 'cache_views');
     }
   }
 
