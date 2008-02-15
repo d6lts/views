@@ -519,17 +519,20 @@ class views_display_plugin extends views_object {
       case 'style_options':
         $form['#title'] .= t('Style options');
         $style = TRUE;
+        $type = 'style_plugin';
+
       case 'row_options':
         // if row, $style will be empty.
         if (empty($style)) {
           $form['#title'] .= t('Row style options');
+          $type = 'row_plugin';
         }
-        $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option('style_plugin'));
+        $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option($type));
         if ($plugin) {
           $form[$form_state['section']] = array(
             '#tree' => TRUE,
           );
-          $plugin->init($this->view, $this);
+          $plugin->init($this->view, $this->display);
           $plugin->options_form($form[$form_state['section']], $form_state);
         }
         break;
@@ -555,7 +558,7 @@ class views_display_plugin extends views_object {
         // if row, $style will be empty.
         $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option(empty($style) ? 'row_plugin' : 'style_plugin'));
         if ($plugin) {
-          $plugin->init($this->view, $this);
+          $plugin->init($this->view, $this->display);
           $plugin->options_validate($form[$form_state['section']], $form_state);
         }
         break;
@@ -575,12 +578,22 @@ class views_display_plugin extends views_object {
       case 'title':
       case 'access':
       case 'row_plugin':
-        $this->set_option($section, $form_state['values'][$section]);
+        // This if prevents resetting options to default if they don't change
+        // the plugin.
+        if ($this->get_option($section) != $form_state['values'][$section]) {
+          $this->set_option($section, $form_state['values'][$section]);
+          $plugin = views_get_plugin('row', $form_state['values'][$section]);
+          $this->set_option('row_options', $plugin->construct($this->display));
+        }
         break;
       case 'style_plugin':
-        $this->set_option($section, $form_state['values'][$section]);
-        $plugin = views_get_plugin('style', $form_state['values'][$section]);
-        $this->set_option('style_options', $plugin->construct($this));
+        // This if prevents resetting options to default if they don't change
+        // the plugin.
+        if ($this->get_option($section) != $form_state['values'][$section]) {
+          $this->set_option($section, $form_state['values'][$section]);
+          $plugin = views_get_plugin('style', $form_state['values'][$section]);
+          $this->set_option('style_options', $plugin->construct($this->display));
+        }
         break;
       case 'style_options':
         $style = TRUE;
@@ -588,7 +601,7 @@ class views_display_plugin extends views_object {
         // if row, $style will be empty.
         $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option('style_plugin'));
         if ($plugin) {
-          $plugin->init($this->view, $this);
+          $plugin->init($this->view, $this->display);
           $plugin->options_submit($form[$section], $form_state);
         }
         $this->set_option($section, $form_state['values'][$section]);
@@ -1292,6 +1305,29 @@ class views_row_plugin extends views_object {
   function uses_fields() {
     return !empty($this->definition['uses fields']);
   }
+
+  /**
+   * Static member function to set default options.
+   */
+  function options(&$display) {
+    return array();
+  }
+
+  /**
+   * Provide a form for setting options.
+   */
+  function options_form(&$form, &$form_state) { }
+
+  /**
+   * Validate the options form.
+   */
+  function options_validate($form, &$form_state) { }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) { }
 
   /**
    * Render a row object. This usually passes through to a theme template
