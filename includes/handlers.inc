@@ -671,6 +671,7 @@ class views_handler_filter_equality extends views_handler_filter {
     $form['value'] = array(
       '#type' => 'textfield',
       '#title' => t('Value'),
+      '#size' => 30,
       '#default_value' => $this->data->value['value'],
     );
   }
