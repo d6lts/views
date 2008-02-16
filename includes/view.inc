@@ -295,11 +295,18 @@ class view extends views_db_object {
 
     // Initially, we want to build sorts and fields. This can change, though,
     // if we get a summary view.
-    $this->build_sort = $this->build_fields = TRUE;
+    $this->build_sort = TRUE;
 
-    $argument_title = '';
     // build arguments.
     $position = -1;
+
+    // Create a title for use in the breadcrumb trail.
+    $title = $this->display_handler->get_option('title');
+
+    $this->build_info['breadcrumb'] = array();
+    $breadcrumb_args = array();
+
+    $substitutions = array();
     foreach ($this->argument as $id => $arg) {
       $position++;
       $argument = &$this->argument[$id];
@@ -316,10 +323,25 @@ class view extends views_db_object {
         $argument->handler->argument = $this->args[$position];
         $argument->handler->query();
 
+        // Since we're really generating the breadcrumb for the item above us,
+        // check the default action of this argument.
+        if ($this->display_handler->uses_breadcrumb() && $argument->handler->uses_breadcrumb()) {
+          $path = $this->get_url($breadcrumb_args);
+          if (strpos('%', $path) === FALSE) {
+            $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
+          }
+        }
+
+        $argument->handler->set_breadcrumb($this->build_info['breadcrumb']);
+
         // Test to see if we should use this argument's title
         if (!empty($argument->title)) {
-          $argument_title = $id;
+          $title = $argument->title;
         }
+
+        // Add this argument's substitution
+        $substitutions['%' . ($position + 1)] = $argument->handler->title();
+        $breadcrumb_args[] = $this->args[$position];
       }
       else {
         // determine default condition and handle.
@@ -329,16 +351,18 @@ class view extends views_db_object {
       }
     }
 
-    // @todo: if $argument_title is set, get the argument and
     // set it in the build info.
+    if (!empty($title)) {
+      $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
+    }
 
     // Build our sort criteria if we were instructed to do so.
     if (!empty($this->build_sort)) {
       $this->_build('sort');
     }
 
-    // @todo: Test display to see if it needs fields.
-    if (!empty($this->build_fields)) {
+    $this->init_style();
+    if ($this->style_handler->uses_fields()) {
       $this->_build('field');
     }
 
@@ -487,7 +511,7 @@ class view extends views_db_object {
    * Determine if the given user has access to the view. Note that
    * this sets the display handler if it hasn't been.
    */
-  function access($account) {
+  function access($account = NULL) {
     if (empty($this->display_handler) && !$this->set_display()) {
       return FALSE;
     }
@@ -505,15 +529,62 @@ class view extends views_db_object {
    *
    * @todo: Implement this.
    */
-  function get_title($context = 'menu') { }
+  function get_title() {
+    if (empty($this->display_handler)) {
+      if (!$this->set_display('default')) {
+        return FALSE;
+      }
+    }
+
+    // During building, we might find a title override. If so, use it.
+    if (!empty($this->build_info['title'])) {
+      $title = $this->build_info['title'];
+    }
+    else {
+      $title = $this->display_handler->get_option('title');
+    }
+
+    return $title;
+  }
 
   /**
    * Get the URL for the current view.
    *
-   * @todo: Implement this.
+   * This URL will be adjusted for arguments.
    */
   function get_url($args = NULL) {
-    return $_GET['q'];
+    $path = $this->get_path();
+    if (!isset($args)) {
+      $args = $this->args;
+    }
+    // Don't bother working if there's nothing to do:
+    if (empty($args) || empty($path)) {
+      return $path;
+    }
+
+    $pieces = array();
+    foreach (explode('/', $path) as $piece) {
+      if ($piece != '%') {
+        $pieces[] = $piece;
+      }
+      else {
+        $pieces[] = empty($args) ? $piece : array_shift($args);
+      }
+    }
+
+    return implode('/', array_merge($pieces, $args));
+  }
+
+  /**
+   * Get the base path used for this view.
+   */
+  function get_path() {
+    if (empty($this->display_handler)) {
+      if (!$this->set_display('default')) {
+        return FALSE;
+      }
+    }
+    return $this->display_handler->get_path();
   }
 
   /**

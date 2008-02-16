@@ -205,6 +205,34 @@ div.views-display-deleted div.tab-section {
   padding: 0em 0.5em;
 }
 
+/* These put checkboxes closer together */
+#views-ajax-pad .form-checkboxes .form-item,
+#views-ajax-pad .form-checkboxes .description,
+#views-ajax-pad .form-checkboxes input,
+#views-ajax-pad .form-radios .form-item,
+#views-ajax-pad .form-radios label,
+#views-ajax-pad .form-radios input {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+#views-ajax-pad .form-item .form-checkboxes,
+#views-ajax-pad .form-checkboxes input,
+#views-ajax-pad .form-checkboxes label,
+#views-ajax-pad .form-item .form-checkboxes .form-item,
+#views-ajax-pad .form-item .form-radios,
+#views-ajax-pad .form-radios input,
+#views-ajax-pad .form-radios label,
+#views-ajax-pad .form-item .form-radios .form-item {
+  padding-left: 0;
+  margin-left: 0;
+}
+
+#views-ajax-pad .form-checkboxes .description,
+#views-ajax-pad .form-radios .description {
+  margin-left: 2em;
+}
+
 #views-ajax-pad {
   display: none;
 }

@@ -27,7 +27,6 @@ function views_views_plugins() {
         'help' => t('Display the view as a page, with a URL and menu links.'),
         'handler' => 'views_display_plugin_page',
         'uses hook menu' => TRUE,
-        'has path' => TRUE,
         'use pager' => TRUE,
       ),
       'block' => array(
@@ -168,10 +167,10 @@ class views_display_plugin extends views_object {
       'empty' => array('empty', 'empty_format'),
       'items_per_page' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'use_pager' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
+      'link_display' => array('link_display'),
 
     // @todo
       'php_arg_code' => array('php_arg_code'),
-      'link_display' => array('link_display'),
       'exposed_options' => array('exposed_options'),
 
       // Force these to cascade properly.
@@ -244,6 +243,61 @@ class views_display_plugin extends views_object {
     $display->display_options['arguments'] = array();
     $display->display_options['filters'] = array();
   }
+
+  /**
+   * Check to see if the display has a 'path' field.
+   *
+   * This is a pure function and not just a setting on the definition
+   * because some displays (such as a panel pane) may have a path based
+   * upon configuration.
+   *
+   * By default, displays do not have a path.
+   */
+  function has_path() { return FALSE; }
+
+  /**
+   * Check to see which display to use when creating links within
+   * a view using this display.
+   */
+  function get_link_display() {
+    $display_id = $this->get_option('link_display');
+    // If unknown, pick the first one.
+    if (empty($display_id) || empty($this->view->display[$display_id])) {
+      foreach ($this->view->display as $display_id => $display) {
+        if ($display->handler->has_path()) {
+          return $display_id;
+        }
+      }
+    }
+    else {
+      return $display_id;
+    }
+    // fall-through returns NULL
+  }
+
+  /**
+   * Return the base path to use for this display.
+   *
+   * This can be overridden for displays that do strange things
+   * with the path.
+   */
+  function get_path() {
+    if ($this->has_path()) {
+      return $this->get_option('path');
+    }
+
+    $display_id = $this->get_link_display();
+    if ($display_id && !empty($this->view->display[$display_id])) {
+      return $this->view->display[$display_id]->handler->get_path();
+    }
+  }
+
+  /**
+   * Check to see if the display needs a breadcrumb
+   *
+   * By default, displays do not need breadcrumbs
+   */
+  function uses_breadcrumb() { return FALSE; }
 
   /**
    * Intelligently get an option either from this display or from the
@@ -385,6 +439,29 @@ class views_display_plugin extends views_object {
       'value' => $access_str,
     );
 
+    if (!$this->has_path()) {
+      // Only show the 'link display' if there is more than one option.
+      $count = 0;
+      foreach ($this->view->display as $display_id => $display) {
+        if ($display->handler->has_path()) {
+          $count++;
+        }
+        if ($count > 1) {
+          break;
+        }
+      }
+
+      if ($count > 1) {
+        $display_id = $this->get_link_display();
+        $link_display = empty($this->view->display[$display_id]) ? t('None') : $this->view->display[$display_id]->display_title;
+        $options['link_display'] = array(
+          'category' => 'basic',
+          'title' => t('Link display'),
+          'value' => $link_display,
+        );
+      }
+    }
+
     foreach (array('header' => t('Header'), 'footer' => t('Footer'), 'empty' => t('Empty text')) as $type => $name) {
       if (!$this->get_option($type)) {
         $field = t('None');
@@ -460,6 +537,13 @@ class views_display_plugin extends views_object {
         );
         break;
       case 'items_per_page':
+        if ($this->get_option('use_pager')) {
+          $form['#title'] .= t('Items per page');
+        }
+        else {
+          $form['#title'] .= t('Items to display');
+        }
+
         $form['items_per_page'] = array(
           '#type' => 'textfield',
           '#description' => t('The number of items to display per page. Enter 0 for no limit.'),
@@ -598,6 +682,21 @@ class views_display_plugin extends views_object {
           '#default_value' => $this->get_option('row_plugin'),
         );
         break;
+      case 'link_display':
+        $form['#title'] .= t('Which display to use for path');
+        foreach ($this->view->display as $display_id => $display) {
+          if ($display->handler->has_path()) {
+            $options[$display_id] = $display->display_title;
+          }
+        }
+        $form['link_display'] = array(
+          '#type' => 'radios',
+          '#options' => $options,
+          '#description' => t('Which display to use to get this display\'s path for things like summary links, rss feed links, more links, etc.'),
+          '#default_value' => $this->get_link_display(),
+        );
+        break;
+
     }
   }
 
@@ -636,6 +735,8 @@ class views_display_plugin extends views_object {
         break;
       case 'title':
       case 'access':
+      case 'link_display':
+      case 'php_arg_code':
         $this->set_option($section, $form_state['values'][$section]);
         break;
       case 'use_pager':
@@ -822,13 +923,26 @@ class views_display_plugin extends views_object {
 
   /**
    * Determine if the user has access to this display of the view.
-   *
-   * @todo Implement this.
    */
-  function access($account) { return TRUE; }
+  function access($account) {
+    $access = $this->get_option('access');
+    switch ($access['type']) {
+      case 'role':
+        $roles = array_keys($account->roles);
+        $roles[] = $account->uid ? DRUPAL_AUTHENTICATED_RID : DRUPAL_ANONYMOUS_RID;
+        return array_intersect(array_filter($access['role']), $roles);
+      case 'perm':
+        return user_access($access['perm'], $account);
+      case 'none':
+      default:
+        return TRUE;
+    }
+  }
   /**
    * When used externally, this is how a view gets run and returns
    * data in the format required.
+   *
+   * The base class cannot be executed.
    */
   function execute() { }
 }
@@ -896,6 +1010,15 @@ class views_display_plugin_default extends views_display_plugin {
  * The plugin that handles a full page.
  */
 class views_display_plugin_page extends views_display_plugin {
+  /**
+   * The page display has a path.
+   */
+  function has_path() { return TRUE; }
+  function uses_breadcrumb() { return TRUE; }
+
+  /**
+   * Add this display's path information to Drupal's menu system.
+   */
   function execute_hook_menu() {
     $items = array();
     // Replace % with the link to our standard views argument loader
@@ -917,6 +1040,8 @@ class views_display_plugin_page extends views_display_plugin {
       'title' => $this->display->handler->get_option('title'),
       'type' => MENU_NORMAL_ITEM,
     );
+
+    dsm($items);
     return $items;
   }
 
@@ -930,7 +1055,27 @@ class views_display_plugin_page extends views_display_plugin {
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $this->view->build();
-    drupal_set_title(filter_xss_admin($this->view->get_title('page')));
+    $base = TRUE;
+    $breadcrumb = array();
+    if (!empty($this->view->build_info['breadcrumb'])) {
+      foreach ($this->view->build_info['breadcrumb'] as $path => $title) {
+        if ($path == variable_get('site_frontpage', 'node')) {
+          $base = FALSE;
+          $title = t('Home');
+        }
+        $breadcrumb[] = l($title, $path, array('html' => true));
+      }
+      if ($base) {
+        drupal_set_breadcrumb(array_merge(drupal_get_breadcrumb(), $breadcrumb));
+      }
+      else {
+        drupal_set_breadcrumb($breadcrumb);
+      }
+    }
+
+    drupal_set_title(filter_xss_admin($this->view->get_title()));
+
+    // @todo set breadcrumb trail
     return $this->view->render();
   }
 

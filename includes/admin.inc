@@ -40,8 +40,8 @@ function views_ui_list_views() {
       }
     }
 
-  $path = 'Todo: path';
-//    $path = empty($view->disabled) && strpos($view->path, '%') === FALSE ? l($view->path, $view->path) : check_plain($view->path);
+    $path = $view->get_path();
+    $path = empty($view->disabled) && strpos($path, '%') === FALSE ? l($path, $path) : check_plain($path);
     $item = array();
     $item[] = check_plain($view->name);
     $item[] = check_plain($view->description);
@@ -824,14 +824,15 @@ function views_ui_rearrange_type($js, $view, $display_id, $type) {
  */
 function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
   $types = views_object_types();
-  $form['#title'] = t('Rearrange @type', array('@type' => $types[$type]['title']));
-  $form['#section'] = $display_id . 'rearrange-item';
 
   $types = views_object_types();
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
   }
   $display = &$view->display[$display_id];
+  $form['#title'] = check_plain($display->display_title) . ': ';
+  $form['#title'] .= t('Rearrange @type', array('@type' => strtolower($types[$type]['title'])));
+  $form['#section'] = $display_id . 'rearrange-item';
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
     $display->handler->add_override_button($form, $types[$type]['plural']);
@@ -979,7 +980,8 @@ function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
   $display = &$view->display[$display_id];
 
   $types = views_object_types();
-  $form['#title'] = t('Add @type', array('@type' => $types[$type]['title']));
+  $form['#title'] = check_plain($display->display_title) . ': ';
+  $form['#title'] .= t('Add @type', array('@type' => strtolower($types[$type]['title'])));
   $form['#section'] = $display_id . 'add-item';
 
   $form_state['view'] = &$view;
@@ -1075,7 +1077,8 @@ function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id,
     $handler->init($view, $item);
     $types = views_object_types();
 
-    $form['#title'] = t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+    $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+    $form['#title'] .= t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
 
     $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
@@ -1273,7 +1276,9 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
     }
     $handler->init($view, $item);
     $types = views_object_types();
-    $form['#title'] = t('Configure summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+
+    $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+    $form['#title'] .= t('Configure summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
 
     $form['#section'] = $display_id . '-' . $type . '-style-options';
 

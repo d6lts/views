@@ -116,7 +116,7 @@ function node_views_data() {
     // Information for accepting a nid as a filter
     'filter' => array(
       'handler' => 'views_handler_filter_node_type',
-    ),    
+    ),
     'argument' => array(
       'handler' => 'views_handler_argument_node_type',
     ),
@@ -152,7 +152,7 @@ function node_views_data() {
      'filter' => array(
        'handler' => 'views_handler_filter_boolean_operator',
        'label' => t('Promoted to front page'),
-       ),     
+       ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -170,7 +170,7 @@ function node_views_data() {
      'filter' => array(
        'handler' => 'views_handler_filter_boolean_operator',
        'label' => t('Sticky'),
-       ),     
+       ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -415,7 +415,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
   /**
    * Provide a link to the next level of the view
    */
-  function title($data, $url) {
+  function title() {
     return format_date(strtotime($this->argument . "15"), 'custom', $this->format, 0);
   }
 }
@@ -445,7 +445,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
   /**
    * Provide a link to the next level of the view
    */
-  function title($data, $url) {
+  function title() {
     return format_date(strtotime("2005" . $this->argument . "15"), 'custom', $this->format, 0);
   }
 }

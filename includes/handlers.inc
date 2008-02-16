@@ -11,6 +11,7 @@
 function _views_create_handler($definition) {
 //  dpr('Instantiating handler ' . $definition['handler']);
   $handler = new $definition['handler'];
+  $handler->set_definition($definition);
   // let the handler have something like a constructor.
   if (isset($definition['arguments'])) {
     call_user_func_array(array($handler, 'construct'), $definition['arguments']);
@@ -19,7 +20,6 @@ function _views_create_handler($definition) {
     $handler->construct();
   }
 
-  $handler->set_definition($definition);
   return $handler;
 }
 
@@ -150,7 +150,7 @@ class views_handler extends views_object {
    * mechanism.
    */
   function construct() { }
-  
+
   /**
    * init the handler with necessary data.
    * @param $view
@@ -277,7 +277,7 @@ class views_handler_field extends views_handler {
    * Construct a new field handler.
    */
 //  function construct($click_sortable = FALSE, $additional_fields = array()) {
-  function construct($click_sortable = FALSE, $additional_fields = array()) {
+  function construct() {
     $this->click_sortable = !empty($this->definition['click sortable']);
     $this->additional_fields = array();
     if (!empty($this->definition['additional fields'])) {
@@ -694,7 +694,7 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
     }
     parent::construct();
   }
-  
+
   function operator_form(&$form, &$form_state) {
     $form['operator'] = array(
       '#type' => 'radios',
@@ -712,7 +712,7 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
       '#value' => $this->value_value,
     );
   }
-  
+
   function admin_summary() {
     return check_plain($this->data->operator['operator']) . ' ' . check_plain($this->value_value);
   }
@@ -757,16 +757,16 @@ class views_handler_filter_in_operator extends views_handler_filter {
       '#default_value' => (array) $this->data->value['value'],
     );
   }
-  
+
   function value_submit($form, &$form_state) {
     // This is so deeply deeply deeply nested due to the way the form is layered.
     $form_state['values']['options']['value']['value'] = array_filter($form_state['values']['options']['value']['value']);
   }
-  
+
   function admin_summary() {
     return check_plain($this->data->operator['operator']) . ' ' . check_plain(implode(', ', $this->data->value['value']));
   }
-  
+
   function query() {
     $this->ensure_my_table();
     $replace = array_fill(0, sizeof($this->data->value['value']), "'%s'");
@@ -800,6 +800,15 @@ class views_handler_argument extends views_handler {
   }
 
   /**
+   * Give an argument the opportunity to modify the breadcrumb, if it wants.
+   * This only gets called on displays where a breadcrumb is actually used.
+   *
+   * The breadcrumb will be in the form of an array, with the keys being
+   * the path and the value being the already sanitized title of the path.
+   */
+  function set_breadcrumb(&$breadcrumb) { }
+
+  /**
    * Provide defaults for the argument when a new one is created.
    */
   function options(&$item) {
@@ -808,6 +817,7 @@ class views_handler_argument extends views_handler {
     $item->style_options = array();
     $item->wildcard = 'all';
     $item->wildcard_substitution = t('All');
+    $item->title = '';
   }
 
   /**
@@ -843,6 +853,12 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->data->wildcard_substitution,
       '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
     );
+    $form['title'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#default_value' => $this->data->title,
+      '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments.'),
+    );
   }
 
   /**
@@ -856,6 +872,7 @@ class views_handler_argument extends views_handler {
       'ignore' => array(
         'title' => t('Display all values'),
         'method' => 'default_ignore',
+        'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
       'not found' => array(
         'title' => t('Display page not found'),
@@ -864,18 +881,21 @@ class views_handler_argument extends views_handler {
       'empty' => array(
         'title' => t('Display empty text'),
         'method' => 'default_empty',
+        'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
       'summary asc' => array(
         'title' => t('Summary, sorted ascending'),
         'method' => 'default_summary',
         'method args' => array('asc'),
         'style plugin' => TRUE,
+        'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
       'summary desc' => array(
         'title' => t('Summary, sorted descending'),
         'method' => 'default_summary',
         'method args' => array('desc'),
         'style plugin' => TRUE,
+        'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
     );
 
@@ -887,6 +907,16 @@ class views_handler_argument extends views_handler {
     else {
       return $defaults;
     }
+  }
+
+  /**
+   * Determine if the can generate a breadcrumb
+   *
+   * @return TRUE/FALSE
+   */
+  function uses_breadcrumb() {
+    $info = $this->default_actions($this->data->default_action);
+    return !empty($info['breadcrumb']);
   }
 
   /**
