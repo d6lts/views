@@ -11,8 +11,12 @@
 function _views_create_handler($definition) {
 //  dpr('Instantiating handler ' . $definition['handler']);
   $handler = new $definition['handler'];
+  // let the handler have something like a constructor.
   if (isset($definition['arguments'])) {
     call_user_func_array(array($handler, 'construct'), $definition['arguments']);
+  }
+  else {
+    $handler->construct();
   }
 
   $handler->set_definition($definition);
@@ -140,6 +144,14 @@ class views_join {
  */
 class views_handler extends views_object {
   /**
+   * A constructor for the handler base object
+   *
+   * This should be overridden to provide for a consistent constructor
+   * mechanism.
+   */
+  function construct() { }
+  
+  /**
    * init the handler with necessary data.
    * @param $view
    *   The $view object this handler is attached to.
@@ -264,9 +276,13 @@ class views_handler_field extends views_handler {
   /**
    * Construct a new field handler.
    */
+//  function construct($click_sortable = FALSE, $additional_fields = array()) {
   function construct($click_sortable = FALSE, $additional_fields = array()) {
-    $this->click_sortable = $click_sortable;
-    $this->additional_fields = $additional_fields;
+    $this->click_sortable = !empty($this->definition['click sortable']);
+    $this->additional_fields = array();
+    if (!empty($this->definition['additional fields'])) {
+      $this->additional_fields = $this->definition['additional fields'];
+    }
   }
 
   /**
@@ -309,12 +325,8 @@ class views_handler_field extends views_handler {
  */
 class views_handler_field_date extends views_handler_field {
   /**
-   * Constructor; calls to base object constructor.
+   * Fill in default options.
    */
-  function construct($click_sortable = FALSE, $additional_fields = array()) {
-    parent::construct($click_sortable, $additional_fields);
-  }
-
   function options(&$item) {
     $item->date_format = 'small';
     $item->custom_date_format = '';
@@ -365,13 +377,6 @@ class views_handler_field_date extends views_handler_field {
  * Allows for display of true/false, yes/no, on/off.
  */
 class views_handler_field_boolean extends views_handler_field {
-  /**
-   * Constructor; calls to base object constructor.
-   */
-  function construct($click_sortable = FALSE, $additional_fields = array()) {
-    parent::construct($click_sortable, $additional_fields);
-  }
-
   function options(&$item) {
     $item->type = 'yes-no';
     $item->not = FALSE;
@@ -417,22 +422,18 @@ class views_handler_field_boolean extends views_handler_field {
 /**
  * A handler to run a field through check_markup, using a companion
  * format field.
- *
- * Allows for display of true/false, yes/no, on/off.
  */
 class views_handler_field_markup extends views_handler_field {
   /**
    * Constructor; calls to base object constructor.
    */
-  function construct($format) {
-    $this->format = $format;
+  function construct() {
+    $this->format = $this->definition['format'];
 
-    $addl_fields = array();
-    if (!is_numeric($format)) {
-      $addl_fields[] = $format;
+    $this->additional_fields = array();
+    if (!is_numeric($this->format)) {
+      $this->additional_fields[] = $this->format;
     }
-
-    parent::construct(FALSE, $addl_fields);
   }
 
   function render($values) {
@@ -513,11 +514,13 @@ class views_handler_sort_formula extends views_handler_sort {
    *   The formula used to sort. If an array, may be keyed by database type. If
    *   used, 'default' MUST be defined.
    */
-  function construct($formula) {
-    $this->formula = $formula;
-    if (is_array($formula) && !isset($formula['default'])) {
-      $this->error = t('views_handler_sort_formula missing default: @formula', array('@formula' => var_export($formula, TRUE)));
+//  function construct($formula) {
+  function construct() {
+    $this->formula = $this->definition['formula'];
+    if (is_array($this->formula) && !isset($this->formula['default'])) {
+      $this->error = t('views_handler_sort_formula missing default: @formula', array('@formula' => var_export($this->formula, TRUE)));
     }
+    parent::construct();
   }
   /**
    * Called to add the sort to a query.
@@ -667,6 +670,9 @@ class views_handler_filter_equality extends views_handler_filter {
     );
   }
 
+  /**
+   * Provide a simple textfield for equality
+   */
   function value_form(&$form, &$form_state) {
     $form['value'] = array(
       '#type' => 'textfield',
@@ -674,6 +680,98 @@ class views_handler_filter_equality extends views_handler_filter {
       '#size' => 30,
       '#default_value' => $this->data->value['value'],
     );
+  }
+}
+
+/**
+ * Simple filter to handle matching of boolean values
+ */
+class views_handler_filter_boolean_operator extends views_handler_filter {
+  function construct($value) {
+    $this->value_value = t('True');
+    if (isset($this->definition['label'])) {
+      $this->value_value = $this->definition['label'];
+    }
+    parent::construct();
+  }
+  
+  function operator_form(&$form, &$form_state) {
+    $form['operator'] = array(
+      '#type' => 'radios',
+      '#default_value' => ($this->data->operator['operator']) ? $this->data->operator['operator'] : '=',
+      '#options' => array(
+        '=' => t('Is'),
+        '<>' => t('Is not'),
+      ),
+    );
+  }
+  function value_form(&$form, &$form_state) {
+    $form['value'] = array(
+      '#type' => 'textfield',
+      '#disabled' => TRUE,
+      '#value' => $this->value_value,
+    );
+  }
+  
+  function admin_summary() {
+    return check_plain($this->data->operator['operator']) . ' ' . check_plain($this->value_value);
+  }
+
+  function query() {
+    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . " 1");
+  }
+
+}
+
+/**
+ * Simple filter to handle matching of multiple options selectable via checkboxes
+ */
+class views_handler_filter_in_operator extends views_handler_filter {
+  function construct() {
+    parent::construct();
+    $this->value_title = t('Options');
+    $this->value_options = array(t('Yes'), t('No'));
+  }
+
+  /**
+   * Provide inclusive/exclusive matching
+   */
+  function operator_form(&$form, &$form_state) {
+    $form['operator'] = array(
+      '#type' => 'radios',
+      '#title' => t('Operator'),
+      '#default_value' => ($this->data->operator['operator']) ? $this->data->operator['operator'] : 'in',
+      '#options' => array(
+        'in' => t('Is one of'),
+        'not in' => t('Is not one of'),
+      ),
+    );
+  }
+
+  function value_form(&$form, &$form_state) {
+    $form['value'] = array(
+      '#type' => 'checkboxes',
+      '#required' => TRUE,
+      '#title' => $this->value_title,
+      '#options' => $this->value_options,
+      '#default_value' => (array) $this->data->value['value'],
+    );
+  }
+  
+  function value_submit($form, &$form_state) {
+    // This is so deeply deeply deeply nested due to the way the form is layered.
+    $form_state['values']['options']['value']['value'] = array_filter($form_state['values']['options']['value']['value']);
+  }
+  
+  function admin_summary() {
+    return check_plain($this->data->operator['operator']) . ' ' . check_plain(implode(', ', $this->data->value['value']));
+  }
+  
+  function query() {
+    $this->ensure_my_table();
+    $replace = array_fill(0, sizeof($this->data->value['value']), "'%s'");
+    $in = ' (' . implode(", ", $replace) . ')';
+    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . $in, $this->data->value['value']);
   }
 }
 
@@ -695,8 +793,10 @@ class views_handler_argument extends views_handler {
   /**
    * Constructor
    */
-  function construct($name_field = NULL) {
-    $this->name_field = $name_field;
+  function construct() {
+    if (!empty($this->definition['name field'])) {
+      $this->name_field = $this->definition['name field'];
+    }
   }
 
   /**
@@ -998,11 +1098,14 @@ class views_handler_argument extends views_handler {
  * Child classes of this object should implement summary_link, at least.
  */
 class views_handler_argument_formula extends views_handler_argument {
+  var $formula = NULL;
   /**
    * Constructor
    */
-  function construct($formula) {
-    $this->formula = $formula;
+  function construct() {
+    if (!empty($this->definition['formula'])) {
+      $this->formula = $this->definition['formula'];
+    }
   }
 
   /**

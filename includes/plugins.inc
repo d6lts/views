@@ -202,7 +202,7 @@ class views_display_plugin extends views_object {
    * saved to the database. It provides appropriate defaults for the
    * display, if necessary.
    */
-  function construct(&$display) {
+  function options(&$display) {
     // Set the following options to use the default display, forcing
     // them to pass through unless we override.
     $display->display_options['defaults'] = array(
@@ -652,7 +652,7 @@ class views_display_plugin extends views_object {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('row', $form_state['values'][$section]);
-          $this->set_option('row_options', $plugin->construct($this->display));
+          $this->set_option('row_options', $plugin->options($this->display));
         }
         break;
       case 'style_plugin':
@@ -661,7 +661,7 @@ class views_display_plugin extends views_object {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('style', $form_state['values'][$section]);
-          $this->set_option('style_options', $plugin->construct($this->display));
+          $this->set_option('style_options', $plugin->options($this->display));
         }
         break;
       case 'style_options':
@@ -843,7 +843,7 @@ class views_display_plugin_default extends views_display_plugin {
    */
   function is_default_display() { return TRUE; }
 
-  function construct(&$display) {
+  function options(&$display) {
     // Make sure the default display has a style plugin to start with.
     $display->display_options['style_plugin'] = 'default';
     $display->display_options['style_options'] = array();
@@ -1256,7 +1256,7 @@ class views_style_plugin_list extends views_style_plugin {
   /**
    * Set default options
    */
-  function construct($display) {
+  function options($display) {
     return array(
       'type' => 'ul',
     );
@@ -1297,7 +1297,7 @@ class views_style_plugin_table extends views_style_plugin {
   /**
    * Set default options
    */
-  function construct($display) {
+  function options($display) {
     return array(
     );
   }

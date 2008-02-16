@@ -22,35 +22,35 @@
   <?php // left section ?>
   <div class="left tab-section">
     <div class="inside">
-			<?php // If this is the default display, add some basic stuff here. ?>
-			<?php if ($default): ?>
-			  <div class="views-category">
-  				<div class="views-category-title"><?php print t('View settings'); ?></div>
-	  			<div class="<?php $details_class; ?>">
-		  			<?php print $details ?>
-		  		</div>
-		    </div>
-			<?php endif; ?>
+      <?php // If this is the default display, add some basic stuff here. ?>
+      <?php if ($default): ?>
+        <div class="views-category">
+          <div class="views-category-title"><?php print t('View settings'); ?></div>
+          <div class="<?php $details_class; ?>">
+            <?php print $details ?>
+          </div>
+        </div>
+      <?php endif; ?>
 
-			<?php foreach ($categories as $category_id => $category): ?>
-				<div class="views-category">
-				<div class="views-category-title views-category-<?php print $category_id; ?>">
-					<?php print $category['title']; ?>
-				</div>
-				<?php foreach ($category['data'] as $data): ?>
-					<div class="<?php print $data['class']; if (!empty($data['overridden'])) { print ' overridden'; }?>">
-						<?php print $data['links'] . $data['content'] ?>    
-					</div>
-				<?php endforeach; ?>
-				</div>
-			<?php endforeach; ?>
-		</div>
+      <?php foreach ($categories as $category_id => $category): ?>
+        <div class="views-category">
+        <div class="views-category-title views-category-<?php print $category_id; ?>">
+          <?php print $category['title']; ?>
+        </div>
+        <?php foreach ($category['data'] as $data): ?>
+          <div class="<?php print $data['class']; if (!empty($data['overridden'])) { print ' overridden'; }?>">
+            <?php print $data['links'] . $data['content'] ?>
+          </div>
+        <?php endforeach; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
   </div>
 
   <?php // middle section ?>
   <div class="middle tab-section">
     <div class="inside">
-      <div class="views-category">      
+      <div class="views-category">
         <?php print $relationships; ?>
       </div>
       <div class="views-category">

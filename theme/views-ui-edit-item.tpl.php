@@ -8,9 +8,9 @@
 ?>
 <?php print $rearrange; ?>
 <?php print $add; ?>
-<div class="views-category-title" <?php if ($overridden) { print ' class="overridden"'; }?>>
+<div class="views-category-title<?php if ($overridden) { print ' overridden'; }?>">
   <?php print $title; ?>
-</div>  
+</div>
 
 <?php if (empty($fields)): ?>
   <div><?php print t('None defined'); ?></div>

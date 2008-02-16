@@ -54,7 +54,7 @@ function node_views_data() {
       'field' => 'title', // the real field
       'group' => t('Node'), // The group it appears in on the UI,
       'handler' => 'views_handler_field_node',
-      'arguments' => array(TRUE), // arguments to the handler
+      'click sortable' => TRUE,
      ),
   );
 
@@ -65,12 +65,12 @@ function node_views_data() {
     // Information for displaying the nid
     'field' => array(
       'handler' => 'views_handler_field_node',
-      'arguments' => array(TRUE),
+      'click sortable' => TRUE,
     ),
     // Information for accepting a nid as an argument
     'argument' => array(
       'handler' => 'views_handler_argument_node_nid',
-      'arguments' => array('title'),
+      'click sortable' => TRUE,
     ),
     // Information for accepting a nid as a filter
     'filter' => array(
@@ -88,7 +88,7 @@ function node_views_data() {
     'help' => t('The date the node was posted.'), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_date',
-      'arguments' => array(TRUE),
+      'click sortable' => TRUE,
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
@@ -101,7 +101,7 @@ function node_views_data() {
     'help' => t('The date the node was last updated.'), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_date',
-      'arguments' => array(TRUE),
+      'click sortable' => TRUE,
     ),
   );
 
@@ -111,8 +111,12 @@ function node_views_data() {
     'help' => t('The type of a node (for example, "blog entry", "forum post", "story", etc)'), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_node_type',
-      'arguments' => array(TRUE),
+      'click sortable' => TRUE,
     ),
+    // Information for accepting a nid as a filter
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_type',
+    ),    
     'argument' => array(
       'handler' => 'views_handler_argument_node_type',
     ),
@@ -125,8 +129,12 @@ function node_views_data() {
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_boolean',
-      'arguments' => array(TRUE), // arguments to the handler
+      'click sortable' => TRUE,
      ),
+     'filter' => array(
+       'handler' => 'views_handler_filter_boolean_operator',
+       'label' => t('Published'),
+       ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -139,8 +147,12 @@ function node_views_data() {
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_boolean',
-      'arguments' => array(TRUE), // arguments to the handler
+      'click sortable' => TRUE,
      ),
+     'filter' => array(
+       'handler' => 'views_handler_filter_boolean_operator',
+       'label' => t('Promoted to front page'),
+       ),     
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -153,8 +165,12 @@ function node_views_data() {
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_boolean',
-      'arguments' => array(TRUE), // arguments to the handler
+      'click sortable' => TRUE,
      ),
+     'filter' => array(
+       'handler' => 'views_handler_filter_boolean_operator',
+       'label' => t('Sticky'),
+       ),     
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -167,7 +183,6 @@ function node_views_data() {
     'help' => t('In the form of YYYYMM'),
     'argument' => array(
       'handler' => 'views_handler_argument_node_created_year_month',
-      'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
 
@@ -176,7 +191,6 @@ function node_views_data() {
     'help' => t('In the form of YYYY'),
     'argument' => array(
       'handler' => 'views_handler_argument_node_created_year',
-      'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
 
@@ -185,7 +199,6 @@ function node_views_data() {
     'help' => t('In the form of MM 01 - 12'),
     'argument' => array(
       'handler' => 'views_handler_argument_node_created_month',
-      'arguments' => array(), // this is required to make sure construct is called.
     ),
   );
 
@@ -222,7 +235,7 @@ function node_views_data() {
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_markup',
-      'arguments' => array('format'), // arguments to the handler
+      'format' => 'format', // The name of the format field
      ),
   );
 
@@ -233,7 +246,7 @@ function node_views_data() {
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_markup',
-      'arguments' => array('format'), // arguments to the handler
+      'format' => 'format', // The name of the format field
      ),
   );
 
@@ -438,6 +451,22 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
 }
 
 /**
+ I Filter by node type
+ */
+class views_handler_filter_node_type extends views_handler_filter_in_operator {
+  function construct() {
+    parent::construct();
+    $this->value_title = t('Node type');
+    $types = node_get_types();
+    foreach ($types as $type => $info) {
+      $options[$type] = $info->name;
+    }
+    $this->value_options = $options;
+  }
+}
+
+
+/**
  * Implementation of hook_views_plugins
  */
 function node_views_plugins() {
@@ -462,7 +491,7 @@ function node_views_plugins() {
  * @ingroup views_row_plugins
  */
 class views_row_plugin_node_view extends views_row_plugin {
-  function construct($display) {
+  function options($display) {
     return array(
       'teaser' => TRUE,
     );

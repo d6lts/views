@@ -921,7 +921,7 @@ class views_db_object {
 
     // Create the new display object
     $display = new views_display;
-    $display->construct($type, $id, $title);
+    $display->options($type, $id, $title);
 
     // Add the new display object to the view.
     $this->display[$id] = $display;
@@ -1041,6 +1041,7 @@ class views_sort  extends views_sub_object {
  * A filter in a view.
  */
 class views_filter  extends views_sub_object {
+  var $group = 0;
 }
 
 /**
@@ -1058,14 +1059,14 @@ class views_display extends views_db_object {
     parent::init($init);
   }
 
-  function construct($type, $id, $title) {
+  function options($type, $id, $title) {
     $this->display_plugin = $type;
     $this->id = $id;
     $this->display_title = $title;
 
     // Create a handler to fill in default values.
     $handler = views_get_plugin('display', $type);
-    $handler->construct($this);
+    $handler->options($this);
   }
 }
 

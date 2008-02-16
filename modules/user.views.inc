@@ -40,7 +40,7 @@ function user_views_data() {
       'field' => 'name', // the real field
       'group' => t('User'), // The group it appears in on the UI,
       'handler' => 'views_handler_field_user_name',
-      'arguments' => array(TRUE), // arguments to the handler
+      'click sortable' => TRUE,
     ),
   );
   // uid
@@ -50,12 +50,11 @@ function user_views_data() {
     // Information for displaying the uid
     'field' => array(
       'handler' => 'views_handler_field_user',
-      'arguments' => array(TRUE),
+      'click sortable' => TRUE,
     ),
     // Information for accepting a uid as an argument
     'argument' => array(
-      'handler' => 'views_handler_argument_uid', //TODO
-      'arguments' => array('title'),
+      'handler' => 'views_handler_argument_uid',
     ), 
     // Information for accepting a uid as a filter
     'filter' => array(
