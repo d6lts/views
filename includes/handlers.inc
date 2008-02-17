@@ -656,6 +656,14 @@ class views_handler_filter extends views_handler {
  */
 class views_handler_filter_equality extends views_handler_filter {
   /**
+   * Provide basic defaults for the equality operator
+   */
+  function options(&$item) {
+    $item->operator['operator'] = '=';
+    $item->value['value'] = '';
+  }
+
+  /**
    * Provide simple equality operator
    */
   function operator_form(&$form, &$form_state) {
@@ -695,6 +703,10 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
     parent::construct();
   }
 
+  function options(&$item) {
+    $item->operator['operator'] = '=';
+  }
+
   function operator_form(&$form, &$form_state) {
     $form['operator'] = array(
       '#type' => 'radios',
@@ -732,6 +744,11 @@ class views_handler_filter_in_operator extends views_handler_filter {
     parent::construct();
     $this->value_title = t('Options');
     $this->value_options = array(t('Yes'), t('No'));
+  }
+
+  function options(&$item) {
+    $item->operator['operator'] = 'in';
+    $item->value['value'] = 0;
   }
 
   /**

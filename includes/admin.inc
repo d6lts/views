@@ -534,10 +534,15 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
   if (empty($name)) {
     $name = t('Update');
   }
+  // remove default validate handler
+  $form['#validate'] = array();
+
+  // but be sure submit button validates!
   $form['buttons']['submit'] = array(
     '#type' => 'submit',
     '#value' => $name,
     '#submit' => array($form_id . '_submit'),
+    '#validate' => array($form_id . '_validate'),
   );
 
   $cancel_submit = function_exists($form_id . '_cancel') ? $form_id . '_cancel' : 'views_ui_standard_cancel';
@@ -545,6 +550,7 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
     '#type' => 'submit',
     '#value' => t('Cancel'),
     '#submit' => array($cancel_submit),
+    '#validate' => array(),
   );
 
   if ($third) {
@@ -556,6 +562,7 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
     $form['buttons'][$submit] = array(
       '#type' => 'submit',
       '#value' => t($third),
+      '#validate' => array(),
       '#submit' => array($third_submit),
     );
   }

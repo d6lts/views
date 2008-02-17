@@ -463,6 +463,14 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
     }
     $this->value_options = $options;
   }
+
+  function options(&$item) {
+    parent::options($item);
+    // Set the default value to the first node type, so that there is something
+    // reasonable there.
+    $types = array_keys(node_get_types());
+    $item->value['value'] = array(array_shift($types));
+  }
 }
 
 
