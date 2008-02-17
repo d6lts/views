@@ -687,7 +687,7 @@ class views_handler_filter_equality extends views_handler_filter {
  * Simple filter to handle matching of boolean values
  */
 class views_handler_filter_boolean_operator extends views_handler_filter {
-  function construct($value) {
+  function construct() {
     $this->value_value = t('True');
     if (isset($this->definition['label'])) {
       $this->value_value = $this->definition['label'];
@@ -718,6 +718,7 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
   }
 
   function query() {
+    $this->ensure_my_table();
     $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . " 1");
   }
 
