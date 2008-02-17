@@ -854,6 +854,8 @@ class views_handler_argument extends views_handler {
       '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
     );
     $form['title'] = array(
+      '#prefix' => '<div class="clear">',
+      '#suffix' => '</div>',
       '#type' => 'textfield',
       '#title' => t('Title'),
       '#default_value' => $this->data->title,

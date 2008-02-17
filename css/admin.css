@@ -1,7 +1,7 @@
 /* $Id$ */
 
 .views-tabset {
-  background: transparent;
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
 }
 
 .views-tabset .views-tab fieldset { 
@@ -11,45 +11,64 @@
 .views-tabset .views-tabs ul {
   list-style-type: none !important;
   list-style-image: none !important;
-  border-bottom: #ADB7BE 1px solid;
   padding: 0;
   margin: 0;
+  position: relative;
 }
 
 .views-tabset .views-tabs ul li {
   list-style-type: none;
   list-style-image: none;
-  background: #B3BEC6;
-  border-top: #ADB7BE 1px solid;
-  border-right: #ADB7BE 1px solid;
-  border-left: #ADB7BE 0px solid;
+  background: #A6CEE7 url('/themes/garland/images/bg-tab.png') repeat-x bottom;
+  line-height: 100%;
   margin: 0;
-  padding: 3px 3px 3px 6px;
+  padding: 0.5em;
+  position: relative;
 }
 
 .views-tabset .views-tabs ul li.active {
-  background: #fff;
+  background: #fff url('/themes/garland/images/bg-bar-white.png') repeat-x;
   border-top: #ADB7BE 1px solid;
   border-right: 0;
-  border-bottom: #ADB7BE 2px solid;
+  border-bottom: #ADB7BE 0px solid;
   margin-left: 0;
-  font-weight: bold;
+  position: relative;
 }
 
+.views-tabset .views-tabs ul li a {
+  font-weight: bold;
+  font-size: 90%;
+  color: #fff;
+}
+
+.views-tabset .views-tabs ul li.active a {
+  color: #FF883F;
+}
 
 .views-tabset .views-tabs {
-  border-bottom: #ADB7BE 1px solid;
-  border-left: #ADB7BE 1px solid;
-  background: #E0E5E8;  float: left;
+  border-bottom: #ADB7BE 0px solid;
+  border-left: #fff 1px solid;
+  background: #CDE3F1; 
+  float: left;
   width: 118px;
+  margin-right: 0;
 }
+
+* html .views-tabset .views-tabs {
+  width: 114px;
+  position: relative;
+  left: 4px;
+}
+
 
 .views-tabset .extra {
   text-align: center;
+  margin-right: 0;
 }
 
 .views-tabset .extra input {
   margin-top: 0;
+  margin-right: 0;
 }
 
 .views-tabset .views-display {
@@ -58,6 +77,10 @@
   margin-left: 118px; /* 120 -1 causes borders to overlap */
   min-height: 302px;
   _height: 300px; /* stupid IE hack */
+}
+
+* html .views-tabset .views-display {
+  margin-left: 114px;
 }
 
 div.views-display-deleted,
@@ -98,14 +121,15 @@ div.views-display-deleted div.tab-section {
 }
 
 .views-display .tab-section .inside {
-  margin: 0.5em 0.5em 0.5em 0.5em;
+  margin: 0.5em 0.5em 0.5em 1em;
 }
 
 .views-display .tab-section .inside .views-category {
-  padding: 0.25em 0.5em;
+  padding: 0.25em 0.25em 0.5em 1em;
   margin-bottom: 1em;
-  background: #F0F2F4;
-  border: 1px #F0F2F4 solid;
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  border-top: 1px #F0F2F4 solid;
+  border-bottom: 1px #F0F2F4 solid;
 }
 
 .views-display .tab-section .inside .views-category-title {
@@ -146,23 +170,26 @@ div.views-display-deleted div.tab-section {
   margin: 0.5em 0em 0 0;
   padding: 0.5em;
   font-weight: bold;
-  background: transparent;
+  background-position: 0px -8px;
 }
 
+
+/* ***********************************************
+  AJAX pad
+*/
 
 #views-ajax-pad {
   background: transparent;
   margin-top: 0px;
   min-height: 200px;
   _height: 200px; /* stupid IE */
-
 }
 
 #views-ajax-title {
-  background: transparent;
-  margin-top: 0;
-  margin-left: 118px;
-  padding: 0.25em 1em;
+  background: transparent url('/themes/garland/images/bg-content.png');
+  background-position: 0px -7px;
+  margin: 0 0 0 118px;
+  padding: 1em 1em 0em 1em;
   border-left: #ADB7BE 1px solid;
   border-right: #ADB7BE 1px solid;
   font-weight: bold;
@@ -171,16 +198,18 @@ div.views-display-deleted div.tab-section {
 #views-ajax-pad .message {
   margin-left: 118px;
   border: #ADB7BE 1px solid;
+  border-top: 0;
   padding: 3em 0em;
   text-align: center;
-  background: #ffd;
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
 }
 
 #views-ajax-pad form {
-  background: #ffd;
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
   margin-left: 118px;
   border: #ADB7BE 1px solid;
-  border-top: #D1D8DD 1px solid;  
+  border-top: 0;  
+  padding-top: 3px;
 }
 
 .views-override {
@@ -190,8 +219,11 @@ div.views-display-deleted div.tab-section {
 #views-ajax-pad .form-buttons {
   margin: 0;
   padding: 0.5em 1em;
-  border-top: #E0E5E8 1px solid;
-  background: #fff;
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  clear: left;
+}
+
+#views-ajax-pad .clear {
   clear: left;
 }
 
@@ -377,12 +409,23 @@ div.changed div.view-changed {
   display: block;
 }
 
-.hilited {
-  padding: 0.25em;
-  background: #ffd;
+.overridden {
+  background: transparent url(/themes/garland/images/menu-leaf.gif) no-repeat left;
+  padding-left: 10px;
 }
 
-.overridden {
-  background: #fff;
-  padding-left: 0.5em;
+.hilited {
+  color: #000;
+  background-color: #ffd;
+  padding-left: 10px;
+}
+
+#views-ajax-pad fieldset {
+  background: transparent;
+  padding-left: 10px;
+}
+
+
+form#views-add-display-form {
+  margin-bottom: 0em;
 }
