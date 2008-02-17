@@ -97,7 +97,8 @@ function views_menu() {
  *   The menu argument index. This counts from 1.
  */
 function views_arg_load($value, $name, $index) {
-  if ($view = views_get_view($name)) {
+  if ($v = views_get_view($name)) {
+    $view = drupal_clone($v);
     $view->init_handlers();
     if (isset($view->argument[$index - 1])) {
       return $view->argument[$index - 1]->handler->validate($value);
@@ -115,7 +116,8 @@ function views_page() {
   $display_id = array_shift($args);
 
   // Load the view
-  if ($view = views_get_view($name)) {
+  if ($v = views_get_view($name)) {
+    $view = drupal_clone($v);
     return $view->execute_display($display_id, $args);
   }
 
@@ -140,10 +142,10 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
     case 'view':
       list($name, $display_id) = explode('-', $delta);
       // Load the view
-      if ($view = views_get_view($name)) {
-        $view->set_display($display_id);
-        if ($view->access()) {
-          return $view->execute_display();
+      if ($v = views_get_view($name)) {
+        $view = drupal_clone($v);
+        if ($view->access($display_id)) {
+          return $view->execute_display($display_id);
         }
       }
       break;
@@ -172,23 +174,26 @@ function views_devel_caches() {
 function views_access($view, $account = NULL) {
   if (is_array($view)) {
     list($name, $display_id) = $view;
-    $view = views_get_view($name);
-    if (!$view) {
+    $v = views_get_view($name);
+    if (!$v) {
       return FALSE;
     }
-    if (!$view->set_display($display_id)) {
+    $view = drupal_clone($v);
+  }
+  elseif (is_string($view)) {
+    $v = views_get_view($view);
+    if (!$v) {
       return FALSE;
     }
+    $view = drupal_clone($v);
+    $display_id = 'default';
+  }
+  else {
+    $view = drupal_clone($view);
+    $display_id = isset($view->current_display) ? $view->current_display : 'default';
   }
 
-  if (is_string($view)) {
-    $view = views_get_view($name);
-    if (!$view) {
-      return FALSE;
-    }
-  }
-
-  return $view->access($account);
+  return $view->access($display_id, $account);
 }
 
 /**
@@ -482,11 +487,11 @@ function views_fetch_plugin_names($type, $key = NULL, $empty = FALSE) {
  *   The name of the view.
  * @param $reset
  *   If TRUE, reset this entry in the load cache.
- * @return &$view
+ * @return $view
  *   A reference to the $view object. Use $reset if you're sure you want
  *   a fresh one.
  */
-function &views_get_view($name, $reset = FALSE) {
+function views_get_view($name, $reset = FALSE) {
   views_include('view');
   $view = view::load($name, $reset);
 
@@ -700,6 +705,24 @@ function vsm($message) {
   if (module_exists('devel')) {
     dsm($message);
   }
+}
+
+function views_trace() {
+  $message = '';
+  foreach (debug_backtrace() as $item) {
+    if (!empty($item['file']) && !in_array($item['function'], array('vsm_trace', 'vpr_trace', 'views_trace'))) {
+      $message .= basename($item['file']) . ": " . (empty($item['class']) ? '' : ($item['class'] . '->')) . "$item[function] line $item[line]" . "\n";
+    }
+  }
+  return $message;
+}
+
+function vsm_trace() {
+  vsm(views_trace());
+}
+
+function vpr_trace() {
+  dpr(views_trace());
 }
 
 function views_object_types() {

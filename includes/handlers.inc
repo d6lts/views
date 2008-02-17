@@ -9,7 +9,7 @@
  * Instantiate and construct a new handler
  */
 function _views_create_handler($definition) {
-//  dpr('Instantiating handler ' . $definition['handler']);
+//  vpr('Instantiating handler ' . $definition['handler']);
   $handler = new $definition['handler'];
   $handler->set_definition($definition);
   // let the handler have something like a constructor.

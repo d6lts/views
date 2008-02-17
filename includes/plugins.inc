@@ -1025,23 +1025,24 @@ class views_display_plugin_page extends views_display_plugin {
     // views_arg_load -- which lives in views.module
     $path = str_replace('%', '%views_arg', $this->get_option('path'));
 
-    // NOTE: This is the very simple 'menu normal item' version. The
-    // tab version needs to come later. Maybe it should be its own plugin.
-    $items[$path] = array(
-      // default views page entry
-      'page callback' => 'views_page',
-      'page arguments' => array($this->view->name, $this->display->id),
-      // Default access check (per display)
-      'access callback' => 'views_access',
-      'access arguments' => array(array($this->view->name, $this->display->id)),
-      // Identify URL embedded arguments and correlate them to a handler
-      'load arguments'  => array($this->view->name, '%index'),
-      // Basic menu title
-      'title' => $this->display->handler->get_option('title'),
-      'type' => MENU_NORMAL_ITEM,
-    );
+    if ($path) {
+      // NOTE: This is the very simple 'menu normal item' version. The
+      // tab version needs to come later. Maybe it should be its own plugin.
+      $items[$path] = array(
+        // default views page entry
+        'page callback' => 'views_page',
+        'page arguments' => array($this->view->name, $this->display->id),
+        // Default access check (per display)
+        'access callback' => 'views_access',
+        'access arguments' => array(array($this->view->name, $this->display->id)),
+        // Identify URL embedded arguments and correlate them to a handler
+        'load arguments'  => array($this->view->name, '%index'),
+        // Basic menu title
+        'title' => $this->display->handler->get_option('title'),
+        'type' => MENU_NORMAL_ITEM,
+      );
+    }
 
-    dsm($items);
     return $items;
   }
 
@@ -1051,12 +1052,16 @@ class views_display_plugin_page extends views_display_plugin {
    * on the view.
    */
   function execute() {
+    // Let the world know that this is the page view we're using.
     views_set_page_view($this);
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $this->view->build();
+
+    // Now that we've built the view, extract the breadcrumb.
     $base = TRUE;
     $breadcrumb = array();
+
     if (!empty($this->view->build_info['breadcrumb'])) {
       foreach ($this->view->build_info['breadcrumb'] as $path => $title) {
         if ($path == variable_get('site_frontpage', 'node')) {
@@ -1073,9 +1078,10 @@ class views_display_plugin_page extends views_display_plugin {
       }
     }
 
+    // And the title, which is much easier.
     drupal_set_title(filter_xss_admin($this->view->get_title()));
 
-    // @todo set breadcrumb trail
+    // And now render the view.
     return $this->view->render();
   }
 

@@ -158,7 +158,10 @@ function views_ui_cache_load($name) {
   $view = views_object_cache_get('view', $name);
 
   if (empty($view)) {
-    $view = views_get_view($name);
+    $v = views_get_view($name);
+    if ($v) {
+      $view = drupal_clone($v);
+    }
   }
 
   if (empty($view)) {

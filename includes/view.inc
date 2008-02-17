@@ -116,7 +116,7 @@ class view extends views_db_object {
   /**
    * Set the display for this view and initialize the display handler.
    */
-  function init_display() {
+  function init_display($test = NULL) {
     // The default display is always the first one in the list.
     if (isset($this->current_display)) {
       return TRUE;
@@ -124,20 +124,32 @@ class view extends views_db_object {
 
     // Instantiate all displays
     foreach (array_keys($this->display) as $id) {
-      $display = &$this->display[$id];
-      $display->handler = views_get_plugin('display', $display->display_plugin);
-      if (!empty($display->handler)) {
+      // Correct for shallow cloning
+      // Often we'll have a cloned view so we don't mess up each other's
+      // displays, but the clone is pretty shallow and doesn't necessarily
+      // clone the displays. We can tell this by looking to see if a handler
+      // has already been set; if it has, but $this->current_display is not
+      // set, then something is dreadfully wrong.
+      if (!empty($this->display[$id]->handler)) {
+        $this->display[$id] = drupal_clone($this->display[$id]);
+        unset($this->display[$id]->handler);
+      }
+      $this->display[$id]->handler = views_get_plugin('display', $this->display[$id]->display_plugin);
+      if (!empty($this->display[$id]->handler)) {
         // Initialize the new display handler with data.
-        $display->handler->init($this, $display);
+        $this->display[$id]->handler->init($this, $this->display[$id]);
         // If this is NOT the default display handler, let it know which is
         // since it may well utilize some data from the default.
         // This assumes that the 'default' handler is always first. It always
         // is. Make sure of it.
         if ($id != 'default') {
-          $display->handler->default_display = &$this->display['default']->handler;
+          $this->display[$id]->handler->default_display = &$this->display['default']->handler;
         }
       }
     }
+
+    $this->current_display = 'default';
+    $this->display_handler = &$this->display['default']->handler;
 
     return TRUE;
   }
@@ -182,11 +194,8 @@ class view extends views_db_object {
       return FALSE;
     }
 
-    // Create a shortcut
-    $display = &$this->display[$display_id];
-
     // Set a shortcut
-    $this->display_handler = &$display->handler;
+    $this->display_handler = &$this->display[$display_id]->handler;
 
     return TRUE;
   }
@@ -205,6 +214,7 @@ class view extends views_db_object {
 
     vpr("Init_style: $this->style_plugin");
     $this->style_handler = views_get_plugin('style', $this->style_plugin);
+
     if (empty($this->style_handler)) {
       return FALSE;
     }
@@ -446,7 +456,6 @@ class view extends views_db_object {
 
     // Initialize the style plugin.
     $this->init_style();
-
     return $this->display_handler->render();
   }
 
@@ -455,8 +464,10 @@ class view extends views_db_object {
    * the given arguments.
    */
   function execute_display($display_id = NULL, $args = array()) {
-    if (!$this->set_display($display_id)) {
-      return FALSE;
+    if (empty($this->current_display) || $this->current_display != $display_id) {
+      if (!$this->set_display($display_id)) {
+        return FALSE;
+      }
     }
 
     // Prepare the view with the information we have.
@@ -511,16 +522,18 @@ class view extends views_db_object {
    * Determine if the given user has access to the view. Note that
    * this sets the display handler if it hasn't been.
    */
-  function access($account = NULL) {
-    if (empty($this->display_handler) && !$this->set_display()) {
-      return FALSE;
+  function access($display_id = NULL, $account = NULL) {
+    if (!isset($this->current_display)) {
+      return TRUE;
     }
 
     if (!$account) {
       $account = $GLOBALS['user'];
     }
 
-    return $this->display_handler->access($account);
+    if (!empty($this->display[$display_id]->handler)) {
+      return $this->display[$display_id]->handler->access($account);
+    }
   }
 
   /**
