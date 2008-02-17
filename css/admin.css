@@ -212,6 +212,14 @@ div.views-display-deleted div.tab-section {
   padding-top: 3px;
 }
 
+#views-ajax-pad .views-messages {
+  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  margin-left: 118px;
+  border: #ADB7BE 1px solid;
+  border-top: 0;  
+  padding: 5px;
+}
+
 .views-override {
   padding: 0.5em 1em 0em 1em;
 }

@@ -55,7 +55,7 @@ function user_views_data() {
     // Information for accepting a uid as an argument
     'argument' => array(
       'handler' => 'views_handler_argument_uid',
-    ), 
+    ),
     // Information for accepting a uid as a filter
     'filter' => array(
       'handler' => 'views_handler_filter_equality',
@@ -87,6 +87,10 @@ class views_handler_field_user extends views_handler_field {
     else {
       $this->uid_field = 'uid';
     }
+  }
+
+  function options(&$item) {
+    $item->link_to_user = TRUE;
   }
 
   /**

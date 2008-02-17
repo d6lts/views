@@ -74,11 +74,13 @@ function views_ui_list_views($arg = NULL) {
     }
   }
 
-  if (strtolower($ts['sort']) == 'desc') {
-    arsort($sorts);
-  }
-  else {
-    asort($sorts);
+  if (!empty($ts)) {
+    if (strtolower($ts['sort']) == 'desc') {
+      arsort($sorts);
+    }
+    else {
+      asort($sorts);
+    }
   }
 
   $i = array();
