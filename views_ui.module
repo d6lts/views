@@ -52,10 +52,10 @@ function views_ui_menu() {
     'callback arguments' => array('views_ui_admin_tools'),
     'type' => MENU_LOCAL_TASK
   );
-  $items['admin/build/views/delete'] = $callback + array(
-    'title' => t('Edit view'),
+  $items['admin/build/views/delete/%views_ui_cache'] = $callback + array(
+    'title' => t('Delete view'),
     'page callback' => 'drupal_get_form',
-    'callback arguments' => array('views_ui_admin_delete_confirm'),
+    'page arguments' => array('views_ui_delete_confirm', 4),
   );
   $items['admin/build/views/enable'] = $callback + array(
     'page callback' => 'views_ui_admin_enable_page',

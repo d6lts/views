@@ -8,7 +8,11 @@
 /**
  * Page callback to list views in the system.
  */
-function views_ui_list_views() {
+function views_ui_list_views($arg = NULL) {
+  if ($arg != NULL) {
+    return drupal_not_found();
+  }
+
   $items = array();
   $sorts = array();
 
@@ -29,7 +33,7 @@ function views_ui_list_views() {
     }
     if ($view->type != t('Default')) {
       $text = $view->type == t('Overridden') ? t('Revert') : t('Delete');
-      $ops[] = l($text, "admin/build/views/$view->name/delete");
+      $ops[] = l($text, "admin/build/views/delete/$view->name");
     }
     else {
       if (empty($view->disabled)) {
@@ -159,6 +163,35 @@ function views_ui_add_form_submit($form, &$form_state) {
 }
 
 /**
+ * Page to delete a view.
+ */
+function views_ui_delete_confirm(&$form_state, $view) {
+  $form_state['view'] = $view;
+  $form = array();
+
+  $cancel = 'admin/build/views';
+  if (!empty($_REQUEST['cancel'])) {
+    $cancel = $_REQUEST['cancel'];
+  }
+  return confirm_form($form,
+                  t('Are you sure you want to delete the view %name?',
+                  array('%name' => $view->name)),
+                  $cancel,
+                  t('Deleting a term will delete all its children if there are any. This action cannot be undone.'),
+                  t('Delete'),
+                  t('Cancel'));
+}
+
+/**
+ * Submit handler to delete a view.
+ */
+function views_ui_delete_confirm_submit(&$form, &$form_state) {
+  $form_state['view']->delete();
+  views_object_cache_clear('view', $form_state['view']->name);
+  drupal_set_message(t('The view has been deleted'));
+  $form_state['redirect'] = 'admin/build/views';
+}
+/**
  * The main view edit page
  */
 function views_ui_edit_page($view) {
@@ -228,6 +261,11 @@ function views_ui_edit_view_form_submit($form, &$form_state) {
 function views_ui_edit_view_form_cancel($form, &$form_state) {
   // Remove this view from cache so edits will be lost.
   views_object_cache_clear('view', $form_state['view']->name);
+}
+
+function views_ui_edit_view_form_delete($form, &$form_state) {
+  // Remove this view from cache so edits will be lost.
+  $form_state['redirect'] = array('admin/build/views/delete/' . $form_state['view']->name, 'cancel=admin/build/views/edit/' . $form_state['view']->name);
 }
 
 /**
