@@ -353,6 +353,10 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
   // Special fields if tihs is the default display.
   $vars['default'] = ($display->id == 'default');
   $vars['details_class'] = views_ui_item_css('details');
+  if (!empty($view->changed_sections['details'])) {
+    $vars['details_changed'] = TRUE;
+  }
+
   $tag = empty($view->tag) ? t('None') : $view->tag;
   $vars['details'] = t('Tag') . ': ' . l($tag, "admin/build/views/nojs/details/$view->name", array('attributes' => array('class' => 'views-ajax-link')));
 
@@ -391,6 +395,9 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
       }
     }
     $data['class'] = views_ui_item_css($display_id . '-' . $id);
+    if (!empty($view->changed_sections[$display_id . '-' . $id])) {
+      $data['changed'] = TRUE;
+    }
   }
 
   $vars['categories'] = $categories;
@@ -464,6 +471,9 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
     $fields[$id]['title'] = l($field_name, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')));
     $fields[$id]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $id);
+    if (!empty($view->changed_sections[$display->id . '-' . $type . '-' . $id])) {
+      $fields[$id]['changed'] = TRUE;
+    }
     $fields[$id]['info'] = $handler->admin_summary();
 
     if ($handler->needs_style_plugin()) {
@@ -477,6 +487,9 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
       $fields[$pid]['title'] = t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));
       $fields[$pid]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $pid);
+      if (!empty($view->changed_sections[$display->id . '-' . $type . '-' . $pid])) {
+        $fields[$pid]['changed'] = TRUE;
+      }
       $fields[$pid]['info'] = '';
     }
   }
@@ -542,7 +555,7 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
     '#type' => 'submit',
     '#value' => $name,
     '#submit' => array($form_id . '_submit'),
-    '#validate' => array($form_id . '_validate'),
+    '#validate' => array('views_ui_standard_submit', $form_id . '_validate'),
   );
 
   $cancel_submit = function_exists($form_id . '_cancel') ? $form_id . '_cancel' : 'views_ui_standard_cancel';
@@ -572,6 +585,18 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
   views_add_css('admin');
 }
 
+/**
+ * Basic submit handler applicable to all 'standard' forms
+ */
+function views_ui_standard_submit($form, &$form_state) {
+  if (!empty($form['#section'])) {
+    $form_state['view']->changed_sections[$form['#section']] = TRUE;
+  }
+}
+
+/**
+ * Submit handler for cancel button
+ */
 function views_ui_standard_cancel($form, &$form_state) {
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }

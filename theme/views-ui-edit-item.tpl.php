@@ -19,7 +19,7 @@
     <?php if (!empty($fields['links'])): ?>
       <?php print $field['links']; ?>
     <?php endif; ?>
-    <div class="<?php print $field['class']; ?>">
+    <div class="<?php print $field['class']; if (!empty($field['changed'])) { print ' changed'; } ?>">
       <?php print $field['title']; ?>
       <?php print $field['info']; ?>
     </div>

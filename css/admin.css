@@ -414,6 +414,10 @@ div.view-changed {
   color: #f93;
 }
 
+div.views-tab div.changed a {
+  color: #f93;
+}
+
 div.changed div.view-changed {
   display: block;
 }
