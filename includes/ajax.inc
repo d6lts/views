@@ -90,7 +90,10 @@ function views_ajax_form($form_id) {
 
   // If the form wasn't submitted successfully, render the form.
   $object = new stdClass();
-  $object->display = '<div class="views-messages">' . theme('status_messages') . '</div>';
+  $object->display = '';
+  if ($messages = theme('status_messages')) {
+    $object->display = '<div class="views-messages">' . $messages . '</div>';
+  }
   $object->display .= drupal_render_form($form_id, $form);
   $object->title = empty($form['#title']) ? '' : $form['#title'];
   $object->url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];
@@ -133,7 +136,10 @@ function views_render_ajax_form($form_id) {
 
   // Render the form and return the object data.
   $output = new stdClass();
-  $object->display = '<div class="views-messages">' . theme('status_messages') . '</div>';
+  $object->display = '';
+  if ($messages = theme('status_messages')) {
+    $object->display = '<div class="views-messages">' . $messages . '</div>';
+  }
   $output->display .= drupal_render_form($form_id, $form);
   $output->title = empty($form['#title']) ? '' : $form['#title'];
   $output->url = empty($form['#url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form['#url'];

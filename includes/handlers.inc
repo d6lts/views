@@ -968,7 +968,7 @@ class views_handler_argument extends views_handler {
       return call_user_func_array(array($this, $info['method']), $info['method args']);
     }
     else {
-      return $this->{$info['method']};
+      return $this->{$info['method']}();
     }
   }
 
