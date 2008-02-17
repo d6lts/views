@@ -519,6 +519,10 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
       '#submit' => array($third_submit),
     );
   }
+
+  // If this isn't an ajaxy form, then we want to set the title.
+  drupal_set_title($form['#title']);
+  views_add_css('admin');
 }
 
 function views_ui_standard_cancel($form, &$form_state) {
@@ -793,7 +797,6 @@ function views_ui_edit_display_form_override($form, &$form_state) {
   $display->handler->options_override($form, $form_state);
 
   views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
   $form_state['regenerate form'] = TRUE;
 }
 
@@ -802,7 +805,7 @@ function views_ui_edit_display_form_override($form, &$form_state) {
  */
 function views_ui_rearrange_type($js, $view, $display_id, $type) {
   if (!$js) {
-    $output = drupal_get_form('views_ui_rearrange_form', $view, $type, $display_id);
+    $output = drupal_get_form('views_ui_rearrange_form', $view, $display_id, $type);
     return $output;
   }
   else {
@@ -1031,8 +1034,7 @@ function views_ui_add_item_form_submit($form, &$form_state) {
 
   // Store in cache
   views_ui_cache_set($form_state['view']);
-
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$type/$form_state[id]";
 }
 
 /**
@@ -1040,7 +1042,7 @@ function views_ui_add_item_form_submit($form, &$form_state) {
  */
 function views_ui_config_item($js, $view, $display_id, $type, $id) {
   if (!$js) {
-    $output = drupal_get_form('views_ui_config_item_form', $view, $display_id, $type, $id);
+    $output = drupal_get_form('views_ui_config_item_form', $view, $display_id, $type, $id, TRUE);
     return $output;
   }
   else {
@@ -1150,7 +1152,12 @@ function views_ui_config_item_form_submit($form, &$form_state) {
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  if (isset($form_state['next'])) {
+    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$form_state[type]/$form_state[next]";
+  }
+  else {
+    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  }
 }
 
 /**
@@ -1164,7 +1171,12 @@ function views_ui_config_item_form_remove($form, &$form_state) {
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  if (isset($form_state['next'])) {
+    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$type/$form_state[next]";
+  }
+  else {
+    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  }
 }
 
 
