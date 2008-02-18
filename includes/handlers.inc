@@ -159,24 +159,27 @@ class views_handler extends views_object {
    *   The item from the database; the actual contents of this will vary
    *   based upon the type of handler.
    */
-  function init(&$view, &$data) {
+  function init(&$view, $options) {
     $this->view = &$view;
-    $this->data = &$data;
+    $this->options = &$options;
 
     // This exist on most handlers, but not all. So they are still optional.
-    if (isset($data->table)) {
-      $this->table = $data->table;
+    if (isset($options['table'])) {
+      $this->table = $options['table'];
     }
 
-    if (isset($data->field)) {
-      $this->field = $data->field;
+    if (isset($options['field'])) {
+      $this->field = $options['field'];
       if (!isset($this->real_field)) {
-        $this->real_field = $data->field;
+        $this->real_field = $options['field'];
       }
     }
 
-    if (isset($data->relationship)) {
-      $this->relationship = $data->relationship;
+    if (isset($options['relationship'])) {
+      $this->relationship = $options['relationship'];
+    }
+    else {
+      $this->relationship = NULL;
     }
 
     if (!empty($view->query)) {
@@ -327,9 +330,10 @@ class views_handler_field_date extends views_handler_field {
   /**
    * Fill in default options.
    */
-  function options(&$item) {
-    $item->date_format = 'small';
-    $item->custom_date_format = '';
+  function options(&$options) {
+    parent::options($options);
+    $options['date_format'] = 'small';
+    $options['custom_date_format'] = '';
   }
 
   function options_form(&$form, &$form_state) {
@@ -343,19 +347,19 @@ class views_handler_field_date extends views_handler_field {
         'custom' => t('Custom'),
         'time ago' => t('Time ago'),
       ),
-      '#default_value' => isset($this->data->date_format) ? $this->data->date_format : 'small',
+      '#default_value' => isset($this->options['date_format']) ? $this->options['date_format'] : 'small',
     );
     $form['custom_date_format'] = array(
       '#type' => 'textfield',
       '#title' => t('Custom date format'),
       '#description' => t('If "Custom", see <a href="http://us.php.net/manual/en/function.date.php">the PHP docs</a> for date formats. If "Time ago" this is the the number of different units to display, which defaults to two.'),
-      '#default_value' => isset($this->data->custom_date_format) ? $this->data->custom_date_format : '',
+      '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
     );
   }
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    $format = $this->data->date_format;
+    $format = $this->options['date_format'];
     if ($format == 'custom') {
       $custom_format = $this->custom_date_format;
     }
@@ -377,9 +381,10 @@ class views_handler_field_date extends views_handler_field {
  * Allows for display of true/false, yes/no, on/off.
  */
 class views_handler_field_boolean extends views_handler_field {
-  function options(&$item) {
-    $item->type = 'yes-no';
-    $item->not = FALSE;
+  function options(&$options) {
+    parent::options($options);
+    $options['type'] = 'yes-no';
+    $options['not'] = FALSE;
   }
 
   function options_form(&$form, &$form_state) {
@@ -391,23 +396,23 @@ class views_handler_field_boolean extends views_handler_field {
         'true-false' => t('True/False'),
         'on-off' => t('On/Off'),
       ),
-      '#default_value' => $this->data->type,
+      '#default_value' => $this->options['type'],
     );
     $form['not'] = array(
       '#type' => 'checkbox',
       '#title' => t('Reverse'),
       '#description' => t('If checked, true will be displayed as false.'),
-      '#default_value' => $this->data->not,
+      '#default_value' => $this->options['not'],
     );
   }
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    if (!empty($this->data->not)) {
+    if (!empty($this->options['not'])) {
       $value = !$value;
     }
 
-    switch ($this->data->type) {
+    switch ($this->options['type']) {
       case 'yes-no':
       default:
         return $value ? t('Yes') : t('No');
@@ -462,21 +467,22 @@ class views_handler_sort extends views_handler {
   function query() {
     $this->ensure_my_table();
     // Add the field.
-    $this->query->add_orderby($this->table_alias, $this->real_field, $this->data->order);
+    $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
   }
 
   /**
    * Set defaults for new handler
    */
   function options(&$options) {
-    $options->order = 'ASC';
+    parent::options($options);
+    $options['order'] = 'ASC';
   }
 
   /**
    * Display whether or not the sort order is ascending or descending
    */
   function admin_summary() {
-    switch ($this->data->order) {
+    switch ($this->options['order']) {
       case 'ASC':
       case 'asc':
       default:
@@ -498,7 +504,7 @@ class views_handler_sort extends views_handler {
       '#type' => 'radios',
       '#title' => t('Sort order'),
       '#options' => array('ASC' => t('Ascending'), 'DESC' => t('Descending')),
-      '#default_value' => $this->data->order,
+      '#default_value' => $this->options['order'],
     );
   }
 }
@@ -540,7 +546,7 @@ class views_handler_sort_formula extends views_handler_sort {
     }
     $this->ensure_my_table();
     // Add the field.
-    $this->add_orderby(NULL, $this->formula, $this->data->order, $this->table_alias . '_' . $this->field);
+    $this->add_orderby(NULL, $this->formula, $this->options['order'], $this->table_alias . '_' . $this->field);
   }
 }
 
@@ -561,13 +567,15 @@ class views_handler_filter extends views_handler {
   /**
    * Provide a simple default initializer -- should be overridden.
    */
-  function options(&$item) {
-    $item->operator = array('operator' => '=');
-    $item->value = array('value' => '');
+  function options(&$options) {
+    parent::options($options);
+    $options['operator'] = array('operator' => '=');
+    $options['value'] = array('value' => '');
+    $options['group'] = 0;
   }
 
   function admin_summary() {
-    return check_plain($this->data->operator['operator']) . ' ' . check_plain($this->data->value['value']);
+    return check_plain($this->options['operator']['operator']) . ' ' . check_plain($this->options['value']['value']);
   }
 
   /**
@@ -642,12 +650,12 @@ class views_handler_filter extends views_handler {
    * Add this filter to the query.
    *
    * Due to the nature of fapi, the value and the operator have an unintended
-   * level of indirection. You will find them in $this->data->operator['operator']
-   * and $this->data->value['value'] respectively.
+   * level of indirection. You will find them in $this->options['operator']['operator']
+   * and $this->options['value']['value'] respectively.
    */
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . " '%s'", $this->data->value['value']);
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . " '%s'", $this->options['value']['value']);
   }
 }
 
@@ -658,9 +666,10 @@ class views_handler_filter_equality extends views_handler_filter {
   /**
    * Provide basic defaults for the equality operator
    */
-  function options(&$item) {
-    $item->operator['operator'] = '=';
-    $item->value['value'] = '';
+  function options(&$options) {
+    parent::options($options);
+    $options['operator']['operator'] = '=';
+    $options['value']['value'] = '';
   }
 
   /**
@@ -670,7 +679,7 @@ class views_handler_filter_equality extends views_handler_filter {
     $form['operator'] = array(
       '#type' => 'radios',
       '#title' => t('Operator'),
-      '#default_value' => $this->data->operator['operator'],
+      '#default_value' => $this->options['operator']['operator'],
       '#options' => array(
         '=' => t('Is equal to'),
         '!=' => t('Is not equal to'),
@@ -686,7 +695,7 @@ class views_handler_filter_equality extends views_handler_filter {
       '#type' => 'textfield',
       '#title' => t('Value'),
       '#size' => 30,
-      '#default_value' => $this->data->value['value'],
+      '#default_value' => $this->options['value']['value'],
     );
   }
 }
@@ -703,14 +712,15 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
     parent::construct();
   }
 
-  function options(&$item) {
-    $item->operator['operator'] = '=';
+  function options(&$options) {
+    parent::options($options);
+    $options['operator']['operator'] = '=';
   }
 
   function operator_form(&$form, &$form_state) {
     $form['operator'] = array(
       '#type' => 'radios',
-      '#default_value' => ($this->data->operator['operator']) ? $this->data->operator['operator'] : '=',
+      '#default_value' => ($this->options['operator']['operator']) ? $this->options['operator']['operator'] : '=',
       '#options' => array(
         '=' => t('Is'),
         '<>' => t('Is not'),
@@ -726,12 +736,12 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
   }
 
   function admin_summary() {
-    return check_plain($this->data->operator['operator']) . ' ' . check_plain($this->value_value);
+    return check_plain($this->options['operator']['operator']) . ' ' . check_plain($this->value_value);
   }
 
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . " 1");
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . " 1");
   }
 
 }
@@ -746,9 +756,10 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $this->value_options = array(t('Yes'), t('No'));
   }
 
-  function options(&$item) {
-    $item->operator['operator'] = 'in';
-    $item->value['value'] = 0;
+  function options(&$options) {
+    parent::options($options);
+    $options['operator']['operator'] = 'in';
+    $options['value']['value'] = 0;
   }
 
   /**
@@ -758,7 +769,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $form['operator'] = array(
       '#type' => 'radios',
       '#title' => t('Operator'),
-      '#default_value' => ($this->data->operator['operator']) ? $this->data->operator['operator'] : 'in',
+      '#default_value' => ($this->options['operator']['operator']) ? $this->options['operator']['operator'] : 'in',
       '#options' => array(
         'in' => t('Is one of'),
         'not in' => t('Is not one of'),
@@ -772,7 +783,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
       '#required' => TRUE,
       '#title' => $this->value_title,
       '#options' => $this->value_options,
-      '#default_value' => (array) $this->data->value['value'],
+      '#default_value' => (array) $this->options['value']['value'],
     );
   }
 
@@ -782,14 +793,14 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function admin_summary() {
-    return check_plain($this->data->operator['operator']) . ' ' . check_plain(implode(', ', $this->data->value['value']));
+    return check_plain($this->options['operator']['operator']) . ' ' . check_plain(implode(', ', $this->options['value']['value']));
   }
 
   function query() {
     $this->ensure_my_table();
-    $replace = array_fill(0, sizeof($this->data->value['value']), "'%s'");
+    $replace = array_fill(0, sizeof($this->options['value']['value']), "'%s'");
     $in = ' (' . implode(", ", $replace) . ')';
-    $this->query->add_where($this->data->group, "$this->table_alias.$this->real_field " . $this->data->operator['operator'] . $in, $this->data->value['value']);
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . $in, $this->options['value']['value']);
   }
 }
 
@@ -829,13 +840,14 @@ class views_handler_argument extends views_handler {
   /**
    * Provide defaults for the argument when a new one is created.
    */
-  function options(&$item) {
-    $item->default_action = 'ignore';
-    $item->style_plugin = 'default_summary';
-    $item->style_options = array();
-    $item->wildcard = 'all';
-    $item->wildcard_substitution = t('All');
-    $item->title = '';
+  function options(&$options) {
+    parent::options($options);
+    $options['default_action'] = 'ignore';
+    $options['style_plugin'] = 'default_summary';
+    $options['style_options'] = array();
+    $options['wildcard'] = 'all';
+    $options['wildcard_substitution'] = t('All');
+    $options['title'] = '';
   }
 
   /**
@@ -852,7 +864,7 @@ class views_handler_argument extends views_handler {
       '#type' => 'radios',
       '#title' => t('Action to take if argument is not present'),
       '#options' => $options,
-      '#default_value' => $this->data->default_action,
+      '#default_value' => $this->options['default_action'],
     );
     $form['wildcard'] = array(
       '#prefix' => '<div class="views-left-40">',
@@ -860,7 +872,7 @@ class views_handler_argument extends views_handler {
       '#type' => 'textfield',
       '#title' => t('Wildcard'),
       '#size' => 20,
-      '#default_value' => $this->data->wildcard,
+      '#default_value' => $this->options['wildcard'],
       '#description' => t('If this value is received as an argument, the argument will be ignored; i.e, "all values"'),
     );
     $form['wildcard_substitution'] = array(
@@ -868,7 +880,7 @@ class views_handler_argument extends views_handler {
       '#type' => 'textfield',
       '#title' => t('Wildcard title'),
       '#size' => 20,
-      '#default_value' => $this->data->wildcard_substitution,
+      '#default_value' => $this->options['wildcard_substitution'],
       '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
     );
     $form['title'] = array(
@@ -876,7 +888,7 @@ class views_handler_argument extends views_handler {
       '#suffix' => '</div>',
       '#type' => 'textfield',
       '#title' => t('Title'),
-      '#default_value' => $this->data->title,
+      '#default_value' => $this->options['title'],
       '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments.'),
     );
   }
@@ -935,7 +947,7 @@ class views_handler_argument extends views_handler {
    * @return TRUE/FALSE
    */
   function uses_breadcrumb() {
-    $info = $this->default_actions($this->data->default_action);
+    $info = $this->default_actions($this->options['default_action']);
     return !empty($info['breadcrumb']);
   }
 
@@ -945,7 +957,7 @@ class views_handler_argument extends views_handler {
    * @return TRUE/FALSE
    */
   function needs_style_plugin() {
-    $info = $this->default_actions($this->data->default_action);
+    $info = $this->default_actions($this->options['default_action']);
     return !empty($info['style plugin']);
   }
 
@@ -959,7 +971,7 @@ class views_handler_argument extends views_handler {
    *   building the view will be aborted here.
    */
   function default_action() {
-    $info = $this->default_actions($this->data->default_action);
+    $info = $this->default_actions($this->options['default_action']);
     if (!$info) {
       return FALSE;
     }
@@ -1014,12 +1026,12 @@ class views_handler_argument extends views_handler {
    */
   function default_summary($order) {
     $this->view->build_info['summary'] = TRUE;
-    $this->view->build_info['summary_level'] = $this->data->id;
+    $this->view->build_info['summary_level'] = $this->options['id'];
 
     // Change the display style to the summary style for this
     // argument.
-    $this->view->style_plugin = $this->data->style_plugin;
-    $this->view->style_options = $this->data->style_options;
+    $this->view->style_plugin = $this->options['style_plugin'];
+    $this->view->style_options = $this->options['style_options'];
 
     // Clear out the normal primary field and whatever else may have
     // been added and let the summary do the work.

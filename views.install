@@ -172,3 +172,4 @@ function views_schema() {
   );
   return $schema;
 }
+

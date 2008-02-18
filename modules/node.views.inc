@@ -264,7 +264,7 @@ class views_handler_field_node extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data->data->link_to_node) && $view->base_table != 'node') {
+    if (isset($data->options['link_to_node']) && $view->base_table != 'node') {
       // @todo: This can't be right, it'll totally fail with relationships.
       $this->additional_fields[] = 'nid';
       $this->nid_field = 'node_nid';
@@ -281,12 +281,12 @@ class views_handler_field_node extends views_handler_field {
     $form['link_to_node'] = array(
       '#title' => t('Link this field to its node'),
       '#type' => 'checkbox',
-      '#default_value' => !empty($this->data->link_to_node),
+      '#default_value' => !empty($this->options['link_to_node']),
     );
   }
 
   function render_link($data, $values) {
-    if (!empty($this->data->link_to_node)) {
+    if (!empty($this->options['link_to_node'])) {
       return l($data, "node/" . $values->{$this->nid_field}, array('html' => TRUE));
     }
     else {
@@ -464,12 +464,12 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
     $this->value_options = $options;
   }
 
-  function options(&$item) {
-    parent::options($item);
+  function options(&$options) {
+    parent::options($options);
     // Set the default value to the first node type, so that there is something
     // reasonable there.
     $types = array_keys(node_get_types());
-    $item->value['value'] = array(array_shift($types));
+    $options['value']['value'] = array(array_shift($types));
   }
 }
 

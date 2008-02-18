@@ -43,7 +43,8 @@ function views_ui_menu() {
   );
   $items['admin/build/views/import'] = $base + array(
     'title' => t('Import'),
-    'page callback' => 'views_ui_admin_import_page',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_import_page'),
     'type' => MENU_LOCAL_TASK
   );
   $items['admin/build/views/tools'] = $base + array(
@@ -57,13 +58,19 @@ function views_ui_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_delete_confirm', 4),
   );
-  $items['admin/build/views/enable'] = $callback + array(
-    'page callback' => 'views_ui_admin_enable_page',
+  $items['admin/build/views/enable/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_enable_page',
+    'page arguments' => array(4),
   );
-  $items['admin/build/views/disable'] = $callback + array(
-    'page callback' => 'views_ui_admin_disable_page',
+  $items['admin/build/views/disable/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_disable_page',
+    'page arguments' => array(4),
   );
 
+  $items['admin/build/views/export/%views_ui_cache'] = $callback + array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_export_page', 4),
+  );
   // lots of little edit form pieces.
   $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_details',

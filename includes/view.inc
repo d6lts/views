@@ -245,14 +245,16 @@ class view extends views_db_object {
     // Load the requested items from the display onto the object.
     $this->$key = $this->display_handler->get_option($info['plural']);
 
+    // Create a shortcut
+    $items = &$this->$key;
+
     // Then run through and initialize a handler for each item.
-    foreach ($this->$key as $data) {
-      $handler = views_get_handler($data->table, $data->field, $key);
+    foreach ($items as $id => $data) {
+      $handler = views_get_handler($data['table'], $data['field'], $key);
       if (is_object($handler)) {
-        // Clone the data because init takes a reference and we don't
-        // want that here.
-        $handler->init($this, drupal_clone($data));
-        $data->handler = $handler;
+        $handler->init($this, $data);
+        // Deal with difficult PHP indirection:
+        $items[$id]['handler'] = $handler;
       }
     }
   }
@@ -281,8 +283,6 @@ class view extends views_db_object {
 
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
-
-
 
     // If that fails, let's build!
     $this->build_info = array();
@@ -321,41 +321,41 @@ class view extends views_db_object {
       $position++;
       $argument = &$this->argument[$id];
 
-      if (!is_object($argument->handler)) {
+      if (!is_object($argument['handler'])) {
         // @todo: Set some kind of warning.
         continue;
       }
 
-      if (isset($this->args[$position]) && $argument->handler->validate($this->args[$position])) {
+      if (isset($this->args[$position]) && $argument['handler']->validate($this->args[$position])) {
         // handle argument that is present.
         // @todo: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
-        $argument->handler->argument = $this->args[$position];
-        $argument->handler->query();
+        $argument['handler']->argument = $this->args[$position];
+        $argument['handler']->query();
 
         // Since we're really generating the breadcrumb for the item above us,
         // check the default action of this argument.
-        if ($this->display_handler->uses_breadcrumb() && $argument->handler->uses_breadcrumb()) {
+        if ($this->display_handler->uses_breadcrumb() && $argument['handler']->uses_breadcrumb()) {
           $path = $this->get_url($breadcrumb_args);
           if (strpos('%', $path) === FALSE) {
             $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
           }
         }
 
-        $argument->handler->set_breadcrumb($this->build_info['breadcrumb']);
+        $argument['handler']->set_breadcrumb($this->build_info['breadcrumb']);
 
         // Test to see if we should use this argument's title
-        if (!empty($argument->title)) {
-          $title = $argument->title;
+        if (!empty($argument['title'])) {
+          $title = $argument['title'];
         }
 
         // Add this argument's substitution
-        $substitutions['%' . ($position + 1)] = $argument->handler->title();
+        $substitutions['%' . ($position + 1)] = $argument['handler']->title();
         $breadcrumb_args[] = $this->args[$position];
       }
       else {
         // determine default condition and handle.
-        if (!$argument->handler->default_action()) {
+        if (!$argument['handler']->default_action()) {
           return;
         }
       }
@@ -390,8 +390,8 @@ class view extends views_db_object {
     $array = &$this->$key;
     foreach ($array as $id => $data) {
       // @todo: we should report an error here if this is not an object.
-      if (!empty($array[$id]->handler) && is_object($array[$id]->handler)) {
-        $array[$id]->handler->query();
+      if (!empty($array[$id]['handler']) && is_object($array[$id]['handler'])) {
+        $array[$id]['handler']->query();
       }
     }
   }
@@ -430,7 +430,7 @@ class view extends views_db_object {
         // Rewrite and run the count query so we can store how many items this would have
         // matched.
         $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
-        $this->total_rows = db_result(db_query($count_query));
+        $this->total_rows = db_result(db_query($count_query, $args));
       }
       else {
         $this->result = db_query($query, $args);
@@ -632,6 +632,7 @@ class view extends views_db_object {
       else {
         $view =& new view();
         $view->load_row($data);
+        $view->type = t('Normal');
         // Load all of our subtables.
         foreach ($view->db_objects() as $key) {
           $object_name = "views_$key";
@@ -783,11 +784,15 @@ class view extends views_db_object {
   function export() {
     $output = '';
     $output .= $this->export_row('view');
+    // Set the API version
+    $output .= '$view->api_version = 2' . ";\n";
+    $output .= '$view->disabled = FALSE; // Edit this to true to make a default view disabled initially' . "\n";
+
     foreach ($this->db_objects() as $key) {
       $output .= '$view->' . $key . ' = array()' . ";\n";
-      foreach ($this->$key as $object) {
+      foreach ($this->$key as $id => $object) {
         $output .= $object->export_row($key, '  ');
-        $output .= '$view->' . $key . '[] = $' . $key . ";\n";
+        $output .= '$view->' . $key . '[\'' . $id . '\'] = $' . $key . ";\n";
       }
     }
     return $output;
@@ -1028,15 +1033,16 @@ class views_db_object {
     while (!empty($fields[$id])) {
       $id = $field . '_' . ++$count;
     }
-    $object = new $types[$type]['object'];
-    $object->id = $id;
-    $object->table = $table;
-    $object->field = $field;
+    $new_item = array(
+      'id' => $id,
+      'table' => $table,
+      'field' => $field,
+    );
 
     $handler = views_get_handler($table, $field, $type);
-    $handler->options($object);
+    $handler->options($new_item);
 
-    $fields[$id] = $object;
+    $fields[$id] = $new_item;
     $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);
 
     return $id;
@@ -1076,6 +1082,8 @@ class views_db_object {
   /**
    * Get the configuration of an item (field/sort/filter/etc) on a given
    * display.
+   *
+   * Pass in NULL for the $item to remove an item.
    */
   function set_item($display_id, $type, $id, $item) {
     // Get info about the types so we can get the right data.

@@ -78,9 +78,8 @@ class views_handler_field_user extends views_handler_field {
   /**
    * Override init function to provide generic option to link to user.
    */
-  function init(&$view, &$data) {
-    parent::init($view, $data);
-    if (isset($data->options['link_to_user']) && $view->base_table != 'user') {
+  function construct() {
+    if (isset($this->options['link_to_user']) && $this->view->base_table != 'user') {
       $this->additional_fields[] = 'uid';
       $this->uid_field = 'users_uid';
     }
@@ -89,8 +88,9 @@ class views_handler_field_user extends views_handler_field {
     }
   }
 
-  function options(&$item) {
-    $item->link_to_user = TRUE;
+  function options(&$options) {
+    parent::options($options);
+    $options['link_to_user'] = TRUE;
   }
 
   /**
@@ -100,12 +100,12 @@ class views_handler_field_user extends views_handler_field {
     $form['link_to_user'] = array(
       '#title' => t('Link this field to its user'),
       '#type' => 'checkbox',
-      '#default_value' => $this->data->link_to_user,
+      '#default_value' => $this->options['link_to_user'],
     );
   }
 
   function render_link($data, $values) {
-    if (!empty($this->data->link_to_user) && user_access('access user profiles')) {
+    if (!empty($this->options['link_to_user']) && user_access('access user profiles')) {
       return l($data, "user/" . $values->{$this->uid_field}, array('html' => TRUE));
     }
     else {
@@ -126,7 +126,7 @@ class views_handler_field_user extends views_handler_field {
 class views_handler_field_user_name extends views_handler_field_user {
 
   function render_link($data, $values) {
-    if (!empty($this->data->link_to_user)) {
+    if (!empty($this->options['link_to_user'])) {
       $account = (object)array('uid' => $values->{$this->uid_field}, 'name' => $values->{$this->field_alias});
       return theme('username', $account);
     }

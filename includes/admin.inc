@@ -29,7 +29,7 @@ function views_ui_list_views($arg = NULL) {
     $ops = array();
     if (empty($view->disabled)) {
       $ops[] = l(t('Edit'), "admin/build/views/edit/$view->name");
-      $ops[] = l(t('Export'), "admin/build/views/$view->name/export");
+      $ops[] = l(t('Export'), "admin/build/views/export/$view->name");
     }
     if ($view->type != t('Default')) {
       $text = $view->type == t('Overridden') ? t('Revert') : t('Delete');
@@ -193,12 +193,88 @@ function views_ui_delete_confirm_submit(&$form, &$form_state) {
   drupal_set_message(t('The view has been deleted'));
   $form_state['redirect'] = 'admin/build/views';
 }
+
 /**
  * The main view edit page
  */
 function views_ui_edit_page($view) {
   drupal_set_title(t('Edit view "%view"', array('%view' => $view->name)));
   return theme('views_ui_edit_view', $view);
+}
+
+/**
+ * Export a view for cut & paste.
+ */
+function views_ui_export_page(&$form_state, $view) {
+  $code = $view->export();
+  $lines = substr_count($code, "\n");
+  $form['code'] = array(
+    '#type' => 'textarea',
+    '#title' => $view->name,
+    '#default_value' => $code,
+    '#rows' => $lines);
+  return $form;
+}
+
+/**
+ * Import a view from cut & paste
+ */
+function views_ui_import_page(&$form_state) {
+  $form['name'] = array(
+    '#type' => 'textfield',
+    '#title' => t('View name'),
+    '#description' => t('Enter the name to use for this view if it is different from the source view. Leave blank to use the name of the view.'),
+  );
+
+  $form['view'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Paste view code here'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Import'),
+    '#submit' => array('views_ui_import_submit'),
+    '#validate' => array('views_ui_import_validate'),
+  );
+  return $form;
+}
+
+/**
+ * Validate handler to import a view
+ */
+function views_ui_import_validate($form, &$form_state) {
+  views_include('view');
+  ob_start();
+  eval($form_state['values']['view']);
+  ob_end_clean();
+
+  if (!is_object($view)) {
+    form_error($form['view'], t('Unable to interpret view code.'));
+  }
+  if (empty($view->api_version) || $view->api_version < 2) {
+    form_error($form['view'], t('That view is not compatible with this version of Views.'));
+  }
+
+  if ($form_state['values']['name']) {
+    $view->name = $form_state['values']['name'];
+  }
+
+  $test = views_get_view($view->name);
+  if ($test && $test->type != t('Default')) {
+    form_set_error('', t('A view by that name already exists; please choose a different name'));
+  }
+
+  $form_state['view'] = $view;
+}
+
+/**
+ * Submit handler for view import
+ */
+function views_ui_import_submit($form, &$form_state) {
+  // Store in cache and then go to edit.
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
@@ -458,10 +534,11 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $fields[$id] = array();
-    $handler = views_get_handler($field->table, $field->field, $type);
+
+    $handler = views_get_handler($field['table'], $field['field'], $type);
     if (empty($handler)) {
       $fields[$id]['class'] = 'broken';
-      $fields[$id]['title'] = t("Error: handler for @table > @field doesn't exist!", array('@table' => $field->table, '@field' => $field->field));
+      $fields[$id]['title'] = t("Error: handler for @table > @field doesn't exist!", array('@table' => $field['table'], '@field' => $field['field']));
       $fields[$id]['info'] = '';
       continue;
     }
@@ -477,7 +554,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     $fields[$id]['info'] = $handler->admin_summary();
 
     if ($handler->needs_style_plugin()) {
-      $style_plugin = views_fetch_plugin_data('style', $handler->data->style_plugin);
+      $style_plugin = views_fetch_plugin_data('style', $handler->options['style_plugin']);
       $style_title = empty($style_plugin['title']) ? t('Missing style plugin') : $style_plugin['title'];
       $pid = $id . '-style-plugin';
 
@@ -923,7 +1000,7 @@ function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
       '#delta' => 10,
       '#default_value' => ++$count,
     );
-    $handler = views_get_handler($field->table, $field->field, $type);
+    $handler = views_get_handler($field['table'], $field['field'], $type);
     if ($handler) {
       $handler->init($view, $field);
       $form[$id]['name'] = array(
@@ -1143,29 +1220,32 @@ function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id,
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
-    $handler = views_get_handler($item->table, $item->field, $type);
+    $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
       break;
     }
-    $handler->init($view, $item);
-    $types = views_object_types();
+    else {
+      $handler->init($view, $item);
+      $types = views_object_types();
 
-    $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-    $form['#title'] .= t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+      $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+      $form['#title'] .= t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
 
-    $form['#section'] = $display_id . '-' . $type . '-' . $id;
+      $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
-    // Get form from the handler.
-    $handler->options_form($form['options'], $form_state);
-    $form_state['view'] = &$view;
-    $form_state['display_id'] = $display_id;
-    $form_state['type'] = $type;
-    $form_state['id'] = $id;
-    $form_state['handler'] = &$handler;
+      // Get form from the handler.
+      $handler->options_form($form['options'], $form_state);
+      $form_state['view'] = &$view;
+      $form_state['display_id'] = $display_id;
+      $form_state['type'] = $type;
+      $form_state['id'] = $id;
+      $form_state['handler'] = &$handler;
 
+    }
     // Set this hidden field so that when we come back, our stacking state
     // will be retained.
+
     $form['stack'] = array(
       '#type' => 'hidden',
       // default value means that what we receive in $_POST is more important.
@@ -1210,11 +1290,11 @@ function views_ui_check_stack(&$form_state) {
 function views_ui_config_item_form_submit($form, &$form_state) {
   // Run it through the handler's submit function.
   $form_state['handler']->options_submit($form['options'], $form_state);
-  $item = $form_state['handler']->data;
+  $item = $form_state['handler']->options;
 
   // Store the data we're given.
   foreach ($form_state['values']['options'] as $key => $value) {
-    $item->$key = $value;
+    $item[$key] = $value;
   }
 
   // Store the item back on the view
@@ -1279,9 +1359,9 @@ function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
-    $handler = views_get_handler($item->table, $item->field, $type);
+    $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
       break;
     }
     $handler->init($view, $item);
@@ -1293,7 +1373,7 @@ function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id
     $form['style_plugin'] =  array(
       '#type' => 'radios',
       '#options' => views_fetch_plugin_names('style', 'summary', TRUE),
-      '#default_value' => $item->style_plugin,
+      '#default_value' => $item['style_plugin'],
     );
 
     $form_state['view'] = &$view;
@@ -1313,10 +1393,10 @@ function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id
 function views_ui_change_style_form_submit($form, &$form_state) {
   // Run it through the handler's submit function.
   $form_state['handler']->options_submit($form['options'], $form_state);
-  $item = $form_state['handler']->data;
+  $item = $form_state['handler']->options;
 
   // Store the data we're given.
-  $item->style_plugin = $form_state['values']['style_plugin'];
+  $item['style_plugin'] = $form_state['values']['style_plugin'];
 
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
@@ -1353,9 +1433,9 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
-    $handler = views_get_handler($item->table, $item->field, $type);
+    $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
-      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item->table, '@field' => $item->field)));
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
       break;
     }
     $handler->init($view, $item);
@@ -1366,12 +1446,12 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
 
     $form['#section'] = $display_id . '-' . $type . '-style-options';
 
-    $plugin = views_get_plugin('style', $item->style_plugin);
+    $plugin = views_get_plugin('style', $item['style_plugin']);
     if ($plugin) {
       $form['style_options'] = array(
         '#tree' => TRUE,
       );
-      $plugin->init($view, $view->display[$display_id], $item->style_options);
+      $plugin->init($view, $view->display[$display_id], $item['style_options']);
 
       $plugin->options_form($form['style_options'], $form_state);
     }
@@ -1393,10 +1473,10 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
 function views_ui_config_style_form_submit($form, &$form_state) {
   // Run it through the handler's submit function.
   $form_state['handler']->options_submit($form['style_options'], $form_state);
-  $item = $form_state['handler']->data;
+  $item = $form_state['handler']->options;
 
   // Store the data we're given.
-  $item->style_options = $form_state['values']['style_options'];
+  $item['style_options'] = $form_state['values']['style_options'];
 
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
