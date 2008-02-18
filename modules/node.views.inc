@@ -469,7 +469,7 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
     // Set the default value to the first node type, so that there is something
     // reasonable there.
     $types = array_keys(node_get_types());
-    $options['value']['value'] = array(array_shift($types));
+    $options['value'] = array(array_shift($types));
   }
 }
 

@@ -565,17 +565,41 @@ class views_handler_sort_formula extends views_handler_sort {
  */
 class views_handler_filter extends views_handler {
   /**
+   * Provide some extra help to get the operator/value easier to use.
+   */
+  function init(&$view, $options) {
+    parent::init($view, $options);
+
+    if (!empty($options['operator']['operator'])) {
+      $this->operator = $options['operator']['operator'];
+    }
+    else {
+      $this->operator = $options['operator'];
+    }
+
+    if (!empty($options['value']['value'])) {
+      $this->value = $options['value']['value'];
+    }
+    else {
+      $this->value = $options['value'];
+    }
+  }
+
+  /**
    * Provide a simple default initializer -- should be overridden.
    */
   function options(&$options) {
     parent::options($options);
-    $options['operator'] = array('operator' => '=');
-    $options['value'] = array('value' => '');
+    $options['operator'] = '=';
+    $options['value'] = '';
     $options['group'] = 0;
   }
 
+  /**
+   * Display the filter on the administrative summary
+   */
   function admin_summary() {
-    return check_plain($this->options['operator']['operator']) . ' ' . check_plain($this->options['value']['value']);
+    return check_plain($this->operator) . ' ' . check_plain($this->value);
   }
 
   /**
@@ -583,19 +607,13 @@ class views_handler_filter extends views_handler {
    * If overridden, it is best to call through to the parent.
    */
   function options_form(&$form, &$form_state) {
-    $form['operator'] = array(
-      '#prefix' => '<div class="views-left-30">',
-      '#suffix' => '</div>',
-    );
-
     $this->operator_form($form['operator'], $form_state);
-
-    $form['value'] = array(
-      '#prefix' => '<div class="views-left-50">',
-      '#suffix' => '</div>',
-    );
+    $form['operator']['#prefix'] = '<div class="views-left-30">';
+    $form['operator']['#suffix'] = '</div>';
 
     $this->value_form($form['value'], $form_state);
+    $form['value']['#prefix'] = '<div class="views-left-50">';
+    $form['value']['#suffix'] = '</div>';
   }
 
   /**
@@ -616,8 +634,11 @@ class views_handler_filter extends views_handler {
 
   /**
    * Provide a form for setting the operator.
+   *
+   * This should be overridden by all child classes, and it must
+   * define $form['operator'];
    */
-  function operator_form(&$form, &$form_state) { }
+  function operator_form(&$form, &$form_state) { $form['operator'] = array(); }
 
   /**
    * Validate the operator form.
@@ -632,8 +653,11 @@ class views_handler_filter extends views_handler {
 
   /**
    * Provide a form for setting options.
+   *
+   * This should be overridden by all child classes and it must
+   * define $form['value']
    */
-  function value_form(&$form, &$form_state) { }
+  function value_form(&$form, &$form_state) { $form['value'] = array(); }
 
   /**
    * Validate the options form.
@@ -650,12 +674,12 @@ class views_handler_filter extends views_handler {
    * Add this filter to the query.
    *
    * Due to the nature of fapi, the value and the operator have an unintended
-   * level of indirection. You will find them in $this->options['operator']['operator']
-   * and $this->options['value']['value'] respectively.
+   * level of indirection. You will find them in $this->operator
+   * and $this->value respectively.
    */
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . " '%s'", $this->options['value']['value']);
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " '%s'", $this->value);
   }
 }
 
@@ -668,8 +692,8 @@ class views_handler_filter_equality extends views_handler_filter {
    */
   function options(&$options) {
     parent::options($options);
-    $options['operator']['operator'] = '=';
-    $options['value']['value'] = '';
+    $options['operator'] = '=';
+    $options['value'] = '';
   }
 
   /**
@@ -679,7 +703,7 @@ class views_handler_filter_equality extends views_handler_filter {
     $form['operator'] = array(
       '#type' => 'radios',
       '#title' => t('Operator'),
-      '#default_value' => $this->options['operator']['operator'],
+      '#default_value' => $this->operator,
       '#options' => array(
         '=' => t('Is equal to'),
         '!=' => t('Is not equal to'),
@@ -695,7 +719,7 @@ class views_handler_filter_equality extends views_handler_filter {
       '#type' => 'textfield',
       '#title' => t('Value'),
       '#size' => 30,
-      '#default_value' => $this->options['value']['value'],
+      '#default_value' => $this->value,
     );
   }
 }
@@ -714,13 +738,13 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
 
   function options(&$options) {
     parent::options($options);
-    $options['operator']['operator'] = '=';
+    $options['operator'] = '=';
   }
 
   function operator_form(&$form, &$form_state) {
     $form['operator'] = array(
       '#type' => 'radios',
-      '#default_value' => ($this->options['operator']['operator']) ? $this->options['operator']['operator'] : '=',
+      '#default_value' => $this->operator,
       '#options' => array(
         '=' => t('Is'),
         '<>' => t('Is not'),
@@ -736,12 +760,13 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
   }
 
   function admin_summary() {
-    return check_plain($this->options['operator']['operator']) . ' ' . check_plain($this->value_value);
+    return check_plain($this->operator) . ' ' . check_plain($this->value_value);
   }
 
   function query() {
+    // @todo this should actually reverse the operator so it can compare against 0.
     $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . " 1");
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " 1");
   }
 
 }
@@ -758,8 +783,8 @@ class views_handler_filter_in_operator extends views_handler_filter {
 
   function options(&$options) {
     parent::options($options);
-    $options['operator']['operator'] = 'in';
-    $options['value']['value'] = 0;
+    $options['operator'] = 'in';
+    $options['value'] = 0;
   }
 
   /**
@@ -769,7 +794,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $form['operator'] = array(
       '#type' => 'radios',
       '#title' => t('Operator'),
-      '#default_value' => ($this->options['operator']['operator']) ? $this->options['operator']['operator'] : 'in',
+      '#default_value' => ($this->operator) ? $this->operator : 'in',
       '#options' => array(
         'in' => t('Is one of'),
         'not in' => t('Is not one of'),
@@ -783,25 +808,25 @@ class views_handler_filter_in_operator extends views_handler_filter {
       '#required' => TRUE,
       '#title' => $this->value_title,
       '#options' => $this->value_options,
-      '#default_value' => (array) $this->options['value']['value'],
+      '#default_value' => (array) $this->value,
     );
   }
 
   function value_submit($form, &$form_state) {
     // This is so deeply deeply deeply nested due to the way the form is layered.
-    $form_state['values']['options']['value']['value'] = array_filter($form_state['values']['options']['value']['value']);
+    $form_state['values']['options']['value'] = array_filter($form_state['values']['options']['value']);
   }
 
   function admin_summary() {
-    if (count($this->options['value']['value']) == 1) {
+    if (count($this->value) == 1) {
       // If there is only one, show it as an =.
-      $keys = array_keys($this->options['value']['value']);
+      $keys = array_keys($this->value);
       $value = check_plain($this->value_options[array_shift($keys)]);
 
-      return ($this->options['operator']['operator'] == 'in' ? '=' : '<>') . ' ' . $value;
+      return ($this->operator == 'in' ? '=' : '<>') . ' ' . $value;
     }
     $output = '';
-    foreach ($this->options['value']['value'] as $value) {
+    foreach ($this->value as $value) {
       if ($output) {
         $output .= ', ';
       }
@@ -812,14 +837,14 @@ class views_handler_filter_in_operator extends views_handler_filter {
       $output .= check_plain($this->value_options[$value]);
     }
 
-    return check_plain($this->options['operator']['operator']) . ' ' . $output;
+    return check_plain($this->operator) . ' ' . $output;
   }
 
   function query() {
     $this->ensure_my_table();
-    $replace = array_fill(0, sizeof($this->options['value']['value']), "'%s'");
+    $replace = array_fill(0, sizeof($this->value), "'%s'");
     $in = ' (' . implode(", ", $replace) . ')';
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->options['operator']['operator'] . $in, $this->options['value']['value']);
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . $in, $this->value);
   }
 }
 
