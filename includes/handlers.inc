@@ -793,7 +793,26 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function admin_summary() {
-    return check_plain($this->options['operator']['operator']) . ' ' . check_plain(implode(', ', $this->options['value']['value']));
+    if (count($this->options['value']['value']) == 1) {
+      // If there is only one, show it as an =.
+      $keys = array_keys($this->options['value']['value']);
+      $value = check_plain($this->value_options[array_shift($keys)]);
+
+      return ($this->options['operator']['operator'] == 'in' ? '=' : '<>') . ' ' . $value;
+    }
+    $output = '';
+    foreach ($this->options['value']['value'] as $value) {
+      if ($output) {
+        $output .= ', ';
+      }
+      if (strlen($output) > 8) {
+        $output .= '...';
+        break;
+      }
+      $output .= check_plain($this->value_options[$value]);
+    }
+
+    return check_plain($this->options['operator']['operator']) . ' ' . $output;
   }
 
   function query() {
