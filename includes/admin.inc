@@ -168,7 +168,7 @@ function views_ui_add_form_submit($form, &$form_state) {
  * Page to delete a view.
  */
 function views_ui_delete_confirm(&$form_state, $view) {
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   $form = array();
 
   $cancel = 'admin/build/views';
@@ -265,7 +265,7 @@ function views_ui_import_validate($form, &$form_state) {
     form_set_error('', t('A view by that name already exists; please choose a different name'));
   }
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
 }
 
 /**
@@ -302,7 +302,7 @@ function views_ui_edit_view_form(&$form_state, $view) {
     );
   }
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   return $form;
 }
 
@@ -574,7 +574,10 @@ function template_preprocess_views_ui_edit_item(&$vars) {
   $vars['fields'] = $fields;
 }
 
-function views_ui_regenerate_tabs($view, $display_id = NULL, $object = NULL) {
+/**
+ * Regenerate the tabs for AJAX updates.
+ */
+function views_ui_regenerate_tabs(&$view, $display_id = NULL, $object = NULL) {
   if (empty($display_id)) {
     $displays = array_keys($view->display);
   }
@@ -603,7 +606,7 @@ function views_ui_regenerate_tabs($view, $display_id = NULL, $object = NULL) {
     $object->replace['#views-tab-title-' . $id] = $title;
   }
 
-  if ($view->changed) {
+  if (!empty($view->changed)) {
     $object->changed = TRUE;
   }
 
@@ -725,7 +728,7 @@ function views_ui_add_display_form(&$form_state, $view) {
   $form['#attributes'] = array('class' => 'views-ajax-form');
   $form['#action'] = url("admin/build/views/nojs/add-display/$view->name");
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   return $form;
 }
 
@@ -789,7 +792,7 @@ function views_ui_remove_display_form(&$form_state, $view, $display_id) {
   $form['#id'] = 'views-add-display-form';
   $form['#attributes'] = array('class' => 'views-ajax-form');
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   $form_state['display_id'] = $display_id;
   return $form;
 }
@@ -863,7 +866,7 @@ function views_ui_edit_details_form(&$form_state, $view) {
     // TODO: This should be an autocomplete field.
   );
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   views_ui_standard_form_buttons($form, 'views_ui_edit_details_form');
   return $form;
 }
@@ -908,7 +911,7 @@ function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) 
   }
   $display = &$view->display[$display_id];
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   $form_state['display_id'] = $display_id;
   $form_state['section'] = $section;
 
@@ -1019,7 +1022,7 @@ function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
     }
   }
 
-  $form_state['view'] = $view;
+  $form_state['view'] = &$view;
   $form_state['display_id'] = $display_id;
   $form_state['type'] = $type;
 
@@ -1331,6 +1334,19 @@ function views_ui_config_item_form_remove($form, &$form_state) {
   }
 }
 
+/**
+ * Override handler for views_ui_edit_display_form
+ */
+function views_ui_config_item_form_expose($form, &$form_state) {
+  $item = $form_state['handler']->options;
+  // flip
+  $item['exposed'] = empty($item['exposed']);
+
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
+
+  views_ui_cache_set($form_state['view']);
+  $form_state['next'] = $form_state['id'];
+}
 
 /**
  * Page callback to change the summary style of an argument

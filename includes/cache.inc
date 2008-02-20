@@ -17,6 +17,9 @@ function _views_include_handlers() {
     if (file_exists("$module_path/$module.views.inc")) {
       include_once "$module_path/$module.views.inc";
     }
+    else if (file_exists("$module_path/includes/$module.views.inc")) {
+      include_once "$module_path/includes/$module.views.inc";
+    }
     else if (file_exists("$views_path/$module.views.inc")) {
       include_once "$views_path/$module.views.inc";
     }

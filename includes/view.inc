@@ -109,8 +109,8 @@ class view extends views_db_object {
    * Set the exposed filters input to an array. If unset they will be taken
    * from $_GET when the time comes.
    */
-  function set_filter_input($filters) {
-    $this->filter_input = $filters;
+  function set_exposed_input($filters) {
+    $this->exposed_input = $filters;
   }
 
   /**
@@ -228,6 +228,11 @@ class view extends views_db_object {
    */
   function init_handlers() {
     if (empty($this->inited)) {
+      // Initialize the exposed input if it is not set.
+      if (!isset($this->exposed_input)) {
+        $this->exposed_input = $_GET;
+      }
+
       foreach (views_object_types() as $key => $info) {
         $this->_init_handler($key, $info);
       }
@@ -260,6 +265,78 @@ class view extends views_db_object {
   }
 
   /**
+   * Build all the arguments.
+   */
+  function _build_arguments() {
+    // Initially, we want to build sorts and fields. This can change, though,
+    // if we get a summary view.
+    if (empty($this->argument)) {
+      return;
+    }
+
+    // build arguments.
+    $position = -1;
+
+    // Create a title for use in the breadcrumb trail.
+    $title = $this->display_handler->get_option('title');
+
+    $this->build_info['breadcrumb'] = array();
+    $breadcrumb_args = array();
+    $substitutions = array();
+
+    // Iterate through each argument and process.
+    foreach ($this->argument as $id => $arg) {
+      $position++;
+      $argument = &$this->argument[$id];
+
+      if (!is_object($argument['handler'])) {
+        // @todo: Set some kind of warning.
+        continue;
+      }
+
+      if (isset($this->args[$position]) && $argument['handler']->validate($this->args[$position])) {
+        // handle argument that is present.
+        // @todo: Do we want to put in argument placeholders here
+        // So that we can try to cache queries with arguments too?
+        $argument['handler']->argument = $this->args[$position];
+        $argument['handler']->query();
+
+        // Since we're really generating the breadcrumb for the item above us,
+        // check the default action of this argument.
+        if ($this->display_handler->uses_breadcrumb() && $argument['handler']->uses_breadcrumb()) {
+          $path = $this->get_url($breadcrumb_args);
+          if (strpos('%', $path) === FALSE) {
+            $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
+          }
+        }
+
+        // Allow the argument to muck with this breadcrumb.
+        $argument['handler']->set_breadcrumb($this->build_info['breadcrumb']);
+
+        // Test to see if we should use this argument's title
+        if (!empty($argument['title'])) {
+          $title = $argument['title'];
+        }
+
+        // Add this argument's substitution
+        $substitutions['%' . ($position + 1)] = $argument['handler']->title();
+        $breadcrumb_args[] = $this->args[$position];
+      }
+      else {
+        // determine default condition and handle.
+        if (!$argument['handler']->default_action()) {
+          return;
+        }
+      }
+    }
+
+    // set the title in the build info.
+    if (!empty($title)) {
+      $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
+    }
+  }
+
+  /**
    * Build the query for the view.
    */
   function build($display_id = NULL) {
@@ -287,6 +364,7 @@ class view extends views_db_object {
     // If that fails, let's build!
     $this->build_info = array();
 
+    // Create and initialize the query object.
     $views_data = views_fetch_data($this->base_table);
     $this->base_field = $views_data['table']['base']['field'];
     views_include('query');
@@ -295,82 +373,30 @@ class view extends views_db_object {
     // Call a module hook and see if it wants to present us with a
     // pre-built query or instruct us not to build the query for
     // some reason.
-    // @todo: Implement this.
+    // @todo: Implement this. Use the same mechanism Panels uses.
 
     // Run through our handlers and ensure they have necessary information.
     $this->init_handlers();
 
+    if ($this->display_handler->uses_exposed()) {
+      // Deal with any exposed filters we may have, before building.
+      $this->exposed_widgets = views_get_form_get('views_exposed_form', $this, $this->display_handler->display);
+    }
+
     // Build all the filters.
     $this->_build('filter');
 
-    // Initially, we want to build sorts and fields. This can change, though,
-    // if we get a summary view.
     $this->build_sort = TRUE;
-
-    // build arguments.
-    $position = -1;
-
-    // Create a title for use in the breadcrumb trail.
-    $title = $this->display_handler->get_option('title');
-
-    $this->build_info['breadcrumb'] = array();
-    $breadcrumb_args = array();
-
-    $substitutions = array();
-    foreach ($this->argument as $id => $arg) {
-      $position++;
-      $argument = &$this->argument[$id];
-
-      if (!is_object($argument['handler'])) {
-        // @todo: Set some kind of warning.
-        continue;
-      }
-
-      if (isset($this->args[$position]) && $argument['handler']->validate($this->args[$position])) {
-        // handle argument that is present.
-        // @todo: Do we want to put in argument placeholders here
-        // So that we can try to cache queries with arguments too?
-        $argument['handler']->argument = $this->args[$position];
-        $argument['handler']->query();
-
-        // Since we're really generating the breadcrumb for the item above us,
-        // check the default action of this argument.
-        if ($this->display_handler->uses_breadcrumb() && $argument['handler']->uses_breadcrumb()) {
-          $path = $this->get_url($breadcrumb_args);
-          if (strpos('%', $path) === FALSE) {
-            $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
-          }
-        }
-
-        $argument['handler']->set_breadcrumb($this->build_info['breadcrumb']);
-
-        // Test to see if we should use this argument's title
-        if (!empty($argument['title'])) {
-          $title = $argument['title'];
-        }
-
-        // Add this argument's substitution
-        $substitutions['%' . ($position + 1)] = $argument['handler']->title();
-        $breadcrumb_args[] = $this->args[$position];
-      }
-      else {
-        // determine default condition and handle.
-        if (!$argument['handler']->default_action()) {
-          return;
-        }
-      }
-    }
-
-    // set it in the build info.
-    if (!empty($title)) {
-      $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
-    }
+    $this->_build_arguments();
 
     // Build our sort criteria if we were instructed to do so.
     if (!empty($this->build_sort)) {
       $this->_build('sort');
     }
 
+    // Initialize the style; arguments may have changed which style we use,
+    // so waiting as long as possible is important. But we need to know
+    // about the style when we go to build fields.
     $this->init_style();
     if ($this->style_handler->uses_fields()) {
       $this->_build('field');
@@ -391,6 +417,10 @@ class view extends views_db_object {
     foreach ($array as $id => $data) {
       // @todo: we should report an error here if this is not an object.
       if (!empty($array[$id]['handler']) && is_object($array[$id]['handler'])) {
+        // Give this handler access to the exposed filter input.
+        if (!empty($this->exposed_input)) {
+          $array[$id]['handler']->accept_exposed_input($this->exposed_input);
+        }
         $array[$id]['handler']->query();
       }
     }
@@ -539,8 +569,6 @@ class view extends views_db_object {
   /**
    * Get the view's current title. This can change depending upon how it
    * was built.
-   *
-   * @todo: Implement this.
    */
   function get_title() {
     if (empty($this->display_handler)) {
@@ -598,6 +626,38 @@ class view extends views_db_object {
       }
     }
     return $this->display_handler->get_path();
+  }
+
+  /**
+   * Get the breadcrumb used for this view.
+   *
+   * @param $set
+   *   If true, use drupal_set_breadcrumb() to install the breadcrumb.
+   */
+  function get_breadcrumb($set = FALSE) {
+    // Now that we've built the view, extract the breadcrumb.
+    $base = TRUE;
+    $breadcrumb = array();
+
+    if (!empty($this->build_info['breadcrumb'])) {
+      foreach ($this->build_info['breadcrumb'] as $path => $title) {
+        // Check to see if the frontpage is in the breadcrumb trail; if it
+        // is, we'll remove that from the actual breadcrumb later.
+        if ($path == variable_get('site_frontpage', 'node')) {
+          $base = FALSE;
+          $title = t('Home');
+        }
+        $breadcrumb[] = l($title, $path, array('html' => true));
+      }
+
+      if ($set) {
+        if ($base) {
+          $breadcrumb = array_merge(drupal_get_breadcrumb(), $breadcrumb);
+        }
+        drupal_set_breadcrumb($breadcrumb);
+      }
+    }
+    return $breadcrumb;
   }
 
   /**
@@ -883,7 +943,7 @@ class views_db_object {
     }
     $query = '';
     if (!$update) {
-      $query = "INSERT INTO {$this->db_table} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
+      $query = "INSERT INTO {" . $this->db_table . "} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
     }
     else {
       $query = '';
@@ -893,7 +953,7 @@ class views_db_object {
         }
         $query .= $field . ' = ' . $defs[$id];
       }
-      $query = "UPDATE {$this->db_table} SET " . $query . " WHERE $update = " . $this->$update;
+      $query = "UPDATE {" . $this->db_table . "} SET " . $query . " WHERE $update = " . $this->$update;
     }
     db_query($query, $values);
 

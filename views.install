@@ -118,20 +118,7 @@ function views_schema() {
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
-  // This is unfortunately cut & pasted from system.module since cache has no way of
-  // telling us what the proper schema is.
-  $schema['cache_views'] = array(
-    'fields' => array(
-      'cid'        => array('type' => 'varchar', 'length' => 255, 'not null' => TRUE, 'default' => ''),
-      'data'       => array('type' => 'blob', 'not null' => FALSE, 'size' => 'big'),
-      'expire'     => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
-      'created'    => array('type' => 'int', 'not null' => TRUE, 'default' => 0),
-      'headers'    => array('type' => 'text', 'not null' => FALSE),
-      'serialized' => array('type' => 'int', 'size' => 'small', 'not null' => TRUE, 'default' => 0)
-    ),
-    'indexes' => array('expire' => array('expire')),
-    'primary key' => array('cid'),
-  );
+  $schema['cache_views'] = drupal_get_schema_unprocessed('system', 'cache');
 
   $schema['views_object_cache'] = array(
     'description' => t('A special cache used to store objects that are being edited; it serves to save state in an ordinarily stateless environment.'),

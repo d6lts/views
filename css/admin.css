@@ -221,10 +221,6 @@ div.views-display-deleted div.tab-section {
   border-right: #ADB7BE 1px solid;
 }
 
-.views-override {
-  padding: 0.5em 1em 0em 1em;
-}
-
 #views-ajax-pad .form-buttons {
   margin: 0;
   padding: 0.5em 1em;
@@ -282,11 +278,18 @@ html.js #views-ajax-pad {
   display: block;
 }
 
-#views-ajax-pad .views-override .form-submit {
+.views-override,
+.views-expose {
+  padding: 0.5em 1em 0em 1em;
+}
+
+#views-ajax-pad .views-override .form-submit,
+#views-ajax-pad .views-expose .form-submit {
   float: right;
   margin: 0 .5em 0 1em;
 }
 
+#views-ajax-pad .views-expose .description,
 #views-ajax-pad .views-override .description {
   margin-bottom: .25em;
 }

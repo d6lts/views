@@ -17,7 +17,7 @@ function template_preprocess_views_view(&$vars) {
     $vars['empty']    = '';
   }
 
-  $vars['filters']    = $view->display_handler->render_filters();
+  $vars['exposed']    = !empty($view->exposed_widgets) ? $view->exposed_widgets : '';
   $vars['header']     = $view->display_handler->render_header();
   $vars['footer']     = $view->display_handler->render_footer();
   $vars['more']       = $view->display_handler->render_more_link();

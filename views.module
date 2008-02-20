@@ -66,6 +66,11 @@ function views_theme() {
     }
   }
 
+  $hooks['views_exposed_form'] = array(
+    'pattern' => 'views_exposed_form__',
+    'arguments' => array('form' => NULL),
+  );
+
   return $hooks;
 }
 
@@ -793,4 +798,119 @@ function views_get_timezone() {
   }
 
   return $timezone;
+}
+
+/**
+ * Form builder for the exposed widgets form.
+ *
+ * Be sure that $view and $display are references.
+ */
+function views_exposed_form(&$form_state, &$view, &$display, $source = NULL) {
+  if (empty($source) || !is_array($source)) {
+    $source = $_GET;
+  }
+
+  $form['#post'] = $source;
+  // Let form plugins know this is for exposed widgets.
+  $form_state['exposed'] = TRUE;
+
+  // Go through each filter and let it generate its info.
+  foreach ($view->filter as $id => $filter) {
+    $filter['handler']->exposed_form($form, $form_state);
+  }
+
+  // @todo deal with exposed sorts
+
+  $form['submit'] = array(
+    '#name' => '', // prevent from showing up in $_GET.
+    '#type' => 'submit',
+    '#value' => t('Apply'),
+  );
+
+  $form['#action'] = url($view->get_url());
+  $form['#process'] = array('views_exposed_process');
+
+  $form['#theme'] = views_theme_functions('views_exposed_form', $view, $display);
+
+  $form_state['view'] = &$view;
+  $form_state['display'] = &$display;
+
+  return $form;
+}
+
+/**
+ * Default theme function for all filter forms.
+ */
+function theme_views_exposed_form(&$form) {
+  return drupal_render($form);
+}
+
+/**
+ * Submit handler for exposed filters
+ */
+function views_exposed_form_submit(&$form, &$form_state) {
+  dsm('submitted');
+  $form_state['view']->exposed_input = $form_state['values'];
+}
+
+/**
+ * Another version of drupal_get_form; this one lets us use something
+ * other than $_POST.
+ *
+ * This is stripped down to remove batch and storage.
+ */
+function views_get_form_get($form_id) {
+  $form_state = array('storage' => NULL, 'submitted' => FALSE);
+
+  $args = func_get_args();
+  $cacheable = FALSE;
+
+  // Use a copy of the function's arguments for manipulation
+  $args_temp = $args;
+  $args_temp[0] = &$form_state;
+  array_unshift($args_temp, $form_id);
+
+  $form = call_user_func_array('drupal_retrieve_form', $args_temp);
+
+  $form['#build_id'] = 'views_get_form'; // These are nice and fake.
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  // Add some stuff in.
+  if (empty($form['#post'])) {
+    $form['#post'] = array();
+  }
+
+  // With $_GET, these forms are always submitted.
+  $form['#post']['form_build_id'] = 'views_get_form';
+  $form['#post']['form_id'] = $form_id;
+  // token?
+  drupal_process_form($form_id, $form, $form_state);
+
+  // Remove some stuff we don't want to render when using $_GET.
+  unset($form['form_token']);
+  unset($form['form_build_id']);
+  unset($form['form_id']);
+
+  $form['#method'] = 'get';
+  return drupal_render_form($form_id, $form);
+}
+
+/**
+ * Build a list of theme function names for use most everywhere.
+ */
+function views_theme_functions($hook, $view, $display = NULL) {
+  $themes = array();
+
+  if ($display) {
+    $themes[] = $hook . '__' . $display->id . '__' . $view->name;
+    $themes[] = $hook . '__' . $display->id;
+    if ($display->id != $display->display_plugin) {
+      $themes[] = $hook . '__' . $display->display_plugin . '__' . $view->name;
+      $themes[] = $hook . '__' . $display->display_plugin;
+    }
+  }
+  $themes[] = $hook . '__' . $view->name;
+  $themes[] = $hook;
+
+  return $themes;
 }

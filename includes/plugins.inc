@@ -155,6 +155,12 @@ class views_display_plugin extends views_object {
   function is_default_display() { return FALSE; }
 
   /**
+   * Determine if this display uses exposed filters, so the view
+   * will know whether or not to build them.
+   */
+  function uses_exposed() { return TRUE; }
+
+  /**
    * Static member function to list which sections are defaultable
    * and what items each section contains.
    */
@@ -910,15 +916,8 @@ class views_display_plugin extends views_object {
    * Render this display.
    */
   function render() {
-    $themes = array(
-      'views_view__' . $this->display->id . '__' . $this->view->name,
-      'views_view__' . $this->display->id,
-      'views_view__' . $this->display->display_plugin . '__' . $this->view->name,
-      'views_view__' . $this->display->display_plugin,
-      'views_view__' . $this->view->name,
-      'views_view',
-    );
-    return theme($themes, $this->view);
+    $theme = views_theme_functions('views_view', $this->view, $this->display);
+    return theme($theme, $this->view);
   }
 
   /**
@@ -1000,6 +999,10 @@ class views_display_plugin_default extends views_display_plugin {
    *
    * This illustrates that render is smart enough to call build and execute
    * if these items have not already been accomplished.
+   *
+   * Note that execute also must accomplish other tasks, such
+   * as setting page titles, breadcrumbs, and generating exposed filter
+   * data if necessary.
    */
   function execute() {
     return $this->view->render();
@@ -1054,29 +1057,11 @@ class views_display_plugin_page extends views_display_plugin {
   function execute() {
     // Let the world know that this is the page view we're using.
     views_set_page_view($this);
+
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $this->view->build();
-
-    // Now that we've built the view, extract the breadcrumb.
-    $base = TRUE;
-    $breadcrumb = array();
-
-    if (!empty($this->view->build_info['breadcrumb'])) {
-      foreach ($this->view->build_info['breadcrumb'] as $path => $title) {
-        if ($path == variable_get('site_frontpage', 'node')) {
-          $base = FALSE;
-          $title = t('Home');
-        }
-        $breadcrumb[] = l($title, $path, array('html' => true));
-      }
-      if ($base) {
-        drupal_set_breadcrumb(array_merge(drupal_get_breadcrumb(), $breadcrumb));
-      }
-      else {
-        drupal_set_breadcrumb($breadcrumb);
-      }
-    }
+    $this->view->get_breadcrumb(TRUE);
 
     // And the title, which is much easier.
     drupal_set_title(filter_xss_admin($this->view->get_title()));
@@ -1279,6 +1264,11 @@ class views_display_plugin_block extends views_display_plugin {
         break;
     }
   }
+
+  /**
+   * Block views do not use exposed widgets.
+   */
+  function uses_exposed() { return FALSE; }
 }
 
 /**

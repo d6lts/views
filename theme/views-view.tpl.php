@@ -10,7 +10,7 @@
  * - $rows: The results of the view query, if any
  * - $empty: The empty text to display if the view is empty
  * - $pager: The pager next/prev links to display, if any
- * - $filters: Exposed filter form/info to display
+ * - $exposed: Exposed widget form/info to display
  * - $feed_icon: Feed icon to display, if any
  *
  * @ingroup views_templates
@@ -23,9 +23,9 @@
     </div>
   <?php endif; ?>
 
-  <?php if ($filters): ?>
+  <?php if ($exposed): ?>
     <div class="view-filters">
-      <?php print $filters; ?>
+      <?php print $exposed; ?>
     </div>
   <?php endif; ?>
 
