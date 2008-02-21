@@ -264,7 +264,7 @@ class views_handler_field_node extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data->options['link_to_node']) && $view->base_table != 'node') {
+    if (isset($data['link_to_node']) && $view->base_table != 'node') {
       // @todo: This can't be right, it'll totally fail with relationships.
       $this->additional_fields[] = 'nid';
       $this->nid_field = 'node_nid';

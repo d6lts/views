@@ -236,6 +236,20 @@ class view extends views_db_object {
   }
 
   /**
+   * Run the pre_query() on all active handlers.
+   */
+  function _pre_query() {
+    foreach (views_object_types() as $key => $info) {
+      $item = &$this->$key;
+      foreach ($item as $id => $info) {
+        if (!empty[$info['handler']) {
+          $item[$id][$handler]->pre_query();
+        }
+      }
+    }
+  }
+
+  /**
    * Attach all of the handlers for each type.
    *
    * @param $key
@@ -372,6 +386,9 @@ class view extends views_db_object {
 
     // Run through our handlers and ensure they have necessary information.
     $this->init_handlers();
+
+    // Let the handlers interact with each other if they really want.
+    $this->_pre_query();
 
     if ($this->display_handler->uses_exposed()) {
       // Deal with any exposed filters we may have, before building.

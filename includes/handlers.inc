@@ -224,6 +224,14 @@ class views_handler extends views_object {
   function exposed_submit(&$form, &$form_state) { }
 
   /**
+   * Run before the view is built.
+   *
+   * This gives all the handlers some time to set up before any handler has
+   * been fully run.
+   */
+  function pre_query() { }
+
+  /**
    * Add this handler into the query.
    *
    * If we were using PHP5, this would be abstract.
@@ -340,6 +348,17 @@ class views_handler_field extends views_handler {
   function click_sort() {
     return "$this->field_alias";
   }
+
+  /**
+   * Run before any fields are rendered.
+   *
+   * This gives the handlers some time to set up before any handler has
+   * been rendered.
+   *
+   * @param
+   *   An array of all objects returned from the query.
+   */
+  function pre_render($values) { }
 
   /**
    * Render the field.
@@ -475,6 +494,32 @@ class views_handler_field_markup extends views_handler_field {
     $value = $values->{$this->field_alias};
     $format = is_numeric($this->format) ? $this->format : $values->{$this->aliases[$this->format]};
     return check_markup($value, $format, FALSE);
+  }
+}
+
+/**
+ * Field handler to provide simple renderer that turns a URL into a clickable link.
+ */
+class views_handler_field_url extends views_handler_field {
+  /**
+   * Provide link to the page being visited.
+   */
+  function options_form(&$form, &$form_state) {
+    $form['display_as_link'] = array(
+      '#title' => t('Display as link'),
+      '#type' => 'checkbox',
+      '#default_value' => !empty($this->options['display_as_link']),
+    );
+  }
+
+  function render($values) {
+    $value = $values->{$this->field_alias};
+    if (!empty($this->options['display_as_link'])) {
+      return l(check_plain($value), $value, array('html' => TRUE));
+    }
+    else {
+      return $value;
+    }
   }
 }
 
@@ -1053,6 +1098,91 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $replace = array_fill(0, sizeof($this->value), "'%s'");
     $in = ' (' . implode(", ", $replace) . ')';
     $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . $in, $this->value);
+  }
+}
+
+/**
+ * Simple filter to handle greater than/less than filters
+ */
+class views_handler_filter_numeric extends views_handler_filter {
+  /**
+   * Provide basic defaults for the filter
+   */
+  function options(&$options) {
+    parent::options($options);
+    $options['operator'] = '=';
+    $options['value']['min'] = '';
+    $options['value']['max'] = '';
+  }
+
+  /**
+   * Provide a list of all the numeric operators
+   */
+  function operator_form(&$form, &$form_state) {
+    $form['operator'] = array(
+      '#type' => 'select',
+      '#title' => t('Operator'),
+      '#default_value' => $this->operator,
+      '#options' => array(
+        '<' => t('Is less than'),
+        '<=' => t('Is less than or equal to'),
+        '=' => t('Is equal to'),
+        '!=' => t('Is not equal to'),
+        '>=' => t('Is greater than or equal to'),
+        '>' => t('Is greater than'),
+        'between' => t('Is between'),
+        'not between' => t('Is not between'),
+      ),
+    );
+  }
+
+  /**
+   * Provide a simple textfield for equality
+   */
+  function value_form(&$form, &$form_state) {
+    $form['value']['#tree'] = TRUE;
+    $form['value']['min'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Min value'),
+      '#size' => 30,
+      '#default_value' => $this->value['min'],
+      '#description' => t('For all non-range operators, this value is used.'),
+    );
+    $form['value']['max'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Max value'),
+      '#size' => 30,
+      '#default_value' => $this->value['max'],
+      '#description' => t('This value is ignored for all non-range operators.'),
+    );
+  }
+
+  /**
+   * We need to override this to avoid doing a string comparison against numeric fields.
+   */
+  function query() {
+    $this->ensure_my_table();
+    switch($this->operator) {
+      case 'between':
+        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field >= %d", $this->value['min']);
+        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field <= %d", $this->value['max']);
+        break;
+      case 'not between':
+        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field <= %d", $this->value['min']);
+        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field >= %d", $this->value['max']);
+        break;
+      default:
+        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " %d", $this->value['min']);
+        break;
+    }
+  }
+
+  function admin_summary() {
+    $output = check_plain($this->operator) . ' ' . check_plain($this->value['min']);
+    if (!empty($this->value['max'])) {
+      $output .= ' '. t('and') .' '. check_plain($this->value['max']);
+    }
+    return $output;
   }
 }
 
