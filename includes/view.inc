@@ -228,11 +228,6 @@ class view extends views_db_object {
    */
   function init_handlers() {
     if (empty($this->inited)) {
-      // Initialize the exposed input if it is not set.
-      if (!isset($this->exposed_input)) {
-        $this->exposed_input = $_GET;
-      }
-
       foreach (views_object_types() as $key => $info) {
         $this->_init_handler($key, $info);
       }
@@ -271,7 +266,7 @@ class view extends views_db_object {
     // Initially, we want to build sorts and fields. This can change, though,
     // if we get a summary view.
     if (empty($this->argument)) {
-      return;
+      return TRUE;
     }
 
     // build arguments.
@@ -324,9 +319,7 @@ class view extends views_db_object {
       }
       else {
         // determine default condition and handle.
-        if (!$argument['handler']->default_action()) {
-          return;
-        }
+        return $argument['handler']->default_action();
       }
     }
 
@@ -334,6 +327,8 @@ class view extends views_db_object {
     if (!empty($title)) {
       $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
     }
+
+    return TRUE;
   }
 
   /**
@@ -387,7 +382,11 @@ class view extends views_db_object {
     $this->_build('filter');
 
     $this->build_sort = TRUE;
-    $this->_build_arguments();
+
+    // Arguments can, in fact, cause this whole thing to abort.
+    if (!$this->_build_arguments()) {
+      return;
+    }
 
     // Build our sort criteria if we were instructed to do so.
     if (!empty($this->build_sort)) {

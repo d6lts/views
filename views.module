@@ -850,9 +850,9 @@ function theme_views_exposed_form(&$form) {
  */
 function views_exposed_form_validate(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $var = &$view->$type;
-    foreach ($form_state['view']->type as $key) {
-      $var[$key]->handler->exposed_validate($form, $form_state);
+    $var = &$form_state['view']->$type;
+    foreach ($var as $key => $info) {
+      $var[$key]['handler']->exposed_validate($form, $form_state);
     }
   }
 }
@@ -862,9 +862,9 @@ function views_exposed_form_validate(&$form, &$form_state) {
  */
 function views_exposed_form_submit(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $var = &$view->$type;
-    foreach ($form_state['view']->type as $key) {
-      $var[$key]->handler->exposed_submit($form, $form_state);
+    $var = &$form_state['view']->$type;
+    foreach ($var as $key => $info) {
+      $var[$key]['handler']->exposed_submit($form, $form_state);
     }
   }
   $form_state['view']->exposed_input = $form_state['values'];
