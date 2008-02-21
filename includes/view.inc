@@ -519,9 +519,13 @@ class view extends views_db_object {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
 
-    $this->set_use_pager($this->display_handler->get_option('use_pager'));
+    // Copy pager information from the display.
+    // @todo: Should this code live on the display?
+    if (!empty($this->display_handler->definition['use pager'])) {
+      $this->set_use_pager($this->display_handler->get_option('use_pager'));
+      $this->set_pager_element($this->display_handler->get_option('pager_element'));
+    }
     $this->set_items_per_page($this->display_handler->get_option('items_per_page'));
-    $this->set_pager_element($this->display_handler->get_option('pager_element'));
     $this->set_offset($this->display_handler->get_option('offset'));
 
     // Execute the view
