@@ -209,6 +209,21 @@ class views_handler extends views_object {
   function options_submit($form, &$form_state) { }
 
   /**
+   * render our chunk of the exposed filter form when selecting
+   */
+  function exposed_form(&$form, &$form_state) { }
+
+  /**
+   * Validate the exposed filter form
+   */
+  function exposed_validate(&$form, &$form_state) { }
+
+  /**
+   * Submit the exposed filter form
+   */
+  function exposed_submit(&$form, &$form_state) { }
+
+  /**
    * Add this handler into the query.
    *
    * If we were using PHP5, this would be abstract.
