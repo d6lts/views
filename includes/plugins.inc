@@ -158,7 +158,7 @@ class views_display_plugin extends views_object {
    * Determine if this display uses exposed filters, so the view
    * will know whether or not to build them.
    */
-  function uses_exposed() { 
+  function uses_exposed() {
     if (!isset($this->has_exposed)) {
       foreach (array('field', 'filter') as $type) {
         foreach ($this->view->$type as $key => $info) {
@@ -171,8 +171,18 @@ class views_display_plugin extends views_object {
       }
       $this->has_exposed = FALSE;
     }
-    
+
     return $this->has_exposed;
+  }
+
+  /**
+   * Does the display have a pager enabled?
+   */
+  function use_pager() {
+    if (!empty($this->definition['use pager'])) {
+      return $this->get_option('use_pager');
+    }
+    return FALSE;
   }
 
   /**
@@ -450,7 +460,7 @@ class views_display_plugin extends views_object {
     }
     $options['items_per_page'] = array(
       'category' => 'basic',
-      'title' => $this->get_option('use_pager') ? t('Items per page') : t('Items to display'),
+      'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
       'value' => intval($this->get_option('items_per_page')),
     );
 
@@ -558,12 +568,7 @@ class views_display_plugin extends views_object {
         );
         break;
       case 'items_per_page':
-        if ($this->get_option('use_pager')) {
-          $form['#title'] .= t('Items per page');
-        }
-        else {
-          $form['#title'] .= t('Items to display');
-        }
+        $form['#title'] .= $this->use_pager() ? t('Items per page') : t('Items to display');
 
         $form['items_per_page'] = array(
           '#type' => 'textfield',
