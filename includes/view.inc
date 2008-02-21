@@ -242,8 +242,8 @@ class view extends views_db_object {
     foreach (views_object_types() as $key => $info) {
       $item = &$this->$key;
       foreach ($item as $id => $info) {
-        if (!empty[$info['handler']) {
-          $item[$id][$handler]->pre_query();
+        if (!empty($info['handler'])) {
+          $item[$id]['handler']->pre_query();
         }
       }
     }
