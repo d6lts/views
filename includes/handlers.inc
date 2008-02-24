@@ -243,7 +243,7 @@ class views_handler extends views_object {
    * a lot.
    */
   function ensure_my_table() {
-    if (!isset($this->alias)) {
+    if (!isset($this->table_alias)) {
       $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
     }
     return $this->table_alias;
@@ -886,16 +886,16 @@ class views_handler_filter extends views_handler {
     if (!empty($this->options['expose']['operator'])) {
       $this->operator_form($form, $form_state);
       $form[$this->options['expose']['operator']] = $form['operator'];
+      unset($form[$this->options['expose']['operator']]['#title']);
       unset($form['operator']);
     }
 
     if (!empty($this->options['expose']['identifier'])) {
       $this->value_form($form, $form_state);
       $form[$this->options['expose']['identifier']] = $form['value'];
+      $form[$this->options['expose']['identifier']]['#title'] = $this->options['expose']['label'];
       unset($form['value']);
     }
-
-    // @todo deal with label
   }
 
   /**
