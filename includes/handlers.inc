@@ -209,7 +209,12 @@ class views_handler extends views_object {
   function options_submit($form, &$form_state) { }
 
   /**
-   * render our chunk of the exposed filter form when selecting
+   * Set new exposed option defaults when exposed setting is flipped
+   * on.
+   */
+  function expose_options() { }
+  /**
+   * Render our chunk of the exposed filter form when selecting
    */
   function exposed_form(&$form, &$form_state) { }
 
@@ -222,6 +227,17 @@ class views_handler extends views_object {
    * Submit the exposed filter form
    */
   function exposed_submit(&$form, &$form_state) { }
+
+  /**
+   * Get information about the exposed form for the form renderer.
+   *
+   * @return
+   *   An array with the following keys:
+   *   - operator: The $form key of the operator. Set to NULL if no operator.
+   *   - value: The $form key of the value. Set to NULL if no value.
+   *   - label: The label to use for this piece.
+   */
+  function exposed_info() { }
 
   /**
    * Run before the view is built.
@@ -838,22 +854,68 @@ class views_handler_filter extends views_handler {
    * that are nicely tailored to the given filter.
    */
   function expose_form(&$form, &$form_state) {
-    $form['expose']['operator'] = array(
-      '#type' => 'textfield',
-      '#default_value' => $this->options['expose']['operator'],
-      '#title' => t('Operator identifier'),
-      '#description' => t('This will appear in the URL after the ? to identify this operator. Leave blank to not expose the operator.'),
+    $form['expose']['start_left'] = array(
+      '#value' => '<div class="views-left-50">',
     );
+
+    if (!empty($form['operator']['#type'])) {
+      $form['expose']['operator'] = array(
+        '#type' => 'textfield',
+        '#default_value' => $this->options['expose']['operator'],
+        '#title' => t('Operator identifier'),
+        '#size' => 40,
+        '#description' => t('This will appear in the URL after the ? to identify this operator. Leave blank to not expose the operator.'),
+      );
+    }
+    else {
+      $form['expose']['operator'] = array(
+        '#type' => 'value',
+        '#value' => '',
+      );
+    }
     $form['expose']['identifier'] = array(
       '#type' => 'textfield',
       '#default_value' => $this->options['expose']['identifier'],
       '#title' => t('Filter identifier'),
+      '#size' => 40,
       '#description' => t('This will appear in the URL after the ? to identify this filter. Cannot be blank.'),
     );
     $form['expose']['label'] = array(
       '#type' => 'textfield',
       '#default_value' => $this->options['expose']['label'],
       '#title' => t('Label'),
+      '#size' => 40,
+    );
+
+    $form['expose']['end_left'] = array(
+      '#value' => '</div>',
+    );
+
+    $form['expose']['start_checkboxes'] = array(
+      '#value' => '<div class="form-checkboxes views-left-40 clear-block">',
+    );
+    $form['expose']['optional'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Optional'),
+      '#description' => t('This exposed filter is optional and will have added options to allow it not to be set.'),
+      '#default_value' => $this->options['expose']['optional'],
+    );
+    if (empty($this->no_single)) {
+      $form['expose']['single'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Force single'),
+        '#description' => t('Force this exposed filter to accept only one option.'),
+        '#default_value' => $this->options['expose']['single'],
+      );
+    }
+    $form['expose']['remember'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Remember'),
+      '#description' => t('Remember the last setting the user gave this filter.'),
+      '#default_value' => $this->options['expose']['remember'],
+    );
+    $form['expose']['end_checkboxes'] = array(
+      '#value' => '</div>',
     );
   }
 
@@ -875,8 +937,20 @@ class views_handler_filter extends views_handler {
    */
   function expose_submit($form, &$form_state) { }
 
+  function expose_options() {
+    $this->options['expose'] = array(
+      'operator' => $this->options['id'] . '_oper',
+      'identifier' => $this->options['id'],
+      'label' => t('@group: @title', array('@group' => $this->definition['group'], '@title' => $this->definition['title'])),
+      'remember' => FALSE,
+      'single' => TRUE,
+      'optional' => TRUE,
+    );
+  }
   /**
-   * render our chunk of the exposed filter form when selecting
+   * Render our chunk of the exposed filter form when selecting
+   *
+   * You can override this if it doesn't do what you expect.
    */
   function exposed_form(&$form, &$form_state) {
     if (empty($this->options['exposed'])) {
@@ -884,18 +958,81 @@ class views_handler_filter extends views_handler {
     }
 
     if (!empty($this->options['expose']['operator'])) {
+      $operator = $this->options['expose']['operator'];
       $this->operator_form($form, $form_state);
-      $form[$this->options['expose']['operator']] = $form['operator'];
-      unset($form[$this->options['expose']['operator']]['#title']);
+      $form[$operator] = $form['operator'];
+
+      if (isset($form[$operator]['#title'])) {
+        unset($form[$operator]['#title']);
+      }
+
+      $this->exposed_translate($form[$operator], 'operator');
+
       unset($form['operator']);
     }
 
     if (!empty($this->options['expose']['identifier'])) {
+      $value = $this->options['expose']['identifier'];
       $this->value_form($form, $form_state);
-      $form[$this->options['expose']['identifier']] = $form['value'];
-      $form[$this->options['expose']['identifier']]['#title'] = $this->options['expose']['label'];
+      $form[$value] = $form['value'];
+
+      if (isset($form[$value]['#title']) && !empty($form[$value]['#type']) && $form[$value]['#type'] != 'checkbox') {
+        unset($form[$value]['#title']);
+      }
+
+      $this->exposed_translate($form[$value], 'value');
+
+      if (!empty($form['#type']) && ($form['#type'] == 'checkboxes' || ($form['#type'] == 'select' && !empty($form['#multiple'])))) {
+        unset($form[$value]['#default_value']);
+      }
+
+      if (!empty($form['#type']) && $form['#type'] == 'select' && empty($form['#multiple'])) {
+        $form[$value]['#default_value'] = 'All';
+      }
+
       unset($form['value']);
     }
+  }
+
+  /**
+   * Make some translations to a form item to make it more suitable to
+   * exposing.
+   */
+  function exposed_translate(&$form, $type) {
+    if (!isset($form['#type'])) {
+      return;
+    }
+
+    if ($form['#type'] == 'radios') {
+      $form['#type'] = 'select';
+    }
+    if ($form['#type'] == 'checkboxes' && !empty($this->options['expose']['single'])) {
+      $form['#type'] = 'select';
+    }
+    if (!empty($this->options['expose']['single']) && isset($form['#multiple'])) {
+      unset($form['#multiple']);
+    }
+
+    if ($type == 'value' && !empty($this->options['expose']['optional']) && $form['#type'] == 'select' && empty($form['#multiple'])) {
+      $form['#options'] = array('All' => t('<Any>')) + $form['#options'];
+      $form['#default_value'] = 'All';
+    }
+  }
+
+  /**
+   * Tell the renderer about our exposed form. This only needs to be
+   * overridden for particularly complex forms. And maybe not even then.
+   */
+  function exposed_info() {
+    if (empty($this->options['exposed'])) {
+      return;
+    }
+
+    return array(
+      'operator' => $this->options['expose']['operator'],
+      'value' => $this->options['expose']['identifier'],
+      'label' => $this->options['expose']['label'],
+    );
   }
 
   /**
@@ -907,13 +1044,33 @@ class views_handler_filter extends views_handler {
       return;
     }
 
-    if (!empty($this->options['expose']['operator']) && !empty($input[$this->options['expose']['operator']])) {
+    if (!empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
       $this->operator = $input[$this->options['expose']['operator']];
     }
 
-    if (!empty($this->options['expose']['identifier']) && !empty($input[$this->options['expose']['identifier']])) {
-      $this->value = $input[$this->options['expose']['identifier']];
+    if (!empty($this->options['expose']['identifier'])) {
+      $value = $input[$this->options['expose']['identifier']];
+      // Various ways to check for the absence of optional input.
+      if (!empty($this->options['expose']['optional'])) {
+        if ($value == 'All' || $value === array()) {
+          return FALSE;
+        }
+
+        if (!empty($this->no_single) && $value === '') {
+          return FALSE;
+        }
+      }
+
+
+      if (isset($value)) {
+        $this->value = $value;
+      }
+      else {
+        return FALSE;
+      }
     }
+
+    return TRUE;
   }
 
   /**
@@ -933,6 +1090,9 @@ class views_handler_filter extends views_handler {
  * Simple filter to handle equal to / not equal to filters
  */
 class views_handler_filter_equality extends views_handler_filter {
+  // exposed filter options
+  var $no_single = TRUE;
+
   /**
    * Provide basic defaults for the equality operator
    */
@@ -974,6 +1134,9 @@ class views_handler_filter_equality extends views_handler_filter {
  * Simple filter to handle matching of boolean values
  */
 class views_handler_filter_boolean_operator extends views_handler_filter {
+  // exposed filter options
+  var $no_single = TRUE;
+
   function construct() {
     $this->value_value = t('True');
     if (isset($this->definition['label'])) {
@@ -984,36 +1147,53 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
 
   function options(&$options) {
     parent::options($options);
-    $options['operator'] = '=';
+    $options['value'] = FALSE;
   }
 
   function operator_form(&$form, &$form_state) {
-    $form['operator'] = array(
-      '#type' => 'radios',
-      '#default_value' => $this->operator,
-      '#options' => array(
-        '=' => t('Is'),
-        '<>' => t('Is not'),
-      ),
-    );
-  }
-  function value_form(&$form, &$form_state) {
-    $form['value'] = array(
-      '#type' => 'textfield',
-      '#disabled' => TRUE,
-      '#size' => 20,
-      '#value' => $this->value_value,
-    );
+    $form['operator'] = array();
   }
 
+  function value_form(&$form, &$form_state) {
+    if (empty($this->options['exposed'])) {
+      $form['value'] = array(
+        '#type' => 'checkbox',
+        '#title' => $this->value_value,
+        '#default_value' => $this->value,
+      );
+    }
+    else {
+      $form['value'] = array(
+        '#type' => 'select',
+        '#title' => $this->value_value,
+        '#options' => array(1 => t('Yes'), 0 => t('No')),
+        '#default_value' => $this->value,
+      );
+    }
+  }
   function admin_summary() {
-    return check_plain($this->operator) . ' ' . check_plain($this->value_value);
+    if (!empty($this->options['exposed'])) {
+      return t('exposed');
+    }
+
+    return (empty($this->value) ? t("False") : t('True'));
+  }
+
+  function expose_options() {
+    $this->options['expose'] = array(
+      'operator' => '',
+      'identifier' => $this->options['id'],
+      'label' => $this->value_value,
+      'remember' => FALSE,
+      'single' => TRUE,
+      'optional' => FALSE,
+    );
   }
 
   function query() {
     // @todo this should actually reverse the operator so it can compare against 0.
     $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " 1");
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . (empty($this->value) ? '=' : '<>') . " 0");
   }
 
 }
@@ -1052,7 +1232,6 @@ class views_handler_filter_in_operator extends views_handler_filter {
   function value_form(&$form, &$form_state) {
     $form['value'] = array(
       '#type' => 'checkboxes',
-      '#required' => TRUE,
       '#title' => $this->value_title,
       '#options' => $this->value_options,
       '#default_value' => (array) $this->value,
@@ -1065,6 +1244,10 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function admin_summary() {
+    if (!empty($this->options['exposed'])) {
+      return t('exposed');
+    }
+
     if (count($this->value) == 1) {
       // If there is only one, show it as an =.
       $keys = array_keys($this->value);
@@ -1094,6 +1277,9 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function query() {
+    if (empty($this->value)) {
+      return;
+    }
     $this->ensure_my_table();
     $replace = array_fill(0, sizeof($this->value), "'%s'");
     $in = ' (' . implode(", ", $replace) . ')';

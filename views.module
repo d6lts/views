@@ -814,9 +814,14 @@ function views_exposed_form(&$form_state, &$view, &$display, $source = NULL) {
   // Let form plugins know this is for exposed widgets.
   $form_state['exposed'] = TRUE;
 
+  $form['#info'] = array();
+
   // Go through each filter and let it generate its info.
   foreach ($view->filter as $id => $filter) {
     $filter['handler']->exposed_form($form, $form_state);
+    if ($info = $filter['handler']->exposed_info()) {
+      $form['#info']['filter-' . $id] = $info;
+    }
   }
 
   // @todo deal with exposed sorts
@@ -842,7 +847,43 @@ function views_exposed_form(&$form_state, &$view, &$display, $source = NULL) {
  * Default theme function for all filter forms.
  */
 function theme_views_exposed_form(&$form) {
-  return drupal_render($form);
+  views_add_css('views');
+  $output = '';
+  $output .= '<div class="views-exposed-form">';
+  $output .= '<div class="views-exposed-widgets clear-block">';
+
+  // Put all single checkboxes together in the last spot.
+  $checkboxes = '';
+
+  foreach ($form['#info'] as $id => $info) {
+    if ($form[$info['value']]['#type'] == 'checkbox') {
+      $checkboxes = drupal_render($form[$info['value']]);
+      continue;
+    }
+    $output .= '<div class="views-left">';
+    $output .= '<label>' . $info['label'] . '</label>';
+    $label = FALSE;
+    if (!empty($info['operator'])) {
+      $form[$info['operator']]['#prefix'] = '<div class="views-left">';
+      $form[$info['operator']]['#suffix'] = '</div>';
+      $output .= drupal_render($form[$info['operator']]);
+    }
+    $form[$info['value']]['#prefix'] = '<div class="views-left">';
+    $form[$info['value']]['#suffix'] = '</div>';
+    $output .= drupal_render($form[$info['value']]);
+    $output .= '</div>';
+  }
+  if ($checkboxes) {
+    $output .= '<div class="views-left">';
+    $output .= $checkboxes;
+    $output .= '</div>';
+  }
+  $output .= '</div>';
+
+  // This includes the submit button.
+  $output .= drupal_render($form);
+  $output .= '</div>';
+  return $output;
 }
 
 /**

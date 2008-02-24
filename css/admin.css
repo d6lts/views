@@ -324,6 +324,11 @@ html.js #views-ajax-pad {
   width: 50%;
 }
 
+#views-ajax-pad .views-left-75 {
+  float: left;
+  width: 75%;
+}
+
 #views-ajax-pad .views-radio-box {
   overflow: auto;
   max-height: 180px;
