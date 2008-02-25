@@ -66,7 +66,8 @@ function views_theme() {
     }
   }
 
-  $hooks['views_exposed_form'] = array(
+  $hooks['views_exposed_form'] = $base + array(
+    'template' => 'views-exposed-form',
     'pattern' => 'views_exposed_form__',
     'arguments' => array('form' => NULL),
   );
@@ -805,12 +806,24 @@ function views_get_timezone() {
  *
  * Be sure that $view and $display are references.
  */
-function views_exposed_form(&$form_state, &$view, &$display, $source = NULL) {
-  if (empty($source) || !is_array($source)) {
-    $source = $_GET;
+function views_exposed_form(&$form_state, &$view, &$display) {
+  // Fill our input either from $_GET or from something previously set on the 
+  // view.
+  if (empty($view->exposed_input)) {
+    $input = $_GET;
+    // unset items that are definitely not our input:
+    unset($input['page']);
+    unset($input['q']);
+    // If we have no input at all, check for remembered input via session.
+    if (empty($input) && !empty($_SESSION['views'][$view->name][$view->current_display])) {
+      $input = $_SESSION['views'][$view->name][$view->current_display];
+    }
+    $form['#post'] = $input;
   }
-
-  $form['#post'] = $source;
+  else {
+    $form['#post'] = $view->exposed_input;
+  }
+  
   // Let form plugins know this is for exposed widgets.
   $form_state['exposed'] = TRUE;
 
@@ -846,44 +859,45 @@ function views_exposed_form(&$form_state, &$view, &$display, $source = NULL) {
 /**
  * Default theme function for all filter forms.
  */
-function theme_views_exposed_form(&$form) {
+function template_preprocess_views_exposed_form(&$vars) {
   views_add_css('views');
-  $output = '';
-  $output .= '<div class="views-exposed-form">';
-  $output .= '<div class="views-exposed-widgets clear-block">';
+  $form = &$vars['form'];
 
   // Put all single checkboxes together in the last spot.
   $checkboxes = '';
 
+  $vars['widgets'] = array();
   foreach ($form['#info'] as $id => $info) {
+    // Set aside checkboxes.
     if ($form[$info['value']]['#type'] == 'checkbox') {
-      $checkboxes = drupal_render($form[$info['value']]);
+      $checkboxes .= drupal_render($form[$info['value']]);
       continue;
     }
-    $output .= '<div class="views-left">';
-    $output .= '<label>' . $info['label'] . '</label>';
-    $label = FALSE;
-    if (!empty($info['operator'])) {
-      $form[$info['operator']]['#prefix'] = '<div class="views-left">';
-      $form[$info['operator']]['#suffix'] = '</div>';
-      $output .= drupal_render($form[$info['operator']]);
+    $widget = new stdClass;
+    // set up defaults so that there's always something there.
+    $widget->label = $widget->operator = $widget->widget = NULL;
+
+    if (!empty($info['label'])) {
+      $widget->label = $info['label'];
     }
-    $form[$info['value']]['#prefix'] = '<div class="views-left">';
-    $form[$info['value']]['#suffix'] = '</div>';
-    $output .= drupal_render($form[$info['value']]);
-    $output .= '</div>';
+    if (!empty($info['operator'])) {
+      $widget->operator = drupal_render($form[$info['operator']]);
+    }
+    $widget->widget = drupal_render($form[$info['value']]);
+    $vars['widgets'][$id] = $widget;
   }
+
+  // Wrap up all the checkboxes we set aside into a widget.
   if ($checkboxes) {
-    $output .= '<div class="views-left">';
-    $output .= $checkboxes;
-    $output .= '</div>';
+    $widget = new stdClass;
+    // set up defaults so that there's always something there.
+    $widget->label = $widget->operator = $widget->widget = NULL;
+    $widget->widget = $checkboxes;
+    $vars['widgets']['checkboxes'] = $widget;
   }
-  $output .= '</div>';
 
   // This includes the submit button.
-  $output .= drupal_render($form);
-  $output .= '</div>';
-  return $output;
+  $vars['button'] = drupal_render($form);
 }
 
 /**
@@ -908,7 +922,7 @@ function views_exposed_form_submit(&$form, &$form_state) {
       $var[$key]['handler']->exposed_submit($form, $form_state);
     }
   }
-  $form_state['view']->exposed_input = $form_state['values'];
+  $form_state['view']->exposed_data = $form_state['values'];
 }
 
 /**

@@ -36,6 +36,9 @@ class view extends views_db_object {
     'current_page' => 0,
   );
 
+  // Exposed widget input
+  var $exposed_data = array();
+  var $exposed_input = array();
   /**
    * Constructor
    */
@@ -434,8 +437,8 @@ class view extends views_db_object {
       // @todo: we should report an error here if this is not an object.
       if (!empty($array[$id]['handler']) && is_object($array[$id]['handler'])) {
         // Give this handler access to the exposed filter input.
-        if (!empty($this->exposed_input)) {
-          if (!$array[$id]['handler']->accept_exposed_input($this->exposed_input)) {
+        if (!empty($this->exposed_data)) {
+          if (!$array[$id]['handler']->accept_exposed_input($this->exposed_data)) {
             continue;
           }
         }

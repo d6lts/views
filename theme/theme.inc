@@ -12,20 +12,31 @@ function template_preprocess_views_view(&$vars) {
 
   if (!$vars['rows']) {
     $vars['empty']    = $view->display_handler->render_empty();
+    if (!$view->display_handler->get_option('header_empty')) {
+      $vars['header'] = '';
+    }
+    if (!$view->display_handler->get_option('footer_empty')) {
+      $vars['footer'] = '';
+    }
   }
   else {
     $vars['empty']    = '';
+    $header = TRUE;
   }
 
   $vars['exposed']    = !empty($view->exposed_widgets) ? $view->exposed_widgets : '';
-  $vars['header']     = $view->display_handler->render_header();
-  $vars['footer']     = $view->display_handler->render_footer();
+  if (!isset($vars['header'])) {
+    $vars['header']   = $view->display_handler->render_header();
+  }
+  if (!isset($vars['footer'])) {
+    $vars['footer']   = $view->display_handler->render_footer();
+  }
   $vars['more']       = $view->display_handler->render_more_link();
   $vars['feed_icon']  = $view->display_handler->render_feed_icon();
 
   $vars['pager']      = '';
   if (!empty($view->pager['use_pager'])) {
-    $vars['pager']    = theme('pager', array(), $view->pager['items_per_page'], $view->pager['element']);
+    $vars['pager']    = theme('pager', $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
 }
