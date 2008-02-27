@@ -102,12 +102,26 @@ function views_menu() {
  * @param $index
  *   The menu argument index. This counts from 1.
  */
-function views_arg_load($value, $name, $index) {
+function views_arg_load($value, $name, $display_id, $index) {
   if ($v = views_get_view($name)) {
     $view = drupal_clone($v);
+    $view->set_display($display_id);
     $view->init_handlers();
-    if (isset($view->argument[$index - 1])) {
-      return $view->argument[$index - 1]->handler->validate($value);
+
+    $ids = array_keys($view->argument);
+
+    $indexes = array();
+    $path = explode('/', $view->get_url());
+    foreach ($path as $id => $piece) {
+      if ($piece == '%' && !empty($ids)) {
+        $indexes[$id] = array_shift($ids);
+      }
+    }
+
+    if (isset($indexes[$index])) {
+      if (isset($view->argument[$indexes[$index]])) {
+        return $view->argument[$indexes[$index]]['handler']->validate($value) ? $value : NULL;
+      }
     }
   }
 }
@@ -807,7 +821,7 @@ function views_get_timezone() {
  * Be sure that $view and $display are references.
  */
 function views_exposed_form(&$form_state, &$view, &$display) {
-  // Fill our input either from $_GET or from something previously set on the 
+  // Fill our input either from $_GET or from something previously set on the
   // view.
   if (empty($view->exposed_input)) {
     $input = $_GET;
@@ -823,7 +837,7 @@ function views_exposed_form(&$form_state, &$view, &$display) {
   else {
     $form['#post'] = $view->exposed_input;
   }
-  
+
   // Let form plugins know this is for exposed widgets.
   $form_state['exposed'] = TRUE;
 

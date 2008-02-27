@@ -1046,7 +1046,20 @@ class views_display_plugin_page extends views_display_plugin {
     $items = array();
     // Replace % with the link to our standard views argument loader
     // views_arg_load -- which lives in views.module
-    $path = str_replace('%', '%views_arg', $this->get_option('path'));
+
+    $bits = explode('/', $this->get_option('path'));
+    $page_arguments = array($this->view->name, $this->display->id);
+
+    // Replace % with %views_arg for menu autoloading and add to the
+    // page arguments so the argument actually comes through.
+    foreach($bits as $pos => $bit) {
+      if ($bit == '%') {
+        $bits[$pos] = '%views_arg';
+        $page_arguments[] = $pos;
+      }
+    }
+
+    $path = implode('/', $bits);
 
     if ($path) {
       // NOTE: This is the very simple 'menu normal item' version. The
@@ -1054,12 +1067,12 @@ class views_display_plugin_page extends views_display_plugin {
       $items[$path] = array(
         // default views page entry
         'page callback' => 'views_page',
-        'page arguments' => array($this->view->name, $this->display->id),
+        'page arguments' => $page_arguments,
         // Default access check (per display)
         'access callback' => 'views_access',
         'access arguments' => array(array($this->view->name, $this->display->id)),
         // Identify URL embedded arguments and correlate them to a handler
-        'load arguments'  => array($this->view->name, '%index'),
+        'load arguments'  => array($this->view->name, $this->display->id, '%index'),
         // Basic menu title
         'title' => $this->display->handler->get_option('title'),
         'type' => MENU_NORMAL_ITEM,
