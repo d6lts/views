@@ -471,12 +471,12 @@ class view extends views_db_object {
       if (!empty($this->pager['use_pager'])) {
         $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
 
-        $this->result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
+        $result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
         $this->total_rows = $GLOBALS['pager_total_items'][$this->pager['element']];
       }
       else if (!empty($this->pager['items_per_page'])) {
         $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
-        $this->result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
+        $result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
 
         // Rewrite and run the count query so we can store how many items this would have
         // matched.
@@ -484,7 +484,12 @@ class view extends views_db_object {
         $this->total_rows = db_result(db_query($count_query, $args));
       }
       else {
-        $this->result = db_query($query, $args);
+        $result = db_query($query, $args);
+      }
+
+      $this->result = array();
+      while ($item = db_fetch_object($result)) {
+        $this->result[] = $item;
       }
     }
 
@@ -501,12 +506,19 @@ class view extends views_db_object {
     $this->execute($display_id);
 
     // Check to see if the build failed.
-    if (empty($this->result)) {
+    if (!isset($this->result)) {
       return;
     }
 
     // Initialize the style plugin.
     $this->init_style();
+
+    // Give field handlers the opportunity to perform additional queries
+    // using the entire resultset prior to rendering.
+    foreach ($this->field as $id => $field) {
+      $this->field[$id]['handler']->pre_render($this->result);
+    }
+
     return $this->display_handler->render();
   }
 

@@ -1011,7 +1011,7 @@ class views_display_plugin_default extends views_display_plugin {
    *
    * If short circuited at any point, look in $view->build_info for
    * information about the query. After execute, look in $view->result
-   * for the object returned from db_query.
+   * for the array of objects returned from db_query.
    *
    * You can also do:
    * @code
@@ -1413,11 +1413,8 @@ class views_style_plugin_default extends views_style_plugin {
       vpr('views_style_plugin_default: Missing row plugin');
       return;
     }
-    // @todo: This needs to be able to support either a database resource OR
-    // an array, because our input format doesn't actually have to be from
-    // a query.
     $rows = array();
-    while ($row = db_fetch_object($this->view->result)) {
+    foreach ($this->view->result as $row) {
       // @todo: Include separator as an option.
       $rows[] = $this->row_plugin->render($row);
     }
@@ -1455,11 +1452,9 @@ class views_style_plugin_list extends views_style_plugin {
       // @todo: Log some form of error here?
       return;
     }
-    // @todo: This needs to be able to support either a database resource OR
-    // an array, because our input format doesn't actually have to be from
-    // a query.
+
     $rows = array();
-    while ($row = db_fetch_object($this->view->result)) {
+    foreach ($this->view->result as $row) {
       $rows[] = $this->row_plugin->render($row);
     }
     return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $this->options, $rows);
@@ -1516,13 +1511,10 @@ class views_style_plugin_summary extends views_style_plugin {
    * Render the given style.
    */
   function render() {
-    // @todo: This needs to be able to support either a database resource OR
-    // an array, because our input format doesn't actually have to be from
-    // a query.
     $rows = array();
-    while ($row = db_fetch_object($this->view->result)) {
+    foreach ($this->view->result as $row) {
       // @todo: Include separator as an option.
-        $rows[] = $row;
+      $rows[] = $row;
     }
     return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $this->options, $rows);
   }
