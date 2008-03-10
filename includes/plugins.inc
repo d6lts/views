@@ -52,6 +52,7 @@ function views_views_plugins() {
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
       ),
+/* -- not yet implemented --
       'table' => array(
         'title' => t('Table'),
         'help' => t('Displays rows in a table.'),
@@ -60,6 +61,7 @@ function views_views_plugins() {
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
       ),
+*/   
       'default_summary' => array(
         'title' => t('Default'),
         'help' => t('Displays the default summary view'),
