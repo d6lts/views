@@ -1172,7 +1172,7 @@ function views_ui_add_item_form_submit($form, &$form_state) {
 
   $form_state['view']->stack = array();
 
-  if (!empty($form_state['values']['name'])) && is_array($form_state['values']['name'])) {
+  if (!empty($form_state['values']['name']) && is_array($form_state['values']['name'])) {
     // Loop through each of the items that were checked and add them to the view.
     foreach (array_keys(array_filter($form_state['values']['name'])) as $field) {
       list($table, $field) = explode('.', $field, 2);
