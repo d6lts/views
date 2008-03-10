@@ -1,11 +1,34 @@
 /* $Id$ */
 
+/* 
+ * Summary pad
+ */
 .views-tabset {
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  border-top: #ccc 1px solid;
+  margin-top: 0.5em;
 }
 
 .views-tabset .views-tab fieldset { 
   margin-top: 0; 
+}
+
+/* 
+ * First column: display drawers
+ */
+.views-tabset .views-tabs {
+  background: #efefef;
+  float: left;
+  width: 118px;
+  margin-right: 0;
+  padding-bottom: 1em;
+  border-left: #ccc 1px solid;
+  border-bottom: #ccc 1px solid;
+}
+
+* html .views-tabset .views-tabs {
+  width: 114px;
+  position: relative;
+  left: 4px;
 }
 
 .views-tabset .views-tabs ul {
@@ -19,47 +42,31 @@
 .views-tabset .views-tabs ul li {
   list-style-type: none;
   list-style-image: none;
-  background: #A6CEE7 url('/themes/garland/images/bg-tab.png') repeat-x bottom;
   line-height: 100%;
+  border-bottom: #ADB7BE 1px solid;
+  background: #e6e6e6;
   margin: 0;
   padding: 0.5em;
   position: relative;
 }
 
 .views-tabset .views-tabs ul li.active {
-  background: #fff url('/themes/garland/images/bg-bar-white.png') repeat-x;
-  border-top: #ADB7BE 1px solid;
+  background: #fff;
+  border-bottom: #ADB7BE 3px solid;
   border-right: 0;
-  border-bottom: #ADB7BE 0px solid;
   margin-left: 0;
   position: relative;
 }
 
 .views-tabset .views-tabs ul li a {
-  font-weight: bold;
   font-size: 90%;
-  color: #fff;
+  color: #777;
+  font-weight: normal;
 }
 
 .views-tabset .views-tabs ul li.active a {
-  color: #FF883F;
+  font-weight: bold;
 }
-
-.views-tabset .views-tabs {
-  border-bottom: #ADB7BE 0px solid;
-  border-left: #fff 1px solid;
-  background: #CDE3F1; 
-  float: left;
-  width: 118px;
-  margin-right: 0;
-}
-
-* html .views-tabset .views-tabs {
-  width: 114px;
-  position: relative;
-  left: 4px;
-}
-
 
 .views-tabset .extra {
   text-align: center;
@@ -71,12 +78,15 @@
   margin-right: 0;
 }
 
+/* 
+ * Three columns with setting-summaries
+ */
 .views-tabset .views-display {
-  border: #ADB7BE 1px solid;
-  border-bottom: 0px;
-  margin-left: 118px; /* 120 -1 causes borders to overlap */
+  border: #ccc 1px solid;
+  border-top: 0;
+  margin-left: 117px; /* 118 -1 causes borders to overlap */
   min-height: 302px;
-  _height: 300px; /* stupid IE hack */
+  _height: 300px;  /*stupid IE hack */
 }
 
 * html .views-tabset .views-display {
@@ -87,6 +97,10 @@ div.views-display-deleted,
 div.views-display-deleted div.top,
 div.views-display-deleted div.tab-section {
   background-color: #eee;
+}
+
+.views-display {
+  background: #fff;
 }
 
 .views-display div {
@@ -111,7 +125,6 @@ div.views-display-deleted div.tab-section {
 }
 
 .views-display .tab-section {
-  background: #fff;
   width: 32.5%;
   padding: 0;
   margin: 0;
@@ -127,16 +140,14 @@ div.views-display-deleted div.tab-section {
 .views-display .tab-section .inside .views-category {
   padding: 0.25em 0.25em 0.5em 1em;
   margin-bottom: 1em;
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
-  border-top: 1px #F0F2F4 solid;
-  border-bottom: 1px #F0F2F4 solid;
+  background: #f6f6f6;
+  border: 1px #efefef solid;
 }
 
 .views-display .tab-section .inside .views-category-title {
   font-size: 9pt;
   font-weight: bold;
 }
-
 
 .views-display .tab-section .links {
   float: right;
@@ -163,7 +174,6 @@ div.views-display-deleted div.tab-section {
 
 .views-display .middle {
   width: 34%;
-
 }
 
 .views-basic-info {
@@ -173,11 +183,9 @@ div.views-display-deleted div.tab-section {
   background-position: 0px -8px;
 }
 
-
-/* ***********************************************
-  AJAX pad
-*/
-
+/* 
+ * AJAX pad, the bottom part where settings are edited.
+ */
 #views-ajax-pad {
   background: transparent;
   margin-top: 0px;
@@ -186,9 +194,9 @@ div.views-display-deleted div.tab-section {
 }
 
 #views-ajax-title {
-  background: transparent url('/themes/garland/images/bg-content.png');
+  background: transparent;
   background-position: 0px -7px;
-  margin: 0 0 0 118px;
+  margin: 0 0 0 117px;
   padding: 1em 1em 0em 1em;
   border-left: #ADB7BE 1px solid;
   border-right: #ADB7BE 1px solid;
@@ -196,25 +204,25 @@ div.views-display-deleted div.tab-section {
 }
 
 #views-ajax-pad .message {
-  margin-left: 118px;
+  margin-left: 117px;
   border: #ADB7BE 1px solid;
   border-top: 0;
   padding: 3em 0em;
   text-align: center;
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  background: transparent;
+  font-style: italic;
 }
 
 #views-ajax-pad form {
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
-  margin-left: 118px;
+  margin-left: 117px;
   border: #ADB7BE 1px solid;
   border-top: 0;  
   padding-top: 3px;
 }
 
 #views-ajax-pad .views-messages {
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
-  margin-left: 118px;
+  background: transparent;
+  margin-left: 117px;
   border-top: 0;  
   padding: 5px;
   border-left: #ADB7BE 1px solid;
@@ -224,7 +232,7 @@ div.views-display-deleted div.tab-section {
 #views-ajax-pad .form-buttons {
   margin: 0;
   padding: 0.5em 1em;
-  background: transparent url('/themes/garland/images/gradient-inner.png') repeat-x top;
+  background: #efefef;
   clear: left;
 }
 
@@ -294,6 +302,9 @@ html.js #views-ajax-pad {
   margin-bottom: .25em;
 }
 
+/* 
+ * Some column widths for use within the ajax pad
+ */
 #views-ajax-pad .views-left-10 {
   float: left;
   width: 10%;
@@ -334,6 +345,9 @@ html.js #views-ajax-pad {
   max-height: 180px;
 }
 
+/* 
+ * Add, Rearrange and Configure buttons using sprites
+ */
 a.views-button-configure, 
 a.views-button-add, 
 a.views-button-rearrange, 
@@ -384,6 +398,7 @@ a.views-button-configure span,
 a.views-button-add span {
   display: none;
 }
+
 html.js #arrange thead {
   display: none;
 }
@@ -412,7 +427,8 @@ html.js a.views-button-remove {
 }
 
 div.changed {
-  background: #ffd;
+  background: #ffe;
+  font-weight: bold;
 }
 
 div.view-changed {
@@ -423,7 +439,7 @@ div.view-changed {
 }
 
 div.views-tab div.changed a {
-  color: #f93;
+  
 }
 
 div.changed div.view-changed {
@@ -437,6 +453,7 @@ div.changed div.view-changed {
 
 .hilited {
   color: #000;
+  font-weight: bold;
   background-color: #ffd;
   padding-left: 10px;
 }
@@ -446,7 +463,11 @@ div.changed div.view-changed {
   padding-left: 10px;
 }
 
-
 form#views-add-display-form {
   margin-bottom: 0em;
+}
+
+#views-ui-edit-view-form {
+  margin: 0 0 0 117px;
+  padding: 0 0 0 1em;
 }
