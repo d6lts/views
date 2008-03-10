@@ -379,6 +379,9 @@ class view extends views_db_object {
     // Create and initialize the query object.
     $views_data = views_fetch_data($this->base_table);
     $this->base_field = $views_data['table']['base']['field'];
+    if (!empty($views_data['table']['base']['database'])) {
+      $this->base_database = $views_data['table']['base']['database'];
+    }
     views_include('query');
     $this->query = new views_query($this->base_table, $this->base_field);
 
@@ -468,6 +471,11 @@ class view extends views_db_object {
 
     $items = array();
     if ($query) {
+      // Allow for a view to query an external database.
+      if (isset($this->base_database)) {
+        db_set_active($this->base_database);
+        $external = TRUE;
+      }
       if (!empty($this->pager['use_pager'])) {
         $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
 
@@ -490,6 +498,9 @@ class view extends views_db_object {
       $this->result = array();
       while ($item = db_fetch_object($result)) {
         $this->result[] = $item;
+      }
+      if ($external) {
+        db_set_active();
       }
     }
 
