@@ -157,8 +157,6 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
         $items += $view->execute_hook_block($display_id);
       }
       return $items;
-    case 'configure':
-    case 'list':
     case 'view':
       list($name, $display_id) = explode('-', $delta);
       // Load the view
