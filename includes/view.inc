@@ -499,7 +499,7 @@ class view extends views_db_object {
       while ($item = db_fetch_object($result)) {
         $this->result[] = $item;
       }
-      if ($external) {
+      if (!empty($external)) {
         db_set_active();
       }
     }
@@ -600,7 +600,7 @@ class view extends views_db_object {
    */
   function access($display_id = NULL, $account = NULL) {
     if (!isset($this->current_display)) {
-      return TRUE;
+      $this->init_display();
     }
 
     if (!$account) {
