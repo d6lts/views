@@ -121,7 +121,10 @@ function _views_discover_default_views() {
       $cache = array();
 
       foreach ($defaults as $name => $view) {
-        $cache[$name] = $view;
+        // Only views with a sufficiently high api version are eligible.
+        if (isset($view->api_version) && $view->api_version >= 2) {
+          $cache[$name] = $view;
+        }
       }
       cache_set('views_default_views:' . $language->language, $cache, 'cache_views');
     }

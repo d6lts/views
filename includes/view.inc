@@ -978,7 +978,7 @@ class views_db_object {
     }
     $query = '';
     if (!$update) {
-      $query = "INSERT INTO {" . $this->db_table . "} (`" . implode('`, `', $fields) . '`) VALUES (' . implode(', ', $defs) . ')';
+      $query = "INSERT INTO {" . $this->db_table . "} (" . implode(', ', $fields) . ') VALUES (' . implode(', ', $defs) . ')';
     }
     else {
       $query = '';
