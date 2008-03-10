@@ -563,7 +563,7 @@ class views_display_plugin extends views_object {
         $form['pager_element'] = array(
           '#type' => 'textfield',
           '#title' => t('Pager element'),
-          '#description' => t('Which element of the ?page= array to use, if the pager is enabled. 0 is recommended, but if there are other pagers on the page, you may use a higher number so as not to conflict. Large values are bad here as they will add a lot of commas to the URLs.'),
+          '#description' => t('Unless you\'re experiencing problems with pagers related to this view, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array.  Large values will add a lot of commas to your URLs, so avoid if possible.'),
           '#default_value' => intval($this->get_option('pager_element')),
         );
         break;
