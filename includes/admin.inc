@@ -37,10 +37,10 @@ function views_ui_list_views($arg = NULL) {
     }
     else {
       if (empty($view->disabled)) {
-        $ops[] = l(t('Disable'), "admin/build/views/disable/$view->name", NULL, drupal_get_destination());
+        $ops[] = l(t('Disable'), "admin/build/views/disable/$view->name", array('query' => drupal_get_destination()));
       }
       else {
-        $ops[] = l(t('Enable'), "admin/build/views/enable/$view->name", NULL, drupal_get_destination());
+        $ops[] = l(t('Enable'), "admin/build/views/enable/$view->name", array('query' => drupal_get_destination()));
       }
     }
 
