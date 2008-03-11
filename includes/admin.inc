@@ -6,6 +6,13 @@
  */
 
 /**
+ * Page callback for the tools page
+ */
+function views_ui_admin_tools() {
+  return array('markup' => array('#value' => t('This page is not yet implemented.')));
+}
+
+/**
  * Page callback to list views in the system.
  */
 function views_ui_list_views($arg = NULL) {
