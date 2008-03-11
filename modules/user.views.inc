@@ -77,8 +77,9 @@ class views_handler_field_user extends views_handler_field {
   /**
    * Override init function to provide generic option to link to user.
    */
-  function construct() {
-    if (isset($this->options['link_to_user']) && $this->view->base_table != 'user') {
+  function init(&$view, &$data) {
+    parent::init($view, $data);
+    if (!empty($this->options['link_to_user']) && $this->view->base_table != 'user') {
       $this->additional_fields[] = 'uid';
       $this->uid_field = 'users_uid';
     }
