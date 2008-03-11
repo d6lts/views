@@ -27,7 +27,6 @@ function user_views_data() {
 
   $data['users']['table']['join']['node']['handler'] = 'views_join';
   $data['users']['table']['join']['node']['arguments'] = array('users', 'node', 'uid', 'uid');
-  $data['users']['table']['group'] = t('User');
 
   // ----------------------------------------------------------------
   // Fields
