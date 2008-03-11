@@ -61,7 +61,7 @@ function views_views_plugins() {
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
       ),
-*/   
+*/
       'default_summary' => array(
         'title' => t('Default'),
         'help' => t('Displays the default summary view'),
@@ -428,6 +428,19 @@ class views_display_plugin extends views_object {
       }
     }
 
+    if (!empty($this->definition['use pager'])) {
+      $options['use_pager'] = array(
+        'category' => 'basic',
+        'title' => t('Use pager'),
+        'value' => $this->get_option('use_pager') ? t('Yes') : t('No'),
+      );
+    }
+    $options['items_per_page'] = array(
+      'category' => 'basic',
+      'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
+      'value' => intval($this->get_option('items_per_page')),
+    );
+
     $access = $this->get_option('access');
     if (!is_array($access)) {
       $access = array('type' => 'none');
@@ -452,19 +465,6 @@ class views_display_plugin extends views_object {
         }
         break;
     }
-
-    if (!empty($this->definition['use pager'])) {
-      $options['use_pager'] = array(
-        'category' => 'basic',
-        'title' => t('Use pager'),
-        'value' => $this->get_option('use_pager') ? t('Yes') : t('No'),
-      );
-    }
-    $options['items_per_page'] = array(
-      'category' => 'basic',
-      'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
-      'value' => intval($this->get_option('items_per_page')),
-    );
 
     $options['access'] = array(
       'category' => 'basic',
@@ -1075,10 +1075,67 @@ class views_display_plugin_page extends views_display_plugin {
         'access arguments' => array(array($this->view->name, $this->display->id)),
         // Identify URL embedded arguments and correlate them to a handler
         'load arguments'  => array($this->view->name, $this->display->id, '%index'),
-        // Basic menu title
-        'title' => $this->display->handler->get_option('title'),
-        'type' => MENU_NORMAL_ITEM,
       );
+      $menu = $this->get_option('menu');
+      if (empty($menu)) {
+        $menu = array('type' => 'none');
+      }
+      // Set the title if we have one.
+      if ($menu['type'] != 'none') {
+        $items[$path]['title'] = $menu['title'];
+      }
+
+      switch ($menu['type']) {
+        case 'none':
+        default:
+          $items[$path]['type'] = MENU_CALLBACK;
+          break;
+        case 'normal':
+          $items[$path]['type'] = MENU_NORMAL_ITEM;
+          break;
+        case 'tab':
+          $items[$path]['type'] = MENU_LOCAL_TASK;
+          break;
+        case 'default tab':
+          $items[$path]['type'] = MENU_LOCAL_TASK;
+          break;
+      }
+
+      // If this is a 'default' tab, check to see if we have to create teh
+      // parent menu item.
+      if ($menu['type'] == 'default tab') {
+        $tab_options = $this->get_option('tab_options');
+        if (!empty($tab_options['type']) && $tab_options['type'] != 'none') {
+          $bits = explode('/', $path);
+          // Remove the last piece.
+          $bit = array_pop($bits);
+
+          // we can't do this if they tried to make the last path bit variable.
+          if ($bit != '%views_arg' && !empty($bits)) {
+            $default_path = implode('/', $bits);
+            $items[$default_path] = array(
+              // default views page entry
+              'page callback' => 'views_page',
+              'page arguments' => $page_arguments,
+              // Default access check (per display)
+              'access callback' => 'views_access',
+              'access arguments' => array(array($this->view->name, $this->display->id)),
+              // Identify URL embedded arguments and correlate them to a handler
+              'load arguments'  => array($this->view->name, $this->display->id, '%index'),
+              'title' => $tab_options['title'],
+            );
+            switch ($tab_options['type']) {
+              default:
+              case 'normal':
+                $items[$default_path]['type'] = MENU_NORMAL_ITEM;
+                break;
+              case 'tab':
+                $items[$default_path]['type'] = MENU_LOCAL_TASK;
+                break;
+            }
+          }
+        }
+      }
     }
 
     return $items;
@@ -1133,11 +1190,38 @@ class views_display_plugin_page extends views_display_plugin {
       'value' => $path,
     );
 
+    $menu = $this->get_option('menu');
+    if (!is_array($menu)) {
+      $menu = array('type' => 'none');
+    }
+    switch($menu['type']) {
+      case 'none':
+      default:
+        $menu_str = t('No menu');
+        break;
+      case 'normal':
+        $menu_str = t('Normal: ' . $menu['title']);
+        break;
+      case 'tab':
+      case 'default tab':
+        $menu_str = t('Tab: ' . $menu['title']);
+        break;
+    }
+
+    if (strlen($menu_str) > 16) {
+      $menu_str = substr($menu_str, 0, 16) . '...';
+    }
+
     $options['menu'] = array(
       'category' => 'page',
       'title' => t('Menu'),
-      'value' => 'TODO',
+      'value' => $menu_str,
     );
+
+    // This adds a 'Settings' link to the style_options setting if the style has options.
+    if ($menu['type'] == 'default tab') {
+      $options['menu']['links']['tab_options'] = t('Settings');
+    }
   }
 
   /**
@@ -1154,6 +1238,77 @@ class views_display_plugin_page extends views_display_plugin {
           '#type' => 'textfield',
           '#description' => t('This view will be displayed by visiting this path on your site.'),
           '#default_value' => $this->get_option('path'),
+          '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
+        );
+        break;
+      case 'menu':
+        $form['#title'] .= t('Menu item entry');
+        $form['menu'] = array(
+          '#prefix' => '<div class="clear-block">',
+          '#suffix' => '</div>',
+          '#tree' => TRUE,
+        );
+        $menu = $this->get_option('menu');
+        if (empty($menu)) {
+          $menu = array('type' => 'none', 'title' => '');
+        }
+        $form['menu']['type'] = array(
+          '#prefix' => '<div class="views-left-30">',
+          '#suffix' => '</div>',
+          '#title' => t('Type'),
+          '#type' => 'radios',
+          '#options' => array('none' => t('No menu entry'), 'normal' => t('Normal menu entry'), 'tab' => t('Menu tab'), 'default tab' => t('Default menu tab')),
+          '#default_value' => $menu['type'],
+        );
+        $form['menu']['title'] = array(
+          '#prefix' => '<div class="views-left-50">',
+          '#suffix' => '</div>',
+          '#title' => t('Title'),
+          '#type' => 'textfield',
+          '#default_value' => $menu['title'],
+          '#description' => t('If set to normal or tab, enter the text to use for the menu item.'),
+        );
+        break;
+      case 'tab_options':
+        $form['#title'] .= t('Default tab options');
+        $tab_options = $this->get_option('tab_options');
+        if (empty($tab_options)) {
+          $tab_options = array('type' => 'none', 'title' => '', 'weight' => 0);
+        }
+
+        $form['tab_markup'] = array(
+          '#prefix' => '<div class="form-item description">',
+          '#suffix' => '</div>',
+          '#value' => t('When providing a menu item as a tab, Drupal needs to know what the parent menu item of that tab will be. Sometimes the parent will already exist, but other times you will need to have one created. The path of a parent item will always be the same path with the last part left off. i.e, if the path to this view is <em>foo/bar/baz</em>, the parent path would be <em>foo/bar</em>.'),
+        );
+
+        $form['tab_options'] = array(
+          '#prefix' => '<div class="clear-block">',
+          '#suffix' => '</div>',
+          '#tree' => TRUE,
+        );
+        $form['tab_options']['type'] = array(
+          '#prefix' => '<div class="views-left-25">',
+          '#suffix' => '</div>',
+          '#title' => t('Parent menu item'),
+          '#type' => 'radios',
+          '#options' => array('none' => t('Already exists'), 'normal' => t('Normal menu item'), 'tab' => t('Menu tab')),
+          '#default_value' => $tab_options['type'],
+        );
+        $form['tab_options']['title'] = array(
+          '#prefix' => '<div class="views-left-75">',
+          '#title' => t('Title'),
+          '#type' => 'textfield',
+          '#default_value' => $tab_options['title'],
+          '#description' => t('If creating a parent menu item, enter the title of the item.'),
+        );
+        $form['tab_options']['weight'] = array(
+          '#suffix' => '</div>',
+          '#title' => t('Tab weight'),
+          '#type' => 'textfield',
+          '#default_value' => $tab_options['weight'],
+          '#size' => 5,
+          '#description' => t('If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be.'),
         );
         break;
     }
@@ -1172,6 +1327,10 @@ class views_display_plugin_page extends views_display_plugin {
 
         // @todo: validate the path against aliases.
         break;
+      case 'menu':
+        // @todo: validate that there is a title if type != 'none'.
+      case 'tab_options':
+        // @todo: validate that there is a title if type != 'none'
     }
   }
 
@@ -1185,6 +1344,12 @@ class views_display_plugin_page extends views_display_plugin {
     switch ($form_state['section']) {
       case 'path':
         $this->set_option('path', $form_state['values']['path']);
+        break;
+      case 'menu':
+        $this->set_option('menu', $form_state['values']['menu']);
+        break;
+      case 'tab_options':
+        $this->set_option('tab_options', $form_state['values']['tab_options']);
         break;
     }
   }
