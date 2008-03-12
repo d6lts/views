@@ -779,31 +779,26 @@ function views_object_types() {
       'title' => t('Fields'),
       'stitle' => t('Field'),
       'plural' => 'fields',
-      'object' => 'views_field',
     ),
     'argument' => array(
       'title' => t('Arguments'),
       'stitle' => t('Argument'),
       'plural' => 'arguments',
-      'object' => 'views_argument',
     ),
     'sort' => array(
       'title' => t('Sort criteria'),
       'stitle' => t('Sort criterion'),
       'plural' => 'sorts',
-      'object' => 'views_sort',
     ),
     'filter' => array(
       'title' => t('Filters'),
       'stitle' => t('Filter'),
       'plural' => 'filters',
-      'object' => 'views_filter',
     ),
     'relationship' => array(
       'title' => t('Relationships'),
       'stitle' => t('Relationship'),
       'plural' => 'relationships',
-      'object' => 'views_relationship',
     ),
   );
 }

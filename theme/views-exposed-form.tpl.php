@@ -11,6 +11,8 @@
  * - $widget->operator: The operator for the widget. May be optional.
  * - $widget->widget: The widget itself.
  * - $button: The submit button for the form.
+ *
+ * @ingroup views_templates
  */
 ?>
 <div class="views-exposed-form">
