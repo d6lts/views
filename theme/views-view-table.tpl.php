@@ -4,16 +4,19 @@
  * @file views-view-table.tpl.php
  * Template to display a view as a table.
  *
+ * - $header: An array of header labels keyed by field id.
+ * - $fields: An array of CSS IDs to use for each field id.
+ * - $rows: An array of row items. Each row is an array of content
+ *   keyed by field ID.
  * @ingroup views_templates
  */
 ?>
 <table>
   <thead>
     <tr>
-      <?php foreach ($header as $field => $data): ?>
-        <?php // @todo click sort styling and link ?>
+      <?php foreach ($header as $field => $label): ?>
         <th class="views-field-<?php print $fields[$field]; ?>">
-          <?php print $data['label']; ?>
+          <?php print $label; ?>
         </th>
       <?php endforeach ?>
     </tr>
@@ -21,9 +24,9 @@
   <tbody>
     <?php foreach ($rows as $count => $row): ?>
       <tr class="<?php print ($count % 2 == 0) ? 'even' : 'odd';?>">
-        <?php foreach ($row as $field => $data): ?>
+        <?php foreach ($row as $field => $content): ?>
           <td class="views-field-<?php print $fields[$field]; ?>">
-            <?php print $data; ?>
+            <?php print $content; ?>
           </td>
         <?php endforeach; ?>
       </tr>

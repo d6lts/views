@@ -115,7 +115,7 @@ function template_preprocess_views_view_table(&$vars) {
     // render the header labels
     if ($field == $column) {
       if (empty($options['info'][$field]['sortable'])) {
-        $vars['header'][$field]['label'] = check_plain($fields[$field]['handler']->label());
+        $vars['header'][$field] = check_plain($fields[$field]['handler']->label());
       }
       else {
         // @todo -- make this a setting
@@ -133,7 +133,7 @@ function template_preprocess_views_view_table(&$vars) {
           'attributes' => array('title' => $title),
           'query' => 'sort=' . urlencode($field) . '&order=' . $initial . $query,
         );
-        $vars['header'][$field]['label'] = l($label . $image, $_GET['q'], $link_options);
+        $vars['header'][$field] = l($label . $image, $_GET['q'], $link_options);
       }
     }
 

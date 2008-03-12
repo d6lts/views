@@ -1840,7 +1840,7 @@ class views_plugin_style_table extends views_plugin_style {
     $form['description_markup'] = array(
       '#prefix' => '<div class="description form-item">',
       '#suffix' => '</div>',
-      '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any.'),
+      '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section.'),
     );
   }
 
