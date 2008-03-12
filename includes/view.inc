@@ -1215,43 +1215,6 @@ class views_db_object {
   }
 }
 
-class views_sub_object {
-  var $table = '';
-  var $field = '';
-  var $relationship = '';
-}
-
-/**
- * An argument in a view.
- */
-class views_argument extends views_sub_object {
-}
-
-/**
- * A field in a view.
- */
-class views_field  extends views_sub_object  {
-}
-
-/**
- * A sort criterion in a view.
- */
-class views_sort  extends views_sub_object {
-}
-
-/**
- * A filter in a view.
- */
-class views_filter  extends views_sub_object {
-  var $group = 0;
-}
-
-/**
- * A relationship in a view.
- */
-class views_relationship  extends views_sub_object {
-}
-
 /**
  * A display type in a view.
  */
