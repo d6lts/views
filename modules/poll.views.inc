@@ -53,3 +53,7 @@ function poll_views_data() {
 
   return $data;
 }
+
+/**
+ * @}
+ */

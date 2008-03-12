@@ -295,3 +295,7 @@ class views_handler_field_uid extends views_handler_field {
     }
   }
 }
+
+/**
+ * @}
+ */

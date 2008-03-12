@@ -155,7 +155,7 @@ class views_handler extends views_object {
    * init the handler with necessary data.
    * @param $view
    *   The $view object this handler is attached to.
-   * @param $data
+   * @param $options
    *   The item from the database; the actual contents of this will vary
    *   based upon the type of handler.
    */
@@ -407,7 +407,7 @@ class views_handler_field extends views_handler {
    * This gives the handlers some time to set up before any handler has
    * been rendered.
    *
-   * @param
+   * @param $values
    *   An array of all objects returned from the query.
    */
   function pre_render($values) { }
@@ -645,12 +645,7 @@ class views_handler_sort extends views_handler {
 class views_handler_sort_formula extends views_handler_sort {
   /**
    * Constructor to take the formula this sorts on.
-   *
-   * @param $formula
-   *   The formula used to sort. If an array, may be keyed by database type. If
-   *   used, 'default' MUST be defined.
    */
-//  function construct($formula) {
   function construct() {
     $this->formula = $this->definition['formula'];
     if (is_array($this->formula) && !isset($this->formula['default'])) {

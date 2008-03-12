@@ -261,6 +261,8 @@ class view extends views_db_object {
    *
    * @param $key
    *   One of 'argument', 'field', 'sort', 'filter', 'relationship'
+   * @param $info
+   *   The $info from views_object_types for this object.
    */
   function _init_handler($key, $info) {
     // Load the requested items from the display onto the object.
