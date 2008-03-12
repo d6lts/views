@@ -439,13 +439,15 @@ class views_handler_field_date extends views_handler_field {
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
+    $time = time();
+
     $form['date_format'] = array(
       '#type' => 'select',
       '#title' => t('Date format'),
       '#options' => array(
-        'small' => t('Small'),
-        'medium' => t('Medium'),
-        'large' => t('Large'),
+        'small' => format_date($time, 'small'),
+        'medium' => format_date($time, 'medium'),
+        'large' => format_date($time, 'large'),
         'custom' => t('Custom'),
         'time ago' => t('Time ago'),
       ),
