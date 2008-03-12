@@ -333,9 +333,7 @@ class views_handler_field extends views_handler {
   /**
    * Construct a new field handler.
    */
-//  function construct($click_sortable = FALSE, $additional_fields = array()) {
   function construct() {
-    $this->click_sortable = !empty($this->definition['click sortable']);
     $this->additional_fields = array();
     if (!empty($this->definition['additional fields'])) {
       $this->additional_fields = $this->definition['additional fields'];
@@ -361,8 +359,46 @@ class views_handler_field extends views_handler {
   /**
    * Called to determine what to tell the clicksorter.
    */
-  function click_sort() {
-    return "$this->field_alias";
+  function click_sort($order) {
+    $this->query->add_orderby($this->table, $this->field, $order, $this->field_alias);
+  }
+
+  /**
+   * Determine if this field is click sortable.
+   */
+  function click_sortable() {
+    return !empty($this->definition['click sortable']);
+  }
+
+  /**
+   * Get this field's label.
+   */
+  function label() {
+    if (!isset($this->options['label'])) {
+      return '';
+    }
+    return $this->options['label'];
+  }
+
+  /**
+   * Provide a default label
+   */
+  function options(&$options) {
+    parent::options($options);
+    $options['label'] = t('!group: !title', array('!group' => $this->definition['group'], '!title' => $this->definition['title']));
+  }
+
+  /**
+   * Default options form that provides the label widget that all fields
+   * should have.
+   */
+  function options_form(&$form, &$form_state) {
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
+      '#description' => t('The label for this field that will be displayed to end users if the style requires it.'),
+    );
   }
 
   /**
@@ -402,6 +438,7 @@ class views_handler_field_date extends views_handler_field {
   }
 
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['date_format'] = array(
       '#type' => 'select',
       '#title' => t('Date format'),
@@ -453,6 +490,7 @@ class views_handler_field_boolean extends views_handler_field {
   }
 
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['type'] = array(
       '#type' => 'select',
       '#title' => t('Output format'),
@@ -521,6 +559,7 @@ class views_handler_field_url extends views_handler_field {
    * Provide link to the page being visited.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['display_as_link'] = array(
       '#title' => t('Display as link'),
       '#type' => 'checkbox',

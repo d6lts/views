@@ -16,7 +16,7 @@ function views_views_plugins() {
       'default' => array(
         'title' => t('Defaults'),
         'help' => t('Default settings for this view.'),
-        'handler' => 'views_display_plugin_default',
+        'handler' => 'views_plugin_display_default',
         'no ui' => TRUE,
         'no remove' => TRUE,
         'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js'),
@@ -25,14 +25,14 @@ function views_views_plugins() {
       'page' => array(
         'title' => t('Page'),
         'help' => t('Display the view as a page, with a URL and menu links.'),
-        'handler' => 'views_display_plugin_page',
+        'handler' => 'views_plugin_display_page',
         'uses hook menu' => TRUE,
         'use pager' => TRUE,
       ),
       'block' => array(
         'title' => t('Block'),
         'help' => t('Display the view as a block.'),
-        'handler' => 'views_display_plugin_block',
+        'handler' => 'views_plugin_display_block',
         'uses hook block' => TRUE,
       ),
     ),
@@ -40,32 +40,31 @@ function views_views_plugins() {
       'default' => array(
         'title' => t('Unformatted'),
         'help' => t('Displays rows one after another.'),
-        'handler' => 'views_style_plugin_default',
+        'handler' => 'views_plugin_style_default',
         'theme' => 'views_view_unformatted',
         'uses row plugin' => TRUE,
       ),
       'list' => array(
         'title' => t('List'),
         'help' => t('Displays rows as an HTML list.'),
-        'handler' => 'views_style_plugin_list',
+        'handler' => 'views_plugin_style_list',
         'theme' => 'views_view_list',
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
       ),
-/* -- not yet implemented --
       'table' => array(
         'title' => t('Table'),
         'help' => t('Displays rows in a table.'),
-        'handler' => 'views_style_plugin_table',
+        'handler' => 'views_plugin_style_table',
         'theme' => 'views_view_table',
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
+        'uses options' => TRUE,
       ),
-*/
       'default_summary' => array(
         'title' => t('Default'),
         'help' => t('Displays the default summary view'),
-        'handler' => 'views_style_plugin_summary',
+        'handler' => 'views_plugin_style_summary',
         'theme' => 'views_view_summary',
         'summary' => TRUE, // only shows up as a summary style
         'uses options' => TRUE,
@@ -75,7 +74,7 @@ function views_views_plugins() {
       'fields' => array(
         'title' => t('Fields'),
         'help' => t('Displays the fields with an optional template.'),
-        'handler' => 'views_row_plugin',
+        'handler' => 'views_plugin_row',
         'theme' => 'views_view_fields',
         'uses fields' => TRUE,
       ),
@@ -127,7 +126,7 @@ function views_discover_plugins() {
 }
 
 /**
- * @defgroup views_display_plugins Views' display plugins
+ * @defgroup views_plugin_displays Views' display plugins
  * @{
  * Display plugins control how Views interact with the rest of Drupal.
  *
@@ -141,7 +140,7 @@ function views_discover_plugins() {
  * The default display plugin handler. Display plugins handle options and
  * basic mechanisms for different output methods.
  */
-class views_display_plugin extends views_object {
+class views_plugin_display extends views_object {
   /**
    * Fill this plugin in with the view, display, etc.
    */
@@ -971,7 +970,7 @@ class views_display_plugin extends views_object {
 /**
  * A plugin to handle defaults on a view.
  */
-class views_display_plugin_default extends views_display_plugin {
+class views_plugin_display_default extends views_plugin_display {
   /**
    * Determine if this display is the 'default' display which contains
    * fallback settings
@@ -1034,7 +1033,7 @@ class views_display_plugin_default extends views_display_plugin {
 /**
  * The plugin that handles a full page.
  */
-class views_display_plugin_page extends views_display_plugin {
+class views_plugin_display_page extends views_plugin_display {
   /**
    * The page display has a path.
    */
@@ -1358,7 +1357,7 @@ class views_display_plugin_page extends views_display_plugin {
 /**
  * The plugin that handles a block.
  */
-class views_display_plugin_block extends views_display_plugin {
+class views_plugin_display_block extends views_plugin_display {
   /**
    * The default block handler doesn't support configurable items,
    * but extended block handlers might be able to do interesting
@@ -1476,7 +1475,7 @@ class views_display_plugin_block extends views_display_plugin {
  */
 
 /**
- * @defgroup views_style_plugins Views' style plugins
+ * @defgroup views_plugin_styles Views' style plugins
  * @{
  * Style plugins control how a view is rendered. For example, they
  * can choose to display a collection of fields, node_view() output,
@@ -1490,7 +1489,7 @@ class views_display_plugin_block extends views_display_plugin {
 /**
  * Base class to define a style plugin handler.
  */
-class views_style_plugin extends views_object {
+class views_plugin_style extends views_object {
   /**
    * Initialize a style plugin.
    *
@@ -1562,6 +1561,13 @@ class views_style_plugin extends views_object {
    */
   function options_submit($form, &$form_state) { }
 
+  /**
+   * Called by the view builder to see if this style handler wants to
+   * interfere with the sorts. If so it should build; if it returns
+   * any non-TRUE value, normal sorting will NOT be added to the query.
+   */
+  function build_sort() { return TRUE; }
+
   function render($rows) { }
 }
 
@@ -1569,13 +1575,13 @@ class views_style_plugin extends views_object {
  * Default style plugin to render rows one after another with no
  * decorations.
  */
-class views_style_plugin_default extends views_style_plugin {
+class views_plugin_style_default extends views_plugin_style {
   /**
    * Render the given style.
    */
   function render() {
     if (empty($this->row_plugin)) {
-      vpr('views_style_plugin_default: Missing row plugin');
+      vpr('views_plugin_style_default: Missing row plugin');
       return;
     }
     $rows = array();
@@ -1583,14 +1589,15 @@ class views_style_plugin_default extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows[] = $this->row_plugin->render($row);
     }
-    return theme(array('views_view_unformatted__' . $this->view->name, 'views_view_unformatted'), $this->view, $this->options, $rows);
+    $theme = views_theme_functions('views_view_unformatted', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, $rows);
   }
 }
 
 /**
  * Style plugin to render each item in an ordered or unordered list
  */
-class views_style_plugin_list extends views_style_plugin {
+class views_plugin_style_list extends views_plugin_style {
   /**
    * Set default options
    */
@@ -1612,9 +1619,12 @@ class views_style_plugin_list extends views_style_plugin {
     );
   }
 
+  /**
+   * Render the list style.
+   */
   function render() {
     if (empty($this->row_plugin)) {
-      // @todo: Log some form of error here?
+      vpr('views_plugin_style_list: Missing row plugin');
       return;
     }
 
@@ -1622,48 +1632,281 @@ class views_style_plugin_list extends views_style_plugin {
     foreach ($this->view->result as $row) {
       $rows[] = $this->row_plugin->render($row);
     }
-    return theme(array('views_view_list__' . $this->view->name, 'views_view_list'), $this->view, $this->options, $rows);
+    $theme = views_theme_functions('views_view_list', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, $rows);
   }
 }
 
 /**
  * Style plugin to render each item as a row in a table.
  */
-class views_style_plugin_table extends views_style_plugin {
+class views_plugin_style_table extends views_plugin_style {
   /**
    * Set default options
    */
   function options($display) {
     return array(
+      'columns' => array(),
+      'default' => '',
+      'info' => array(),
+      'override' => TRUE,
+      'order' => 'asc',
     );
+  }
+
+  /**
+   * Determine if we should provide sorting based upon $_GET inputs.
+   */
+  function build_sort() {
+    if (!isset($_GET['sort'])) {
+      // check for a 'default' clicksort. If there isn't one, exit gracefully.
+      if (empty($this->options['default'])) {
+        return TRUE;
+      }
+      $sort = $this->options['default'];
+      $this->order = !empty($this->options['order']) ? $this->options['order'] : 'asc';
+    }
+    else {
+      $sort = $_GET['sort'];
+      // Store the $order for later use.
+      $this->order = !empty($_GET['order']) ? strtolower($_GET['order']) : 'asc';
+    }
+
+    // If a sort we don't know anything about gets through, exit gracefully.
+    if (empty($this->view->field[$sort])) {
+      return TRUE;
+    }
+
+    // Ensure $this->order is valid.
+    if ($this->order != 'asc' && $this->order != 'desc') {
+      $this->order = 'asc';
+    }
+
+    // Store the $sort for later use.
+    $this->active = $sort;
+
+    // Tell the field to click sort.
+    $this->view->field[$sort]['handler']->click_sort($this->order);
+
+    // Let the builder know whether or not we're overriding the default sorts.
+    return empty($this->options['override']);
+  }
+
+  /**
+   * Normalize a list of columns based upon the fields that are
+   * available.
+   *
+   * - Each field must be in a column.
+   * - Each column must be based upon a field, and that field
+   *   is somewhere in the column.
+   * - Any fields not currently represented must be added.
+   * - Columns must be re-ordered to match the fields.
+   *
+   * @param $columns
+   *   An array of all fields; the key is the id of the field and the
+   *   value is the id of the column the field should be in.
+   */
+  function sanitize_columns($columns) {
+    $sanitized = array();
+    $fields = $this->display->handler->get_option('fields');
+
+    // Preconfigure the sanitized array so that the order is retained.
+    foreach ($fields as $field => $info) {
+      // Set to itself so that if it isn't touched, it gets column
+      // status automatically.
+      $sanitized[$field] = $field;
+    }
+
+    foreach ($columns as $field => $column) {
+      // first, make sure the field still exists.
+      if (!isset($sanitized[$field])) {
+        continue;
+      }
+
+      // If the field is the column, mark it so, or the column
+      // it's set to is a column, that's ok
+      if ($field == $column || $columns[$column] == $column) {
+        $sanitized[$field] = $column;
+      }
+      // Since we set the field to itself initially, ignoring
+      // the condition is ok; the field will get its column
+      // status back.
+    }
+
+    return $sanitized;
   }
 
   /**
    * Render the given style.
    */
   function options_form(&$form, &$form_state) {
-    $form['markup'] = array(
-      '#default_value' => 'ToDo',
+    $fields = $this->display->handler->get_option('fields');
+    if (empty($fields)) {
+      $form['error_markup'] = array(
+        '#value' => t('You need at least one field before you can configure your table settings'),
+        '#prefix' => '<div class="error form-item description">',
+        '#suffix' => '</div>',
+      );
+      return;
+    }
+
+    $form['override'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Override normal sorting if click sorting is used'),
+      '#default_value' => !empty($this->options['override']),
+    );
+
+    $form['order'] = array(
+      '#type' => 'select',
+      '#title' => t('Default sort order'),
+      '#options' => array('asc' => t('Ascending'), 'desc' => t('Descending')),
+      '#default_value' => $this->options['order'],
+      '#description' => t('If a default sort order is selected, what order should it use by default.'),
+    );
+
+    // @todo: add dependency here.
+
+    // Note: views UI registers this theme handler on our behalf. Your module
+    // will have to register your theme handlers if you do stuff like this.
+    $form['#theme'] = 'views_ui_style_plugin_table';
+
+    $columns = $this->sanitize_columns($this->options['columns']);
+
+    // Create an array of allowed columns from the data we know:
+    $field_names = array();
+    $handlers = array();
+    foreach ($fields as $field => $info) {
+      $handlers[$field] = views_get_handler($info['table'], $info['field'], 'field');
+      $handlers[$field]->init($this->view, $info);
+
+      if ($label = $handlers[$field]->label()) {
+        $field_names[$field] = $label;
+      }
+      else {
+        $field_names[$field] = t('!group: !title', array('!group' => $handlers[$field]->definition['group'], '!title' => $handlers[$field]->definition['title']));
+      }
+    }
+
+    if (isset($this->options['default'])) {
+      $default = $this->options['default'];
+      if (!isset($fields[$default])) {
+        $default = -1;
+      }
+    }
+    else {
+      $default = -1;
+    }
+
+    foreach ($columns as $field => $column) {
+      $form['columns'][$field] = array(
+        '#type' => 'select',
+        '#options' => $field_names,
+        '#default_value' => $column,
+      );
+      if ($handlers[$field]->click_sortable()) {
+        $form['info'][$field]['sortable'] = array(
+          '#type' => 'checkbox',
+          '#default_value' => !empty($this->options['info'][$field]['sortable']),
+        );
+        $form['default'][$field] = array(
+          '#type' => 'radio',
+          '#return_value' => $field,
+          '#parents' => array('style_options', 'default'),
+          '#id' => form_clean_id('edit-default-' . $field),
+          '#default_value' => $default,
+        );
+      }
+      $form['info'][$field]['separator'] = array(
+        '#type' => 'textfield',
+        '#size' => 10,
+        '#default_value' => isset($this->options['info'][$field]['separator']) ? $this->options['info'][$field]['separator'] : '',
+      );
+
+      // markup for the field name
+      $form['info'][$field]['name'] = array(
+        '#value' => $field_names[$field],
+      );
+    }
+
+    // Provide a radio for no default sort
+    $form['default'][-1] = array(
+      '#type' => 'radio',
+      '#return_value' => -1,
+      '#parents' => array('style_options', 'default'),
+      '#id' => form_clean_id('edit-default-0'),
+      '#default_value' => $default,
+    );
+
+    $form['description_markup'] = array(
+      '#prefix' => '<div class="description form-item">',
+      '#suffix' => '</div>',
+      '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any.'),
     );
   }
 
+  /**
+   * Render the table style.
+   */
   function render() {
-    if (empty($this->row_plugin)) {
-      // @todo: Log some form of error here?
-      return;
-    }
-    // @todo: This needs to be able to support either a database resource OR
-    // an array, because our input format doesn't actually have to be from
-    // a query.
-    $rows = '';
-    return "Table not yet implemented";
+    $theme = views_theme_functions('views_view_table', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, array());
   }
+}
+
+/**
+ * Theme the form for the table style plugin
+ */
+function theme_views_ui_style_plugin_table($form) {
+  $output = drupal_render($form['description_markup']);
+
+  $header = array(
+    t('Field'),
+    t('Column'),
+    t('Separator'),
+    array(
+      'data' => t('Sortable'),
+      'align' => 'center',
+    ),
+    array(
+      'data' => t('Default sort'),
+      'align' => 'center',
+    ),
+  );
+  $rows = array();
+  foreach (element_children($form['columns']) as $id) {
+    $row = array();
+    $row[] = drupal_render($form['info'][$id]['name']);
+    $row[] = drupal_render($form['columns'][$id]);
+    $row[] = drupal_render($form['info'][$id]['separator']);
+    if (!empty($form['info'][$id]['sortable'])) {
+      $row[] = array(
+        'data' => drupal_render($form['info'][$id]['sortable']),
+        'align' => 'center',
+      );
+      $row[] = array(
+        'data' => drupal_render($form['default'][$id]),
+        'align' => 'center',
+      );
+    }
+    else {
+      $row[] = '';
+      $row[] = '';
+    }
+    $rows[] = $row;
+  }
+
+  // Add the special 'None' row.
+  $rows[] = array(t('None'), '', '', '', array('align' => 'center', 'data' => drupal_render($form['default'][-1])));
+
+  $output .= theme('table', $header, $rows);
+  $output .= drupal_render($form);
+  return $output;
 }
 
 /**
  * The default style plugin for summaries.
  */
-class views_style_plugin_summary extends views_style_plugin {
+class views_plugin_style_summary extends views_plugin_style {
   function options_form(&$form, &$form_state) {
     $form['count'] = array(
       '#type' => 'checkbox',
@@ -1681,7 +1924,8 @@ class views_style_plugin_summary extends views_style_plugin {
       // @todo: Include separator as an option.
       $rows[] = $row;
     }
-    return theme(array('views_view_summary__' . $this->view->name, 'views_view_summary'), $this->view, $this->options, $rows);
+    $theme = views_theme_functions('views_view_summary', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, $rows);
   }
 }
 
@@ -1690,7 +1934,7 @@ class views_style_plugin_summary extends views_style_plugin {
  */
 
 /**
- * @defgroup views_row_plugins Views' row plugins
+ * @defgroup views_plugin_rows Views' row plugins
  * @{
  *
  * Row plugins control how Views outputs an individual record. They are
@@ -1702,7 +1946,7 @@ class views_style_plugin_summary extends views_style_plugin {
  * Default plugin to view a single row of a table. This is really just a wrapper around
  * a theme function.
  */
-class views_row_plugin extends views_object {
+class views_plugin_row extends views_object {
   /**
    * Initialize the row plugin.
    */
@@ -1744,7 +1988,8 @@ class views_row_plugin extends views_object {
    * of some form, but not always.
    */
   function render($row) {
-    return theme(array('views_view_fields__' . $this->view->name, 'views_view_fields'), $this->view, $this->options, $row);
+    $theme = views_theme_functions('views_view_fields', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, $row);
   }
 }
 

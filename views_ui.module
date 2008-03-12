@@ -152,6 +152,11 @@ function views_ui_theme() {
       'arguments' => array('body' => NULL),
       'file' => '/includes/tabs.inc',
     ),
+
+    'views_ui_style_plugin_table' => array(
+      'arguments' => array('form' => NULL),
+    ),
+
   );
 }
 

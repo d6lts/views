@@ -210,6 +210,10 @@ class view extends views_db_object {
    * check the view object first, then ask the display handler.
    */
   function init_style() {
+    if (isset($this->style_handler)) {
+      return;
+    }
+
     if (!isset($this->style_plugin)) {
       $this->style_plugin = $this->display_handler->get_option('style_plugin');
       $this->style_options = $this->display_handler->get_option('style_options');
@@ -411,17 +415,20 @@ class view extends views_db_object {
       return;
     }
 
-    // Build our sort criteria if we were instructed to do so.
-    if (!empty($this->build_sort)) {
-      $this->_build('sort');
-    }
-
     // Initialize the style; arguments may have changed which style we use,
     // so waiting as long as possible is important. But we need to know
     // about the style when we go to build fields.
     $this->init_style();
     if ($this->style_handler->uses_fields()) {
       $this->_build('field');
+    }
+
+    // Build our sort criteria if we were instructed to do so.
+    if (!empty($this->build_sort)) {
+      // Allow the style handler to deal with sorting.
+      if ($this->style_handler->build_sort()) {
+        $this->_build('sort');
+      }
     }
 
     $this->build_info['query'] = $this->query->query();

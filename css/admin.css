@@ -345,6 +345,17 @@ html.js #views-ajax-pad {
   max-height: 180px;
 }
 
+#views-ajax-pad fieldset {
+  margin: 0 .5em;
+}
+
+#views-ajax-pad table td .form-item,
+#views-ajax-pad table td .form-item input,
+#views-ajax-pad table td .form-item select {
+  padding: 0;
+  margin: 0;
+}
+
 /* 
  * Add, Rearrange and Configure buttons using sprites
  */

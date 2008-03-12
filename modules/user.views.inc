@@ -97,6 +97,7 @@ class views_handler_field_user extends views_handler_field {
    * Provide link to node option
    */
   function options_form(&$form) {
+    parent::options_form($form, $form_state);
     $form['link_to_user'] = array(
       '#title' => t('Link this field to its user'),
       '#type' => 'checkbox',
@@ -124,7 +125,6 @@ class views_handler_field_user extends views_handler_field {
  * @ingroup views_field_handlers
  */
 class views_handler_field_user_name extends views_handler_field_user {
-
   function render_link($data, $values) {
     if (!empty($this->options['link_to_user'])) {
       $account = (object)array('uid' => $values->{$this->uid_field}, 'name' => $values->{$this->field_alias});

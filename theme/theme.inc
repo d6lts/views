@@ -91,5 +91,86 @@ function template_preprocess_views_view_summary(&$vars) {
 }
 
 /**
+ * Display a view as a table style.
+ */
+function template_preprocess_views_view_table(&$vars) {
+  $view     = $vars['view'];
+  $result   = $view->result;
+  $options  = $view->style_handler->options;
+  $handler  = $view->style_handler;
+
+  $columns  = $handler->sanitize_columns($options['columns']);
+
+  $fields   = $view->field;
+
+  $active   = !empty($handler->active) ? $handler->active : '';
+  $order    = !empty($handler->order) ? $handler->order : 'asc';
+
+  $query    = tablesort_get_querystring();
+  if ($query) {
+    $query = '&' . $query;
+  }
+
+  foreach ($columns as $field => $column) {
+    // render the header labels
+    if ($field == $column) {
+      if (empty($options['info'][$field]['sortable'])) {
+        $vars['header'][$field]['label'] = check_plain($fields[$field]['handler']->label());
+      }
+      else {
+        // @todo -- make this a setting
+        $initial = 'asc';
+
+        if ($active == $field && $order == 'asc') {
+          $initial = 'desc';
+        }
+
+        $label = check_plain($fields[$field]['handler']->label());
+        $image = theme('tablesort_indicator', $initial);
+        $title = t('sort by @s', array('@s' => $label));
+        $link_options = array(
+          'html' => true,
+          'attributes' => array('title' => $title),
+          'query' => 'sort=' . urlencode($field) . '&order=' . $initial . $query,
+        );
+        $vars['header'][$field]['label'] = l($label . $image, $_GET['q'], $link_options);
+      }
+    }
+
+    // Create a second variable so we can easily find what fields we have and what the
+    // CSS classes should be.
+    $vars['fields'][$field] = views_css_safe($field);
+    if ($active == $field) {
+      $vars['fields'][$field] .= ' active';
+    }
+
+    // Render each field into its appropriate column.
+    foreach ($result as $num => $row) {
+      if (!empty($fields[$field]['handler']) && is_object($fields[$field]['handler'])) {
+        $handler = &$fields[$field]['handler'];
+        $themes = array(
+          'views_view_field__' . $view->name . '__' . $handler->field_alias,
+          'views_view_field__' . $view->name,
+          'views_view_field__' . $handler->field_alias,
+          'views_view_field',
+        );
+
+        // Add the field into a variable named after the field. field_alias will be unique.
+        if (isset($vars['rows'][$num][$column])) {
+          if (!empty($options['info'][$column]['separator'])) {
+            $vars['rows'][$num][$column] .= $options['info'][$column]['separator'];
+          }
+        }
+        else {
+          $vars['rows'][$num][$column] = '';
+        }
+
+        $vars['rows'][$num][$column] .= theme($themes, $view, $fields[$field], $row);
+      }
+    }
+  }
+}
+
+/**
  * @defgroup views_templates Views' template files
  */
