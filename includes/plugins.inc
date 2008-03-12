@@ -1658,7 +1658,7 @@ class views_plugin_style_table extends views_plugin_style {
    * Determine if we should provide sorting based upon $_GET inputs.
    */
   function build_sort() {
-    if (!isset($_GET['sort'])) {
+    if (!isset($_GET['order'])) {
       // check for a 'default' clicksort. If there isn't one, exit gracefully.
       if (empty($this->options['default'])) {
         return TRUE;
@@ -1667,9 +1667,9 @@ class views_plugin_style_table extends views_plugin_style {
       $this->order = !empty($this->options['order']) ? $this->options['order'] : 'asc';
     }
     else {
-      $sort = $_GET['sort'];
+      $sort = $_GET['order'];
       // Store the $order for later use.
-      $this->order = !empty($_GET['order']) ? strtolower($_GET['order']) : 'asc';
+      $this->order = !empty($_GET['sort']) ? strtolower($_GET['sort']) : 'asc';
     }
 
     // If a sort we don't know anything about gets through, exit gracefully.

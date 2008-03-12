@@ -131,7 +131,7 @@ function template_preprocess_views_view_table(&$vars) {
         $link_options = array(
           'html' => true,
           'attributes' => array('title' => $title),
-          'query' => 'sort=' . urlencode($field) . '&order=' . $initial . $query,
+          'query' => 'order=' . urlencode($field) . '&sort=' . $initial . $query,
         );
         $vars['header'][$field] = l($label . $image, $_GET['q'], $link_options);
       }
