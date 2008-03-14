@@ -958,6 +958,20 @@ class views_plugin_display extends views_object {
         return TRUE;
     }
   }
+
+  /**
+   * Set up any variables on the view prior to execution. These are separated
+   * from execute because they are extremely common and unlikely to be
+   * overridden on an individual display.
+   */
+  function pre_execute() {
+    // Copy pager information from the display.
+    $this->view->set_use_pager($this->use_pager());
+    $this->view->set_pager_element($this->get_option('pager_element'));
+    $this->view->set_items_per_page($this->get_option('items_per_page'));
+    $this->view->set_offset($this->get_option('offset'));
+  }
+
   /**
    * When used externally, this is how a view gets run and returns
    * data in the format required.
@@ -965,6 +979,12 @@ class views_plugin_display extends views_object {
    * The base class cannot be executed.
    */
   function execute() { }
+
+  /**
+   * Fully render the display for the purposes of a live preview or
+   * some other AJAXy reason.
+   */
+  function preview() { return $this->view->render(); }
 }
 
 /**

@@ -110,6 +110,11 @@ function views_ui_menu() {
     'page callback' => 'views_ui_config_style',
     'page arguments' => array(3, 5),
   );
+  // Live preview
+  $items['admin/build/views/%views_ui_js/preview/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_preview',
+    'page arguments' => array(3, 5),
+  );
   return $items;
 }
 

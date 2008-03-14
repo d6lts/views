@@ -107,6 +107,22 @@ function views_ui_add_page() {
 }
 
 /**
+ * Page callback for the live preview.
+ */
+function views_ui_preview($js, $view) {
+  $display_id = !empty($_POST['display_id']) ? $_POST['display_id'] : 'default';
+  if (empty($view->display[$display_id])) {
+    $display_id = 'default';
+  }
+
+  $args = array();
+  if (!empty($_POST['args'])) {
+    $args = explode('/', $_POST['args']);
+  }
+
+}
+
+/**
  * Form constructor callback to create the views Add Form, phase 1.
  */
 function views_ui_add_form(&$form_state) {
@@ -186,7 +202,7 @@ function views_ui_delete_confirm(&$form_state, $view) {
                   t('Are you sure you want to delete the view %name?',
                   array('%name' => $view->name)),
                   $cancel,
-                  t('Deleting a term will delete all its children if there are any. This action cannot be undone.'),
+                  t('Deleting a view cannot be undone.'),
                   t('Delete'),
                   t('Cancel'));
 }

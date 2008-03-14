@@ -543,8 +543,9 @@ class view extends views_db_object {
   }
 
   /**
-   * To be called externally. Execute the given display, with
-   * the given arguments.
+   * Execute the given display, with the given arguments.
+   * To be called externally by whatever mechanism invokes the view,
+   * such as a page callback, hook_block, etc.
    */
   function execute_display($display_id = NULL, $args = array()) {
     if (empty($this->current_display) || $this->current_display != $display_id) {
@@ -556,15 +557,33 @@ class view extends views_db_object {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
 
-    // Copy pager information from the display.
-    // @todo: Should this code live on the display?
-    $this->set_use_pager($this->display_handler->use_pager());
-    $this->set_pager_element($this->display_handler->get_option('pager_element'));
-    $this->set_items_per_page($this->display_handler->get_option('items_per_page'));
-    $this->set_offset($this->display_handler->get_option('offset'));
+    // Allow the display handler to set up for execution
+    $this->display_handler->pre_execute();
 
     // Execute the view
     return $this->display_handler->execute();
+  }
+
+  /**
+   * Preview the given display, with the given arguments.
+   * To be called externally, probably by an AJAX handler
+   * of some flavor.
+   */
+  function preview($display_id = NULL, $args = array()) {
+    if (empty($this->current_display) || $this->current_display != $display_id) {
+      if (!$this->set_display($display_id)) {
+        return FALSE;
+      }
+    }
+
+    // Prepare the view with the information we have.
+    $this->set_arguments($args);
+
+    // Allow the display handler to set up for execution
+    $this->display_handler->pre_execute();
+
+    // Preview the view.
+    return $this->display_handler->preview();
   }
 
   /**
@@ -970,6 +989,7 @@ class views_db_object {
     foreach ($schema['fields'] as $field => $info) {
       // special case -- skip serial types if we are updating.
       if ($info['type'] == 'serial') {
+        $serials[] = $field;
         continue;
       }
       $fields[] = $field;
