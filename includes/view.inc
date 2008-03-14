@@ -1027,7 +1027,7 @@ class views_db_object {
     }
     db_query($query, $values);
 
-    if ($serials) {
+    if ($serials && !$update) {
       // get last insert ids and fill them in.
       foreach ($serials as $field) {
         $this->$field = db_last_insert_id($this->db_table, $field);
