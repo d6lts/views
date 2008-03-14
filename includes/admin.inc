@@ -397,7 +397,12 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   }
 
   // This is the area that will render beneath the links
-  $display_button = drupal_get_form('views_ui_add_display_form', $view);
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => FALSE,
+  );
+
+  $display_button = drupal_build_form('views_ui_add_display_form', $form_state);
   $tabs->add_extra($display_button);
 
   $vars['tabs'] = $tabs->render();
@@ -442,7 +447,8 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
     if (!empty($_POST['form_id']) && $_POST['form_id'] == 'views_ui_remove_display_form') {
       unset($_POST['form_id']);
     }
-    $vars['remove'] = drupal_get_form('views_ui_remove_display_form', $view, $display->id);
+    $form_state = array('view' => &$view, 'display_id' => $display->id, 'ajax' => FALSE);
+    $vars['remove'] = drupal_build_form('views_ui_remove_display_form', $form_state);
   }
 
   // basic fields
@@ -641,7 +647,7 @@ function views_ui_regenerate_tabs(&$view, $display_id = NULL, $object = NULL) {
  * a hidden op operator because the forms plugin doesn't seem to properly
  * provide which button was clicked.
  */
-function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third = NULL, $submit = NULL) {
+function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = NULL, $third = NULL, $submit = NULL) {
   $form['buttons'] = array(
     '#prefix' => '<div class="clear-block"><div class="form-buttons">',
     '#suffix' => '</div></div>',
@@ -683,6 +689,21 @@ function views_ui_standard_form_buttons(&$form, $form_id, $name = NULL, $third =
     );
   }
 
+  // Compatibility, to be removed later:
+  // We used to set these items on the form, but now we want them on the $form_state:
+  if (isset($form['#title'])) {
+    $form_state['title'] = $form['#title'];
+  }
+  if (isset($form['#url'])) {
+    $form_state['url'] = $form['#url'];
+  }
+  if (isset($form['#js'])) {
+    $form_state['js settings'] = $form['#js'];
+  }
+  if (isset($form['#section'])) {
+    $form_state['#section'] = $form['#section'];
+  }
+
   // If this isn't an ajaxy form, then we want to set the title.
   drupal_set_title($form['#title']);
   views_add_css('admin');
@@ -711,31 +732,45 @@ function views_ui_standard_cancel($form, &$form_state) {
  * AJAX callback to add a display.
  */
 function views_ui_add_display($js, $view) {
-  if (!$js) {
-    return drupal_get_form('views_ui_add_display_form', $view);
-  }
-
   views_include('ajax');
-  $form_state = views_ajax_form('views_ui_add_display_form', $view);
-  $view = $form_state['view'];
-  $id = $form_state['id'];
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+  );
 
-  if (!$view->set_display('default')) {
-    views_ajax_render(t('Invalid display id'));
+  $output = views_ajax_form_wrapper('views_ui_add_display_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      $id = $form_state['id'];
+
+      // Make sure the new display is active
+      if (!$view->set_display('default')) {
+        views_ajax_render(t('Invalid display id'));
+      }
+
+      // Render the new display
+      list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
+
+      // Instruct the javascript on the browser to render the new tab.
+      $output = new stdClass;
+      $output->tab = array('#views-tab-' . $id => array('title' => $title, 'body' => $body));
+    }
+    // Render the command object. This automatically exits.
+    views_ajax_render($output);
   }
 
-  list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
-
-  $output = new stdClass;
-  $output->tab = array('#views-tab-' . $id => array('title' => $title, 'body' => $body));
-
-  views_ajax_render($output);
+  // But the non-js variant will return output if it didn't redirect us.
+  return $output;
 }
 
 /**
  * Form to add a display to a view.
  */
-function views_ui_add_display_form(&$form_state, $view) {
+function views_ui_add_display_form(&$form_state) {
+  $view = &$form_state['view'];
+
   $form['display']['display'] = array(
     '#type' => 'select',
     '#options' => views_fetch_plugin_names('display'),
@@ -751,7 +786,6 @@ function views_ui_add_display_form(&$form_state, $view) {
   $form['#attributes'] = array('class' => 'views-ajax-form');
   $form['#action'] = url("admin/build/views/nojs/add-display/$view->name");
 
-  $form_state['view'] = &$view;
   return $form;
 }
 
@@ -774,21 +808,33 @@ function views_ui_add_display_form_submit($form, &$form_state) {
  * AJAX callback to remove a display.
  */
 function views_ui_remove_display($js, $view, $display_id) {
-  if (!$js) {
-    return drupal_get_form('views_ui_remove_display_form', $view, $display_id);
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'display_id' => $display_id,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_remove_display_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      return views_ui_regenerate_tabs($view, $display_id);
+    }
+    return views_ajax_render($output);
   }
 
-  views_include('ajax');
-  $form_state = views_ajax_form('views_ui_remove_display_form', $view, $display_id);
-  // regenerate the tabset, set it to replace. Use $form_state['view'] here to get
-  // the modifications.
-  return views_ui_regenerate_tabs($form_state['view'], $display_id);
+  return $output;
 }
 
 /**
  * Form to remove a display from a view.
  */
-function views_ui_remove_display_form(&$form_state, $view, $display_id) {
+function views_ui_remove_display_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+
   if (empty($view->display[$display_id]->deleted)) {
     $form['display'] = array(
       '#prefix' => '<div class="display-button remove-display">',
@@ -815,8 +861,6 @@ function views_ui_remove_display_form(&$form_state, $view, $display_id) {
   $form['#id'] = 'views-add-display-form';
   $form['#attributes'] = array('class' => 'views-ajax-form');
 
-  $form_state['view'] = &$view;
-  $form_state['display_id'] = $display_id;
   return $form;
 }
 
@@ -857,20 +901,31 @@ function views_ui_remove_display_form_restore($form, &$form_state) {
  * Page callback to edit details of a view.
  */
 function views_ui_edit_details($js, $view) {
-  if (!$js) {
-    return drupal_get_form('views_ui_edit_details_form', $view);
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_edit_details_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      return views_ui_regenerate_tabs($view);
+    }
+    return views_ajax_render($output);
+
   }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_edit_details_form', $view);
-    return views_ui_regenerate_tabs($form_state['view']);
-  }
+  return $output;
 }
 
 /**
  * Form constructor callback to edit details of a view
  */
-function views_ui_edit_details_form(&$form_state, $view) {
+function views_ui_edit_details_form(&$form_state) {
+  $view = &$form_state['view'];
+
   $form['#title'] = t('View details');
   $form['#section'] = 'details';
 
@@ -889,8 +944,7 @@ function views_ui_edit_details_form(&$form_state, $view) {
     // TODO: This should be an autocomplete field.
   );
 
-  $form_state['view'] = &$view;
-  views_ui_standard_form_buttons($form, 'views_ui_edit_details_form');
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_edit_details_form');
   return $form;
 }
 
@@ -908,39 +962,51 @@ function views_ui_edit_details_form_submit($form, &$form_state) {
  * Page callback to edit options on a display of a view.
  */
 function views_ui_edit_display($js, $view, $display_id, $section) {
-  if (!$js) {
-    return drupal_get_form('views_ui_edit_display_form', $view, $display_id, $section);
-  }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_edit_display_form', $view, $display_id, $section);
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'section' => $section,
+  );
 
-    // Sometimes we need to re-generate the form for multi-step type operations.
-    $object = NULL;
-    if (!empty($form_state['regenerate form'])) {
-      $object = views_render_ajax_form('views_ui_edit_display_form', $form_state['view'], $display_id, $section);
+  $output = views_ajax_form_wrapper('views_ui_edit_display_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      $object = NULL;
+      if (!empty($form_state['regenerate form'])) {
+        $form_state['input'] = array(); // Remove the input so it can't post.
+        $form_state['executed'] = FALSE;
+        $object = views_ajax_form_wrapper('views_ui_edit_display_form', $form_state);
+      }
+      // regenerate all tabs because changes to the default tab could ripple.
+      return views_ui_regenerate_tabs($view, NULL, $object);
     }
-    // regenerate all tabs because changes to the default tab could ripple.
-    return views_ui_regenerate_tabs($form_state['view'], NULL, $object);
+    return views_ajax_render($output);
   }
+
+  return $output;
 }
 
 /**
  * Form constructor callback to edit display of a view
  */
-function views_ui_edit_display_form(&$form_state, $view, $display_id, $section) {
+function views_ui_edit_display_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $section = $form_state['section'];
+
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
   }
   $display = &$view->display[$display_id];
 
-  $form_state['view'] = &$view;
-  $form_state['display_id'] = $display_id;
-  $form_state['section'] = $section;
-
   // Get form from the handler.
   $display->handler->options_form($form, $form_state);
-  views_ui_standard_form_buttons($form, 'views_ui_edit_display_form');
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_edit_display_form');
   return $form;
 }
 
@@ -979,29 +1045,41 @@ function views_ui_edit_display_form_override($form, &$form_state) {
  * Page callback to rearrange a type.
  */
 function views_ui_rearrange_type($js, $view, $display_id, $type) {
-  if (!$js) {
-    $output = drupal_get_form('views_ui_rearrange_form', $view, $display_id, $type);
-    return $output;
-  }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_rearrange_form', $view, $display_id, $type);
-    // Sometimes we need to re-generate the form for multi-step type operations.
-    $object = NULL;
-    if (!empty($form_state['regenerate form'])) {
-      $object = views_render_ajax_form('views_ui_rearrange_form', $form_state['view'], $display_id, $type);
-    }
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'type' => $type,
+  );
 
-    // regenerate the tabset, set it to replace
-    return views_ui_regenerate_tabs($form_state['view'], $display_id, $object);
+  $output = views_ajax_form_wrapper('views_ui_rearrange_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      $object = NULL;
+      if (!empty($form_state['regenerate form'])) {
+        $form_state['input'] = array(); // Remove the input so it can't post.
+        $form_state['executed'] = FALSE;
+        $object = views_ajax_form_wrapper('views_ui_rearrange_form', $form_state);
+      }
+      return views_ui_regenerate_tabs($view, $display_id, $object);
+    }
+    return views_ajax_render($output);
   }
+
+  return $output;
 }
 
 /**
  * Form to rearrange items in the views UI.
  */
-function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
-  $types = views_object_types();
+function views_ui_rearrange_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
 
   $types = views_object_types();
   if (!$view->set_display($display_id)) {
@@ -1045,10 +1123,6 @@ function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
     }
   }
 
-  $form_state['view'] = &$view;
-  $form_state['display_id'] = $display_id;
-  $form_state['type'] = $type;
-
   // Add javascript settings that will be added via $.extend for tabledragging
   $form['#js']['tableDrag']['arrange']['weight'][0] = array(
     'target' => 'weight',
@@ -1059,7 +1133,7 @@ function views_ui_rearrange_form(&$form_state, $view, $display_id, $type) {
     'limit' => 0,
   );
 
-  views_ui_standard_form_buttons($form, 'views_ui_rearrange_form');
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_rearrange_form');
   return $form;
 }
 
@@ -1130,28 +1204,45 @@ function views_ui_rearrange_form_submit($form, &$form_state) {
  * Page callback to add_item a type.
  */
 function views_ui_add_item($js, $view, $display_id, $type) {
-  if (!$js) {
-    $output = drupal_get_form('views_ui_add_item_form', $view, $display_id, $type);
-    return $output;
-  }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_add_item_form', $view, $display_id, $type);
-    // regenerate the tabset, set it to replace
-    $object = NULL;
-    if (!empty($form_state['id'])) {
-      $object = views_render_ajax_form('views_ui_config_item_form', $form_state['view'], $display_id, $type, $form_state['id'], TRUE);
-      // This form is at a different URL than $_GET['q'] so we have to pass via the object.
-      $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'type' => $type,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_add_item_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      $object = NULL;
+      if (!empty($form_state['id'])) {
+        $form_state['input'] = array(); // Remove the input so it can't post.
+        $form_state['executed'] = FALSE;
+        $form_state['stack'] = TRUE; // tell it to continue stacking forms up
+        $object = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
+        // This form is at a different URL than $_GET['q'] so we have to pass via the object.
+        $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
+      }
+      return views_ui_regenerate_tabs($view, $display_id, $object);
     }
-    return views_ui_regenerate_tabs($form_state['view'], $display_id, $object);
+    return views_ajax_render($output);
   }
+
+  return $output;
 }
 
 /**
  * Form to add_item items in the views UI.
  */
-function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
+function views_ui_add_item_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
   }
@@ -1161,10 +1252,6 @@ function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
   $form['#title'] = check_plain($display->display_title) . ': ';
   $form['#title'] .= t('Add @type', array('@type' => strtolower($types[$type]['title'])));
   $form['#section'] = $display_id . 'add-item';
-
-  $form_state['view'] = &$view;
-  $form_state['display_id'] = $display_id;
-  $form_state['type'] = $type;
 
   $options = views_fetch_field_names($view->base_table, $type);
 
@@ -1181,7 +1268,7 @@ function views_ui_add_item_form(&$form_state, $view, $display_id, $type) {
       '#value' => '<div>' . t('There are no @types available to add.', array('@types' =>  strtolower($types[$type]['title']))) . '</div>',
     );
   }
-  views_ui_standard_form_buttons($form, 'views_ui_add_item_form', t('Add'));
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_add_item_form', t('Add'));
 
   return $form;
 }
@@ -1218,29 +1305,48 @@ function views_ui_add_item_form_submit($form, &$form_state) {
  * Page callback to configure an item
  */
 function views_ui_config_item($js, $view, $display_id, $type, $id) {
-  if (!$js) {
-    $output = drupal_get_form('views_ui_config_item_form', $view, $display_id, $type, $id, TRUE);
-    return $output;
-  }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_config_item_form', $view, $display_id, $type, $id);
-    // regenerate the tabset, set it to replace
-    $object = NULL;
-    // If we're editing several in a row, go to the next one. Setting $stack to TRUE.
-    if (!empty($form_state['next'])) {
-      $object = views_render_ajax_form('views_ui_config_item_form', $form_state['view'], $display_id, $type, $form_state['next'], TRUE);
-      // This form is at a different URL than $_GET['q'] so we have to pass via the object.
-      $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[next]");
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'id' => $id,
+    'type' => $type,
+    'stack' => TRUE,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      $object = NULL;
+      if (!empty($form_state['next'])) {
+        $form_state['input'] = array(); // Remove the input so it can't post.
+        $form_state['executed'] = FALSE;
+        $form_state['id'] = $form_state['next'];
+        $object = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
+        // This form is at a different URL than $_GET['q'] so we have to pass via the object.
+        $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
+      }
+      return views_ui_regenerate_tabs($view, $display_id, $object);
     }
-    return views_ui_regenerate_tabs($form_state['view'], $display_id, $object);
+    return views_ajax_render($output);
   }
+
+  return $output;
 }
 
 /**
  * Form to config_item items in the views UI.
  */
-function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id, $stack = FALSE) {
+function views_ui_config_item_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+  $id = $form_state['id'];
+
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
@@ -1264,10 +1370,6 @@ function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id,
 
       // Get form from the handler.
       $handler->options_form($form['options'], $form_state);
-      $form_state['view'] = &$view;
-      $form_state['display_id'] = $display_id;
-      $form_state['type'] = $type;
-      $form_state['id'] = $id;
       $form_state['handler'] = &$handler;
 
     }
@@ -1277,12 +1379,10 @@ function views_ui_config_item_form(&$form_state, $view, $display_id, $type, $id,
     $form['stack'] = array(
       '#type' => 'hidden',
       // default value means that what we receive in $_POST is more important.
-      '#default_value' => $stack,
+      '#default_value' => !empty($form_state['stack']),
     );
 
-    $form_state['stack'] = $stack;
-
-    views_ui_standard_form_buttons($form, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
   }
   return $form;
 }
@@ -1382,22 +1482,37 @@ function views_ui_config_item_form_expose($form, &$form_state) {
  * Page callback to change the summary style of an argument
  */
 function views_ui_change_style($js, $view, $display_id, $type, $id) {
-  if (!$js) {
-    $output = drupal_get_form('views_ui_change_style_form', $view, $display_id, $type, $id);
-    return $output;
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'display_id' => $display_id,
+    'type' => $type,
+    'id' => $id,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_change_style_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      return views_ui_regenerate_tabs($view, $display_id);
+    }
+    return views_ajax_render($output);
   }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_change_style_form', $view, $display_id, $type, $id);
-    // regenerate the tabset, set it to replace
-    return views_ui_regenerate_tabs($form_state['view'], $display_id);
-  }
+
+  return $output;
 }
 
 /**
  * Form to change_style items in the views UI.
  */
-function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id) {
+function views_ui_change_style_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+  $id = $form_state['id'];
+
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
@@ -1422,13 +1537,9 @@ function views_ui_change_style_form(&$form_state, $view, $display_id, $type, $id
       '#default_value' => $item['style_plugin'],
     );
 
-    $form_state['view'] = &$view;
-    $form_state['display_id'] = $display_id;
-    $form_state['type'] = $type;
-    $form_state['id'] = $id;
     $form_state['handler'] = &$handler;
 
-    views_ui_standard_form_buttons($form, 'views_ui_change_style_form');
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_change_style_form');
   }
   return $form;
 }
@@ -1456,22 +1567,37 @@ function views_ui_change_style_form_submit($form, &$form_state) {
  * Page callback to config the summary style of an argument
  */
 function views_ui_config_style($js, $view, $display_id, $type, $id) {
-  if (!$js) {
-    $output = drupal_get_form('views_ui_config_style_form', $view, $display_id, $type, $id);
-    return $output;
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'display_id' => $display_id,
+    'type' => $type,
+    'id' => $id,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_config_style_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      return views_ui_regenerate_tabs($view, $display_id);
+    }
+    return views_ajax_render($output);
   }
-  else {
-    views_include('ajax');
-    $form_state = views_ajax_form('views_ui_config_style_form', $view, $display_id, $type, $id);
-    // regenerate the tabset, set it to replace
-    return views_ui_regenerate_tabs($form_state['view'], $display_id);
-  }
+
+  return $output;
 }
 
 /**
  * Form to config_style items in the views UI.
  */
-function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id) {
+function views_ui_config_style_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+  $id = $form_state['id'];
+
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
     views_ajax_render(t('Invalid display id'));
@@ -1502,13 +1628,9 @@ function views_ui_config_style_form(&$form_state, $view, $display_id, $type, $id
       $plugin->options_form($form['style_options'], $form_state);
     }
 
-    $form_state['view'] = &$view;
-    $form_state['display_id'] = $display_id;
-    $form_state['type'] = $type;
-    $form_state['id'] = $id;
     $form_state['handler'] = &$handler;
 
-    views_ui_standard_form_buttons($form, 'views_ui_config_style_form');
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_style_form');
   }
   return $form;
 }

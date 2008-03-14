@@ -1,6 +1,23 @@
 <?php
 // $Id$
 
+function _views_theme_functions($hook, $view, $display = NULL) {
+  $themes = array();
+
+  if ($display) {
+    $themes[] = $hook . '__' . $display->id . '__' . $view->name;
+    $themes[] = $hook . '__' . $display->id;
+    if ($display->id != $display->display_plugin) {
+      $themes[] = $hook . '__' . $display->display_plugin . '__' . $view->name;
+      $themes[] = $hook . '__' . $display->display_plugin;
+    }
+  }
+  $themes[] = $hook . '__' . $view->name;
+  $themes[] = $hook;
+
+  return $themes;
+}
+
 /**
  * Preprocess the primary theme implementation for a view.
  */
@@ -169,6 +186,55 @@ function template_preprocess_views_view_table(&$vars) {
       }
     }
   }
+}
+
+/**
+ * Default theme function for all filter forms.
+ */
+function template_preprocess_views_exposed_form(&$vars) {
+  views_add_css('views');
+  $form = &$vars['form'];
+
+  // Put all single checkboxes together in the last spot.
+  $checkboxes = '';
+
+  $vars['widgets'] = array();
+  foreach ($form['#info'] as $id => $info) {
+    // Set aside checkboxes.
+    if ($form[$info['value']]['#type'] == 'checkbox') {
+      $checkboxes .= drupal_render($form[$info['value']]);
+      continue;
+    }
+    $widget = new stdClass;
+    // set up defaults so that there's always something there.
+    $widget->label = $widget->operator = $widget->widget = NULL;
+
+    if (!empty($info['label'])) {
+      $widget->label = $info['label'];
+    }
+    if (!empty($info['operator'])) {
+      $widget->operator = drupal_render($form[$info['operator']]);
+    }
+    $widget->widget = drupal_render($form[$info['value']]);
+    $vars['widgets'][$id] = $widget;
+  }
+
+  // Wrap up all the checkboxes we set aside into a widget.
+  if ($checkboxes) {
+    $widget = new stdClass;
+    // set up defaults so that there's always something there.
+    $widget->label = $widget->operator = $widget->widget = NULL;
+    $widget->widget = $checkboxes;
+    $vars['widgets']['checkboxes'] = $widget;
+  }
+
+  // Don't render these:
+  unset($form['form_id']);
+  unset($form['form_build_id']);
+  unset($form['form_token']);
+
+  // This includes the submit button.
+  $vars['button'] = drupal_render($form);
 }
 
 /**
