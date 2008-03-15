@@ -141,6 +141,13 @@ function views_ui_menu() {
   return $items;
 }
 
+function views_ui_help($path, $arg) {
+  switch ($path) {
+    case 'admin/build/views/tools':
+      return '<p>' . t('The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match.') . '</p>';
+  }
+}
+
 /*
  * Implementation of hook_perm()
  */
