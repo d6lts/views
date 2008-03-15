@@ -6,13 +6,6 @@
  */
 
 /**
- * Page callback for the tools page
- */
-function views_ui_admin_tools() {
-  return array('markup' => array('#value' => t('This page is not yet implemented.')));
-}
-
-/**
  * Page callback to list views in the system.
  */
 function views_ui_list_views($arg = NULL) {
@@ -343,7 +336,15 @@ function views_ui_import_validate($form, &$form_state) {
     form_error($form['view'], t('Unable to interpret view code.'));
   }
   if (empty($view->api_version) || $view->api_version < 2) {
-    form_error($form['view'], t('That view is not compatible with this version of Views.'));
+    // Check for some value that would only exist on a Views 1 view.
+    if (isset($view->url) || isset($view->page) || isset($view->block)) {
+      views_include('views1');
+      $view = views1_import($view);
+      drupal_set_message(t('You are importing a view created in Views version 1. You may need to adjust some parameters to work correctly in version 2.'), 'warning');
+    }
+    else {
+      form_error($form['view'], t('That view is not compatible with this version of Views.'));
+    }
   }
 
   if ($form_state['values']['name']) {
@@ -1752,4 +1753,143 @@ function views_ui_get_roles() {
  */
 function views_ui_item_css($item) {
   return views_css_safe('views-item-' . $item);
+}
+
+/**
+ * Page callback for the Views enable page.
+ */
+function views_ui_enable_page($view) {
+  $views_status = variable_get('views_defaults', array());
+  $views_status[$view->name] = FALSE; // false is enabled
+  variable_set('views_defaults', $views_status);
+  views_invalidate_cache();
+  menu_rebuild();
+  drupal_goto('admin/build/views');
+}
+
+/**
+ * Page callback for the Views enable page
+ */
+function views_ui_disable_page($view) {
+  $views_status = variable_get('views_defaults', array());
+  $views_status[$view->name] = TRUE; // True is disabled
+  variable_set('views_defaults', $views_status);
+  views_invalidate_cache();
+  menu_rebuild();
+  drupal_goto('admin/build/views');
+}
+
+/**
+ * Page callback for the tools - other page
+ */
+function views_ui_admin_other() {
+  return array('markup' => array('#value' => t('This page is not yet implemented.')));
+}
+
+/**
+ * Page callback for the tools - Views 1 convert page
+ */
+function views_ui_admin_convert() {
+
+  if (!db_table_exists('view_view')) {
+    return t('There are no Views 1 views stored in the database to convert.');
+  }
+  $items = array();
+  $sorts = array();
+
+  $header = array(
+    array('data' => t('View name'), 'field' => 'name', 'sort' => 'asc'),
+    array('data' => t('Description')),
+    array('data' => t('Operations')),
+  );
+  $current_views = array();
+  foreach (views_get_all_views() as $view) {
+    $current_views[] = $view->name;
+  }
+  $result = db_query("SELECT v.* FROM {view_view} v");
+  while ($view = db_fetch_object($result)) {
+    $ops = array();
+    if (!in_array($view->name, $current_views)) {
+      $ops[] = l(t('Convert'), "admin/build/views1/convert/$view->name");
+    }
+    else {
+      $ops[] = t('Converted');
+    }
+    $ops[] = l(t('Delete'), "admin/build/views1/delete/$view->name");
+
+    $item = array();
+    $item[] = check_plain($view->name);
+    $item[] = check_plain($view->description);
+    $item[] = implode(' | ', $ops);
+    $items[] = $item;
+
+    $ts = tablesort_init($header);
+    switch ($ts['sql']) {
+      case 'name':
+      default:
+        $sorts[] = $item[0];
+        break;
+      case 'title':
+        $sorts[] = $item[1];
+        break;
+    }
+  }
+
+  if (!empty($ts)) {
+    if (strtolower($ts['sort']) == 'desc') {
+      arsort($sorts);
+    }
+    else {
+      asort($sorts);
+    }
+  }
+
+  $i = array();
+  foreach ($sorts as $id => $title) {
+    $i[] = $items[$id];
+  }
+  $output = t('The table below lists Views version 1 views that are stored in the database. You can either convert them to work in Views version 2, or delete them. The views are convertible only if there is no Views 2 view with the same name.');
+  $output .= theme('table', $header, $i);
+  return $output;
+}
+
+/**
+ * Page callback for the tools - Views 1 convert page
+ */
+function views_ui_convert1($arg) {
+  views_include('views1');
+  $old = views1_load($arg);
+  $view = views1_import($old);
+  views_ui_cache_set($view);
+  drupal_goto('admin/build/views/edit/' . $view->name);
+}
+
+/**
+ * Page to delete a Views 1 view.
+ */
+function views_ui_delete1_confirm(&$form_state, $vid) {
+  $form_state['values']['vid'] = $vid;
+  $form = array();
+
+  $cancel = 'admin/build/views/tools/convert';
+  if (!empty($_REQUEST['cancel'])) {
+    $cancel = $_REQUEST['cancel'];
+  }
+  return confirm_form($form,
+                  t('Are you sure you want to delete the view %name?',
+                  array('%name' => $view->name)),
+                  $cancel,
+                  t('This action cannot be undone.'),
+                  t('Delete'),
+                  t('Cancel'));
+}
+
+/**
+ * Submit handler to delete a view.
+ */
+function views_ui_delete1_confirm_submit(&$form, &$form_state) {
+  views_include('views1');
+  views1_delete($form_state['values']['vid']);
+  drupal_set_message(t('The view has been deleted'));
+  $form_state['redirect'] = 'admin/build/views/tools/convert';
 }

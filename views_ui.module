@@ -50,20 +50,43 @@ function views_ui_menu() {
   );
   $items['admin/build/views/tools'] = $base + array(
     'title' => t('Tools'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('views_ui_admin_tools'),
+    'page callback' => 'views_ui_admin_convert',
     'type' => MENU_LOCAL_TASK
+  );
+  $items['admin/build/views/tools/convert'] = $base + array(
+    'title' => t('Convert'),
+    'description' => t('Convert stored Views 1 views.'),
+    'page callback' => 'views_ui_admin_convert',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => 1,
+  );
+  $items['admin/build/views/tools/other'] = $base + array(
+    'title' => t('Other'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_admin_other'),
+    'type' => MENU_LOCAL_TASK,
+    'weight' => 2,
+  );
+  $items['admin/build/views1/delete'] = $callback + array(
+    'title' => t('Delete view'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_delete1_confirm', 4),
+  );
+  $items['admin/build/views1/convert'] = $callback + array(
+    'title' => t('Convert view'),
+    'page callback' => 'views_ui_convert1',
+    'page arguments' => array(4),
   );
   $items['admin/build/views/delete/%views_ui_cache'] = $callback + array(
     'title' => t('Delete view'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_delete_confirm', 4),
   );
-  $items['admin/build/views/enable/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/enable/%views_ui_default'] = $callback + array(
     'page callback' => 'views_ui_enable_page',
     'page arguments' => array(4),
   );
-  $items['admin/build/views/disable/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/disable/%views_ui_default'] = $callback + array(
     'page callback' => 'views_ui_disable_page',
     'page arguments' => array(4),
   );
@@ -188,6 +211,19 @@ function views_ui_cache_load($name) {
   else {
     return $view;
   }
+}
+
+/**
+ * Specialized menu callback to load a view that is only a default
+ * view.
+ */
+function views_ui_default_load($name) {
+  $view = views_get_view($name);
+  if ($view->type == t('Default')) {
+    return $view;
+  }
+
+  return FALSE;
 }
 
 /**

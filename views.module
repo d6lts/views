@@ -202,6 +202,13 @@ function views_devel_caches() {
 }
 
 /**
+ * Invalidate the views cache, forcing a rebuild on the next grab of table data.
+ */
+function views_invalidate_cache() {
+  cache_clear_all('*', 'cache_views', true);
+}
+
+/**
  * Determine if the given user has access to the view + display.
  *
  * @param $view
@@ -652,7 +659,7 @@ function views_get_all_views() {
     $views = view::load_views();
 
     // Get all default views.
-    $status = variable_get('panel_page_defaults', array());
+    $status = variable_get('views_defaults', array());
 
     foreach (views_discover_default_views() as $view) {
       // Determine if default view is enabled or disabled.

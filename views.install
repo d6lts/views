@@ -16,9 +16,18 @@ function views_uninstall() {
 }
 
 /**
- * Implementation of hook_schema
+ * Implementation of hook_schemea
  */
 function views_schema() {
+  // Currently, schema 1 is the only schema we have. As we make updates,
+  // we might either create a new schema 2 or make adjustments here.
+  return views_schema_1();
+}
+
+/**
+ * Views 2's initial schema; separated for the purposes of updates.
+ */
+function views_schema_1() {
   $schema['views_view'] = array(
     'description' => t('Stores the general data for a view.'),
     'fields' => array(
@@ -158,3 +167,24 @@ function views_schema() {
   return $schema;
 }
 
+/**
+ * Update a site to Drupal 6! Contains a bit of special code to detect
+ * if you've been running a beta version or something.
+ */
+function views_update_6000() {
+  if (db_table_exists('views_view')) {
+    return;
+  }
+
+  // This is mostly the same as drupal_install_schema, but it forces
+  // views_schema_1 rather than the default schema. This will be important
+  // if we have table updates.
+  $schema = views_schema_1();
+  _drupal_initialize_schema($module, $schema);
+
+  $ret = array();
+  foreach ($schema as $name => $table) {
+    db_create_table($ret, $name, $table);
+  }
+  return $ret;
+}
