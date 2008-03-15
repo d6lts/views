@@ -110,16 +110,83 @@ function views_ui_add_page() {
  * Page callback for the live preview.
  */
 function views_ui_preview($js, $view) {
-  $display_id = !empty($_POST['display_id']) ? $_POST['display_id'] : 'default';
-  if (empty($view->display[$display_id])) {
-    $display_id = 'default';
-  }
+  $form_state = array(
+    'display_id' => 'default',
+    'args' => '',
+    're_render' => TRUE,
+    'no_redirect' => TRUE,
+    'view' => &$view,
+  );
 
+  $output = drupal_build_form('views_ui_preview_form', $form_state);
   $args = array();
-  if (!empty($_POST['args'])) {
-    $args = explode('/', $_POST['args']);
+  if (!empty($form_state['args'])) {
+    $args = explode('/', $form_state['args']);
   }
 
+  $output .= $view->preview($form_state['display_id'], $args);
+
+  if (!$js) {
+    views_add_css('admin');
+    drupal_set_title($view->get_title());
+    return $output;
+  }
+  else {
+    views_include('ajax');
+    $object = new stdClass();
+    if ($messages = theme('status_messages')) {
+      $object->display = '<div class="views-messages">' . $messages . '</div>';
+    }
+    $object->display .= $output;
+    $object->title = $view->get_title();
+    views_ajax_render($object);
+  }
+}
+
+/**
+ * Form for generating argument information for the live preview.
+ */
+function views_ui_preview_form(&$form_state) {
+  $view = &$form_state['view'];
+  $view->init_display();
+  $options = array();
+  foreach ($view->display as $id => $display) {
+    $options[$id] = $display->display_title;
+  }
+
+  $form['#attributes'] = array(
+    'class' => 'clear-block',
+  );
+
+  $form['display_id'] = array(
+    '#type' => 'select',
+    '#title' => t('Display'),
+    '#options' => $options,
+    '#default_value' => $form_state['display_id'],
+    '#id' => 'preview-display-id',
+  );
+
+  $form['args'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Arguments'),
+    '#default_value' => $form_state['args'],
+    '#description' => t('Separate arguments with a / as though they were a URL path.'),
+    '#id' => 'preview-args',
+  );
+
+  $form['preview'] = array(
+    '#type' => 'submit',
+    '#value' => t('Preview'),
+    '#id' => 'preview-submit',
+  );
+
+  $form['#action'] = url("admin/build/views/nojs/preview/$view->name");
+  return $form;
+}
+
+function views_ui_preview_form_submit(&$form, &$form_state) {
+  $form_state['display_id'] = $form_state['values']['display_id'];
+  $form_state['args'] = $form_state['values']['args'];
 }
 
 /**
@@ -406,6 +473,16 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   $tabs->add_extra($display_button);
 
   $vars['tabs'] = $tabs->render();
+
+  $form_state = array(
+    'display_id' => 'default',
+    'args' => '',
+    're_render' => FALSE,
+    'no_redirect' => TRUE,
+    'view' => &$view,
+    'input' => array(),
+  );
+  $vars['preview'] = drupal_build_form('views_ui_preview_form', $form_state);
 
   views_add_css('admin');
   views_add_js('ajax');

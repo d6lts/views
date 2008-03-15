@@ -666,9 +666,9 @@ class views_query {
     }
 
     // If it's not a count query, add our fields
-    $fields_array = $get_count ? array($this->count_field) : $this->fields;
+    $fields_array = $this->fields;
     foreach ($fields_array as $field) {
-      if ($fields) {        // @todo: LG: This would be cleaner as an array that gets imploded.
+      if ($fields) {
         $fields .= ",\n   ";
       }
       $string = '';
@@ -688,27 +688,12 @@ class views_query {
       $fields .= $string;
     }
 
+    if ($this->groupby) {
+      $groupby = "GROUP BY " . implode(', ', $this->groupby) . "\n";
+    }
+
     if (!$get_count) {
       // we only add the groupby if we're not counting.
-      if ($this->groupby) {
-        $groupby = "GROUP BY " . implode(', ', $this->groupby) . "\n";
-      }
-
-      // ok, tablesort_sql is really, really (really) annoying.
-      // 1) it insists on adding the ORDER BY clause.
-      // 2) You're supposed to give it your stuff as $before, but
-      // 3) You have to add the comma and
-      // 4) if it doesn't have anything to add, it returns NOTHING.
-      // 5) So I'm just going to get what it sends back and chop off
-      //    the orderby, cause otherwise my code is too ugly with
-      //    various checks.
-      if ($this->header) {
-        $result = tablesort_sql($this->header);
-        if ($result) {
-          $this->orderby[] = str_replace('ORDER BY ', '', $result);
-        }
-      }
-
       if ($this->orderby) {
         $orderby = "ORDER BY " . implode(', ', $this->orderby) . "\n";
       }
@@ -724,6 +709,10 @@ class views_query {
     }
 
     $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $orderby";
+
+    if ($get_count) {
+      $query = "SELECT COUNT(*) FROM ($query) count_alias";
+    }
 
     $replace = array('&gt;' => '>', '&lt;' => '<');
     $query = strtr($query, $replace);

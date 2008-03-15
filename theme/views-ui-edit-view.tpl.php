@@ -30,3 +30,7 @@
 </div>
 
 <?php print $save_button ?>
+
+<div id='views-live-preview'>
+  <?php print $preview ?>
+</div>

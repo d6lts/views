@@ -423,7 +423,7 @@ class view extends views_db_object {
 
     // Arguments can, in fact, cause this whole thing to abort.
     if (!$this->_build_arguments()) {
-      return;
+      return $this->built;
     }
 
     // Initialize the style; arguments may have changed which style we use,
@@ -472,14 +472,14 @@ class view extends views_db_object {
    * Execute the view's query.
    */
   function execute($display_id = NULL) {
-    if (!empty($this->executed)) {
-      return TRUE;
-    }
-
     if (empty($this->built)) {
       if (!$this->build($display_id)) {
         return FALSE;
       }
+    }
+
+    if (!empty($this->executed)) {
+      return TRUE;
     }
 
     $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field);

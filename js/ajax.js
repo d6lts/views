@@ -75,6 +75,8 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
   else {
     // If no display, reset the form.
     Drupal.Views.Ajax.setForm('', Drupal.settings.views.ajax.defaultForm);
+    // Trigger an update for the live preview when we reach this state:
+    $('#views-ui-preview-form').trigger('submit');
   } 
 
   // Go through the 'add' array and add any new content we're instructed to add.
@@ -115,6 +117,58 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
   if (data.changed) {
     $('div.views-basic-info').addClass('changed');
+  }
+}
+
+/**
+ * An ajax responder that accepts a packet of JSON data and acts appropriately.
+ * This one specifically responds to the Views live preview area, so it's
+ * hardcoded and specialized.
+ */
+Drupal.Views.Ajax.previewResponse = function(data) {
+  if (data.debug) {
+    alert(data.debug);
+  }
+
+  // See if we have any settings to extend. Do this first so that behaviors
+  // can access the new settings easily.
+
+  if (data.js) {
+    $.extend(Drupal.settings, data.js);
+  }
+
+  // Check the 'display' for data.
+  if (data.display) {
+    var ajax_area = 'div#views-live-preview';
+    $(ajax_area).html(data.display);
+
+    var url = $(ajax_area, 'form').attr('action');
+
+    // if a URL was supplied, bind the form to it.
+    if (url) {   
+      // Bind a click to the button to set the value for the button.
+      $('input[type=submit]', ajax_area).unbind('click');
+      $('input[type=submit]', ajax_area).click(function() {
+        $('form', ajax_area).append('<input type="hidden" name="' 
+          + $(this).attr('name') + '" value="' + $(this).val() + '">');
+      });
+
+      // Bind forms to ajax submit.
+      $('form', ajax_area).unbind('submit'); // be safe here.
+      $('form', ajax_area).submit(function() {
+        $(this).ajaxSubmit({
+          url: url,
+          data: '',
+          type: 'POST',
+          success: Drupal.Views.Ajax.previewResponse,
+          error: function() { alert("An error occurred."); },
+          dataType: 'json'
+        });
+        return false;
+      });
+    }
+
+    Drupal.attachBehaviors(ajax_area);
   }
 }
 
@@ -159,4 +213,23 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
     return false;   
   });
 
+  // Bind the live preview to where it's supposed to go.
+
+  $('form#views-ui-preview-form:not(.views-processed)')
+    .addClass('views-processed')
+    .submit(function() {
+    var url = $(this).attr('action');
+    url = url.replace('nojs', 'ajax');
+
+    $(this).ajaxSubmit({
+      url: url,
+      data: '',
+      type: 'POST',
+      success: Drupal.Views.Ajax.previewResponse,
+      error: function() { alert("An error occurred."); },
+      dataType: 'json'
+    });
+
+    return false;   
+  });
 }

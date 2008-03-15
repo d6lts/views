@@ -1626,6 +1626,8 @@ class views_handler_argument extends views_handler {
   function default_empty() {
     // We return with no query; this will force the empty text.
     $this->view->built = TRUE;
+    $this->view->executed = TRUE;
+    $this->view->result = array();
     return FALSE;
   }
 
