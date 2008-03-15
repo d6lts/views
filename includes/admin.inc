@@ -763,7 +763,7 @@ function views_ui_regenerate_tabs(&$view, $display_id = NULL, $object = NULL) {
   }
 
   if (!$view->set_display('default')) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id while regenerating tabs'));
   }
 
   if (!is_object($object)) {
@@ -889,7 +889,7 @@ function views_ui_add_display($js, $view) {
 
       // Make sure the new display is active
       if (!$view->set_display('default')) {
-        views_ajax_render(t('Invalid display id'));
+        views_ajax_render(t('Unable to initialize default display'));
       }
 
       // Render the new display
@@ -1142,7 +1142,7 @@ function views_ui_edit_display_form(&$form_state) {
   $section = $form_state['section'];
 
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $display = &$view->display[$display_id];
 
@@ -1225,7 +1225,7 @@ function views_ui_rearrange_form(&$form_state) {
 
   $types = views_object_types();
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $display = &$view->display[$display_id];
   $form['#title'] = check_plain($display->display_title) . ': ';
@@ -1386,7 +1386,7 @@ function views_ui_add_item_form(&$form_state) {
   $type = $form_state['type'];
 
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $display = &$view->display[$display_id];
 
@@ -1491,7 +1491,7 @@ function views_ui_config_item_form(&$form_state) {
 
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $item = $view->get_item($display_id, $type, $id);
 
@@ -1657,7 +1657,7 @@ function views_ui_change_style_form(&$form_state) {
 
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $item = $view->get_item($display_id, $type, $id);
 
@@ -1742,7 +1742,7 @@ function views_ui_config_style_form(&$form_state) {
 
   $form = array('options' => array('#tree' => TRUE));
   if (!$view->set_display($display_id)) {
-    views_ajax_render(t('Invalid display id'));
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
   }
   $item = $view->get_item($display_id, $type, $id);
 
