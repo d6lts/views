@@ -111,7 +111,27 @@ function views_ui_preview($js, $view) {
     $args = explode('/', $form_state['args']);
   }
 
-  $output .= $view->preview($form_state['display_id'], $args);
+  $preview = $view->preview($form_state['display_id'], $args);
+
+  $output .= '<div class="views-query-info">';
+  $rows = array();
+  $query = db_prefix_tables($view->build_info['query']);
+  if ($view->build_info['query_args']) {
+    _db_query_callback($view->build_info['query_args'], TRUE);
+    $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
+  }
+  $rows[] = array('<strong>' . t('Query') . '</strong>', $query);
+  $rows[] = array('<strong>' . t('Title') . '</strong>', $view->get_title());
+  if ($view->display_handler->get_option('path')) {
+    $path = $view->get_url();
+    $path = l($path, $path);
+    $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
+  }
+
+  $output .= theme('table', array(), $rows);
+
+  $output .= '</div>';
+  $output .= $preview;
 
   if (!$js) {
     views_add_css('admin');
