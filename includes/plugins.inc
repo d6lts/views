@@ -366,6 +366,10 @@ class views_plugin_display extends views_object {
       $text = '<span>' . $text . '</span>';
     }
 
+    if (empty($text)) {
+      $text = t('Broken field');
+    }
+
     return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link ' . $class), 'html' => TRUE));
   }
 
@@ -506,7 +510,12 @@ class views_plugin_display extends views_object {
         }
         $format_val = filter_resolve_format($fmt_string);
         $format = filter_formats($format_val);
-        $field = $format->name;
+        if ($format) {
+          $field = $format->name;
+        }
+        else {
+          $field = t('Unknown/missing filter');
+        }
       }
 
       $output[] = t('!name: !field', array('!name' => $name, '!field' => $this->option_link($field, $type)));
@@ -859,7 +868,13 @@ class views_plugin_display extends views_object {
    * If override/revert was clicked, perform the proper toggle.
    */
   function options_override($form, &$form_state) {
-    $section = $form_state['section'];
+    $this->set_override($form_state['section']);
+  }
+
+  /**
+   * Flip the override setting for the given section.
+   */
+  function set_override($section) {
     $options = $this->defaultable_sections($section);
     if (!$options) {
       return;
@@ -1104,6 +1119,10 @@ class views_plugin_display_page extends views_plugin_display {
         $items[$path]['title'] = $menu['title'];
       }
 
+      if (isset($menu['weight'])) {
+        $items[$path]['weight'] = intval($menu['weight']);
+      }
+
       switch ($menu['type']) {
         case 'none':
         default:
@@ -1153,6 +1172,10 @@ class views_plugin_display_page extends views_plugin_display {
                 break;
             }
           }
+          if (isset($tab_options['weight'])) {
+            $items[$default_path]['weight'] = intval($tab_options['weight']);
+          }
+
         }
       }
     }
@@ -1269,7 +1292,7 @@ class views_plugin_display_page extends views_plugin_display {
         );
         $menu = $this->get_option('menu');
         if (empty($menu)) {
-          $menu = array('type' => 'none', 'title' => '');
+          $menu = array('type' => 'none', 'title' => '', 'weight' => 0);
         }
         $form['menu']['type'] = array(
           '#prefix' => '<div class="views-left-30">',
@@ -1281,11 +1304,17 @@ class views_plugin_display_page extends views_plugin_display {
         );
         $form['menu']['title'] = array(
           '#prefix' => '<div class="views-left-50">',
-          '#suffix' => '</div>',
           '#title' => t('Title'),
           '#type' => 'textfield',
           '#default_value' => $menu['title'],
           '#description' => t('If set to normal or tab, enter the text to use for the menu item.'),
+        );
+        $form['menu']['weight'] = array(
+          '#suffix' => '</div>',
+          '#title' => t('Weight'),
+          '#type' => 'textfield',
+          '#default_value' => isset($menu['weight']) ? $menu['weight'] : 0,
+          '#description' => t('If set to normal or tab, enter the weight of the item. The lower th weight the higher/further left it will appear.'),
         );
         break;
       case 'tab_options':

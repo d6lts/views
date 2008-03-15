@@ -942,6 +942,18 @@ class view extends views_db_object {
     }
     return $output;
   }
+
+  /**
+   * Make a copy of this view that has been sanitized of all database IDs
+   * and handlers and other stuff.
+   *
+   * I'd call this clone() but it's reserved.
+   */
+  function copy() {
+    $code = $this->export();
+    eval($code);
+    return $view;
+  }
 }
 
 /**

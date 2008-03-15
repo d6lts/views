@@ -19,6 +19,8 @@ function views_ui_menu() {
 
   $callback = $base + array('type' => MENU_CALLBACK);
 
+  $convert = array('file' => 'includes/convert.inc') + $base;
+
   $items['admin/build/views'] = $base + array(
     'title' => t('Views'),
     'page callback' => 'views_ui_list_views',
@@ -36,12 +38,6 @@ function views_ui_menu() {
     'page callback' => 'views_ui_add_page',
     'type' => MENU_LOCAL_TASK
   );
-  $items['admin/build/views/edit/%views_ui_cache'] = $base + array(
-    'title' => t('Edit'),
-    'page callback' => 'views_ui_edit_page',
-    'page arguments' => array(4),
-    'type' => MENU_LOCAL_TASK
-  );
   $items['admin/build/views/import'] = $base + array(
     'title' => t('Import'),
     'page callback' => 'drupal_get_form',
@@ -50,37 +46,49 @@ function views_ui_menu() {
   );
   $items['admin/build/views/tools'] = $base + array(
     'title' => t('Tools'),
-    'page callback' => 'views_ui_admin_convert',
+    'page callback' => 'views_ui_admin_tools',
     'type' => MENU_LOCAL_TASK
   );
-  $items['admin/build/views/tools/convert'] = $base + array(
+  $items['admin/build/views/tools/basic'] = $base + array(
+    'title' => t('Basic'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_admin_tools'),
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+
+  $items['admin/build/views/tools/convert'] = $convert + array(
     'title' => t('Convert'),
     'description' => t('Convert stored Views 1 views.'),
     'page callback' => 'views_ui_admin_convert',
-    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'type' => MENU_LOCAL_TASK,
     'weight' => 1,
   );
-  $items['admin/build/views/tools/other'] = $base + array(
-    'title' => t('Other'),
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('views_ui_admin_other'),
-    'type' => MENU_LOCAL_TASK,
-    'weight' => 2,
-  );
-  $items['admin/build/views1/delete'] = $callback + array(
+  $items['admin/build/views1/delete'] = $convert + array(
     'title' => t('Delete view'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_delete1_confirm', 4),
+    'type' => MENU_CALLBACK,
   );
-  $items['admin/build/views1/convert'] = $callback + array(
+  $items['admin/build/views1/convert'] = $convert + array(
     'title' => t('Convert view'),
     'page callback' => 'views_ui_convert1',
     'page arguments' => array(4),
+    'type' => MENU_CALLBACK,
   );
+
   $items['admin/build/views/delete/%views_ui_cache'] = $callback + array(
     'title' => t('Delete view'),
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_delete_confirm', 4),
+  );
+  $items['admin/build/views/export/%views_ui_cache'] = $callback + array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_export_page', 4),
+  );
+  $items['admin/build/views/clone/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_clone_page',
+    'page arguments' => array(4),
   );
   $items['admin/build/views/enable/%views_ui_default'] = $callback + array(
     'page callback' => 'views_ui_enable_page',
@@ -90,9 +98,13 @@ function views_ui_menu() {
     'page callback' => 'views_ui_disable_page',
     'page arguments' => array(4),
   );
-  $items['admin/build/views/export/%views_ui_cache'] = $callback + array(
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('views_ui_export_page', 4),
+
+  // Many line items for editing a view.
+  $items['admin/build/views/edit/%views_ui_cache'] = $base + array(
+    'title' => t('Edit'),
+    'page callback' => 'views_ui_edit_page',
+    'page arguments' => array(4),
+    'type' => MENU_LOCAL_TASK
   );
   // lots of little edit form pieces.
   $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
@@ -143,8 +155,8 @@ function views_ui_menu() {
 
 function views_ui_help($path, $arg) {
   switch ($path) {
-    case 'admin/build/views/tools':
-      return '<p>' . t('The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match.') . '</p>';
+    case 'admin/build/views/tools/convert':
+      return '<p>' . t('The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match. You can import Views 1 views through the normal Import tab.') . '</p>';
   }
 }
 

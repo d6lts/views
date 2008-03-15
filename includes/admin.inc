@@ -30,6 +30,7 @@ function views_ui_list_views($arg = NULL) {
     if (empty($view->disabled)) {
       $ops[] = l(t('Edit'), "admin/build/views/edit/$view->name");
       $ops[] = l(t('Export'), "admin/build/views/export/$view->name");
+      $ops[] = l(t('Clone'), "admin/build/views/clone/$view->name");
     }
     if ($view->type != t('Default')) {
       $text = $view->type == t('Overridden') ? t('Revert') : t('Delete');
@@ -90,13 +91,6 @@ function views_ui_list_views($arg = NULL) {
 
   $output = theme('table', $header, $i);
   return $output;
-}
-
-/**
- * Page callback to add a new view.
- */
-function views_ui_add_page() {
-  return drupal_get_form('views_ui_add_form');
 }
 
 /**
@@ -177,33 +171,67 @@ function views_ui_preview_form(&$form_state) {
   return $form;
 }
 
+/**
+ * Submit the preview form.
+ *
+ * This just takes the data and stores it on the form state in a
+ * known location. The caller will be responsible for using it.
+ */
 function views_ui_preview_form_submit(&$form, &$form_state) {
   $form_state['display_id'] = $form_state['values']['display_id'];
   $form_state['args'] = $form_state['values']['args'];
 }
 
 /**
+ * Page callback to add a new view.
+ */
+function views_ui_add_page() {
+  $form_state = array(
+    'view' => NULL
+  );
+
+  return drupal_build_form('views_ui_add_form', $form_state);
+}
+
+/**
+ * Page callback to add a new view.
+ */
+function views_ui_clone_page($view) {
+  $form_state = array(
+    'view' => $view->copy(),
+  );
+
+  drupal_set_title(t('Clone view @view', array('@view' => $view->name)));
+  return drupal_build_form('views_ui_add_form', $form_state);
+}
+
+/**
  * Form constructor callback to create the views Add Form, phase 1.
  */
 function views_ui_add_form(&$form_state) {
+  $view = $form_state['view'];
   $form = array();
+
   $form['name'] = array(
     '#type' => 'textfield',
     '#title' => t('View name'),
     '#description' => t('This is the unique name of the view. It must contain only alphanumeric characters and underscores; it is used to identify the view internally and to generate unique theming template names for this view. If overriding a module provided view, the name must not be changed or instead a new view will be created.'),
     '#required' => TRUE,
+    '#default_value' => $view ? $view->name : '',
   );
 
   $form['description'] = array(
     '#type' => 'textfield',
     '#title' => t('View description'),
     '#description' => t('This description will appear on the Views administrative UI to tell you what the view is about.'),
+    '#default_value' => $view ? $view->description : '',
   );
 
   $form['tag'] = array(
     '#type' => 'textfield',
     '#title' => t('View tag'),
     '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
+    '#default_value' => $view ? $view->tag : '',
     // TODO: This should be an autocomplete field.
   );
 
@@ -211,9 +239,13 @@ function views_ui_add_form(&$form_state) {
     '#type' => 'radios',
     '#title' => t('View type'),
     '#description' => t('The view type is the primary table for which information is being retrieved. The view type controls what arguments, fields, sort criteria and filters are available, so once this is set it <strong>cannot be changed</strong>.'),
-    '#default_value' => 'node', // default to node views.
+    '#default_value' => $view ? $view->base_table : 'node',
     '#options' => views_fetch_base_table_names(),
   );
+
+  if ($view) {
+    $form['base_table']['#disabled'] = TRUE;
+  }
 
   $form['submit'] = array(
     '#type' => 'submit',
@@ -227,21 +259,33 @@ function views_ui_add_form(&$form_state) {
 
 /**
  * Validate the add view form.
- *
- * @todo Validate the name field.
  */
 function views_ui_add_form_validate($form, &$form_state) {
+  $name = $form_state['values']['name'];
+
+  // View name must be alphanumeric or underscores, no other punctuation.
+  if (preg_match('/[^a-zA-Z0-9_]/', $name)) {
+    form_error($form['name'], t('View name must be alphanumeric or underscores only.'));
+  }
+
+  // View name must already exist.
+  $view = views_get_view($form_state['values']['name']);
+  if ($view && $view->type != t('Default')) {
+    form_error($form['name'], t('You must use a unique name for this view.'));
+  }
 }
 
 /**
  * Process the add view form
  */
 function views_ui_add_form_submit($form, &$form_state) {
-  $view = views_new_view();
+  $view = $form_state['view'] ? $form_state['view'] : views_new_view();
   $view->name = $form_state['values']['name'];
   $view->description = $form_state['values']['description'];
   $view->tag = $form_state['values']['tag'];
-  $view->base_table = $form_state['values']['base_table'];
+  if (empty($form['base_table']['#disabled'])) {
+    $view->base_table = $form_state['values']['base_table'];
+  }
 
   views_ui_cache_set($view);
   $form_state['redirect'] ='admin/build/views/edit/' . $view->name;
@@ -338,7 +382,7 @@ function views_ui_import_validate($form, &$form_state) {
   if (empty($view->api_version) || $view->api_version < 2) {
     // Check for some value that would only exist on a Views 1 view.
     if (isset($view->url) || isset($view->page) || isset($view->block)) {
-      views_include('views1');
+      views_include('convert');
       $view = views1_import($view);
       drupal_set_message(t('You are importing a view created in Views version 1. You may need to adjust some parameters to work correctly in version 2.'), 'warning');
     }
@@ -1782,114 +1826,6 @@ function views_ui_disable_page($view) {
 /**
  * Page callback for the tools - other page
  */
-function views_ui_admin_other() {
+function views_ui_admin_tools() {
   return array('markup' => array('#value' => t('This page is not yet implemented.')));
-}
-
-/**
- * Page callback for the tools - Views 1 convert page
- */
-function views_ui_admin_convert() {
-
-  if (!db_table_exists('view_view')) {
-    return t('There are no Views 1 views stored in the database to convert.');
-  }
-  $items = array();
-  $sorts = array();
-
-  $header = array(
-    array('data' => t('View name'), 'field' => 'name', 'sort' => 'asc'),
-    array('data' => t('Description')),
-    array('data' => t('Operations')),
-  );
-  $current_views = array();
-  foreach (views_get_all_views() as $view) {
-    $current_views[] = $view->name;
-  }
-  $result = db_query("SELECT v.* FROM {view_view} v");
-  while ($view = db_fetch_object($result)) {
-    $ops = array();
-    if (!in_array($view->name, $current_views)) {
-      $ops[] = l(t('Convert'), "admin/build/views1/convert/$view->name");
-    }
-    else {
-      $ops[] = t('Converted');
-    }
-    $ops[] = l(t('Delete'), "admin/build/views1/delete/$view->name");
-
-    $item = array();
-    $item[] = check_plain($view->name);
-    $item[] = check_plain($view->description);
-    $item[] = implode(' | ', $ops);
-    $items[] = $item;
-
-    $ts = tablesort_init($header);
-    switch ($ts['sql']) {
-      case 'name':
-      default:
-        $sorts[] = $item[0];
-        break;
-      case 'title':
-        $sorts[] = $item[1];
-        break;
-    }
-  }
-
-  if (!empty($ts)) {
-    if (strtolower($ts['sort']) == 'desc') {
-      arsort($sorts);
-    }
-    else {
-      asort($sorts);
-    }
-  }
-
-  $i = array();
-  foreach ($sorts as $id => $title) {
-    $i[] = $items[$id];
-  }
-  $output = t('The table below lists Views version 1 views that are stored in the database. You can either convert them to work in Views version 2, or delete them. The views are convertible only if there is no Views 2 view with the same name.');
-  $output .= theme('table', $header, $i);
-  return $output;
-}
-
-/**
- * Page callback for the tools - Views 1 convert page
- */
-function views_ui_convert1($arg) {
-  views_include('views1');
-  $old = views1_load($arg);
-  $view = views1_import($old);
-  views_ui_cache_set($view);
-  drupal_goto('admin/build/views/edit/' . $view->name);
-}
-
-/**
- * Page to delete a Views 1 view.
- */
-function views_ui_delete1_confirm(&$form_state, $vid) {
-  $form_state['values']['vid'] = $vid;
-  $form = array();
-
-  $cancel = 'admin/build/views/tools/convert';
-  if (!empty($_REQUEST['cancel'])) {
-    $cancel = $_REQUEST['cancel'];
-  }
-  return confirm_form($form,
-                  t('Are you sure you want to delete the view %name?',
-                  array('%name' => $view->name)),
-                  $cancel,
-                  t('This action cannot be undone.'),
-                  t('Delete'),
-                  t('Cancel'));
-}
-
-/**
- * Submit handler to delete a view.
- */
-function views_ui_delete1_confirm_submit(&$form, &$form_state) {
-  views_include('views1');
-  views1_delete($form_state['values']['vid']);
-  drupal_set_message(t('The view has been deleted'));
-  $form_state['redirect'] = 'admin/build/views/tools/convert';
 }
