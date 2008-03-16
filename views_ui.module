@@ -259,7 +259,7 @@ function views_ui_js_load($js) {
  * Specialized cache function to add a flag to our view, include an appropriate
  * include, and cache more easily.
  */
-function views_ui_cache_set($view) {
+function views_ui_cache_set(&$view) {
   views_include('cache');
   $view->changed = TRUE; // let any future object know that this view has changed.
 
