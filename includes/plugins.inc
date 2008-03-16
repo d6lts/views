@@ -145,8 +145,8 @@ class views_plugin_display extends views_object {
    * Fill this plugin in with the view, display, etc.
    */
   function init(&$view, &$display) {
-    $this->view = $view;
-    $this->display = $display;
+    $this->view = &$view;
+    $this->display = &$display;
   }
 
   /**
@@ -1549,8 +1549,8 @@ class views_plugin_style extends views_object {
    *   from at least two locations. If it's not included, look on the display.
    */
   function init(&$view, &$display, $options = NULL) {
-    $this->view = $view;
-    $this->display = $display;
+    $this->view = &$view;
+    $this->display = &$display;
     if (isset($options)) {
       $this->options = $options;
     }
@@ -2000,8 +2000,8 @@ class views_plugin_row extends views_object {
    * Initialize the row plugin.
    */
   function init(&$view, &$display) {
-    $this->view = $view;
-    $this->display = $display;
+    $this->view = &$view;
+    $this->display = &$display;
     $this->options = $display->handler->get_option('row_options');
   }
 

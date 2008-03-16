@@ -120,8 +120,8 @@ function views_ui_preview($js, $view) {
     _db_query_callback($view->build_info['query_args'], TRUE);
     $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
   }
-  $rows[] = array('<strong>' . t('Query') . '</strong>', $query);
-  $rows[] = array('<strong>' . t('Title') . '</strong>', $view->get_title());
+  $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
+  $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
   if ($view->display_handler->get_option('path')) {
     $path = $view->get_url();
     $path = l($path, $path);
