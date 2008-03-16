@@ -346,6 +346,17 @@ class views_plugin_display extends views_object {
   }
 
   /**
+   * Determine if the display's style uses fields.
+   */
+  function uses_fields() {
+    $plugin = views_get_plugin('style', $this->get_option('style_plugin'));
+    $plugin->init($this->view, $this->display);
+    if ($plugin) {
+      return $plugin->uses_fields();
+    }
+  }
+
+  /**
    * Intelligently set an option either from this display or from the
    * default display, if directed to do so.
    */

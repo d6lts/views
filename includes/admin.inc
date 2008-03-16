@@ -95,6 +95,8 @@ function views_ui_list_views($arg = NULL) {
 
 /**
  * Page callback for the live preview.
+ *
+ * @todo make this use a template
  */
 function views_ui_preview($js, $view) {
   $form_state = array(
@@ -113,25 +115,36 @@ function views_ui_preview($js, $view) {
 
   // Fix 'q' for paging so that it will go to the NON ajax live preview.
   $_GET['q'] = str_replace('ajax', 'nojs', $_GET['q']);
-  $preview = $view->preview($form_state['display_id'], $args);
+
+  $errors = $view->validate();
+  if ($errors === TRUE) {
+    $preview = $view->preview($form_state['display_id'], $args);
+    $rows = array();
+    $query = db_prefix_tables($view->build_info['query']);
+    if ($view->build_info['query_args']) {
+      _db_query_callback($view->build_info['query_args'], TRUE);
+      $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
+    }
+    $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
+    $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
+    if ($view->display_handler->get_option('path')) {
+      $path = $view->get_url();
+      $path = l($path, $path);
+      $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
+    }
+
+    $info = theme('table', array(), $rows);
+  }
+  else {
+    foreach ($errors as $error) {
+      drupal_set_message($error, 'error');
+    }
+    $preview = t('Unable to preview due to validation errors.');
+    $info = '';
+  }
 
   $output .= '<div class="views-query-info">';
-  $rows = array();
-  $query = db_prefix_tables($view->build_info['query']);
-  if ($view->build_info['query_args']) {
-    _db_query_callback($view->build_info['query_args'], TRUE);
-    $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
-  }
-  $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
-  $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
-  if ($view->display_handler->get_option('path')) {
-    $path = $view->get_url();
-    $path = l($path, $path);
-    $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
-  }
-
-  $output .= theme('table', array(), $rows);
-
+  $output .= $info;
   $output .= '</div>';
   $output .= $preview;
 
@@ -462,6 +475,18 @@ function views_ui_edit_view_form(&$form_state, $view) {
 
   $form_state['view'] = &$view;
   return $form;
+}
+
+/**
+ * Validate that a view is complete and whole.
+ */
+function views_ui_edit_view_form_validate($form, $form_state) {
+  $errors = $form_state['view']->validate();
+  if ($errors !== TRUE) {
+    foreach ($errors as $error) {
+      form_set_error('', $error);
+    }
+  }
 }
 
 /**
