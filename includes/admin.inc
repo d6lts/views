@@ -141,6 +141,7 @@ function views_ui_preview($js, $view) {
   else {
     views_include('ajax');
     $object = new stdClass();
+    $object->display = '';
     if ($messages = theme('status_messages')) {
       $object->display = '<div class="views-messages">' . $messages . '</div>';
     }
