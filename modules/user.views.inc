@@ -53,7 +53,7 @@ function user_views_data() {
     ),
     // Information for accepting a uid as an argument
     'argument' => array(
-      'handler' => 'views_handler_argument_uid',
+      'handler' => 'views_handler_argument_user_uid',
     ),
     // Information for accepting a uid as a filter
     'filter' => array(
