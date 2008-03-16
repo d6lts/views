@@ -111,6 +111,8 @@ function views_ui_preview($js, $view) {
     $args = explode('/', $form_state['args']);
   }
 
+  // Fix 'q' for paging so that it will go to the NON ajax live preview.
+  $_GET['q'] = str_replace('ajax', 'nojs', $_GET['q']);
   $preview = $view->preview($form_state['display_id'], $args);
 
   $output .= '<div class="views-query-info">';

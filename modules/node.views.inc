@@ -359,7 +359,7 @@ class views_handler_argument_node_nid extends views_handler_argument {
    * Override the behavior of title(). Get the title of the node.
    */
   function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d"), $this->argument));
+    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d", $this->argument)));
     if (empty($title)) {
       return t('No title');
     }
