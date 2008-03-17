@@ -35,6 +35,9 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
   // See if we have any settings to extend. Do this first so that behaviors
   // can access the new settings easily.
 
+  if (Drupal.settings.viewsAjax) {
+    Drupal.settings.viewsAjax = {};
+  }
   if (data.js) {
     $.extend(Drupal.settings, data.js);
   }
@@ -135,6 +138,10 @@ Drupal.Views.Ajax.previewResponse = function(data) {
   // See if we have any settings to extend. Do this first so that behaviors
   // can access the new settings easily.
 
+  // Clear any previous viewsAjax settings.
+  if (Drupal.settings.viewsAjax) {
+    Drupal.settings.viewsAjax = {};
+  }
   if (data.js) {
     $.extend(Drupal.settings, data.js);
   }

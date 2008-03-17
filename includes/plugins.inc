@@ -10,6 +10,7 @@
  * Implementation of hook_views_plugins
  */
 function views_views_plugins() {
+  $path = drupal_get_path('module', 'views') . '/js';
   return array(
     'module' => 'views', // This just tells our themes are elsewhere.
     'display' => array(
@@ -19,7 +20,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_display_default',
         'no ui' => TRUE,
         'no remove' => TRUE,
-        'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js'),
+        'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', "$path/dependent.js"),
         'use pager' => TRUE,
       ),
       'page' => array(
@@ -624,13 +625,17 @@ class views_plugin_display extends views_object {
           '#default_value' => $access['type'],
         );
         $form['access']['role'] = array(
-          '#prefix' => '<div class="views-left-25">',
-          '#suffix' => '</div>',
+          // Add an id to the surrounding div because checkboxes don't get ids
+          // as a whole group. =(
+          '#prefix' => '<div class="views-left-25"><div id="edit-access-role">',
+          '#suffix' => '</div></div>',
           '#type' => 'checkboxes',
           '#title' => t('If by role'),
           '#default_value' => $access['role'],
           '#options' => views_ui_get_roles(),
           '#description' => t('Only the checked roles will be able to access this display.'),
+          '#process' => array('expand_checkboxes', 'views_process_dependency'),
+          '#dependency' => array('radio:access[type]' => array('role')),
         );
 
         $perms = array();
@@ -648,6 +653,10 @@ class views_plugin_display extends views_object {
           '#title' => t('If by perm'),
           '#default_value' => $access['perm'],
           '#description' => t('Only users with the selected permission flag will be able to access this display.'),
+          '#process' => array('views_process_dependency'),
+          // Radios don't *get* ids in this system, so we use a special format
+          // for the id.
+          '#dependency' => array('radio:access[type]' => array('perm')),
         );
         break;
       case 'header':
@@ -1310,7 +1319,12 @@ class views_plugin_display_page extends views_plugin_display {
           '#suffix' => '</div>',
           '#title' => t('Type'),
           '#type' => 'radios',
-          '#options' => array('none' => t('No menu entry'), 'normal' => t('Normal menu entry'), 'tab' => t('Menu tab'), 'default tab' => t('Default menu tab')),
+          '#options' => array(
+            'none' => t('No menu entry'),
+            'normal' => t('Normal menu entry'),
+            'tab' => t('Menu tab'),
+            'default tab' => t('Default menu tab')
+          ),
           '#default_value' => $menu['type'],
         );
         $form['menu']['title'] = array(
@@ -1319,13 +1333,17 @@ class views_plugin_display_page extends views_plugin_display {
           '#type' => 'textfield',
           '#default_value' => $menu['title'],
           '#description' => t('If set to normal or tab, enter the text to use for the menu item.'),
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:menu[type]' => array('normal', 'tab', 'default tab')),
         );
         $form['menu']['weight'] = array(
           '#suffix' => '</div>',
           '#title' => t('Weight'),
           '#type' => 'textfield',
           '#default_value' => isset($menu['weight']) ? $menu['weight'] : 0,
-          '#description' => t('If set to normal or tab, enter the weight of the item. The lower th weight the higher/further left it will appear.'),
+          '#description' => t('If set to tab, enter the weight of the item. The lower th weight the higher/further left it will appear.'),
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:menu[type]' => array('tab', 'default tab')),
         );
         break;
       case 'tab_options':
@@ -1360,6 +1378,8 @@ class views_plugin_display_page extends views_plugin_display {
           '#type' => 'textfield',
           '#default_value' => $tab_options['title'],
           '#description' => t('If creating a parent menu item, enter the title of the item.'),
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:tab_options[type]' => array('normal', 'tab')),
         );
         $form['tab_options']['weight'] = array(
           '#suffix' => '</div>',
@@ -1368,6 +1388,8 @@ class views_plugin_display_page extends views_plugin_display {
           '#default_value' => $tab_options['weight'],
           '#size' => 5,
           '#description' => t('If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be.'),
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:tab_options[type]' => array('tab')),
         );
         break;
     }
@@ -1824,8 +1846,6 @@ class views_plugin_style_table extends views_plugin_style {
       '#description' => t('If a default sort order is selected, what order should it use by default.'),
     );
 
-    // @todo: add dependency here.
-
     // Note: views UI registers this theme handler on our behalf. Your module
     // will have to register your theme handlers if you do stuff like this.
     $form['#theme'] = 'views_ui_style_plugin_table';
@@ -1858,6 +1878,10 @@ class views_plugin_style_table extends views_plugin_style {
     }
 
     foreach ($columns as $field => $column) {
+      $safe = str_replace(array('][', '_', ' '), '-', $field);
+      // the $id of the column for dependency checking.
+      $id = 'edit-style-options-columns-' . $safe;
+
       $form['columns'][$field] = array(
         '#type' => 'select',
         '#options' => $field_names,
@@ -1867,19 +1891,29 @@ class views_plugin_style_table extends views_plugin_style {
         $form['info'][$field]['sortable'] = array(
           '#type' => 'checkbox',
           '#default_value' => !empty($this->options['info'][$field]['sortable']),
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array($id => array($field)),
         );
+        // Provide an ID so we can have such things.
+        $radio_id = form_clean_id('edit-default-' . $field);
         $form['default'][$field] = array(
           '#type' => 'radio',
           '#return_value' => $field,
           '#parents' => array('style_options', 'default'),
-          '#id' => form_clean_id('edit-default-' . $field),
+          '#id' => $radio_id,
+          // because 'radio' doesn't fully support '#id' =(
+          '#attributes' => array('id' => $radio_id),
           '#default_value' => $default,
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array($id => array($field)),
         );
       }
       $form['info'][$field]['separator'] = array(
         '#type' => 'textfield',
         '#size' => 10,
         '#default_value' => isset($this->options['info'][$field]['separator']) ? $this->options['info'][$field]['separator'] : '',
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array($id => array($field)),
       );
 
       // markup for the field name
@@ -1893,7 +1927,7 @@ class views_plugin_style_table extends views_plugin_style {
       '#type' => 'radio',
       '#return_value' => -1,
       '#parents' => array('style_options', 'default'),
-      '#id' => form_clean_id('edit-default-0'),
+      '#id' => 'edit-default-0',
       '#default_value' => $default,
     );
 

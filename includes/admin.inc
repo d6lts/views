@@ -916,7 +916,12 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
     $form_state['url'] = $form['#url'];
   }
   if (isset($form['#js'])) {
-    $form_state['js settings'] = $form['#js'];
+    if (is_array($form_state['js settings'])) {
+      $form_state['js settings'] = array_merge($form_state['settings'], $form['#js']);
+    }
+    else {
+      $form_state['js settings'] = $form['#js'];
+    }
   }
   if (isset($form['#section'])) {
     $form_state['#section'] = $form['#section'];
