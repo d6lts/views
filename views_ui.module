@@ -82,6 +82,11 @@ function views_ui_menu() {
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_delete_confirm', 4),
   );
+  $items['admin/build/views/break-lock/%views_ui_cache'] = $callback + array(
+    'title' => t('Delete view'),
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_break_lock_confirm', 4),
+  );
   $items['admin/build/views/export/%views_ui_cache'] = $callback + array(
     'page callback' => 'drupal_get_form',
     'page arguments' => array('views_ui_export_page', 4),
@@ -221,6 +226,10 @@ function views_ui_cache_load($name) {
     if ($v) {
       $view = drupal_clone($v);
     }
+
+    // Check to see if someone else is already editing this view.
+    global $user;
+    $view->locked = db_fetch_object(db_query("SELECT s.uid, v.updated FROM {views_object_cache} v INNER JOIN {sessions}  s ON v.sid = s.sid WHERE s.uid != %d and v.name = '%s' and v.obj = 'view' ORDER BY v.updated ASC", $user->uid, $view->name));
   }
 
   if (empty($view)) {
@@ -231,6 +240,31 @@ function views_ui_cache_load($name) {
     return $view;
   }
 }
+
+/**
+ * Specialized cache function to add a flag to our view, include an appropriate
+ * include, and cache more easily.
+ */
+function views_ui_cache_set(&$view) {
+  if (!empty($view->locked)) {
+    dsm($view->locked);
+    drupal_set_message('Changes cannot be made to a locked view.', 'error');
+    return;
+  }
+  views_include('cache');
+  $view->changed = TRUE; // let any future object know that this view has changed.
+
+  // Unset handlers; we don't want to write these into the cache
+  unset($view->display_handler);
+  unset($view->current_display);
+  unset($view->default_display);
+  foreach (array_keys($view->display) as $id) {
+    unset($view->display[$id]->handler);
+    unset($view->display[$id]->default_display);
+  }
+  views_object_cache_set('view', $view->name, $view);
+}
+
 
 /**
  * Specialized menu callback to load a view that is only a default
@@ -253,23 +287,4 @@ function views_ui_js_load($js) {
     return TRUE;
   }
   return 0;
-}
-
-/**
- * Specialized cache function to add a flag to our view, include an appropriate
- * include, and cache more easily.
- */
-function views_ui_cache_set(&$view) {
-  views_include('cache');
-  $view->changed = TRUE; // let any future object know that this view has changed.
-
-  // Unset handlers; we don't want to write these into the cache
-  unset($view->display_handler);
-  unset($view->current_display);
-  unset($view->default_display);
-  foreach (array_keys($view->display) as $id) {
-    unset($view->display[$id]->handler);
-    unset($view->display[$id]->default_display);
-  }
-  views_object_cache_set('view', $view->name, $view);
 }

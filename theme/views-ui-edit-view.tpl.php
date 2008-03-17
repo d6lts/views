@@ -5,7 +5,11 @@
  * Template for the primary view editing window.
  */
 ?>
-
+<?php if ($locked): ?>
+  <div class="view-locked">
+    <?php print t('This view is locked by user !user, and may not be modified. This lock is !age old. Click here to !break.', array('!user' => $locked, '!age' => $lock_age, '!break' => $break)); ?>
+  </div>
+<?php endif; ?>
 <div class="views-basic-info<?php if (!empty($view->changed)) { print " changed"; }?>">
   <?php if (!is_numeric($view->vid)): ?>
     <div class="view-changed view-new"><?php print t('New view'); ?></div>

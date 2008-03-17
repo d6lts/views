@@ -119,21 +119,26 @@ function views_ui_preview($js, $view) {
   $errors = $view->validate();
   if ($errors === TRUE) {
     $preview = $view->preview($form_state['display_id'], $args);
-    $rows = array();
-    $query = db_prefix_tables($view->build_info['query']);
-    if ($view->build_info['query_args']) {
-      _db_query_callback($view->build_info['query_args'], TRUE);
-      $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
-    }
-    $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
-    $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
-    if ($view->display_handler->get_option('path')) {
-      $path = $view->get_url();
-      $path = l($path, $path);
-      $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
-    }
+    if (!empty($view->build_info['query'])) {
+      $rows = array();
+      $query = db_prefix_tables($view->build_info['query']);
+      if ($view->build_info['query_args']) {
+        _db_query_callback($view->build_info['query_args'], TRUE);
+        $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
+      }
+      $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
+      $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
+      if ($view->display_handler->get_option('path')) {
+        $path = $view->get_url();
+        $path = l($path, $path);
+        $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
+      }
 
-    $info = theme('table', array(), $rows);
+      $info = theme('table', array(), $rows);
+    }
+    else {
+      $info = theme('table', array(), array(array('<strong>' . t('Query') . '</strong>', t('No query was run'))));
+    }
   }
   else {
     foreach ($errors as $error) {
@@ -358,6 +363,41 @@ function views_ui_delete_confirm_submit(&$form, &$form_state) {
 }
 
 /**
+ * Page to delete a view.
+ */
+function views_ui_break_lock_confirm(&$form_state, $view) {
+  $form_state['view'] = &$view;
+  $form = array();
+
+  if (empty($view->locked)) {
+    return t('There is no lock on view %view to break.', array('%name' => $view->name));
+  }
+
+  $cancel = 'admin/build/views/edit/' . $view->name;
+  if (!empty($_REQUEST['cancel'])) {
+    $cancel = $_REQUEST['cancel'];
+  }
+
+  $account = user_load($view->locked->uid);
+  return confirm_form($form,
+                  t('Are you sure you want to break the lock on view %name?',
+                  array('%name' => $view->name)),
+                  $cancel,
+                  t('By breaking this lock, any unsaved changes made by !user will be lost!', array('!user' => theme('username', $account))),
+                  t('Break lock'),
+                  t('Cancel'));
+}
+
+/**
+ * Submit handler to break_lock a view.
+ */
+function views_ui_break_lock_confirm_submit(&$form, &$form_state) {
+  db_query("DELETE FROM {views_object_cache} WHERE obj = 'view' AND name = '%s'", $form_state['view']->name);
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  drupal_set_message('The lock has been broken and you may now edit this view.');
+}
+
+/**
  * The main view edit page
  */
 function views_ui_edit_page($view) {
@@ -576,6 +616,14 @@ function template_preprocess_views_ui_edit_view(&$vars) {
     'input' => array(),
   );
   $vars['preview'] = drupal_build_form('views_ui_preview_form', $form_state);
+
+  $vars['locked'] = NULL;
+  if (is_object($view->locked)) {
+    $account = user_load($view->locked->uid);
+    $vars['locked'] = theme('username', $account);
+    $vars['lock_age'] = format_interval(time() - $view->locked->updated);
+    $vars['break'] = l(t('break this lock'), 'admin/build/views/break-lock/' . $view->name);
+  }
 
   views_add_css('admin');
   views_add_js('ajax');
