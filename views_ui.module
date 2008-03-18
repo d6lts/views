@@ -174,7 +174,7 @@ function views_ui_perm() {
 
 function views_ui_theme() {
   $path = drupal_get_path('module', 'views');
-  include_once "$path/includes/admin.inc";
+  require_once "./$path/includes/admin.inc";
 
   return array(
     'views_ui_edit_view' => array(

@@ -128,10 +128,10 @@ function views1_import($imported) {
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);
     if (file_exists("$module_path/$module.views_convert.inc")) {
-      include_once "$module_path/$module.views_convert.inc";
+      require_once "./$module_path/$module.views_convert.inc";
     }
     else if (file_exists("$views_path/$module.views_convert.inc")) {
-      include_once "$views_path/$module.views_convert.inc";
+      require_once "./$views_path/$module.views_convert.inc";
     }
   }
 

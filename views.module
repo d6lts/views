@@ -12,7 +12,7 @@
  */
 function views_theme() {
   $path = drupal_get_path('module', 'views');
-  include_once "$path/theme/theme.inc";
+  require_once "./$path/theme/theme.inc";
 
   // Some quasi clever array merging here.
   $base = array(
@@ -292,7 +292,7 @@ function &views_get_current_view() {
 function views_include($file) {
   static $used = array();
   if (!isset($used[$file])) {
-    require_once drupal_get_path('module', 'views') . "/includes/$file.inc";
+    require_once './' . drupal_get_path('module', 'views') . "/includes/$file.inc";
   }
 
   $used[$file] = TRUE;
@@ -890,7 +890,7 @@ function views_exposed_form_submit(&$form, &$form_state) {
  * Build a list of theme function names for use most everywhere.
  */
 function views_theme_functions($hook, $view, $display = NULL) {
-  require_once drupal_get_path('module', 'views') . "/theme/theme.inc";
+  require_once './' . drupal_get_path('module', 'views') . "/theme/theme.inc";
   return _views_theme_functions($hook, $view, $display);
 }
 

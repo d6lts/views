@@ -15,13 +15,13 @@ function _views_include_handlers() {
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);
     if (file_exists("$module_path/$module.views.inc")) {
-      include_once "$module_path/$module.views.inc";
+      require_once "./$module_path/$module.views.inc";
     }
     else if (file_exists("$module_path/includes/$module.views.inc")) {
-      include_once "$module_path/includes/$module.views.inc";
+      require_once "./$module_path/includes/$module.views.inc";
     }
     else if (file_exists("$views_path/$module.views.inc")) {
-      include_once "$views_path/$module.views.inc";
+      require_once "./$views_path/$module.views.inc";
     }
   }
 }
@@ -35,10 +35,10 @@ function _views_include_default_views() {
   foreach (module_list() as $module) {
     $module_path = drupal_get_path('module', $module);
     if (file_exists("$module_path/$module.views_default.inc")) {
-      include_once "$module_path/$module.views_default.inc";
+      require_once "./$module_path/$module.views_default.inc";
     }
     else if (file_exists("$views_path/$module.views_default.inc")) {
-      include_once "$views_path/$module.views_default.inc";
+      require_once "./$views_path/$module.views_default.inc";
     }
   }
 }
