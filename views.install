@@ -177,6 +177,12 @@ function views_update_6000() {
     return $ret;
   }
 
+  // This has the beneficial effect of wiping out any Views 1 cache at the
+  // same time; not wiping that cache could easily cause problems with Views 2.
+  if (db_table_exists('cache_views')) {
+    db_drop_table($ret, 'cache_views');
+  }
+
   // This is mostly the same as drupal_install_schema, but it forces
   // views_schema_1 rather than the default schema. This will be important
   // if we have table updates.
