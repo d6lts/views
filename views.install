@@ -172,8 +172,9 @@ function views_schema_1() {
  * if you've been running a beta version or something.
  */
 function views_update_6000() {
+  $ret = array();
   if (db_table_exists('views_view')) {
-    return;
+    return $ret;
   }
 
   // This is mostly the same as drupal_install_schema, but it forces
@@ -182,7 +183,6 @@ function views_update_6000() {
   $schema = views_schema_1();
   _drupal_initialize_schema($module, $schema);
 
-  $ret = array();
   foreach ($schema as $name => $table) {
     db_create_table($ret, $name, $table);
   }
