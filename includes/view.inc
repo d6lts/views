@@ -276,8 +276,14 @@ class view extends views_db_object {
       $handler = views_get_handler($data['table'], $data['field'], $key);
       if (is_object($handler)) {
         $handler->init($this, $data);
-        // Deal with difficult PHP indirection:
-        $items[$id]['handler'] = $handler;
+        // Remove any handlers which are inaccessible to the current user. For example, see users.mail
+        if ($handler->access()) {
+          // Deal with difficult PHP indirection:
+          $items[$id]['handler'] = $handler;
+        }
+        else { 
+          unset($items[$id]); 
+        }
       }
     }
   }

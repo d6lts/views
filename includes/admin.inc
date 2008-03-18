@@ -618,7 +618,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   $vars['preview'] = drupal_build_form('views_ui_preview_form', $form_state);
 
   $vars['locked'] = NULL;
-  if (is_object($view->locked)) {
+  if (isset($view->locked) && is_object($view->locked)) {
     $account = user_load($view->locked->uid);
     $vars['locked'] = theme('username', $account);
     $vars['lock_age'] = format_interval(time() - $view->locked->updated);

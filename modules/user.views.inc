@@ -42,6 +42,21 @@ function user_views_data() {
       'click sortable' => TRUE,
     ),
   );
+
+  // mail
+  // Note that this field implements field level access control. Neato.
+  $data['users']['mail'] = array(
+    'title' => t('E-mail'), // The item it appears as on the UI,
+    'help' => t('Email address for a given user. Only accessible to users with <em>administer users</em> permission'), // The help that appears on the UI,
+    'field' => array(
+      'field' => 'mail', // the real field
+      'group' => t('User'), // The group it appears in on the UI,
+      // TODO: mailto link?
+      'handler' => 'views_handler_field_user_mail',
+      'click sortable' => TRUE,
+    ),
+  );
+
   // uid
   $data['users']['uid'] = array(
     'title' => t('Uid'),
@@ -79,7 +94,7 @@ class views_handler_field_user extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (!empty($this->options['link_to_user']) && $this->view->base_table != 'user') {
+    if (!empty($this->options['link_to_user']) && $this->view->base_table != 'users') {
       $this->additional_fields[] = 'uid';
       $this->uid_field = 'users_uid';
     }
@@ -116,6 +131,19 @@ class views_handler_field_user extends views_handler_field {
 
   function render($values) {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
+  }
+}
+
+/**
+ * Field handler to provide acess control for the email field
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_mail extends views_handler_field {
+
+  // An example of field level access control.
+  function access() {
+    return user_access('administer users');
   }
 }
 

@@ -116,9 +116,8 @@ function template_preprocess_views_view_table(&$vars) {
   $options  = $view->style_handler->options;
   $handler  = $view->style_handler;
 
-  $columns  = $handler->sanitize_columns($options['columns']);
-
   $fields   = $view->field;
+  $columns  = $handler->sanitize_columns($options['columns'], $fields);
 
   $active   = !empty($handler->active) ? $handler->active : '';
   $order    = !empty($handler->order) ? $handler->order : 'asc';
