@@ -290,7 +290,7 @@ class views_handler extends views_object {
   /**
    * Take input from exposed filters and assign to this handler, if necessary.
    */
-  function accept_exposed_input($input) { }
+  function accept_exposed_input($input) { return TRUE; }
 }
 
 /**
