@@ -302,6 +302,8 @@ class view extends views_db_object {
     $breadcrumb_args = array();
     $substitutions = array();
 
+    $status = TRUE;
+
     // Iterate through each argument and process.
     foreach ($this->argument as $id => $arg) {
       $position++;
@@ -342,7 +344,8 @@ class view extends views_db_object {
       }
       else {
         // determine default condition and handle.
-        return $argument['handler']->default_action();
+        $status = $argument['handler']->default_action();
+        break;
       }
     }
 
@@ -351,7 +354,7 @@ class view extends views_db_object {
       $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
     }
 
-    return TRUE;
+    return $status;
   }
 
   /**
