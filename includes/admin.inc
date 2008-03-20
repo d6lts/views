@@ -45,7 +45,7 @@ function views_ui_list_views($arg = NULL) {
       }
     }
 
-    if (!empty($view->display)) {
+    if (empty($view->display)) {
       $path = t('Warning! Broken view!');
     }
     else {
