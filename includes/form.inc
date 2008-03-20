@@ -192,8 +192,8 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
  * Usage:
  *
  * On any form item, add
- * - '#process' => 'views_process_dependency' and
- * - '#dependency' => array('id-of-form-without-the-#' => array(list, of, values, that, make, this, gadget, visible));
+ * - @code '#process' => 'views_process_dependency' @endcode
+ * - @code '#dependency' => array('id-of-form-without-the-#' => array(list, of, values, that, make, this, gadget, visible)); @endcode
  */
 function views_process_dependency($element, $edit, &$form_state, &$form) {
   if (isset($element['#dependency'])) {

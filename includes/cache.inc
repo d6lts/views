@@ -11,36 +11,14 @@
  * Load views files on behalf of modules.
  */
 function _views_include_handlers() {
-  $views_path = drupal_get_path('module', 'views') . '/modules';
-  foreach (module_list() as $module) {
-    $module_path = drupal_get_path('module', $module);
-    if (file_exists("$module_path/$module.views.inc")) {
-      require_once "./$module_path/$module.views.inc";
-    }
-    else if (file_exists("$module_path/includes/$module.views.inc")) {
-      require_once "./$module_path/includes/$module.views.inc";
-    }
-    else if (file_exists("$views_path/$module.views.inc")) {
-      require_once "./$views_path/$module.views.inc";
-    }
-  }
+  views_module_include('views.inc');
 }
 
 /**
  * Load default views files on behalf of modules.
  */
 function _views_include_default_views() {
-  // Now include the views_default files specifically.
-  $views_path = drupal_get_path('module', 'views') . '/modules';
-  foreach (module_list() as $module) {
-    $module_path = drupal_get_path('module', $module);
-    if (file_exists("$module_path/$module.views_default.inc")) {
-      require_once "./$module_path/$module.views_default.inc";
-    }
-    else if (file_exists("$views_path/$module.views_default.inc")) {
-      require_once "./$views_path/$module.views_default.inc";
-    }
-  }
+  views_module_include('views_default.inc');
 }
 
 /**

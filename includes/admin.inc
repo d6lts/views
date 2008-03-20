@@ -45,8 +45,13 @@ function views_ui_list_views($arg = NULL) {
       }
     }
 
-    $path = $view->get_path();
-    $path = empty($view->disabled) && strpos($path, '%') === FALSE ? l($path, $path) : check_plain($path);
+    if (!empty($view->display)) {
+      $path = t('Warning! Broken view!');
+    }
+    else {
+      $path = $view->get_path();
+      $path = empty($view->disabled) && strpos($path, '%') === FALSE ? l($path, $path) : check_plain($path);
+    }
     $item = array();
     $item[] = check_plain($view->name);
     $item[] = check_plain($view->description);
@@ -1577,6 +1582,7 @@ function views_ui_config_item_form(&$form_state) {
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
+    dsm($item);
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));

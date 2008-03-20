@@ -123,17 +123,7 @@ function views_ui_delete1_confirm_submit(&$form, &$form_state) {
  * Convert a Views 1 view to a Views 2 view.
  */
 function views1_import($imported) {
-  // Include the views_convert files specifically.
-  $views_path = drupal_get_path('module', 'views') . '/modules';
-  foreach (module_list() as $module) {
-    $module_path = drupal_get_path('module', $module);
-    if (file_exists("$module_path/$module.views_convert.inc")) {
-      require_once "./$module_path/$module.views_convert.inc";
-    }
-    else if (file_exists("$views_path/$module.views_convert.inc")) {
-      require_once "./$views_path/$module.views_convert.inc";
-    }
-  }
+  views_module_include('views_convert.inc');
 
   $view = views_new_view();
 
