@@ -56,6 +56,14 @@ function node_views_data() {
       'handler' => 'views_handler_field_node',
       'click sortable' => TRUE,
      ),
+    'sort' => array(
+      'handler' => 'views_handler_filter_sort',
+    ),
+    // Information for accepting a title as a filter
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    // @todo: argumennt
   );
 
   // nid
@@ -93,6 +101,7 @@ function node_views_data() {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
+    // @todo date filter
   );
 
   // changed field
@@ -103,6 +112,10 @@ function node_views_data() {
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
     ),
+    'sort' => array(
+      'handler' => 'views_handler_filter_sort',
+    ),
+    // @todo date filter
   );
 
   // Node type
@@ -113,7 +126,6 @@ function node_views_data() {
       'handler' => 'views_handler_field_node_type',
       'click sortable' => TRUE,
     ),
-    // Information for accepting a nid as a filter
     'filter' => array(
       'handler' => 'views_handler_filter_node_type',
     ),
@@ -130,11 +142,11 @@ function node_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
-     ),
-     'filter' => array(
-       'handler' => 'views_handler_filter_boolean_operator',
-       'label' => t('Published'),
-       ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Published'),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -148,11 +160,11 @@ function node_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
-     ),
-     'filter' => array(
-       'handler' => 'views_handler_filter_boolean_operator',
-       'label' => t('Promoted to front page'),
-       ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Promoted to front page'),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -166,11 +178,11 @@ function node_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
-     ),
-     'filter' => array(
-       'handler' => 'views_handler_filter_boolean_operator',
-       'label' => t('Sticky'),
-       ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Sticky'),
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
@@ -236,7 +248,10 @@ function node_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_markup',
       'format' => 'format', // The name of the format field
-     ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
   );
 
   // Teaser field
@@ -248,8 +263,15 @@ function node_views_data() {
       'handler' => 'views_handler_field_markup',
       'format' => 'format', // The name of the format field
      ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
   );
 
+  // @todo
+  // revision title
+  // revision log message
+  // revision timestamp
   return $data;
 }
 

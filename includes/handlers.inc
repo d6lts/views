@@ -907,10 +907,24 @@ class views_handler_filter extends views_handler {
   /**
    * Provide a form for setting the operator.
    *
-   * This should be overridden by all child classes, and it must
+   * This may be overridden by child classes, and it must
    * define $form['operator'];
    */
-  function operator_form(&$form, &$form_state) { $form['operator'] = array(); }
+  function operator_form(&$form, &$form_state) {
+    $options = $this->operator_options();
+    $form['operator'] = array(
+      '#type' => count($options) < 10 ? 'radios' : 'select',
+      '#title' => t('Operator'),
+      '#default_value' => $this->operator,
+      '#options' => $options,
+    );
+  }
+
+  /**
+   * Provide a list of options for the default operator form.
+   * Should be overridden by classes that don't override operator_form
+   */
+  function operator_options() { return array(); }
 
   /**
    * Validate the operator form.
@@ -928,7 +942,7 @@ class views_handler_filter extends views_handler {
    */
   function show_value_form(&$form, &$form_state) {
     $this->value_form($form, $form_state);
-    $form['value']['#prefix'] = '<div class="views-left-50">';
+    $form['value']['#prefix'] = '<div class="views-left-60">';
     $form['value']['#suffix'] = '</div>';
   }
 
@@ -1268,15 +1282,10 @@ class views_handler_filter_equality extends views_handler_filter {
   /**
    * Provide simple equality operator
    */
-  function operator_form(&$form, &$form_state) {
-    $form['operator'] = array(
-      '#type' => 'radios',
-      '#title' => t('Operator'),
-      '#default_value' => $this->operator,
-      '#options' => array(
-        '=' => t('Is equal to'),
-        '!=' => t('Is not equal to'),
-      ),
+  function operator_options() {
+    return array(
+      '=' => t('Is equal to'),
+      '!=' => t('Is not equal to'),
     );
   }
 
@@ -1292,6 +1301,194 @@ class views_handler_filter_equality extends views_handler_filter {
     );
   }
 }
+
+/**
+ * Basic textfield filter to handle string filtering commands
+ * including equality, like, not like, etc.
+ */
+class views_handler_filter_string extends views_handler_filter {
+  // exposed filter options
+  var $no_single = TRUE;
+
+  /**
+   * Provide basic defaults for the equality operator
+   */
+  function options(&$options) {
+    parent::options($options);
+    $options['operator'] = '=';
+    $options['value'] = '';
+    $options['case'] = TRUE;
+  }
+
+  /**
+   * This kind of construct makes it relatively easy for a child class
+   * to add or remove functionality by overriding this function and
+   * adding/removing items from this array.
+   */
+  function like_data() {
+    return array(
+      '=' => array(
+        'title' => t('Is equal to'),
+        'short' => t('='),
+        'method' => 'op_equal',
+      ),
+      '!=' => array(
+        'title' => t('Is not equal to'),
+        'short' => t('='),
+        'method' => 'op_equal',
+      ),
+      'contains' => array(
+        'title' => t('Contains'),
+        'short' => t('contains'),
+        'method' => 'op_contains',
+      ),
+      'word' => array(
+        'title' => t('Contains any word'),
+        'short' => t('has word'),
+        'method' => 'op_word',
+      ),
+      'allwords' => array(
+        'title' => t('Contains all words'),
+        'short' => t('has all'),
+        'method' => 'op_word',
+      ),
+      'starts' => array(
+        'title' => t('Starts with'),
+        'short' => t('begins'),
+        'method' => 'op_starts',
+      ),
+      'ends' => array(
+        'title' => t('Ends with'),
+        'short' => t('ends'),
+        'method' => 'op_ends',
+      ),
+      'not' => array(
+        'title' => t('Does not contain'),
+        'short' => t('!has'),
+        'method' => 'op_not',
+      ),
+    );
+  }
+
+  /**
+   * Build strings from the like_data() for 'select' options
+   */
+  function like_options($which = 'title') {
+    $options = array();
+    foreach ($this->like_data() as $id => $info) {
+      $options[$id] = $info[$which];
+    }
+
+    return $options;
+  }
+
+  /**
+   * Provide simple equality operator
+   */
+  function operator_options() {
+    return $this->like_options();
+  }
+
+  function admin_summary() {
+    $options = $this->like_options('short');
+    return (!empty($this->options['exposed']) ? t('exposed<br />') : '') . $options[$this->operator];
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['case'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Case sensitive'),
+      '#default_value' => $this->options['case'],
+      '#description' => t('Case sensitive filters may be faster; MySQL might ignore case sensitivity.'),
+    );
+  }
+
+  /**
+   * Provide a simple textfield for equality
+   */
+  function value_form(&$form, &$form_state) {
+    $form['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Value'),
+      '#size' => 30,
+      '#default_value' => $this->value,
+    );
+  }
+
+  function case_transform() {
+    return empty($this->options['case']) ? '' : 'UPPER';
+  }
+
+  /**
+   * Add this filter to the query.
+   *
+   * Due to the nature of fapi, the value and the operator have an unintended
+   * level of indirection. You will find them in $this->operator
+   * and $this->value respectively.
+   */
+  function query() {
+    $this->ensure_my_table();
+    $field = "$this->table_alias.$this->real_field";
+    $upper = $this->case_transform();
+
+    $info = $this->like_data();
+    if (!empty($info[$this->operator]['method'])) {
+      $this->{$info[$this->operator]['method']}($field, $upper);
+    }
+  }
+
+  function op_equal($field, $upper) {
+    // operator is either = or !=
+    $this->query->add_where($this->options['group'], "$upper(%s) $this->operator $upper('%s')", $field, $this->value);
+  }
+
+  function op_contains($field, $upper) {
+    $this->query->add_where($this->options['group'], "$upper(%s) LIKE $upper('%%%s%%')", $field, $this->value);
+  }
+
+  function op_word($field, $upper) {
+    preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' '. $this->value, $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+      $phrase = false;
+      // Strip off phrase quotes
+      if ($match[2]{0} == '"') {
+        $match[2] = substr($match[2], 1, -1);
+        $phrase = true;
+      }
+      $words = trim($match[2], ',?!();:-');
+      $words = $phrase ? array($words) : preg_split('/ /', $words, -1, PREG_SPLIT_NO_EMPTY);
+      foreach ($words as $word) {
+        $where[] = "$upper(%s) LIKE $upper('%%%s%%')";
+        $values[] = $field;
+        $values[] = trim($word, " ,!?");
+      }
+    }
+    if ($this->operator == 'word') {
+      $where = '('. implode(' OR ', $where) .')';
+    }
+    else {
+      $where = implode(' AND ', $where);
+    }
+    // previously this was a call_user_func_array but that's unnecessary
+    // as views will unpack an array that is a single arg.
+    $this->query->add_where($this->options['group'], $where, $values);
+  }
+
+  function op_starts($field, $upper) {
+    $this->query->add_where($this->options['group'], "$upper(%s) LIKE $upper('%s%%')", $field, $this->value);
+  }
+
+  function op_ends($field, $upper) {
+    $this->query->add_where($this->options['group'], "$upper(%s) LIKE $upper('%%%s')", $field, $this->value);
+  }
+
+  function op_not($field, $upper) {
+    $this->query->add_where($this->options['group'], "$upper(%s) NOT LIKE $upper('%%%s%%')", $field, $this->value);
+  }
+
+}
+
 
 /**
  * Simple filter to handle matching of boolean values
@@ -1379,15 +1576,10 @@ class views_handler_filter_in_operator extends views_handler_filter {
   /**
    * Provide inclusive/exclusive matching
    */
-  function operator_form(&$form, &$form_state) {
-    $form['operator'] = array(
-      '#type' => 'radios',
-      '#title' => t('Operator'),
-      '#default_value' => ($this->operator) ? $this->operator : 'in',
-      '#options' => array(
-        'in' => t('Is one of'),
-        'not in' => t('Is not one of'),
-      ),
+  function operator_options() {
+    return array(
+      'in' => t('Is one of'),
+      'not in' => t('Is not one of'),
     );
   }
 
@@ -1466,21 +1658,16 @@ class views_handler_filter_numeric extends views_handler_filter {
   /**
    * Provide a list of all the numeric operators
    */
-  function operator_form(&$form, &$form_state) {
-    $form['operator'] = array(
-      '#type' => 'select',
-      '#title' => t('Operator'),
-      '#default_value' => $this->operator,
-      '#options' => array(
-        '<' => t('Is less than'),
-        '<=' => t('Is less than or equal to'),
-        '=' => t('Is equal to'),
-        '!=' => t('Is not equal to'),
-        '>=' => t('Is greater than or equal to'),
-        '>' => t('Is greater than'),
-        'between' => t('Is between'),
-        'not between' => t('Is not between'),
-      ),
+  function operator_options() {
+    return array(
+      '<' => t('Is less than'),
+      '<=' => t('Is less than or equal to'),
+      '=' => t('Is equal to'),
+      '!=' => t('Is not equal to'),
+      '>=' => t('Is greater than or equal to'),
+      '>' => t('Is greater than'),
+      'between' => t('Is between'),
+      'not between' => t('Is not between'),
     );
   }
 
