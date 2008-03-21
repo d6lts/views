@@ -1354,7 +1354,6 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
   }
 
   function query() {
-    // @todo this should actually reverse the operator so it can compare against 0.
     $this->ensure_my_table();
     $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . (empty($this->value) ? '=' : '<>') . " 0");
   }
@@ -1903,14 +1902,21 @@ class views_handler_argument_formula extends views_handler_argument {
     }
   }
 
+  function get_formula() {
+    return str_replace('***table***', $this->table_alias, $this->formula);
+  }
+
   /**
    * Build the summary query based on a formula
    */
   function summary_query() {
     $this->ensure_my_table();
+    // Now that our table is secure, get our formula.
+    $formula = $this->get_formula();
+
     // Add the field.
-    $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $this->formula, $this->field);
-    $this->query->set_count_field(NULL, $this->formula, $this->field);
+    $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $formula, $this->field);
+    $this->query->set_count_field(NULL, $formula, $this->field);
 
     return $this->summary_basics(FALSE);
   }
@@ -1920,7 +1926,10 @@ class views_handler_argument_formula extends views_handler_argument {
    */
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where(0, "$this->formula = '%s'", $this->argument);
+    // Now that our table is secure, get our formula.
+    $formula = $this->get_formula();
+
+    $this->query->add_where(0, "$formula = '%s'", $this->argument);
   }
 }
 

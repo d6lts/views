@@ -932,11 +932,8 @@ class views_plugin_display extends views_object {
   function render_feed_icon() { }
 
   /**
-   * Render the view's title for display
-   * @todo Necessary? Hm.
+   * Render a text area, using hte proper format.
    */
-  function render_title() { }
-
   function render_textarea($area) {
     $value = $this->get_option($area);
     if ($value) {

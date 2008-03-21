@@ -63,7 +63,7 @@ function comment_views_data() {
       'handler' => 'views_handler_field_markup',
       'format' => 'format',
     ),
-  ); 
+  );
 
   //cid
   $data['comments']['cid'] = array(
@@ -188,16 +188,8 @@ class views_handler_field_comment extends views_handler_field {
   function init(&$view, &$data) {
     parent::init($view, $data);
     if (isset($data->link_to_comment)) {
-      if ($view->base_table != 'comments') {
-        $this->additional_fields[] = 'cid';
-        $this->cid_field = 'comments_cid';
-        $this->nid_field = 'nid';
-      }
-      else {
-        $this->additional_fields[] = 'nid';
-        $this->cid_field = 'cid';
-        $this->nid_field = 'comments_nid';
-      }
+      $this->additional_fields['cid'] = 'cid';
+      $this->additional_fields['nid'] = 'nid';
     }
   }
 
@@ -210,6 +202,7 @@ class views_handler_field_comment extends views_handler_field {
    * Provide link-to-comment option
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['link_to_comment'] = array(
       '#title' => t('Link this field to its comment'),
       '#type' => 'checkbox',
@@ -219,7 +212,7 @@ class views_handler_field_comment extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->options['link_to_comment'])) {
-      return l($data, "node/". $values->{$this->nid_field}, array('html' => TRUE, 'fragment' => "comment-". $values->{$this->cid_field}));
+      return l($data, "node/". $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-". $values->{$this->aliases['cid']}));
     }
     else {
       return $data;
@@ -242,10 +235,8 @@ class views_handler_field_username_comment extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data->link_to_user)) {
-        $this->additional_fields[] = 'uid';
-        $this->additional_fields[] = 'homepage';
-    }
+    $this->additional_fields['uid'] = 'uid';
+    $this->additional_fields['uid'] = 'homepage';
   }
 
   function options(&$options) {
@@ -253,7 +244,8 @@ class views_handler_field_username_comment extends views_handler_field {
     $options['link_to_user'] = TRUE;
   }
 
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['link_to_user'] = array(
       '#title' => t('Link this field to its user or an author\'s homepage'),
       '#type' => 'checkbox',
@@ -262,9 +254,9 @@ class views_handler_field_username_comment extends views_handler_field {
   }
 
   function render_link($data, $values) {
-    $account->uid = $values->comments_uid;
-    $account->name = $values->comments_name;
-    $account->homepage = $values->comments_homepage;
+    $account->uid = $values->{$this->aliases['uid']};
+    $account->name = $values->{$this->field_alias};
+    $account->homepage = $values->{$this->aliases['homepage']};
 
     if (!empty($this->options['link_to_user'])) {
       return theme('username', $account);
@@ -273,7 +265,7 @@ class views_handler_field_username_comment extends views_handler_field {
       return $data;
     }
   }
-  
+
   function render($values) {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
   }

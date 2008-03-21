@@ -79,8 +79,6 @@ class view extends views_db_object {
 
   /**
    * Set the page size for ranged or pager queries
-   *
-   * @todo move all pager properties into a pager object
    */
   function set_items_per_page($items_per_page) {
     $this->pager['items_per_page'] = $items_per_page;
@@ -314,6 +312,7 @@ class view extends views_db_object {
     foreach ($this->argument as $id => $arg) {
       $position++;
       $argument = &$this->argument[$id];
+      $argument['handler']->set_relationship();
 
       if (!is_object($argument['handler'])) {
         // @todo: Set some kind of warning.

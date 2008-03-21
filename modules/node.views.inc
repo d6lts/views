@@ -367,13 +367,10 @@ class views_handler_argument_node_nid extends views_handler_argument {
 class views_handler_argument_node_created_year extends views_handler_argument_formula {
   /**
    * Constructor implementation
-   *
-   * @todo node.created should instead know about table aliases otherwise this
-   * will explode in relationships.
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula = "YEAR(FROM_UNIXTIME(node.created+$timezone))";
+    $this->formula = "YEAR(FROM_UNIXTIME(***table***.created+$timezone))";
   }
 
   /**
@@ -394,7 +391,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(node.created+$timezone), '%Y%m')";
+    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.created+$timezone), '%Y%m')";
     $this->format = 'F, Y';
   }
 
@@ -423,7 +420,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula =  "MONTH(FROM_UNIXTIME(node.created+$timezone))";
+    $this->formula =  "MONTH(FROM_UNIXTIME(***table***.created+$timezone))";
     $this->format = 'F';
   }
 

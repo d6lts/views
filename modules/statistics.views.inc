@@ -229,10 +229,16 @@ class views_handler_field_accesslog_path extends views_handler_field {
     }
   }
 
+  function options(&$options) {
+    parent::options($options);
+    $options['display_as_link'] = FALSE;
+  }
+
   /**
    * Provide link to the page being visited.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['display_as_link'] = array(
       '#title' => t('Display as link'),
       '#type' => 'checkbox',
@@ -258,6 +264,13 @@ class views_handler_field_accesslog_path extends views_handler_field {
  * @ingroup views_field_handlers
  */
 class views_handler_field_uid extends views_handler_field {
+  function init(&$view, &$data) {
+    parent::init($view, $data);
+    if (!empty($this->options['link_to_user'])) {
+      $this->additional_fields['name'] = array('table' => 'users', 'field' => 'name');
+    }
+  }
+
   function options(&$options) {
     parent::options($options);
     $options['link_to_user'] = TRUE;
@@ -266,7 +279,7 @@ class views_handler_field_uid extends views_handler_field {
   /**
    * Provide link to node option
    */
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
     $form['link_to_user'] = array(
       '#title' => t('Link this field to its user'),
       '#type' => 'checkbox',
@@ -274,20 +287,9 @@ class views_handler_field_uid extends views_handler_field {
     );
   }
 
-  /**
-   * Called to add the field to a query.
-   */
-  function query() {
-    parent::query();
-    if (!empty($this->options['link_to_user'])) {
-      $query = $this->view->query;
-      $query->add_field('users', 'name');
-    }
-  }
-
   function render($values) {
     if (!empty($this->options['link_to_user'])) {
-      $account = (object)array('uid' => $values->{$this->field_alias}, 'name' => $values->users_name);
+      $account = (object) array('uid' => $values->{$this->field_alias}, 'name' => $values->{$this->aliases['name']});
       return theme('username', $account);
     }
     else {
