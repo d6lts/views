@@ -908,6 +908,7 @@ function views_exposed_form(&$form_state) {
 
   $form['#theme'] = views_theme_functions('views_exposed_form', $view, $display);
 
+  views_add_js('dependent');
   return $form;
 }
 

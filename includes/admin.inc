@@ -110,6 +110,7 @@ function views_ui_preview($js, $view) {
     're_render' => TRUE,
     'no_redirect' => TRUE,
     'view' => &$view,
+    'ajax' => $js
   );
 
   $output = drupal_build_form('views_ui_preview_form', $form_state);
@@ -123,6 +124,7 @@ function views_ui_preview($js, $view) {
 
   $errors = $view->validate();
   if ($errors === TRUE) {
+    $view->ajax = $js;
     $preview = $view->preview($form_state['display_id'], $args);
     if (!empty($view->build_info['query'])) {
       $rows = array();
@@ -166,6 +168,9 @@ function views_ui_preview($js, $view) {
   else {
     views_include('ajax');
     $object = new stdClass();
+    if (!empty($view->js_settings)) {
+      $object->js = $view->js_settings;
+    }
     $object->display = '';
     if ($messages = theme('status_messages')) {
       $object->display = '<div class="views-messages">' . $messages . '</div>';
@@ -631,6 +636,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   }
 
   views_add_css('admin');
+  views_add_css('views');
   views_add_js('ajax');
   drupal_add_js('misc/jquery.form.js');
 

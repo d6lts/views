@@ -421,7 +421,14 @@ class view extends views_db_object {
         'no_redirect' => TRUE,
       );
 
+      if (!empty($this->ajax)) {
+        $form_state['ajax'] = TRUE;
+      }
+
       $this->exposed_widgets = drupal_build_form('views_exposed_form', $form_state);
+      if (!empty($form_state['js settings'])) {
+        $this->js_settings = $form_state['js settings'];
+      }
     }
     // Build all the relationships first thing.
     $this->_build('relationship');

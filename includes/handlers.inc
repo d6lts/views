@@ -820,21 +820,8 @@ class views_handler_filter extends views_handler {
   function init(&$view, $options) {
     parent::init($view, $options);
 
-    // @todo -- remove this if once it's safe, and just set it directly.
-    if (is_array($options['operator']) && !empty($options['operator']['operator'])) {
-      $this->operator = $options['operator']['operator'];
-    }
-    else {
-      $this->operator = $options['operator'];
-    }
-
-    // @todo -- remove this if once it's safe, and just set it directly.
-    if (is_array($options['value']) && !empty($options['value']['value'])) {
-      $this->value = $options['value']['value'];
-    }
-    else {
-      $this->value = $options['value'];
-    }
+    $this->operator = $options['operator'];
+    $this->value = $options['value'];
   }
 
   /**
@@ -1024,6 +1011,9 @@ class views_handler_filter extends views_handler {
    * that are nicely tailored to the given filter.
    */
   function expose_form(&$form, &$form_state) {
+    // @todo we should break this up into two functions to make it easier
+    // for child objects to put options in the left or right side without
+    // having to override this whole thing.
     $form['expose']['start_left'] = array(
       '#value' => '<div class="views-left-50">',
     );
@@ -1325,7 +1315,7 @@ class views_handler_filter_string extends views_handler_filter {
    * to add or remove functionality by overriding this function and
    * adding/removing items from this array.
    */
-  function like_data() {
+  function operators() {
     return array(
       '=' => array(
         'title' => t('Is equal to'),
@@ -1371,26 +1361,19 @@ class views_handler_filter_string extends views_handler_filter {
   }
 
   /**
-   * Build strings from the like_data() for 'select' options
+   * Build strings from the operators() for 'select' options
    */
-  function like_options($which = 'title') {
+  function operator_options($which = 'title') {
     $options = array();
-    foreach ($this->like_data() as $id => $info) {
+    foreach ($this->operators() as $id => $info) {
       $options[$id] = $info[$which];
     }
 
     return $options;
   }
 
-  /**
-   * Provide simple equality operator
-   */
-  function operator_options() {
-    return $this->like_options();
-  }
-
   function admin_summary() {
-    $options = $this->like_options('short');
+    $options = $this->operator_options('short');
     return (!empty($this->options['exposed']) ? t('exposed<br />') : '') . $options[$this->operator];
   }
 
@@ -1432,7 +1415,7 @@ class views_handler_filter_string extends views_handler_filter {
     $field = "$this->table_alias.$this->real_field";
     $upper = $this->case_transform();
 
-    $info = $this->like_data();
+    $info = $this->operators();
     if (!empty($info[$this->operator]['method'])) {
       $this->{$info[$this->operator]['method']}($field, $upper);
     }
@@ -1645,6 +1628,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
  * Simple filter to handle greater than/less than filters
  */
 class views_handler_filter_numeric extends views_handler_filter {
+  var $no_single = TRUE;
   /**
    * Provide basic defaults for the filter
    */
@@ -1653,43 +1637,146 @@ class views_handler_filter_numeric extends views_handler_filter {
     $options['operator'] = '=';
     $options['value']['min'] = '';
     $options['value']['max'] = '';
+    $options['value']['value'] = '';
+  }
+
+  function operators() {
+    return array(
+      '<' => array(
+        'title' => t('Is less than'),
+        'method' => 'op_simple',
+        'short' => t('<'),
+        'values' => 1,
+      ),
+      '<=' => array(
+        'title' => t('Is less than or equal to'),
+        'method' => 'op_simple',
+        'short' => t('<='),
+        'values' => 1,
+      ),
+      '=' => array(
+        'title' => t('Is equal to'),
+        'method' => 'op_simple',
+        'short' => t('='),
+        'values' => 1,
+      ),
+      '!=' => array(
+        'title' => t('Is not equal to'),
+        'method' => 'op_simple',
+        'short' => t('!='),
+        'values' => 1,
+      ),
+      '>=' => array(
+        'title' => t('Is greater than or equal to'),
+        'method' => 'op_simple',
+        'short' => t('>='),
+        'values' => 1,
+      ),
+      '>' => array(
+        'title' => t('Is greater than'),
+        'method' => 'op_simple',
+        'short' => t('>'),
+        'values' => 1,
+      ),
+      'between' => array(
+        'title' => t('Is between'),
+        'method' => 'op_between',
+        'short' => t('between'),
+        'values' => 2,
+      ),
+      'not between' => array(
+        'title' => t('Is not between'),
+        'method' => 'op_between',
+        'short' => t('not between'),
+        'values' => 2,
+      ),
+    );
   }
 
   /**
    * Provide a list of all the numeric operators
    */
-  function operator_options() {
-    return array(
-      '<' => t('Is less than'),
-      '<=' => t('Is less than or equal to'),
-      '=' => t('Is equal to'),
-      '!=' => t('Is not equal to'),
-      '>=' => t('Is greater than or equal to'),
-      '>' => t('Is greater than'),
-      'between' => t('Is between'),
-      'not between' => t('Is not between'),
-    );
+  function operator_options($which = 'title') {
+    $options = array();
+    foreach ($this->operators() as $id => $info) {
+      $options[$id] = $info[$which];
+    }
+
+    return $options;
   }
 
+  function operator_values($values = 1) {
+    $options = array();
+    foreach ($this->operators() as $id => $info) {
+      if ($info['values'] == $values) {
+        $options[] = $id;
+      }
+    }
+
+    return $options;
+  }
   /**
    * Provide a simple textfield for equality
    */
   function value_form(&$form, &$form_state) {
     $form['value']['#tree'] = TRUE;
-    $form['value']['min'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Min value'),
-      '#size' => 30,
-      '#default_value' => $this->value['min'],
-      '#description' => t('For all non-range operators, this value is used.'),
-    );
-    $form['value']['max'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Max value'),
-      '#size' => 30,
-      '#default_value' => $this->value['max'],
-      '#description' => t('This value is ignored for all non-range operators.'),
-    );
+
+    // We have to make some choices when creating this as an exposed
+    // filter form. For example, if the operator is locked and thus
+    // not rendered, we can't render dependencies; instead we only
+    // render the form items we need.
+    $which = 'all';
+    $source = 'radio:options[operator]';
+    if (!empty($form_state['exposed'])) {
+      if (empty($this->options['expose']['operator'])) {
+        // exposed and locked.
+        $which = in_array($this->operator, $this->operator_values(2)) ? 'minmax' : 'value';
+      }
+      else {
+        $source = 'edit-' . form_clean_id($this->options['expose']['operator']);
+      }
+    }
+
+    if ($which == 'all' || $which == 'value') {
+      $form['value']['value'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Value'),
+        '#size' => 30,
+        '#default_value' => $this->value['value'],
+        '#description' => t('For all non-range operators, this value is used.'),
+      );
+      if ($which == 'all') {
+        $form['value']['value'] += array(
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array($source => $this->operator_values(1)),
+        );
+      }
+    }
+
+    if ($which == 'all' || $which == 'minmax') {
+      $form['value']['min'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Min value'),
+        '#size' => 30,
+        '#default_value' => $this->value['min'],
+        '#description' => t('For all non-range operators, this value is used.'),
+      );
+      $form['value']['max'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Max value'),
+        '#size' => 30,
+        '#default_value' => $this->value['max'],
+        '#description' => t('This value is ignored for all non-range operators.'),
+      );
+      if ($which == 'all') {
+        $dependency = array(
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array($source => $this->operator_values(2)),
+        );
+        $form['value']['min'] += $dependency;
+        $form['value']['max'] += $dependency;
+      }
+    }
   }
 
   /**
@@ -1697,25 +1784,39 @@ class views_handler_filter_numeric extends views_handler_filter {
    */
   function query() {
     $this->ensure_my_table();
-    switch($this->operator) {
-      case 'between':
-        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field >= %d", $this->value['min']);
-        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field <= %d", $this->value['max']);
-        break;
-      case 'not between':
-        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field <= %d", $this->value['min']);
-        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field >= %d", $this->value['max']);
-        break;
-      default:
-        $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " %d", $this->value['min']);
-        break;
+    $field = "$this->table_alias.$this->real_field";
+
+    $info = $this->operators();
+    if (!empty($info[$this->operator]['method'])) {
+      $this->{$info[$this->operator]['method']}($field);
     }
   }
 
+  function op_between($field) {
+    if ($this->operator == 'between') {
+      $a = $this->value['min'];
+      $b = $this->value['max'];
+    }
+    else {
+      $a = $this->value['max'];
+      $b = $this->value['min'];
+    }
+
+    $this->query->add_where($this->options['group'], "$field >= %d", $a);
+    $this->query->add_where($this->options['group'], "$field <= %d", $b);
+  }
+
+  function op_simple($field) {
+    $this->query->add_where($this->options['group'], "$field $this->operator %d", $this->value['value']);
+  }
+
   function admin_summary() {
-    $output = check_plain($this->operator) . ' ' . check_plain($this->value['min']);
-    if (!empty($this->value['max'])) {
-      $output .= ' '. t('and') .' '. check_plain($this->value['max']);
+    $output = check_plain($this->operator) . ' ';
+    if (in_array($this->operator, $this->operator_values(2))) {
+      $output .= t('@min and @max', array('@min' => $this->value['min'], '@max' => $this->value['max']));
+    }
+    else {
+      $output .= check_plain($this->value['value']);
     }
     return $output;
   }

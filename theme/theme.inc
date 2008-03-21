@@ -200,7 +200,7 @@ function template_preprocess_views_exposed_form(&$vars) {
   $vars['widgets'] = array();
   foreach ($form['#info'] as $id => $info) {
     // Set aside checkboxes.
-    if ($form[$info['value']]['#type'] == 'checkbox') {
+    if (isset($form[$info['value']]['#type']) && $form[$info['value']]['#type'] == 'checkbox') {
       $checkboxes .= drupal_render($form[$info['value']]);
       continue;
     }

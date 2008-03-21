@@ -5,9 +5,11 @@ Drupal.Views = {};
  */
 
 Drupal.behaviors.viewsTabs = function (context) {
-  $('#views-tabset:not(.views-processed)').addClass('views-processed').tabs({
-    selectedClass: 'active'
-  });
+  if ($.ui && $.ui.tabs) {
+    $('#views-tabset:not(.views-processed)').addClass('views-processed').tabs({
+      selectedClass: 'active'
+    });
+  }
 
   $('a.views-remove-link')
     .addClass('views-processed')

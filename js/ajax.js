@@ -143,6 +143,7 @@ Drupal.Views.Ajax.previewResponse = function(data) {
     Drupal.settings.viewsAjax = {};
   }
   if (data.js) {
+    console.log('hi');
     $.extend(Drupal.settings, data.js);
   }
 
