@@ -264,14 +264,7 @@ class views_handler_field_node extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data['link_to_node']) && $view->base_table != 'node') {
-      // @todo: This can't be right, it'll totally fail with relationships.
-      $this->additional_fields[] = 'nid';
-      $this->nid_field = 'node_nid';
-    }
-    else {
-      $this->nid_field = 'nid';
-    }
+    $this->additional_fields['nid'] = 'nid';
   }
 
   /**
@@ -288,7 +281,7 @@ class views_handler_field_node extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->options['link_to_node'])) {
-      return l($data, "node/" . $values->{$this->nid_field}, array('html' => TRUE));
+      return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE));
     }
     else {
       return $data;

@@ -175,16 +175,16 @@ class views_handler extends views_object {
       }
     }
 
-    if (isset($options['relationship'])) {
-      $this->relationship = $options['relationship'];
-    }
-    else {
-      $this->relationship = NULL;
-    }
-
     if (!empty($view->query)) {
       $this->query = &$view->query;
     }
+  }
+
+  /**
+   * Return a string representing this handler's name in the UI.
+   */
+  function ui_name() {
+    return t('@group: @title', array('@group' => $this->definition['group'], '@title' => $this->definition['title']));
   }
 
   /**
@@ -238,12 +238,12 @@ class views_handler extends views_object {
    *   - label: The label to use for this piece.
    */
   function exposed_info() { }
-  
+
  /**
   * Check whether current user has access to this handler.
   *
   * @return boolean
-  */ 
+  */
   function access() {
     return TRUE;
   }
@@ -255,6 +255,36 @@ class views_handler extends views_object {
    * been fully run.
    */
   function pre_query() { }
+
+  /**
+   * Called just prior to query(), this lets a handler set up any relationship
+   * it needs.
+   */
+  function set_relationship() {
+    // Ensure this gets set to something.
+    $this->relationship = NULL;
+
+    // Don't process non-existant relationships.
+    if (empty($this->options['relationship']) || $this->options['relationship'] == 'none') {
+      return;
+    }
+
+    $relationship = $this->options['relationship'];
+
+    // Ignore missing/broken relationships.
+    if (empty($this->view->relationship[$relationship]) || empty($this->view->relationship[$relationship]['handler'])) {
+      return;
+    }
+
+    // Check to see if the relationship has already processed. If not, then we
+    // cannot process it.
+    if (empty($this->view->relationship[$relationship]['handler']->alias)) {
+      return;
+    }
+
+    // Finally!
+    $this->relationship = $this->view->relationship[$relationship]['handler']->alias;
+  }
 
   /**
    * Add this handler into the query.
@@ -269,7 +299,8 @@ class views_handler extends views_object {
    */
   function ensure_my_table() {
     if (!isset($this->table_alias)) {
-      $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
+      $value = $this->query->ensure_table($this->table, $this->relationship);
+      $this->table_alias = $value;
     }
     return $this->table_alias;
   }
@@ -314,11 +345,53 @@ class views_handler extends views_object {
  */
 class views_handler_relationship extends views_handler {
   /**
+   * Get this field's label.
+   */
+  function label() {
+    if (!isset($this->options['label'])) {
+      return $this->ui_name();
+    }
+    return $this->options['label'];
+  }
+
+  /**
+   * Provide a default label
+   */
+  function options(&$options) {
+    parent::options($options);
+    $options['label'] = !empty($this->definition['label']) ? $this->definition['label'] : $this->definition['field'];
+  }
+
+  /**
+   * Default options form that provides the label widget that all fields
+   * should have.
+   */
+  function options_form(&$form, &$form_state) {
+    $form['label'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Label'),
+      '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
+      '#description' => t('The label for this relationship that will be displayed only administratively.'),
+    );
+  }
+
+  /**
    * Called to implement a relationship in a query.
    */
   function query() {
-    $alias = $this->table . '_' . $this->field . '_' . $this->relationship;
-    return $this->query->add_relationship($alias, new views_join($this->view->primary_table, $this->table, $this->real_field, $this->primary_field), $this->relationship);
+    // Figure out what base table this relationship brings to the party.
+    $table_data = views_fetch_data($this->definition['base']);
+    $base_field = $table_data['table']['base']['field'];
+
+    $join = new views_join;
+    $join->construct($this->definition['base'], $this->table, $this->real_field, $base_field);
+
+    $this->ensure_my_table();
+
+    // use a short alias for this:
+    $alias = $this->options['id'];
+
+    $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base'], $this->relationship);
   }
 }
 
@@ -357,10 +430,41 @@ class views_handler_field extends views_handler {
     // Add the field.
     $this->field_alias = $this->query->add_field($this->table_alias, $this->real_field);
 
-    // Add any additional fields we are given.
-    if (!empty($this->additional_fields) && is_array($this->additional_fields)) {
-      foreach ($this->additional_fields as $field) {
-        $this->aliases[$field] = $this->query->add_field($this->table_alias, $field);
+    $this->add_additional_fields();
+  }
+
+  /**
+   * Add 'additional' fields to the query.
+   *
+   * @param $fields
+   * An array of fields. The key is an identifier used to later find the
+   * field alias used. The value is either a string in which case it's
+   * assumed to be a field on this handler's table; or it's an array in the
+   * form of
+   * @code array('table' => $tablename, 'field' => $fieldname) @endcode
+   */
+  function add_additional_fields($fields = NULL) {
+    if (!isset($fields)) {
+      // notice check
+      if (empty($this->additional_fields)) {
+        return;
+      }
+      $fields = $this->additional_fields;
+    }
+    if (!empty($fields) && is_array($fields)) {
+      foreach ($fields as $identifier => $info) {
+        if (is_array($info)) {
+          if (isset($info['table'])) {
+            $table_alias = $this->query->ensure_table($info['table'], $this->relationship);
+          }
+          else {
+            $table_alias = $this->table_alias;
+          }
+          $this->aliases[$identifier] = $this->query->add_field($table_alias, $info['field']);
+        }
+        else {
+          $this->aliases[$info] = $this->query->add_field($this->table_alias, $info);
+        }
       }
     }
   }
@@ -394,7 +498,7 @@ class views_handler_field extends views_handler {
    */
   function options(&$options) {
     parent::options($options);
-    $options['label'] = t('!group: !title', array('!group' => $this->definition['group'], '!title' => $this->definition['title']));
+    $options['label'] = $this->ui_name();
   }
 
   /**
@@ -408,6 +512,13 @@ class views_handler_field extends views_handler {
       '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
       '#description' => t('The label for this field that will be displayed to end users if the style requires it.'),
     );
+  }
+
+  /**
+   * Provide extra data to the administration form
+   */
+  function admin_summary() {
+    return $this->label();
   }
 
   /**
@@ -986,7 +1097,7 @@ class views_handler_filter extends views_handler {
     $this->options['expose'] = array(
       'operator' => $this->options['id'] . '_oper',
       'identifier' => $this->options['id'],
-      'label' => t('@group: @title', array('@group' => $this->definition['group'], '@title' => $this->definition['title'])),
+      'label' => $this->ui_name(),
       'remember' => FALSE,
       'single' => TRUE,
       'optional' => TRUE,

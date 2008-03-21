@@ -281,8 +281,8 @@ class view extends views_db_object {
           // Deal with difficult PHP indirection:
           $items[$id]['handler'] = $handler;
         }
-        else { 
-          unset($items[$id]); 
+        else {
+          unset($items[$id]);
         }
       }
     }
@@ -424,6 +424,8 @@ class view extends views_db_object {
 
       $this->exposed_widgets = drupal_build_form('views_exposed_form', $form_state);
     }
+    // Build all the relationships first thing.
+    $this->_build('relationship');
 
     // Build all the filters.
     $this->_build('filter');
@@ -472,6 +474,7 @@ class view extends views_db_object {
             continue;
           }
         }
+        $array[$id]['handler']->set_relationship();
         $array[$id]['handler']->query();
       }
     }

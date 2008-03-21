@@ -784,6 +784,20 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   $fields = array();
 
+  static $relationships = NULL;
+  if (!isset($relationships)) {
+    // Get relationship labels
+    $relationships = array();
+    foreach ($display->handler->get_option('relationships') as $id => $relationship) {
+      $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
+      if (empty($handler)) {
+        continue;
+      }
+      $handler->init($view, $relationship);
+      $relationships[$id] = $handler->label();
+    }
+  }
+
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $fields[$id] = array();
 
@@ -796,7 +810,10 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
     $handler->init($view, $field);
 
-    $field_name = t('!group: !title', array('!group' => $handler->definition['group'], '!title' => $handler->definition['title']));
+    $field_name = $handler->ui_name();
+    if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
+      $field_name = '(' . $relationships[$field['relationship']] . ') ' . $field_name;
+    }
 
     $fields[$id]['title'] = l($field_name, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')));
     $fields[$id]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $id);
@@ -921,7 +938,7 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
     $form_state['url'] = $form['#url'];
   }
   if (isset($form['#js'])) {
-    if (is_array($form_state['js settings'])) {
+    if (!empty($form_state['js settings']) && is_array($form_state['js settings'])) {
       $form_state['js settings'] = array_merge($form_state['settings'], $form['#js']);
     }
     else {
@@ -1325,6 +1342,17 @@ function views_ui_rearrange_form(&$form_state) {
 
   $count = 0;
 
+  // Get relationship labels
+  $relationships = array();
+  foreach ($display->handler->get_option('relationships') as $id => $relationship) {
+    $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
+    if (empty($handler)) {
+      continue;
+    }
+    $handler->init($view, $relationship);
+    $relationships[$id] = $handler->label();
+  }
+
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $form[$id] = array('#tree' => TRUE);
     $form[$id]['weight'] = array(
@@ -1335,8 +1363,13 @@ function views_ui_rearrange_form(&$form_state) {
     $handler = views_get_handler($field['table'], $field['field'], $type);
     if ($handler) {
       $handler->init($view, $field);
+      $name = $handler->ui_name() . ' ' . $handler->admin_summary();
+      if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
+        $name = '(' . $relationships[$field['relationship']] . ') ' . $name;
+      }
+
       $form[$id]['name'] = array(
-        '#value' => t('@group: @title', array('@group' => $handler->definition['group'], '@title' => $handler->definition['title'])) . ' ' . $handler->admin_summary(),
+        '#value' => $name,
       );
       $form[$id]['removed'] = array(
         '#type' => 'checkbox',
@@ -1481,7 +1514,17 @@ function views_ui_add_item_form(&$form_state) {
   $form['#title'] .= t('Add @type', array('@type' => strtolower($types[$type]['title'])));
   $form['#section'] = $display_id . 'add-item';
 
-  $options = views_fetch_field_names($view->base_table, $type);
+  // Figure out all the base tables allowed based upon what the relationships provide.
+  $base_tables = array($view->base_table => TRUE);
+  $relationships = $display->handler->get_option('relationships');
+  foreach ($relationships as $relationship) {
+    $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
+    if ($handler) {
+      $base_tables[$handler->definition['base']] = TRUE;
+    }
+  }
+
+  $options = views_fetch_field_names(array_keys($base_tables), $type);
 
   if (!empty($options)) {
     $form['name'] = array(
@@ -1582,7 +1625,6 @@ function views_ui_config_item_form(&$form_state) {
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
-    dsm($item);
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
@@ -1592,14 +1634,58 @@ function views_ui_config_item_form(&$form_state) {
       $handler->init($view, $item);
       $types = views_object_types();
 
+      // A whole bunch of code to figure out what relationships are valid for
+      // this item.
+      $relationships = $view->display_handler->get_option('relationships');
+      $relationship_options = array();
+
+      foreach ($relationships as $relationship) {
+        // relationships can't link back to self. But also, due to ordering,
+        // relationships can only link to prior relationships.
+        if ($type == 'relationship' && $id == $relationship['id']) {
+          break;
+        }
+        $relationship_handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
+        $relationship_handler->init($view, $relationship);
+
+        // ignore invalid/broken relationships.
+        if (empty($relationship_handler)) {
+          continue;
+        }
+        $relationship_options[$relationship['id']] = $relationship_handler->label();
+      }
+
+      if (!empty($relationship_options)) {
+        // Make sure the existing relationship is even valid. If not, force
+        // it to none.
+        $relationship_options = array_merge(array('none' => t('Do not use a relationship')), $relationship_options);
+        $rel = empty($item['relationship']) ? 'none' : $item['relationship'];
+        if (empty($relationship_options[$rel])) {
+          $rel = 'none';
+        }
+
+        $form['options']['relationship'] = array(
+          '#type' => 'select',
+          '#title' => t('Relationship'),
+          '#options' => $relationship_options,
+          '#default_value' => $rel,
+        );
+      }
+      else {
+        $form['options']['relationship'] = array(
+          '#type' => 'value',
+          '#value' => 'none',
+        );
+      }
+
       $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-      $form['#title'] .= t('Configure @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+      $form['#title'] .= t('Configure @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
 
       $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
       // Get form from the handler.
       $handler->options_form($form['options'], $form_state);
-      $form_state['handler'] = &$handler;
+        $form_state['handler'] = &$handler;
 
     }
     // Set this hidden field so that when we come back, our stacking state
@@ -1756,7 +1842,7 @@ function views_ui_change_style_form(&$form_state) {
     }
     $handler->init($view, $item);
     $types = views_object_types();
-    $form['#title'] = t('Change summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+    $form['#title'] = t('Change summary style for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-' . $id .'-style-plugin';
 
@@ -1843,7 +1929,7 @@ function views_ui_config_style_form(&$form_state) {
     $types = views_object_types();
 
     $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-    $form['#title'] .= t('Configure summary style for @type "@group: @title"', array('@type' => strtolower($types[$type]['stitle']), '@group' => $handler->definition['group'], '@title' => $handler->definition['title']));
+    $form['#title'] .= t('Configure summary style for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-style-options';
 

@@ -94,12 +94,8 @@ class views_handler_field_user extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (!empty($this->options['link_to_user']) && $this->view->base_table != 'users') {
-      $this->additional_fields[] = 'uid';
-      $this->uid_field = 'users_uid';
-    }
-    else {
-      $this->uid_field = 'uid';
+    if (!empty($this->options['link_to_user'])) {
+      $this->additional_fields['uid'] = 'uid';
     }
   }
 
@@ -122,7 +118,7 @@ class views_handler_field_user extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->options['link_to_user']) && user_access('access user profiles')) {
-      return l($data, "user/" . $values->{$this->uid_field}, array('html' => TRUE));
+      return l($data, "user/" . $values->{$this->aliases['uid']}, array('html' => TRUE));
     }
     else {
       return $data;
@@ -155,7 +151,9 @@ class views_handler_field_user_mail extends views_handler_field {
 class views_handler_field_user_name extends views_handler_field_user {
   function render_link($data, $values) {
     if (!empty($this->options['link_to_user'])) {
-      $account = (object)array('uid' => $values->{$this->uid_field}, 'name' => $values->{$this->field_alias});
+      $account = new stdClass();
+      $account->name = $values->{$this->field_alias};
+      $account->uid = $values->{$this->aliases['uid']};
       return theme('username', $account);
     }
     else {

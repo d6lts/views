@@ -65,7 +65,12 @@ class views_query {
   function views_query($primary_table = 'node', $primary_field = 'nid') {
     $this->primary_table = $primary_table;  // Predefine these above, for clarity.
     $this->primary_field = $primary_field;
-    $this->relationships[$primary_table] = array('link' => NULL, 'table' => $primary_table, 'alias' => $primary_table);
+    $this->relationships[$primary_table] = array(
+      'link' => NULL,
+      'table' => $primary_table,
+      'alias' => $primary_table,
+      'base' => $primary_table
+    );
 
     // init the table queue with our primary table.
     $this->table_queue[$primary_table] = array(
@@ -153,13 +158,17 @@ class views_query {
    *   for the table.
    * @param $join
    *   A views_join object (or derived object) to join the alias in.
+   * @param $base
+   *   The name of the 'base' table this relationship represents; this
+   *   tells the join search which path to attempt to use when finding
+   *   the path to this relationship.
    * @param $link_point
    *   If this relationship links to something other than the primary
    *   table, specify that table here. For example, a 'track' node
    *   might have a relationship to an 'album' node, which might
    *   have a relationship to an 'artist' node.
    */
-  function add_relationship($alias, $join, $link_point = NULL) {
+  function add_relationship($alias, $join, $base, $link_point = NULL) {
     if (empty($link_point)) {
       $link_point = $this->primary_table;
     }
@@ -169,7 +178,11 @@ class views_query {
 
     $join = $this->adjust_join($join, $link_point);
     if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
-      $this->relationships[$alias] = array('link' => $link_point, 'table' => $join->table);
+      $this->relationships[$alias] = array(
+        'link' => $link_point,
+        'table' => $join->table,
+        'base' => $base,
+      );
       return $alias;
     }
   }
@@ -242,7 +255,7 @@ class views_query {
   function queue_table($table, $relationship = NULL, $join = NULL, $alias = NULL) {
     // If the alias is set, make sure it doesn't already exist.
     if (isset($this->table_queue[$alias])) {
-      return FALSE;
+      return TRUE;
     }
 
     if (empty($relationship)) {
@@ -253,6 +266,41 @@ class views_query {
       return FALSE;
     }
 
+    $alias = $this->mark_table($table, $relationship, $alias);
+
+    // If no alias is specified, give it the default.
+    if (!isset($alias)) {
+      $alias = $this->tables[$relationship][$table]['alias'] . $this->tables[$relationship][$table]['count'];
+    }
+
+    // If this is a relationship based table, add a marker with
+    // the relationship as a primary table for the alias.
+    if ($table!= $alias) {
+      $this->mark_table($alias, $this->primary_table, $alias);
+    }
+
+    // If no join is specified, pull it from the table data.
+    if (!isset($join)) {
+      $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
+      if (empty($join)) {
+        return FALSE;
+      }
+
+      $join = $this->adjust_join($join, $relationship);
+    }
+
+    $this->table_queue[$alias] = array(
+      'table' => $table,
+      'num' => $this->tables[$relationship][$table]['count'],
+      'alias' => $alias,
+      'join' => $join,
+      'relationship' => $relationship,
+    );
+
+    return $alias;
+  }
+
+  function mark_table($table, $relationship, $alias) {
     // Mark that this table has been added.
     if (empty($this->tables[$relationship][$table])) {
       if (!isset($alias)) {
@@ -272,29 +320,6 @@ class views_query {
     else {
       $this->tables[$relationship][$table]['count']++;
     }
-
-    // If no alias is specified, give it the default.
-    if (!isset($alias)) {
-      $alias = $this->tables[$relationship][$table]['alias'] . $this->tables[$relationship][$table]['count'];
-    }
-
-    // If no join is specified, pull it from the table data.
-    if (!isset($join)) {
-      $join = $this->get_join_data($table);
-      if (empty($join)) {
-        return FALSE;
-      }
-
-      $join = $this->adjust_join($join, $relationship);
-    }
-
-    $this->table_queue[$alias] = array(
-      'table' => $table,
-      'num' => $this->tables[$relationship][$table]['count'],
-      'alias' => $alias,
-      'join' => $join,
-      'relationship' => $relationship,
-    );
 
     return $alias;
   }
@@ -318,16 +343,25 @@ class views_query {
    *   cannot be ensured.
    */
   function ensure_table($table, $relationship = NULL, $join = NULL) {
+    // ensure a relationship
     if (empty($relationship)) {
       $relationship = $this->primary_table;
+    }
+
+    // If the relationship is the primary table, this actually be a relationship
+    // link back from an alias. We store all aliases along with the primary table
+    // to detect this state, because eventually it'll hit a table we already
+    // have and that's when we want to stop.
+    if ($relationship == $this->primary_table && !empty($this->tables[$relationship][$table])) {
+      return $this->tables[$relationship][$table]['alias'];
     }
 
     if (!array_key_exists($relationship, $this->relationships)) {
       return FALSE;
     }
 
-    if (isset($this->tables[$relationship][$table]['alias'])) {
-      return $this->tables[$relationship][$table]['alias'];
+    if ($table == $this->relationships[$relationship]['base']) {
+      return $relationship;
     }
 
     if (!empty($join)) {
@@ -356,13 +390,13 @@ class views_query {
     }
 
     if (!isset($join)) {
-      $join = $this->get_join_data($table);
+      $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
     }
 
     // Does a table along this path exist?
     if (isset($this->tables[$relationship][$table]) ||
-      $join->left_table == $relationship ||
-      $join->left_table == $this->relationships[$relationship]['table']) {
+      ($join && $join->left_table == $relationship) ||
+      ($join && $join->left_table == $this->relationships[$relationship]['table'])) {
       // Make sure that we're linking to the correct table for our relationship.
       foreach (array_reverse($add) as $table => $join) {
         $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship));
@@ -377,7 +411,7 @@ class views_query {
     }
 
     // Do we have to add this table?
-    $left_join = $this->get_join_data($join->left_table);
+    $left_join = $this->get_join_data($join->left_table, $this->relationships[$relationship]['base']);
     if (!isset($this->tables[$relationship][$join->left_table])) {
       $add[$join->left_table] = $left_join;
     }
@@ -419,20 +453,21 @@ class views_query {
   /**
    * Retrieve join data from the larger join data cache.
    *
+   * @param
+   *   The table to get the join information for.
+   * @param
+   *   The path we're following to get this join.
+   *
    * @return
-   *   A keyed array containing the following information:
-   *   - 'alias': The alias used to refer to the table in the query.
-   *   - 'table': The real table in the query.
-   *   - 'relationship': What relationship this join is part of.
-   *   - 'join': The join object used to create the join.
+   *   A views_join object or child object, if one exists.
    */
-  function get_join_data($table) {
+  function get_join_data($table, $primary_table) {
     // Check to see if we're linking to a known alias. If so, get the real
     // table's data instead.
     if (!empty($this->table_queue[$table])) {
       $table = $this->table_queue[$table]['table'];
     }
-    return views_get_table_join($table, $this->primary_table);
+    return views_get_table_join($table, $primary_table);
 
   }
 

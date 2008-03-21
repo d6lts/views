@@ -432,6 +432,16 @@ function views_fetch_field_names($base, $type) {
   if (empty($fields)) {
     $data = views_fetch_data();
     $start = microtime();
+    // This constructs this ginormous multi dimensional array to
+    // collect the important data about fields. In the end,
+    // the structure looks a bit like this (using nid as an example)
+    // $strings['nid']['filter']['title'] = 'string'.
+    //
+    // This is constructed this way because the above referenced strings
+    // can appear in different places in the actual data structure so that
+    // the data doesn't have to be repeated a lot. This essentially lets
+    // each field have a cheap kind of inheritance.
+
     foreach ($data as $table => $table_data) {
       $bases = array();
       $strings = array();
@@ -450,7 +460,7 @@ function views_fetch_field_names($base, $type) {
         }
         foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
           if (!empty($info[$key])) {
-            foreach (array('title', 'group', 'help') as $string) {
+            foreach (array('title', 'group', 'help', 'base') as $string) {
               // First, try the lowest possible level
               if (!empty($info[$key][$string])) {
                 $strings[$field][$key][$string] = $info[$key][$string];
@@ -464,7 +474,9 @@ function views_fetch_field_names($base, $type) {
                 $strings[$field][$key][$string] = $table_data['table'][$string];
               }
               else {
-                $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+                if ($string != 'base') {
+                  $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+                }
               }
             }
           }
@@ -479,6 +491,20 @@ function views_fetch_field_names($base, $type) {
       }
     }
 //    vsm('Views UI data build time: ' . (microtime() - $start) * 1000 . ' ms');
+  }
+
+  // If we have an array of base tables available, go through them
+  // all and add them together. Duplicate keys will be lost and that's
+  // Just Fine.
+  if (is_array($base)) {
+    $strings = array();
+    foreach ($base as $base_table) {
+      if (isset($fields[$base_table][$type])) {
+        $strings += $fields[$base_table][$type];
+      }
+    }
+    asort($strings);
+    return $strings;
   }
 
   if (isset($fields[$base][$type])) {
