@@ -1316,7 +1316,7 @@ class views_handler_filter_string extends views_handler_filter {
    * adding/removing items from this array.
    */
   function operators() {
-    return array(
+    $operators = array(
       '=' => array(
         'title' => t('Is equal to'),
         'short' => t('='),
@@ -1358,6 +1358,25 @@ class views_handler_filter_string extends views_handler_filter {
         'method' => 'op_not',
       ),
     );
+    // if the definition allows for the empty operator, add it.
+    if (!empty($this->definition['allow empty'])) {
+      $operators += array(
+        'empty' => array(
+          'title' => t('Is empty (NULL)'),
+          'method' => 'op_empty',
+          'short' => t('empty'),
+          'values' => 0,
+        ),
+        'not empty' => array(
+          'title' => t('Is not empty (NULL)'),
+          'method' => 'op_empty',
+          'short' => t('not empty'),
+          'values' => 0,
+        ),
+      );
+    }
+
+    return $operators;
   }
 
   /**
@@ -1468,6 +1487,17 @@ class views_handler_filter_string extends views_handler_filter {
 
   function op_not($field, $upper) {
     $this->query->add_where($this->options['group'], "$upper(%s) NOT LIKE $upper('%%%s%%')", $field, $this->value);
+  }
+
+  function op_empty($field) {
+    if ($this->operator == 'empty') {
+      $operator = "IS NULL";
+    }
+    else {
+      $operator = "IS NOT NULL";
+    }
+
+    $this->query->add_where($this->options['group'], "$field $operator");
   }
 
 }
@@ -1641,7 +1671,7 @@ class views_handler_filter_numeric extends views_handler_filter {
   }
 
   function operators() {
-    return array(
+    $operators = array(
       '<' => array(
         'title' => t('Is less than'),
         'method' => 'op_simple',
@@ -1691,6 +1721,26 @@ class views_handler_filter_numeric extends views_handler_filter {
         'values' => 2,
       ),
     );
+
+    // if the definition allows for the empty operator, add it.
+    if (!empty($this->definition['allow empty'])) {
+      $operators += array(
+        'empty' => array(
+          'title' => t('Is empty (NULL)'),
+          'method' => 'op_empty',
+          'short' => t('empty'),
+          'values' => 0,
+        ),
+        'not empty' => array(
+          'title' => t('Is not empty (NULL)'),
+          'method' => 'op_empty',
+          'short' => t('not empty'),
+          'values' => 0,
+        ),
+      );
+    }
+
+    return $operators;
   }
 
   /**
@@ -1802,6 +1852,17 @@ class views_handler_filter_numeric extends views_handler_filter {
 
   function op_simple($field) {
     $this->query->add_where($this->options['group'], "$field $this->operator %d", $this->value['value']);
+  }
+
+  function op_empty($field) {
+    if ($this->operator == 'empty') {
+      $operator = "IS NULL";
+    }
+    else {
+      $operator = "IS NOT NULL";
+    }
+
+    $this->query->add_where($this->options['group'], "$field $operator");
   }
 
   function admin_summary() {
