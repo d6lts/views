@@ -1406,16 +1406,51 @@ class views_handler_filter_string extends views_handler_filter {
     );
   }
 
+  function operator_values($values = 1) {
+    $options = array();
+    foreach ($this->operators() as $id => $info) {
+      if (isset($info['values']) && $info['values'] == $values) {
+        $options[] = $id;
+      }
+    }
+
+    return $options;
+  }
+
   /**
    * Provide a simple textfield for equality
    */
   function value_form(&$form, &$form_state) {
-    $form['value'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Value'),
-      '#size' => 30,
-      '#default_value' => $this->value,
-    );
+    // We have to make some choices when creating this as an exposed
+    // filter form. For example, if the operator is locked and thus
+    // not rendered, we can't render dependencies; instead we only
+    // render the form items we need.
+    $which = 'all';
+    $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
+    if (!empty($form_state['exposed'])) {
+      if (empty($this->options['expose']['operator'])) {
+        // exposed and locked.
+        $which = in_array($this->operator, $this->operator_values(1)) ? 'value' : 'none';
+      }
+      else {
+        $source = 'edit-' . form_clean_id($this->options['expose']['operator']);
+      }
+    }
+
+    if ($which == 'all' || $which == 'value') {
+      $form['value'] = array(
+        '#type' => 'textfield',
+        '#title' => t('Value'),
+        '#size' => 30,
+        '#default_value' => $this->value,
+      );
+      if ($which == 'all') {
+        $form['value'] += array(
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array($source => $this->operator_values(1)),
+        );
+      }
+    }
   }
 
   function case_transform() {
