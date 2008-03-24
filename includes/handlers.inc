@@ -578,6 +578,8 @@ class views_handler_field_date extends views_handler_field {
       '#title' => t('Custom date format'),
       '#description' => t('If "Custom", see <a href="http://us.php.net/manual/en/function.date.php">the PHP docs</a> for date formats. If "Time ago" this is the the number of different units to display, which defaults to two.'),
       '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-options-date-format' => array('custom', 'time ago')),
     );
   }
 
@@ -793,9 +795,69 @@ class views_handler_sort_formula extends views_handler_sort {
     }
     $this->ensure_my_table();
     // Add the field.
-    $this->add_orderby(NULL, $this->formula, $this->options['order'], $this->table_alias . '_' . $this->field);
+    $this->query->add_orderby(NULL, $formula, $this->options['order'], $this->table_alias . '_' . $this->field);
   }
 }
+
+class views_handler_sort_date extends views_handler_sort {
+  function options(&$options) {
+    parent::options($options);
+    $options['granularity'] = 'second';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
+    $form['granularity'] = array(
+      '#type' => 'radios',
+      '#title' => t('Granularity'),
+      '#options' => array(
+        'second' => t('Second'),
+        'minute' => t('Minute'),
+        'hour'   => t('Hour'),
+        'day'    => t('Day'),
+        'month'  => t('Month'),
+        'year'   => t('Year'),
+      ),
+      '#description' => t('The granularity is the smallest unit to use when determining whether two dates are the same; for example, if the granularity is "Year" then all dates in 1999, regardless of when they fall in 1999, will be considered the same date.'),
+      '#default_value' => $this->options['granularity'],
+    );
+  }
+
+  /**
+   * Called to add the sort to a query.
+   */
+  function query() {
+    $timezone = views_get_timezone();
+
+    $this->ensure_my_table();
+    switch($this->options['granularity']) {
+      case 'second':
+      default:
+        $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
+        return;
+      case 'minute':
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field), '%Y%m%%d%H%i')";
+        break;
+      case 'hour':
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field), '%Y%m%%d%H')";
+        break;
+      case 'day':
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y%m%%d')";
+        break;
+      case 'month':
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y%m')";
+        break;
+      case 'year':
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y')";
+        break;
+    }
+
+    // Add the field.
+    $this->query->add_orderby(NULL, $formula, $this->options['order'], $this->table_alias . '_' . $this->field . '_' . $this->options['granularity']);
+  }
+}
+
 
 /**
  * @}
@@ -1819,7 +1881,10 @@ class views_handler_filter_numeric extends views_handler_filter {
     // not rendered, we can't render dependencies; instead we only
     // render the form items we need.
     $which = 'all';
-    $source = 'radio:options[operator]';
+    if (!empty($form['operator'])) {
+      $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
+    }
+
     if (!empty($form_state['exposed'])) {
       if (empty($this->options['expose']['operator'])) {
         // exposed and locked.
