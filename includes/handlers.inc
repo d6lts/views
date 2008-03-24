@@ -1201,7 +1201,7 @@ class views_handler_filter extends views_handler {
    */
   function accept_exposed_input($input) {
     if (empty($this->options['exposed'])) {
-      return;
+      return TRUE;
     }
 
     if (!empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
@@ -1743,7 +1743,6 @@ class views_handler_filter_numeric extends views_handler_filter {
         '#title' => t('Value'),
         '#size' => 30,
         '#default_value' => $this->value['value'],
-        '#description' => t('For all non-range operators, this value is used.'),
       );
       if ($which == 'all') {
         $form['value']['value'] += array(
@@ -1756,17 +1755,15 @@ class views_handler_filter_numeric extends views_handler_filter {
     if ($which == 'all' || $which == 'minmax') {
       $form['value']['min'] = array(
         '#type' => 'textfield',
-        '#title' => t('Min value'),
+        '#title' => t('Min'),
         '#size' => 30,
         '#default_value' => $this->value['min'],
-        '#description' => t('For all non-range operators, this value is used.'),
       );
       $form['value']['max'] = array(
         '#type' => 'textfield',
-        '#title' => t('Max value'),
+        '#title' => t('And max'),
         '#size' => 30,
         '#default_value' => $this->value['max'],
-        '#description' => t('This value is ignored for all non-range operators.'),
       );
       if ($which == 'all') {
         $dependency = array(
@@ -1779,9 +1776,6 @@ class views_handler_filter_numeric extends views_handler_filter {
     }
   }
 
-  /**
-   * We need to override this to avoid doing a string comparison against numeric fields.
-   */
   function query() {
     $this->ensure_my_table();
     $field = "$this->table_alias.$this->real_field";
@@ -1819,6 +1813,78 @@ class views_handler_filter_numeric extends views_handler_filter {
       $output .= check_plain($this->value['value']);
     }
     return $output;
+  }
+}
+
+class views_handler_filter_date extends views_handler_filter_numeric {
+  function options(&$options) {
+    parent::options($options);
+    $options['value']['type'] = 'date';
+  }
+
+  /**
+   * Add a type selector to the value form
+   */
+  function value_form(&$form, &$form_state) {
+    $form['value']['type'] = array(
+      '#type' => 'radios',
+      '#title' => t('Value type'),
+      '#options' => array(
+        'date' => t('A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred.'),
+        'offset' => t('An offset from the current time such as "+1 day" or "-2 hours and 30 minutes"'),
+      ),
+      '#default_value' => $this->value['type'],
+    );
+    parent::value_form($form, $form_state);
+  }
+
+  function options_validate(&$form, &$form_state) {
+    parent::options_validate($form, $form_state);
+    $operators = $this->operators();
+    if ($operators[$form_state['values']['options']['operator']]['values'] == 1) {
+      $convert = strtotime($form_state['values']['options']['value']['value']);
+      if ($convert == -1 || $convert === FALSE) {
+        form_error($form['value']['value'], t('Invalid date format.'));
+      }
+    }
+    else {
+      $min = strtotime($form_state['values']['options']['value']['min']);
+      if ($min == -1 || $min === FALSE) {
+        form_error($form['value']['min'], t('Invalid date format.'));
+      }
+      $max = strtotime($form_state['values']['options']['value']['max']);
+      if ($max == -1 || $max === FALSE) {
+        form_error($form['value']['max'], t('Invalid date format.'));
+      }
+    }
+  }
+
+  function op_between($field) {
+    if ($this->operator == 'between') {
+      $a = strtotime($this->value['min'], 0);
+      $b = strtotime($this->value['max'], 0);
+    }
+    else {
+      $a = strtotime($this->value['max'], 0);
+      $b = strtotime($this->value['min'], 0);
+    }
+
+    if ($this->value['type'] == 'offset') {
+      $a = '***CURRENT_TIME***' . sprintf('%+d', $a); // keep sign
+      $b = '***CURRENT_TIME***' . sprintf('%+d', $b); // keep sign
+    }
+    // %s is safe here because strtotime scrubbed the input and we might
+    // have a string if using offset.
+    $this->query->add_where($this->options['group'], "$field >= %s", $a);
+    $this->query->add_where($this->options['group'], "$field <= %s", $b);
+  }
+
+  function op_simple($field) {
+    $value = strtotime($this->value['value'], 0);
+    if ($this->value['type'] == 'offset') {
+      $value = '***CURRENT_TIME***' . sprintf('%+d', $value); // keep sign
+    }
+    $this->query->add_where($this->options['group'], "$field $this->operator %s", $value);
   }
 }
 

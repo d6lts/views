@@ -102,7 +102,9 @@ function node_views_data() {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
-    // @todo date filter
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
   );
 
   // changed field
@@ -115,6 +117,9 @@ function node_views_data() {
     ),
     'sort' => array(
       'handler' => 'views_handler_filter_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
     ),
     // @todo date filter
   );
@@ -188,6 +193,9 @@ function node_views_data() {
       'handler' => 'views_handler_sort',
     ),
   );
+
+  // @todo: language field
+  // @todo: translation and/or tnid
 
   // Bogus fields for aliasing purposes.
 

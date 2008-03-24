@@ -507,13 +507,25 @@ class view extends views_db_object {
 
     $items = array();
     if ($query) {
+      $replacements = module_invoke_all('views_query_substitutions', $this);
+      foreach ($replacements as $src => $dest) {
+        $query = str_replace($src, $dest, $query);
+        $count_query = str_replace($src, $dest, $this->build_info['count_query']);
+
+        if (is_array($args)) {
+          foreach ($args as $id => $arg) {
+            $args[$id] = str_replace($src, $dest, $arg);
+          }
+        }
+      }
+
       // Allow for a view to query an external database.
       if (isset($this->base_database)) {
         db_set_active($this->base_database);
         $external = TRUE;
       }
       if (!empty($this->pager['use_pager'])) {
-        $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
+        $count_query = db_rewrite_sql($count_query, $this->base_table, $this->base_field);
 
         $result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
         $this->total_rows = $GLOBALS['pager_total_items'][$this->pager['element']];
@@ -524,7 +536,7 @@ class view extends views_db_object {
 
         // Rewrite and run the count query so we can store how many items this would have
         // matched.
-        $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field);
+        $count_query = db_rewrite_sql($count_query, $this->base_table, $this->base_field);
         $this->total_rows = db_result(db_query($count_query, $args));
       }
       else {
