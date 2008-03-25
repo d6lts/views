@@ -194,6 +194,14 @@ function node_views_data() {
 
   // @todo: language field
   // @todo: translation and/or tnid
+  // @todo: link to node field
+  // @todo: edit node field
+  // @todo: delete node field
+  // @todo: feed selector field
+
+  // @todo: Filter by uid
+
+  // @todo: filter by authored or commented (this should be in comment.views.inc)
 
   // Bogus fields for aliasing purposes.
 
@@ -201,6 +209,7 @@ function node_views_data() {
     'title' => t('Created year + month'),
     'help' => t('In the form of YYYYMM'),
     'argument' => array(
+      'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year_month',
     ),
   );
@@ -209,6 +218,7 @@ function node_views_data() {
     'title' => t('Created year'),
     'help' => t('In the form of YYYY'),
     'argument' => array(
+      'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year',
     ),
   );
@@ -217,9 +227,14 @@ function node_views_data() {
     'title' => t('Created month'),
     'help' => t('In the form of MM 01 - 12'),
     'argument' => array(
+      'field' => 'created',
       'handler' => 'views_handler_argument_node_created_month',
     ),
   );
+
+  // @todo:
+  // fulldate
+  // week
 
   // ----------------------------------------------------------------------
   // Node revisions table
@@ -279,6 +294,11 @@ function node_views_data() {
   // revision title
   // revision log message
   // revision timestamp
+
+  // @todo: History table
+  // @todo: history --> has new content
+
+
   return $data;
 }
 
@@ -399,7 +419,7 @@ class views_handler_argument_node_created_year extends views_handler_argument_fo
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula = "YEAR(FROM_UNIXTIME(***table***.created+$timezone))";
+    $this->formula = "YEAR(FROM_UNIXTIME(***table***.$this->real_field+$timezone))";
   }
 
   /**
@@ -420,7 +440,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.created+$timezone), '%Y%m')";
+    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.$this->real_field+$timezone), '%Y%m')";
     $this->format = 'F, Y';
   }
 
@@ -449,7 +469,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
    */
   function construct() {
     $timezone = views_get_timezone();
-    $this->formula =  "MONTH(FROM_UNIXTIME(***table***.created+$timezone))";
+    $this->formula =  "MONTH(FROM_UNIXTIME(***table***.$this->real_field+$timezone))";
     $this->format = 'F';
   }
 
@@ -471,7 +491,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
 }
 
 /**
- I Filter by node type
+ * Filter by node type
  */
 class views_handler_filter_node_type extends views_handler_filter_in_operator {
   function construct() {
@@ -492,7 +512,6 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
     $options['value'] = array(array_shift($types));
   }
 }
-
 
 /**
  * Implementation of hook_views_plugins
@@ -522,6 +541,7 @@ class views_plugin_row_node_view extends views_plugin_row {
   function options($display) {
     return array(
       'teaser' => TRUE,
+      'links' => TRUE,
     );
   }
 
@@ -530,6 +550,11 @@ class views_plugin_row_node_view extends views_plugin_row {
       '#type' => 'checkbox',
       '#title' => t('Display only teaser'),
       '#default_value' => $this->options['teaser'],
+    );
+    $form['links'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display links'),
+      '#default_value' => $this->options['links'],
     );
   }
   /**
@@ -544,6 +569,7 @@ class views_plugin_row_node_view extends views_plugin_row {
  * Template helper for theme_views_view_row_node
  */
 function template_preprocess_views_view_row_node(&$vars) {
+  $options = $vars['options'];
   $vars['node'] = ''; // make sure var is defined.
   $nid = $vars['row']->nid;
   if (!is_numeric($nid)) {
@@ -551,13 +577,23 @@ function template_preprocess_views_view_row_node(&$vars) {
   }
 
   $node = node_load($nid);
+  $node->view = $vars['view'];
 
   if (empty($node)) {
     return;
   }
 
   // @todo add settings so that this can choose teaser, links, etc.
-  $vars['node'] = node_view($node, TRUE);
+  $vars['node'] = node_view($node, $options['teaser'], FALSE, $options['links']);
+}
+
+/**
+ * Automatically allow view-based node templates if called from a view.
+ */
+function views_preprocess_node($vars) {
+  if (!empty($vars['node']->view) && !empty($vars['node']->view->name)) {
+    $vars['template_files'][] = 'node-view-' . $vars['node']->view->name;
+  }
 }
 
 /**

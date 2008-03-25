@@ -829,6 +829,7 @@ class views_handler_sort_date extends views_handler_sort {
    */
   function query() {
     $timezone = views_get_timezone();
+    $timezone = ($timezone) ? sprintf('%+d', $timezone) : '';
 
     $this->ensure_my_table();
     switch($this->options['granularity']) {
@@ -843,13 +844,13 @@ class views_handler_sort_date extends views_handler_sort {
         $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field), '%Y%m%%d%H')";
         break;
       case 'day':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y%m%%d')";
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y%m%%d')";
         break;
       case 'month':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y%m')";
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y%m')";
         break;
       case 'year':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field+$timezone), '%Y')";
+        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y')";
         break;
     }
 
