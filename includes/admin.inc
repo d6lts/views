@@ -945,7 +945,7 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
   }
   if (isset($form['#js'])) {
     if (!empty($form_state['js settings']) && is_array($form_state['js settings'])) {
-      $form_state['js settings'] = array_merge($form_state['settings'], $form['#js']);
+      $form_state['js settings'] = array_merge($form_state['js settings'], $form['#js']);
     }
     else {
       $form_state['js settings'] = $form['#js'];

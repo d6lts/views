@@ -194,15 +194,34 @@ function node_views_data() {
     ),
   );
 
-  // @todo: translation and/or tnid
-  // @todo: link to node field
-  // @todo: edit node field
-  // @todo: delete node field
-  // @todo: feed selector field
+  $data['node']['view_node'] = array(
+    'field' => array(
+      'title' => t('Link to node'),
+      'help' => t('Provide a simple link to the node.'),
+      'handler' => 'views_handler_field_node_link',
+    ),
+  );
 
-  // @todo: Filter by uid
+  $data['node']['edit_node'] = array(
+    'field' => array(
+      'title' => t('Link to node edit'),
+      'help' => t('Provide a simple link to edit the node.'),
+      'handler' => 'views_handler_field_node_link_edit',
+    ),
+  );
 
-  // @todo: filter by authored or commented (this should be in comment.views.inc)
+  $data['node']['delete_node'] = array(
+    'field' => array(
+      'title' => t('Link to node delete'),
+      'help' => t('Provide a simple link to delete the node.'),
+      'handler' => 'views_handler_field_node_link_delete',
+    ),
+  );
+  // @todo: feed selector field -- hold for RSS.
+
+  // @todo: Filter by uid -- this will go in user.
+
+  // @todo: filter by authored or commented (this should be in comment.views.inc -- maybe)
 
   // Language field if translation module enabled
   if (module_exists('translation')) {
@@ -223,6 +242,15 @@ function node_views_data() {
   }
 
   // Bogus fields for aliasing purposes.
+
+  $data['node']['created_fulldate'] = array(
+    'title' => t('Created date'),
+    'help' => t('In the form of CCYYMMDD.'),
+    'argument' => array(
+      'field' => 'created',
+      'handler' => 'views_handler_argument_node_created_fulldate',
+    ),
+  );
 
   $data['node']['created_year_month'] = array(
     'title' => t('Created year + month'),
@@ -251,9 +279,14 @@ function node_views_data() {
     ),
   );
 
-  // @todo:
-  // fulldate
-  // week
+  $data['node']['created_week'] = array(
+    'title' => t('Created week'),
+    'help' => t('In the form of WW (01 - 53).'),
+    'argument' => array(
+      'field' => 'created',
+      'handler' => 'views_handler_argument_node_created_week',
+    ),
+  );
 
   // ----------------------------------------------------------------------
   // Node revisions table
@@ -389,10 +422,10 @@ class views_handler_argument_node_language extends views_handler_argument {
  */
 class views_handler_field_node extends views_handler_field {
   /**
-   * Override init function to provide generic option to link to node.
+   * Constructor to provide additional field to add.
    */
-  function init(&$view, &$data) {
-    parent::init($view, $data);
+  function construct() {
+    parent::construct();
     $this->additional_fields['nid'] = 'nid';
   }
 
@@ -431,6 +464,99 @@ class views_handler_field_node_type extends views_handler_field_node {
   function render($values) {
     $value = node_get_types('name', $values->{$this->field_alias});
     return $this->render_link(check_plain($value), $values);
+  }
+}
+
+/**
+ * Field handler to present a link to the node.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_link extends views_handler_field {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['nid'] = 'nid';
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['text'] = '';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['text'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Text to display'),
+      '#default_value' => $this->options['text'],
+    );
+  }
+
+  function query() {
+    $this->ensure_my_table();
+    $this->add_additional_fields();
+  }
+
+  function render($values) {
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
+    $nid = $values->{$this->aliases['nid']};
+    return l($text, "node/$nid");
+  }
+}
+
+/**
+ * Field handler to present a link node edit.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_link_edit extends views_handler_field_node_link {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = 'uid';
+    $this->additional_fields['format'] = array('table' => 'node_revisions', 'field' => 'format');
+  }
+
+  function render($values) {
+    // ensure user has access to edit this node.
+    $node = new stdClass();
+    $node->nid = $values->{$this->aliases['nid']};
+    $node->uid = $values->{$this->aliases['uid']};
+    $node->format = $values->{$this->aliases['format']};
+    $node->status = 1; // unpublished nodes ignore access control
+    if (!node_access('update', $node)) {
+      return;
+    }
+
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');
+    return l($text, "node/$node->nid/edit", array('query' => drupal_get_destination()));
+  }
+}
+
+/**
+ * Field handler to present a link node edit.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_link_delete extends views_handler_field_node_link {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = 'uid';
+    $this->additional_fields['format'] = array('table' => 'node_revisions', 'field' => 'format');
+  }
+
+  function render($values) {
+    // ensure user has access to edit this node.
+    $node = new stdClass();
+    $node->nid = $values->{$this->aliases['nid']};
+    $node->uid = $values->{$this->aliases['uid']};
+    $node->format = $values->{$this->aliases['format']};
+    $node->status = 1; // unpublished nodes ignore access control
+    if (!node_access('delete', $node)) {
+      return;
+    }
+
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
+    return l($text, "node/$node->nid/delete", array('query' => drupal_get_destination()));
   }
 }
 
@@ -491,6 +617,35 @@ class views_handler_argument_node_nid extends views_handler_argument {
 }
 
 /**
+ * Argument handler for a full date (CCYYMMDD)
+ */
+class views_handler_argument_node_created_fulldate extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.$this->real_field+$timezone), '%Y%m%%d')";
+    $this->format = 'F j, Y';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_name($data) {
+    $created = $data->{$this->name_alias};
+    return format_date(strtotime($created), 'custom', $this->format, 0);
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title() {
+    return format_date(strtotime($this->argument), 'custom', $this->format, 0);
+  }
+}
+
+/**
  * Argument handler for a year (CCYY)
  */
 class views_handler_argument_node_created_year extends views_handler_argument_formula {
@@ -500,14 +655,6 @@ class views_handler_argument_node_created_year extends views_handler_argument_fo
   function construct() {
     $timezone = views_get_timezone();
     $this->formula = "YEAR(FROM_UNIXTIME(***table***.$this->real_field+$timezone))";
-  }
-
-  /**
-   * Provide a link to the next level of the view
-   */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    return l($value, "$url/$value");
   }
 }
 
@@ -556,10 +703,9 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
   /**
    * Provide a link to the next level of the view
    */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    $created = $data->{$this->name_alias};
-    return l(format_date($created, 'custom', $this->format), "$url/$value");
+  function summary_name($data) {
+    $month = str_pad($data->{$this->name_alias}, 2, '0', STR_PAD_LEFT);
+    return format_date(strtotime("2005" . $month . "15"), 'custom', $this->format);
   }
 
   /**
@@ -567,6 +713,27 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
    */
   function title() {
     return format_date(strtotime("2005" . $this->argument . "15"), 'custom', $this->format, 0);
+  }
+}
+
+/**
+ * Argument handler for a full date (CCYYMMDD)
+ */
+class views_handler_argument_node_created_week extends views_handler_argument_formula {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $timezone = views_get_timezone();
+    $this->formula =  "WEEK(FROM_UNIXTIME(***table***.$this->real_field+$timezone), 3)";
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_name($data) {
+    $created = $data->{$this->name_alias};
+    return t('Week @week', array('@week' => $created));
   }
 }
 
