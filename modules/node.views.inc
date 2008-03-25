@@ -71,7 +71,7 @@ function node_views_data() {
   // nid
   $data['node']['nid'] = array(
     'title' => t('Nid'),
-    'help' => t('The node ID of the node'), // The help that appears on the UI,
+    'help' => t('The node ID of the node.'), // The help that appears on the UI,
     // Information for displaying the nid
     'field' => array(
       'handler' => 'views_handler_field_node',
@@ -127,7 +127,7 @@ function node_views_data() {
   // Node type
   $data['node']['type'] = array(
     'title' => t('Type'), // The item it appears as on the UI,
-    'help' => t('The type of a node (for example, "blog entry", "forum post", "story", etc)'), // The help that appears on the UI,
+    'help' => t('The type of a node (for example, "blog entry", "forum post", "story", etc).'), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_node_type',
       'click sortable' => TRUE,
@@ -194,7 +194,6 @@ function node_views_data() {
     ),
   );
 
-  // @todo: language field
   // @todo: translation and/or tnid
   // @todo: link to node field
   // @todo: edit node field
@@ -205,11 +204,29 @@ function node_views_data() {
 
   // @todo: filter by authored or commented (this should be in comment.views.inc)
 
+  // Language field if translation module enabled
+  if (module_exists('translation')) {
+    $data['node']['language'] = array(
+      'title' => t('Language'),
+      'help' => t('Content language, if a translation system is enabled.'),
+      'field' => array(
+        'handler' => 'views_handler_field_node_language',
+        'click sortable' => TRUE,
+      ),
+      'filter' => array(
+        'handler' => 'views_handler_filter_node_language',
+      ),
+      'argument' => array(
+        'handler' => 'views_handler_argument_node_language',
+      ),
+    );
+  }
+
   // Bogus fields for aliasing purposes.
 
   $data['node']['created_year_month'] = array(
     'title' => t('Created year + month'),
-    'help' => t('In the form of YYYYMM'),
+    'help' => t('In the form of YYYYMM.'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year_month',
@@ -218,7 +235,7 @@ function node_views_data() {
 
   $data['node']['created_year'] = array(
     'title' => t('Created year'),
-    'help' => t('In the form of YYYY'),
+    'help' => t('In the form of YYYY.'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year',
@@ -227,7 +244,7 @@ function node_views_data() {
 
   $data['node']['created_month'] = array(
     'title' => t('Created month'),
-    'help' => t('In the form of MM 01 - 12'),
+    'help' => t('In the form of MM (01 - 12).'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_month',
@@ -300,6 +317,67 @@ function node_views_data() {
   // @todo: History table
   // @todo: history --> has new content
 
+/**
+ I Filter by language
+ */
+class views_handler_filter_node_language extends views_handler_filter_in_operator {
+  function construct() {
+    parent::construct();
+    $this->value_title = t('Node language');
+    $this->value_options = locale_language_list();
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    // Set the default value to the default language
+    $options['value'] = language_default('language');
+  }
+}
+
+/**
+ * Field handler to translate a language into its readable form.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_language extends views_handler_field_node {
+  function render($values) {
+    $languages = locale_language_list();
+    $value = $languages[$values->{$this->field_alias}];
+    return $this->render_link($value, $values);
+  }
+}
+
+/**
+ * Argument handler to accept a language.
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_node_language extends views_handler_argument {
+  function construct() {
+    parent::construct('language');
+  }
+
+  /**
+   * Override the behavior of summary_name(). Get the user friendly version
+   * of the language.
+   */
+  function summary_name($data) {
+    return $this->node_language($data->{$this->name_alias});
+  }
+
+  /**
+   * Override the behavior of title(). Get the user friendly version of the
+   * node type.
+   */
+  function title() {
+    return $this->node_language($this->argument);
+  }
+
+  function node_language($langcode) {
+    $languages = locale_language_list();
+    return isset($languages[$langcode]) ? $languages[$langcode] : t('Unknown language');
+  }
+}
 
   return $data;
 }
