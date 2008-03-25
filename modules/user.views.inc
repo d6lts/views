@@ -25,6 +25,7 @@ function user_views_data() {
     'help' => t('Allows views of your site\'s users.'),
   );
 
+  // @todo: restructure this back to normal.
   $data['users']['table']['join']['node']['handler'] = 'views_join';
   $data['users']['table']['join']['node']['arguments'] = array('users', 'node', 'uid', 'uid');
 
@@ -41,6 +42,10 @@ function user_views_data() {
       'handler' => 'views_handler_field_user_name',
       'click sortable' => TRUE,
     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    // @todo argument
   );
 
   // mail
@@ -72,13 +77,19 @@ function user_views_data() {
     ),
     // Information for accepting a uid as a filter
     'filter' => array(
-      'handler' => 'views_handler_filter_equality',
+      'handler' => 'views_handler_filter_numeric',
     ),
     // Information for sorting on a uid.
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
   );
+
+  // @todo: users_roles table
+  // @todo: filter on role
+  // @todo roles field
+
+  // @todo: tracker default view (in users.default_views.inc)
   return $data;
 }
 

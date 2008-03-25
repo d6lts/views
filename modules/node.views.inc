@@ -63,7 +63,9 @@ function node_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_string',
     ),
-    // @todo: argumennt
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
   );
 
   // nid
@@ -583,7 +585,6 @@ function template_preprocess_views_view_row_node(&$vars) {
     return;
   }
 
-  // @todo add settings so that this can choose teaser, links, etc.
   $vars['node'] = node_view($node, $options['teaser'], FALSE, $options['links']);
 }
 

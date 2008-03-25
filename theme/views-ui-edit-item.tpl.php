@@ -15,8 +15,8 @@
 <?php if (empty($fields)): ?>
   <div><?php print t('None defined'); ?></div>
 <?php else: ?>
-  <?php foreach ($fields as $field): ?>
-    <?php if (!empty($fields['links'])): ?>
+  <?php foreach ($fields as $pid => $field): ?>
+    <?php if (!empty($field['links'])): ?>
       <?php print $field['links']; ?>
     <?php endif; ?>
     <div class="<?php print $field['class']; if (!empty($field['changed'])) { print ' changed'; } ?>">

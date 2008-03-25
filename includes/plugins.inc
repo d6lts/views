@@ -1648,6 +1648,11 @@ class views_plugin_style extends views_object {
   function build_sort() { return TRUE; }
 
   function render($rows) { }
+
+  /**
+   * Inject anything into the query that the style handler needs.
+   */
+  function query() { }
 }
 
 /**
@@ -2005,11 +2010,37 @@ function theme_views_ui_style_plugin_table($form) {
  * The default style plugin for summaries.
  */
 class views_plugin_style_summary extends views_plugin_style {
+  function options($display) {
+    return array(
+      'count' => TRUE,
+      'override' => FALSE,
+      'items_per_page' => 0,
+    );
+  }
+
+  function query() {
+    if (!empty($this->options['override'])) {
+      $this->view->set_items_per_page(intval($this->options['items_per_page']));
+    }
+  }
+
   function options_form(&$form, &$form_state) {
     $form['count'] = array(
       '#type' => 'checkbox',
       '#default_value' => !empty($this->options['count']),
       '#title' => t('Display record count with link'),
+    );
+    $form['override'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => !empty($this->options['override']),
+      '#title' => t('Override number of items to display'),
+    );
+    $form['items_per_page'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Items to display'),
+      '#default_value' => $this->options['items_per_page'],
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-style-options-override' => array(TRUE)),
     );
   }
 

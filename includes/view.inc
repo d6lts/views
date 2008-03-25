@@ -459,6 +459,10 @@ class view extends views_db_object {
       }
     }
 
+    // Allow style handler to affect the query:
+
+    $this->style_handler->query();
+
     $this->build_info['query'] = $this->query->query();
     $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();

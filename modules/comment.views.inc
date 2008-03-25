@@ -23,7 +23,7 @@ function comment_views_data() {
   $data['comments']['table']['base'] = array(
     'field' => 'cid',
     'title' => t('Comments'),
-    'help' => t('The comments type allows views of your site\'s comments.'),
+    'help' => t('Your site\'s comments.'),
   );
 
   //joins
