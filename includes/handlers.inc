@@ -2468,5 +2468,162 @@ class views_handler_argument_formula extends views_handler_argument {
 }
 
 /**
+ * Basic argument handler to implement string arguments that may have length
+ * limits.
+ */
+class views_handler_argument_string extends views_handler_argument {
+  function options(&$options) {
+    parent::options($options);
+    $options['glossary'] = FALSE;
+    $options['limit'] = 0;
+    $options['case'] = 'none';
+    $options['path_case'] = 'none';
+    $options['transform_dash'] = FALSE;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
+    $form['glossary'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Glossary mode'),
+      '#description' => t('Glossary mode applies a limit to the number of characters used in the argument, which allows the summary view to act as a glossary.'),
+      '#default_value' => $this->options['glossary'],
+    );
+
+    $form['limit'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Character limit'),
+      '#description' => t('How many characters of the argument to filter against. If set to 1, all fields starting with the letter in the argument would be matched.'),
+      '#default_value' => $this->options['limit'],
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-options-glossary' => array(TRUE)),
+    );
+
+    $form['case'] = array(
+      '#type' => 'select',
+      '#title' => t('Case'),
+      '#description' => t('When printing the argument result, how to transform the case.'),
+      '#options' => array(
+        'none' => t('No transform'),
+        'upper' => t('Upper case'),
+        'lower' => t('Lower case'),
+        'ucfirst' => t('Capitalize first letter'),
+        'ucwords' => t('Capitalize each word'),
+      ),
+      '#default_value' => $this->options['case'],
+    );
+
+    $form['path_case'] = array(
+      '#type' => 'select',
+      '#title' => t('Case in path'),
+      '#description' => t('When printing url paths, how to transform the of the argument. Do not use this unless with Postgres as it uses case sensitive comparisons.'),
+      '#options' => array(
+        'none' => t('No transform'),
+        'upper' => t('Upper case'),
+        'lower' => t('Lower case'),
+        'ucfirst' => t('Capitalize first letter'),
+        'ucwords' => t('Capitalize each word'),
+      ),
+      '#default_value' => $this->options['path_case'],
+    );
+
+    $form['transform_dash'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Transform spaces to dashes in URL'),
+      '#description' => t('Glossary mode applies a limit to the number of characters used in the argument, which allows the summary view to act as a glossary.'),
+      '#default_value' => $this->options['transform_dash'],
+    );
+  }
+
+  /**
+   * Build the summary query based on a formula
+   */
+  function summary_query() {
+    $this->ensure_my_table();
+    if (empty($this->options['glossary'])) {
+      // Add the field.
+      $this->base_alias = $this->name_alias = $this->query->add_field($this->table_alias, $this->real_field);
+      $this->query->set_count_field($this->table_alias, $this->real_field);
+    }
+    else {
+      // Add the field.
+      $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $this->get_formula(), $this->field . '_truncated');
+      $this->query->set_count_field(NULL, $formula, $this->field, $this->field . '_truncated');
+    }
+
+    return $this->summary_basics(FALSE);
+  }
+
+  /**
+   * Get the formula for this argument.
+   *
+   * $this->ensure_my_table() MUST have been called prior to this.
+   */
+  function get_formula() {
+    return "LEFT($this->table_alias.$this->real_field, " . intval($this->options['limit']) . ")";
+  }
+
+  /**
+   * Build the query based upon the formula
+   */
+  function query() {
+    $this->ensure_my_table();
+
+    $argument = $this->argument;
+    if (!empty($this->options['transform_dash'])) {
+      $argument = strtr($argument, '-', ' ');
+    }
+
+    if (empty($this->options['glossary'])) {
+      $field = "$this->table_alias.$this->real_field";
+    }
+    else {
+      $field = $this->get_formula();
+    }
+
+    $this->query->add_where(0, "$field = '%s'", $argument);
+  }
+
+  /**
+   * Provides a link from the summary to the next level; this will be called
+   * once per row of a summary.
+   *
+   * @param $data
+   *   The query results for the row.
+   * @param $url
+   *   The base URL to use.
+   */
+  function summary_link($data, $url) {
+    $value = $this->case_transform($data->{$this->base_alias}, 'path_case');
+    if (!empty($this->options['transform_dash'])) {
+      $value = strtr($value, ' ', '-');
+    }
+    return url("$url/$value");
+  }
+
+  function case_transform($string, $option) {
+    switch ($this->options[$option]) {
+      default:
+        return $string;
+      case 'upper':
+        return strtoupper($string);
+      case 'lower':
+        return strtolower($string);
+      case 'upper':
+        return strtoupper($string);
+      case 'ucfirst':
+        return ucfirst($string);
+      case 'ucwords':
+        return ucwords($string);
+    }
+  }
+
+  function title() {
+    return check_plain($this->case_transform($this->argument, 'case'));
+  }
+}
+
+/**
  * @}
  */
