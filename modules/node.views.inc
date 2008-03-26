@@ -196,7 +196,7 @@ function node_views_data() {
 
   $data['node']['view_node'] = array(
     'field' => array(
-      'title' => t('Link to node'),
+      'title' => t('Link'),
       'help' => t('Provide a simple link to the node.'),
       'handler' => 'views_handler_field_node_link',
     ),
@@ -204,7 +204,7 @@ function node_views_data() {
 
   $data['node']['edit_node'] = array(
     'field' => array(
-      'title' => t('Link to node edit'),
+      'title' => t('Edit link'),
       'help' => t('Provide a simple link to edit the node.'),
       'handler' => 'views_handler_field_node_link_edit',
     ),
@@ -212,7 +212,7 @@ function node_views_data() {
 
   $data['node']['delete_node'] = array(
     'field' => array(
-      'title' => t('Link to node delete'),
+      'title' => t('Delete link'),
       'help' => t('Provide a simple link to delete the node.'),
       'handler' => 'views_handler_field_node_link_delete',
     ),
@@ -293,7 +293,7 @@ function node_views_data() {
 
   // Define the base group of this table. Fields that don't
   // have a group defined will go into this field by default.
-  $data['node_revisions']['table']['group']  = t('Node');
+  $data['node_revisions']['table']['group']  = t('Node revision');
 
   // Advertise this table as a possible base table
   $data['node_revisions']['table']['base'] = array(
@@ -316,6 +316,7 @@ function node_views_data() {
 
   // Body field
   $data['node_revisions']['body'] = array(
+    'group' => t('Node'),
     'title' => t('Body'), // The item it appears as on the UI,
     'help' => t('The actual, full data in the body field; this may not be valid data on all node types.'), // The help that appears on the UI,
      // Information for displaying a title as a field
@@ -330,6 +331,7 @@ function node_views_data() {
 
   // Teaser field
   $data['node_revisions']['teaser'] = array(
+    'group' => t('Node'),
     'title' => t('Teaser'), // The item it appears as on the UI,
     'help' => t('The stored teaser field. This may not be valid or useful data on all node types.'), // The help that appears on the UI,
      // Information for displaying a title as a field
@@ -342,16 +344,78 @@ function node_views_data() {
     ),
   );
 
-  // @todo
-  // revision title
-  // revision log message
+  // title
+  $data['node_revisions']['title'] = array(
+    'title' => t('Title'), // The item it appears as on the UI,
+    'help' => t('The title of the node.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'field' => 'title', // the real field
+      'handler' => 'views_handler_field_node',
+      'click sortable' => TRUE,
+     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  // log field
+  $data['node_revisions']['log'] = array(
+    'title' => t('Log message'), // The item it appears as on the UI,
+    'help' => t('The log message entered when the revision was created.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'handler' => 'views_handler_field_xss',
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
   // revision timestamp
+  // changed field
+  $data['node']['changed'] = array(
+    'title' => t('Created date'), // The item it appears as on the UI,
+    'help' => t('The date the node revision was created.'), // The help that appears on the UI,
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  $data['node_revisions']['revert_revision'] = array(
+    'field' => array(
+      'title' => t('Revert link'),
+      'help' => t('Provide a simple link to revert to the revision.'),
+      'handler' => 'views_handler_field_node_revision_link_revert',
+    ),
+  );
+
+  $data['node_revisions']['delete_revision'] = array(
+    'field' => array(
+      'title' => t('Delete link'),
+      'help' => t('Provide a simple link to delete the node revision.'),
+      'handler' => 'views_handler_field_node_revision_link_delete',
+    ),
+  );
 
   // @todo: History table
   // @todo: history --> has new content
 
 /**
- I Filter by language
+ * Filter by language
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
   function construct() {
@@ -533,7 +597,7 @@ class views_handler_field_node_link_edit extends views_handler_field_node_link {
 }
 
 /**
- * Field handler to present a link node edit.
+ * Field handler to present a link to delete a node.
  *
  * @ingroup views_field_handlers
  */
@@ -557,6 +621,74 @@ class views_handler_field_node_link_delete extends views_handler_field_node_link
 
     $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
     return l($text, "node/$node->nid/delete", array('query' => drupal_get_destination()));
+  }
+}
+
+/**
+ * Field handler to present a link to revert a node to a revision
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_revision_link_revert extends views_handler_field_node_link {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = array('table' => 'node', 'field' => 'uid');
+    $this->additional_fields['vid'] = 'vid';
+    $this->additional_fields['format'] = 'format';
+  }
+
+  function access() {
+    return user_access('revert revisions') || user_access('administer nodes');
+  }
+
+  function render($values) {
+    // ensure user has access to edit this node.
+    $node = new stdClass();
+    $node->nid = $values->{$this->aliases['nid']};
+    $node->vid = $values->{$this->aliases['vid']};
+    $node->uid = $values->{$this->aliases['uid']};
+    $node->format = $values->{$this->aliases['format']};
+    $node->status = 1; // unpublished nodes ignore access control
+    if (!node_access('update', $node)) {
+      return;
+    }
+
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('revert');
+    return l($text, "node/$node->nid/revisions/$node->vid/revert", array('query' => drupal_get_destination()));
+  }
+}
+
+/**
+ * Field handler to present delete a node revision.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_revision_link_delete extends views_handler_field_node_link {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = array('table' => 'node', 'field' => 'uid');
+    $this->additional_fields['vid'] = 'vid';
+    $this->additional_fields['format'] = 'format';
+  }
+
+  function access() {
+    return user_access('delete revisions') || user_access('administer nodes');
+  }
+
+  function render($values) {
+    // ensure user has access to edit this node.
+    $node = new stdClass();
+    $node->nid = $values->{$this->aliases['nid']};
+    $node->vid = $values->{$this->aliases['vid']};
+    $node->uid = $values->{$this->aliases['uid']};
+    $node->format = $values->{$this->aliases['format']};
+    $node->status = 1; // unpublished nodes ignore access control
+    if (!node_access('delete', $node)) {
+      return;
+    }
+
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
+    return l($text, "node/$node->nid/revisions/$node->vid/delete", array('query' => drupal_get_destination()));
   }
 }
 
