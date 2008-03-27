@@ -308,7 +308,7 @@ function node_views_data() {
   $data['node_revisions']['table']['base'] = array(
     'field' => 'vid',
     'title' => t('Node revisions'),
-    'help' => t('Node revisions allow you to list revisions to nodes.'),
+    'help' => t('Node revisions allow you to list revisions of nodes.'),
   );
 
   // For other base tables, explain how we join
@@ -427,6 +427,9 @@ function node_views_data() {
   // ----------------------------------------------------------------------
   // History table
 
+  // We're actually defining a specific instance of the table, so let's
+  // alias it so that we can later add the real table for other purposes if we
+  // need it.
   $data['history_user']['table']['group']  = t('Node');
 
   // Explain how this table joins to others.
@@ -443,8 +446,12 @@ function node_views_data() {
   );
 
   $data['history_user']['timestamp'] = array(
+    'title' => t('Has new content'),
+    'field' => array(
+      'handler' => 'views_handler_field_history_user_timestamp',
+      'help' => t('Show a marker if the node has new or updated content.'),
+    ),
     'filter' => array(
-      'title' => t('Has new content'),
       'help' => t('Show only nodes that have new content.'),
       'handler' => 'views_handler_filter_history_user_timestamp',
     ),
@@ -541,6 +548,11 @@ class views_handler_field_node extends views_handler_field {
     );
   }
 
+  /**
+   * Render whatever the data is as a link to the node.
+   *
+   * Data should be made XSS safe prior to calling this function.
+   */
   function render_link($data, $values) {
     if (!empty($this->options['link_to_node'])) {
       return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE));
@@ -725,6 +737,72 @@ class views_handler_field_node_revision_link_delete extends views_handler_field_
 
     $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
     return l($text, "node/$node->nid/revisions/$node->vid/delete", array('query' => drupal_get_destination()));
+  }
+}
+
+class views_handler_field_history_user_timestamp extends views_handler_field_node {
+  function construct() {
+    parent::construct();
+    global $user;
+    if ($user->uid) {
+      $this->additional_fields['created'] = array('table' => 'node', 'field' => 'created');
+      $this->additional_fields['changed'] = array('table' => 'node', 'field' => 'changed');
+      if (module_exists('comment') && !empty($this->options['comments'])) {
+        $this->additional_fields['last_comment'] = array('table' => 'node_comment_statistics', 'field' => 'last_comment_timestamp');
+      }
+    }
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['comments'] = FALSE;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    if (module_exists('comments')) {
+      $form['comments'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Check for new comments as well'),
+        '#default_value' => !empty($this->options['comments']),
+      );
+    }
+  }
+
+  function query() {
+    // Only add ourselves to the query if logged in.
+    global $user;
+    if (!$user->uid) {
+      return;
+    }
+    parent::query();
+  }
+
+  function render($values) {
+    // Let's default to 'read' state.
+    // This code shadows node_mark, but it reads from the db directly and
+    // we already have that info.
+    $mark = MARK_READ;
+    global $user;
+    if ($user->uid) {
+      $last_read = $values->{$this->field_alias};
+      $created = $values->{$this->aliases['created']};
+      $changed = $values->{$this->aliases['changed']};
+
+      $last_comment = module_exists('comments') ? $values->{$this->aliases['last_comment']} : 0;
+
+      if (!$last_read && $created > NODE_NEW_LIMIT) {
+        $mark = MARK_NEW;
+      }
+      elseif ($changed > $last_read && $changed > NODE_NEW_LIMIT) {
+        $mark = MARK_UPDATED;
+      }
+      elseif ($last_comment > $last_read && $last_comment > NODE_NEW_LIMIT) {
+        $mark = MARK_UPDATED;
+      }
+    }
+
+    return $this->render_link(theme('mark', $mark), $values);
   }
 }
 
@@ -931,7 +1009,7 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
 /**
  * Filter for new content
  */
-class views_handler_filter_history_user_timestamp {
+class views_handler_filter_history_user_timestamp extends views_handler_filter {
   function options_form(&$form, &$form_state) {
     // Remove all the normal options, including exposing.
     // @todo: make it so we can expose this filter as a checkbox.
@@ -949,8 +1027,8 @@ class views_handler_filter_history_user_timestamp {
 
     $limit = time() - NODE_NEW_LIMIT;
 
-    $field = "$this->table_alias.$this->real_field";
     $this->ensure_my_table();
+    $field = "$this->table_alias.$this->real_field";
     $node = $this->query->ensure_table('node');
 
     if (module_exists('comment')) {

@@ -147,9 +147,9 @@ class views_join {
     $output = " $this->type JOIN {" . $this->table . "} $table[alias] ON $left[alias].$this->left_field = $table[alias].$this->field";
 
     // Tack on the extra.
-    if (isset($extra)) {
-      foreach ($extra as $field => $value) {
-        $output .= " AND $table[alias].$this->field";
+    if (isset($this->extra)) {
+      foreach ($this->extra as $field => $value) {
+        $output .= " AND $table[alias].$field";
         if (is_array($value) && !empty($value)) {
           $output .= " IN ('". implode("','", $value) ."')";
         }
