@@ -32,13 +32,22 @@ function node_views_data() {
 
   // For other base tables, explain how we join
   $data['node']['table']['join'] = array(
+    // this explains how the 'node' table (named in the line above)
+    // links toward the users table.
     'users' => array(
       'handler' => 'views_join', // this is actually optional
-      'arguments' => array('node', 'users', 'uid', 'uid'),
+      'left_table' => 'users', // Because this is a direct link it could be left out.
+      'left_field' => 'uid',
+      'field' => 'uid',
+      // also supported:
+      // 'type' => 'INNER',
+      // 'extra' => array('fieldname' => 'value')
+      // 'table' => 'the actual name of this table in the database',
      ),
     'node_revisions' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('node', 'node_revisions', 'nid', 'nid'),
+       // We link directly to node_revisions so we don't have to specify it.'
+      'left_field' => 'nid',
+      'field' => 'nid',
      ),
   );
 
@@ -304,14 +313,18 @@ function node_views_data() {
 
   // For other base tables, explain how we join
   $data['node_revisions']['table']['join'] = array(
+    // Directly links to node table.
     'node' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('node_revisions', 'node', 'vid', 'vid'),
-     ),
+      'left_field' => 'vid',
+      'field' => 'vid',
+    ),
+    // Links to user table through node table.
     'user' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('node_revisions', 'node', 'vid', 'vid'),
-     ),
+      // Since it doesn't link to the user table, we must specify
+      'left_table' => 'node',
+      'left_field' => 'vid',
+      'field' => 'vid',
+    ),
   );
 
   // Body field
@@ -411,8 +424,34 @@ function node_views_data() {
     ),
   );
 
-  // @todo: History table
-  // @todo: history --> has new content
+  // ----------------------------------------------------------------------
+  // History table
+
+  $data['history_user']['table']['group']  = t('Node');
+
+  // Explain how this table joins to others.
+  $data['history_user']['table']['join'] = array(
+     // Directly links to node table.
+    'node' => array(
+      'table' => 'history',
+      'left_field' => 'nid',
+      'field' => 'nid',
+      'extra' => array(
+        'uid' => '***CURRENT_USER***',
+      ),
+    ),
+  );
+
+  $data['history_user']['timestamp'] = array(
+    'filter' => array(
+      'title' => t('Has new content'),
+      'help' => t('Show only nodes that have new content.'),
+      'handler' => 'views_handler_filter_history_user_timestamp',
+    ),
+  );
+  return $data;
+}
+
 
 /**
  * Filter by language
@@ -474,9 +513,6 @@ class views_handler_argument_node_language extends views_handler_argument {
     $languages = locale_language_list();
     return isset($languages[$langcode]) ? $languages[$langcode] : t('Unknown language');
   }
-}
-
-  return $data;
 }
 
 /**
@@ -889,6 +925,44 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
     // reasonable there.
     $types = array_keys(node_get_types());
     $options['value'] = array(array_shift($types));
+  }
+}
+
+/**
+ * Filter for new content
+ */
+class views_handler_filter_history_user_timestamp {
+  function options_form(&$form, &$form_state) {
+    // Remove all the normal options, including exposing.
+    // @todo: make it so we can expose this filter as a checkbox.
+  }
+
+  function query() {
+    global $user;
+    // This can only work if we're logged in.
+    if (!$user || !$user->uid) {
+      return;
+    }
+
+    // Hey, Drupal kills old history, so nodes that haven't been updated
+    // since NODE_NEW_LIMIT are bzzzzzzzt outta here!
+
+    $limit = time() - NODE_NEW_LIMIT;
+
+    $field = "$this->table_alias.$this->real_field";
+    $this->ensure_my_table();
+    $node = $this->query->ensure_table('node');
+
+    if (module_exists('comment')) {
+      $ncs = $this->query->ensure_table('node_comment_statistics');
+      $clause = ("OR $ncs.last_comment_timestamp > (***CURRENT_TIME*** - $limit)");
+      $clause2 = "OR $field < $ncs.last_comment_timestamp";
+    }
+
+    // NULL means a history record doesn't exist. That's clearly new content.
+    // Unless it's very very old content. Everything in the query is already
+    // type safe cause none of it is coming from outside here.
+    $this->query->add_where($this->options['group'], "($field IS NULL AND ($node.changed > (***CURRENT_TIME*** - $limit) $clause)) OR $field < $node.changed $clause2");
   }
 }
 

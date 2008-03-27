@@ -48,10 +48,30 @@ function views_get_table_join($table, $primary_table) {
   $data = views_fetch_data($table);
   if (isset($data['table']['join'][$primary_table])) {
     $h = $data['table']['join'][$primary_table];
-    $handler = new $h['handler'];
+    if (!empty($h['handler']) && class_exists($h['handler'])) {
+      $handler = new $h['handler'];
+    }
+    else {
+      $handler = new views_join();
+    }
+
+    // Fill in some easy defaults
+    $handler->definition = $h;
+    if (empty($handler->definition['table'])) {
+      $handler->definition['table'] = $table;
+    }
+    // If this is empty, it's a direct link.
+    if (empty($handler->definition['left_table'])) {
+      $handler->definition['left_table'] = $primary_table;
+    }
+
     if (isset($h['arguments'])) {
       call_user_func_array(array(&$handler, 'construct'), $h['arguments']);
     }
+    else {
+      $handler->construct();
+    }
+
     return $handler;
   }
   // DEBUG -- identify missing handlers
@@ -70,8 +90,8 @@ function views_get_table_join($table, $primary_table) {
  *   // PHP 4 doesn't call constructors of the base class automatically from a
  *   // constructor of a derived class. It is your responsibility to propagate
  *   // the call to constructors upstream where appropriate.
- *   function construct($left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
- *     parent::construct($left_table, $left_field, $field, $extra, $type);
+ *   function construct($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+ *     parent::construct($table, $left_table, $left_field, $field, $extra, $type);
  *   }
  *
  *   function join($table, &$query) {
@@ -95,13 +115,28 @@ class views_join {
   /**
    * Construct the views_join object.
    */
-  function construct($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
-    $this->table = $table;
-    $this->left_table = $left_table;
-    $this->left_field = $left_field;
-    $this->field = $field;
-    $this->extra = $extra;
-    $this->type = strtoupper($type);
+  function construct($table = NULL, $left_table = NULL, $left_field = NULL, $field = NULL, $extra = array(), $type = 'LEFT') {
+    if (!empty($table)) {
+      $this->table = $table;
+      $this->left_table = $left_table;
+      $this->left_field = $left_field;
+      $this->field = $field;
+      $this->extra = $extra;
+      $this->type = strtoupper($type);
+    }
+    else if (!empty($this->definition)) {
+      // if no arguments, construct from definition.
+      // These four must exist or it will throw notices.
+      $this->table = $this->definition['table'];
+      $this->left_table = $this->definition['left_table'];
+      $this->left_field = $this->definition['left_field'];
+      $this->field = $this->definition['field'];
+      if (!empty($this->definition['extra'])) {
+        $this->extra = $this->definition['extra'];
+      }
+
+      $this->type = !empty($this->definition['type']) ? strtoupper($this->definition['type']) : 'LEFT';
+    }
   }
 
   /**
@@ -383,8 +418,20 @@ class views_handler_relationship extends views_handler {
     $table_data = views_fetch_data($this->definition['base']);
     $base_field = $table_data['table']['base']['field'];
 
-    $join = new views_join;
-    $join->construct($this->definition['base'], $this->table, $this->real_field, $base_field);
+    $def = $this->definition;
+    $def['table'] = $this->definition['base'];
+    $def['field'] = $base_field;
+    $def['left_table'] = $this->table;
+    $def['left_field'] = $this->real_field;
+    if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
+      $join = new $def['join_handler'];
+    }
+    else {
+      $join = new views_join();
+    }
+
+    $join->definition = $def;
+    $join->construct();
 
     $this->ensure_my_table();
 
@@ -2548,7 +2595,8 @@ class views_handler_argument_string extends views_handler_argument {
     }
     else {
       // Add the field.
-      $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $this->get_formula(), $this->field . '_truncated');
+      $formula = $this->get_formula();
+      $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $formula, $this->field . '_truncated');
       $this->query->set_count_field(NULL, $formula, $this->field, $this->field . '_truncated');
     }
 
