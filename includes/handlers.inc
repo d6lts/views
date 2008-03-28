@@ -940,7 +940,7 @@ class views_handler_sort_date extends views_handler_sort {
     switch($this->options['granularity']) {
       case 'second':
       default:
-        $this->query->add_orderby($this->table_alias, "$this->table_alias.$this->real_field", $this->options['order']);
+        $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
         return;
       case 'minute':
         $formula = views_date_sql_format('YmdHi', "$this->table_alias.$this->real_field");
