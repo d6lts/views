@@ -110,12 +110,29 @@ function views_get_table_join($table, $primary_table) {
  * declare this an interface.
  *
  * Extensions of this class can be used to create more interesting joins.
+ *
+ * join definition
+ *   - table: table to join (right table)
+ *   - field: field to join on (right field)
+ *   - left_table: The table we join to
+ *   - left_field: The field we join to
+ *   - type: either LEFT (default) or INNER
+ *   - extra: Either a string that's directly added, or an array of items:
+ *   - - table: if not set, current table; if NULL, no table. This field can't
+ *       be set in the cached definition because it can't know aliases; this field
+ *       can only be used by realtime joins.
+ *   - - field: Field or formula
+ *   - - operator: defaults to =
+ *   - - value: Must be set. If an array, operator will be defaulted to IN.
+ *   - - numeric: If true, the value will not be surrounded in quotes.
+ *   - extra type: How all the extras will be combined. Either AND or OR. Defaults to AND.
  */
 class views_join {
   /**
    * Construct the views_join object.
    */
   function construct($table = NULL, $left_table = NULL, $left_field = NULL, $field = NULL, $extra = array(), $type = 'LEFT') {
+    $this->extra_type = 'AND';
     if (!empty($table)) {
       $this->table = $table;
       $this->left_table = $left_table;
@@ -134,6 +151,9 @@ class views_join {
       if (!empty($this->definition['extra'])) {
         $this->extra = $this->definition['extra'];
       }
+      if (!empty($this->definition['extra type'])) {
+        $this->extra = strtoupper($this->definition['extra_type']);
+      }
 
       $this->type = !empty($this->definition['type']) ? strtoupper($this->definition['type']) : 'LEFT';
     }
@@ -148,14 +168,44 @@ class views_join {
 
     // Tack on the extra.
     if (isset($this->extra)) {
-      foreach ($this->extra as $field => $value) {
-        $output .= " AND $table[alias].$field";
-        if (is_array($value) && !empty($value)) {
-          $output .= " IN ('". implode("','", $value) ."')";
+      if (is_array($this->extra)) {
+        $extras = array();
+        foreach ($this->extra as $info) {
+          $extra = '';
+          // Figure out the table name. Remember, only use aliases provided
+          // if at all possible.
+          $join_table = '';
+          if (!array_key_exists('table', $info)) {
+            $join_table = $table['alias'] . '.';
+          }
+          elseif (isset($info['table'])) {
+            $join_table = $info['table'] . '.';
+          }
+
+          // And now deal with the value and the operator
+          $value = $info['value'];
+          if (is_array($value) && !empty($value)) {
+            $extra = "$join_table$info[field] IN ('". implode("','", $value) ."')";
+          }
+          else {
+            $operator = "=";
+            if (!empty($info['operator'])) {
+              $operator = $info['operator'];
+            }
+
+            if (empty($info['numeric'])) {
+              $extra .= "$join_table$info[field] $operator '$value'";
+            }
+            else {
+              $extra .= "$join_table$info[field] $operator $value";
+            }
+          }
+          $extras[] = $extra;
         }
-        else if ($value !== NULL) {
-          $output .= " = '$value'";
-        }
+        $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+      }
+      else if (is_string($this->extra)) {
+        $output .= " AND ($this->extra)";
       }
     }
     return $output;
@@ -334,8 +384,7 @@ class views_handler extends views_object {
    */
   function ensure_my_table() {
     if (!isset($this->table_alias)) {
-      $value = $this->query->ensure_table($this->table, $this->relationship);
-      $this->table_alias = $value;
+      $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
     }
     return $this->table_alias;
   }
@@ -1746,7 +1795,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
   function options(&$options) {
     parent::options($options);
     $options['operator'] = 'in';
-    $options['value'] = 0;
+    $options['value'] = array();
   }
 
   /**
@@ -1769,7 +1818,6 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function value_submit($form, &$form_state) {
-    // This is so deeply deeply deeply nested due to the way the form is layered.
     $form_state['values']['options']['value'] = array_filter($form_state['values']['options']['value']);
   }
 
@@ -2112,6 +2160,162 @@ class views_handler_filter_date extends views_handler_filter_numeric {
       $value = '***CURRENT_TIME***' . sprintf('%+d', $value); // keep sign
     }
     $this->query->add_where($this->options['group'], "$field $this->operator %s", $value);
+  }
+}
+
+/**
+ * Complex filter to handle filtering for many to one relationships,
+ * such as terms (many terms per node) or roles (many roles per user).
+ *
+ * The construct method needs to be overridden to provide a list of options;
+ * alternately, the value_form and admin_summary methods need to be overriden
+ * to provide something that isn't just a select list.
+ */
+class views_handler_filter_many_to_one extends views_handler_filter {
+  function construct() {
+    parent::construct();
+    // @todo Pull depth information from definition.
+    $this->allow_depth = FALSE;
+    $this->value_title = t('Options');
+    $this->value_options = array();
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['operator'] = 'or';
+    $options['value'] = array();
+    $options['depth'] = 0;
+  }
+
+  /**
+   * Provide inclusive/exclusive matching
+   */
+  function operator_options() {
+    return array(
+      'or' => t('Is one of'),
+      'and' => t('Is all of'),
+      'not' => t('Is none of'),
+    );
+  }
+
+  function value_form(&$form, &$form_state) {
+    $form['value'] = array(
+      '#type' => 'select',
+      '#title' => $this->value_title,
+      '#options' => $this->value_options,
+      '#multiple' => TRUE,
+      '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
+      '#default_value' => (array) $this->value,
+    );
+  }
+
+  function admin_summary() {
+    if (!empty($this->options['exposed'])) {
+      return t('exposed');
+    }
+
+    if (count($this->value) == 1) {
+      // If there is only one, show it as an =.
+      $keys = array_keys($this->value);
+      $key = array_shift($keys);
+      if (!empty($this->value_options[$key])) {
+        $value = check_plain($this->value_options[$key]);
+      }
+      else {
+        $value = t('Unknown');
+      }
+
+      return ($this->operator == 'in' ? '=' : '<>') . ' ' . $value;
+    }
+    $output = '';
+    foreach ($this->value as $value) {
+      if ($output) {
+        $output .= ', ';
+      }
+      if (strlen($output) > 8) {
+        $output .= '...';
+        break;
+      }
+      $output .= check_plain($this->value_options[$value]);
+    }
+
+    return check_plain($this->operator) . ' ' . $output;
+  }
+
+  /**
+   * Override ensure_my_table so we can control how this joins in.
+   * The operator actually has influence over joining.
+   */
+  function ensure_my_table() {
+    if (!isset($this->table_alias)) {
+      $base_join = views_get_table_join($this->table, $this->query->primary_table);
+      if ($this->operator != 'not') {
+        // If it's an and or an or, we do one join per selected value.
+        // Clone the join for each table:
+        $this->table_aliases = array();
+        foreach ($this->value as $value) {
+          // Clone to make sure we aren't overwriting previous joins due
+          // to overzealous references.
+          $join = drupal_clone($base_join);
+          $join->extra = array(
+            array(
+              'field' => $this->real_field,
+              'value' => $value,
+              'numeric' => !empty($this->definition['numeric']),
+            ),
+          );
+          $alias = $this->table_aliases[$value] = $this->query->add_table($this->table, $this->relationship, $join, $this->table . '_' . $value);
+
+          // and set table_alias to the first of these.
+          if (empty($this->table_alias)) {
+            $this->table_alias = $alias;
+          }
+        }
+      }
+      else {
+        // For not, we just do one join. We'll add a where clause during
+        // the query phase to ensure that $table.$field IS NULL.
+        $join = drupal_clone($base_join); // be safe!
+        $join->type = 'LEFT';
+        $join->extra = array();
+        $join->extra_type = 'OR';
+        foreach ($this->value as $value) {
+          $join->extra[] = array(
+            'field' => $this->field,
+            'value' => $value,
+            'numeric' => !empty($this->definition['numeric']),
+          );
+        }
+
+        $this->table_alias = $this->query->add_table($this->table, $this->relationship, $join);
+      }
+    }
+    return $this->table_alias;
+  }
+
+  function query() {
+    if (empty($this->value)) {
+      return;
+    }
+    $this->ensure_my_table();
+
+    if ($this->operator == 'not') {
+      $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field IS NULL");
+    }
+    else {
+      $clauses = array();
+      foreach ($this->table_aliases as $value => $alias) {
+        if (!empty($this->definition['numeric'])) {
+          $clauses[] = "$alias.$this->real_field = %d";
+        }
+        else {
+          $clauses[] = "$alias.$this->real_field = '%s'";
+        }
+      }
+
+      // implode on either AND or OR.
+      $this->query->add_where($this->options['group'], implode(' ' . strtoupper($this->operator) . ' ', $clauses), $this->value);
+    }
   }
 }
 

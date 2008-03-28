@@ -26,8 +26,17 @@ function user_views_data() {
   );
 
   // @todo: restructure this back to normal.
-  $data['users']['table']['join']['node']['handler'] = 'views_join';
-  $data['users']['table']['join']['node']['arguments'] = array('users', 'node', 'uid', 'uid');
+  $data['users']['table']['join'] = array(
+    'node' => array(
+      'left_field' => 'uid',
+      'field' => 'uid',
+    ),
+    // This will be the revision author, not the node author.
+    'node_revisions' => array(
+      'left_field' => 'uid',
+      'field' => 'uid',
+    ),
+  );
 
   // ----------------------------------------------------------------
   // Fields
@@ -37,29 +46,34 @@ function user_views_data() {
     'title' => t('Name'), // The item it appears as on the UI,
     'help' => t('The user or author name.'), // The help that appears on the UI,
     'field' => array(
-      'field' => 'name', // the real field
-      'group' => t('User'), // The group it appears in on the UI,
       'handler' => 'views_handler_field_user_name',
       'click sortable' => TRUE,
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
-    // @todo argument
+    'filter' => array(
+      'handler' => 'views_handler_filter_user_name',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
   );
 
   // mail
-  // Note that this field implements field level access control. Neato.
+  // Note that this field implements field level access control.
   $data['users']['mail'] = array(
     'title' => t('E-mail'), // The item it appears as on the UI,
     'help' => t('Email address for a given user. Only accessible to users with <em>administer users</em> permission'), // The help that appears on the UI,
     'field' => array(
-      'field' => 'mail', // the real field
-      'group' => t('User'), // The group it appears in on the UI,
-      // TODO: mailto link?
       'handler' => 'views_handler_field_user_mail',
       'click sortable' => TRUE,
     ),
+    // @todo: filter
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+
   );
 
   // uid
@@ -85,14 +99,137 @@ function user_views_data() {
     ),
   );
 
-  // @todo: users_roles table
-  // @todo: filter on role
-  // @todo roles field
+  // picture
+  $data['users']['picture'] = array(
+    'title' => t('Picture'),
+    'help' => t('The user\'s picture, if allowed'), // The help that appears on the UI,
+    // Information for displaying the uid
+    'field' => array(
+      'field' => 'uid',
+      'handler' => 'views_handler_field_user_picture',
+      'click sortable' => TRUE,
+    ),
+  );
 
-  // @todo: tracker default view (in users.default_views.inc)
+    // created field
+  $data['users']['created'] = array(
+    'title' => t('Created date'), // The item it appears as on the UI,
+    'help' => t('The date the user was created.'), // The help that appears on the UI,
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  // access field
+  $data['users']['access'] = array(
+    'title' => t('Last access'), // The item it appears as on the UI,
+    'help' => t('The user\'s last access date.'), // The help that appears on the UI,
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  // login field
+  $data['users']['login'] = array(
+    'title' => t('Last login'), // The item it appears as on the UI,
+    'help' => t('The user\'s last login date.'), // The help that appears on the UI,
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  // published status
+  $data['users']['status'] = array(
+    'title' => t('Active'), // The item it appears as on the UI,
+    'help' => t('Whether a user is active or blocked.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Published'),
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // log field
+  $data['users']['signature'] = array(
+    'title' => t('Signature'), // The item it appears as on the UI,
+    'help' => t('The user\'s signature.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'handler' => 'views_handler_field_xss',
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
+  // ----------------------------------------------------------------------
+  // Roles table
+
+  $data['users_roles']['table']['group']  = t('User');
+
+  // Explain how this table joins to others.
+  $data['users_roles']['table']['join'] = array(
+     // Directly links to users table.
+    'users' => array(
+      'left_field' => 'uid',
+      'field' => 'uid',
+      ),
+    'node' => array(
+      'table' => 'users',
+      'left_field' => 'uid',
+      'field' => 'uid',
+      ),
+    'node_revisions' => array(
+      'table' => 'users',
+      'left_field' => 'uid',
+      'field' => 'uid',
+    ),
+  );
+
+
+  $data['users_roles']['rid'] = array(
+    'title' => t('Role'),
+    'help' => t('Roles that a user belongs to'),
+    'field' => array(
+      'handler' => 'views_handler_field_user_roles',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_user_roles',
+      'numeric' => TRUE,
+    ),
+  );
+
+  // @todo: tracker default view (in users.default_views.inc -- This really should go in comment)
   return $data;
 }
-
 
 /**
  * Field handler to provide simple renderer that allows linking to a user.
@@ -118,7 +255,7 @@ class views_handler_field_user extends views_handler_field {
   /**
    * Provide link to node option
    */
-  function options_form(&$form) {
+  function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['link_to_user'] = array(
       '#title' => t('Link this field to its user'),
@@ -128,7 +265,7 @@ class views_handler_field_user extends views_handler_field {
   }
 
   function render_link($data, $values) {
-    if (!empty($this->options['link_to_user']) && user_access('access user profiles')) {
+    if (!empty($this->options['link_to_user']) && user_access('access user profiles') && $values->{$this->aliases['uid']}) {
       return l($data, "user/" . $values->{$this->aliases['uid']}, array('html' => TRUE));
     }
     else {
@@ -138,19 +275,6 @@ class views_handler_field_user extends views_handler_field {
 
   function render($values) {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
-  }
-}
-
-/**
- * Field handler to provide acess control for the email field
- *
- * @ingroup views_field_handlers
- */
-class views_handler_field_user_mail extends views_handler_field {
-
-  // An example of field level access control.
-  function access() {
-    return user_access('administer users');
   }
 }
 
@@ -169,6 +293,140 @@ class views_handler_field_user_name extends views_handler_field_user {
     }
     else {
       return $data;
+    }
+  }
+}
+
+/**
+ * Field handler to provide acess control for the email field
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_mail extends views_handler_field_user {
+  function options(&$options) {
+    parent::options($options);
+    $options['link_to_user'] = 'mailto';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['link_to_user'] = array(
+      '#title' => t('Link this field'),
+      '#type' => 'radios',
+      '#options' => array(
+        0 => t('No link'),
+        'user' => t('To the user'),
+        'mailto' => t("With a mailto:"),
+      ),
+      '#default_value' => $this->options['link_to_user'],
+    );
+  }
+
+  // An example of field level access control.
+  function access() {
+    return user_access('administer users');
+  }
+
+  function render($values) {
+    if ($this->options['link_to_user'] == 'mailto') {
+      return l($values->{$this->field_alias}, "mailto:" . $values->{$this->field_alias});
+    }
+    return $this->render_link(check_plain($values->{$this->field_alias}), $values);
+  }
+}
+
+/**
+ * Field handler to provide simple renderer that allows using a themed user link
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_picture extends views_handler_field {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = array('uid');
+    $this->additional_fields['name'] = array('name');
+  }
+
+  function render($values) {
+    // Fake an account object.
+    $account = new stdClass();
+    $account->uid = $values->{$this->aliases['uid']};
+    $account->name = $values->{$this->aliases['name']};
+    $account->picture = $values->{$this->field_alias};
+
+    return theme('user_picture', $account);
+  }
+}
+
+/**
+ * Field handler to provide a list of roles.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_roles extends views_handler_field {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = array('table' => 'users', 'field' => 'uid');
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['type'] = 'separator';
+    $options['separator'] = ', ';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['type'] = array(
+      '#type' => 'radios',
+      '#title' => t('Display type'),
+      '#options' => array(
+        'ul' => t('Unordered list'),
+        'ol' => t('Ordered list'),
+        'separator' => t('Simple separator'),
+      ),
+      '#default_value' => $this->options['type'],
+    );
+
+    $form['separator'] = array(
+      '#type' => 'textfield',
+      '#title' => 'separator',
+      '#default_value' => $this->options['separator'],
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('radio:options[type]' => array('separator')),
+    );
+  }
+
+  function query() {
+    $this->add_additional_fields();
+  }
+
+  function pre_render($results) {
+    $uids = array();
+    $roles = array();
+    $this->roles = array();
+
+    foreach ($results as $result) {
+      $uids[] = $result->{$this->aliases['uid']};
+    }
+
+    if ($uids) {
+      $result = db_query("SELECT u.uid, u.rid, r.name FROM {role} r INNER JOIN {users_roles} u ON u.rid = r.rid WHERE u.uid IN (" . implode(', ', $uids) . ") ORDER BY r.name");
+      while ($role = db_fetch_object($result)) {
+        $this->roles[$role->uid][$role->rid] = check_plain($role->name);
+      }
+    }
+  }
+
+  function render($value) {
+    $uid = $value->{$this->aliases['uid']};
+    if (!empty($this->roles[$uid])) {
+      if ($this->options['type'] == 'separator') {
+        return implode(check_plain($this->options['separator']), $this->roles[$uid]);
+      }
+      else {
+        return theme('item_list', $this->roles[$uid], NULL, $this->options['type']);
+      }
     }
   }
 }
@@ -196,6 +454,103 @@ class views_handler_argument_user_uid extends views_handler_argument {
     }
 
     return check_plain($title);
+  }
+}
+
+/**
+ * Filter handler for usernames
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_user_name extends views_handler_filter_in_operator {
+  function value_form(&$form, &$form_state) {
+    $values = array();
+    if ($this->value) {
+      $result = db_query("SELECT * FROM {users} u WHERE uid IN ("  . implode(', ', $this->value) . ")");
+      while ($account = db_fetch_object($result)) {
+        if ($account->uid) {
+          $values[] = $account->name;
+        }
+        else {
+          $values[] = 'Anonymous'; // Intentionally NOT translated.
+        }
+      }
+    }
+
+    sort($values);
+    $form['value'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Usernames'),
+      '#description' => t('Enter a comma separated list of usernames'),
+      '#default_value' => implode(', ', $values),
+      '#autocomplete_path' => 'admin/build/views/autocomplete/user',
+    );
+  }
+
+  function value_validate(&$form, &$form_state) {
+    $values = drupal_explode_tags($form_state['values']['options']['value']);
+    $uids = array();
+    $placeholders = array();
+    $args = array();
+    $results = array();
+    foreach ($values as $value) {
+      if (strtolower($value) == 'anonymous') {
+        $uids[] = 0;
+      }
+      else {
+        $missing[strtolower($value)] = TRUE;
+        $args[] = $value;
+        $placeholders[] = "'%s'";
+      }
+    }
+
+    $result = db_query("SELECT * FROM {users} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
+    while ($account = db_fetch_object($result)) {
+      unset($missing[strtolower($account->name)]);
+      $uids[] = $account->uid;
+    }
+
+    if ($missing) {
+      form_error($form['value'], t('Unable to find user(s): @users', array('@users', implode(', ', $missing))));
+    }
+
+    $form_state['values']['options']['value'] = $uids;
+  }
+
+  function value_submit() {
+    // prevent array filter from removing our anonymous user.
+  }
+
+  function admin_summary() {
+    // set up $this->value_options for the parent summary
+    $this->value_options = array();
+
+    if ($this->value) {
+      $result = db_query("SELECT * FROM {users} u WHERE uid IN ("  . implode(', ', $this->value) . ")");
+
+      while ($account = db_fetch_object($result)) {
+        if ($account->uid) {
+          $this->value_options[$account->uid] = $account->name;
+        }
+        else {
+          $this->value_options[$account->uid] = 'Anonymous'; // Intentionally NOT translated.
+        }
+      }
+    }
+    return parent::admin_summary();
+  }
+}
+
+/**
+ * Filter handler for user roles
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_user_roles extends views_handler_filter_many_to_one {
+  function construct() {
+    parent::construct();
+    $this->value_options = user_roles(TRUE);
+    unset($this->value_options[DRUPAL_AUTHENTICATED_RID]);
   }
 }
 

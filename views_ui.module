@@ -155,6 +155,13 @@ function views_ui_menu() {
     'page callback' => 'views_ui_preview',
     'page arguments' => array(3, 5),
   );
+
+  // autocompletes for handlers and such
+  $items['admin/build/views/autocomplete/user'] = $callback + array(
+    'page callback' => 'views_ui_autocomplete_user',
+  );
+
+
   return $items;
 }
 

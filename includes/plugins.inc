@@ -20,7 +20,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_display_default',
         'no ui' => TRUE,
         'no remove' => TRUE,
-        'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', "$path/dependent.js"),
+        'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', 'misc/autocomplete.js', "$path/dependent.js"),
         'use pager' => TRUE,
       ),
       'page' => array(

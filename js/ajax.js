@@ -182,6 +182,38 @@ Drupal.Views.Ajax.previewResponse = function(data) {
   }
 }
 
+Drupal.Views.updatePreviewForm = function() {
+  var url = $(this).attr('action');
+  url = url.replace('nojs', 'ajax');
+
+  $(this).ajaxSubmit({
+    url: url,
+    data: '',
+    type: 'POST',
+    success: Drupal.Views.Ajax.previewResponse,
+    error: function() { alert("An error occurred."); },
+    dataType: 'json'
+  });
+
+  return false;   
+}
+
+Drupal.Views.updatePreviewLink = function() {
+  var url = $(this).attr('href');
+  url = url.replace('nojs', 'ajax');
+
+  $(this).ajaxSubmit({
+    url: url,
+    data: '',
+    type: 'GET',
+    success: Drupal.Views.Ajax.previewResponse,
+    error: function() { alert("An error occurred."); },
+    dataType: 'json'
+  });
+
+  return false;   
+}
+
 Drupal.behaviors.ViewsAjaxLinks = function() {
   // Make specified links ajaxy.
   $('a.views-ajax-link:not(.views-processed)').addClass('views-processed').click(function() {
@@ -230,19 +262,14 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
 
   $('form#views-ui-preview-form:not(.views-processed)')
     .addClass('views-processed')
-    .submit(function() {
-    var url = $(this).attr('action');
-    url = url.replace('nojs', 'ajax');
+    .submit(Drupal.Views.updatePreviewForm);
 
-    $(this).ajaxSubmit({
-      url: url,
-      data: '',
-      type: 'POST',
-      success: Drupal.Views.Ajax.previewResponse,
-      error: function() { alert("An error occurred."); },
-      dataType: 'json'
-    });
+  $('div#views-live-preview form:not(.views-processed)')
+    .addClass('views-processed')
+    .submit(Drupal.Views.updatePreviewForm);
 
-    return false;   
-  });
+  $('div#views-live-preview a:not(.views-processed)')
+    .addClass('views-processed')
+    .click(Drupal.Views.updatePreviewLink);
+
 }

@@ -41,7 +41,9 @@ function node_views_data() {
       'field' => 'uid',
       // also supported:
       // 'type' => 'INNER',
-      // 'extra' => array('fieldname' => 'value')
+      // 'extra' => array(array('field' => 'fieldname', 'value' => 'value', 'operator' => '='))
+      // Unfortunately, you can't specify other tables here, but you can construct
+      // alternative joins in the handlers that can do that.
       // 'table' => 'the actual name of this table in the database',
      ),
     'node_revisions' => array(
@@ -55,13 +57,14 @@ function node_views_data() {
   // Fields
 
   // title
+  // This definition has more items in it than it needs to as an example.
   $data['node']['title'] = array(
     'title' => t('Title'), // The item it appears as on the UI,
     'help' => t('The title of the node.'), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
-      'field' => 'title', // the real field
-      'group' => t('Node'), // The group it appears in on the UI,
+      'field' => 'title', // the real field. This could be left out since it is the same.
+      'group' => t('Node'), // The group it appears in on the UI. Could be left out.
       'handler' => 'views_handler_field_node',
       'click sortable' => TRUE,
      ),
@@ -357,6 +360,30 @@ function node_views_data() {
     ),
   );
 
+  // nid
+  $data['node_revisions']['vid'] = array(
+    'title' => t('Vid'),
+    'help' => t('The revision ID of the node revision.'), // The help that appears on the UI,
+    // Information for displaying the nid
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    // Information for accepting a nid as an argument
+    'argument' => array(
+      'handler' => 'views_handler_argument_node_vid',
+      'click sortable' => TRUE,
+    ),
+    // Information for accepting a nid as a filter
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    // Information for sorting on a nid.
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
   // title
   $data['node_revisions']['title'] = array(
     'title' => t('Title'), // The item it appears as on the UI,
@@ -393,7 +420,7 @@ function node_views_data() {
 
   // revision timestamp
   // changed field
-  $data['node']['changed'] = array(
+  $data['node_revisions']['timestamp'] = array(
     'title' => t('Created date'), // The item it appears as on the UI,
     'help' => t('The date the node revision was created.'), // The help that appears on the UI,
     'field' => array(
@@ -440,7 +467,7 @@ function node_views_data() {
       'left_field' => 'nid',
       'field' => 'nid',
       'extra' => array(
-        'uid' => '***CURRENT_USER***',
+        array('field' => 'uid', 'value' => '***CURRENT_USER***', 'numeric' => TRUE),
       ),
     ),
   );
@@ -462,6 +489,8 @@ function node_views_data() {
 
 /**
  * Filter by language
+ *
+ * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
   function construct() {
@@ -681,6 +710,7 @@ class views_handler_field_node_revision_link_revert extends views_handler_field_
   function construct() {
     parent::construct();
     $this->additional_fields['uid'] = array('table' => 'node', 'field' => 'uid');
+    $this->additional_fields['node_vid'] = array('table' => 'node', 'field' => 'vid');
     $this->additional_fields['vid'] = 'vid';
     $this->additional_fields['format'] = 'format';
   }
@@ -701,6 +731,11 @@ class views_handler_field_node_revision_link_revert extends views_handler_field_
       return;
     }
 
+    // Current revision cannot be reverted.
+    if ($node->vid == $values->{$this->aliases['node_vid']}) {
+      return;
+    }
+
     $text = !empty($this->options['text']) ? $this->options['text'] : t('revert');
     return l($text, "node/$node->nid/revisions/$node->vid/revert", array('query' => drupal_get_destination()));
   }
@@ -715,6 +750,7 @@ class views_handler_field_node_revision_link_delete extends views_handler_field_
   function construct() {
     parent::construct();
     $this->additional_fields['uid'] = array('table' => 'node', 'field' => 'uid');
+    $this->additional_fields['node_vid'] = array('table' => 'node', 'field' => 'vid');
     $this->additional_fields['vid'] = 'vid';
     $this->additional_fields['format'] = 'format';
   }
@@ -735,11 +771,20 @@ class views_handler_field_node_revision_link_delete extends views_handler_field_
       return;
     }
 
+    // Current revision cannot be deleted.
+    if ($node->vid == $values->{$this->aliases['node_vid']}) {
+      return;
+    }
     $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
     return l($text, "node/$node->nid/revisions/$node->vid/delete", array('query' => drupal_get_destination()));
   }
 }
 
+/**
+ * Field handler to display the marker for new content.
+ *
+ * @ingroup views_argument_handlers
+ */
 class views_handler_field_history_user_timestamp extends views_handler_field_node {
   function construct() {
     parent::construct();
@@ -863,7 +908,30 @@ class views_handler_argument_node_nid extends views_handler_argument {
 }
 
 /**
+ * Argument handler to accept a node revision id.
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_node_vid extends views_handler_argument {
+  // No constructor is necessary.
+
+  /**
+   * Override the behavior of title(). Get the title of the revision.
+   */
+  function title() {
+    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node_revisions} n WHERE n.vid = %d", $this->argument)));
+    if (empty($title)) {
+      return t('No title');
+    }
+
+    return check_plain($title);
+  }
+}
+
+/**
  * Argument handler for a full date (CCYYMMDD)
+ *
+ * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_fulldate extends views_handler_argument_formula {
   /**
@@ -893,6 +961,8 @@ class views_handler_argument_node_created_fulldate extends views_handler_argumen
 
 /**
  * Argument handler for a year (CCYY)
+ *
+ * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_year extends views_handler_argument_formula {
   /**
@@ -906,6 +976,8 @@ class views_handler_argument_node_created_year extends views_handler_argument_fo
 
 /**
  * Argument handler for a year plus month (CCYYMM)
+ *
+ * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_year_month extends views_handler_argument_formula {
   /**
@@ -935,6 +1007,8 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
 
 /**
  * Argument handler for a month (MM)
+ *
+ * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_month extends views_handler_argument_formula {
   /**
@@ -964,6 +1038,8 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
 
 /**
  * Argument handler for a full date (CCYYMMDD)
+ *
+ * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_week extends views_handler_argument_formula {
   /**
@@ -985,6 +1061,8 @@ class views_handler_argument_node_created_week extends views_handler_argument_fo
 
 /**
  * Filter by node type
+ *
+ * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_type extends views_handler_filter_in_operator {
   function construct() {
@@ -1008,6 +1086,8 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
 
 /**
  * Filter for new content
+ *
+ * @ingroup views_filter_handlers
  */
 class views_handler_filter_history_user_timestamp extends views_handler_filter {
   function options_form(&$form, &$form_state) {
