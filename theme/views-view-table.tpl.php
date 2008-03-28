@@ -15,7 +15,7 @@
   <thead>
     <tr>
       <?php foreach ($header as $field => $label): ?>
-        <th class="views-field-<?php print $fields[$field]; ?>">
+        <th class="views-field views-field-<?php print $fields[$field]; ?>">
           <?php print $label; ?>
         </th>
       <?php endforeach ?>
@@ -25,7 +25,7 @@
     <?php foreach ($rows as $count => $row): ?>
       <tr class="<?php print ($count % 2 == 0) ? 'even' : 'odd';?>">
         <?php foreach ($row as $field => $content): ?>
-          <td class="views-field-<?php print $fields[$field]; ?>">
+          <td class="views-field views-field-<?php print $fields[$field]; ?>">
             <?php print $content; ?>
           </td>
         <?php endforeach; ?>
