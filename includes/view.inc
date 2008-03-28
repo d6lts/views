@@ -472,6 +472,10 @@ class view extends views_db_object {
 
     $this->style_handler->query();
 
+    if (variable_get('views_sql_signature', FALSE)) {
+      $this->query->add_field(NULL, "'". $this->name .':'. $this->current_display ."'", 'view_name');
+    }
+
     $this->build_info['query'] = $this->query->query();
     $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();

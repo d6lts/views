@@ -46,7 +46,8 @@ function views_ui_menu() {
   );
   $items['admin/build/views/tools'] = $base + array(
     'title' => t('Tools'),
-    'page callback' => 'views_ui_admin_tools',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('views_ui_admin_tools'),
     'type' => MENU_LOCAL_TASK
   );
   $items['admin/build/views/tools/basic'] = $base + array(
