@@ -104,6 +104,8 @@ function views_ui_list_views($arg = NULL) {
  * @todo make this use a template
  */
 function views_ui_preview($js, $view) {
+  // Take off the items we know so that we can have just the args passed
+  // in for later use.
   $func_args = func_get_args();
   array_shift($func_args); // $js
   array_shift($func_args); // $view
@@ -124,20 +126,26 @@ function views_ui_preview($js, $view) {
     $args = explode('/', $form_state['view_args']);
   }
 
-  // Fix 'q' for paging so that it will go to the NON ajax live preview.
-  $_GET['q'] = str_replace('ajax', 'nojs', $_GET['q']);
-
   $errors = $view->validate();
   if ($errors === TRUE) {
     $view->ajax = $js;
+
+    // Store the current view URL for later use:
+    $view->set_display($form_state['display_id']);
+    $view->set_arguments($args);
+
+    if ($view->display_handler->get_option('path')) {
+      $path = $view->get_url();
+    }
+
     // Make view links come back to preview.
     $view->override_path = 'admin/build/views/nojs/preview/' . $view->name . '/' . $form_state['display_id'];
-    if ($form_state['view_args']) {
-      $view->override_path .= '/' . $form_state['view_args'];
-    }
 
     // also override $_GET['q'] so we get the pager
     $_GET['q'] = $view->override_path;
+    if ($form_state['view_args']) {
+      $_GET['q'] .= '/' . $form_state['view_args'];
+    }
 
     $preview = $view->preview($form_state['display_id'], $args);
 
@@ -151,11 +159,15 @@ function views_ui_preview($js, $view) {
       }
       $rows[] = array('<strong>' . t('Query') . '</strong>', check_plain($query));
       $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
-      if ($view->display_handler->get_option('path')) {
-        $path = $view->get_url();
+      if (isset($path)) {
         $path = l($path, $path);
-        $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
       }
+      else {
+        $path = t('This display has no path.');
+      }
+
+      $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
+
 
       $info = theme('table', array(), $rows);
     }
@@ -635,7 +647,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
 
   $form_state = array(
     'display_id' => 'default',
-    'args' => '',
+    'view_args' => '',
     're_render' => FALSE,
     'no_redirect' => TRUE,
     'view' => &$view,
