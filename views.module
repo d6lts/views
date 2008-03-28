@@ -1008,8 +1008,8 @@ function views_date_sql_format($format, $field, $field_type = 'int', $set_offset
         'i' => '%i',
         's' => '%s',
         );
-      $format = str_replace($format, $replace);
-      return "DATE_FORMAT($field, $format)";
+      $format = strtr($format, $replace);
+      return "DATE_FORMAT($field, '$format')";
     case 'pgsql':
       $replace = array(
         'Y' => 'YY',
@@ -1019,8 +1019,8 @@ function views_date_sql_format($format, $field, $field_type = 'int', $set_offset
         'i' => 'MI',
         's' => 'SS',
         );
-      $format = str_replace($format, $replace);
-      return "TO_CHAR($field, $format)";
+      $format = strtr($format, $replace);
+      return "TO_CHAR($field, '$format')";
   }
 }
 

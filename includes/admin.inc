@@ -104,9 +104,14 @@ function views_ui_list_views($arg = NULL) {
  * @todo make this use a template
  */
 function views_ui_preview($js, $view) {
+  $func_args = func_get_args();
+  array_shift($func_args); // $js
+  array_shift($func_args); // $view
+  $display_id = (count($func_args)) ? array_shift($func_args) : 'default';
+
   $form_state = array(
-    'display_id' => 'default',
-    'args' => '',
+    'display_id' => $display_id,
+    'view_args' => $func_args ? implode('/', $func_args) : '',
     're_render' => TRUE,
     'no_redirect' => TRUE,
     'view' => &$view,
@@ -115,8 +120,8 @@ function views_ui_preview($js, $view) {
 
   $output = drupal_build_form('views_ui_preview_form', $form_state);
   $args = array();
-  if (!empty($form_state['args'])) {
-    $args = explode('/', $form_state['args']);
+  if (!empty($form_state['view_args'])) {
+    $args = explode('/', $form_state['view_args']);
   }
 
   // Fix 'q' for paging so that it will go to the NON ajax live preview.
@@ -125,7 +130,18 @@ function views_ui_preview($js, $view) {
   $errors = $view->validate();
   if ($errors === TRUE) {
     $view->ajax = $js;
+    // Make view links come back to preview.
+    $view->override_path = 'admin/build/views/nojs/preview/' . $view->name . '/' . $form_state['display_id'];
+    if ($form_state['view_args']) {
+      $view->override_path .= '/' . $form_state['view_args'];
+    }
+
+    // also override $_GET['q'] so we get the pager
+    $_GET['q'] = $view->override_path;
+
     $preview = $view->preview($form_state['display_id'], $args);
+
+    // Get information from the preview for display.
     if (!empty($view->build_info['query'])) {
       $rows = array();
       $query = db_prefix_tables($view->build_info['query']);
@@ -207,7 +223,7 @@ function views_ui_preview_form(&$form_state) {
   $form['args'] = array(
     '#type' => 'textfield',
     '#title' => t('Arguments'),
-    '#default_value' => $form_state['args'],
+    '#default_value' => $form_state['view_args'],
     '#description' => t('Separate arguments with a / as though they were a URL path.'),
     '#id' => 'preview-args',
   );
@@ -230,7 +246,7 @@ function views_ui_preview_form(&$form_state) {
  */
 function views_ui_preview_form_submit(&$form, &$form_state) {
   $form_state['display_id'] = $form_state['values']['display_id'];
-  $form_state['args'] = $form_state['values']['args'];
+  $form_state['view_args'] = $form_state['values']['args'];
 }
 
 /**

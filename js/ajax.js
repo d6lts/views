@@ -189,7 +189,7 @@ Drupal.Views.updatePreviewForm = function() {
   $(this).ajaxSubmit({
     url: url,
     data: '',
-    type: 'POST',
+    type: 'GET',
     success: Drupal.Views.Ajax.previewResponse,
     error: function() { alert("An error occurred."); },
     dataType: 'json'
