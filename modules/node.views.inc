@@ -886,8 +886,7 @@ class views_handler_argument_node_created_fulldate extends views_handler_argumen
    * Constructor implementation
    */
   function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.$this->real_field+$timezone), '%Y%m%%d')";
+    $this->formula = views_date_sql_format('Ymd', "***table***.$this->real_field");
     $this->format = 'F j, Y';
   }
 
@@ -917,8 +916,7 @@ class views_handler_argument_node_created_year extends views_handler_argument_fo
    * Constructor implementation
    */
   function construct() {
-    $timezone = views_get_timezone();
-    $this->formula = "YEAR(FROM_UNIXTIME(***table***.$this->real_field+$timezone))";
+    $this->formula = views_date_sql_extract('YEAR', "***table***.$this->real_field");
   }
 }
 
@@ -932,8 +930,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
    * Constructor implementation
    */
   function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "DATE_FORMAT(FROM_UNIXTIME(***table***.$this->real_field+$timezone), '%Y%m')";
+    $this->formula = views_date_sql_format('Ym', "***table***.$this->real_field");
     $this->format = 'F, Y';
   }
 
@@ -963,8 +960,7 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
    * Constructor implementation
    */
   function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "MONTH(FROM_UNIXTIME(***table***.$this->real_field+$timezone))";
+    $this->formula = views_date_sql_extract('MONTH', "***table***.$this->real_field");
     $this->format = 'F';
   }
 
@@ -994,8 +990,7 @@ class views_handler_argument_node_created_week extends views_handler_argument_fo
    * Constructor implementation
    */
   function construct() {
-    $timezone = views_get_timezone();
-    $this->formula =  "WEEK(FROM_UNIXTIME(***table***.$this->real_field+$timezone), 3)";
+    $this->formula = views_date_sql_extract('WEEK', "***table***.$this->real_field");
   }
 
   /**

@@ -936,29 +936,26 @@ class views_handler_sort_date extends views_handler_sort {
    * Called to add the sort to a query.
    */
   function query() {
-    $timezone = views_get_timezone();
-    $timezone = ($timezone) ? sprintf('%+d', $timezone) : '';
-
     $this->ensure_my_table();
     switch($this->options['granularity']) {
       case 'second':
       default:
-        $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
+        $this->query->add_orderby($this->table_alias, "$this->table_alias.$this->real_field", $this->options['order']);
         return;
       case 'minute':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field), '%Y%m%%d%H%i')";
+        $formula = views_date_sql_format('YmdHi', "$this->table_alias.$this->real_field");
         break;
       case 'hour':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field), '%Y%m%%d%H')";
+        $formula = views_date_sql_format('YmdH', "$this->table_alias.$this->real_field");
         break;
       case 'day':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y%m%%d')";
+        $formula = views_date_sql_format('Ymd', "$this->table_alias.$this->real_field");
         break;
       case 'month':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y%m')";
+        $formula = views_date_sql_format('Ym', "$this->table_alias.$this->real_field");
         break;
       case 'year':
-        $formula = "DATE_FORMAT(FROM_UNIXTIME($this->table_alias.$this->real_field $timezone), '%Y')";
+        $formula = views_date_sql_format('Y', "$this->table_alias.$this->real_field");
         break;
     }
 
