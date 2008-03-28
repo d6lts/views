@@ -1602,7 +1602,9 @@ class views_handler_filter_string extends views_handler_filter {
     // not rendered, we can't render dependencies; instead we only
     // render the form items we need.
     $which = 'all';
-    $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
+    if (!empty($form['operator'])) {
+      $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
+    }
     if (!empty($form_state['exposed'])) {
       if (empty($this->options['expose']['operator'])) {
         // exposed and locked.
