@@ -26,6 +26,8 @@ function template_preprocess_views_view(&$vars) {
 
   $vars['rows']       = $view->style_handler->render($view->result);
   $vars['css_name']   = views_css_safe($view->name);
+  $vars['name']       = $view->name;
+  $vars['display_id'] = $view->current_display;
 
   if (!$vars['rows']) {
     $vars['empty']    = $view->display_handler->render_empty();
@@ -53,9 +55,29 @@ function template_preprocess_views_view(&$vars) {
 
   $vars['pager']      = '';
   if (!empty($view->pager['use_pager'])) {
-    $vars['pager']    = theme('pager', $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
+    $pager_type = $view->pager['use_pager'] == 'mini' ? 'views_mini_pager' : 'pager';
+    $vars['pager']    = theme($pager_type, $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
+  // If using AJAX, send identifying data about this view.
+  if ($view->use_ajax) {
+    $settings = array(
+      'views' => array(
+        'ajax_path' => url('views/ajax'),
+        'ajaxViews' => array(
+          array(
+            'view_name' => $view->name,
+            'view_display_id' => $view->current_display,
+            'view_args' => implode('/', $view->args),
+            'view_path' => $_GET['q'],
+          ),
+        ),
+      ),
+    );
+
+    drupal_add_js($settings, 'setting');
+    views_add_js('ajax_view');
+  }
 }
 
 /**
@@ -234,6 +256,41 @@ function template_preprocess_views_exposed_form(&$vars) {
 
   // This includes the submit button.
   $vars['button'] = drupal_render($form);
+}
+
+function theme_views_mini_pager($tags = array(), $limit = 10, $element = 0, $parameters = array(), $quantity = 9) {
+  global $pager_page_array, $pager_total;
+
+  // Calculate various markers within this pager piece:
+  // Middle is used to "center" pages around the current page.
+  $pager_middle = ceil($quantity / 2);
+  // current is the page we are currently paged to
+  $pager_current = $pager_page_array[$element] + 1;
+  // max is the maximum page number
+  $pager_max = $pager_total[$element];
+  // End of marker calculations.
+
+
+  $li_previous = theme('pager_previous', (isset($tags[1]) ? $tags[1] : t('‹‹')), $limit, $element, 1, $parameters);
+  $li_next = theme('pager_next', (isset($tags[3]) ? $tags[3] : t('››')), $limit, $element, 1, $parameters);
+
+  if ($pager_total[$element] > 1) {
+    $items[] = array(
+      'class' => 'pager-previous',
+      'data' => $li_previous,
+    );
+
+    $items[] = array(
+      'class' => 'pager-current',
+      'data' => t('Page @current of @max', array('@current' => $pager_current, '@max' => $pager_max)),
+    );
+
+    $items[] = array(
+      'class' => 'pager-next',
+      'data' => $li_next,
+    );
+    return theme('item_list', $items, NULL, 'ul', array('class' => 'pager'));
+  }
 }
 
 /**

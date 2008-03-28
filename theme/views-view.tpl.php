@@ -16,7 +16,7 @@
  * @ingroup views_templates
  */
 ?>
-<div class="view view-<?php print $css_name; ?>">
+<div class="view view-<?php print $css_name; ?> view-id-<?php print $name; ?> view-display-id-<?php print $display_id; ?>">
   <?php if ($header): ?>
     <div class="view-header">
       <?php print $header; ?>

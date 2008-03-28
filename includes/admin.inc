@@ -2034,7 +2034,7 @@ function views_ui_disable_page($view) {
  * Page callback for the tools - other page
  */
 function views_ui_admin_tools() {
-  return array('markup' => array('#value' => t('This page is not yet implemented.')));
+  return t('This page is not yet implemented. But try the convert tool.');
 }
 
 /**

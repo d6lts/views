@@ -27,6 +27,8 @@ class view extends views_db_object {
   var $args = array();
   var $build_info = array();
 
+  var $use_ajax = FALSE;
+
   // pager variables
   var $pager = array(
     'use_pager' => FALSE,
@@ -82,6 +84,13 @@ class view extends views_db_object {
    */
   function set_items_per_page($items_per_page) {
     $this->pager['items_per_page'] = $items_per_page;
+  }
+
+  /**
+   * Whether or not AJAX should be used.
+   */
+  function set_use_ajax($use_ajax) {
+    $this->use_ajax = $use_ajax;
   }
 
   /**

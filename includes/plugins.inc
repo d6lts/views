@@ -21,6 +21,7 @@ function views_views_plugins() {
         'no ui' => TRUE,
         'no remove' => TRUE,
         'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', 'misc/autocomplete.js', "$path/dependent.js"),
+        'use ajax' => TRUE,
         'use pager' => TRUE,
       ),
       'page' => array(
@@ -28,6 +29,7 @@ function views_views_plugins() {
         'help' => t('Display the view as a page, with a URL and menu links.'),
         'handler' => 'views_plugin_display_page',
         'uses hook menu' => TRUE,
+        'use ajax' => TRUE,
         'use pager' => TRUE,
       ),
       'block' => array(
@@ -35,6 +37,8 @@ function views_views_plugins() {
         'help' => t('Display the view as a block.'),
         'handler' => 'views_plugin_display_block',
         'uses hook block' => TRUE,
+        'use ajax' => TRUE,
+        'use pager' => TRUE,
       ),
     ),
     'style' => array(
@@ -178,6 +182,16 @@ class views_plugin_display extends views_object {
   }
 
   /**
+   * Does the display use AJAX?
+   */
+  function use_ajax() {
+    if (!empty($this->definition['use ajax'])) {
+      return $this->get_option('use_ajax');
+    }
+    return FALSE;
+  }
+
+  /**
    * Does the display have a pager enabled?
    */
   function use_pager() {
@@ -198,6 +212,7 @@ class views_plugin_display extends views_object {
       'header' => array('header', 'header_format', 'header_empty'),
       'footer' => array('footer', 'footer_format', 'footer_empty'),
       'empty' => array('empty', 'empty_format'),
+      'use_ajax' => array('use_ajax'),
       'items_per_page' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'use_pager' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'link_display' => array('link_display'),
@@ -249,6 +264,7 @@ class views_plugin_display extends views_object {
       'empty' => TRUE,
       'empty_format' => TRUE,
 
+      'use_ajax' => TRUE,
       'items_per_page' => TRUE,
       'offset' => TRUE,
       'use_pager' => TRUE,
@@ -442,12 +458,19 @@ class views_plugin_display extends views_object {
         $options['row_plugin']['links']['row_options'] = t('Settings');
       }
     }
+    if (!empty($this->definition['use ajax'])) {
+      $options['use_ajax'] = array(
+        'category' => 'basic',
+        'title' => t('Use AJAX'),
+        'value' => $this->get_option('use_ajax') ? t('Yes') : t('No'),
+      );
+    }
 
     if (!empty($this->definition['use pager'])) {
       $options['use_pager'] = array(
         'category' => 'basic',
         'title' => t('Use pager'),
-        'value' => $this->get_option('use_pager') ? t('Yes') : t('No'),
+        'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') ? t('Mini') : t('Yes')) : t('No'),
       );
     }
     $options['items_per_page'] = array(
@@ -575,11 +598,24 @@ class views_plugin_display extends views_object {
           '#default_value' => $this->get_option('title'),
         );
         break;
+      case 'use_ajax':
+        $form['#title'] .= t('Use AJAX when available to load this view');
+        $form['description'] = array(
+          '#prefix' => '<div class="description form-item">',
+          '#suffix' => '</div>',
+          '#value' => t('If set, this view will use an AJAX mechanism for paging, table sorting and exposed filters. This means the entire page will not refresh. It is not recommend that you use this if this view is the main content of the page, but it is very useful for side content.'),
+        );
+        $form['use_ajax'] = array(
+          '#type' => 'radios',
+          '#options' => array(1 => t('Yes'), 0 => t('No')),
+          '#default_value' => $this->get_option('use_ajax'),
+        );
+        break;
       case 'use_pager':
         $form['#title'] .= t('Use a pager for this view');
         $form['use_pager'] = array(
           '#type' => 'radios',
-          '#options' => array(1 => t('Yes'), 0 => t('No')),
+          '#options' => array(1 => t('Full pager'), 'mini' => t('Mini pager'), 0 => t('No')),
           '#default_value' => $this->get_option('use_pager'),
         );
         $form['pager_element'] = array(
@@ -793,6 +829,7 @@ class views_plugin_display extends views_object {
       case 'access':
       case 'link_display':
       case 'php_arg_code':
+      case 'use_ajax':
         $this->set_option($section, $form_state['values'][$section]);
         break;
       case 'use_pager':
@@ -997,6 +1034,7 @@ class views_plugin_display extends views_object {
    * overridden on an individual display.
    */
   function pre_execute() {
+    $this->view->set_use_ajax($this->use_ajax());
     // Copy pager information from the display.
     $this->view->set_use_pager($this->use_pager());
     $this->view->set_pager_element($this->get_option('pager_element'));

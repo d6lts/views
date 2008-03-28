@@ -14,11 +14,17 @@ function views_theme() {
   $path = drupal_get_path('module', 'views');
   require_once "./$path/theme/theme.inc";
 
-  // Some quasi clever array merging here.
+    // Some quasi clever array merging here.
   $base = array(
     'file' => 'theme.inc',
     'path' => "$path/theme",
   );
+
+  // Our extra version of pager from pager.inc
+  $hooks['views_mini_pager'] = $base + array(
+    'arguments' => array('tags' => array(), 'limit' => 10, 'element' => 0, 'parameters' => array()),
+  );
+
 
   $arguments = array(
     'display' => array('view' => NULL),
@@ -110,6 +116,14 @@ function views_menu() {
       $items += $result;
     }
   }
+  $items['views/ajax'] = array(
+    'title' => t('Views'),
+    'page callback' => 'views_ajax',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'description' => t('Ajax callback for view loading.'),
+    'type' => MENU_CALLBACK,
+  );
   return $items;
 }
 
@@ -246,6 +260,55 @@ function views_access($view, $account = NULL) {
   }
 
   return $view->access($display_id, $account);
+}
+
+/**
+ * Menu callback to load a view via AJAX.
+ */
+function views_ajax() {
+  if (isset($_REQUEST['view_name']) && isset($_REQUEST['view_display_id'])) {
+    $name = $_REQUEST['view_name'];
+    $display_id = $_REQUEST['view_display_id'];
+    $args = isset($_REQUEST['view_args']) ? explode('/', $_REQUEST['view_args']) : array();
+    $path = isset($_REQUEST['view_path']) ? $_REQUEST['view_path'] : NULL;
+    views_include('ajax');
+    $object = new stdClass();
+
+    $object->status = FALSE;
+    $object->display = '';
+
+    // Load the view.
+    if ($v = views_get_view($name)) {
+      $view = drupal_clone($v);
+      if ($view->access($display_id)) {
+
+        // Fix 'q' for paging.
+        if (!empty($path)) {
+          $_GET['q'] = $path;
+        }
+
+        $errors = $view->validate();
+        if ($errors === TRUE) {
+          $object->status = TRUE;
+          $object->title = $view->get_title();
+          $object->display .= $view->preview($display_id, $args);
+        }
+        else {
+          foreach ($errors as $error) {
+            drupal_set_message($error, 'error');
+          }
+        }
+        // Register the standard JavaScript callback.
+        $object->__callbacks = array('Drupal.Views.Ajax.ajaxViewResponse');
+        // Allow other modules to extend the data returned.
+        drupal_alter('ajax_data', $object, 'views', $view);
+      }
+    }
+    $messages = theme('status_messages');
+    $object->messages = $messages ? '<div class="views-messages">'. $messages .'</div>' : '';
+
+    views_ajax_render($object);
+  }
 }
 
 /**
@@ -1074,6 +1137,10 @@ function views_exposed_form(&$form_state) {
 
   $form['#theme'] = views_theme_functions('views_exposed_form', $view, $display);
 
+  // If using AJAX, we need the form plugin.
+  if ($view->use_ajax) {
+    drupal_add_js('misc/jquery.form.js');
+  }
   views_add_js('dependent');
   return $form;
 }
@@ -1136,3 +1203,4 @@ function views_views_query_substitutions($view) {
   global $language;
   return array('***CURRENT_TIME***' => time(), '***CURRENT_LANGUAGE***' => $language->language);
 }
+
