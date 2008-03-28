@@ -78,6 +78,12 @@ function views_theme() {
     'arguments' => array('form' => NULL),
   );
 
+  $hooks['views_more'] = $base + array(
+    'template' => 'views-more',
+    'pattern' => 'views_more__',
+    'arguments' => array('more_url' => NULL),
+  );
+
   return $hooks;
 }
 

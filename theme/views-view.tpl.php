@@ -12,6 +12,7 @@
  * - $pager: The pager next/prev links to display, if any
  * - $exposed: Exposed widget form/info to display
  * - $feed_icon: Feed icon to display, if any
+ * - $more: A link to view more, if any
  *
  * @ingroup views_templates
  */
@@ -41,6 +42,10 @@
 
   <?php if ($pager): ?>
     <?php print $pager; ?>
+  <?php endif; ?>
+
+  <?php if ($more): ?>
+    <?php print $more; ?>
   <?php endif; ?>
 
   <?php if ($footer): ?>

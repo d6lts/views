@@ -282,7 +282,7 @@ function theme_views_mini_pager($tags = array(), $limit = 10, $element = 0, $par
 
     $items[] = array(
       'class' => 'pager-current',
-      'data' => t('Page @current of @max', array('@current' => $pager_current, '@max' => $pager_max)),
+      'data' => t('@current of @max', array('@current' => $pager_current, '@max' => $pager_max)),
     );
 
     $items[] = array(

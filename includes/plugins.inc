@@ -23,6 +23,7 @@ function views_views_plugins() {
         'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', 'misc/autocomplete.js', "$path/dependent.js"),
         'use ajax' => TRUE,
         'use pager' => TRUE,
+        'use more' => TRUE,
       ),
       'page' => array(
         'title' => t('Page'),
@@ -39,6 +40,7 @@ function views_views_plugins() {
         'uses hook block' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
+        'use more' => TRUE,
       ),
     ),
     'style' => array(
@@ -202,6 +204,16 @@ class views_plugin_display extends views_object {
   }
 
   /**
+   * Does the display have a more link enabled?
+   */
+  function use_more() {
+    if (!empty($this->definition['use more'])) {
+      return $this->get_option('use_more');
+    }
+    return FALSE;
+  }
+
+  /**
    * Static member function to list which sections are defaultable
    * and what items each section contains.
    */
@@ -215,6 +227,7 @@ class views_plugin_display extends views_object {
       'use_ajax' => array('use_ajax'),
       'items_per_page' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'use_pager' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
+      'use_more' => array('use_more'),
       'link_display' => array('link_display'),
 
     // @todo
@@ -269,6 +282,7 @@ class views_plugin_display extends views_object {
       'offset' => TRUE,
       'use_pager' => TRUE,
       'pager_element'  => TRUE,
+      'use_more' => TRUE,
 
       'link_display' => TRUE,
       'php_arg_code' => TRUE,
@@ -473,11 +487,20 @@ class views_plugin_display extends views_object {
         'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') ? t('Mini') : t('Yes')) : t('No'),
       );
     }
+
     $options['items_per_page'] = array(
       'category' => 'basic',
       'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
       'value' => intval($this->get_option('items_per_page')),
     );
+
+    if (!empty($this->definition['use more'])) {
+      $options['use_more'] = array(
+        'category' => 'basic',
+        'title' => t('More link'),
+        'value' => $this->get_option('use_more') ? t('Yes') : t('No'),
+      );
+    }
 
     $access = $this->get_option('access');
     if (!is_array($access)) {
@@ -603,7 +626,7 @@ class views_plugin_display extends views_object {
         $form['description'] = array(
           '#prefix' => '<div class="description form-item">',
           '#suffix' => '</div>',
-          '#value' => t('If set, this view will use an AJAX mechanism for paging, table sorting and exposed filters. This means the entire page will not refresh. It is not recommend that you use this if this view is the main content of the page, but it is very useful for side content.'),
+          '#value' => t('If set, this view will use an AJAX mechanism for paging, table sorting and exposed filters. This means the entire page will not refresh. It is not recommended that you use this if this view is the main content of the page as it will prevent deep linking to specific pages, but it is very useful for side content.'),
         );
         $form['use_ajax'] = array(
           '#type' => 'radios',
@@ -638,6 +661,15 @@ class views_plugin_display extends views_object {
           '#title' => t('Offset'),
           '#description' => t('The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed.'),
           '#default_value' => intval($this->get_option('offset')),
+        );
+        break;
+      case 'use_more':
+        $form['#title'] .= t('Add a more link to the bottom of the display.');
+        $form['use_more'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Create more link'),
+          '#description' => t('This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in \'Link display\' above.'),
+          '#default_value' => $this->get_option('use_more'),
         );
         break;
       case 'access':
@@ -840,6 +872,9 @@ class views_plugin_display extends views_object {
         $this->set_option($section, intval($form_state['values'][$section]));
         $this->set_option('offset', intval($form_state['values']['offset']));
         break;
+      case 'use_more':
+        $this->set_option($section, $form_state['values'][$section]);
+        break;
       case 'row_plugin':
         // This if prevents resetting options to default if they don't change
         // the plugin.
@@ -959,9 +994,18 @@ class views_plugin_display extends views_object {
   function render_filters() { }
 
   /**
-   * Not all display plugins will have a 'more' link
+   * Render the 'more' link
    */
-  function render_more_link() { }
+  function render_more_link() {
+    if ($this->use_more()) {
+      $path = $this->get_path();
+      if ($path) {
+        $theme = views_theme_functions('views_more', $this->view, $this->display);
+        $path = check_url(url($path));
+        return theme($theme, $path);
+      }
+    }
+  }
 
   /**
    * Not all display plugins will have a feed icon.
