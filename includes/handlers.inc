@@ -202,9 +202,11 @@ class views_join {
           }
           $extras[] = $extra;
         }
-        $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+        if ($extras) {
+          $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+        }
       }
-      else if (is_string($this->extra)) {
+      else if ($this->extra && is_string($this->extra)) {
         $output .= " AND ($this->extra)";
       }
     }

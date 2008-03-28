@@ -486,71 +486,6 @@ function node_views_data() {
   return $data;
 }
 
-
-/**
- * Filter by language
- *
- * @ingroup views_filter_handlers
- */
-class views_handler_filter_node_language extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
-    $this->value_title = t('Node language');
-    $this->value_options = locale_language_list();
-  }
-
-  function options(&$options) {
-    parent::options($options);
-    // Set the default value to the default language
-    $options['value'] = language_default('language');
-  }
-}
-
-/**
- * Field handler to translate a language into its readable form.
- *
- * @ingroup views_field_handlers
- */
-class views_handler_field_node_language extends views_handler_field_node {
-  function render($values) {
-    $languages = locale_language_list();
-    $value = $languages[$values->{$this->field_alias}];
-    return $this->render_link($value, $values);
-  }
-}
-
-/**
- * Argument handler to accept a language.
- *
- * @ingroup views_argument_handlers
- */
-class views_handler_argument_node_language extends views_handler_argument {
-  function construct() {
-    parent::construct('language');
-  }
-
-  /**
-   * Override the behavior of summary_name(). Get the user friendly version
-   * of the language.
-   */
-  function summary_name($data) {
-    return $this->node_language($data->{$this->name_alias});
-  }
-
-  /**
-   * Override the behavior of title(). Get the user friendly version of the
-   * node type.
-   */
-  function title() {
-    return $this->node_language($this->argument);
-  }
-
-  function node_language($langcode) {
-    $languages = locale_language_list();
-    return isset($languages[$langcode]) ? $languages[$langcode] : t('Unknown language');
-  }
-}
-
 /**
  * Field handler to provide simple renderer that allows linking to a node.
  *
@@ -593,6 +528,19 @@ class views_handler_field_node extends views_handler_field {
 
   function render($values) {
     return $this->render_link(check_plain($values->{$this->field_alias}), $values);
+  }
+}
+
+/**
+ * Field handler to translate a language into its readable form.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_language extends views_handler_field_node {
+  function render($values) {
+    $languages = locale_language_list();
+    $value = $languages[$values->{$this->field_alias}];
+    return $this->render_link($value, $values);
   }
 }
 
@@ -1121,6 +1069,59 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
     // Unless it's very very old content. Everything in the query is already
     // type safe cause none of it is coming from outside here.
     $this->query->add_where($this->options['group'], "($field IS NULL AND ($node.changed > (***CURRENT_TIME*** - $limit) $clause)) OR $field < $node.changed $clause2");
+  }
+}
+
+
+
+/**
+ * Filter by language
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_node_language extends views_handler_filter_in_operator {
+  function construct() {
+    parent::construct();
+    $this->value_title = t('Node language');
+    $this->value_options = locale_language_list();
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    // Set the default value to the default language
+    $options['value'] = language_default('language');
+  }
+}
+
+/**
+ * Argument handler to accept a language.
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_node_language extends views_handler_argument {
+  function construct() {
+    parent::construct('language');
+  }
+
+  /**
+   * Override the behavior of summary_name(). Get the user friendly version
+   * of the language.
+   */
+  function summary_name($data) {
+    return $this->node_language($data->{$this->name_alias});
+  }
+
+  /**
+   * Override the behavior of title(). Get the user friendly version of the
+   * node type.
+   */
+  function title() {
+    return $this->node_language($this->argument);
+  }
+
+  function node_language($langcode) {
+    $languages = locale_language_list();
+    return isset($languages[$langcode]) ? $languages[$langcode] : t('Unknown language');
   }
 }
 

@@ -195,12 +195,16 @@ Drupal.Views.updatePreviewForm = function() {
     dataType: 'json'
   });
 
-  return false;   
+  return false;
 }
 
 Drupal.Views.updatePreviewLink = function() {
   var url = $(this).attr('href');
   url = url.replace('nojs', 'ajax');
+  if (url.substring(0, 18) != '/admin/build/views') {
+//    console.log(url.substring(0, 18));
+    return true;
+  }
 
   $(this).ajaxSubmit({
     url: url,
