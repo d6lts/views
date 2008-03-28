@@ -1065,6 +1065,11 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
     // type safe cause none of it is coming from outside here.
     $this->query->add_where($this->options['group'], "($field IS NULL AND ($node.changed > (***CURRENT_TIME*** - $limit) $clause)) OR $field < $node.changed $clause2");
   }
+
+  /**
+   * Blank this, because there is nothing to say about this one.
+   */
+  function admin_summary() { }
 }
 
 
