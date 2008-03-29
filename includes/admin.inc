@@ -957,7 +957,7 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
 
     $form['buttons'][$submit] = array(
       '#type' => 'submit',
-      '#value' => t($third),
+      '#value' => $third,
       '#validate' => array(),
       '#submit' => array($third_submit),
     );
