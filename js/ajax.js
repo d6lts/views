@@ -28,6 +28,9 @@ Drupal.Views.Ajax.setForm = function(title, output) {
  * 
  */
 Drupal.Views.Ajax.ajaxResponse = function(data) {
+  $('a.views-throbbing').removeClass('views-throbbing');
+  $('span.views-throbbing').remove();
+
   if (data.debug) {
     alert(data.debug);
   }
@@ -56,17 +59,18 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
       $('input[type=submit]', ajax_area).click(function() {
         $('form', ajax_area).append('<input type="hidden" name="' 
           + $(this).attr('name') + '" value="' + $(this).val() + '">');
+        $(this).after('<span class="views-throbbing">&nbsp</span>');
       });
 
       // Bind forms to ajax submit.
       $('form', ajax_area).unbind('submit'); // be safe here.
-      $('form', ajax_area).submit(function() {
+      $('form', ajax_area).submit(function(arg) {
         $(this).ajaxSubmit({
           url: data.url,
           data: '',
           type: 'POST',
           success: Drupal.Views.Ajax.ajaxResponse,
-          error: function() { alert("An error occurred."); },
+          error: function() { $('span.views-throbbing').remove(); alert("An error occurred."); },
           dataType: 'json'
         });
         return false;
@@ -131,6 +135,9 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
  * hardcoded and specialized.
  */
 Drupal.Views.Ajax.previewResponse = function(data) {
+  $('a.views-throbbing').removeClass('views-throbbing');
+  $('span.views-throbbing').remove();
+
   if (data.debug) {
     alert(data.debug);
   }
@@ -143,7 +150,6 @@ Drupal.Views.Ajax.previewResponse = function(data) {
     Drupal.settings.viewsAjax = {};
   }
   if (data.js) {
-    console.log('hi');
     $.extend(Drupal.settings, data.js);
   }
 
@@ -161,6 +167,7 @@ Drupal.Views.Ajax.previewResponse = function(data) {
       $('input[type=submit]', ajax_area).click(function() {
         $('form', ajax_area).append('<input type="hidden" name="' 
           + $(this).attr('name') + '" value="' + $(this).val() + '">');
+        $(this).after('<span class="views-throbbing">&nbsp</span>');
       });
 
       // Bind forms to ajax submit.
@@ -171,7 +178,7 @@ Drupal.Views.Ajax.previewResponse = function(data) {
           data: '',
           type: 'POST',
           success: Drupal.Views.Ajax.previewResponse,
-          error: function() { alert("An error occurred."); },
+          error: function() { $('span.views-throbbing').remove(); alert("An error occurred."); },
           dataType: 'json'
         });
         return false;
@@ -186,12 +193,13 @@ Drupal.Views.updatePreviewForm = function() {
   var url = $(this).attr('action');
   url = url.replace('nojs', 'ajax');
 
+  $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
   $(this).ajaxSubmit({
     url: url,
     data: '',
     type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { alert("An error occurred."); },
+    error: function() { $('span.views-throbbing').remove(); alert("An error occurred."); },
     dataType: 'json'
   });
 
@@ -202,12 +210,13 @@ Drupal.Views.updatePreviewFilterForm = function() {
   var url = $(this).attr('action');
   url = url.replace('nojs', 'ajax');
 
+  $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
   $(this).ajaxSubmit({
     url: url,
     data: '',
     type: 'GET',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { alert("An error occurred."); },
+    error: function() { $('span.views-throbbing').remove(); alert("An error occurred."); },
     dataType: 'json'
   });
 
@@ -218,16 +227,16 @@ Drupal.Views.updatePreviewLink = function() {
   var url = $(this).attr('href');
   url = url.replace('nojs', 'ajax');
   if (url.substring(0, 18) != '/admin/build/views') {
-//    console.log(url.substring(0, 18));
     return true;
   }
 
-  $(this).ajaxSubmit({
+  $(this).addClass('views-throbbing');
+  $.ajax({
     url: url,
     data: '',
     type: 'GET',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { alert("An error occurred."); },
+    error: function() { $(this).removeClass('views-throbbing'); alert("An error occurred."); },
     dataType: 'json'
   });
 
@@ -248,30 +257,32 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
     //Disable the save button.
     $('#edit-save').attr('disabled', 'true');
     
+    $(this).addClass('views-throbbing');
     $.ajax({
       type: "GET",
       url: url,
       data: '',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { alert("An error occurred."); },
+      error: function() { $(this).removeClass('views-throbbing'); alert("An error occurred."); },
       dataType: 'json'
     });
     
     return false;
   });  
 
-  $('form.views-ajax-form:not(.views-processed)').addClass('views-processed').submit(function() {
+  $('form.views-ajax-form:not(.views-processed)').addClass('views-processed').submit(function(arg) {
     // Translate the href on the link to the ajax href. That way this degrades
     // into a nice, normal link.
     var url = $(this).attr('action');
     url = url.replace('nojs', 'ajax');
 
+//    $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
     $(this).ajaxSubmit({
       url: url,
       data: '',
       type: 'POST',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { alert("An error occurred."); },
+      error: function() { $('span.views-throbbing').remove(); alert("An error occurred."); },
       dataType: 'json'
     });
 

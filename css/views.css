@@ -17,3 +17,9 @@
 .views-exposed-widgets {
   margin-bottom: .5em;
 }
+
+html.js a.views-throbbing,
+html.js span.views-throbbing {
+  background:url(../images/status-active.gif) no-repeat right center;
+  padding-right:18px;
+}
