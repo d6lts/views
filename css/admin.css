@@ -85,8 +85,8 @@
   border: #ccc 1px solid;
   border-top: 0;
   margin-left: 117px; /* 118 -1 causes borders to overlap */
-  min-height: 302px;
-  _height: 300px;  /*stupid IE hack */
+//  min-height: 302px;
+//  _height: 300px;  /*stupid IE hack */
 }
 
 * html .views-tabset .views-display {
@@ -189,8 +189,6 @@ div.views-display-deleted div.tab-section {
 #views-ajax-pad {
   background: transparent;
   margin-top: 0px;
-  min-height: 200px;
-  _height: 200px; /* stupid IE */
 }
 
 #views-ajax-title {
@@ -207,7 +205,7 @@ div.views-display-deleted div.tab-section {
   margin-left: 117px;
   border: #ADB7BE 1px solid;
   border-top: 0;
-  padding: 3em 0em;
+  /* padding: 3em 0em; */
   text-align: center;
   background: transparent;
   font-style: italic;

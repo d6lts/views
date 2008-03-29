@@ -590,7 +590,9 @@ class view extends views_db_object {
     // Give field handlers the opportunity to perform additional queries
     // using the entire resultset prior to rendering.
     foreach ($this->field as $id => $field) {
-      $this->field[$id]['handler']->pre_render($this->result);
+      if (!empty($this->field[$id]['handler'])) {
+        $this->field[$id]['handler']->pre_render($this->result);
+      }
     }
 
     return $this->display_handler->render();

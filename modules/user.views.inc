@@ -190,6 +190,22 @@ function user_views_data() {
     ),
   );
 
+  $data['users']['edit_node'] = array(
+    'field' => array(
+      'title' => t('Edit link'),
+      'help' => t('Provide a simple link to edit the user.'),
+      'handler' => 'views_handler_field_user_link_edit',
+    ),
+  );
+
+  $data['users']['delete_node'] = array(
+    'field' => array(
+      'title' => t('Delete link'),
+      'help' => t('Provide a simple link to delete the user.'),
+      'handler' => 'views_handler_field_user_link_delete',
+    ),
+  );
+
   // ----------------------------------------------------------------------
   // Roles table
 
@@ -298,6 +314,84 @@ class views_handler_field_user_name extends views_handler_field_user {
 }
 
 /**
+ * Field handler to present a link to the user.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_link extends views_handler_field {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['uid'] = 'uid';
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['text'] = '';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['text'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Text to display'),
+      '#default_value' => $this->options['text'],
+    );
+  }
+
+  // An example of field level access control.
+  function access() {
+    return user_access('access user profiles');
+  }
+
+  function query() {
+    $this->ensure_my_table();
+    $this->add_additional_fields();
+  }
+
+  function render($values) {
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
+    $uid = $values->{$this->aliases['uid']};
+    return l($text, "user/$uid");
+  }
+}
+
+/**
+ * Field handler to present a link to user edit.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_link_edit extends views_handler_field_user_link {
+  // An example of field level access control.
+  function access() {
+    return user_access('administer users');
+  }
+
+  function render($values) {
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');
+    $uid = $values->{$this->aliases['uid']};
+    return l($text, "user/$uid/edit", array('query' => drupal_get_destination()));
+  }
+}
+
+/**
+ * Field handler to present a link to user delete.
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_user_link_delete extends views_handler_field_user_link {
+  // An example of field level access control.
+  function access() {
+    return user_access('administer users');
+  }
+
+  function render($values) {
+    $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
+    $uid = $values->{$this->aliases['uid']};
+    return l($text, "user/$uid/delete", array('query' => drupal_get_destination()));
+  }
+}
+
+/**
  * Field handler to provide acess control for the email field
  *
  * @ingroup views_field_handlers
@@ -363,42 +457,15 @@ class views_handler_field_user_picture extends views_handler_field {
  *
  * @ingroup views_field_handlers
  */
-class views_handler_field_user_roles extends views_handler_field {
+class views_handler_field_user_roles extends views_handler_field_prerender_list {
   function construct() {
     parent::construct();
     $this->additional_fields['uid'] = array('table' => 'users', 'field' => 'uid');
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['type'] = 'separator';
-    $options['separator'] = ', ';
-  }
-
-  function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
-    $form['type'] = array(
-      '#type' => 'radios',
-      '#title' => t('Display type'),
-      '#options' => array(
-        'ul' => t('Unordered list'),
-        'ol' => t('Ordered list'),
-        'separator' => t('Simple separator'),
-      ),
-      '#default_value' => $this->options['type'],
-    );
-
-    $form['separator'] = array(
-      '#type' => 'textfield',
-      '#title' => 'separator',
-      '#default_value' => $this->options['separator'],
-      '#process' => array('views_process_dependency'),
-      '#dependency' => array('radio:options[type]' => array('separator')),
-    );
-  }
-
   function query() {
     $this->add_additional_fields();
+    $this->field_alias = $this->aliases['uid'];
   }
 
   function pre_render($results) {
@@ -413,19 +480,7 @@ class views_handler_field_user_roles extends views_handler_field {
     if ($uids) {
       $result = db_query("SELECT u.uid, u.rid, r.name FROM {role} r INNER JOIN {users_roles} u ON u.rid = r.rid WHERE u.uid IN (" . implode(', ', $uids) . ") ORDER BY r.name");
       while ($role = db_fetch_object($result)) {
-        $this->roles[$role->uid][$role->rid] = check_plain($role->name);
-      }
-    }
-  }
-
-  function render($value) {
-    $uid = $value->{$this->aliases['uid']};
-    if (!empty($this->roles[$uid])) {
-      if ($this->options['type'] == 'separator') {
-        return implode(check_plain($this->options['separator']), $this->roles[$uid]);
-      }
-      else {
-        return theme('item_list', $this->roles[$uid], NULL, $this->options['type']);
+        $this->items[$role->uid][$role->rid] = check_plain($role->name);
       }
     }
   }

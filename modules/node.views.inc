@@ -322,7 +322,7 @@ function node_views_data() {
       'field' => 'vid',
     ),
     // Links to user table through node table.
-    'user' => array(
+    'users' => array(
       // Since it doesn't link to the user table, we must specify
       'left_table' => 'node',
       'left_field' => 'vid',

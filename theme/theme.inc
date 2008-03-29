@@ -152,8 +152,9 @@ function template_preprocess_views_view_table(&$vars) {
   foreach ($columns as $field => $column) {
     // render the header labels
     if ($field == $column) {
+      $label = check_plain(!empty($fields[$field]['handler']) ? $fields[$field]['handler']->label() : '');
       if (empty($options['info'][$field]['sortable'])) {
-        $vars['header'][$field] = check_plain($fields[$field]['handler']->label());
+        $vars['header'][$field] = $label;
       }
       else {
         // @todo -- make this a setting
@@ -163,7 +164,6 @@ function template_preprocess_views_view_table(&$vars) {
           $initial = 'desc';
         }
 
-        $label = check_plain($fields[$field]['handler']->label());
         $image = theme('tablesort_indicator', $initial);
         $title = t('sort by @s', array('@s' => $label));
         $link_options = array(

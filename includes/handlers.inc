@@ -811,6 +811,58 @@ class views_handler_field_url extends views_handler_field {
 }
 
 /**
+ * Field handler to provide a list of items.
+ *
+ * The items are expected to be loaded by a child object during pre_render,
+ * and 'my field' is expected to be the pointer to the items in the list.
+ *
+ * Items to render should be in a list in $this->items
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_prerender_list extends views_handler_field {
+  function options(&$options) {
+    parent::options($options);
+    $options['type'] = 'separator';
+    $options['separator'] = ', ';
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['type'] = array(
+      '#type' => 'radios',
+      '#title' => t('Display type'),
+      '#options' => array(
+        'ul' => t('Unordered list'),
+        'ol' => t('Ordered list'),
+        'separator' => t('Simple separator'),
+      ),
+      '#default_value' => $this->options['type'],
+    );
+
+    $form['separator'] = array(
+      '#type' => 'textfield',
+      '#title' => 'separator',
+      '#default_value' => $this->options['separator'],
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('radio:options[type]' => array('separator')),
+    );
+  }
+
+  function render($value) {
+    $field = $value->{$this->field_alias};
+    if (!empty($this->items[$field])) {
+      if ($this->options['type'] == 'separator') {
+        return implode(check_plain($this->options['separator']), $this->items[$field]);
+      }
+      else {
+        return theme('item_list', $this->items[$field], NULL, $this->options['type']);
+      }
+    }
+  }
+}
+
+/**
  * @}
  */
 
