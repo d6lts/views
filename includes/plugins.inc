@@ -493,7 +493,7 @@ class views_plugin_display extends views_object {
       $options['use_pager'] = array(
         'category' => 'basic',
         'title' => t('Use pager'),
-        'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') ? t('Mini') : t('Yes')) : t('No'),
+        'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') == 'mini' ? t('Mini') : t('Yes')) : t('No'),
         'desc' => t('Change this display\'s pager setting.'),
       );
     }
