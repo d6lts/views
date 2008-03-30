@@ -47,7 +47,7 @@ function comment_views_data() {
   //choice to mark as new/updated etc
   $data['comments']['subject'] = array(
     'title' => t('Subject'),
-    'help' => t('The subject of the comment'),
+    'help' => t('The subject of the comment.'),
     'field' => array(
       'field' => 'subject',
       'handler' => 'views_handler_field_comment',
@@ -58,7 +58,7 @@ function comment_views_data() {
   //comment (the comment body)
   $data['comments']['comment'] = array(
     'title' => t('Comment body'),
-    'help' => t('The body of the comment'),
+    'help' => t('The body of the comment.'),
     'field' => array(
       'handler' => 'views_handler_field_markup',
       'format' => 'format',
@@ -78,7 +78,7 @@ function comment_views_data() {
   //name (of comment author)
   $data['comments']['name'] = array(
     'title' => t('Author\'s name'),
-    'help' => t('The name of the poster'),
+    'help' => t('The name of the poster.'),
     'field' => array(
       'handler' => 'views_handler_field_username_comment',
       'click sortable' => TRUE,
@@ -88,7 +88,7 @@ function comment_views_data() {
   //homepage
   $data['comments']['homepage'] = array(
     'title' => t('Author\'s website'),
-    'help' => t('The website address of the comment\'s author. Can be a link. The homepage can also be linked with the Name field'),
+    'help' => t('The website address of the comment\'s author. Can be a link. The homepage can also be linked with the Name field.'),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
@@ -98,7 +98,7 @@ function comment_views_data() {
   //timestamp (when comment was posted)
   $data['comments']['timestamp'] = array(
     'title' => t('Created date'),
-    'help' => t('Date and time of when the comment was posted'),
+    'help' => t('Date and time of when the comment was posted.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
@@ -139,8 +139,8 @@ function comment_views_data() {
 
   //last_comment_timestamp
   $data['node_comment_statistics']['last_comment_timestamp'] = array(
-    'title' => t('Created Time'),
-    'help' => t('Date and time of when the last comment was posted'),
+    'title' => t('Created time'),
+    'help' => t('Date and time of when the last comment was posted.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
@@ -153,7 +153,7 @@ function comment_views_data() {
   //last_comment_name (author's name)
   $data['node_comment_statistics']['last_comment_name'] = array(
     'title' => t('Last author\'s name'),
-    'help' => t('The name of the author of the last posted comment'),
+    'help' => t('The name of the author of the last posted comment.'),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
@@ -163,7 +163,7 @@ function comment_views_data() {
   //comment_count
   $data['node_comment_statistics']['comment_count'] = array(
     'title' => t('Comment count'),
-    'help' => t('The number of comments a node has'),
+    'help' => t('The number of comments a node has.'),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,

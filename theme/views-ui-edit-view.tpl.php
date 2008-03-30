@@ -16,7 +16,7 @@
   <?php else: ?>
     <div class="view-changed"><?php print t('Changed view'); ?></div>
   <?php endif; ?>
-  <?php print t('View %name, displaying items of type <b>@base</b>.',
+  <?php print t('View %name, displaying items of type <strong>@base</strong>.',
       array('%name' => $view->name, '@base' => $base_table)); ?>
 </div>
 

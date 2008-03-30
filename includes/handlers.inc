@@ -1621,7 +1621,7 @@ class views_handler_filter_string extends views_handler_filter {
 
   function admin_summary() {
     $options = $this->operator_options('short');
-    return (!empty($this->options['exposed']) ? t('exposed<br />') : '') . $options[$this->operator];
+    return (!empty($this->options['exposed']) ? t('exposed>') : '') . $options[$this->operator];
   }
 
   function options_form(&$form, &$form_state) {
