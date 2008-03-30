@@ -825,6 +825,7 @@ class views_handler_field_prerender_list extends views_handler_field {
     parent::options($options);
     $options['type'] = 'separator';
     $options['separator'] = ', ';
+    $options['empty'] = '';
   }
 
   function options_form(&$form, &$form_state) {
@@ -842,10 +843,22 @@ class views_handler_field_prerender_list extends views_handler_field {
 
     $form['separator'] = array(
       '#type' => 'textfield',
-      '#title' => 'separator',
+      '#title' => t('Separator'),
       '#default_value' => $this->options['separator'],
       '#process' => array('views_process_dependency'),
       '#dependency' => array('radio:options[type]' => array('separator')),
+    );
+
+    if (empty($this->options['empty'])) {
+      // @todo: remove this. IT's just to remove notices for alpha4 users
+      $this->options['empty'] = '';
+    }
+
+    $form['empty'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Empty list text'),
+      '#default_value' => $this->options['empty'],
+      '#description' => t('If the list is empty, you may enter text here that will be displayed.'),
     );
   }
 
@@ -858,6 +871,9 @@ class views_handler_field_prerender_list extends views_handler_field {
       else {
         return theme('item_list', $this->items[$field], NULL, $this->options['type']);
       }
+    }
+    else if (!empty($this->options['empty'])) {
+      return $this->options['empty'];
     }
   }
 }
