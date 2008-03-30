@@ -115,6 +115,9 @@ function profile_views_fetch_field($field) {
         'filter' => array(
           'handler' => 'views_handler_filter_string',
         ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_string',
+        ),
       );
 
       break;
@@ -147,6 +150,7 @@ function profile_views_fetch_field($field) {
         'filter' => array(
           'handler' => 'views_handler_filter_boolean',
         ),
+        // @todo there ought to be a boolean argument handler
       );
 
       break;
@@ -180,6 +184,9 @@ function profile_views_fetch_field($field) {
           // @todo
           'handler' => 'views_handler_filter_profile_selection',
           'fid' => $field->fid,
+        ),
+        'argument' => array(
+          'handler' => 'views_handler_argument_string',
         ),
       );
 

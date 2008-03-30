@@ -2513,6 +2513,8 @@ class views_handler_argument extends views_handler {
         'style plugin' => TRUE,
         'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
+      // @todo: There should be a 'default' where a default value
+      // is filled in if the argument is not present.
     );
 
     if ($which) {

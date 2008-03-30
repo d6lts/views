@@ -746,7 +746,8 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
     if (!empty($option['title'])) {
       $data['content'] .= $option['title'] . ': ';
     }
-    $data['content'] .= $display->handler->option_link($option['value'], $id);
+
+    $data['content'] .= $display->handler->option_link($option['value'], $id, '', empty($option['desc']) ? '' : $option['desc']);
     if (!empty($display->display_options['defaults'][$id])) {
       $display_id = 'default';
     }
@@ -808,9 +809,9 @@ function template_preprocess_views_ui_edit_item(&$vars) {
   $display = $vars['display'];
   $types = views_object_types();
 
-  $vars['rearrange'] = l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link'), 'html' => true));
+  $vars['rearrange'] = l('<span>' . t('Rearrange') . '</span>', "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-rearrange views-ajax-link', 'title' => t('Rearrange')), 'html' => true));
 
-  $vars['add'] = l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link'), 'html' => true));
+  $vars['add'] = l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link', 'title' => t('Add')), 'html' => true));
 
   $vars['overridden'] = (!$display->handler->is_default_display() && empty($display->display_options['defaults'][$types[$type]['plural']]));
 
@@ -862,7 +863,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
       $pid = $id . '-style-plugin';
 
       if (!empty($style_plugin['uses options'])) {
-        $fields[$pid]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link'), 'html' => true));
+        $fields[$pid]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
       }
 
       $fields[$pid]['title'] = t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));

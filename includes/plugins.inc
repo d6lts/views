@@ -403,7 +403,7 @@ class views_plugin_display extends views_object {
    * Because forms may be split up into sections, this provides
    * an easy URL to exactly the right section. Don't override this.
    */
-  function option_link($text, $section, $class = '') {
+  function option_link($text, $section, $class = '', $title = '') {
     if (!empty($class)) {
       $text = '<span>' . $text . '</span>';
     }
@@ -412,7 +412,11 @@ class views_plugin_display extends views_object {
       $text = t('Broken field');
     }
 
-    return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link ' . $class), 'html' => TRUE));
+    if (empty($title)) {
+      $title = $text;
+    }
+
+    return l($text, 'admin/build/views/nojs/display/' . $this->view->name . '/' . $this->display->id . '/' . $section, array('attributes' => array('class' => 'views-ajax-link ' . $class, 'title' => $title), 'html' => TRUE));
   }
 
   /**
@@ -429,6 +433,7 @@ class views_plugin_display extends views_object {
       'category' => 'basic',
       'title' => t('Name'),
       'value' => $this->display->display_title,
+      'desc' => t('Change the name of this display.'),
     );
 
     $title = $this->get_option('title');
@@ -440,6 +445,7 @@ class views_plugin_display extends views_object {
       'category' => 'basic',
       'title' => t('Title'),
       'value' => $title,
+      'desc' => t('Change the title that this display will use.'),
     );
 
     $style_plugin = views_fetch_plugin_data('style', $this->get_option('style_plugin'));
@@ -451,6 +457,7 @@ class views_plugin_display extends views_object {
       'category' => 'basic',
       'title' => t('Style'),
       'value' => $style_title,
+      'desc' => t('Change the style plugin.'),
     );
 
     // This adds a 'Settings' link to the style_options setting if the style has options.
@@ -466,6 +473,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => t('Row style'),
         'value' => $row_title,
+        'desc' => t('Change the row plugin.'),
       );
       // This adds a 'Settings' link to the row_options setting if the row style has options.
       if (!empty($row_plugin['uses options'])) {
@@ -477,6 +485,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => t('Use AJAX'),
         'value' => $this->get_option('use_ajax') ? t('Yes') : t('No'),
+        'desc' => t('Change whether or not this display will use AJAX.'),
       );
     }
 
@@ -485,6 +494,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => t('Use pager'),
         'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') ? t('Mini') : t('Yes')) : t('No'),
+        'desc' => t('Change this display\'s pager setting.'),
       );
     }
 
@@ -492,6 +502,7 @@ class views_plugin_display extends views_object {
       'category' => 'basic',
       'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
       'value' => intval($this->get_option('items_per_page')),
+      'desc' => t('Change how many items to display.'),
     );
 
     if (!empty($this->definition['use more'])) {
@@ -499,6 +510,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => t('More link'),
         'value' => $this->get_option('use_more') ? t('Yes') : t('No'),
+        'desc' => t('Specify whether this display will provide a "more" link.'),
       );
     }
 
@@ -531,6 +543,7 @@ class views_plugin_display extends views_object {
       'category' => 'basic',
       'title' => t('Access'),
       'value' => $access_str,
+      'desc' => t('Specify access control settings for this display.'),
     );
 
     if (!$this->has_path()) {
@@ -552,6 +565,7 @@ class views_plugin_display extends views_object {
           'category' => 'basic',
           'title' => t('Link display'),
           'value' => $link_display,
+          'desc' => t('Specify which display this display will link to.'),
         );
       }
     }
@@ -576,11 +590,12 @@ class views_plugin_display extends views_object {
         }
       }
 
-      $output[] = t('!name: !field', array('!name' => $name, '!field' => $this->option_link($field, $type)));
+//      $output[] = t('!name: !field', array('!name' => $name, '!field' => $this->option_link($field, $type)));
       $options[$type] = array(
         'category' => 'basic',
         'title' => $name,
         'value' => $field,
+        'desc' => t('Change this display\'s !name.', array('!name' => strtolower($name))),
       );
     }
   }

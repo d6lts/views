@@ -217,12 +217,12 @@ function user_views_data() {
     'users' => array(
       'left_field' => 'uid',
       'field' => 'uid',
-      ),
+    ),
     'node' => array(
       'table' => 'users',
       'left_field' => 'uid',
       'field' => 'uid',
-      ),
+    ),
     'node_revisions' => array(
       'table' => 'users',
       'left_field' => 'uid',
@@ -232,7 +232,7 @@ function user_views_data() {
 
 
   $data['users_roles']['rid'] = array(
-    'title' => t('Role'),
+    'title' => t('Roles'),
     'help' => t('Roles that a user belongs to'),
     'field' => array(
       'handler' => 'views_handler_field_user_roles',
@@ -241,6 +241,7 @@ function user_views_data() {
       'handler' => 'views_handler_filter_user_roles',
       'numeric' => TRUE,
     ),
+    // @todo: a base many::one argument handler
   );
 
   // @todo: tracker default view (in users.default_views.inc -- This really should go in comment)
