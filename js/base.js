@@ -39,16 +39,3 @@ Drupal.Views.parseQueryString = function (query) {
   }
   return args;
 };
-
-/**
- * Helper function to return the last portion of a class.
- */
-Drupal.Views.getClassSuffix = function (elt, prefix) {
-  var className = elt.className.split(' ');
-  for (var i in className) {
-    if (className[i].indexOf(prefix) == 0) {
-      return className[i].substring(prefix.length);
-    }
-  }
-  return false;
-};
