@@ -67,7 +67,7 @@ Drupal.behaviors.ViewsAjaxView = function() {
                 });
               }
             },
-            error: function() { alert("An error occurred"); },
+            error: function() { alert(Drupal.t("An error occurred")); },
             dataType: 'json'
           });
   
@@ -98,7 +98,7 @@ Drupal.behaviors.ViewsAjaxView = function() {
                     });
                   }
                 },
-                error: function() { $(this).removeClass('views-throbbing'); alert("An error occurred"); },
+                error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred")); },
                 dataType: 'json'
               });
 
@@ -130,7 +130,7 @@ Drupal.behaviors.ViewsAjaxView = function() {
                     });
                   }
                 },
-                error: function() { $(this).removeClass('views-throbbing'); alert("An error occurred"); },
+                error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred")); },
                 dataType: 'json'
               });
 

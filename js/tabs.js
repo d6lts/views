@@ -329,7 +329,7 @@
           }, 0);*/
 
         } else {
-          throw 'jQuery UI Tabs: Mismatching fragment identifier.';
+          throw Drupal.t('jQuery UI Tabs: Mismatching fragment identifier.');
         }
 
         this.blur(); // prevent IE from keeping other link focussed when using the back button
@@ -364,7 +364,7 @@
         this.tabify();
         o.add(this.$tabs[position - 1], this.$containers[position - 1]); // callback
       } else {
-        throw 'jQuery UI Tabs: Not enough arguments to add tab.';
+        throw Drupal.t('jQuery UI Tabs: Not enough arguments to add tab.');
       }       
     },
     remove: function(position) {
