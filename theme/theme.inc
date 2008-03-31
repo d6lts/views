@@ -219,6 +219,10 @@ function template_preprocess_views_exposed_form(&$vars) {
   // Put all single checkboxes together in the last spot.
   $checkboxes = '';
 
+  if (!empty($form['q'])) {
+    $vars['q'] = drupal_render($form['q']);
+  }
+
   $vars['widgets'] = array();
   foreach ($form['#info'] as $id => $info) {
     // Set aside checkboxes.

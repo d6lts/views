@@ -1122,6 +1122,13 @@ function views_exposed_form(&$form_state) {
 
   $form['#info'] = array();
 
+  if (!variable_get('clean_url', FALSE)) {
+    $form['q'] = array(
+      '#type' => 'hidden',
+      '#value' => $view->get_url(),
+    );
+  }
+
   // Go through each filter and let it generate its info.
   foreach ($view->filter as $id => $filter) {
     $filter['handler']->exposed_form($form, $form_state);
@@ -1137,6 +1144,7 @@ function views_exposed_form(&$form_state) {
     '#type' => 'submit',
     '#value' => t('Apply'),
   );
+
 
   $form['#action'] = url($view->get_url());
   $form['#process'] = array('views_exposed_process');
