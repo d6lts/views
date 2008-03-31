@@ -1033,7 +1033,7 @@ class views_plugin_display extends views_object {
   function render_textarea($area) {
     $value = $this->get_option($area);
     if ($value) {
-      return check_markup($value, $this->get_option($area . '_format'));
+      return check_markup($value, $this->get_option($area . '_format'), FALSE);
     }
   }
 
