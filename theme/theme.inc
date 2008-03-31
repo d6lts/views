@@ -87,21 +87,33 @@ function template_preprocess_views_view_fields(&$vars) {
   $view = $vars['view'];
 
   // Loop through the fields for this view.
-  foreach ($view->field as $field) {
+  foreach ($view->field as $id => $field) {
     if (!empty($field['handler']) && is_object($field['handler'])) {
       $themes = array(
         'views_view_field__' . $view->name . '__' . $field['handler']->field_alias,
         'views_view_field__' . $view->name,
-        'views_view_field__' . $field['handler']->field_alias,
+        'views_view_field__' . $id,
         'views_view_field',
       );
+
+      $object = new stdClass();
+
       // Add the field into a variable named after the field. field_alias will be unique.
-      $vars[$field['handler']->field_alias] = theme($themes, $view, $field, $vars['row']);
-      // Create a second variable so we can easily find what fields we have and what the
-      // CSS classes should be.
-      $vars['fields'][$field['handler']->field_alias] = views_css_safe($field['handler']->field_alias);
+      $object->content = theme($themes, $view, $field, $vars['row']);
+      if (isset($field['handler']->field_alias) && isset($vars['row']->{$field['handler']->field_alias})) {
+        $object->raw = $vars['row']->{$field['handler']->field_alias};
+      }
+      else {
+        $object->raw = NULL; // make sure it exists to reduce NOTICE
+      }
+
+      $object->handler = $field['handler'];
+      $object->class = views_css_safe($id);
+
+      $vars['fields'][$id] = $object;
     }
   }
+
 }
 
 /**
