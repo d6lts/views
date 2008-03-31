@@ -137,6 +137,10 @@ function views_ui_menu() {
     'page callback' => 'views_ui_config_item',
     'page arguments' => array(3, 5),
   );
+  $items['admin/build/views/%views_ui_js/config-item-extra/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_config_item_extra',
+    'page arguments' => array(3, 5),
+  );
   // display specific parameters
   $items['admin/build/views/%views_ui_js/display/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_display',

@@ -22,7 +22,7 @@ function user_views_data() {
   $data['users']['table']['base'] = array(
     'field' => 'uid',
     'title' => t('User'),
-    'help' => t('Allows views of your site\'s users.'),
+    'help' => t('Users who have created accounts on your site.'),
   );
 
   // @todo: restructure this back to normal.
@@ -88,6 +88,7 @@ function user_views_data() {
     // Information for accepting a uid as an argument
     'argument' => array(
       'handler' => 'views_handler_argument_user_uid',
+      'name field' => 'name', // display this field in the summary
     ),
     // Information for accepting a uid as a filter
     'filter' => array(
@@ -471,8 +472,7 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
 
   function pre_render($results) {
     $uids = array();
-    $roles = array();
-    $this->roles = array();
+    $this->items = array();
 
     foreach ($results as $result) {
       $uids[] = $result->{$this->aliases['uid']};
@@ -603,8 +603,7 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_user_roles extends views_handler_filter_many_to_one {
-  function construct() {
-    parent::construct();
+  function get_value_options() {
     $this->value_options = user_roles(TRUE);
     unset($this->value_options[DRUPAL_AUTHENTICATED_RID]);
   }

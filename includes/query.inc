@@ -481,6 +481,14 @@ class views_query {
     if (!empty($this->table_queue[$table])) {
       return $this->table_queue[$table];
     }
+
+    // In rare cases we might *only* have aliased versions of the table.
+    if (!empty($this->tables[$this->primary_table][$table])) {
+      $alias = $this->tables[$this->primary_table][$table]['alias'];
+      if (!empty($this->table_queue[$alias])) {
+        return $this->table_queue[$alias];
+      }
+    }
   }
 
   /**

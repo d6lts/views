@@ -296,6 +296,33 @@ class views_handler extends views_object {
   function options_submit($form, &$form_state) { }
 
   /**
+   * If a handler has 'extra options' it will get a little settings widget and
+   * another form called extra_options.
+   */
+  function has_extra_options() { return FALSE; }
+
+  /**
+   * Provide defaults for the handler.
+   */
+  function extra_options(&$option) { }
+
+  /**
+   * Provide a form for setting options.
+   */
+  function extra_options_form(&$form, &$form_state) { }
+
+  /**
+   * Validate the options form.
+   */
+  function extra_options_validate($form, &$form_state) { }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function extra_options_submit($form, &$form_state) { }
+
+  /**
    * Set new exposed option defaults when exposed setting is flipped
    * on.
    */
@@ -1858,6 +1885,15 @@ class views_handler_filter_in_operator extends views_handler_filter {
   function construct() {
     parent::construct();
     $this->value_title = t('Options');
+    $this->value_options = NULL;
+  }
+
+  /**
+   * Child classes should override this function to set the 'value options'.
+   * This can use a guard to be used to reduce database hits as much as
+   * possible.
+   */
+  function get_value_options() {
     $this->value_options = array(t('Yes'), t('No'));
   }
 
@@ -1878,6 +1914,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function value_form(&$form, &$form_state) {
+    $this->get_value_options();
     $form['value'] = array(
       '#type' => 'checkboxes',
       '#title' => $this->value_title,
@@ -1895,6 +1932,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
       return t('exposed');
     }
 
+    $this->get_value_options();
     if (count($this->value) == 1) {
       // If there is only one, show it as an =.
       $keys = array_keys($this->value);
@@ -2239,21 +2277,16 @@ class views_handler_filter_date extends views_handler_filter_numeric {
  * The construct method needs to be overridden to provide a list of options;
  * alternately, the value_form and admin_summary methods need to be overriden
  * to provide something that isn't just a select list.
+ *
+ * @todo Should this handler allow an option as to whether or not to avoid
+ * duplicates? That would have an effect on the join, but if you're not
+ * concerned about duplicates you'll get more efficient queries.
  */
-class views_handler_filter_many_to_one extends views_handler_filter {
-  function construct() {
-    parent::construct();
-    // @todo Pull depth information from definition.
-    $this->allow_depth = FALSE;
-    $this->value_title = t('Options');
-    $this->value_options = array();
-  }
-
+class views_handler_filter_many_to_one extends views_handler_filter_in_operator {
   function options(&$options) {
     parent::options($options);
     $options['operator'] = 'or';
     $options['value'] = array();
-    $options['depth'] = 0;
   }
 
   /**
@@ -2268,6 +2301,7 @@ class views_handler_filter_many_to_one extends views_handler_filter {
   }
 
   function value_form(&$form, &$form_state) {
+    $this->get_value_options();
     $form['value'] = array(
       '#type' => 'select',
       '#title' => $this->value_title,
@@ -2276,39 +2310,6 @@ class views_handler_filter_many_to_one extends views_handler_filter {
       '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
       '#default_value' => (array) $this->value,
     );
-  }
-
-  function admin_summary() {
-    if (!empty($this->options['exposed'])) {
-      return t('exposed');
-    }
-
-    if (count($this->value) == 1) {
-      // If there is only one, show it as an =.
-      $keys = array_keys($this->value);
-      $key = array_shift($keys);
-      if (!empty($this->value_options[$key])) {
-        $value = check_plain($this->value_options[$key]);
-      }
-      else {
-        $value = t('Unknown');
-      }
-
-      return ($this->operator == 'in' ? '=' : '<>') . ' ' . $value;
-    }
-    $output = '';
-    foreach ($this->value as $value) {
-      if ($output) {
-        $output .= ', ';
-      }
-      if (strlen($output) > 8) {
-        $output .= '...';
-        break;
-      }
-      $output .= check_plain($this->value_options[$value]);
-    }
-
-    return check_plain($this->operator) . ' ' . $output;
   }
 
   /**

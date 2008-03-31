@@ -857,6 +857,10 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
     $fields[$id]['info'] = $handler->admin_summary();
 
+    if ($handler->has_extra_options()) {
+      $fields[$id]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-item-extra/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
+    }
+
     if ($handler->needs_style_plugin()) {
       $style_plugin = views_fetch_plugin_data('style', $handler->options['style_plugin']);
       $style_title = empty($style_plugin['title']) ? t('Missing style plugin') : $style_plugin['title'];
@@ -1834,6 +1838,109 @@ function views_ui_config_item_form_expose($form, &$form_state) {
 
   views_ui_cache_set($form_state['view']);
   $form_state['next'] = $form_state['id'];
+}
+
+/**
+ * Page callback to configure an item
+ */
+function views_ui_config_item_extra($js, $view, $display_id, $type, $id) {
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'id' => $id,
+    'type' => $type,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_config_item_extra_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      return views_ui_regenerate_tabs($view, $display_id);
+    }
+    return views_ajax_render($output);
+  }
+
+  return $output;
+}
+
+/**
+ * Form to config_item items in the views UI.
+ */
+function views_ui_config_item_extra_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+  $id = $form_state['id'];
+
+  $form = array('options' => array('#tree' => TRUE));
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
+  }
+  $item = $view->get_item($display_id, $type, $id);
+
+  if ($item) {
+    $handler = views_get_handler($item['table'], $item['field'], $type);
+    if (empty($handler)) {
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
+      break;
+    }
+    else {
+      $handler->init($view, $item);
+      $types = views_object_types();
+
+      $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+      $form['#title'] .= t('Configure extra settings for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
+
+      $form['#section'] = $display_id . '-' . $type . '-' . $id;
+
+      // Get form from the handler.
+      $handler->extra_options_form($form['options'], $form_state);
+        $form_state['handler'] = &$handler;
+
+    }
+
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_config_item_extra_form_validate($form, &$form_state) {
+  $form_state['handler']->extra_options_validate($form['options'], $form_state);
+}
+
+/**
+ * Submit handler for configing new item(s) to a view.
+ */
+function views_ui_config_item_extra_form_submit($form, &$form_state) {
+  // Run it through the handler's submit function.
+  $form_state['handler']->extra_options_submit($form['options'], $form_state);
+  $item = $form_state['handler']->options;
+
+  // Store the data we're given.
+  foreach ($form_state['values']['options'] as $key => $value) {
+    $item[$key] = $value;
+  }
+
+  // Store the item back on the view
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
+
+  views_ui_check_stack($form_state);
+
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
+  if (isset($form_state['next'])) {
+    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$form_state[type]/$form_state[next]";
+  }
+  else {
+    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+  }
 }
 
 /**

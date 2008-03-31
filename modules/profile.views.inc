@@ -330,11 +330,6 @@ class views_handler_field_profile_list extends views_handler_field_prerender_lis
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_profile_selection extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
-    $this->value_options = NULL;
-  }
-
   function get_value_options() {
     if (isset($this->value_options)) {
       return;
@@ -350,23 +345,6 @@ class views_handler_filter_profile_selection extends views_handler_filter_in_ope
         $this->value_options[$line] = $line;
       }
     }
-  }
-
-  function options(&$options) {
-    parent::options($options);
-    $options['value'] = array();
-  }
-
-  function options_form(&$form, &$form_state) {
-    // Do this only when really needed in order to reduce database hits.
-    $this->get_value_options();
-    parent::options_form($form, $form_state);
-  }
-
-  function admin_summary() {
-    // Do this only when really needed in order to reduce database hits.
-    $this->get_value_options();
-    return parent::admin_summary();
   }
 }
 

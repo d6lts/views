@@ -26,7 +26,7 @@ function node_views_data() {
   $data['node']['table']['base'] = array(
     'field' => 'nid',
     'title' => t('Node'),
-    'help' => t('The node type allows views of your site\'s primary content.'),
+    'help' => t('Nodes are a Drupal site\'s primary content.'),
     'weight' => 10,
   );
 
@@ -92,7 +92,7 @@ function node_views_data() {
     // Information for accepting a nid as an argument
     'argument' => array(
       'handler' => 'views_handler_argument_node_nid',
-      'click sortable' => TRUE,
+      'name field' => 'title', // the field to display in the summary.
     ),
     // Information for accepting a nid as a filter
     'filter' => array(
@@ -311,7 +311,7 @@ function node_views_data() {
   $data['node_revisions']['table']['base'] = array(
     'field' => 'vid',
     'title' => t('Node revisions'),
-    'help' => t('Node revisions allow you to list revisions of nodes.'),
+    'help' => t('Node revisions are a history of changes to nodes.'),
   );
 
   // For other base tables, explain how we join
@@ -840,8 +840,6 @@ class views_handler_argument_node_type extends views_handler_argument {
  * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_nid extends views_handler_argument {
-  // No constructor is necessary.
-
   /**
    * Override the behavior of title(). Get the title of the node.
    */
@@ -1008,22 +1006,15 @@ class views_handler_argument_node_created_week extends views_handler_argument_fo
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_type extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
-    $this->value_title = t('Node type');
-    $types = node_get_types();
-    foreach ($types as $type => $info) {
-      $options[$type] = $info->name;
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Node type');
+      $types = node_get_types();
+      foreach ($types as $type => $info) {
+        $options[$type] = $info->name;
+      }
+      $this->value_options = $options;
     }
-    $this->value_options = $options;
-  }
-
-  function options(&$options) {
-    parent::options($options);
-    // Set the default value to the first node type, so that there is something
-    // reasonable there.
-    $types = array_keys(node_get_types());
-    $options['value'] = array(array_shift($types));
   }
 }
 
@@ -1080,10 +1071,11 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
-    $this->value_title = t('Node language');
-    $this->value_options = locale_language_list();
+  function get_value_options() {
+    if (empty($this->value_options)) {
+      $this->value_title = t('Node language');
+      $this->value_options = locale_language_list();
+    }
   }
 
   function options(&$options) {
