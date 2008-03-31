@@ -1,0 +1,99 @@
+<?php
+// $Id$
+/**
+ * @file
+ * Provide views data and handlers for book.module
+ */
+
+/**
+ * @defgroup views_book_module book.module handlers
+ *
+ * @{
+ */
+
+/**
+ * Implementation of hook_views_data()
+ */
+function book_views_data() {
+  // ----------------------------------------------------------------------
+  // book table
+
+  $data['book']['table']['group']  = t('Book');
+  $data['book']['table']['join'] = array(
+    'node' => array(
+      'left_field' => 'nid',
+      'field' => 'nid',
+    ),
+  );
+
+  $data['book']['bid'] = array(
+    'title' => t('Top level book'),
+    'help' => t('The book the node is in'),
+    'relationship' => array(
+      'base' => 'node',
+      'field' => 'bid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('Book'),
+    ),
+    // There is no argument here; if you need an argument, add the relationship
+    // and use the node: nid argument.
+  );
+
+  // ----------------------------------------------------------------------
+  // menu_links table -- this is aliased so we can get just book relations
+
+  // Book hierarchy and weight data are now in {menu_links}.
+  $data['book_menu_links']['table']['group'] = t('Book');
+  $data['book_menu_links']['table']['join'] = array(
+    'node' => array(
+      'table' => 'menu_links',
+      'left_table' => 'book',
+      'left_field' => 'mlid',
+      'field' => 'mlid',
+    ),
+  );
+
+  $data['book_menu_links']['weight'] = array(
+    'title' => t('Weight'),
+    'help' => t('The weight of the book page'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // ----------------------------------------------------------------------
+  // book_parent table -- this is an alias of the book table which
+  // represents the parent book.
+
+  // The {book} record for the parent node.
+  $data['book_parent']['table']['group'] = t('Book');
+  $data['book_parent']['table']['join'] = array(
+    'node' => array(
+      'table' => 'book',
+      'left_table' => 'book_menu_links',
+      'left_field' => 'plid',
+      'field' => 'mlid',
+    ),
+  );
+
+  $data['book_parent']['nid'] = array(
+    'title' => t('Parent'),
+    'help' => t('The parent book node'),
+    'relationship' => array(
+      'base' => 'node',
+      'field' => 'nid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('Book parent'),
+    ),
+  );
+
+  return $data;
+}
+
+/**
+ * @}
+ */
