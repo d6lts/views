@@ -109,7 +109,7 @@ function template_preprocess_views_view_fields(&$vars) {
 
       $object->handler = $field['handler'];
       $object->class = views_css_safe($id);
-
+      $object->label = check_plain($field['handler']->label());
       $vars['fields'][$id] = $object;
     }
   }

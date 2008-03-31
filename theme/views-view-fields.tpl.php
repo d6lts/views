@@ -17,7 +17,12 @@
  */
 ?>
 <?php foreach ($fields as $id => $field): ?>
-  <div class="views-field-<?php print $field->class ?>">
-    <?php print $field->content; ?>
+  <div class="views-field-<?php print $field->class; ?>">
+    <?php if ($field->label): ?>
+      <label class="views-label-<?php print $field->class; ?>">
+        <?php print $field->label; ?>:
+      </label>
+    <?php endif; ?>
+      <span class="field-content"><?php print $field->content; ?></span>
   </div>
 <?php endforeach; ?>
