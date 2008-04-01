@@ -119,7 +119,7 @@ function views_menu() {
     list($view, $display_id) = $data;
     $result = $view->execute_hook_menu($display_id);
     if (is_array($result)) {
-      $items += $result;
+      $items = array_merge($items, $result);
     }
   }
   $items['views/ajax'] = array(
@@ -200,7 +200,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
         list($view, $display_id) = $data;
         $result = $view->execute_hook_block($display_id);
         if (is_array($result)) {
-          $items += $result;
+          $items = array_merge($items, $result);
         }
       }
       return $items;
