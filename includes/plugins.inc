@@ -229,6 +229,7 @@ class views_plugin_display extends views_object {
       'use_pager' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'use_more' => array('use_more'),
       'link_display' => array('link_display'),
+      'distinct' => array('distinct'),
 
     // @todo
       'php_arg_code' => array('php_arg_code'),
@@ -283,6 +284,7 @@ class views_plugin_display extends views_object {
       'use_pager' => TRUE,
       'pager_element'  => TRUE,
       'use_more' => TRUE,
+      'distinct' => TRUE,
 
       'link_display' => TRUE,
       'php_arg_code' => TRUE,
@@ -514,6 +516,13 @@ class views_plugin_display extends views_object {
       );
     }
 
+    $options['distinct'] = array(
+      'category' => 'basic',
+      'title' => t('Distinct'),
+      'value' => $this->get_option('distinct') ? t('Yes') : t('No'),
+      'desc' => t('Display only distinct items, without duplicates.'),
+    );
+
     $access = $this->get_option('access');
     if (!is_array($access)) {
       $access = array('type' => 'none');
@@ -685,6 +694,15 @@ class views_plugin_display extends views_object {
           '#title' => t('Create more link'),
           '#description' => t("This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."),
           '#default_value' => $this->get_option('use_more'),
+        );
+        break;
+      case 'distinct':
+        $form['#title'] .= t('Display only distinct items, without duplicates.');
+        $form['distinct'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Distinct'),
+          '#description' => t('This will make the view display only distinct items. If there are multiple identical items, each will be displayed only once. You can use this to try and remove duplicates from a view, though it does not always work. Note that this can slow queries down, so use it with caution.'),
+          '#default_value' => $this->get_option('distinct'),
         );
         break;
       case 'access':
@@ -888,6 +906,7 @@ class views_plugin_display extends views_object {
         $this->set_option('offset', intval($form_state['values']['offset']));
         break;
       case 'use_more':
+      case 'distinct':
         $this->set_option($section, $form_state['values'][$section]);
         break;
       case 'row_plugin':
@@ -1000,6 +1019,16 @@ class views_plugin_display extends views_object {
         $this->display->display_options[$option] = $this->get_option($option);
       }
       $this->display->display_options['defaults'][$option] = $new_state;
+    }
+  }
+
+  /**
+   * Inject anything into the query that the display handler needs.
+   */
+  function query() {
+    // Make the query distinct if the option was set.
+    if ($this->get_option('distinct')) {
+      $this->view->query->set_distinct();
     }
   }
 

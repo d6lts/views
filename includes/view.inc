@@ -468,8 +468,10 @@ class view extends views_db_object {
       }
     }
 
-    // Allow style handler to affect the query:
+    // Allow display handler to affect the query:
+    $this->display_handler->query();
 
+    // Allow style handler to affect the query:
     $this->style_handler->query();
 
     if (variable_get('views_sql_signature', FALSE)) {
