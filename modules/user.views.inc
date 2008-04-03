@@ -25,7 +25,6 @@ function user_views_data() {
     'help' => t('Users who have created accounts on your site.'),
   );
 
-  // @todo: restructure this back to normal.
   $data['users']['table']['join'] = array(
     'node' => array(
       'left_field' => 'uid',

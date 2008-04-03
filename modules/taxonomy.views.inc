@@ -177,6 +177,10 @@ function taxonomy_views_data() {
       'left_field' => 'nid',
       'field' => 'nid',
     ),
+    'term_hierarchy' => array(
+      'left_field' => 'tid',
+      'field' => 'tid',
+    ),
   );
 
   // tid field
@@ -193,6 +197,8 @@ function taxonomy_views_data() {
 //    ),
     'filter' => array(
       'handler' => 'views_handler_filter_term_node_tid',
+      'hierarchy table' => 'term_hierarchy',
+      'numeric' => TRUE,
     ),
   );
 
@@ -206,9 +212,9 @@ function taxonomy_views_data() {
 
   $data['term_hierarchy']['table']['join'] = array(
     'term_hierarchy' => array(
-      // links to self through left.tid = right.parent
+      // links to self through left.parent = right.tid (going down in depth)
       'left_field' => 'tid',
-      'field' => 'right',
+      'field' => 'parent',
     ),
     'term_data' => array(
       // links directly to term_data via tid
@@ -430,50 +436,6 @@ class views_handler_argument_taxonomy extends views_handler_argument {
     }
     // TODO review text
     return t('No name');
-  }
-}
-
-/**
- * Overide equality so we can steal some comparison code and just overide the choice form.
- */
-class views_handler_filter_taxonomy extends views_handler_filter_in_operator  {
-
-  function value_form(&$form, &$form_state) {
-    $options = array();
-    $where = '';
-
-    if (isset($this->definition['vid'])) {
-      $where = "WHERE td.vid = {$this->definition['vid']}";
-    }
-    $result = db_query("SELECT DISTINCT(td.tid), td.name, td.weight, v.name as vocabname, v.weight FROM {term_data} td LEFT JOIN {vocabulary} v ON v.vid = td.vid $where ORDER BY v.weight, v.name, td.weight, td.name");
-    while ($obj = db_fetch_object($result)) {
-      if ($this->definition['vid']) {
-        $options[$obj->tid] = "$obj->name";
-      }
-      else {
-        $options[$obj->tid] = "$obj->vocabname: $obj->name";
-      }
-    }
-
-    $form['value'] = array(
-      '#title' => t('Term'),
-      '#type' => 'select',
-      '#multiple' => TRUE,
-      '#options' => $options,
-      '#default_value' => $options,
-    );
-    return $form;
-  }
-
-  function admin_summary() {
-    $output = '';
-
-    foreach ($this->value as $tid) {
-      $term = taxonomy_get_term($tid);
-      $terms[] = $term->name;
-    }
-    $output .= implode(', ', $terms);
-    return check_plain($this->operator) .' '. check_plain($output);
   }
 }
 

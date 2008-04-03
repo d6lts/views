@@ -744,11 +744,20 @@ class views_query {
 
     $clauses = array();
     foreach ($this->where as $group => $info) {
-      $clauses[] = '(' . implode(") " . $info['type'] . " (", $info['clauses']) . ')';
+      $clause = implode(") " . $info['type'] . " (", $info['clauses']);
+      if (count($info['clauses']) > 1) {
+        $clause = '(' . $clause . ')';
+      }
+      $clauses[] = $clause;
     }
 
     if ($clauses) {
-      $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ")\n";
+      if (count($clauses) > 1) {
+        $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ")\n";
+      }
+      else {
+        $where = "WHERE " . array_shift($clauses) . "\n";
+      }
     }
 
     $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $orderby";
