@@ -1556,7 +1556,10 @@ function views_ui_add_item_form(&$form_state) {
   $form['#section'] = $display_id . 'add-item';
 
   // Figure out all the base tables allowed based upon what the relationships provide.
-  $base_tables = array($view->base_table => TRUE);
+  $base_tables = array(
+    $view->base_table => TRUE,
+    '#global' => TRUE,
+  );
   $relationships = $display->handler->get_option('relationships');
   foreach ($relationships as $relationship) {
     $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
