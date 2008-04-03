@@ -23,7 +23,7 @@ function comment_views_data() {
   $data['comments']['table']['base'] = array(
     'field' => 'cid',
     'title' => t('Comments'),
-    'help' => t('Your site\'s comments.'),
+    'help' => t("Your site's comments."),
   );
 
   //joins
@@ -77,7 +77,7 @@ function comment_views_data() {
 
   //name (of comment author)
   $data['comments']['name'] = array(
-    'title' => t('Author\'s name'),
+    'title' => t("Author's name"),
     'help' => t('The name of the poster.'),
     'field' => array(
       'handler' => 'views_handler_field_username_comment',
@@ -87,8 +87,8 @@ function comment_views_data() {
 
   //homepage
   $data['comments']['homepage'] = array(
-    'title' => t('Author\'s website'),
-    'help' => t('The website address of the comment\'s author. Can be a link. The homepage can also be linked with the Name field.'),
+    'title' => t("Author's website"),
+    'help' => t("The website address of the comment's author. Can be a link. The homepage can also be linked with the Name field."),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
@@ -152,7 +152,7 @@ function comment_views_data() {
 
   //last_comment_name (author's name)
   $data['node_comment_statistics']['last_comment_name'] = array(
-    'title' => t('Last author\'s name'),
+    'title' => t("Last author's name"),
     'help' => t('The name of the author of the last posted comment.'),
     'field' => array(
       'handler' => 'views_handler_field',
@@ -247,7 +247,7 @@ class views_handler_field_username_comment extends views_handler_field {
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['link_to_user'] = array(
-      '#title' => t('Link this field to its user or an author\'s homepage'),
+      '#title' => t("Link this field to its user or an author's homepage"),
       '#type' => 'checkbox',
       '#default_value' => $this->options['link_to_user'],
     );

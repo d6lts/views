@@ -102,7 +102,7 @@ function user_views_data() {
   // picture
   $data['users']['picture'] = array(
     'title' => t('Picture'),
-    'help' => t('The user\'s picture, if allowed'), // The help that appears on the UI,
+    'help' => t("The user's picture, if allowed."), // The help that appears on the UI,
     // Information for displaying the uid
     'field' => array(
       'handler' => 'views_handler_field_user_picture',
@@ -129,7 +129,7 @@ function user_views_data() {
   // access field
   $data['users']['access'] = array(
     'title' => t('Last access'), // The item it appears as on the UI,
-    'help' => t('The user\'s last access date.'), // The help that appears on the UI,
+    'help' => t("The user's last access date."), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
@@ -145,7 +145,7 @@ function user_views_data() {
   // login field
   $data['users']['login'] = array(
     'title' => t('Last login'), // The item it appears as on the UI,
-    'help' => t('The user\'s last login date.'), // The help that appears on the UI,
+    'help' => t("The user's last login date."), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
@@ -179,7 +179,7 @@ function user_views_data() {
   // log field
   $data['users']['signature'] = array(
     'title' => t('Signature'), // The item it appears as on the UI,
-    'help' => t('The user\'s signature.'), // The help that appears on the UI,
+    'help' => t("The user's signature."), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
       'handler' => 'views_handler_field_xss',

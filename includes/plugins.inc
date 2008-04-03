@@ -494,7 +494,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => t('Use pager'),
         'value' => $this->get_option('use_pager') ? ($this->get_option('use_pager') == 'mini' ? t('Mini') : t('Yes')) : t('No'),
-        'desc' => t('Change this display\'s pager setting.'),
+        'desc' => t("Change this display's pager setting."),
       );
     }
 
@@ -595,7 +595,7 @@ class views_plugin_display extends views_object {
         'category' => 'basic',
         'title' => $name,
         'value' => $field,
-        'desc' => t('Change this display\'s !name.', array('!name' => strtolower($name))),
+        'desc' => t("Change this display's !name.", array('!name' => strtolower($name))),
       );
     }
   }
@@ -659,7 +659,7 @@ class views_plugin_display extends views_object {
         $form['pager_element'] = array(
           '#type' => 'textfield',
           '#title' => t('Pager element'),
-          '#description' => t('Unless you\'re experiencing problems with pagers related to this view, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array.  Large values will add a lot of commas to your URLs, so avoid if possible.'),
+          '#description' => t("Unless you're experiencing problems with pagers related to this view, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array. Large values will add a lot of commas to your URLs, so avoid if possible."),
           '#default_value' => intval($this->get_option('pager_element')),
         );
         break;
@@ -683,7 +683,7 @@ class views_plugin_display extends views_object {
         $form['use_more'] = array(
           '#type' => 'checkbox',
           '#title' => t('Create more link'),
-          '#description' => t('This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in \'Link display\' above.'),
+          '#description' => t("This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."),
           '#default_value' => $this->get_option('use_more'),
         );
         break;
@@ -831,7 +831,7 @@ class views_plugin_display extends views_object {
         $form['link_display'] = array(
           '#type' => 'radios',
           '#options' => $options,
-          '#description' => t('Which display to use to get this display\'s path for things like summary links, rss feed links, more links, etc.'),
+          '#description' => t("Which display to use to get this display's path for things like summary links, rss feed links, more links, etc."),
           '#default_value' => $this->get_link_display(),
         );
         break;

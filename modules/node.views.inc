@@ -26,7 +26,7 @@ function node_views_data() {
   $data['node']['table']['base'] = array(
     'field' => 'nid',
     'title' => t('Node'),
-    'help' => t('Nodes are a Drupal site\'s primary content.'),
+    'help' => t("Nodes are a Drupal site's primary content."),
     'weight' => 10,
   );
 
