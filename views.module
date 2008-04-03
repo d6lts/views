@@ -110,18 +110,9 @@ function views_help($path, $arg) {
 
 /**
  * Implementation of hook_menu().
- *
- * This probably needs to actually be hook_menu_alter or something.
  */
 function views_menu() {
   $items = array();
-  foreach (views_get_page_views() as $data) {
-    list($view, $display_id) = $data;
-    $result = $view->execute_hook_menu($display_id);
-    if (is_array($result)) {
-      $items = array_merge($items, $result);
-    }
-  }
   $items['views/ajax'] = array(
     'title' => 'Views',
     'page callback' => 'views_ajax',
@@ -131,6 +122,38 @@ function views_menu() {
     'type' => MENU_CALLBACK,
   );
   return $items;
+}
+
+/**
+ * Implementation of hook_menu_alter().
+ */
+function views_menu_alter(&$callbacks) {
+  foreach (views_get_page_views() as $data) {
+    list($view, $display_id) = $data;
+    $result = $view->execute_hook_menu($display_id);
+    if (is_array($result)) {
+      $regex = '#^('. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .')$#';
+      $matches = preg_grep($regex, array_keys($callbacks));
+      foreach ($matches as $path) {
+        if (preg_match('#%#', $path) && !preg_match('#%views_arg(/|$)#', $path)) {
+          unset($callbacks[$path]);
+        }
+      }
+      foreach ($result as $path => $item) {
+        if (isset($callbacks[$path])) {
+          $callbacks[$path]['page arguments'][1] = (array)$callbacks[$path]['page arguments'][1];
+          $callbacks[$path]['page arguments'][1][] = $display_id;
+          $callbacks[$path]['access arguments'][0][1] = (array)$callbacks[$path]['access arguments'][0][1];
+          $callbacks[$path]['access arguments'][0][1][] = $display_id;
+          $callbacks[$path]['load arguments'][1] = (array)$callbacks[$path]['load arguments'][1];
+          $callbacks[$path]['load arguments'][1][] = $display_id;
+        }
+        else {
+          $callbacks[$path] = $item;
+        }
+      }
+    }
+  }
 }
 
 /**

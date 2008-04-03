@@ -165,12 +165,32 @@ class view extends views_db_object {
   }
 
   /**
+   * Get the first display that is accessible to the user.
+   *
+   * @param $displays
+   *   Either a single display id or an array of display ids.
+   */
+  function choose_display($displays) {
+    if (!is_array($displays)) {
+      return $displays;
+    }
+    foreach ($displays as $display_id) {
+      if (views_access(array($this->name, $display_id))) {
+        return $display_id;
+      }
+    }
+    return 'default';
+  }
+
+  /**
    * Set the display as current.
    *
    * @param $display_id
    *   The id of the display to mark as current.
    */
   function set_display($display_id = NULL) {
+    $display_id = $this->choose_display($display_id);
+
     // If we have not already initialized the display, do so. But be careful.
     if (empty($this->current_display)) {
       $this->init_display();
@@ -606,7 +626,7 @@ class view extends views_db_object {
    * such as a page callback, hook_block, etc.
    */
   function execute_display($display_id = NULL, $args = array()) {
-    if (empty($this->current_display) || $this->current_display != $display_id) {
+    if (empty($this->current_display) || $this->current_display != $this->choose_display($display_id)) {
       if (!$this->set_display($display_id)) {
         return FALSE;
       }
@@ -684,7 +704,7 @@ class view extends views_db_object {
    * Determine if the given user has access to the view. Note that
    * this sets the display handler if it hasn't been.
    */
-  function access($display_id = NULL, $account = NULL) {
+  function access($displays = NULL, $account = NULL) {
     if (!isset($this->current_display)) {
       $this->init_display();
     }
@@ -693,9 +713,18 @@ class view extends views_db_object {
       $account = $GLOBALS['user'];
     }
 
-    if (!empty($this->display[$display_id]->handler)) {
-      return $this->display[$display_id]->handler->access($account);
+    // We can't use choose_display() here because that function
+    // calls this one.
+    $displays = (array)$displays;
+    foreach ($displays as $display_id) {
+      if (!empty($this->display[$display_id]->handler)) {
+        if ($this->display[$display_id]->handler->access($account)) {
+          return TRUE;
+        }
+      }
     }
+
+    return FALSE;
   }
 
   /**
