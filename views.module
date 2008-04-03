@@ -123,11 +123,11 @@ function views_menu() {
     }
   }
   $items['views/ajax'] = array(
-    'title' => t('Views'),
+    'title' => 'Views',
     'page callback' => 'views_ajax',
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
-    'description' => t('Ajax callback for view loading.'),
+    'description' => 'Ajax callback for view loading.',
     'type' => MENU_CALLBACK,
   );
   return $items;
