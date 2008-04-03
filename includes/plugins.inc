@@ -464,7 +464,7 @@ class views_plugin_display extends views_object {
 
     // This adds a 'Settings' link to the style_options setting if the style has options.
     if (!empty($style_plugin['uses options'])) {
-      $options['style_plugin']['links']['style_options'] = t('Settings');
+      $options['style_plugin']['links']['style_options'] = t('Change settings for this style');
     }
 
     if (!empty($style_plugin['uses row plugin'])) {
@@ -479,7 +479,7 @@ class views_plugin_display extends views_object {
       );
       // This adds a 'Settings' link to the row_options setting if the row style has options.
       if (!empty($row_plugin['uses options'])) {
-        $options['row_plugin']['links']['row_options'] = t('Settings');
+        $options['row_plugin']['links']['row_options'] = t('Change settings for this style');
       }
     }
     if (!empty($this->definition['use ajax'])) {
@@ -809,6 +809,7 @@ class views_plugin_display extends views_object {
           '#type' => 'radios',
           '#options' => views_fetch_plugin_names('style', 'summary', FALSE),
           '#default_value' => $this->get_option('style_plugin'),
+          '#description' => t('If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary.'),
         );
         break;
       case 'style_options':
@@ -1405,7 +1406,7 @@ class views_plugin_display_page extends views_plugin_display {
 
     // This adds a 'Settings' link to the style_options setting if the style has options.
     if ($menu['type'] == 'default tab') {
-      $options['menu']['links']['tab_options'] = t('Settings');
+      $options['menu']['links']['tab_options'] = t('Change settings for this style');
     }
   }
 
