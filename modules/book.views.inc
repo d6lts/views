@@ -55,13 +55,39 @@ function book_views_data() {
 
   $data['book_menu_links']['weight'] = array(
     'title' => t('Weight'),
-    'help' => t('The weight of the book page'),
+    'help' => t('The weight of the book page.'),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
+    ),
+  );
+
+  $data['book_menu_links']['depth'] = array(
+    'title' => t('Depth'),
+    'help' => t('The depth of the book page in the hierarchy; top level books have a depth of 1.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument',
+    ),
+  );
+
+  $data['book_menu_links']['p'] = array(
+    'title' => t('Hierarchy'),
+    'help' => t('The order of pages in the book hierarchy.  Remember to sort by weight too if you want exactly the right order.'),
+    'sort' => array(
+      'handler' => 'views_handler_sort_menu_hierarchy',
     ),
   );
 
