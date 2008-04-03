@@ -33,6 +33,12 @@ class views_query {
    */
   var $where = array();
   /**
+   * An array of sections of the HAVING query. Each section is in itself
+   * an array of pieces and a flag as to whether or not it should be AND
+   * or OR.
+   */
+  var $having = array();
+  /**
    * The default operator to use when connecting the WHERE groups. May be
    * AND or OR.
    */
@@ -545,33 +551,38 @@ class views_query {
   }
 
   /**
-   * Create a new grouping for the WHERE clause.
+   * Create a new grouping for the WHERE or HAVING clause.
    *
    * @param $type
    *   Either 'AND' or 'OR'. All items within this group will be added
    *   to the WHERE clause with this logical operator.
    * @param $group
    *   An ID to use for this group. If unspecified, an ID will be generated.
+   * @param $where
+   *   'where' or 'having'.
    *
    * @return $group
    *   The group ID generated.
    */
-  function set_where_group($type = 'AND', $group = NULL) {
+  function set_where_group($type = 'AND', $group = NULL, $where = 'where') {
+    // Set an alias.
+    $groups = &$this->$where;
+
     if (!isset($group)) {
-      $group = max(array_keys($this->where)) + 1;
+      $group = max(array_keys($groups)) + 1;
     }
 
     // Create an empty group
-    if (empty($this->where[$group])) {
-      $this->where[$group] = array('clauses' => array(), 'args' => array());
+    if (empty($groups[$group])) {
+      $groups[$group] = array('clauses' => array(), 'args' => array());
     }
 
-    $this->where[$group]['type'] = strtoupper($type);
+    $groups[$group]['type'] = strtoupper($type);
     return $group;
   }
 
   /**
-   * Control how all WHERE groups are put together.
+   * Control how all WHERE and HAVING groups are put together.
    *
    * @param $type
    *   Either 'AND' or 'OR'
@@ -623,6 +634,52 @@ class views_query {
     if (is_array($args)) {
       $this->where[$group]['clauses'][] = $clause;
       $this->where[$group]['args'] = array_merge($this->where[$group]['args'], $args);
+    }
+  }
+
+  /**
+   * Add a simple HAVING clause to the query. The caller is responsible for
+   * ensuring that all fields are fully qualified (TABLE.FIELD) and that
+   * the table and an appropriate GROUP BY already exist in the query.
+   *
+   * @param $group
+   *   The HAVING group to add these to; groups are used to create AND/OR
+   *   sections. Groups cannot be nested. Use 0 as the default group.
+   *   If the group does not yet exist it will be created as an AND group.
+   * @param $clause
+   *   The actual clause to add. When adding a having clause it is important
+   *   that all tables are addressed by the alias provided by add_table or
+   *   ensure_table and that all fields are addressed by their alias wehn
+   *   possible. Please use %d and %s for arguments.
+   * @param ...
+   *   A number of arguments as used in db_query(). May be many args or one
+   *   array full of args.
+   */
+  function add_having($group, $clause) {
+    $args = func_get_args();
+    array_shift($args); // ditch $group
+    array_shift($args); // ditch $clause
+
+    // Expand an array of args if it came in.
+    if (count($args) == 1 && is_array(reset($args))) {
+      $args = current($args);
+    }
+
+    // Ensure all variants of 0 are actually 0. Thus '', 0 and NULL are all
+    // the default group.
+    if (empty($group)) {
+      $group = 0;
+    }
+
+    // Check for a group.
+    if (!isset($this->having[$group])) {
+      $this->set_where_group('AND', $group, 'having');
+    }
+
+    // Add the clause and the args.
+    if (is_array($args)) {
+      $this->having[$group]['clauses'][] = $clause;
+      $this->having[$group]['args'] = array_merge($this->having[$group]['args'], $args);
     }
   }
 
@@ -685,6 +742,34 @@ class views_query {
       $this->groupby[] = $clause;
     }
   }
+  
+  /**
+   * Construct the "WHERE" or "HAVING" part of the query.
+   *
+   * @param $where
+   *   'where' or 'having'.
+   */
+  function condition_sql($where = 'where') {
+    $clauses = array();
+    foreach ($this->$where as $group => $info) {
+      $clause = implode(") " . $info['type'] . " (", $info['clauses']);
+      if (count($info['clauses']) > 1) {
+        $clause = '(' . $clause . ')';
+      }
+      $clauses[] = $clause;
+    }
+
+    if ($clauses) {
+      $keyword = drupal_strtoupper($where);
+      if (count($clauses) > 1) {
+        return "$keyword (" . implode(")\n    " . $this->group_operator . ' (', $clauses) . ")\n";
+      }
+      else {
+        return "$keyword " . array_shift($clauses) . "\n";
+      }
+    }
+    return "";
+  }
 
   /**
    * Generate a query and a countquery from all of the information supplied
@@ -700,7 +785,7 @@ class views_query {
       $this->count_field['distinct'] = TRUE;
     }
 
-    $joins = $fields = $where = $orderby = $groupby = '';
+    $joins = $fields = $where = $having = $orderby = $groupby = '';
     // Add all the tables to the query via joins. We assume all LEFT joins.
     foreach ($this->table_queue as $table) {
       if (is_object($table['join'])) {
@@ -733,6 +818,9 @@ class views_query {
 
     if ($this->groupby) {
       $groupby = "GROUP BY " . implode(', ', $this->groupby) . "\n";
+      if ($this->having) {
+        $having = $this->condition_sql('having');
+      }
     }
 
     if (!$get_count) {
@@ -742,25 +830,9 @@ class views_query {
       }
     }
 
-    $clauses = array();
-    foreach ($this->where as $group => $info) {
-      $clause = implode(") " . $info['type'] . " (", $info['clauses']);
-      if (count($info['clauses']) > 1) {
-        $clause = '(' . $clause . ')';
-      }
-      $clauses[] = $clause;
-    }
+    $where = $this->condition_sql();
 
-    if ($clauses) {
-      if (count($clauses) > 1) {
-        $where = 'WHERE (' . implode(")\n    " . $this->group_operator . ' (', $clauses) . ")\n";
-      }
-      else {
-        $where = "WHERE " . array_shift($clauses) . "\n";
-      }
-    }
-
-    $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $orderby";
+    $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $having $orderby";
 
     if ($get_count) {
       $query = "SELECT COUNT(*) FROM ($query) count_alias";
@@ -773,12 +845,15 @@ class views_query {
   }
 
   /**
-   * Get the arguments attached to the WHERE clauses of this query.
+   * Get the arguments attached to the WHERE and HAVING clauses of this query.
    */
   function get_where_args() {
     $args = array();
     foreach ($this->where as $group => $where) {
       $args = array_merge($args, $where['args']);
+    }
+    foreach ($this->having as $group => $having) {
+      $args = array_merge($args, $having['args']);
     }
     return $args;
   }
