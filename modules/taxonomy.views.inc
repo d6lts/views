@@ -116,7 +116,7 @@ function taxonomy_views_data() {
       'handler' => 'views_handler_sort',
     ),
     'argument' => array(
-      'handler' => 'views_handler_argument_string', // @todo
+      'handler' => 'views_handler_argument_string',
       'help' => t('Taxonomy term name'),
       'many to one' => TRUE,
       'empty name field' => t('Uncategorized'),
@@ -153,7 +153,7 @@ function taxonomy_views_data() {
     'title' => t('Vocabulary'),
     'help' => t('Filter the results of "Taxonomy: Term" to a particular vocabulary.'),
     'filter' => array(
-      'handler' => 'views_handler_filter_vocabulary_vid', // @todo
+      'handler' => 'views_handler_filter_vocabulary_vid',
     ),
   );
 

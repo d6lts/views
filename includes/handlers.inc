@@ -308,6 +308,11 @@ class views_handler extends views_object {
 
 /**
  * This many to one helper object is used on both arguments and filters.
+ *
+ * @todo This requires extensive documentation on how this class is to
+ * be used. For now, look at the arguments and filters that use it. Lots
+ * of stuff is just pass-through but there are definitely some interesting
+ * areas where they interact.
  */
 class views_many_to_one_helper {
   function views_many_to_one_helper(&$handler) {
