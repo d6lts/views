@@ -44,7 +44,8 @@ class views_handler_argument extends views_handler {
     parent::options($options);
     $options['default_action'] = 'ignore';
     $options['style_plugin'] = 'default_summary';
-    $options['style_options'] = array();
+    // provide default options for the summary style.
+    $options['style_options'] = views_plugin_style_summary::options();
     $options['wildcard'] = 'all';
     $options['wildcard_substitution'] = t('All');
     $options['title'] = '';
@@ -531,10 +532,6 @@ class views_handler_argument_string extends views_handler_argument {
     }
   }
 
-  function get_join() {
-    return drupal_clone(views_get_table_join($this->table, $this->query->primary_table));
-  }
-
   /**
    * Build the summary query based on a formula
    */
@@ -543,43 +540,7 @@ class views_handler_argument_string extends views_handler_argument {
       $this->ensure_my_table();
     }
     else {
-      // @todo -- this code seems like it should be on the many to one helper.
-      $field = $this->table . '.' . $this->field;
-      $join = $this->get_join();
-
-      if (!empty($this->options['require_value'])) {
-        $join->type = 'INNER';
-      }
-
-      if (empty($this->options['add_table']) || empty($this->view->many_to_one_tables[$field])) {
-        $this->table_alias = $this->query->ensure_table($this->table, $this->relationship, $join);
-      }
-      else {
-        if (!empty($this->view->many_to_one_tables[$field])) {
-          foreach ($this->view->many_to_one_tables[$field] as $value) {
-            $join->extra = array(
-              array(
-                'field' => $this->real_field,
-                'operator' => '!=',
-                'value' => $value,
-                'numeric' => !empty($this->definition['numeric']),
-              ),
-            );
-          }
-        }
-        // See if there's a chain between us and the base relationship. If so, we need
-        // to create a new relationship to use.
-        $r_join = drupal_clone($join);
-        while ($r_join->left_table != $this->query->primary_table) {
-          $r_join = views_get_table_join($r_join->left_table, $this->query->primary_table);
-        }
-
-        $relationship = $this->relationship;
-        if ($r_join->table != $join->table) {
-          $relationship = $this->query->add_relationship(NULL, $r_join, $r_join->table, $this->relationship);
-        }
-        $this->table_alias = $this->query->add_table($this->table, $relationship, $join);
-      }
+      $this->table_alias = $this->helper->summary_join();
     }
 
     if (empty($this->options['glossary'])) {
@@ -781,19 +742,7 @@ class views_handler_argument_many_to_one extends views_handler_argument {
       $this->table_alias = $this->query->ensure_table($this->table, $this->relationship, $join);
     }
     else {
-      if (!empty($this->view->many_to_one_tables[$field])) {
-        foreach ($this->view->many_to_one_tables[$field] as $value) {
-          $join->extra = array(
-            array(
-              'field' => $this->real_field,
-              'operator' => '!=',
-              'value' => $value,
-              'numeric' => !empty($this->definition['numeric']),
-            ),
-          );
-        }
-      }
-      $this->table_alias = $this->query->add_table($this->table, $this->relationship, $join);
+      $this->table_alias = $this->helper->summary_join();
     }
 
     // Add the field.

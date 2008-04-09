@@ -338,6 +338,97 @@ class views_many_to_one_helper {
   }
 
   /**
+   * Add a table to the query.
+   *
+   * This is an advanced concept; not only does it add a new instance of the table,
+   * but it follows the relationship path all the way down to the relationship
+   * link point and adds *that* as a new relationship and then adds the table to
+   * the relationship, if necessary.
+   */
+  function add_table($join = NULL, $alias = NULL) {
+    // This is used for lookups in the many_to_one table.
+    $field = $this->handler->table . '.' . $this->handler->field;
+
+    if (empty($join)) {
+      $join = $this->get_join();
+    }
+
+    // See if there's a chain between us and the base relationship. If so, we need
+    // to create a new relationship to use.
+    $relationship = $this->handler->relationship;
+
+    // Determine the primary table to seek
+    if (empty($this->handler->query->relationships[$relationship])) {
+      $primary_table = $this->handler->query->primary_table;
+    }
+    else {
+      $primary_table = $this->handler->query->relationships[$relationship]['base'];
+    }
+
+    // Cycle through the joins. This isn't as error-safe as the normal
+    // ensure_path logic. Perhaps it should be.
+    $r_join = drupal_clone($join);
+    while ($r_join->left_table != $primary_table) {
+      $r_join = views_get_table_join($r_join->left_table, $primary_table);
+    }
+
+    // If we found that there are tables in between, add the relationship.
+    if ($r_join->table != $join->table) {
+      $relationship = $this->handler->query->add_relationship(NULL, $r_join, $r_join->table, $this->handler->relationship);
+    }
+
+    // And now add our table, using the new relationship if one was used.
+    $alias = $this->handler->query->add_table($this->handler->table, $relationship, $join, $alias);
+
+    // Store what values are used by this table chain so that other chains can
+    // automatically discard those values.
+    $this->handler->view->many_to_one_tables[$field] = array_merge($this->handler->view->many_to_one_tables[$field], $this->handler->value);
+
+    return $alias;
+  }
+
+  function get_join() {
+    return drupal_clone(views_get_table_join($this->handler->table, $this->handler->query->primary_table));
+  }
+
+  /**
+   * Provide the proper join for summary queries. This is important in part because
+   * it will cooperate with other arguments if possible.
+   */
+  function summary_join() {
+    $field = $this->handler->table . '.' . $this->handler->field;
+    $join = $this->get_join();
+
+    // shortcuts
+    $options = $this->handler->options;
+    $view = &$this->handler->view;
+    $query = &$this->handler->query;
+
+    if (!empty($options['require_value'])) {
+      $join->type = 'INNER';
+    }
+
+    if (empty($options['add_table']) || empty($view->many_to_one_tables[$field])) {
+      return $query->ensure_table($this->handler->table, $this->handler->relationship, $join);
+    }
+    else {
+      if (!empty($view->many_to_one_tables[$field])) {
+        foreach ($view->many_to_one_tables[$field] as $value) {
+          $join->extra = array(
+            array(
+              'field' => $this->handler->real_field,
+              'operator' => '!=',
+              'value' => $value,
+              'numeric' => !empty($this->definition['numeric']),
+            ),
+          );
+        }
+      }
+      return $this->add_table($join);
+    }
+  }
+
+  /**
    * Override ensure_my_table so we can control how this joins in.
    * The operator actually has influence over joining.
    */
@@ -345,14 +436,13 @@ class views_many_to_one_helper {
     if (!isset($this->handler->table_alias)) {
       // For 'or' if we're not reducing duplicates, we get the absolute simplest:
       $field = $this->handler->table . '.' . $this->handler->field;
-      $base_join = views_get_table_join($this->handler->table, $this->handler->query->primary_table);
       if ($this->handler->operator == 'or' && empty($this->handler->options['reduce_duplicates'])) {
         if (empty($this->handler->options['add_table']) || empty($this->handler->view->many_to_one_tables[$field])) {
           $this->handler->table_alias = $this->handler->query->ensure_table($this->handler->table, $this->handler->relationship);
           $this->handler->view->many_to_one_tables[$field] = $this->handler->value;
         }
         else {
-          $join = drupal_clone($base_join);
+          $join = $this->get_join();
           if (!empty($this->handler->view->many_to_one_tables[$field])) {
             foreach ($this->handler->view->many_to_one_tables[$field] as $value) {
               $join->extra = array(
@@ -366,21 +456,9 @@ class views_many_to_one_helper {
             }
           }
 
-          // See if there's a chain between us and the base relationship. If so, we need
-          // to create a new relationship to use.
-          $r_join = drupal_clone($join);
-          while ($r_join->left_table != $this->handler->query->primary_table) {
-            $r_join = views_get_table_join($r_join->left_table, $this->handler->query->primary_table);
-          }
-
-          $relationship = $this->handler->relationship;
-          if ($r_join->table != $join->table) {
-            $relationship = $this->handler->query->add_relationship(NULL, $r_join, $r_join->table, $this->handler->relationship);
-          }
-
-          $this->handler->table_alias = $this->handler->query->add_table($this->handler->table, $relationship, $join);
-          $this->handler->view->many_to_one_tables[$field] = array_merge($this->handler->view->many_to_one_tables[$field], $this->handler->value);
+          $this->handler->table_alias = $this->add_table($join);
         }
+
         return $this->handler->table_alias;
       }
 
@@ -389,9 +467,7 @@ class views_many_to_one_helper {
         // Clone the join for each table:
         $this->handler->table_aliases = array();
         foreach ($this->handler->value as $value) {
-          // Clone to make sure we aren't overwriting previous joins due
-          // to overzealous references.
-          $join = drupal_clone($base_join);
+          $join = $this->get_join();
           $join->extra = array(
             array(
               'field' => $this->handler->real_field,
@@ -399,7 +475,7 @@ class views_many_to_one_helper {
               'numeric' => !empty($this->handler->definition['numeric']),
             ),
           );
-          $alias = $this->handler->table_aliases[$value] = $this->handler->query->add_table($this->handler->table, $this->handler->relationship, $join, $this->handler->table . '_' . $value);
+          $alias = $this->handler->table_aliases[$value] = $this->add_table($join, $this->handler->table . '_' . $value);
 
           // and set table_alias to the first of these.
           if (empty($this->handler->table_alias)) {
@@ -410,7 +486,7 @@ class views_many_to_one_helper {
       else {
         // For not, we just do one join. We'll add a where clause during
         // the query phase to ensure that $table.$field IS NULL.
-        $join = drupal_clone($base_join); // be safe!
+        $join = $this->get_join();
         $join->type = 'LEFT';
         $join->extra = array();
         $join->extra_type = 'OR';
@@ -422,7 +498,7 @@ class views_many_to_one_helper {
           );
         }
 
-        $this->handler->table_alias = $this->handler->query->add_table($this->handler->table, $this->handler->relationship, $join);
+        $this->handler->table_alias = $this->add_table($join);
       }
     }
     return $this->handler->table_alias;
@@ -448,9 +524,14 @@ class views_many_to_one_helper {
       $this->handler->query->add_where($options['group'], "$field IS NULL");
     }
     else if ($operator == 'or' && empty($options['reduce_duplicates'])) {
-      $replace = array_fill(0, sizeof($this->handler->value), $placeholder);
-      $in = ' (' . implode(", ", $replace) . ')';
-      $this->handler->query->add_where($options['group'], "$field IN " . $in, $this->handler->value);
+      if (count($this->handler->value) > 1) {
+        $replace = array_fill(0, sizeof($this->handler->value), $placeholder);
+        $in = '(' . implode(", ", $replace) . ')';
+        $this->handler->query->add_where($options['group'], "$field IN $in", $this->handler->value);
+      }
+      else {
+        $this->handler->query->add_where($options['group'], "$field = $placeholder", $this->handler->value);
+      }
     }
     else {
       $field = $this->handler->real_field;

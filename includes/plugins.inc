@@ -2137,11 +2137,11 @@ function theme_views_ui_style_plugin_table($form) {
  * The default style plugin for summaries.
  */
 class views_plugin_style_summary extends views_plugin_style {
-  function options($display) {
+  function options($display = NULL) {
     return array(
       'count' => TRUE,
       'override' => FALSE,
-      'items_per_page' => 0,
+      'items_per_page' => 25,
     );
   }
 

@@ -867,7 +867,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
       $pid = $id . '-style-plugin';
 
       if (!empty($style_plugin['uses options'])) {
-        $fields[$pid]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
+        $fields[$pid]['links'] = l('<span>' . t('Change settings for this style') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
       }
 
       $fields[$pid]['title'] = t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));
@@ -2019,6 +2019,11 @@ function views_ui_change_style_form_submit($form, &$form_state) {
   // Run it through the handler's submit function.
   $form_state['handler']->options_submit($form['options'], $form_state);
   $item = $form_state['handler']->options;
+
+  if (empty($item['style_plugin']) || $item['style_plugin'] != $form_state['values']['style_plugin']) {
+    $plugin = views_get_plugin('style', $form_state['values']['style_plugin']);
+    $item['style_options'] = $plugin->options($form_state['view']->display[$form_state['display_id']]);
+  }
 
   // Store the data we're given.
   $item['style_plugin'] = $form_state['values']['style_plugin'];
