@@ -23,6 +23,9 @@ class views_handler_argument extends views_handler {
     if (!empty($this->definition['name field'])) {
       $this->name_field = $this->definition['name field'];
     }
+    if (!empty($this->definition['name table'])) {
+      $this->name_table = $this->definition['name table'];
+    }
   }
 
   /**
@@ -264,16 +267,43 @@ class views_handler_argument extends views_handler {
     // Add the field.
     $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);
 
+    $this->summary_name_field();
+    return $this->summary_basics();
+  }
+
+  /**
+   * Add the name field, which is the field displayed in summary queries.
+   * This is often used when the argument is numeric.
+   */
+  function summary_name_field() {
     // Add the 'name' field. For example, if this is a uid argument, the
     // name field would be 'name' (i.e, the username).
+
+    if (isset($this->name_table)) {
+      // if the alias is different then we're probably added, not ensured,
+      // so look up the join and add it instead.
+      if ($this->table_alias != $this->table) {
+        $j = views_get_table_join($this->name_table, $this->table);
+        if ($j) {
+          $join = drupal_clone($j);
+          $join->left_table = $this->table_alias;
+          $this->name_table_alias = $this->query->add_table($this->name_table, $this->relationship, $join);
+        }
+      }
+      else {
+        $this->name_table_alias = $this->query->ensure_table($this->name_table);
+      }
+    }
+    else {
+      $this->name_table_alias = $this->table_alias;
+    }
+
     if (isset($this->name_field)) {
-      $this->name_alias = $this->query->add_field($this->table_alias, $this->name_field);
+      $this->name_alias = $this->query->add_field($this->name_table_alias, $this->name_field);
     }
     else {
       $this->name_alias = $this->base_alias;
     }
-
-    return $this->summary_basics();
   }
 
   /**
@@ -283,7 +313,7 @@ class views_handler_argument extends views_handler {
   function summary_basics($count_field = TRUE) {
     // Add the number of nodes counter
     $count_alias = $this->query->add_field(NULL, 'COUNT('. $this->query->primary_table .'.'. $this->query->primary_field . ')', 'num_records');
-    $this->query->add_groupby($this->base_alias);
+    $this->query->add_groupby($this->name_alias);
 
     if ($count_field) {
       $this->query->set_count_field($this->table_alias, $this->real_field);
@@ -300,7 +330,7 @@ class views_handler_argument extends views_handler {
    *   The order selected in the UI.
    */
   function summary_sort($order) {
-    $this->query->add_orderby(NULL, NULL, $order, $this->base_alias);
+    $this->query->add_orderby(NULL, NULL, $order, $this->name_alias);
   }
 
   /**
@@ -325,7 +355,11 @@ class views_handler_argument extends views_handler {
    *   The query results for the row.
    */
   function summary_name($data) {
-    return check_plain($data->{$this->name_alias});
+    $value = $data->{$this->name_alias};
+    if (empty($value) && !empty($this->definition['empty name field'])) {
+      $value = $this->definition['empty name field'];
+    }
+    return check_plain($value);
   }
 
   /**
@@ -407,6 +441,17 @@ class views_handler_argument_formula extends views_handler_argument {
  * limits.
  */
 class views_handler_argument_string extends views_handler_argument {
+  function construct() {
+    parent::construct();
+    if (!empty($this->definition['many to one'])) {
+      $this->helper = new views_many_to_one_helper($this);
+
+      // Ensure defaults for these, during summaries and stuff:
+      $this->operator = 'or';
+      $this->value = array();
+    }
+  }
+
   function options(&$options) {
     parent::options($options);
     $options['glossary'] = FALSE;
@@ -469,13 +514,74 @@ class views_handler_argument_string extends views_handler_argument {
       '#description' => t('Glossary mode applies a limit to the number of characters used in the argument, which allows the summary view to act as a glossary.'),
       '#default_value' => $this->options['transform_dash'],
     );
+
+    if (!empty($this->definition['many to one'])) {
+      $form['add_table'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Allow multiple arguments to work together.'),
+        '#description' => t('If selected, multiple instances of this argument can work together, as though multiple terms were supplied to the same argument. This setting is not compatible with the "Reduce duplicates" setting.'),
+        '#default_value' => !empty($this->options['add_table']),
+      );
+
+      $form['require_value'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Do not display items with no value in summary'),
+        '#default_value' => !empty($this->options['require_value']),
+      );
+    }
+  }
+
+  function get_join() {
+    return drupal_clone(views_get_table_join($this->table, $this->query->primary_table));
   }
 
   /**
    * Build the summary query based on a formula
    */
   function summary_query() {
-    $this->ensure_my_table();
+    if (empty($this->definition['many to one'])) {
+      $this->ensure_my_table();
+    }
+    else {
+      // @todo -- this code seems like it should be on the many to one helper.
+      $field = $this->table . '.' . $this->field;
+      $join = $this->get_join();
+
+      if (!empty($this->options['require_value'])) {
+        $join->type = 'INNER';
+      }
+
+      if (empty($this->options['add_table']) || empty($this->view->many_to_one_tables[$field])) {
+        $this->table_alias = $this->query->ensure_table($this->table, $this->relationship, $join);
+      }
+      else {
+        if (!empty($this->view->many_to_one_tables[$field])) {
+          foreach ($this->view->many_to_one_tables[$field] as $value) {
+            $join->extra = array(
+              array(
+                'field' => $this->real_field,
+                'operator' => '!=',
+                'value' => $value,
+                'numeric' => !empty($this->definition['numeric']),
+              ),
+            );
+          }
+        }
+        // See if there's a chain between us and the base relationship. If so, we need
+        // to create a new relationship to use.
+        $r_join = drupal_clone($join);
+        while ($r_join->left_table != $this->query->primary_table) {
+          $r_join = views_get_table_join($r_join->left_table, $this->query->primary_table);
+        }
+
+        $relationship = $this->relationship;
+        if ($r_join->table != $join->table) {
+          $relationship = $this->query->add_relationship(NULL, $r_join, $r_join->table, $this->relationship);
+        }
+        $this->table_alias = $this->query->add_table($this->table, $relationship, $join);
+      }
+    }
+
     if (empty($this->options['glossary'])) {
       // Add the field.
       $this->base_alias = $this->name_alias = $this->query->add_field($this->table_alias, $this->real_field);
@@ -504,13 +610,22 @@ class views_handler_argument_string extends views_handler_argument {
    * Build the query based upon the formula
    */
   function query() {
-    $this->ensure_my_table();
-
     $argument = $this->argument;
     if (!empty($this->options['transform_dash'])) {
       $argument = strtr($argument, '-', ' ');
     }
 
+    if (!empty($this->definition['many to one'])) {
+      if (!empty($this->options['glossary'])) {
+        $this->helper->formula = TRUE;
+      }
+      $this->value = array($argument);
+      $this->helper->ensure_my_table();
+      $this->helper->add_filter();
+      return;
+    }
+
+    $this->ensure_my_table();
     if (empty($this->options['glossary'])) {
       $field = "$this->table_alias.$this->real_field";
     }
@@ -557,6 +672,152 @@ class views_handler_argument_string extends views_handler_argument {
 
   function title() {
     return check_plain($this->case_transform($this->argument, 'case'));
+  }
+}
+
+/**
+ * An argument handler for use in fields that have a many to one relationship
+ * with the table(s) to the left. This adds a bunch of options that are
+ * reasonably common with this type of relationship.
+ */
+class views_handler_argument_many_to_one extends views_handler_argument {
+  function construct() {
+    parent::construct();
+    $this->helper = new views_many_to_one_helper($this);
+
+    // Ensure defaults for these, during summaries and stuff:
+    $this->operator = 'or';
+    $this->value = array();
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['break_phrase'] = FALSE;
+    $options['add_table'] = FALSE;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
+    // allow + for or, , for and
+    if (!empty($this->definition['numeric'])) {
+      $form['break_phrase'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Allow multiple terms per argument.'),
+        '#description' => t('If selected, users can enter multiple arguments in the form of 1+2+3 (for OR) or 1,2,3 (for AND).'),
+        '#default_value' => !empty($this->options['break_phrase']),
+      );
+    }
+
+    $form['add_table'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Allow multiple arguments to work together.'),
+      '#description' => t('If selected, multiple instances of this argument can work together, as though multiple terms were supplied to the same argument. This setting is not compatible with the "Reduce duplicates" setting.'),
+      '#default_value' => !empty($this->options['add_table']),
+    );
+
+    $form['require_value'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Do not display items with no value in summary'),
+      '#default_value' => !empty($this->options['require_value']),
+    );
+
+    $this->helper->options_form($form, $form_state);
+  }
+
+  /**
+   * Override ensure_my_table so we can control how this joins in.
+   * The operator actually has influence over joining.
+   */
+  function ensure_my_table() {
+    $this->helper->ensure_my_table();
+  }
+
+  function query() {
+    if (!empty($this->options['break_phrase'])) {
+      views_break_phrase($this->argument, $this);
+    }
+    else {
+      $this->value = array($this->argument);
+      $this->operator = 'or';
+    }
+
+    $this->helper->add_filter();
+  }
+
+  function title() {
+    if (!$this->argument) {
+      return t('Uncategorized');
+    }
+
+    if (!empty($this->options['break_phrase'])) {
+      views_break_phrase($this->argument, $this);
+    }
+    else {
+      $this->value = array($this->argument);
+      $this->operator = 'or';
+    }
+
+    if (empty($this->value)) {
+      return t('Uncategorized');
+    }
+
+    return implode($this->operator == 'or' ? ' + ' : ', ', $this->title_query());
+  }
+
+  function get_join() {
+    return drupal_clone(views_get_table_join($this->table, $this->query->primary_table));
+  }
+
+  function summary_query() {
+    $field = $this->table . '.' . $this->field;
+    $join = $this->get_join();
+
+    if (!empty($this->options['require_value'])) {
+      $join->type = 'INNER';
+    }
+
+    if (empty($this->options['add_table']) || empty($this->view->many_to_one_tables[$field])) {
+      $this->table_alias = $this->query->ensure_table($this->table, $this->relationship, $join);
+    }
+    else {
+      if (!empty($this->view->many_to_one_tables[$field])) {
+        foreach ($this->view->many_to_one_tables[$field] as $value) {
+          $join->extra = array(
+            array(
+              'field' => $this->real_field,
+              'operator' => '!=',
+              'value' => $value,
+              'numeric' => !empty($this->definition['numeric']),
+            ),
+          );
+        }
+      }
+      $this->table_alias = $this->query->add_table($this->table, $this->relationship, $join);
+    }
+
+    // Add the field.
+    $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);
+
+    $this->summary_name_field();
+
+    return $this->summary_basics();
+  }
+
+  function summary_link($data, $url) {
+    $value = $data->{$this->base_alias};
+    if (empty($value)) {
+      $value = 0;
+    }
+
+    return url("$url/$value");
+  }
+
+  /**
+   * Override for specific title lookups.
+   */
+  function title_query() {
+    return $this->value;
   }
 }
 

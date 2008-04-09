@@ -228,7 +228,7 @@ class views_query {
       return FALSE;
     }
 
-    return $this->queue_table($table, $relationship, $join, $alias);
+    return $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship), $alias);
   }
 
   /**
@@ -403,6 +403,7 @@ class views_query {
     if (isset($this->tables[$relationship][$table]) ||
       ($join && $join->left_table == $relationship) ||
       ($join && $join->left_table == $this->relationships[$relationship]['table'])) {
+
       // Make sure that we're linking to the correct table for our relationship.
       foreach (array_reverse($add) as $table => $join) {
         $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship));
@@ -432,6 +433,10 @@ class views_query {
    * based upon what relationship items are joined in on.
    */
   function adjust_join($join, $relationship) {
+    if (empty($relationship) || empty($this->relationships[$relationship])) {
+      return $join;
+    }
+
     // Adjusts the left table for our relationship.
     if ($relationship != $this->primary_table) {
       // If we're linking to the primary table, the relationship to use will
@@ -742,7 +747,7 @@ class views_query {
       $this->groupby[] = $clause;
     }
   }
-  
+
   /**
    * Construct the "WHERE" or "HAVING" part of the query.
    *

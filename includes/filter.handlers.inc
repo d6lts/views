@@ -881,16 +881,17 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $this->get_value_options();
     if (count($this->value) == 1) {
       // If there is only one, show it as an =.
-      $keys = array_keys($this->value);
+      $keys = $this->value;
       $key = array_shift($keys);
-      if (!empty($this->value_options[$key])) {
+
+      if (isset($this->value_options[$key])) {
         $value = check_plain($this->value_options[$key]);
       }
       else {
         $value = t('Unknown');
       }
 
-      return ($this->operator == 'in' ? '=' : '<>') . ' ' . $value;
+      return (substr($this->operator, 0, 3) != 'not' ? '=' : '<>') . ' ' . $value;
     }
     $output = '';
     foreach ($this->value as $value) {
@@ -1231,6 +1232,11 @@ class views_handler_filter_date extends views_handler_filter_numeric {
  * concerned about duplicates you'll get more efficient queries.
  */
 class views_handler_filter_many_to_one extends views_handler_filter_in_operator {
+  function construct() {
+    parent::construct();
+    $this->helper = new views_many_to_one_helper($this);
+  }
+
   function options(&$options) {
     parent::options($options);
     $options['operator'] = 'or';
@@ -1258,6 +1264,7 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
       '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
       '#default_value' => (array) $this->value,
     );
+    $this->helper->options_form($form, $form_state);
   }
 
   /**
@@ -1265,75 +1272,14 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
    * The operator actually has influence over joining.
    */
   function ensure_my_table() {
-    if (!isset($this->table_alias)) {
-      $base_join = views_get_table_join($this->table, $this->query->primary_table);
-      if ($this->operator != 'not') {
-        // If it's an and or an or, we do one join per selected value.
-        // Clone the join for each table:
-        $this->table_aliases = array();
-        foreach ($this->value as $value) {
-          // Clone to make sure we aren't overwriting previous joins due
-          // to overzealous references.
-          $join = drupal_clone($base_join);
-          $join->extra = array(
-            array(
-              'field' => $this->real_field,
-              'value' => $value,
-              'numeric' => !empty($this->definition['numeric']),
-            ),
-          );
-          $alias = $this->table_aliases[$value] = $this->query->add_table($this->table, $this->relationship, $join, $this->table . '_' . $value);
-
-          // and set table_alias to the first of these.
-          if (empty($this->table_alias)) {
-            $this->table_alias = $alias;
-          }
-        }
-      }
-      else {
-        // For not, we just do one join. We'll add a where clause during
-        // the query phase to ensure that $table.$field IS NULL.
-        $join = drupal_clone($base_join); // be safe!
-        $join->type = 'LEFT';
-        $join->extra = array();
-        $join->extra_type = 'OR';
-        foreach ($this->value as $value) {
-          $join->extra[] = array(
-            'field' => $this->field,
-            'value' => $value,
-            'numeric' => !empty($this->definition['numeric']),
-          );
-        }
-
-        $this->table_alias = $this->query->add_table($this->table, $this->relationship, $join);
-      }
-    }
-    return $this->table_alias;
+    $this->helper->ensure_my_table();
   }
 
   function query() {
     if (empty($this->value)) {
       return;
     }
-    $this->ensure_my_table();
-
-    if ($this->operator == 'not') {
-      $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field IS NULL");
-    }
-    else {
-      $clauses = array();
-      foreach ($this->table_aliases as $value => $alias) {
-        if (!empty($this->definition['numeric'])) {
-          $clauses[] = "$alias.$this->real_field = %d";
-        }
-        else {
-          $clauses[] = "$alias.$this->real_field = '%s'";
-        }
-      }
-
-      // implode on either AND or OR.
-      $this->query->add_where($this->options['group'], implode(' ' . strtoupper($this->operator) . ' ', $clauses), $this->value);
-    }
+    $this->helper->add_filter();
   }
 }
 

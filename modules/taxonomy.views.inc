@@ -97,6 +97,11 @@ function taxonomy_views_data() {
       'left_field' => 'tid',
       'field' => 'tid',
     ),
+    // This is provided for many_to_one argument
+    'term_node' => array(
+      'field' => 'tid',
+      'left_field' => 'tid',
+    ),
   );
 
   // Term name field
@@ -110,10 +115,12 @@ function taxonomy_views_data() {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
-//    'argument' => array(
-//      'handler' => 'views_handler_argument_term_data_name', // @todo
-//      'help' => t('Taxonomy term name'),
-//    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string', // @todo
+      'help' => t('Taxonomy term name'),
+      'many to one' => TRUE,
+      'empty name field' => t('Uncategorized'),
+    ),
   );
 
   // taxonomy weight
@@ -192,9 +199,12 @@ function taxonomy_views_data() {
       'help' => t('Display all taxonomy terms associated with a node.'),
       'handler' => 'views_handler_field_term_node_tid',
     ),
-//    'argument' => array(
-//      'handler' => 'views_handler_argument_term_node_tid', // @todo
-//    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_term_node_tid',
+      'name table' => 'term_data',
+      'name field' => 'name',
+      'empty name field' => t('Uncategorized'),
+    ),
     'filter' => array(
       'handler' => 'views_handler_filter_term_node_tid',
       'hierarchy table' => 'term_hierarchy',
@@ -253,29 +263,31 @@ function taxonomy_views_data() {
       'field' => 'tid',
     ),
     'node' => array(
-      // links directly to node via nid
-      'left_field' => 'nid',
-      'field' => 'nid',
+      'left_table' => 'term_node',
+      'left_field' => 'tid',
+      'field' => 'tid',
     ),
     'node_revisions' => array(
-      // links directly to node_revisions via vid
-      'left_field' => 'vid',
-      'field' => 'vid',
+      'left_table' => 'term_node',
+      'left_field' => 'tid',
+      'field' => 'tid',
     ),
     'users' => array(
-      // Links to users via node.nid
-      'left_table' => 'node',
-      'left_field' => 'nid',
-      'field' => 'nid',
+      // Links to users via node
+      'left_table' => 'term_node',
+      'left_field' => 'tid',
+      'field' => 'tid',
     ),
   );
 
   $data['term_synonym']['name'] = array(
     'title' => t('Term synonym'),
     'help' => t('Term synonyms may be used to find terms by alternate names'),
-//    'argument' => array(
-//      'handler' => 'views_handler_argument_string', // @todo this should be own argument probably
-//    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+      'many to one' => TRUE,
+      'empty name field' => t('Uncategorized'),
+    ),
   );
   return $data;
 }
@@ -535,12 +547,12 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     if ($this->options['type'] == 'textfield') {
       $default = '';
       if ($this->value) {
-        $result = db_query("SELECT * FROM {term_data} td WHERE td.tid IN (" . implode(', ', $this->value));
+        $result = db_query("SELECT * FROM {term_data} td WHERE td.tid IN (" . implode(', ', $this->value) . ')');
         while ($term = db_fetch_object($result)) {
-          if ($value) {
-            $value .= ', ';
+          if ($default) {
+            $default .= ', ';
           }
-          $value .= $term->name;
+          $default .= $term->name;
         }
       }
 
@@ -563,11 +575,19 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       );
       unset($form['value']['#weight']);
     }
+
+    // Retain the helper option
+    $this->helper->options_form($form, $form_state);
   }
 
   function value_validate($form, &$form_state) {
     if ($this->options['type'] == 'textfield') {
       $values = drupal_explode_tags($form_state['values']['options']['value']);
+      if (empty($values)) {
+        $form_state['values']['options']['value'] = array();
+        return;
+      }
+
       $tids = array();
       $placeholders = array();
       $args = array();
@@ -614,35 +634,23 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     }
     return parent::admin_summary();
   }
+}
 
-  /**
-   * Override ensure_my_table so we can control how this joins in.
-   * The operator actually has influence over joining.
-   */
-  function ensure_my_table() {
-    if (!isset($this->table_alias)) {
-      $base_join = views_get_table_join($this->table, $this->query->primary_table);
-      if ($this->operator == 'or') {
-        // For this stuff, we just do a single join, simple join:
-        return views_handler_field::ensure_my_table();
-      }
-      else {
-        // base handling for everything else is ok:
-        return parent::ensure_my_table();
-      }
-    }
-    return $this->table_alias;
-  }
+/**
+ * Allow taxonomy term ID(s) as argument
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_term_node_tid extends views_handler_argument_many_to_one {
+  function title_query() {
+    $titles = array();
+    $tids = implode(', ', $this->value); // only does numbers so safe
 
-  function query() {
-    if ($this->value && $this->operator == 'or') {
-      $this->ensure_my_table();
-      $this->operator = 'in';
-      views_handler_filter_in_operator::query();
+    $result = db_query("SELECT name FROM {term_data} WHERE tid IN (%s)", $tids);
+    while ($term = db_fetch_object($result)) {
+      $titles[] = check_plain($term->name);
     }
-    else {
-      return parent::query();
-    }
+    return $titles;
   }
 }
 
