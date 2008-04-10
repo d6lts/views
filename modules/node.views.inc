@@ -851,7 +851,7 @@ class views_handler_argument_node_nid extends views_handler_argument {
    * Override the behavior of title(). Get the title of the node.
    */
   function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d", $this->argument)));
+    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d"), $this->argument));
     if (empty($title)) {
       return t('No title');
     }
@@ -872,7 +872,7 @@ class views_handler_argument_node_vid extends views_handler_argument {
    * Override the behavior of title(). Get the title of the revision.
    */
   function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node_revisions} n WHERE n.vid = %d", $this->argument)));
+    $title = db_result(db_query(db_rewrite_sql("SELECT r.title FROM {node_revisions} r INNER JOIN {node} n ON r.nid = n.nid WHERE r.vid = %d"), $this->argument));
     if (empty($title)) {
       return t('No title');
     }
