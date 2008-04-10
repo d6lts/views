@@ -143,8 +143,8 @@ function system_views_data() {
 
   // status
   $data['files']['status'] = array(
-    'title' => t('Size'),
-    'help' => t('The size of the file.'),
+    'title' => t('Status'),
+    'help' => t('The status of the file.'),
     'field' => array(
       'handler' => 'views_handler_field_file_status',
       'click sortable' => TRUE,

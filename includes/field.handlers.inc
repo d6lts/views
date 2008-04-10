@@ -103,7 +103,7 @@ class views_handler_field extends views_handler {
    */
   function options(&$options) {
     parent::options($options);
-    $options['label'] = $this->ui_name();
+    $options['label'] = $this->definition['title'];
   }
 
   /**
