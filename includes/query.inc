@@ -68,42 +68,42 @@ class views_query {
   /**
    * Constructor; Create the basic query object and fill with default values.
    */
-  function views_query($primary_table = 'node', $primary_field = 'nid') {
-    $this->primary_table = $primary_table;  // Predefine these above, for clarity.
-    $this->primary_field = $primary_field;
-    $this->relationships[$primary_table] = array(
+  function views_query($base_table = 'node', $base_field = 'nid') {
+    $this->base_table = $base_table;  // Predefine these above, for clarity.
+    $this->base_field = $base_field;
+    $this->relationships[$base_table] = array(
       'link' => NULL,
-      'table' => $primary_table,
-      'alias' => $primary_table,
-      'base' => $primary_table
+      'table' => $base_table,
+      'alias' => $base_table,
+      'base' => $base_table
     );
 
     // init the table queue with our primary table.
-    $this->table_queue[$primary_table] = array(
-      'alias' => $primary_table,
-      'table' => $primary_table,
-      'relationship' => $primary_table,
+    $this->table_queue[$base_table] = array(
+      'alias' => $base_table,
+      'table' => $base_table,
+      'relationship' => $base_table,
       'join' => NULL,
     );
 
     // init the tables with our primary table
-    $this->tables[$primary_table][$primary_table] = array(
+    $this->tables[$base_table][$base_table] = array(
       'count' => 1,
-      'alias' => $primary_table,
+      'alias' => $base_table,
     );
 
-    if ($primary_field) {
-      $this->fields[$primary_field] = array(
-        'table' => $primary_table,
-        'field' => $primary_field,
-        'alias' => $primary_field,
+    if ($base_field) {
+      $this->fields[$base_field] = array(
+        'table' => $base_table,
+        'field' => $base_field,
+        'alias' => $base_field,
       );
     }
 
     $this->count_field = array(
-      'table' => $primary_table,
-      'field' => $primary_field,
-      'alias' => $primary_field,
+      'table' => $base_table,
+      'field' => $base_field,
+      'alias' => $base_field,
       'count' => TRUE,
     );
   }
@@ -176,7 +176,7 @@ class views_query {
    */
   function add_relationship($alias, $join, $base, $link_point = NULL) {
     if (empty($link_point)) {
-      $link_point = $this->primary_table;
+      $link_point = $this->base_table;
     }
     else if (!array_key_exists($link_point, $this->relationships)) {
       return FALSE;
@@ -265,7 +265,7 @@ class views_query {
     }
 
     if (empty($relationship)) {
-      $relationship = $this->primary_table;
+      $relationship = $this->base_table;
     }
 
     if (!array_key_exists($relationship, $this->relationships)) {
@@ -282,7 +282,7 @@ class views_query {
     // If this is a relationship based table, add a marker with
     // the relationship as a primary table for the alias.
     if ($table!= $alias) {
-      $this->mark_table($alias, $this->primary_table, $alias);
+      $this->mark_table($alias, $this->base_table, $alias);
     }
 
     // If no join is specified, pull it from the table data.
@@ -311,7 +311,7 @@ class views_query {
     if (empty($this->tables[$relationship][$table])) {
       if (!isset($alias)) {
         $alias = '';
-        if ($relationship != $this->primary_table) {
+        if ($relationship != $this->base_table) {
           // double underscore will help prevent accidental name
           // space collisions.
           $alias = $relationship . '__';
@@ -351,14 +351,14 @@ class views_query {
   function ensure_table($table, $relationship = NULL, $join = NULL) {
     // ensure a relationship
     if (empty($relationship)) {
-      $relationship = $this->primary_table;
+      $relationship = $this->base_table;
     }
 
     // If the relationship is the primary table, this actually be a relationship
     // link back from an alias. We store all aliases along with the primary table
     // to detect this state, because eventually it'll hit a table we already
     // have and that's when we want to stop.
-    if ($relationship == $this->primary_table && !empty($this->tables[$relationship][$table])) {
+    if ($relationship == $this->base_table && !empty($this->tables[$relationship][$table])) {
       return $this->tables[$relationship][$table]['alias'];
     }
 
@@ -388,7 +388,7 @@ class views_query {
    */
   function ensure_path($table, $relationship = NULL, $join = NULL, $traced = array(), $add = array()) {
     if (!isset($relationship)) {
-      $relationship = $this->primary_table;
+      $relationship = $this->base_table;
     }
 
     if (!array_key_exists($relationship, $this->relationships)) {
@@ -438,7 +438,7 @@ class views_query {
     }
 
     // Adjusts the left table for our relationship.
-    if ($relationship != $this->primary_table) {
+    if ($relationship != $this->base_table) {
       // If we're linking to the primary table, the relationship to use will
       // be the prior relationship. Unless it's a direct link.
 
@@ -472,13 +472,13 @@ class views_query {
    * @return
    *   A views_join object or child object, if one exists.
    */
-  function get_join_data($table, $primary_table) {
+  function get_join_data($table, $base_table) {
     // Check to see if we're linking to a known alias. If so, get the real
     // table's data instead.
     if (!empty($this->table_queue[$table])) {
       $table = $this->table_queue[$table]['table'];
     }
-    return views_get_table_join($table, $primary_table);
+    return views_get_table_join($table, $base_table);
 
   }
 
@@ -494,8 +494,8 @@ class views_query {
     }
 
     // In rare cases we might *only* have aliased versions of the table.
-    if (!empty($this->tables[$this->primary_table][$table])) {
-      $alias = $this->tables[$this->primary_table][$table]['alias'];
+    if (!empty($this->tables[$this->base_table][$table])) {
+      $alias = $this->tables[$this->base_table][$table]['alias'];
       if (!empty($this->table_queue[$alias])) {
         return $this->table_queue[$alias];
       }
@@ -523,8 +523,8 @@ class views_query {
    */
   function add_field($table, $field, $alias = '') {
     // We check for this specifically because it gets a special alias.
-    if ($table == $this->primary_table && $field == $this->primary_field && empty($alias)) {
-      $alias = $this->primary_field;
+    if ($table == $this->base_table && $field == $this->base_field && empty($alias)) {
+      $alias = $this->base_field;
     }
 
     if ($table) {
@@ -786,7 +786,7 @@ class views_query {
   function query($get_count = FALSE) {
     // Check query distinct value.
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
-      $this->fields[$this->primary_field]['distinct'] = TRUE;
+      $this->fields[$this->base_field]['distinct'] = TRUE;
       $this->count_field['distinct'] = TRUE;
     }
 
@@ -837,7 +837,7 @@ class views_query {
 
     $where = $this->condition_sql();
 
-    $query = "SELECT $fields\n FROM {" . $this->primary_table . "} $this->primary_table \n$joins $where $groupby $having $orderby";
+    $query = "SELECT $fields\n FROM {" . $this->base_table . "} $this->base_table \n$joins $where $groupby $having $orderby";
 
     if ($get_count) {
       $query = "SELECT COUNT(*) FROM ($query) count_alias";

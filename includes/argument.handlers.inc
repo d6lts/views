@@ -257,7 +257,7 @@ class views_handler_argument extends views_handler {
    * This must:
    * - add_groupby: group on this field in order to create summaries.
    * - add_field: add a 'num_nodes' field for the count. Usually it will
-   *   be a count on $view->primary_field
+   *   be a count on $view->base_field
    * - set_count_field: Reset the count field so we get the right paging.
    *
    * @return
@@ -313,7 +313,7 @@ class views_handler_argument extends views_handler {
    */
   function summary_basics($count_field = TRUE) {
     // Add the number of nodes counter
-    $count_alias = $this->query->add_field(NULL, 'COUNT('. $this->query->primary_table .'.'. $this->query->primary_field . ')', 'num_records');
+    $count_alias = $this->query->add_field(NULL, 'COUNT('. $this->query->base_table .'.'. $this->query->base_field . ')', 'num_records');
     $this->query->add_groupby($this->name_alias);
 
     if ($count_field) {
@@ -727,7 +727,7 @@ class views_handler_argument_many_to_one extends views_handler_argument {
   }
 
   function get_join() {
-    return drupal_clone(views_get_table_join($this->table, $this->query->primary_table));
+    return drupal_clone(views_get_table_join($this->table, $this->query->base_table));
   }
 
   function summary_query() {

@@ -44,10 +44,10 @@ function _views_prepare_handler($definition, $data, $field) {
 /**
  * Fetch a handler to join one table to a primary table from the data cache
  */
-function views_get_table_join($table, $primary_table) {
+function views_get_table_join($table, $base_table) {
   $data = views_fetch_data($table);
-  if (isset($data['table']['join'][$primary_table])) {
-    $h = $data['table']['join'][$primary_table];
+  if (isset($data['table']['join'][$base_table])) {
+    $h = $data['table']['join'][$base_table];
     if (!empty($h['handler']) && class_exists($h['handler'])) {
       $handler = new $h['handler'];
     }
@@ -62,7 +62,7 @@ function views_get_table_join($table, $primary_table) {
     }
     // If this is empty, it's a direct link.
     if (empty($handler->definition['left_table'])) {
-      $handler->definition['left_table'] = $primary_table;
+      $handler->definition['left_table'] = $base_table;
     }
 
     if (isset($h['arguments'])) {
@@ -75,7 +75,7 @@ function views_get_table_join($table, $primary_table) {
     return $handler;
   }
   // DEBUG -- identify missing handlers
-  vpr("Missing join: $table $primary_table");
+  vpr("Missing join: $table $base_table");
 }
 
 /**
@@ -364,17 +364,17 @@ class views_many_to_one_helper {
 
     // Determine the primary table to seek
     if (empty($this->handler->query->relationships[$relationship])) {
-      $primary_table = $this->handler->query->primary_table;
+      $base_table = $this->handler->query->base_table;
     }
     else {
-      $primary_table = $this->handler->query->relationships[$relationship]['base'];
+      $base_table = $this->handler->query->relationships[$relationship]['base'];
     }
 
     // Cycle through the joins. This isn't as error-safe as the normal
     // ensure_path logic. Perhaps it should be.
     $r_join = drupal_clone($join);
-    while ($r_join->left_table != $primary_table) {
-      $r_join = views_get_table_join($r_join->left_table, $primary_table);
+    while ($r_join->left_table != $base_table) {
+      $r_join = views_get_table_join($r_join->left_table, $base_table);
     }
 
     // If we found that there are tables in between, add the relationship.
@@ -398,7 +398,7 @@ class views_many_to_one_helper {
   }
 
   function get_join() {
-    return drupal_clone(views_get_table_join($this->handler->table, $this->handler->query->primary_table));
+    return drupal_clone(views_get_table_join($this->handler->table, $this->handler->query->base_table));
   }
 
   /**
