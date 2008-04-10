@@ -1,4 +1,5 @@
 <?php
+// $Id$
 /**
  * @file
  *
@@ -15,8 +16,6 @@
  * Implementation of hook_views_data()
  */
 function taxonomy_views_data() {
-//  $vocabularies = taxonomy_get_vocabularies();
-
   $data = array();
 
   // ----------------------------------------------------------------------
@@ -74,9 +73,8 @@ function taxonomy_views_data() {
   $data['term_data']['table']['group']  = t('Taxonomy');
   $data['term_data']['table']['base'] = array(
     'field' => 'tid',
-    'title' => t('Terms'),
+    'title' => t('Term'),
     'help' => t('Taxonomy terms are attached to nodes.'),
-    'weight' => 10,
   );
 
 

@@ -499,6 +499,17 @@ function views_fetch_data($table = NULL) {
   return _views_fetch_data($table);
 }
 
+function _views_weight_sort($a, $b) {
+  if ($a['weight'] != $b['weight']) {
+    return $a['weight'] < $b['weight'] ? -1 : 1;
+  }
+  if ($a['title'] != $b['title']) {
+    return $a['title'] < $b['title'] ? -1 : 1;
+  }
+
+  return 0;
+}
+
 /**
  * Fetch a list of all base tables available
  *
@@ -508,11 +519,20 @@ function views_fetch_data($table = NULL) {
 function views_fetch_base_table_names() {
   static $base_tables = array();
   if (empty($base_tables)) {
+    $weights = array();
+    $tables = array();
     $data = views_fetch_data();
     foreach ($data as $table => $info) {
       if (!empty($info['table']['base'])) {
-        $base_tables[$table] = $info['table']['base']['title'] . '<br /><div class="description">' . $info['table']['base']['help'] . "</div>\n";
+        $tables[$table] = array(
+          'title' => $info['table']['base']['title'] . '<div class="description">' . $info['table']['base']['help'] . "</div>\n",
+          'weight' => !empty($info['table']['base']['weight']) ? $info['table']['base']['weight'] : 0,
+        );
       }
+    }
+    uasort($tables, '_views_weight_sort');
+    foreach ($tables as $table => $info) {
+      $base_tables[$table] = $info['title'];
     }
   }
 

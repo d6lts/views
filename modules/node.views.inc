@@ -16,7 +16,8 @@
  * Implementation of hook_views_data()
  */
 function node_views_data() {
-  // Basic table information.
+  // ----------------------------------------------------------------
+  // node table -- basic table information.
 
   // Define the base group of this table. Fields that don't
   // have a group defined will go into this field by default.
@@ -27,7 +28,7 @@ function node_views_data() {
     'field' => 'nid',
     'title' => t('Node'),
     'help' => t("Nodes are a Drupal site's primary content."),
-    'weight' => 10,
+    'weight' => -10,
   );
 
   // For other base tables, explain how we join
@@ -54,31 +55,7 @@ function node_views_data() {
   );
 
   // ----------------------------------------------------------------
-  // Fields
-
-  // title
-  // This definition has more items in it than it needs to as an example.
-  $data['node']['title'] = array(
-    'title' => t('Title'), // The item it appears as on the UI,
-    'help' => t('The title of the node.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
-    'field' => array(
-      'field' => 'title', // the real field. This could be left out since it is the same.
-      'group' => t('Node'), // The group it appears in on the UI. Could be left out.
-      'handler' => 'views_handler_field_node',
-      'click sortable' => TRUE,
-     ),
-    'sort' => array(
-      'handler' => 'views_handler_sort',
-    ),
-    // Information for accepting a title as a filter
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-    ),
-    'argument' => array(
-      'handler' => 'views_handler_argument_string',
-    ),
-  );
+  // node table -- fields
 
   // nid
   $data['node']['nid'] = array(
@@ -101,6 +78,30 @@ function node_views_data() {
     // Information for sorting on a nid.
     'sort' => array(
       'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // title
+  // This definition has more items in it than it needs to as an example.
+  $data['node']['title'] = array(
+    'title' => t('Title'), // The item it appears as on the UI,
+    'help' => t('The title of the node.'), // The help that appears on the UI,
+     // Information for displaying a title as a field
+    'field' => array(
+      'field' => 'title', // the real field. This could be left out since it is the same.
+      'group' => t('Node'), // The group it appears in on the UI. Could be left out.
+      'handler' => 'views_handler_field_node',
+      'click sortable' => TRUE,
+     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    // Information for accepting a title as a filter
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
     ),
   );
 
@@ -206,6 +207,8 @@ function node_views_data() {
     ),
   );
 
+  // links to operate on the node
+
   $data['node']['view_node'] = array(
     'field' => array(
       'title' => t('Link'),
@@ -310,7 +313,7 @@ function node_views_data() {
   // Advertise this table as a possible base table
   $data['node_revisions']['table']['base'] = array(
     'field' => 'vid',
-    'title' => t('Node revisions'),
+    'title' => t('Node revision'),
     'help' => t('Node revisions are a history of changes to nodes.'),
   );
 

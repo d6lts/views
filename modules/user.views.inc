@@ -232,7 +232,7 @@ function user_views_data() {
 
   $data['users_roles']['rid'] = array(
     'title' => t('Roles'),
-    'help' => t('Roles that a user belongs to'),
+    'help' => t('Roles that a user belongs to.'),
     'field' => array(
       'handler' => 'views_handler_field_user_roles',
     ),

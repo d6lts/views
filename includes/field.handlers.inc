@@ -386,6 +386,15 @@ class views_handler_field_prerender_list extends views_handler_field {
 }
 
 /**
+ * Render a numeric value as a size.
+ */
+class views_handler_field_file_size extends views_handler_field {
+  function render($values) {
+    return format_size($values->{$this->field_alias});
+  }
+}
+
+/**
  * @}
  */
 

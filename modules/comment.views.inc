@@ -22,8 +22,8 @@ function comment_views_data() {
 
   $data['comments']['table']['base'] = array(
     'field' => 'cid',
-    'title' => t('Comments'),
-    'help' => t("Your site's comments."),
+    'title' => t('Comment'),
+    'help' => t("Comments are responses to node content."),
   );
 
   //joins
