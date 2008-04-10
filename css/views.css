@@ -22,4 +22,5 @@ html.js a.views-throbbing,
 html.js span.views-throbbing {
   background:url(../images/status-active.gif) no-repeat right center;
   padding-right:18px;
+  border: 0;
 }

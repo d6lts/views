@@ -75,5 +75,6 @@
       </div>
     </div>
   </div>
+  <span class="clear"></span>
 
 </div>
