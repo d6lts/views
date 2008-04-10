@@ -741,8 +741,8 @@ class views_handler_field_node_revision_link_delete extends views_handler_field_
  * @ingroup views_argument_handlers
  */
 class views_handler_field_history_user_timestamp extends views_handler_field_node {
-  function construct() {
-    parent::construct();
+  function init(&$view, $options) {
+    parent::init($view, $options);
     global $user;
     if ($user->uid) {
       $this->additional_fields['created'] = array('table' => 'node', 'field' => 'created');
@@ -760,8 +760,8 @@ class views_handler_field_history_user_timestamp extends views_handler_field_nod
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    if (module_exists('comments')) {
-      $form['comments'] = array(
+    if (module_exists('comment')) {
+      $form['comment'] = array(
         '#type' => 'checkbox',
         '#title' => t('Check for new comments as well'),
         '#default_value' => !empty($this->options['comments']),
@@ -789,7 +789,7 @@ class views_handler_field_history_user_timestamp extends views_handler_field_nod
       $created = $values->{$this->aliases['created']};
       $changed = $values->{$this->aliases['changed']};
 
-      $last_comment = module_exists('comments') ? $values->{$this->aliases['last_comment']} : 0;
+      $last_comment = module_exists('comment') ? $values->{$this->aliases['last_comment']} : 0;
 
       if (!$last_read && $created > NODE_NEW_LIMIT) {
         $mark = MARK_NEW;
