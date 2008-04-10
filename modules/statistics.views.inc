@@ -39,7 +39,7 @@ function statistics_views_data() {
     'help' => t('The total number of times the node has been viewed.'), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
      ),
     'filter' => array(
@@ -56,7 +56,7 @@ function statistics_views_data() {
     'help' => t('The total number of times the node has been viewed today.'), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
      ),
     'filter' => array(
@@ -184,7 +184,7 @@ function statistics_views_data() {
     'help' => t('Time in milliseconds that the page took to load.'), // The help that appears on the UI,
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
     ),
     'filter' => array(

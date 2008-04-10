@@ -103,7 +103,7 @@ function upload_views_data() {
     'title' => t('Weight'),
     'help' => t('The weight, used for sorting.'),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
      ),
     'sort' => array(

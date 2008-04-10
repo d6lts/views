@@ -57,7 +57,7 @@ function book_views_data() {
     'title' => t('Weight'),
     'help' => t('The weight of the book page.'),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
     ),
     'sort' => array(
@@ -69,7 +69,7 @@ function book_views_data() {
     'title' => t('Depth'),
     'help' => t('The depth of the book page in the hierarchy; top level books have a depth of 1.'),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
     ),
     'sort' => array(
