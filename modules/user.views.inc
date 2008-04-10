@@ -15,6 +15,9 @@
  * Implementation of hook_views_data()
  */
 function user_views_data() {
+  // ----------------------------------------------------------------
+  // users table
+
   // Define the base group of this table. Fields that don't
   // have a group defined will go into this field by default.
   $data['users']['table']['group']  = t('User');
@@ -36,9 +39,6 @@ function user_views_data() {
       'field' => 'uid',
     ),
   );
-
-  // ----------------------------------------------------------------
-  // Fields
 
   // name
   $data['users']['name'] = array(
@@ -68,11 +68,12 @@ function user_views_data() {
       'handler' => 'views_handler_field_user_mail',
       'click sortable' => TRUE,
     ),
-    // @todo: filter
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
-
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
   );
 
   // uid
@@ -206,7 +207,7 @@ function user_views_data() {
   );
 
   // ----------------------------------------------------------------------
-  // Roles table
+  // users_roles table
 
   $data['users_roles']['table']['group']  = t('User');
 
@@ -229,7 +230,6 @@ function user_views_data() {
     ),
   );
 
-
   $data['users_roles']['rid'] = array(
     'title' => t('Roles'),
     'help' => t('Roles that a user belongs to.'),
@@ -240,7 +240,35 @@ function user_views_data() {
       'handler' => 'views_handler_filter_user_roles',
       'numeric' => TRUE,
     ),
-    // @todo: a base many::one argument handler
+    'argument' => array(
+      'handler' => 'views_handler_argument_users_roles_rid',
+      'name table' => 'role',
+      'name field' => 'name',
+      'empty name field' => t('No role'),
+      'numeric' => TRUE,
+    ),
+  );
+
+  // ----------------------------------------------------------------------
+  // role table
+
+  $data['role']['table']['join'] = array(
+     // Directly links to users table.
+    'users' => array(
+      'left_table' => 'users_roles',
+      'left_field' => 'rid',
+      'field' => 'rid',
+    ),
+    'node' => array(
+      'left_table' => 'users_roles',
+      'left_field' => 'rid',
+      'field' => 'rid',
+    ),
+    'node_revisions' => array(
+      'left_table' => 'users_roles',
+      'left_field' => 'rid',
+      'field' => 'rid',
+    ),
   );
 
   // @todo: tracker default view (in users.default_views.inc -- This really should go in comment)
@@ -613,6 +641,24 @@ class views_handler_filter_user_roles extends views_handler_filter_many_to_one {
 function user_views_query_substitutions($view) {
   global $user;
   return array('***CURRENT_USER***' => intval($user->uid));
+}
+
+/**
+ * Allow role ID(s) as argument
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_users_roles_rid extends views_handler_argument_many_to_one {
+  function title_query() {
+    $titles = array();
+    $rids = implode(', ', $this->value); // only does numbers so safe
+
+    $result = db_query("SELECT name FROM {role} WHERE rid IN (%s)", $rids);
+    while ($term = db_fetch_object($result)) {
+      $titles[] = check_plain($term->name);
+    }
+    return $titles;
+  }
 }
 
 /**
