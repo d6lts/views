@@ -192,7 +192,7 @@ class views_handler_field_date extends views_handler_field {
     $value = $values->{$this->field_alias};
     $format = $this->options['date_format'];
     if ($format == 'custom') {
-      $custom_format = $this->custom_date_format;
+      $custom_format = $this->options['custom_date_format'];
     }
 
     switch ($format) {
