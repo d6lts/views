@@ -1,6 +1,23 @@
 <?php
 // $Id$
 
+/**
+ * @file theme.inc
+ *
+ * An array of preprocessors to fill variables for templates and helper
+ * functions to make theming easier.
+ */
+
+/**
+ * Provide a full array of possible themes to try for a given hook.
+ *
+ * @param $hook
+ *   The hook to use. This is the base theme/template name.
+ * @param $view
+ *   The view being rendered.
+ * @param $display
+ *   The display being rendered, if applicable.
+ */
 function _views_theme_functions($hook, $view, $display = NULL) {
   $themes = array();
 
@@ -311,4 +328,47 @@ function theme_views_mini_pager($tags = array(), $limit = 10, $element = 0, $par
 
 /**
  * @defgroup views_templates Views' template files
+ * @{
+ * All views templates can be overridden with a variety of names, using
+ * the view, the display ID of the view, the display type of the view,
+ * or some combination thereof.
+ *
+ * For each view, there will be a minimum of two templates used. The first
+ * is used for all views: views-view.tpl.php.
+ *
+ * The second template is determined by the style selected for the view. Note
+ * that certain aspects of the view can also change which style is used; for
+ * example, arguments which provide a summary view might change the style to
+ * one of the special summary styles.
+ *
+ * The default style for all views is views-view-unformatted.tpl.php
+ *
+ * Many styles will then farm out the actual display of each row to a row
+ * style; the default row style is views-view-fields.tpl.php.
+ *
+ * Here is an example of all the templates that will be tried in the following
+ * case:
+ *
+ * View, named foobar. Style: unformatted. Row style: Fields. Display: Page.
+ *
+ * - views-view--page--foobar.tpl.php
+ * - views-view--page.tpl.php
+ * - views-view--foobar.tpl.php
+ * - views-view.tpl.php
+ *
+ * - views-view-unformatted--page--foobar.tpl.php
+ * - views-view-unformatted--page.tpl.php
+ * - views-view-unformatted--foobar.tpl.php
+ * - views-view-unformatted.tpl.php
+ *
+ * - views-view-fields--page--foobar.tpl.php
+ * - views-view-fields--page.tpl.php
+ * - views-view-fields--foobar.tpl.php
+ * - views-view-fields.tpl.php
+ *
+ * Important! When adding a new template to your theme, be sure to flush the
+ * theme registry cache! Simply visit admin/build/themes.
+ *
+ * @see _views_theme_functions
+ * @}
  */

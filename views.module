@@ -1,10 +1,12 @@
 <?php
 // $Id$
-
 /**
- * @file views.module
- *
+ * @file
  * Primarily Drupal hooks and global API functions to manipulate views.
+ *
+ * This is the main module file for Views. The main entry points into
+ * this module are views_page() and views_block(), where it handles
+ * incoming page and block requests.
  */
 
 /**
@@ -24,7 +26,6 @@ function views_theme() {
   $hooks['views_mini_pager'] = $base + array(
     'arguments' => array('tags' => array(), 'limit' => 10, 'element' => 0, 'parameters' => array()),
   );
-
 
   $arguments = array(
     'display' => array('view' => NULL),
@@ -90,7 +91,6 @@ function views_theme() {
 /**
  * Implementation of hook_help().
  */
-
 function views_help($path, $arg) {
   switch ($path) {
     case 'admin/help#views':

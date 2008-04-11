@@ -1,5 +1,15 @@
 <?php
+// $Id$
+/**
+ * @file
+ *
+ * An array of preprocessors to fill variables for templates and helper
+ * functions to make theming easier.
+ */
 
+/**
+ * Contain a set of tabs as well as the ability to render them.
+ */
 class views_tabset {
   var $tabs = array();
   var $extra = '';
@@ -87,6 +97,11 @@ class views_tab {
   }
 }
 
+/**
+ * Render a tabset.
+ *
+ * @todo Turn this into a template.
+ */
 function theme_views_tabset($tabs, $extra = NULL, $selected = NULL) {
   $link_output = "<div class=\"views-tabs\"><ul id=\"views-tabset\">\n";
   $tab_output = "<div class=\"views-tab-area\">\n";

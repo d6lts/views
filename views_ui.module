@@ -1,9 +1,7 @@
 <?php
 // $Id$
-
 /**
  * @file views_ui.module
- *
  * Provide structure for the administrative interface to Views.
  */
 
