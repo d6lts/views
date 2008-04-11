@@ -133,7 +133,7 @@ function views_discover_plugins() {
 }
 
 /**
- * @defgroup views_plugin_displays Views' display plugins
+ * @defgroup views_display_plugins Views' display plugins
  * @{
  * Display plugins control how Views interact with the rest of Drupal.
  *
@@ -141,6 +141,8 @@ function views_discover_plugins() {
  * handle creating Views from a Drupal block hook. They can also
  * handle creating Views from an external module source, such as
  * a Panels pane, or an insert view, or a CCK field type.
+ *
+ * @see hook_views_plugins
  */
 
 /**
@@ -1681,7 +1683,7 @@ class views_plugin_display_block extends views_plugin_display {
  */
 
 /**
- * @defgroup views_plugin_styles Views' style plugins
+ * @defgroup views_style_plugins Views' style plugins
  * @{
  * Style plugins control how a view is rendered. For example, they
  * can choose to display a collection of fields, node_view() output,
@@ -1690,6 +1692,8 @@ class views_plugin_display_block extends views_plugin_display {
  * Many style plugins can have an optional 'row' plugin, that displays
  * a single record. Not all style plugins can utilize this, so it is
  * up to the plugin to set this up and call through to the row plugin.
+ *
+ * @see hook_views_plugins
  */
 
 /**
@@ -2190,12 +2194,14 @@ class views_plugin_style_summary extends views_plugin_style {
  */
 
 /**
- * @defgroup views_plugin_rows Views' row plugins
+ * @defgroup views_row_plugins Views' row plugins
  * @{
  *
  * Row plugins control how Views outputs an individual record. They are
  * tightly coupled to style plugins, in that a style plugin is what calls
  * the row plugin.
+ *
+ * @see hook_views_plugins
  */
 
 /**

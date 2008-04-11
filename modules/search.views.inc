@@ -6,7 +6,7 @@
  */
 
 /**
- * @defgroup views_node_module node.module handlers
+ * @defgroup views_search_module search.module handlers
  *
  * Includes the tables 'search_index'
  * @{

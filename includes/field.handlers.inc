@@ -369,8 +369,8 @@ class views_handler_field_prerender_list extends views_handler_field {
     );
   }
 
-  function render($value) {
-    $field = $value->{$this->field_alias};
+  function render($values) {
+    $field = $values->{$this->field_alias};
     if (!empty($this->items[$field])) {
       if ($this->options['type'] == 'separator') {
         return implode(check_plain($this->options['separator']), $this->items[$field]);

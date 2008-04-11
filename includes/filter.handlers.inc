@@ -4,11 +4,6 @@
  * @file
  * Views' filter handlers.
  */
-/**
- * @defgroup views_sort_handlers Views' sort handlers
- * @{
- * Handlers to tell Views how to sort queries
- */
 
 /**
  * @defgroup views_filter_handlers Views' filter handlers
@@ -1292,5 +1287,3 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
 /**
  * @}
  */
-
-

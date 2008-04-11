@@ -149,12 +149,12 @@ class views_handler_field_upload_fid extends views_handler_field_prerender_list 
     $this->field_alias = $this->aliases['nid'];
   }
 
-  function pre_render($results) {
+  function pre_render($values) {
     $nids = array();
     $this->items = array();
 
     $data = array();
-    foreach ($results as $result) {
+    foreach ($values as $result) {
       $nids[] = $result->{$this->aliases['nid']};
     }
 
@@ -207,7 +207,7 @@ class views_handler_field_upload_description extends views_handler_field_prerend
     );
   }
 
-  function pre_render($results) {
+  function pre_render($values) {
     if (empty($this->options['link_to_file'])) {
       return;
     }
@@ -216,7 +216,7 @@ class views_handler_field_upload_description extends views_handler_field_prerend
     $this->items = array();
 
     $data = array();
-    foreach ($results as $result) {
+    foreach ($values as $result) {
       $fids[] = $result->{$this->aliases['fid']};
     }
 
@@ -229,9 +229,8 @@ class views_handler_field_upload_description extends views_handler_field_prerend
     }
   }
 
-  function render($value) {
-    return $this->render_link($value->{$this->field_alias}, $value);
-
+  function render($values) {
+    return $this->render_link($values->{$this->field_alias}, $values);
   }
 
   /**

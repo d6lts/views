@@ -6,7 +6,7 @@
  */
 
 /**
- * @defgroup views_user_module user.module handlers
+ * @defgroup views_profile_module profile.module handlers
  *
  * @{
  */

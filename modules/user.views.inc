@@ -496,11 +496,11 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
     $this->field_alias = $this->aliases['uid'];
   }
 
-  function pre_render($results) {
+  function pre_render($values) {
     $uids = array();
     $this->items = array();
 
-    foreach ($results as $result) {
+    foreach ($values as $result) {
       $uids[] = $result->{$this->aliases['uid']};
     }
 

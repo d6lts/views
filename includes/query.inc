@@ -464,9 +464,9 @@ class views_query {
   /**
    * Retrieve join data from the larger join data cache.
    *
-   * @param
+   * @param $table
    *   The table to get the join information for.
-   * @param
+   * @param $base_table
    *   The path we're following to get this join.
    *
    * @return
