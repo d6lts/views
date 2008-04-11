@@ -16,6 +16,7 @@
  * - @ref views_hooks
  * - @ref views_handlers
  * - @ref views_plugins
+ * - @ref views_templates
  */
 
 /**

@@ -40,6 +40,37 @@ function user_views_data() {
     ),
   );
 
+  // uid
+  $data['users']['uid'] = array(
+    'title' => t('Uid'),
+    'help' => t('The user ID'), // The help that appears on the UI,
+    'field' => array(
+      'handler' => 'views_handler_field_user',
+      'click sortable' => TRUE,
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_user_uid',
+      'name field' => 'name', // display this field in the summary
+    ),
+    'filter' => array(
+      'title' => t('Name'),
+      'handler' => 'views_handler_filter_user_name',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // uid
+  $data['users']['uid_current'] = array(
+    'real field' => 'uid',
+    'title' => t('Current'),
+    'help' => t('Filter the view to the currently logged in user.'),
+    'filter' => array(
+      'handler' => 'views_handler_filter_user_current',
+    ),
+  );
+
   // name
   $data['users']['name'] = array(
     'title' => t('Name'), // The item it appears as on the UI,
@@ -50,9 +81,6 @@ function user_views_data() {
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_user_name',
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_string',
@@ -73,30 +101,6 @@ function user_views_data() {
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_string',
-    ),
-  );
-
-  // uid
-  $data['users']['uid'] = array(
-    'title' => t('Uid'),
-    'help' => t('The user ID'), // The help that appears on the UI,
-    // Information for displaying the uid
-    'field' => array(
-      'handler' => 'views_handler_field_user',
-      'click sortable' => TRUE,
-    ),
-    // Information for accepting a uid as an argument
-    'argument' => array(
-      'handler' => 'views_handler_argument_user_uid',
-      'name field' => 'name', // display this field in the summary
-    ),
-    // Information for accepting a uid as a filter
-    'filter' => array(
-      'handler' => 'views_handler_filter_numeric',
-    ),
-    // Information for sorting on a uid.
-    'sort' => array(
-      'handler' => 'views_handler_sort',
     ),
   );
 
@@ -563,7 +567,7 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     $form['value'] = array(
       '#type' => 'textfield',
       '#title' => t('Usernames'),
-      '#description' => t('Enter a comma separated list of usernames'),
+      '#description' => t('Enter a comma separated list of user names.'),
       '#default_value' => implode(', ', $values),
       '#autocomplete_path' => 'admin/build/views/autocomplete/user',
     );
@@ -603,6 +607,9 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     // prevent array filter from removing our anonymous user.
   }
 
+  // Override to do nothing.
+  function get_value_options() { }
+
   function admin_summary() {
     // set up $this->value_options for the parent summary
     $this->value_options = array();
@@ -619,7 +626,25 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
         }
       }
     }
+
     return parent::admin_summary();
+  }
+}
+
+/**
+ * Filter handler for the current user
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_user_current extends views_handler_filter_boolean_operator {
+  function construct() {
+    parent::construct();
+    $this->value_value = t('Is the logged in user');
+  }
+
+  function query() {
+    $this->ensure_my_table();
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . (empty($this->value) ? '!=' : '=') . " ***CURRENT_USER***");
   }
 }
 

@@ -27,7 +27,7 @@ function _views_create_handler($definition) {
  * Prepare a handler's data by checking defaults and such.
  */
 function _views_prepare_handler($definition, $data, $field) {
-  foreach (array('group', 'title', 'help') as $key) {
+  foreach (array('group', 'title', 'help', 'real field') as $key) {
     // First check the field level
     if (!isset($definition[$key]) && !empty($data[$field][$key])) {
       $definition[$key] = $data[$field][$key];
@@ -113,6 +113,14 @@ class views_handler extends views_object {
     // This exist on most handlers, but not all. So they are still optional.
     if (isset($options['table'])) {
       $this->table = $options['table'];
+    }
+
+    if (isset($this->definition['real field'])) {
+      $this->real_field = $this->definition['real field'];
+    }
+
+    if (isset($this->definition['field'])) {
+      $this->real_field = $this->definition['field'];
     }
 
     if (isset($options['field'])) {
