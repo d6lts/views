@@ -70,6 +70,9 @@ function template_preprocess_views_view(&$vars) {
   $vars['more']       = $view->display_handler->render_more_link();
   $vars['feed_icon']  = $view->display_handler->render_feed_icon();
 
+  $vars['attachment_before'] = !empty($view->attachment_before) ? $view->attachment_before : '';
+  $vars['attachment_after'] = !empty($view->attachment_after) ? $view->attachment_after : '';
+
   $vars['pager']      = '';
   if (!empty($view->pager['use_pager'])) {
     $pager_type = $view->pager['use_pager'] == 'mini' ? 'views_mini_pager' : 'pager';

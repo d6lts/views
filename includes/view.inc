@@ -647,9 +647,7 @@ class view extends views_db_object {
       }
     }
 
-    $output = $this->display_handler->render();
-
-    return $this->attachment_before . $output . $this->attachment_after;
+    return $this->display_handler->render();
   }
 
   /**
