@@ -875,14 +875,14 @@ function views_get_view($name, $reset = FALSE) {
   }
   elseif (empty($view) && !empty($default_view)) {
     $default_view->type = t('Default');
-    return $default_view;
+    return drupal_clone($default_view);
   }
   elseif (!empty($view) && !empty($default_view)) {
     $view->type = t('Overridden');
-    return $view;
+    return drupal_clone($view);
   }
 
-  return $view;
+  return drupal_clone($view);
 }
 
 /**

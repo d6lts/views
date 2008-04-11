@@ -1058,6 +1058,7 @@ function views_ui_add_display_form(&$form_state) {
   $form['display']['display'] = array(
     '#type' => 'select',
     '#options' => views_fetch_plugin_names('display'),
+    '#default_value' => 'page',
   );
 
   $form['display']['add_display'] = array(

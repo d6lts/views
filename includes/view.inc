@@ -38,6 +38,10 @@ class view extends views_db_object {
     'current_page' => 0,
   );
 
+  // Places to put attached renderings:
+  var $attachment_before = '';
+  var $attachment_after = '';
+
   // Exposed widget input
   var $exposed_data = array();
   var $exposed_input = array();
@@ -131,10 +135,27 @@ class view extends views_db_object {
   /**
    * Set the display for this view and initialize the display handler.
    */
-  function init_display($test = NULL) {
+  function init_display($reset = FALSE) {
     // The default display is always the first one in the list.
     if (isset($this->current_display)) {
-      return TRUE;
+      if (!$reset) {
+        return TRUE;
+      }
+      else {
+        if (isset($this->current_display)) {
+          unset($this->current_display);
+        }
+
+        if (isset($this->display_handler)) {
+          unset($this->display_handler);
+        }
+
+        foreach ($this->display as $id => $display) {
+          if (isset($this->display[$id]->handler)) {
+            unset($this->display[$id]->handler);
+          }
+        }
+      }
     }
 
     // Instantiate all displays
@@ -404,8 +425,10 @@ class view extends views_db_object {
       return;
     }
 
-    if (!$this->set_display($display_id)) {
-      return FALSE;
+    if (empty($this->current_display) || $display_id) {
+      if (!$this->set_display($display_id)) {
+        return FALSE;
+      }
     }
 
     // Execute the initial PHP code that a view can have.
@@ -624,7 +647,9 @@ class view extends views_db_object {
       }
     }
 
-    return $this->display_handler->render();
+    $output = $this->display_handler->render();
+
+    return $this->attachment_before . $output . $this->attachment_after;
   }
 
   /**
@@ -641,6 +666,13 @@ class view extends views_db_object {
 
     // Prepare the view with the information we have.
     $this->set_arguments($args);
+
+    // Give other displays an opportunity to attach to the view.
+    foreach ($this->display as $id => $display) {
+      if (!empty($this->display[$id]->handler)) {
+        $this->display[$id]->handler->attach_to($this->current_display);
+      }
+    }
 
     // Allow the display handler to set up for execution
     $this->display_handler->pre_execute();
@@ -663,6 +695,13 @@ class view extends views_db_object {
 
     // Prepare the view with the information we have.
     $this->set_arguments($args);
+
+    // Give other displays an opportunity to attach to the view.
+    foreach ($this->display as $id => $display) {
+      if (!empty($this->display[$id]->handler)) {
+        $this->display[$id]->handler->attach_to($this->current_display);
+      }
+    }
 
     // Allow the display handler to set up for execution
     $this->display_handler->pre_execute();

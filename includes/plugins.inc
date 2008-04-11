@@ -24,6 +24,7 @@ function views_views_plugins() {
         'use ajax' => TRUE,
         'use pager' => TRUE,
         'use more' => TRUE,
+        'accept attachments' => TRUE,
       ),
       'page' => array(
         'title' => t('Page'),
@@ -32,6 +33,7 @@ function views_views_plugins() {
         'uses hook menu' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
+        'accept attachments' => TRUE,
       ),
       'block' => array(
         'title' => t('Block'),
@@ -41,6 +43,13 @@ function views_views_plugins() {
         'use ajax' => TRUE,
         'use pager' => TRUE,
         'use more' => TRUE,
+        'accept attachments' => TRUE,
+      ),
+      'attachment' => array(
+        'title' => t('Attachment'),
+        'help' => t('Attachments added to other displays to achieve multiple views in the same view.'),
+        'handler' => 'views_plugin_display_attachment',
+        'use ajax' => TRUE,
       ),
     ),
     'style' => array(
@@ -214,6 +223,18 @@ class views_plugin_display extends views_object {
     }
     return FALSE;
   }
+
+  /**
+   * Can this display accept attachments?
+   */
+  function accept_attachments() {
+    return !empty($this->definition['accept attachments']);
+  }
+
+  /**
+   * Allow displays to attach to other views.
+   */
+  function attach_to($display_id) { }
 
   /**
    * Static member function to list which sections are defaultable
@@ -1207,7 +1228,7 @@ class views_plugin_display_default extends views_plugin_display {
    * data if necessary.
    */
   function execute() {
-    return $this->view->render();
+    return $this->view->render($this->display->id);
   }
 }
 
@@ -1678,6 +1699,178 @@ class views_plugin_display_block extends views_plugin_display {
   function uses_exposed() { return FALSE; }
 }
 
+/**
+ * The plugin that handles an attachment display.
+ */
+class views_plugin_display_attachment extends views_plugin_display {
+  /**
+   * Execute the attachment view.
+   */
+  function options(&$display) {
+    parent::options(&$display);
+    $display->display_options['attachment_position'] = 'before';
+    $display->display_options['inherit_arguments'] = TRUE;
+    $display->display_options['displays'] = array();
+  }
+
+  function execute() {
+    return $this->view->render();
+  }
+
+  function attachment_positions($position) {
+    $positions = array(
+      'before' => t('Before'),
+      'after' => t('After'),
+      'both' => t('Both'),
+    );
+  }
+
+  /**
+   * Provide the summary for attachment options in the views UI.
+   *
+   * This output is returned as an array.
+   */
+  function options_summary(&$categories, &$options) {
+    // It is very important to call the parent function here:
+    parent::options_summary($categories, $options);
+
+    $categories['attachment'] = array(
+      'title' => t('Attachment settings'),
+    );
+
+    $options['inherit_arguments'] = array(
+      'category' => 'attachment',
+      'title' => t('Inherit arguments'),
+      'value' => $this->get_option('inherit_arguments') ? t('Yes') : t('No'),
+    );
+
+    $options['attachment_position'] = array(
+      'category' => 'attachment',
+      'title' => t('Position'),
+      'value' => $this->attachment_positions($this->get_option('attachment_position')),
+    );
+
+    $displays = array_filter($this->get_option('displays'));
+    if (count($displays) > 1) {
+      $attach_to = t('Multiple displays');
+    }
+    else if (count($displays) == 1) {
+      $display = array_shift($displays);
+      if (!empty($this->view->display[$display])) {
+        $attach_to = $this->view->display[$display]->display_title;
+      }
+    }
+
+    if (!isset($attach_to)) {
+      $attach_to = t('None');
+    }
+
+    $options['displays'] = array(
+      'category' => 'attachment',
+      'title' => t('Attach to'),
+      'value' => $attach_to,
+    );
+  }
+
+  /**
+   * Provide the default form for setting options.
+   */
+  function options_form(&$form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_form($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'inherit_arguments':
+        $form['#title'] .= t('Inherit arguments');
+        $form['inherit_arguments'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Inherit'),
+          '#description' => t('Should this display inherit its arguments from the parent display to which it is attached?'),
+          '#default_value' => $this->get_option('inherit_arguments'),
+        );
+        break;
+      case 'attachment_position':
+        $form['#title'] .= t('Position');
+        $form['attachment_position'] = array(
+          '#type' => 'checkboxes',
+          '#description' => t('Attach before or after the parent display?'),
+          '#options' => $this->attachment_positions(),
+          '#default_value' => $this->get_option('attachment_position'),
+        );
+        break;
+      case 'displays':
+        $form['#title'] .= t('Attach to');
+        $displays = array();
+        foreach ($this->view->display as $display_id => $display) {
+          if (!empty($display->handler) && $display->handler->accept_attachments()) {
+            $displays[$display_id] = $display->display_title;
+          }
+        }
+        $form['displays'] = array(
+          '#type' => 'checkboxes',
+          '#description' => t('Attach before or after the parent display?'),
+          '#options' => $displays,
+          '#default_value' => $this->get_option('displays'),
+        );
+        break;
+    }
+  }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_submit($form, $form_state);
+    switch ($form_state['section']) {
+      case 'inherit_arguments':
+      case 'attachment_position':
+      case 'displays':
+        $this->set_option($form_state['section'], $form_state['values'][$form_state['section']]);
+        break;
+    }
+  }
+
+  /**
+   * Attach to another view.
+   */
+  function attach_to($display_id) {
+    $displays = $this->get_option('displays');
+    if (empty($displays[$display_id])) {
+      return;
+    }
+
+    // Get a fresh view because our current one has a lot of stuff on it because it's
+    // already been executed.
+    $view = drupal_clone($this->view);
+    $view->init_display(TRUE); // totally reset the displays.
+
+    $args = $this->get_option('inherit_arguments') ? $this->view->args : array();
+
+    // because of this, it is very very important that displays that can accept
+    // attachments not also be attachments, or this could explode messily.
+    $attachment = $view->execute_display($this->display->id, $args);
+
+    switch ($this->get_option('attachment_position')) {
+      case 'before':
+        $this->view->attachment_before .= $attachment;
+        break;
+      case 'after':
+        $this->view->attachment_after .= $attachment;
+        break;
+      case 'both':
+        $this->view->attachment_before .= $attachment;
+        $this->view->attachment_after .= $attachment;
+        break;
+    }
+  }
+
+  /**
+   * Attachment views do not use exposed widgets.
+   */
+  function uses_exposed() { return FALSE; }
+}
 /**
  * @}
  */
