@@ -10,4 +10,8 @@
  */
 ?>
 
-<a href="<?php print $more_url ?>">View more</a>
+<div class="more-link">
+  <a href="<?php print $more_url ?>">
+    <?php print t('more'); ?>
+  </a>
+</div>
