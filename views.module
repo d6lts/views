@@ -70,6 +70,24 @@ function views_theme() {
           $hooks[$def['theme']]['template'] = views_css_safe($def['theme']);
         }
       }
+      if (isset($def['additional themes'])) {
+        foreach ($def['additional themes'] as $theme => $theme_type) {
+          if (empty($theme_type)) {
+            $theme = $theme_type;
+            $theme_type = $type;
+          }
+
+          $hooks[$theme] = array(
+            'pattern' => $theme . '__',
+            'file' => $def['file'],
+            'path' => $def['path'],
+            'arguments' => $arguments[$theme_type],
+          );
+          if (!function_exists('theme_' . $theme)) {
+            $hooks[$theme]['template'] = views_css_safe($theme);
+          }
+        }
+      }
     }
   }
 
@@ -656,17 +674,23 @@ function views_get_plugin($type, $plugin) {
 /**
  * Fetch a list of all base tables available
  *
+ * @param $type
+ *   Either 'display', 'style' or 'row'
+ * @param $key
+ *   For style plugins, this is an optional type to restrict to. May be 'normal',
+ *   'summary', 'feed' or others based on the neds of the display.
+ *
  * @return
  *   A keyed array of in the form of 'base_table' => 'Description'.
  */
-function views_fetch_plugin_names($type, $key = NULL, $empty = FALSE) {
+function views_fetch_plugin_names($type, $key = NULL) {
   $data = views_fetch_plugin_data();
 
   $plugins[$type] = array();
 
   foreach ($data[$type] as $id => $plugin) {
     // Skip plugins that don't conform to our key.
-    if ($key && (($empty && empty($plugin[$key])) || (!$empty && !empty($plugin[$key])))) {
+    if ($key && (empty($plugin['type']) || $plugin['type'] != $key)) {
       continue;
     }
     if (empty($plugin['no ui'])) {

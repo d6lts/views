@@ -2010,7 +2010,7 @@ function views_ui_change_style_form(&$form_state) {
 
     $form['style_plugin'] =  array(
       '#type' => 'radios',
-      '#options' => views_fetch_plugin_names('style', 'summary', TRUE),
+      '#options' => views_fetch_plugin_names('style', 'summary'),
       '#default_value' => $item['style_plugin'],
     );
 

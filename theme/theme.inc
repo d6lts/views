@@ -68,7 +68,7 @@ function template_preprocess_views_view(&$vars) {
     $vars['footer']   = $view->display_handler->render_footer();
   }
   $vars['more']       = $view->display_handler->render_more_link();
-  $vars['feed_icon']  = $view->display_handler->render_feed_icon();
+  $vars['feed_icon']  = !empty($view->feed_icon) ? $view->feed_icon : '';
 
   $vars['attachment_before'] = !empty($view->attachment_before) ? $view->attachment_before : '';
   $vars['attachment_after'] = !empty($view->attachment_after) ? $view->attachment_after : '';
@@ -239,6 +239,42 @@ function template_preprocess_views_view_table(&$vars) {
       }
     }
   }
+}
+
+/**
+ * Preprocess an RSS feed
+ */
+function template_preprocess_views_view_rss(&$vars) {
+  global $base_url;
+  global $language;
+
+  $view     = &$vars['view'];
+  $options  = &$vars['options'];
+  $items    = &$vars['rows'];
+
+  $style    = &$view->style_handler;
+
+  if (!empty($options['mission_description'])) {
+    $description = variable_get('site_mission', '');
+  }
+  else {
+    $description = $options['description'];
+  }
+
+  // Figure out which display which has a path we're using for this feed. If there isn't
+  // one, use the global $base_url
+  $link_display = $view->display_handler->get_link_display();
+
+
+  // Compare the link to the default home page; if it's the default home page, just use $base_url.
+  if (empty($vars['link'])) {
+    $vars['link'] = $base_url;
+  }
+
+  $vars['namespaces'] = drupal_attributes($style->namespaces);
+  $vars['channel'] = format_rss_channel($view->get_title(), $vars['link'], $description, $items, $language->language);
+
+  drupal_set_header('Content-Type: application/rss+xml; charset=utf-8');
 }
 
 /**

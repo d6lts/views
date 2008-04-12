@@ -1138,6 +1138,15 @@ function node_views_plugins() {
         'theme' => 'views_view_row_node',
         'base' => array('node'), // only works with 'node' as base.
         'uses options' => TRUE,
+        'type' => 'normal',
+      ),
+      'node_rss' => array(
+        'title' => t('Node'),
+        'help' => t('Display the node with standard node view.'),
+        'handler' => 'views_plugin_row_node_rss',
+        'base' => array('node'), // only works with 'node' as base.
+        'uses options' => TRUE,
+        'type' => 'feed',
       ),
     ),
   );
@@ -1203,6 +1212,105 @@ function template_preprocess_views_view_row_node(&$vars) {
 function views_preprocess_node($vars) {
   if (!empty($vars['node']->view) && !empty($vars['node']->view->name)) {
     $vars['template_files'][] = 'node-view-' . $vars['node']->view->name;
+  }
+}
+
+/**
+ * Plugin which performs a node_view on the resulting object
+ * and formats it as an RSS item.
+ *
+ * @ingroup views_plugin_rows
+ */
+class views_plugin_row_node_rss extends views_plugin_row {
+  function options($display) {
+    return array(
+      'item_length' => 'default',
+    );
+  }
+
+  function options_form(&$form, &$form_state) {
+    $form['item_length'] = array(
+      '#type' => 'select',
+      '#title' => t('Display type'),
+      '#options' => array(
+        'fulltext' => t('Full text'),
+        'teaser' => t('Title plus teaser'),
+        'title' => t('Title only'),
+        'default' => t('Use default RSS settings'),
+      ),
+      '#default_value' => $this->options['item_length'],
+    );
+  }
+
+  function render($row) {
+    // For the most part, this code is taken from node_feed() in node.module
+    global $base_url;
+
+    $item_length = $this->options['item_length'];
+    if ($item_length == 'default') {
+      $item_length = variable_get('feed_item_length', 'teaser');
+    }
+
+    if (empty($this->view->style_handler->namespaces)) {
+      $this->view->style_handler->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
+    }
+
+    // Load the specified node:
+    $item = node_load($row->nid);
+    $item->build_mode = NODE_BUILD_RSS;
+    $item->link = url("node/$row->nid", array('absolute' => TRUE));
+
+    if ($item_length != 'title') {
+      $teaser = ($item_length == 'teaser') ? TRUE : FALSE;
+
+      // Filter and prepare node teaser
+      if (node_hook($item, 'view')) {
+        $item = node_invoke($item, 'view', $teaser, FALSE);
+      }
+      else {
+        $item = node_prepare($item, $teaser);
+      }
+
+      // Allow modules to change $node->teaser before viewing.
+      node_invoke_nodeapi($item, 'view', $teaser, FALSE);
+    }
+
+    // Allow modules to add additional item fields and/or modify $item
+    $extra = node_invoke_nodeapi($item, 'rss item');
+    $extra = array_merge($extra,
+      array(
+        array('key' => 'pubDate', 'value' => format_date($item->created, 'custom', 'r')),
+        array('key' => 'dc:creator', 'value' => $item->name),
+        array(
+          'key' => 'guid',
+          'value' => $item->nid . ' at ' . $base_url,
+          'attributes' => array('isPermaLink' => 'false')
+        ),
+      )
+    );
+    foreach ($extra as $element) {
+      if (isset($element['namespace'])) {
+        $this->view->style_handler->namespaces = array_merge($this->view->style_handler->namespaces, $element['namespace']);
+      }
+    }
+
+    // Prepare the item description
+    switch ($item_length) {
+      case 'fulltext':
+        $item_text = $item->body;
+        break;
+      case 'teaser':
+        $item_text = $item->teaser;
+        if (!empty($item->readmore)) {
+          $item_text .= '<p>'. l(t('read more'), 'node/'. $item->nid, array('absolute' => TRUE, 'attributes' => array('target' => '_blank'))) .'</p>';
+        }
+        break;
+      case 'title':
+        $item_text = '';
+        break;
+    }
+
+    return format_rss_item($item->title, $item->link, $item_text, $extra);
   }
 }
 

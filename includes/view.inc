@@ -694,6 +694,8 @@ class view extends views_db_object {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
 
+    $this->preview = TRUE;
+
     // Give other displays an opportunity to attach to the view.
     foreach ($this->display as $id => $display) {
       if (!empty($this->display[$id]->handler)) {
@@ -798,8 +800,10 @@ class view extends views_db_object {
    *
    * This URL will be adjusted for arguments.
    */
-  function get_url($args = NULL) {
-    $path = $this->get_path();
+  function get_url($args = NULL, $path = NULL) {
+    if (!isset($path)) {
+      $path = $this->get_path();
+    }
     if (!isset($args)) {
       $args = $this->args;
     }

@@ -786,8 +786,9 @@ class views_query {
   function query($get_count = FALSE) {
     // Check query distinct value.
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
-      $this->fields[$this->base_field]['distinct'] = TRUE;
-      $this->count_field['distinct'] = TRUE;
+      if (!empty($this->fields[$this->base_field])) {
+        $this->fields[$this->base_field]['distinct'] = TRUE;
+      }
     }
 
     $joins = $fields = $where = $having = $orderby = $groupby = '';
@@ -805,7 +806,7 @@ class views_query {
         $fields .= ",\n   ";
       }
       $string = '';
-      if ($field['table']) {
+      if (!empty($field['table'])) {
         $string .= $field['table'] . '.';
       }
       $string .= $field['field'];

@@ -51,6 +51,15 @@ function views_views_plugins() {
         'handler' => 'views_plugin_display_attachment',
         'use ajax' => TRUE,
       ),
+      'feed' => array(
+        'title' => t('Feed'),
+        'help' => t('Display the view as a feed, such as an RSS feed.'),
+        'handler' => 'views_plugin_display_feed',
+        'uses hook menu' => TRUE,
+        'use ajax' => FALSE,
+        'use pager' => FALSE,
+        'accept attachments' => FALSE,
+      ),
     ),
     'style' => array(
       'default' => array(
@@ -59,6 +68,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_style_default',
         'theme' => 'views_view_unformatted',
         'uses row plugin' => TRUE,
+        'type' => 'normal',
       ),
       'list' => array(
         'title' => t('List'),
@@ -67,6 +77,7 @@ function views_views_plugins() {
         'theme' => 'views_view_list',
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
+        'type' => 'normal',
       ),
       'table' => array(
         'title' => t('Table'),
@@ -76,14 +87,24 @@ function views_views_plugins() {
         'uses row plugin' => FALSE,
         'uses fields' => TRUE,
         'uses options' => TRUE,
+        'type' => 'normal',
       ),
       'default_summary' => array(
         'title' => t('Default'),
         'help' => t('Displays the default summary view'),
         'handler' => 'views_plugin_style_summary',
         'theme' => 'views_view_summary',
-        'summary' => TRUE, // only shows up as a summary style
+        'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
+      ),
+      'rss' => array(
+        'title' => t('RSS Feed'),
+        'help' => t('Generates an RSS feed from a view.'),
+        'handler' => 'views_plugin_style_rss',
+        'theme' => 'views_view_rss',
+        'uses row plugin' => TRUE,
+        'uses options' => TRUE,
+        'type' => 'feed',
       ),
     ),
     'row' => array(
@@ -93,10 +114,10 @@ function views_views_plugins() {
         'handler' => 'views_plugin_row',
         'theme' => 'views_view_fields',
         'uses fields' => TRUE,
+        'type' => 'normal',
       ),
     ),
   );
-
 }
 
 /**
@@ -344,6 +365,15 @@ class views_plugin_display extends views_object {
   function has_path() { return FALSE; }
 
   /**
+   * Check to see if the display has some need to link to another display.
+   *
+   * For the most part, displays without a path will use a link display. However,
+   * sometimes displays that have a path might also need to link to another display.
+   * This is true for feeds.
+   */
+  function uses_link_display() { return !$this->has_path(); }
+
+  /**
    * Check to see which display to use when creating links within
    * a view using this display.
    */
@@ -578,7 +608,7 @@ class views_plugin_display extends views_object {
       'desc' => t('Specify access control settings for this display.'),
     );
 
-    if (!$this->has_path()) {
+    if ($this->uses_link_display()) {
       // Only show the 'link display' if there is more than one option.
       $count = 0;
       foreach ($this->view->display as $display_id => $display) {
@@ -830,7 +860,7 @@ class views_plugin_display extends views_object {
         $form['#title'] .= t('How should this view be styled');
         $form['style_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('style', 'summary', FALSE),
+          '#options' => views_fetch_plugin_names('style', $this->get_style_type()),
           '#default_value' => $this->get_option('style_plugin'),
           '#description' => t('If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary.'),
         );
@@ -859,7 +889,7 @@ class views_plugin_display extends views_object {
         $form['#title'] .= t('How should each row in this view be styled');
         $form['row_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('row', 'summary', FALSE),
+          '#options' => views_fetch_plugin_names('row', $this->get_style_type()),
           '#default_value' => $this->get_option('row_plugin'),
         );
         break;
@@ -1076,11 +1106,6 @@ class views_plugin_display extends views_object {
   }
 
   /**
-   * Not all display plugins will have a feed icon.
-   */
-  function render_feed_icon() { }
-
-  /**
    * Render a text area, using hte proper format.
    */
   function render_textarea($area) {
@@ -1167,6 +1192,12 @@ class views_plugin_display extends views_object {
    * some other AJAXy reason.
    */
   function preview() { return $this->view->render(); }
+
+  /**
+   * Displays can require a certain type of style plugin. By default, they will
+   * be 'normal'.
+   */
+  function get_style_type() { return 'normal'; }
 }
 
 /**
@@ -1703,18 +1734,15 @@ class views_plugin_display_block extends views_plugin_display {
  * The plugin that handles an attachment display.
  */
 class views_plugin_display_attachment extends views_plugin_display {
-  /**
-   * Execute the attachment view.
-   */
   function options(&$display) {
-    parent::options(&$display);
+    parent::options($display);
     $display->display_options['attachment_position'] = 'before';
     $display->display_options['inherit_arguments'] = TRUE;
     $display->display_options['displays'] = array();
   }
 
   function execute() {
-    return $this->view->render();
+    return $this->view->render($this->display->id);
   }
 
   function attachment_positions($position) {
@@ -1871,6 +1899,154 @@ class views_plugin_display_attachment extends views_plugin_display {
    */
   function uses_exposed() { return FALSE; }
 }
+
+/**
+ * The plugin that handles a feed, such as RSS or atom.
+ *
+ * For the most part, feeds are page displays but with some subtle differences.
+ */
+class views_plugin_display_feed extends views_plugin_display_page {
+  function uses_breadcrumb() { return FALSE; }
+  function get_style_type() { return 'feed'; }
+
+  /**
+   * Feeds do not go through the normal page theming mechanism. Instead, they
+   * go through their own little theme function and then return NULL so that
+   * Drupal believes that the page has already rendered itself...which it has.
+   */
+  function execute() {
+    print $this->view->render();
+  }
+
+  function preview() {
+    return '<pre>' . check_plain($this->view->render()) . '</pre>';
+  }
+
+  /**
+   * Instead of going through the standard views_view.tpl.php, delegate this
+   * to the style handler.
+   */
+  function render() {
+    return $this->view->style_handler->render($this->view->result);
+  }
+
+  function defaultable_sections($section = NULL) {
+    if (in_array($section, array('style_options', 'style_plugin', 'row_options', 'row_plugin',))) {
+      return FALSE;
+    }
+
+    return parent::defaultable_sections($section);
+  }
+
+  function options(&$display) {
+    parent::options($display);
+    $display->display_options['displays'] = array();
+    $display->display_options['style_plugin'] = 'rss';
+    $display->display_options['style_options'] = array('mission_description' => FALSE, 'description' => '');
+    $display->display_options['row_plugin'] = '';
+    $display->display_options['defaults']['style_plugin'] = FALSE;
+    $display->display_options['defaults']['style_options'] = FALSE;
+    $display->display_options['defaults']['row_plugin'] = FALSE;
+    $display->display_options['defaults']['row_options'] = FALSE;
+
+  }
+
+  function options_summary(&$categories, &$options) {
+    // It is very important to call the parent function here:
+    parent::options_summary($categories, $options);
+
+    // Since we're childing off the 'page' type, we'll still *call* our
+    // category 'page' but let's override it so it says feed settings.
+    $categories['page'] = array(
+      'title' => t('Feed settings'),
+    );
+
+    // I don't think we want to give feeds menus directly.
+    unset($options['menu']);
+
+    $displays = array_filter($this->get_option('displays'));
+    if (count($displays) > 1) {
+      $attach_to = t('Multiple displays');
+    }
+    else if (count($displays) == 1) {
+      $display = array_shift($displays);
+      if (!empty($this->view->display[$display])) {
+        $attach_to = $this->view->display[$display]->display_title;
+      }
+    }
+
+    if (!isset($attach_to)) {
+      $attach_to = t('None');
+    }
+
+    $options['displays'] = array(
+      'category' => 'page',
+      'title' => t('Attach to'),
+      'value' => $attach_to,
+    );
+  }
+
+  /**
+   * Provide the default form for setting options.
+   */
+  function options_form(&$form, &$form_state) {
+    // It is very important to call the parent function here.
+    parent::options_form($form, $form_state);
+
+    switch ($form_state['section']) {
+      case 'displays':
+        $form['#title'] .= t('Attach to');
+        $displays = array();
+        foreach ($this->view->display as $display_id => $display) {
+          if (!empty($display->handler) && $display->handler->accept_attachments()) {
+            $displays[$display_id] = $display->display_title;
+          }
+        }
+        $form['displays'] = array(
+          '#type' => 'checkboxes',
+          '#description' => t('Attach before or after the parent display?'),
+          '#options' => $displays,
+          '#default_value' => $this->get_option('displays'),
+        );
+        break;
+      case 'path':
+        $form['path']['#description'] = t('This view will be displayed by visiting this path on your site. It is recommended that the path be something like "path/%/%/feed" or "path/%/%/rss.xml", putting one % in the path for each argument you have defined in the view.');
+    }
+  }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_submit($form, $form_state);
+    switch ($form_state['section']) {
+      case 'displays':
+        $this->set_option($form_state['section'], $form_state['values'][$form_state['section']]);
+        break;
+    }
+  }
+
+  /**
+   * Attach to another view.
+   */
+  function attach_to($display_id) {
+    $displays = $this->get_option('displays');
+    if (empty($displays[$display_id])) {
+      return;
+    }
+
+    // Defer to the feed style; it may put in meta information, and/or
+    // attach a feed icon.
+    $plugin = views_get_plugin('style', $this->get_option('style_plugin'));
+    $plugin->init($this->view, $this->display);
+    if ($plugin) {
+      $plugin->attach_to($display_id, $this->get_path(), $this->get_option('title'));
+    }
+  }
+}
+
 /**
  * @}
  */
@@ -1912,7 +2088,7 @@ class views_plugin_style extends views_object {
       $this->options = $display->handler->get_option('style_options');
     }
 
-    if ($this->uses_row_plugin()) {
+    if ($this->uses_row_plugin() && $display->handler->get_option('row_plugin')) {
       $this->row_plugin = views_get_plugin('row', $display->handler->get_option('row_plugin'));
       // initialize the row plugin.
       if ($this->row_plugin) {
@@ -1934,7 +2110,7 @@ class views_plugin_style extends views_object {
   function uses_fields() {
     // If we use a row plugin, ask the row plugin. Chances are, we don't
     // care, it does.
-    if ($this->uses_row_plugin()) {
+    if ($this->uses_row_plugin() && !empty($this->row_plugin)) {
       return $this->row_plugin->uses_fields();
     }
     // Otherwise, maybe we do.
@@ -2378,6 +2554,69 @@ class views_plugin_style_summary extends views_plugin_style {
       $rows[] = $row;
     }
     $theme = views_theme_functions('views_view_summary', $this->view, $this->display);
+    return theme($theme, $this->view, $this->options, $rows);
+  }
+}
+
+/**
+ * Default style plugin to render an RSS feed.
+ */
+class views_plugin_style_rss extends views_plugin_style {
+  function attach_to($display_id, $path, $title) {
+    $display = $this->view->display[$display_id]->handler;
+    if ($display->has_path()) {
+      if (empty($this->preview)) {
+        drupal_add_feed($this->view->get_url(NULL, $path), $title);
+      }
+    }
+    else {
+      if (empty($this->view->feed_icon)) {
+        $this->view->feed_icon = '';
+      }
+
+      $this->view->feed_icon .= theme('feed_icon', $this->view->get_url(NULL, $path), $title);
+    }
+  }
+
+  function options($display = NULL) {
+    return array(
+      'description' => '',
+      'mission_description' => FALSE,
+    );
+  }
+
+  function options_form(&$form, &$form_state) {
+    $form['mission_description'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => !empty($this->options['mission_description']),
+      '#title' => t('Use the site mission for the description'),
+    );
+    $form['description'] = array(
+      '#type' => 'textfield',
+      '#title' => t('RSS description'),
+      '#default_value' => $this->options['description'],
+      '#description' => t('This will appear in the RSS feed iself.'),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-style-options-override' => array(FALSE)),
+    );
+  }
+
+  function render() {
+    if (empty($this->row_plugin)) {
+      vpr('views_plugin_style_default: Missing row plugin');
+      return;
+    }
+    $rows = '';
+
+    // This will be filled in by the row plugin and is used later on in the
+    // theming output.
+    $this->namespaces = array();
+
+    foreach ($this->view->result as $row) {
+      $rows .= $this->row_plugin->render($row);
+    }
+
+    $theme = views_theme_functions('views_view_rss', $this->view, $this->display);
     return theme($theme, $this->view, $this->options, $rows);
   }
 }
