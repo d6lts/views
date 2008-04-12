@@ -146,19 +146,43 @@ function views_menu() {
  * Implementation of hook_menu_alter().
  */
 function views_menu_alter(&$callbacks) {
+  $our_paths = array();
   foreach (views_get_page_views() as $data) {
     list($view, $display_id) = $data;
     $result = $view->execute_hook_menu($display_id);
     if (is_array($result)) {
-      $regex = '#^('. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .')$#';
+      // The menu system doesn't support having two otherwise
+      // identical paths with different placeholders.  So we
+      // want to remove the existing items from the menu whose
+      // paths would conflict with ours.
+
+      // First, we must find any existing menu items that may
+      // conflict.  We use a regular expression because we don't
+      // know what placeholders they might use.  Note that we
+      // first construct the regex itself by replacing %views_arg
+      // in the display path, then we use this constructed regex
+      // (which will be something like '#foo/%[^/]*/bar#') to
+      // search through the existing paths.
+      $regex = '#'. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .'#';
       $matches = preg_grep($regex, array_keys($callbacks));
+
+      // Remove any conflicting items that were found.
       foreach ($matches as $path) {
-        if (preg_match('#%#', $path) && !preg_match('#%views_arg(/|$)#', $path)) {
+        // Don't remove the paths we just added!
+        if (!isset($our_paths[$path])) {
           unset($callbacks[$path]);
         }
       }
       foreach ($result as $path => $item) {
-        if (isset($callbacks[$path])) {
+        if (!isset($callbacks[$path])) {
+          // Add a new item, possibly replacing (and thus effectively
+          // overriding) one that we removed above.
+          $callbacks[$path] = $item;
+        }
+        else {
+          // This item already exists, so it must be one that we added.
+          // We change the various callback arguments to pass an array
+          // of possible display IDs instead of a single ID.
           $callbacks[$path]['page arguments'][1] = (array)$callbacks[$path]['page arguments'][1];
           $callbacks[$path]['page arguments'][1][] = $display_id;
           $callbacks[$path]['access arguments'][0][1] = (array)$callbacks[$path]['access arguments'][0][1];
@@ -166,9 +190,7 @@ function views_menu_alter(&$callbacks) {
           $callbacks[$path]['load arguments'][1] = (array)$callbacks[$path]['load arguments'][1];
           $callbacks[$path]['load arguments'][1][] = $display_id;
         }
-        else {
-          $callbacks[$path] = $item;
-        }
+        $our_paths[$path] = TRUE;
       }
     }
   }
