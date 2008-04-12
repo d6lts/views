@@ -509,3 +509,7 @@ form#views-ui-preview-form input#preview-submit {
 html.js .views-hidden {
   display: none;
 }
+
+.views-query-info {
+  overflow: auto;
+}
