@@ -163,7 +163,7 @@ function views_menu_alter(&$callbacks) {
       // in the display path, then we use this constructed regex
       // (which will be something like '#foo/%[^/]*/bar#') to
       // search through the existing paths.
-      $regex = '#'. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .'#';
+      $regex = '#^('. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .')$#';
       $matches = preg_grep($regex, array_keys($callbacks));
 
       // Remove any conflicting items that were found.
