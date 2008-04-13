@@ -832,6 +832,8 @@ function views_get_block_views() {
  * @endcode
  */
 function views_get_applicable_views($type) {
+  // @todo: Use a smarter flagging system so that we don't have to
+  // load every view for this.
   $result = array();
   $views = views_get_all_views();
 
@@ -856,6 +858,10 @@ function views_get_applicable_views($type) {
         if ($v->set_display($display->id)) {
           $result[] = array($v, $display->id);
         }
+        // In PHP 4.4.7 and presumably earlier, if we do not unset $v
+        // here, we will find that it actually overwrites references
+        // possibly due to shallow copying issues.
+        unset($v);
       }
     }
   }
