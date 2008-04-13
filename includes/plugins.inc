@@ -553,10 +553,11 @@ class views_plugin_display extends views_object {
       );
     }
 
+    $items = intval($this->get_option('items_per_page'));
     $options['items_per_page'] = array(
       'category' => 'basic',
       'title' => $this->use_pager() ? t('Items per page') : t('Items to display'),
-      'value' => intval($this->get_option('items_per_page')),
+      'value' => $items ? $items : t('Unlimited'),
       'desc' => t('Change how many items to display.'),
     );
 

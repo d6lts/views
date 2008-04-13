@@ -161,7 +161,7 @@ function views_menu_alter(&$callbacks) {
       // know what placeholders they might use.  Note that we
       // first construct the regex itself by replacing %views_arg
       // in the display path, then we use this constructed regex
-      // (which will be something like '#foo/%[^/]*/bar#') to
+      // (which will be something like '#^(foo/%[^/]*/bar)$#') to
       // search through the existing paths.
       $regex = '#^('. preg_replace('#%views_arg#', '%[^/]*', implode('|', array_keys($result))) .')$#';
       $matches = preg_grep($regex, array_keys($callbacks));
