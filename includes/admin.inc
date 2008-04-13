@@ -114,7 +114,7 @@ function views_ui_preview($js, $view) {
   $form_state = array(
     'display_id' => $display_id,
     'view_args' => $func_args ? implode('/', $func_args) : '',
-    're_render' => TRUE,
+    'rerender' => TRUE,
     'no_redirect' => TRUE,
     'view' => &$view,
     'ajax' => $js
@@ -648,7 +648,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   $form_state = array(
     'display_id' => 'default',
     'view_args' => '',
-    're_render' => FALSE,
+    'rerender' => FALSE,
     'no_redirect' => TRUE,
     'view' => &$view,
     'input' => array(),
@@ -987,6 +987,8 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
   if (isset($form['#section'])) {
     $form_state['#section'] = $form['#section'];
   }
+  // Finally, we never want these cached -- our object cache does that for us.
+  $form['#no_cache'] = TRUE;
 
   // If this isn't an ajaxy form, then we want to set the title.
   drupal_set_title($form['#title']);
@@ -1326,7 +1328,8 @@ function views_ui_edit_display_form_override($form, &$form_state) {
   $display->handler->options_override($form, $form_state);
 
   views_ui_cache_set($form_state['view']);
-  $form_state['regenerate form'] = TRUE;
+  $form_state['rerender'] = TRUE;
+  $form_state['rebuild'] = TRUE;
 }
 
 /**
@@ -1849,7 +1852,9 @@ function views_ui_config_item_form_expose($form, &$form_state) {
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
   views_ui_cache_set($form_state['view']);
-  $form_state['next'] = $form_state['id'];
+  $form_state['rerender'] = TRUE;
+  $form_state['rebuild'] = TRUE;
+//  $form_state['next'] = $form_state['id'];
 }
 
 /**

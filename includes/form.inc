@@ -30,6 +30,9 @@ function _drupal_build_form($form_id, &$form_state) {
     // be passed on to the form processing code.
     if (isset($_POST['form_id']) && $_POST['form_id'] == $form_id && !empty($_POST['form_build_id'])) {
       $form = form_get_cache($_POST['form_build_id'], $form_state);
+      if (!empty($form['#no_cache']) || empty($form)) {
+        unset($form);
+      }
     }
 
     // If the previous bit of code didn't result in a populated $form
@@ -68,11 +71,11 @@ function _drupal_build_form($form_id, &$form_state) {
 
     // If we were told not to redirect, but not told to re-render, return
     // here.
-    if (!empty($form_state['executed']) && empty($form_state['re_render'])) {
+    if (!empty($form_state['executed']) && empty($form_state['rerender'])) {
       return;
     }
 
-    if ($cacheable && !empty($form['#cache'])) {
+    if ($cacheable && !empty($form['#cache']) && empty($form['#no_cache'])) {
       // Caching is done past drupal_process_form so #process callbacks can
       // set #cache. By not sending the form state, we avoid storing
       // $form_state['storage'].
@@ -95,12 +98,49 @@ function _drupal_build_form($form_id, &$form_state) {
   // other variables passed into drupal_get_form().
 
   if (!empty($form_state['rebuild']) || !empty($form_state['storage'])) {
-    $form = drupal_rebuild_form($form_id, $form_state, $args);
+    $form = drupal_rebuild_form_new($form_id, $form_state, $args);
   }
 
   // If we haven't redirected to a new location by now, we want to
   // render whatever form array is currently in hand.
   return drupal_render_form($form_id, $form);
+}
+
+/**
+ * Views' replacement of drupal_rebuild_form.
+ *
+ * This change merely respects a form's wishes not to be cached.
+ */
+function drupal_rebuild_form_new($form_id, &$form_state, $args, $form_build_id = NULL) {
+  // Remove the first argument. This is $form_id.when called from
+  // drupal_get_form and the original $form_state when called from some AHAH
+  // callback. Neither is needed. After that, put in the current state.
+  $args[0] = &$form_state;
+  // And the form_id.
+  array_unshift($args, $form_id);
+  $form = call_user_func_array('drupal_retrieve_form', $args);
+
+  if (!isset($form_build_id)) {
+    // We need a new build_id for the new version of the form.
+    $form_build_id = 'form-'. md5(mt_rand());
+  }
+  $form['#build_id'] = $form_build_id;
+  drupal_prepare_form($form_id, $form, $form_state);
+
+  if (empty($form['#no_cache'])) {
+    // Now, we cache the form structure so it can be retrieved later for
+    // validation. If $form_state['storage'] is populated, we'll also cache
+    // it so that it can be used to resume complex multi-step processes.
+    form_set_cache($form_build_id, $form, $form_state);
+  }
+
+  // Originally this called drupal_process_form, but all that happens there
+  // is form_builder and then submission; and the rebuilt form is not
+  // allowed to submit. Therefore, just do this:
+  $form['#post'] = $form_state['input'];
+  $form = form_builder($form_id, $form, $form_state);
+
+  return $form;
 }
 
 /**
