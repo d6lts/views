@@ -332,12 +332,14 @@ class view extends views_db_object {
         // Remove any handlers which are inaccessible to the current user. For example, see users.mail
         if ($handler->access()) {
           // Deal with difficult PHP indirection:
-          $items[$id]['handler'] = $handler;
+          $items[$id]['handler'] = &$handler;
         }
         else {
           unset($items[$id]);
         }
       }
+      // Protect against reference mangling in PHP4.
+      unset($handler);
     }
   }
 

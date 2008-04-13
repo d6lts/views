@@ -1233,8 +1233,8 @@ class views_handler_filter_date extends views_handler_filter_numeric {
  * concerned about duplicates you'll get more efficient queries.
  */
 class views_handler_filter_many_to_one extends views_handler_filter_in_operator {
-  function construct() {
-    parent::construct();
+  function init(&$view, &$options) {
+    parent::init($view, $options);
     $this->helper = new views_many_to_one_helper($this);
   }
 

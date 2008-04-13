@@ -574,8 +574,10 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       unset($form['value']['#weight']);
     }
 
-    // Retain the helper option
-    $this->helper->options_form($form, $form_state);
+    if (empty($form_state['exposed'])) {
+      // Retain the helper option
+      $this->helper->options_form($form, $form_state);
+    }
   }
 
   function value_validate($form, &$form_state) {
