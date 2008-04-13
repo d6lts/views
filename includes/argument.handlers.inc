@@ -442,8 +442,8 @@ class views_handler_argument_formula extends views_handler_argument {
  * limits.
  */
 class views_handler_argument_string extends views_handler_argument {
-  function construct() {
-    parent::construct();
+  function init(&$view, &$options) {
+    parent::init($view, $options);
     if (!empty($this->definition['many to one'])) {
       $this->helper = new views_many_to_one_helper($this);
 
@@ -642,8 +642,8 @@ class views_handler_argument_string extends views_handler_argument {
  * reasonably common with this type of relationship.
  */
 class views_handler_argument_many_to_one extends views_handler_argument {
-  function construct() {
-    parent::construct();
+  function init(&$view, &$options) {
+    parent::init($view, $options);
     $this->helper = new views_many_to_one_helper($this);
 
     // Ensure defaults for these, during summaries and stuff:

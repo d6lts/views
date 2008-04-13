@@ -1854,7 +1854,6 @@ function views_ui_config_item_form_expose($form, &$form_state) {
   views_ui_cache_set($form_state['view']);
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
-//  $form_state['next'] = $form_state['id'];
 }
 
 /**
