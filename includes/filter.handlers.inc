@@ -79,6 +79,7 @@ class views_handler_filter extends views_handler {
    * Simple submit handler
    */
   function options_submit(&$form, &$form_state) {
+    unset($form_state['values']['expose_button']); // don't store this.
     $this->operator_submit($form, $form_state);
     $this->value_submit($form, $form_state);
     if (!empty($this->options['exposed'])) {
@@ -203,6 +204,18 @@ class views_handler_filter extends views_handler {
       '#suffix' => '</div>',
     );
     $this->expose_form($form, $form_state);
+
+    // When we click the expose button, we add new gadgets to the form but they
+    // have no data in $_POST so their defaults get wiped out. This prevents
+    // these defaults from getting wiped out. This setting will only be TRUE
+    // during a 2nd pass rerender.
+    if (!empty($form_state['force_expose_options'])) {
+      foreach (element_children($form['expose']) as $id) {
+        if (isset($form['expose'][$id]['#default_value']) && !isset($form['expose'][$id]['#value'])) {
+          $form['expose'][$id]['#value'] = $form['expose'][$id]['#default_value'];
+        }
+      }
+    }
   }
 
   /**
@@ -237,6 +250,7 @@ class views_handler_filter extends views_handler {
         '#value' => '',
       );
     }
+
     $form['expose']['identifier'] = array(
       '#type' => 'textfield',
       '#default_value' => $this->options['expose']['identifier'],
@@ -461,6 +475,7 @@ class views_handler_filter extends views_handler {
     $this->ensure_my_table();
     $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " '%s'", $this->value);
   }
+
 }
 
 /**
