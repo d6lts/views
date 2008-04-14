@@ -126,11 +126,11 @@ function taxonomy_views_data() {
     'title' => t('Weight'),
     'help' => t('The term weight field'),
     'field' => array(
-      'handler' => 'views_hander_field',
+      'handler' => 'views_handler_field',
       'click sortable' => TRUE,
     ),
     'sort' => array(
-      'handler' => 'views_hander_sort',
+      'handler' => 'views_handler_sort',
     ),
   );
 

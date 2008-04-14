@@ -1403,7 +1403,7 @@ function views_ui_rearrange_form(&$form_state) {
     $form[$id] = array('#tree' => TRUE);
     $form[$id]['weight'] = array(
       '#type' => 'weight',
-      '#delta' => 10,
+      '#delta' => 25,
       '#default_value' => ++$count,
     );
     $handler = views_get_handler($field['table'], $field['field'], $type);
