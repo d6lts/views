@@ -127,6 +127,10 @@ function views_ui_menu() {
     'page callback' => 'views_ui_rearrange_type',
     'page arguments' => array(3, 5),
   );
+  $items['admin/build/views/%views_ui_js/config-type/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_config_type',
+    'page arguments' => array(3, 5),
+  );
   $items['admin/build/views/%views_ui_js/add-item/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_add_item',
     'page arguments' => array(3, 5),

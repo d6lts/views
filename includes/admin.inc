@@ -815,7 +815,8 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   $vars['overridden'] = (!$display->handler->is_default_display() && empty($display->display_options['defaults'][$types[$type]['plural']]));
 
-  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/rearrange/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
+  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
+//  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
 
   $fields = array();
 
@@ -1330,6 +1331,90 @@ function views_ui_edit_display_form_override($form, &$form_state) {
   views_ui_cache_set($form_state['view']);
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * Page callback to config a type.
+ */
+function views_ui_config_type($js, $view, $display_id, $type) {
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'type' => $type,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_config_type_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      // Sometimes we need to re-generate the form for multi-step type operations.
+      $object = NULL;
+      if (!empty($form_state['regenerate form'])) {
+        $form_state['input'] = array(); // Remove the input so it can't post.
+        $form_state['executed'] = FALSE;
+        $object = views_ajax_form_wrapper('views_ui_config_type_form', $form_state);
+      }
+      return views_ui_regenerate_tabs($view, $display_id, $object);
+    }
+    return views_ajax_render($output);
+  }
+
+  return $output;
+}
+
+/**
+ * Form to config items in the views UI.
+ */
+function views_ui_config_type_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+
+  $types = views_object_types();
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
+  }
+  $display = &$view->display[$display_id];
+  $form['#title'] = check_plain($display->display_title) . ': ';
+  $form['#title'] .= t('Configure @type', array('@type' => strtolower($types[$type]['title'])));
+  $form['#section'] = $display_id . 'config-item';
+
+  if ($display->handler->defaultable_sections($types[$type]['plural'])) {
+    $display->handler->add_override_button($form, $types[$type]['plural']);
+    $form_state['section'] = $types[$type]['plural'];
+  }
+
+  if (!empty($types[$type]['options']) && function_exists($types[$type]['options'])) {
+    $options = $type . '_options';
+    $form[$options] = array('#tree' => TRUE);
+    $types[$type]['options']($form, $form_state);
+  }
+
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_type_form');
+  return $form;
+}
+
+/**
+ * Submit handler for rearranging form
+ */
+function views_ui_config_type_form_submit($form, &$form_state) {
+  $types = views_object_types();
+  $display = &$form_state['view']->display[$form_state['display_id']];
+
+  // Store in cache
+  views_ui_cache_set($form_state['view']);
+
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Configure settings particular to filters.
+ */
+function views_ui_config_filters_form(&$form, &$form_state) {
+
 }
 
 /**

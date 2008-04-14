@@ -719,8 +719,14 @@ class views_handler_argument_many_to_one extends views_handler_argument {
       $this->operator = 'or';
     }
 
+    // @todo -- both of these should check definition for alternate keywords.
+
     if (empty($this->value)) {
       return t('Uncategorized');
+    }
+
+    if ($this->value === array(-1)) {
+      return t('Invalid input');
     }
 
     return implode($this->operator == 'or' ? ' + ' : ', ', $this->title_query());
@@ -767,6 +773,14 @@ class views_handler_argument_many_to_one extends views_handler_argument {
    */
   function title_query() {
     return $this->value;
+  }
+
+  function is_wildcard() {
+    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $this->argument;
+  }
+
+  function wildcard_title() {
+    return $this->options['wildcard_substitution'];
   }
 }
 
