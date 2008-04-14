@@ -202,6 +202,7 @@ function taxonomy_views_data() {
       'name table' => 'term_data',
       'name field' => 'name',
       'empty name field' => t('Uncategorized'),
+      'numeric' => TRUE,
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_term_node_tid',
@@ -644,9 +645,9 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
 class views_handler_argument_term_node_tid extends views_handler_argument_many_to_one {
   function title_query() {
     $titles = array();
-    $tids = implode(', ', $this->value); // only does numbers so safe
+    $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
 
-    $result = db_query("SELECT name FROM {term_data} WHERE tid IN (%s)", $tids);
+    $result = db_query("SELECT name FROM {term_data} WHERE tid IN ($placeholders)", $this->value);
     while ($term = db_fetch_object($result)) {
       $titles[] = check_plain($term->name);
     }
