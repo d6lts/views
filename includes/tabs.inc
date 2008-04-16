@@ -3,8 +3,7 @@
 /**
  * @file
  *
- * An array of preprocessors to fill variables for templates and helper
- * functions to make theming easier.
+ * Classes and theme functions for rendering javascript UI tabs.
  */
 
 /**
