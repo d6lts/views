@@ -111,6 +111,10 @@ function views_ui_menu() {
     'type' => MENU_LOCAL_TASK
   );
   // lots of little edit form pieces.
+  $items['admin/build/views/%views_ui_js/analyze/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_analyze_view',
+    'page arguments' => array(3, 5),
+  );
   $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_details',
     'page arguments' => array(3, 5),

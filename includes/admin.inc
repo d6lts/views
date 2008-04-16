@@ -642,7 +642,8 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   );
 
   $display_button = drupal_build_form('views_ui_add_display_form', $form_state);
-  $tabs->add_extra($display_button);
+  $analyze_button = drupal_get_form('views_ui_analyze_view_button', $view);
+  $tabs->add_extra($display_button . $analyze_button);
 
   $vars['tabs'] = $tabs->render();
 
@@ -1214,6 +1215,128 @@ function views_ui_remove_display_form_restore($form, &$form_state) {
 
   // Send it back
   $form_state['redirect'] = array('admin/build/views/edit/' . $form_state['view']->name, NULL, 'views-tab-' . $form_state['display_id']);
+}
+
+/**
+ * Page callback to edit details of a view.
+ */
+function views_ui_analyze_view($js, $view) {
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_analyze_view_form', $form_state);
+
+  if ($js) {
+    // If we don't have an output object, it was submitted. Set up the submission.
+    if (empty($output)) {
+      return views_ui_regenerate_tabs($view);
+    }
+    return views_ajax_render($output);
+
+  }
+  return $output;
+}
+
+/**
+ * This form doesn't particularly do much; it's really just providing a link
+ * but a button seems like it would be nicer here.
+ *
+ * It has no submit or anything, as we will never actually submit this form
+ * where the form is placed.
+ */
+function views_ui_analyze_view_button(&$form_state, $view) {
+  $form['#action'] = url("admin/build/views/nojs/analyze/$view->name");
+  $form['#attributes'] = array('class' => 'views-ajax-form');
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Analyze'),
+  );
+
+  return $form;
+}
+
+/**
+ * Format an analysis message.
+ */
+function views_ui_analysis($message, $type = 'error') {
+  return array('message' => $message, 'type' => $type);
+//  return "<div class=\"$type\">$message</div>";
+}
+
+/**
+ * Implementation of hook_views_analyze().
+ */
+function views_ui_views_analyze($view) {
+  $ret = array();
+  // Check for something other than the default display:
+  if (count($view->display) < 2) {
+    $ret[] = views_ui_analysis(t('This view has only a default display and therefore will not be placed anywhere on your site; perhaps you want to add a page or a block display.'), 'warning');
+  }
+
+
+  return $ret;
+}
+
+/**
+ * Form constructor callback to edit details of a view
+ */
+function views_ui_analyze_view_form(&$form_state) {
+  $view = &$form_state['view'];
+
+  $form['#title'] = t('View analysis');
+  $form['#section'] = 'analyze';
+
+  $messages = array();
+
+  $messages = module_invoke_all('views_analyze', $view);
+
+  if (empty($messages)) {
+    $messages = array(views_ui_analysis(t('View analysis can find nothing to report.'), 'ok'));
+  }
+
+  $types = array('ok' => array(), 'warning' => array(), 'error' => array());
+  foreach ($messages as $message) {
+    if (empty($types[$message['type']])) {
+      $types[$message['type']] = array();
+    }
+    $types[$message['type']][] = $message['message'];
+  }
+
+  $output = '';
+  foreach ($types as $type => $messages) {
+    $message = '';
+    if (count($messages) > 1) {
+      $message = theme('item_list', $messages);
+    }
+    else if ($messages) {
+      $message = array_shift($messages);
+    }
+
+    if ($message) {
+      $output .= "<div class=\"$type\">$message</div>";
+    }
+  }
+
+  $form['analysis'] = array(
+    '#prefix' => '<div class="form-item">',
+    '#suffix' => '</div>',
+    '#value' => $output,
+  );
+
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_analyze_view_form');
+  unset($form['buttons']['submit']);
+  $form['buttons']['cancel']['#value'] = t('Ok');
+  return $form;
+}
+
+/**
+ * Submit handler for views_ui_analyze_view_form
+ */
+function views_ui_analyze_view_form_submit($form, &$form_state) {
+  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**

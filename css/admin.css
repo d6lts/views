@@ -445,6 +445,7 @@ div.view-changed {
   float: right;
   font-style: italic;
   color: #f93;
+  padding-left: 1em;
 }
 
 div.views-tab div.changed a {
@@ -516,4 +517,8 @@ html.js .views-hidden {
 
 .views-quick-links {
   float: right;
+}
+
+.views-quick-links li.last {
+  padding-right: 0;
 }
