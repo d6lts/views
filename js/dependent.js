@@ -130,13 +130,19 @@ Drupal.Views.dependent.autoAttach = function() {
             for (i in Drupal.Views.dependent.activeBindings[id]) {
               len++;
             }
+
+            var object = jQuery('#' + id + '-wrapper');
+            if (!object.size()) {
+              object = jQuery('#' + id).parent();
+            }
+
             if (Drupal.settings.viewsAjax.formRelationships[id].num <= len) {
               // Show if the element if criteria is matched
-              jQuery('#'+ id).parent().show(0);
+              object.show(0);
             }
             else {
               // Otherwise hide
-              jQuery('#'+ id).parent().hide(0);
+              object.hide(0);
             }
           }
         }
@@ -149,9 +155,8 @@ Drupal.Views.dependent.autoAttach = function() {
         // Trigger initial reaction
         changeTrigger(trigger_id, bind_id);
       }
+      setChangeTrigger(trigger_id, bind_id);
     }
-
-    setChangeTrigger(trigger_id, bind_id);
   }
 }
 

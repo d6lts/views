@@ -117,6 +117,26 @@ function views_views_plugins() {
         'type' => 'normal',
       ),
     ),
+    'argument default' => array(
+      'fixed' => array(
+        'title' => t('Fixed entry'),
+        'handler' => 'views_plugin_argument_default',
+      ),
+      'php' => array(
+        'title' => t('PHP Code'),
+        'handler' => 'views_plugin_argument_default_php',
+      ),
+    ),
+    'argument validator' => array(
+      'php' => array(
+        'title' => t('PHP Code'),
+        'handler' => 'views_plugin_argument_validate_php',
+      ),
+      'numeric' => array(
+        'title' => t('Numeric'),
+        'handler' => 'views_plugin_argument_validate_numeric',
+      ),
+    ),
   );
 }
 
@@ -2685,6 +2705,235 @@ class views_plugin_row extends views_object {
   function render($row) {
     $theme = views_theme_functions('views_view_fields', $this->view, $this->display);
     return theme($theme, $this->view, $this->options, $row);
+  }
+}
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup views_argument_default_plugins Views' argument default plugins
+ * @{
+ *
+ * Allow specialized methods of filling in arguments when they aren't
+ * provided.
+ *
+ * @see hook_views_plugins
+ */
+
+/**
+ */
+class views_plugin_argument_default extends views_object {
+  var $option_name = 'default_argument_fixed';
+  /**
+   * Initialize this plugin with the view and the argument
+   * it is linked to.
+   */
+  function init(&$view, &$argument, $id = NULL) {
+    $this->view = &$view;
+    $this->argument = &$argument;
+    $this->id = $id;
+  }
+
+  /**
+   * Determine if the administrator has the privileges to use this
+   * plugin
+   */
+  function access() { return TRUE; }
+
+  function argument_form(&$form, &$form_state) {
+    $form[$this->option_name] = array(
+      '#type' => 'textfield',
+      '#title' => t('Default argument'),
+      '#default_value' => $this->get_argument(),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array(
+        'radio:options[default_action]' => array('default'),
+        'radio:options[default_argument_type]' => array($this->id)
+      ),
+      '#dependency_count' => 2,
+    );
+
+    // Only do this if using one simple standard form gadget
+    $this->check_access($form);
+  }
+
+  /**
+   * If we don't have access to the form but are showing it anyway, ensure that
+   * the form is safe and cannot be changed from user input.
+   */
+  function check_access(&$form) {
+    if (!$this->access()) {
+      $form[$this->option_name]['#disabled'] = TRUE;
+      $form[$this->option_name]['#value'] = $form[$this->option_name]['#default_value'];
+    }
+  }
+
+  /**
+   * Return the default argument.
+   */
+  function get_argument() {
+    return isset($this->argument->options[$this->option_name]) ? $this->argument->options[$this->option_name] : '';
+  }
+}
+
+class views_plugin_argument_default_php extends views_plugin_argument_default {
+  var $option_name = 'default_argument_php';
+
+  function argument_form(&$form, &$form_state) {
+    $form[$this->option_name] = array(
+      '#type' => 'textarea',
+      '#title' => t('PHP argument code'),
+      '#default_value' => $this->get_argument(TRUE), // the true forces it raw.
+      '#process' => array('views_process_dependency'),
+      '#description' => t('Enter PHP code that returns a value to use for this argument. Do not use &lt;?php ?&gt;.'),
+      '#dependency' => array(
+        'radio:options[default_action]' => array('default'),
+        'radio:options[default_argument_type]' => array($this->id)
+      ),
+      '#dependency_count' => 2,
+    );
+
+    $this->check_access($form);
+  }
+
+  /**
+   * Only let users with PHP block visibility permissions set/modify this
+   * default plugin.
+   */
+  function access() {
+    return user_access('use PHP for block visibility');
+  }
+
+  function get_argument($raw = FALSE) {
+    if ($raw) {
+      return parent::get_argument();
+    }
+
+    // set up variables to make it easier to reference during the argument.
+    $view = &$view;
+    $argument = &$this->argument;
+    ob_start();
+    $result = eval($this->argument->options[$this->option_name]);
+    ob_end_clean();
+    return $result;
+  }
+}
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup views_argument_validate_plugins Views' argument validate plugins
+ * @{
+ *
+ * Allow specialized methods of validating arguments.
+ *
+ * @see hook_views_plugins
+ */
+
+/**
+ */
+class views_plugin_argument_validate extends views_object {
+  var $option_name = 'validate_argument';
+
+  /**
+   * Initialize this plugin with the view and the argument
+   * it is linked to.
+   */
+  function init(&$view, &$argument, $id = NULL) {
+    $this->view = &$view;
+    $this->argument = &$argument;
+    $this->id = $id;
+  }
+
+  /**
+   * Determine if the administrator has the privileges to use this
+   * plugin
+   */
+  function access() { return TRUE; }
+
+  function argument_form(&$form, &$form_state) {
+  }
+
+  /**
+   * If we don't have access to the form but are showing it anyway, ensure that
+   * the form is safe and cannot be changed from user input.
+   */
+  function check_access(&$form) {
+    if (!$this->access()) {
+      $form[$this->option_name]['#disabled'] = TRUE;
+      $form[$this->option_name]['#value'] = $form[$this->option_name]['#validate_value'];
+    }
+  }
+
+  /**
+   * Return the validate argument.
+   */
+  function get_argument() {
+    return isset($this->argument->options[$this->option_name]) ? $this->argument->options[$this->option_name] : '';
+  }
+
+  function validate_form(&$form, &$form_state) { }
+
+  function validate_argument($arg) { return TRUE; }
+}
+
+/**
+ * Provide PHP code to validate whether or not an argument is ok.
+ */
+class views_plugin_argument_validate_php extends views_plugin_argument_validate {
+  var $option_name = 'validate_argument_php';
+
+  function validate_form(&$form, &$form_state) {
+    $form[$this->option_name] = array(
+      '#type' => 'textarea',
+      '#title' => t('PHP validate code'),
+      '#default_value' => $this->get_argument(),
+      '#description' => t('Enter PHP code that returns a value to use for this argument. Do not use &lt;?php ?&gt;. The argument to validate will be "$argument" and the view will be "$view"'),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-options-validate-type' => array($this->id)),
+    );
+
+    $this->check_access($form);
+  }
+
+  /**
+   * Only let users with PHP block visibility permissions set/modify this
+   * validate plugin.
+   */
+  function access() {
+    return user_access('use PHP for block visibility');
+  }
+
+  function validate_argument($argument) {
+    // set up variables to make it easier to reference during the argument.
+    $view = &$view;
+    ob_start();
+    $result = eval($this->argument->options[$this->option_name]);
+    ob_end_clean();
+    return $result;
+  }
+}
+
+/**
+ * Provide PHP code to validate whether or not an argument is ok.
+ */
+class views_plugin_argument_validate_numeric extends views_plugin_argument_validate {
+  var $option_name = 'validate_argument_numeric';
+
+  /**
+   * Only let users with PHP block visibility permissions set/modify this
+   * validate plugin.
+   */
+  function access() {
+    return !empty($this->argument->definition['numeric']);
+  }
+
+  function validate_argument($argument) {
+    return is_numeric($argument);
   }
 }
 

@@ -70,6 +70,8 @@ function node_views_data() {
     'argument' => array(
       'handler' => 'views_handler_argument_node_nid',
       'name field' => 'title', // the field to display in the summary.
+      'numeric' => TRUE,
+      'validate type' => 'nid',
     ),
     // Information for accepting a nid as a filter
     'filter' => array(
@@ -376,6 +378,7 @@ function node_views_data() {
     'argument' => array(
       'handler' => 'views_handler_argument_node_vid',
       'click sortable' => TRUE,
+      'numeric' => TRUE,
     ),
     // Information for accepting a nid as a filter
     'filter' => array(
@@ -1149,6 +1152,12 @@ function node_views_plugins() {
         'type' => 'feed',
       ),
     ),
+    'argument validator' => array(
+      'node' => array(
+        'title' => t('Node'),
+        'handler' => 'views_plugin_argument_validate_node',
+      ),
+    ),
   );
 }
 
@@ -1311,6 +1320,59 @@ class views_plugin_row_node_rss extends views_plugin_row {
     }
 
     return format_rss_item($item->title, $item->link, $item_text, $extra);
+  }
+}
+
+/**
+ * Provide PHP code to validate whether or not an argument is ok.
+ */
+class views_plugin_argument_validate_node extends views_plugin_argument_validate {
+  var $option_name = 'validate_argument_node_type';
+
+  function validate_form(&$form, &$form_state) {
+    $types = node_get_types();
+    foreach ($types as $type => $info) {
+      $options[$type] = $info->name;
+    }
+
+    $arg = $this->get_argument();
+    if (empty($arg)) {
+      $arg = array();
+    }
+
+    $form[$this->option_name] = array(
+      '#type' => 'checkboxes',
+      '#prefix' => '<div id="edit-options-validate-argument-node-type-wrapper">',
+      '#suffix' => '</div>',
+      '#title' => t('Types'),
+      '#options' => $options,
+      '#default_value' => $arg,
+      '#description' => t('If you wish to validate for specific node types, check them; if none are checked, all nodes will pass.'),
+      '#process' => array('expand_checkboxes', 'views_process_dependency'),
+      '#dependency' => array('edit-options-validate-type' => array($this->id)),
+    );
+
+    $this->check_access($form);
+  }
+
+  function validate_argument($argument) {
+    if (!is_numeric($argument)) {
+      return FALSE;
+    }
+    $node = node_load($argument);
+    if (!$node) {
+      return FALSE;
+    }
+
+    // Save the title() handlers some work.
+    $this->argument->validated_title = $node->title;
+
+    $types = array_filter($this->argument->options[$this->option_name]);
+    if (empty($types)) {
+      return TRUE;
+    }
+
+    return isset($types[$node->type]);
   }
 }
 

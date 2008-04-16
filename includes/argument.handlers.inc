@@ -28,6 +28,19 @@ class views_handler_argument extends views_handler {
     }
   }
 
+  function init(&$view, &$options) {
+    parent::init($view, $options);
+    // Ensure this is set; early arguments did not have validators.
+    if (empty($this->options['validate_type'])) {
+      $this->options['validate_type'] = 'none';
+    }
+    if (empty($this->options['validate_fail'])) {
+      $this->options['validate_fail'] = 'not found';
+    }
+    if (empty($this->options['default_argument_type'])) {
+      $this->options['default_argument_type'] = 'fixed';
+    }
+  }
   /**
    * Give an argument the opportunity to modify the breadcrumb, if it wants.
    * This only gets called on displays where a breadcrumb is actually used.
@@ -36,6 +49,34 @@ class views_handler_argument extends views_handler {
    * the path and the value being the already sanitized title of the path.
    */
   function set_breadcrumb(&$breadcrumb) { }
+
+  /**
+   * Determine if the argument can generate a breadcrumb
+   *
+   * @return TRUE/FALSE
+   */
+  function uses_breadcrumb() {
+    $info = $this->default_actions($this->options['default_action']);
+    return !empty($info['breadcrumb']);
+  }
+
+  function is_wildcard() {
+    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $this->argument;
+  }
+
+  function wildcard_title() {
+    return $this->options['wildcard_substitution'];
+  }
+
+  /**
+   * Determine if the argument needs a style plugin.
+   *
+   * @return TRUE/FALSE
+   */
+  function needs_style_plugin() {
+    $info = $this->default_actions($this->options['default_action']);
+    return !empty($info['style plugin']);
+  }
 
   /**
    * Provide defaults for the argument when a new one is created.
@@ -49,6 +90,10 @@ class views_handler_argument extends views_handler {
     $options['wildcard'] = 'all';
     $options['wildcard_substitution'] = t('All');
     $options['title'] = '';
+    $options['default_argument_type'] = 'fixed';
+    $options['default_argument'] = '';
+    $options['validate_type'] = 'none';
+    $options['validate_fail'] = 'not found';
   }
 
   /**
@@ -56,19 +101,32 @@ class views_handler_argument extends views_handler {
    */
   function options_form(&$form, &$form_state) {
     $defaults = $this->default_actions();
-    foreach ($defaults as $id => $info) {
-      $options[$id] = $info['title'];
-    }
-    $form['default_action'] = array(
-      '#prefix' => '<div class="views-left-50">',
+
+    $form['title'] = array(
+      '#prefix' => '<div class="clear-block">',
       '#suffix' => '</div>',
+      '#type' => 'textfield',
+      '#title' => t('Title'),
+      '#default_value' => $this->options['title'],
+      '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use "%1" for the first argument, "%2" for the second, etc.'),
+    );
+
+    $form['defaults_start'] = array(
+      '#value' => '<div class="views-left-50">',
+    );
+
+    $form['default_action'] = array(
       '#type' => 'radios',
       '#title' => t('Action to take if argument is not present'),
-      '#options' => $options,
       '#default_value' => $this->options['default_action'],
     );
+
+    $form['defaults_stop'] = array(
+      '#value' => '</div>',
+    );
+
     $form['wildcard'] = array(
-      '#prefix' => '<div class="views-left-40">',
+      '#prefix' => '<div class="views-left-50">',
       // prefix and no suffix means these two items will be grouped together.
       '#type' => 'textfield',
       '#title' => t('Wildcard'),
@@ -84,14 +142,81 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->options['wildcard_substitution'],
       '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
     );
-    $form['title'] = array(
-      '#prefix' => '<div class="clear">',
-      '#suffix' => '</div>',
-      '#type' => 'textfield',
-      '#title' => t('Title'),
-      '#default_value' => $this->options['title'],
-      '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments.'),
+
+    $options = array();
+    $validate_options = array();
+    foreach ($defaults as $id => $info) {
+      $options[$id] = $info['title'];
+      if (empty($info['default only'])) {
+        $validate_options[$id] = $info['title'];
+      }
+      if (!empty($info['form method'])) {
+        $this->{$info['form method']}($form, $form_state);
+      }
+    }
+
+    $form['default_action']['#options'] = $options;
+
+    $form['validate_type'] = array(
+      '#type' => 'select',
+      '#title' => t('Validator'),
+      '#default_value' => $this->options['validate_type'],
     );
+
+    $validate_types = array('none' => t('<No validation>'));
+    $plugins = views_fetch_plugin_data('argument validator');
+    foreach ($plugins as $id => $info) {
+      $valid = TRUE;
+      if (!empty($info['type'])) {
+        $valid = FALSE;
+        if (empty($this->definition['validate type'])) {
+          continue;
+        }
+        foreach ((array) $info['type'] as $type) {
+          if ($type == $this->definition['validate type']) {
+            $valid = TRUE;
+            break;
+          }
+        }
+      }
+
+      // If we decide this validator is ok, add it to the list.
+      if ($valid) {
+        $plugin = views_get_plugin('argument validator', $id);
+        if ($plugin) {
+          $plugin->init($this->view, $this, $id);
+          if ($plugin->access()) {
+            $plugin->validate_form($form, $form_state, $id);
+            $validate_types[$id] = $info['title'];
+          }
+        }
+      }
+    }
+
+    // Only show validators if there are any to use.
+    if (count($validate_types) > 1) {
+      asort($validate_types);
+      $form['validate_type']['#options'] = $validate_types;
+      // Show this gadget if *anything* but 'none' is selected
+      $dependency = array_keys($validate_types);
+      // get rid of 'none';
+      array_shift($dependency);
+
+      $form['validate_fail'] = array(
+        '#type' => 'select',
+        '#title' => t('Action to take if argument does not validate'),
+        '#default_value' => $this->options['validate_fail'],
+        '#options' => $validate_options,
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array('edit-options-validate-type' => $dependency),
+      );
+    }
+    else {
+      $form['validate_type'] = array(
+        '#type' => 'value',
+        '#value' => 'none',
+      );
+    }
   }
 
   /**
@@ -108,7 +233,7 @@ class views_handler_argument extends views_handler {
         'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
       'not found' => array(
-        'title' => t('Display page not found'),
+        'title' => t('Hide view / Page not found (404)'),
         'method' => 'default_not_found',
       ),
       'empty' => array(
@@ -130,8 +255,13 @@ class views_handler_argument extends views_handler {
         'style plugin' => TRUE,
         'breadcrumb' => TRUE, // generate a breadcrumb to here
       ),
-      // @todo: There should be a 'default' where a default value
-      // is filled in if the argument is not present.
+      'default' => array(
+        'title' => t('Provide default argument'),
+        'method' => 'default_default',
+        'form method' => 'default_argument_form',
+        'has default argument' => TRUE,
+        'default only' => TRUE, // this can only be used for missing argument, not validation failure
+      ),
     );
 
     if ($which) {
@@ -145,23 +275,38 @@ class views_handler_argument extends views_handler {
   }
 
   /**
-   * Determine if the can generate a breadcrumb
-   *
-   * @return TRUE/FALSE
+   * Provide a form for selecting the default argument when the
+   * default action is set to provide default argument.
    */
-  function uses_breadcrumb() {
-    $info = $this->default_actions($this->options['default_action']);
-    return !empty($info['breadcrumb']);
-  }
+  function default_argument_form(&$form, &$form_state) {
+    $plugins = views_fetch_plugin_data('argument default');
+    $options = array();
 
-  /**
-   * Determine if the argument needs a style plugin.
-   *
-   * @return TRUE/FALSE
-   */
-  function needs_style_plugin() {
-    $info = $this->default_actions($this->options['default_action']);
-    return !empty($info['style plugin']);
+    $form['default_argument_type'] = array(
+      '#prefix' => '<div id="edit-options-default-argument-type-wrapper">',
+      '#suffix' => '</div>',
+      '#type' => 'radios',
+      '#id' => 'edit-options-default-argument-type',
+      '#title' => t('Default argument type'),
+      '#default_value' => $this->options['default_argument_type'],
+      '#process' => array('expand_radios', 'views_process_dependency'),
+      '#dependency' => array('radio:options[default_action]' => array('default')),
+    );
+
+    foreach ($plugins as $id => $info) {
+      $plugin = views_get_plugin('argument default', $id);
+      if ($plugin) {
+        $plugin->init($this->view, $this, $id);
+
+        if ($plugin->access() || $this->options['default_argument_type'] == $id) {
+          $options[$id] = $info['title'];
+          $plugin->argument_form($form, $form_state);
+        }
+      }
+    }
+
+    asort($options);
+    $form['default_argument_type']['#options'] = $options;
   }
 
   /**
@@ -173,8 +318,11 @@ class views_handler_argument extends views_handler {
    *   A boolean value; if TRUE, continue building this view. If FALSE,
    *   building the view will be aborted here.
    */
-  function default_action() {
-    $info = $this->default_actions($this->options['default_action']);
+  function default_action($info = NULL) {
+    if (!isset($info)) {
+      $info = $this->default_actions($this->options['default_action']);
+    }
+
     if (!$info) {
       return FALSE;
     }
@@ -187,6 +335,13 @@ class views_handler_argument extends views_handler {
     }
   }
 
+  /**
+   * How to act if validation failes
+   */
+  function validate_fail() {
+    $info = $this->default_actions($this->options['validate_fail']);
+    return $this->default_action($info);
+  }
   /**
    * Default action: ignore.
    *
@@ -221,6 +376,30 @@ class views_handler_argument extends views_handler {
     $this->view->executed = TRUE;
     $this->view->result = array();
     return FALSE;
+  }
+
+  /**
+   * This just returns true. The view argument builder will know where
+   * to find the argument from.
+   */
+  function default_default() {
+    return TRUE;
+  }
+
+  /**
+   * Get a default argument, if available.
+   */
+  function get_default_argument() {
+    $info = $this->default_actions($this->options['default_action']);
+    if (empty($info['has default argument'])) {
+      return; // NULL
+    }
+
+    $plugin = views_get_plugin('argument default', $this->options['default_argument_type']);
+    if ($plugin) {
+      $plugin->init($this->view, $this);
+      return $plugin->get_argument();
+    }
   }
 
   /**
@@ -370,7 +549,8 @@ class views_handler_argument extends views_handler {
    */
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where(0, "$this->table_alias.$this->real_field = '%s'", $this->argument);
+    $placeholder = empty($this->definition['numeric']) ? "'%s'" : '%d';
+    $this->query->add_where(0, "$this->table_alias.$this->real_field = $placeholder", $this->argument);
   }
 
   /**
@@ -383,10 +563,57 @@ class views_handler_argument extends views_handler {
   }
 
   /**
+   * Called by the view object to get the title. This may be set by a
+   * validator so we don't necessarily call through to title().
+   */
+  function get_title() {
+    if (isset($this->validated_title)) {
+      return $this->validated_title;
+    }
+    else {
+      return $this->title();
+    }
+  }
+
+  /**
    * Validate that this argument works. By default, all arguments are valid.
    */
-  function validate($arg) {
-    return TRUE;
+  function validate_argument($arg) {
+    // By using % in URLs, arguments could be validated twice; this eases
+    // that pain.
+    if (isset($this->argument_validated)) {
+      return $this->argument_validated;
+    }
+
+    // Assume valid unless told otherwise:
+    $this->argument_validated = TRUE;
+
+    if ($this->options['validate_type'] == 'none') {
+      return $this->argument_validated;
+    }
+
+    $plugin = views_get_plugin('argument validator', $this->options['validate_type']);
+    if ($plugin) {
+      $plugin->init($this->view, $this, $this->options['validate_type']);
+      $this->argument_validated = $plugin->validate_argument($arg);
+    }
+
+    // If the plugin isn't found, all arguments are valid.
+    return $this->argument_validated;
+  }
+
+  /**
+   * Set the input for this argument
+   *
+   * @return TRUE if it successfully validates; FALSE if it does not.
+   */
+  function set_argument($arg) {
+    $this->argument = $arg;
+    if ($this->is_wildcard()) {
+      return TRUE;
+    }
+
+    return $this->validate_argument($arg);
   }
 }
 
@@ -773,14 +1000,6 @@ class views_handler_argument_many_to_one extends views_handler_argument {
    */
   function title_query() {
     return $this->value;
-  }
-
-  function is_wildcard() {
-    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $this->argument;
-  }
-
-  function wildcard_title() {
-    return $this->options['wildcard_substitution'];
   }
 }
 

@@ -376,16 +376,22 @@ class view extends views_db_object {
         continue;
       }
 
-      if (isset($this->args[$position]) && $argument['handler']->validate($this->args[$position])) {
+      $arg = isset($this->args[$position]) ? $this->args[$position] : $argument['handler']->get_default_argument();
+
+      if (isset($arg)) {
         // handle argument that is present.
         // @todo: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
-        $argument['handler']->argument = $this->args[$position];
+        if (!$argument['handler']->set_argument($arg)) {
+          $status = $argument['handler']->validate_fail($arg);
+          break;
+        }
+
         if ($argument['handler']->is_wildcard()) {
           $arg_title = $argument['handler']->wildcard_title();
         }
         else {
-          $arg_title = $argument['handler']->title();
+          $arg_title = $argument['handler']->get_title();
           $argument['handler']->query();
         }
 
@@ -409,7 +415,7 @@ class view extends views_db_object {
         // Add this argument's substitution
         $substitutions['%' . ($position + 1)] = $arg_title;
 
-        $breadcrumb_args[] = $this->args[$position];
+        $breadcrumb_args[] = $arg;
       }
       else {
         // determine default condition and handle.
