@@ -302,5 +302,11 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
   $('div#views-live-preview a:not(.views-processed)')
     .addClass('views-processed')
     .click(Drupal.Views.updatePreviewLink);
+}
 
+/**
+ * Get rid of irritating tabledrag messages
+ */
+Drupal.theme.tableDragChangedWarning = function () { 
+  return ''; 
 }
