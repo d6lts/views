@@ -664,6 +664,36 @@ function template_preprocess_views_ui_edit_view(&$vars) {
     $vars['break'] = l(t('break this lock'), 'admin/build/views/break-lock/' . $view->name);
   }
 
+  $vars['quick_links_raw'] = array(
+    array(
+      'title' => t('Export'),
+      'alt' => t("Export this view"),
+      'href' => "admin/build/views/export/$view->name",
+    ),
+    array(
+      'title' => t('Clone'),
+      'alt' => t("Create a copy of this view"),
+      'href' => "admin/build/views/clone/$view->name",
+    ),
+  );
+
+  $paths = array();
+  foreach ($view->display as $id => $display) {
+    if ($display->handler->has_path()) {
+      $path = $display->handler->get_path();
+      if (strpos('%', $path) === FALSE && !isset($paths[$path])) {
+        $vars['quick_links_raw'][] = array(
+          'title' => t('View "@display"', array('@display' => $display->display_title)),
+          'alt' => t("Go to the real page for this display"),
+          'href' => $path,
+        );
+        // Displays can have the same path; no point in showing more than one link.
+        $paths[$path] = TRUE;
+      }
+    }
+  }
+
+  $vars['quick_links'] = theme('links', $vars['quick_links_raw']);
   views_add_css('admin');
   views_add_css('views');
   views_add_js('ajax');

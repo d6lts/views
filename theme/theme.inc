@@ -79,6 +79,34 @@ function template_preprocess_views_view(&$vars) {
     $vars['pager']    = theme($pager_type, $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
+  // if administrator, add some links. These used to be tabs, but this is better.
+  if (user_access('administer views')) {
+    $vars['admin_links_raw'] = array(
+      array(
+        'title' => t('Edit'),
+        'alt' => t("Edit this view"),
+        'href' => "admin/build/views/edit/$view->name",
+        'fragment' => 'views-tab-' . $view->current_display,
+        'query' => drupal_get_destination(),
+      ),
+      array(
+        'title' => t('Export'),
+        'alt' => t("Export this view"),
+        'href' => "admin/build/views/export/$view->name",
+      ),
+      array(
+        'title' => t('Clone'),
+        'alt' => t("Create a copy of this view"),
+        'href' => "admin/build/views/clone/$view->name",
+      ),
+    );
+    $vars['admin_links'] = theme('links', $vars['admin_links_raw']);
+  }
+  else {
+    $vars['admin_links'] = '';
+    $vars['admin_links_raw'] = array();
+  }
+
   // If using AJAX, send identifying data about this view.
   if ($view->use_ajax) {
     $settings = array(

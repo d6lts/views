@@ -23,3 +23,54 @@ html.js span.views-throbbing {
   background:url(../images/status-active.gif) no-repeat right center;
   padding-right:18px;
 }
+
+/* administrative hover links */
+
+div.view div.views-admin-links {
+  font-size: xx-small;
+  margin-right: 1em;
+}
+
+div.view div.views-admin-links ul {
+  padding-left: 0;
+}
+
+div.view div.views-admin-links li a {
+  color: #ccc;
+}
+
+div.view div.views-admin-links li {
+  padding-bottom: 2px;
+  z-index: 201;
+}
+
+div.view div.views-admin-links-hover a,
+div.view div.views-admin-links:hover a {
+  color: #000;
+}
+
+div.view div.views-admin-links a:before {
+  content: "[";
+}
+
+div.view div.views-admin-links a:after {
+  content: "]";
+}
+
+div.view div.views-hide {
+  display: none;
+}
+
+/** For IE we add the class via js; for other browsers we rely on :hover **/
+div.view div.views-hide-hover,
+div.view:hover div.views-hide {
+  display: block;
+  position: absolute;
+  z-index: 200;
+}
+
+/* don't do this one in IE */
+div.view:hover div.views-hide {
+  margin-top: -1.5em;
+}
+

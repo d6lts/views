@@ -16,6 +16,9 @@
   <?php else: ?>
     <div class="view-changed"><?php print t('Changed view'); ?></div>
   <?php endif; ?>
+  <div class="views-quick-links">
+    <?php print $quick_links ?>
+  </div>
   <?php print t('View %name, displaying items of type <strong>@base</strong>.',
       array('%name' => $view->name, '@base' => $base_table)); ?>
 </div>
