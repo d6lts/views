@@ -95,6 +95,8 @@ function user_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_user_mail',
       'click sortable' => TRUE,
+      'access callback' => 'user_access',
+      'access arguments' => array('administer users'),
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
@@ -446,11 +448,6 @@ class views_handler_field_user_mail extends views_handler_field_user {
       ),
       '#default_value' => $this->options['link_to_user'],
     );
-  }
-
-  // An example of field level access control.
-  function access() {
-    return user_access('administer users');
   }
 
   function render($values) {
