@@ -147,6 +147,38 @@ class views_handler_field extends views_handler {
     $value = $values->{$this->field_alias};
     return check_plain($value);
   }
+
+  /**
+   * Call out to the theme() function, which probably just calls render() but
+   * allows sites to override output fairly easily.
+   */
+  function theme($values) {
+    return theme($this->theme_functions(), $this->view, $this, $values);
+  }
+
+  function theme_functions() {
+    $themes = array();
+    $hook = 'views_view_field';
+
+    $display = $this->view->display[$this->view->current_display];
+
+    if (!empty($display)) {
+      $themes[] = $hook . '__' . $this->view->name  . '__' . $display->id . '__' . $this->options['id'];
+      $themes[] = $hook . '__' . $this->view->name  . '__' . $display->id;
+      $themes[] = $hook . '__' . $display->id . '__' . $this->options['id'];
+      $themes[] = $hook . '__' . $display->id;
+      if ($display->id != $display->display_plugin) {
+        $themes[] = $hook . '__' . $this->view->name  . '__' . $display->display_plugin . '__' . $this->options['id'];
+        $themes[] = $hook . '__' . $this->view->name  . '__' . $display->display_plugin;
+        $themes[] = $hook . '__' . $display->display_plugin . '__' . $this->options['id'];
+        $themes[] = $hook . '__' . $display->display_plugin;
+      }
+    }
+    $themes[] = $hook . '__' . $this->view->name . '__' . $this->options['id'];
+    $themes[] = $hook;
+
+    return $themes;
+  }
 }
 
 /**

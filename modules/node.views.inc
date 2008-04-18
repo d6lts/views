@@ -1186,12 +1186,6 @@ class views_plugin_row_node_view extends views_plugin_row {
       '#default_value' => $this->options['links'],
     );
   }
-  /**
-   * Override the behavior of the render() function.
-   */
-  function render($row) {
-    return theme(array('views_view_row_node__' . $this->view->name, 'views_view_row_node'), $this->view, $this->options, $row);
-  }
 }
 
 /**

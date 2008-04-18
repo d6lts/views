@@ -22,10 +22,10 @@ function _views_theme_functions($hook, $view, $display = NULL) {
   $themes = array();
 
   if ($display) {
-    $themes[] = $hook . '__' . $display->id . '__' . $view->name;
+    $themes[] = $hook . '__' . $view->name . '__' . $display->id;
     $themes[] = $hook . '__' . $display->id;
     if ($display->id != $display->display_plugin) {
-      $themes[] = $hook . '__' . $display->display_plugin . '__' . $view->name;
+      $themes[] = $hook . '__' . $view->name . '__' . $display->display_plugin;
       $themes[] = $hook . '__' . $display->display_plugin;
     }
   }
@@ -137,17 +137,9 @@ function template_preprocess_views_view_fields(&$vars) {
   // Loop through the fields for this view.
   foreach ($view->field as $id => $field) {
     if (!empty($field['handler']) && is_object($field['handler'])) {
-      $themes = array(
-        'views_view_field__' . $view->name . '__' . $field['handler']->field_alias,
-        'views_view_field__' . $view->name,
-        'views_view_field__' . $id,
-        'views_view_field',
-      );
-
       $object = new stdClass();
 
-      // Add the field into a variable named after the field. field_alias will be unique.
-      $object->content = theme($themes, $view, $field, $vars['row']);
+      $object->content = $field['handler']->theme($vars['row']);
       if (isset($field['handler']->field_alias) && isset($vars['row']->{$field['handler']->field_alias})) {
         $object->raw = $vars['row']->{$field['handler']->field_alias};
       }
@@ -172,7 +164,7 @@ function template_preprocess_views_view_fields(&$vars) {
  * this: @code { $row->{$field->field_alias} @endcode
  */
 function theme_views_view_field($view, $field, $row) {
-  return $field['handler']->render($row);
+  return $field->render($row);
 }
 
 /**
@@ -246,14 +238,14 @@ function template_preprocess_views_view_table(&$vars) {
     foreach ($result as $num => $row) {
       if (!empty($fields[$field]['handler']) && is_object($fields[$field]['handler'])) {
         $handler = &$fields[$field]['handler'];
-        $themes = array(
-          'views_view_field__' . $view->name . '__' . $handler->field_alias,
-          'views_view_field__' . $view->name,
-          'views_view_field__' . $handler->field_alias,
-          'views_view_field',
-        );
+        $field_output = $handler->theme($row);
 
-        // Add the field into a variable named after the field. field_alias will be unique.
+        // Don't bother with separators and stuff if the field does not show up.
+        if (!$field_output) {
+          continue;
+        }
+
+        // Place the field into the column, along with an optional separator.
         if (isset($vars['rows'][$num][$column])) {
           if (!empty($options['info'][$column]['separator'])) {
             $vars['rows'][$num][$column] .= $options['info'][$column]['separator'];
@@ -263,7 +255,7 @@ function template_preprocess_views_view_table(&$vars) {
           $vars['rows'][$num][$column] = '';
         }
 
-        $vars['rows'][$num][$column] .= theme($themes, $view, $fields[$field], $row);
+        $vars['rows'][$num][$column] .= $field_output;
       }
     }
   }

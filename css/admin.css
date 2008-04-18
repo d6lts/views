@@ -473,6 +473,13 @@ div.changed div.view-changed {
   padding-left: 10px;
 }
 
+#views-ajax-pad pre {
+  overflow: auto;
+  border: 1px solid #333;
+  background-color: #f0f0f0;
+  padding: .5em;
+}
+
 form#views-add-display-form {
   margin-bottom: 0em;
 }

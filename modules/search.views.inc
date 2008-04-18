@@ -270,7 +270,7 @@ class views_plugin_row_search_view extends views_plugin_row {
    * Override the behavior of the render() function.
    */
   function render($row) {
-    return theme(array('views_view_row_search__' . $this->view->name, 'views_view_row_search'), $this->view, $this->options, $row);
+    return theme($this->theme_functions(), $this->view, $this->options, $row);
   }
 }
 

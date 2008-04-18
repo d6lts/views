@@ -34,21 +34,6 @@ function views_theme() {
   );
 
   // Default view themes
-  $hooks['views_view'] = $base + array(
-    'template' => 'views-view',
-    'pattern' => 'views_view__',
-    'arguments' => $arguments['display'],
-  );
-  $hooks['views_view_rows'] = $base + array(
-    'template' => 'views-view-rows',
-    'pattern' => 'views_view_rows__',
-    'arguments' => $arguments['style'],
-  );
-  $hooks['views_view_row'] = $base + array(
-    'template' => 'views-view-row',
-    'pattern' => 'views_view_row__',
-    'arguments' => $arguments['row'],
-  );
   $hooks['views_view_field'] = $base + array(
     'pattern' => 'views_view_field__',
     'arguments' => array('view' => NULL, 'field' => NULL, 'row' => NULL),

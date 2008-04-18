@@ -18,6 +18,7 @@ function views_views_plugins() {
         'title' => t('Defaults'),
         'help' => t('Default settings for this view.'),
         'handler' => 'views_plugin_display_default',
+        'theme' => 'views_view',
         'no ui' => TRUE,
         'no remove' => TRUE,
         'js' => array('misc/collapse.js', 'misc/textarea.js', 'misc/tabledrag.js', 'misc/autocomplete.js', "$path/dependent.js"),
@@ -30,6 +31,7 @@ function views_views_plugins() {
         'title' => t('Page'),
         'help' => t('Display the view as a page, with a URL and menu links.'),
         'handler' => 'views_plugin_display_page',
+        'theme' => 'views_view',
         'uses hook menu' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
@@ -39,6 +41,7 @@ function views_views_plugins() {
         'title' => t('Block'),
         'help' => t('Display the view as a block.'),
         'handler' => 'views_plugin_display_block',
+        'theme' => 'views_view',
         'uses hook block' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
@@ -49,6 +52,7 @@ function views_views_plugins() {
         'title' => t('Attachment'),
         'help' => t('Attachments added to other displays to achieve multiple views in the same view.'),
         'handler' => 'views_plugin_display_attachment',
+        'theme' => 'views_view',
         'use ajax' => TRUE,
       ),
       'feed' => array(
@@ -183,6 +187,48 @@ function views_discover_plugins() {
 }
 
 /**
+ * Abstract base class to provide interface common to all plugins.
+ */
+class views_plugin extends views_object {
+  /**
+   * Init will be called after construct, when the plugin is attached to a
+   * view and a display.
+   */
+  function init(&$view, &$display) {
+    $this->view = &$view;
+    $this->display = &$display;
+  }
+
+  /**
+   * Provide a form to edit options for this plugin.
+   */
+  function options_form(&$form, &$form_state) { }
+
+  /**
+   * Validate the options form.
+   */
+  function options_form_validate(&$form, &$form_state) { }
+
+  /**
+   * Handle any special handling on the validate form.
+   */
+  function options_form_submit(&$form, &$form_state) { }
+
+  /**
+   * Add anything to the query that we might need to.
+   */
+  function query() { }
+
+  /**
+   * Provide a full list of possible theme templates used by this style.
+   */
+  function theme_functions() {
+    return views_theme_functions($this->definition['theme'], $this->view, $this->display);
+  }
+
+}
+
+/**
  * @defgroup views_display_plugins Views' display plugins
  * @{
  * Display plugins control how Views interact with the rest of Drupal.
@@ -199,15 +245,7 @@ function views_discover_plugins() {
  * The default display plugin handler. Display plugins handle options and
  * basic mechanisms for different output methods.
  */
-class views_plugin_display extends views_object {
-  /**
-   * Fill this plugin in with the view, display, etc.
-   */
-  function init(&$view, &$display) {
-    $this->view = &$view;
-    $this->display = &$display;
-  }
-
+class views_plugin_display extends views_plugin {
   /**
    * Determine if this display is the 'default' display which contains
    * fallback settings
@@ -455,10 +493,25 @@ class views_plugin_display extends views_object {
    * Determine if the display's style uses fields.
    */
   function uses_fields() {
-    $plugin = views_get_plugin('style', $this->get_option('style_plugin'));
-    $plugin->init($this->view, $this->display);
+    $plugin = $this->get_plugin();
     if ($plugin) {
       return $plugin->uses_fields();
+    }
+  }
+
+  /**
+   * Get the display or row plugin, if it exists.
+   */
+  function get_plugin($type = 'style', $name = NULL) {
+    if (!$name) {
+      $name = $this->get_option($type . '_plugin');
+    }
+
+    $plugin = views_get_plugin($type, $name);
+    if ($plugin) {
+      $options = $this->get_option($type . '_options');
+      $plugin->init($this->view, $this->display, $options);
+      return $plugin;
     }
   }
 
@@ -681,6 +734,13 @@ class views_plugin_display extends views_object {
         'desc' => t("Change this display's !name.", array('!name' => strtolower($name))),
       );
     }
+
+    $options['analyze-theme'] = array(
+      'category' => 'basic',
+      'title' => t('Theme'),
+      'value' => t('Information'),
+      'desc' => t('Get information on how to theme this display'),
+    );
   }
 
   /**
@@ -897,12 +957,11 @@ class views_plugin_display extends views_object {
           $form['#title'] .= t('Row style options');
           $type = 'row_plugin';
         }
-        $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option($type));
+        $plugin = $this->get_plugin(empty($style) ? 'row' : 'style');
         if ($plugin) {
           $form[$form_state['section']] = array(
             '#tree' => TRUE,
           );
-          $plugin->init($this->view, $this->display);
           $plugin->options_form($form[$form_state['section']], $form_state);
         }
         break;
@@ -928,8 +987,175 @@ class views_plugin_display extends views_object {
           '#default_value' => $this->get_link_display(),
         );
         break;
+      case 'analyze-theme':
+        $form['#title'] .= t('Theming information');
+        $funcs = array();
 
+        // Get theme functions for the display. Note that some displays may
+        // not have themes. The 'feed' display, for example, completely
+        // delegates to the style.
+        if (!empty($this->definition['theme'])) {
+          $funcs[] = $this->option_link(t('Display output'), 'analyze-theme-display') . ': '  . $this->format_themes($this->theme_functions());
+        }
+
+        $plugin = $this->get_plugin();
+        if ($plugin) {
+          $funcs[] = $this->option_link(t('Style output'), 'analyze-theme-style') . ': ' . $this->format_themes($plugin->theme_functions());
+
+          if ($plugin->uses_row_plugin()) {
+            $row_plugin = $this->get_plugin('row');
+            if ($row_plugin) {
+              $funcs[] = $this->option_link(t('Row style output'), 'analyze-theme-row') . ': ' . $this->format_themes($row_plugin->theme_functions());
+            }
+          }
+
+          if ($plugin->uses_fields()) {
+            $fields = $this->get_option('fields');
+            foreach ($fields as $field => $info) {
+              $handler = views_get_handler($info['table'], $info['field'], 'field');
+              if ($handler) {
+                $handler->init($this->view, $info);
+                $funcs[] = $this->option_link(t('Field @field', array('@field' => $handler->ui_name())), 'analyze-theme-field') . ': ' . $this->format_themes($handler->theme_functions());
+              }
+            }
+          }
+        }
+
+        $form['markup'] = array(
+          '#prefix' => '<div class="form-item description">',
+          '#suffix' => '</div>',
+          '#value' => '<p>' . t('You may use any of the following possible theme files to modify individual parts of your view. In total, there are four parts to theming a view. The <strong>display</strong> theme is usually views-view.tpl.php and it largely controls the decorations around a view; where the header, footer, pager, more link, feed icon, etc, will be placed. The <strong>style</strong> will control how all of the results of the display are put together. It may be as simple as just displaying all of the rows, or it may be a complex table generator or something in between. The <strong>row</strong> style controls each individual row; not all styles utilize the row style (notably the table), but most others do. Finally, <strong>field</strong> themes allow you to override the look and even the data of each individual field, if the style uses fields.') . '</p>',
+        );
+
+        $form['important'] = array(
+          '#prefix' => '<div class="form-item description">',
+          '#suffix' => '</div>',
+          '#value' => '<p>' . t('<strong>Important!</strong> When you add a new template to your theme, be sure to clear the theme registry cache. You can do this by visiting administer >> site building >> themes -- just loading the page should clear the cache.') . '</p>',
+        );
+
+        $form['analysis'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+          '#value' => theme('item_list', $funcs),
+        );
+
+        $form_state['ok_button'] = TRUE;
+        break;
+      case 'analyze-theme-display':
+        $form['#title'] .= t('Theming information (display)');
+        $output = '';
+
+        if (empty($this->definition['theme'])) {
+          $output .= t('This display has no theming information');
+        }
+        else {
+          $output .= '<p>' . t('This is the default theme template used for this display.') . '</p>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['path'] . '/' . strtr($this->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+        }
+        $form['analysis'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+          '#value' => $output,
+        );
+
+        $form_state['ok_button'] = TRUE;
+        break;
+      case 'analyze-theme-style':
+        $form['#title'] .= t('Theming information (style)');
+        $output = '';
+
+        $plugin = $this->get_plugin();
+
+        if (empty($plugin->definition['theme'])) {
+          $output .= t('This display has no style theming information');
+        }
+        else {
+          $output .= '<p>' . t('This is the default theme template used for this style.') . '</p>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+        }
+        $form['analysis'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+          '#value' => $output,
+        );
+
+        $form_state['ok_button'] = TRUE;
+        break;
+      case 'analyze-theme-row':
+        $form['#title'] .= t('Theming information (row style)');
+        $output = '';
+
+        $plugin = $this->get_plugin('row');
+
+        if (empty($plugin->definition['theme'])) {
+          $output .= t('This display has no row style theming information');
+        }
+        else {
+          $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+        }
+        $form['analysis'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+          '#value' => $output,
+        );
+
+        $form_state['ok_button'] = TRUE;
+        break;
+      case 'analyze-theme-field':
+        $form['#title'] .= t('Theming information (row style)');
+        $output = '';
+
+        $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
+        $template =  "<?php\n";
+        $template .= " /**\n";
+        $template .= "  * Variables available:\n";
+        $template .= "  * - \$view: The view object\n";
+        $template .= "  * - \$field: The field handler object that can process the input\n";
+        $template .= "  * - \$row: The raw SQL result that can be used\n";
+        $template .= "  */\n";
+        $template .= "?>/\n";
+        $template .= "<?php print \$field->render(\$row); ?>\n";
+        $output .= '<pre>' . check_plain($template) . '</pre>';
+
+        $form['analysis'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+          '#value' => $output,
+        );
+        break;
     }
+  }
+
+  /**
+   * Format a list of theme templates for output by the theme info helper.
+   */
+  function format_themes($themes) {
+    init_theme();
+    $registry = theme_get_registry();
+
+    // Run through the theme engine variables, if necessary
+    global $theme_engine;
+    $extension = '.tpl.php';
+    if (isset($theme_engine)) {
+      $extension_function = $theme_engine .'_extension';
+      if (function_exists($extension_function)) {
+        $extension = $extension_function();
+      }
+    }
+
+    $output = '';
+    $found = FALSE;
+    foreach ($themes as $theme) {
+      $template = strtr($theme, '_', '-') . $extension;
+      if (!$found && !empty($registry[$theme])) {
+        $template = '<strong>' . $template . '</strong>';
+        $found = TRUE;
+      }
+      $fixed[] = $template;
+    }
+
+    return implode(', ', array_reverse($fixed));
   }
 
   /**
@@ -941,9 +1167,8 @@ class views_plugin_display extends views_object {
         $style = TRUE;
       case 'row_options':
         // if row, $style will be empty.
-        $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option(empty($style) ? 'row_plugin' : 'style_plugin'));
+        $plugin = $this->get_plugin(empty($style) ? 'row' : 'style');
         if ($plugin) {
-          $plugin->init($this->view, $this->display);
           $plugin->options_validate($form[$form_state['section']], $form_state);
         }
         break;
@@ -990,6 +1215,7 @@ class views_plugin_display extends views_object {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('row', $form_state['values'][$section]);
+          // @todo -- change this
           $this->set_option('row_options', $plugin->options($this->display));
         }
         break;
@@ -999,6 +1225,7 @@ class views_plugin_display extends views_object {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('style', $form_state['values'][$section]);
+          // @todo -- change this
           $this->set_option('style_options', $plugin->options($this->display));
         }
         break;
@@ -1006,9 +1233,8 @@ class views_plugin_display extends views_object {
         $style = TRUE;
       case 'row_options':
         // if row, $style will be empty.
-        $plugin = views_get_plugin(empty($style) ? 'row' : 'style', $this->get_option('style_plugin'));
+        $plugin = $this->get_plugin(empty($style) ? 'row' : 'style');
         if ($plugin) {
-          $plugin->init($this->view, $this->display);
           $plugin->options_submit($form[$section], $form_state);
         }
         $this->set_option($section, $form_state['values'][$section]);
@@ -1164,8 +1390,7 @@ class views_plugin_display extends views_object {
    * Render this display.
    */
   function render() {
-    $theme = views_theme_functions('views_view', $this->view, $this->display);
-    return theme($theme, $this->view);
+    return theme($this->theme_functions(), $this->view);
   }
 
   /**
@@ -2060,8 +2285,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
 
     // Defer to the feed style; it may put in meta information, and/or
     // attach a feed icon.
-    $plugin = views_get_plugin('style', $this->get_option('style_plugin'));
-    $plugin->init($this->view, $this->display);
+    $plugin = $this->get_plugin();
     if ($plugin) {
       $plugin->attach_to($display_id, $this->get_path(), $this->get_option('title'));
     }
@@ -2089,7 +2313,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
 /**
  * Base class to define a style plugin handler.
  */
-class views_plugin_style extends views_object {
+class views_plugin_style extends views_plugin {
   /**
    * Initialize a style plugin.
    *
@@ -2110,11 +2334,7 @@ class views_plugin_style extends views_object {
     }
 
     if ($this->uses_row_plugin() && $display->handler->get_option('row_plugin')) {
-      $this->row_plugin = views_get_plugin('row', $display->handler->get_option('row_plugin'));
-      // initialize the row plugin.
-      if ($this->row_plugin) {
-        $this->row_plugin->init($view, $display);
-      }
+      $this->row_plugin = $display->handler->get_plugin('row');
     }
   }
 
@@ -2140,6 +2360,9 @@ class views_plugin_style extends views_object {
 
   /**
    * Static member function to set default options.
+   *
+   * @todo the options on all plugins should be unified and made to match
+   * how handler options work.
    */
   function options(&$display) {
     return array();
@@ -2168,12 +2391,13 @@ class views_plugin_style extends views_object {
    */
   function build_sort() { return TRUE; }
 
-  function render($rows) { }
-
   /**
-   * Inject anything into the query that the style handler needs.
+   * Render the display in this style.
+   *
+   * @param $rows
+   *   The full results of the query, loaded into an array of objects.
    */
-  function query() { }
+  function render($rows) { }
 }
 
 /**
@@ -2194,8 +2418,8 @@ class views_plugin_style_default extends views_plugin_style {
       // @todo: Include separator as an option.
       $rows[] = $this->row_plugin->render($row);
     }
-    $theme = views_theme_functions('views_view_unformatted', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, $rows);
+//    $theme = views_theme_functions('views_view_unformatted', $this->view, $this->display);
+    return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
 
@@ -2237,8 +2461,8 @@ class views_plugin_style_list extends views_plugin_style {
     foreach ($this->view->result as $row) {
       $rows[] = $this->row_plugin->render($row);
     }
-    $theme = views_theme_functions('views_view_list', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, $rows);
+//    $theme = views_theme_functions('views_view_list', $this->view, $this->display);
+    return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
 
@@ -2472,8 +2696,8 @@ class views_plugin_style_table extends views_plugin_style {
    * Render the table style.
    */
   function render() {
-    $theme = views_theme_functions('views_view_table', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, array());
+//    $theme = views_theme_functions('views_view_table', $this->view, $this->display);
+    return theme($this->theme_functions(), $this->view, $this->options, array());
   }
 }
 
@@ -2574,8 +2798,8 @@ class views_plugin_style_summary extends views_plugin_style {
       // @todo: Include separator as an option.
       $rows[] = $row;
     }
-    $theme = views_theme_functions('views_view_summary', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, $rows);
+//    $theme = views_theme_functions('views_view_summary', $this->view, $this->display);
+    return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
 
@@ -2637,8 +2861,8 @@ class views_plugin_style_rss extends views_plugin_style {
       $rows .= $this->row_plugin->render($row);
     }
 
-    $theme = views_theme_functions('views_view_rss', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, $rows);
+//    $theme = views_theme_functions('views_view_rss', $this->view, $this->display);
+    return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
 
@@ -2661,7 +2885,7 @@ class views_plugin_style_rss extends views_plugin_style {
  * Default plugin to view a single row of a table. This is really just a wrapper around
  * a theme function.
  */
-class views_plugin_row extends views_object {
+class views_plugin_row extends views_plugin {
   /**
    * Initialize the row plugin.
    */
@@ -2703,8 +2927,7 @@ class views_plugin_row extends views_object {
    * of some form, but not always.
    */
   function render($row) {
-    $theme = views_theme_functions('views_view_fields', $this->view, $this->display);
-    return theme($theme, $this->view, $this->options, $row);
+    return theme($this->theme_functions(), $this->view, $this->options, $row);
   }
 }
 
@@ -2724,7 +2947,7 @@ class views_plugin_row extends views_object {
 
 /**
  */
-class views_plugin_argument_default extends views_object {
+class views_plugin_argument_default extends views_plugin {
   var $option_name = 'default_argument_fixed';
   /**
    * Initialize this plugin with the view and the argument
@@ -2778,6 +3001,9 @@ class views_plugin_argument_default extends views_object {
   }
 }
 
+/**
+ * Default argument plugin to provide a PHP code block.
+ */
 class views_plugin_argument_default_php extends views_plugin_argument_default {
   var $option_name = 'default_argument_php';
 
@@ -2835,8 +3061,9 @@ class views_plugin_argument_default_php extends views_plugin_argument_default {
  */
 
 /**
+ * Base argument validator plugin to provide basic functionality.
  */
-class views_plugin_argument_validate extends views_object {
+class views_plugin_argument_validate extends views_plugin {
   var $option_name = 'validate_argument';
 
   /**

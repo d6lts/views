@@ -798,13 +798,10 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
   $vars['categories'] = $categories;
 
   // Fetch style plugin info because it has some effect on how/what we render.
-  $style_plugin = views_get_plugin('style', $display->handler->get_option('style_plugin'));
-  if ($style_plugin) {
-    $style_plugin->init($view, $display);
-  }
+  $style_plugin = $display->handler->get_plugin();
 
   $vars['fields'] = '';
-  if ($style_plugin->uses_fields()) {
+  if ($style_plugin && $style_plugin->uses_fields()) {
     $vars['fields'] = theme('views_ui_edit_item', 'field', $view, $display);
   }
 
@@ -971,18 +968,20 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
   // remove default validate handler
   $form['#validate'] = array();
 
-  // but be sure submit button validates!
-  $form['buttons']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => $name,
-    '#submit' => array($form_id . '_submit'),
-    '#validate' => array('views_ui_standard_submit', $form_id . '_validate'),
-  );
+  if (empty($form_state['ok_button'])) {
+    // but be sure submit button validates!
+    $form['buttons']['submit'] = array(
+      '#type' => 'submit',
+      '#value' => $name,
+      '#submit' => array($form_id . '_submit'),
+      '#validate' => array('views_ui_standard_submit', $form_id . '_validate'),
+    );
+  }
 
   $cancel_submit = function_exists($form_id . '_cancel') ? $form_id . '_cancel' : 'views_ui_standard_cancel';
   $form['buttons']['cancel'] = array(
     '#type' => 'submit',
-    '#value' => t('Cancel'),
+    '#value' => empty($form_state['ok_button']) ? t('Cancel') : t('Ok'),
     '#submit' => array($cancel_submit),
     '#validate' => array(),
   );
@@ -1218,7 +1217,7 @@ function views_ui_remove_display_form_restore($form, &$form_state) {
 }
 
 /**
- * Page callback to edit details of a view.
+ * Page callback to display analysis information on a view.
  */
 function views_ui_analyze_view($js, $view) {
   views_include('ajax');
@@ -1276,12 +1275,11 @@ function views_ui_views_analyze($view) {
     $ret[] = views_ui_analysis(t('This view has only a default display and therefore will not be placed anywhere on your site; perhaps you want to add a page or a block display.'), 'warning');
   }
 
-
   return $ret;
 }
 
 /**
- * Form constructor callback to edit details of a view
+ * Form constructor callback to display analysis information on a view
  */
 function views_ui_analyze_view_form(&$form_state) {
   $view = &$form_state['view'];
@@ -1326,9 +1324,9 @@ function views_ui_analyze_view_form(&$form_state) {
     '#value' => $output,
   );
 
+  // Inform the standard button function that we want an OK button.
+  $form_state['ok_button'] = TRUE;
   views_ui_standard_form_buttons($form, $form_state, 'views_ui_analyze_view_form');
-  unset($form['buttons']['submit']);
-  $form['buttons']['cancel']['#value'] = t('Ok');
   return $form;
 }
 
