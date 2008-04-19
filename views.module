@@ -1281,7 +1281,7 @@ function views_theme_functions($hook, $view, $display = NULL) {
  * - input: The source of input. If unset this will be $_POST.
  * - no_redirect: Absolutely do not redirect the form even if instructed
  *   to do so.
- * - re_render: If no_redirect is set and the form was successfully submitted,
+ * - rerender: If no_redirect is set and the form was successfully submitted,
  *   rerender the form. Otherwise it will just return.
  *
  */

@@ -154,10 +154,6 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
   // reference.
   $form_state['values'] = array();
 
-  $form = form_builder($form_id, $form, $form_state);
-  // Only process the form if it is programmed or the form_id coming
-  // from the POST data is set and matches the current form_id.
-
   // With $_GET, these forms are always submitted.
   if ($form_state['method'] == 'get') {
     if (!isset($form['#post']['form_build_id'])) {
@@ -166,7 +162,14 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
     if (!isset($form['#post']['form_id'])) {
       $form['#post']['form_id'] = $form_id;
     }
+    if (!isset($form['#post']['form_token'])) {
+      $form['#post']['form_token'] = drupal_get_token($form['#token']);
+    }
   }
+
+  $form = form_builder($form_id, $form, $form_state);
+  // Only process the form if it is programmed or the form_id coming
+  // from the POST data is set and matches the current form_id.
 
   if ((!empty($form['#programmed'])) || (!empty($form['#post']) && (isset($form['#post']['form_id']) && ($form['#post']['form_id'] == $form_id)))) {
     drupal_validate_form($form_id, $form, $form_state);

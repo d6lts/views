@@ -36,6 +36,7 @@ function views_views_plugins() {
         'use ajax' => TRUE,
         'use pager' => TRUE,
         'accept attachments' => TRUE,
+        'admin' => t('Page'),
       ),
       'block' => array(
         'title' => t('Block'),
@@ -47,6 +48,7 @@ function views_views_plugins() {
         'use pager' => TRUE,
         'use more' => TRUE,
         'accept attachments' => TRUE,
+        'admin' => t('Block'),
       ),
       'attachment' => array(
         'title' => t('Attachment'),
@@ -63,6 +65,7 @@ function views_views_plugins() {
         'use ajax' => FALSE,
         'use pager' => FALSE,
         'accept attachments' => FALSE,
+        'admin' => t('Feed'),
       ),
     ),
     'style' => array(
@@ -1024,7 +1027,7 @@ class views_plugin_display extends views_plugin {
         $form['markup'] = array(
           '#prefix' => '<div class="form-item description">',
           '#suffix' => '</div>',
-          '#value' => '<p>' . t('You may use any of the following possible theme files to modify individual parts of your view. In total, there are four parts to theming a view. The <strong>display</strong> theme is usually views-view.tpl.php and it largely controls the decorations around a view; where the header, footer, pager, more link, feed icon, etc, will be placed. The <strong>style</strong> will control how all of the results of the display are put together. It may be as simple as just displaying all of the rows, or it may be a complex table generator or something in between. The <strong>row</strong> style controls each individual row; not all styles utilize the row style (notably the table), but most others do. Finally, <strong>field</strong> themes allow you to override the look and even the data of each individual field, if the style uses fields.') . '</p>',
+          '#value' => '<p>' . t('You may use any of the following possible theme files to modify individual parts of your view. In total, there are four parts to theming a view. The <strong>display</strong> theme is usually views-view.tpl.php and it largely controls the decorations around a view; where the header, footer, pager, more link, feed icon, etc, will be placed. The <strong>style</strong> will control how all of the results of the display are put together. It may be as simple as just displaying all of the rows, or it may be a complex table generator or something in between. The <strong>row</strong> style controls each individual row; not all styles utilize the row style (notably the table), but most others do. Finally, <strong>field</strong> themes allow you to override the look and even the data of each individual field, if the style uses fields. The actual template the system will use should be hilighted in <strong>bold</strong>.') . '</p>',
         );
 
         $form['important'] = array(

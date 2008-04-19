@@ -489,7 +489,7 @@ class view extends views_db_object {
         'display' => &$this->display_handler->display,
         'input' => $_GET,
         'method' => 'get',
-        're_render' => TRUE,
+        'rerender' => TRUE,
         'no_redirect' => TRUE,
       );
 

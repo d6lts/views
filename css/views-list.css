@@ -1,0 +1,47 @@
+/* $Id */
+
+table.views-entry {
+  margin: 2px 0;
+  border: 1px solid #ccc;
+  background-color: white;
+  clear: left;
+}
+
+table.views-entry tbody {
+  border: none;
+}
+
+table.views-entry td.view-ops {
+  width: 45%;
+  text-align: right;
+  background-color: #eee;
+}
+
+table.views-entry td.view-name {
+  background-color: #eee;
+}
+
+table.views-entry .description {
+  vertical-align: top;
+}
+
+body form#views-ui-list-views-form {
+  margin: 0 0 .5em 0;
+}
+
+#views-ui-list-views-form .form-item {
+  padding-right: 1em;
+  float: left;
+}
+
+#views-ui-list-views-form .form-submit {
+  clear: left;
+  position: relative;
+  top: .65em;
+}
+
+.advanced-help-link {
+  position: relative;
+  top: 2px;
+  padding-right: 3px;
+}
