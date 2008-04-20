@@ -7,8 +7,6 @@
 
 /**
  * Page callback to list views in the system.
- *
- * @todo: template.
  */
 function views_ui_list_views($arg = NULL) {
   if ($arg != NULL) {

@@ -167,9 +167,9 @@ function taxonomy_views_data() {
       'field' => 'tid',
     ),
     'node' => array(
-      // links directly to node via nid
-      'left_field' => 'nid',
-      'field' => 'nid',
+      // links directly to node via vid
+      'left_field' => 'vid',
+      'field' => 'vid',
     ),
     'node_revisions' => array(
       // links directly to node_revisions via vid
@@ -179,8 +179,8 @@ function taxonomy_views_data() {
     'users' => array(
       // Links to users via node.nid
       'left_table' => 'node',
-      'left_field' => 'nid',
-      'field' => 'nid',
+      'left_field' => 'vid',
+      'field' => 'vid',
     ),
     'term_hierarchy' => array(
       'left_field' => 'tid',
