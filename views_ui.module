@@ -253,10 +253,7 @@ function views_ui_cache_load($name) {
   $view = views_object_cache_get('view', $name);
 
   if (empty($view)) {
-    $v = views_get_view($name);
-    if ($v) {
-      $view = drupal_clone($v);
-    }
+    $view = views_get_view($name);
 
     if (!empty($view)) {
       // Check to see if someone else is already editing this view.

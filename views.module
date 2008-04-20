@@ -195,8 +195,7 @@ function views_menu_alter(&$callbacks) {
  *   The menu argument index. This counts from 1.
  */
 function views_arg_load($value, $name, $display_id, $index) {
-  if ($v = views_get_view($name)) {
-    $view = drupal_clone($v);
+  if ($view = views_get_view($name)) {
     $view->set_display($display_id);
     $view->init_handlers();
 
@@ -228,8 +227,7 @@ function views_page() {
   $display_id = array_shift($args);
 
   // Load the view
-  if ($v = views_get_view($name)) {
-    $view = drupal_clone($v);
+  if ($view = views_get_view($name)) {
     return $view->execute_display($display_id, $args);
   }
 
@@ -255,8 +253,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
     case 'view':
       list($name, $display_id) = explode('-', $delta);
       // Load the view
-      if ($v = views_get_view($name)) {
-        $view = drupal_clone($v);
+      if ($view = views_get_view($name)) {
         if ($view->access($display_id)) {
           return $view->execute_display($display_id);
         }
@@ -294,22 +291,21 @@ function views_invalidate_cache() {
 function views_access($view, $account = NULL) {
   if (is_array($view)) {
     list($name, $display_id) = $view;
-    $v = views_get_view($name);
-    if (!$v) {
+    $view = views_get_view($name);
+    if (!$view) {
       return FALSE;
     }
-    $view = drupal_clone($v);
   }
   elseif (is_string($view)) {
-    $v = views_get_view($view);
-    if (!$v) {
+    $view = views_get_view($view);
+    if (!$view) {
       return FALSE;
     }
-    $view = drupal_clone($v);
     $display_id = 'default';
   }
   else {
-    $view = drupal_clone($view);
+    // Clone the view to prevent problems.
+    $view = $view->clone_view();
     $display_id = isset($view->current_display) ? $view->current_display : 'default';
   }
 
@@ -332,8 +328,7 @@ function views_ajax() {
     $object->display = '';
 
     // Load the view.
-    if ($v = views_get_view($name)) {
-      $view = drupal_clone($v);
+    if ($view = views_get_view($name)) {
       if ($view->access($display_id)) {
 
         // Fix 'q' for paging.
@@ -839,7 +834,7 @@ function views_get_applicable_views($type) {
       if (!empty($plugin[$type])) {
         // This view uses hook menu. Clone it so that different handlers
         // don't trip over each other, and add it to the list.
-        $v = drupal_clone($view);
+        $v = $view->clone_view();
         if ($v->set_display($display->id)) {
           $result[] = array($v, $display->id);
         }
