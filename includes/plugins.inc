@@ -1725,7 +1725,7 @@ class views_plugin_display_page extends views_plugin_display {
         $form['#title'] .= t('The menu path or URL of this view');
         $form['path'] = array(
           '#type' => 'textfield',
-          '#description' => t('This view will be displayed by visiting this path on your site.'),
+          '#description' => t('This view will be displayed by visiting this path on your site. You may use "%" in your URL to represent values that will be used for arguments: For example, "node/%/feed".'),
           '#default_value' => $this->get_option('path'),
           '#field_prefix' => url(NULL, array('absolute' => TRUE)) . (variable_get('clean_url', 0) ? '' : '?q='),
         );
