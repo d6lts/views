@@ -148,7 +148,7 @@ function profile_views_fetch_field($field) {
           'handler' => 'views_handler_sort',
         ),
         'filter' => array(
-          'handler' => 'views_handler_filter_boolean',
+          'handler' => 'views_handler_filter_boolean_operator',
         ),
         // @todo there ought to be a boolean argument handler
       );
