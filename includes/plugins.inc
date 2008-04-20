@@ -86,6 +86,15 @@ function views_views_plugins() {
         'uses options' => TRUE,
         'type' => 'normal',
       ),
+      'grid' => array(
+        'title' => t('Grid'),
+        'help' => t('Displays rows in a grid.'),
+        'handler' => 'views_plugin_style_grid',
+        'theme' => 'views_view_grid',
+        'uses row plugin' => TRUE,
+        'uses options' => TRUE,
+        'type' => 'normal',
+      ),
       'table' => array(
         'title' => t('Table'),
         'help' => t('Displays rows in a table.'),
@@ -2405,17 +2414,6 @@ class views_plugin_style extends views_plugin {
    * @param $rows
    *   The full results of the query, loaded into an array of objects.
    */
-  function render($rows) { }
-}
-
-/**
- * Default style plugin to render rows one after another with no
- * decorations.
- */
-class views_plugin_style_default extends views_plugin_style {
-  /**
-   * Render the given style.
-   */
   function render() {
     if (empty($this->row_plugin)) {
       vpr('views_plugin_style_default: Missing row plugin');
@@ -2423,11 +2421,19 @@ class views_plugin_style_default extends views_plugin_style {
     }
     $rows = array();
     foreach ($this->view->result as $row) {
-      // @todo: Include separator as an option.
       $rows[] = $this->row_plugin->render($row);
     }
-//    $theme = views_theme_functions('views_view_unformatted', $this->view, $this->display);
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
+  }
+}
+
+/**
+ * Default style plugin to render rows one after another with no
+ * decorations.
+ */
+class views_plugin_style_default extends views_plugin_style {
+  function options_form(&$form, &$form_state) {
+    // @todo -- separator option
   }
 }
 
@@ -2455,22 +2461,30 @@ class views_plugin_style_list extends views_plugin_style {
       '#default_value' => $this->options['type'],
     );
   }
+}
+
+/**
+ * Style plugin to render each item in a grid cell.
+ */
+class views_plugin_style_grid extends views_plugin_style {
+  /**
+   * Set default options
+   */
+  function options($display) {
+    return array(
+      'columns' => 4,
+    );
+  }
 
   /**
-   * Render the list style.
+   * Render the given style.
    */
-  function render() {
-    if (empty($this->row_plugin)) {
-      vpr('views_plugin_style_list: Missing row plugin');
-      return;
-    }
-
-    $rows = array();
-    foreach ($this->view->result as $row) {
-      $rows[] = $this->row_plugin->render($row);
-    }
-//    $theme = views_theme_functions('views_view_list', $this->view, $this->display);
-    return theme($this->theme_functions(), $this->view, $this->options, $rows);
+  function options_form(&$form, &$form_state) {
+    $form['columns'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Number of columns'),
+      '#default_value' => $this->options['columns'],
+    );
   }
 }
 
@@ -2704,7 +2718,6 @@ class views_plugin_style_table extends views_plugin_style {
    * Render the table style.
    */
   function render() {
-//    $theme = views_theme_functions('views_view_table', $this->view, $this->display);
     return theme($this->theme_functions(), $this->view, $this->options, array());
   }
 }
@@ -2797,16 +2810,12 @@ class views_plugin_style_summary extends views_plugin_style {
     );
   }
 
-  /**
-   * Render the given style.
-   */
   function render() {
     $rows = array();
     foreach ($this->view->result as $row) {
       // @todo: Include separator as an option.
       $rows[] = $row;
     }
-//    $theme = views_theme_functions('views_view_summary', $this->view, $this->display);
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
@@ -2869,7 +2878,6 @@ class views_plugin_style_rss extends views_plugin_style {
       $rows .= $this->row_plugin->render($row);
     }
 
-//    $theme = views_theme_functions('views_view_rss', $this->view, $this->display);
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }

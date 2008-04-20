@@ -261,6 +261,30 @@ function template_preprocess_views_view_table(&$vars) {
   }
 }
 
+
+/**
+ * Display a view as a grid style.
+ */
+function template_preprocess_views_view_grid(&$vars) {
+  $view     = $vars['view'];
+  $result   = $view->result;
+  $options  = $view->style_handler->options;
+  $handler  = $view->style_handler;
+
+  $columns  = $options['columns'];
+
+  $rows = array();
+  $row = array();
+  foreach($vars['rows'] as $count => $item) {
+    $row[] = $item;
+    if (($count + 1) % $columns == 0) {
+      $rows[] = $row;
+      $row = array();
+    }
+  }
+  $vars['rows'] = $rows;
+}
+
 /**
  * Preprocess an RSS feed
  */
