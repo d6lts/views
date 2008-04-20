@@ -138,24 +138,7 @@ class view extends views_db_object {
   function init_display($reset = FALSE) {
     // The default display is always the first one in the list.
     if (isset($this->current_display)) {
-      if (!$reset) {
-        return TRUE;
-      }
-      else {
-        if (isset($this->current_display)) {
-          unset($this->current_display);
-        }
-
-        if (isset($this->display_handler)) {
-          unset($this->display_handler);
-        }
-
-        foreach ($this->display as $id => $display) {
-          if (isset($this->display[$id]->handler)) {
-            unset($this->display[$id]->handler);
-          }
-        }
-      }
+      return TRUE;
     }
 
     // Instantiate all displays
@@ -680,12 +663,7 @@ class view extends views_db_object {
     // Prepare the view with the information we have.
     $this->set_arguments($args);
 
-    // Give other displays an opportunity to attach to the view.
-    foreach ($this->display as $id => $display) {
-      if (!empty($this->display[$id]->handler)) {
-        $this->display[$id]->handler->attach_to($this->current_display);
-      }
-    }
+    $this->attach_displays();
 
     // Allow the display handler to set up for execution
     $this->display_handler->pre_execute();
@@ -711,18 +689,29 @@ class view extends views_db_object {
 
     $this->preview = TRUE;
 
-    // Give other displays an opportunity to attach to the view.
-    foreach ($this->display as $id => $display) {
-      if (!empty($this->display[$id]->handler)) {
-        $this->display[$id]->handler->attach_to($this->current_display);
-      }
-    }
+    $this->attach_displays();
 
     // Allow the display handler to set up for execution
     $this->display_handler->pre_execute();
 
     // Preview the view.
     return $this->display_handler->preview();
+  }
+
+  /**
+   * Run attachment displays for the view.
+   */
+  function attach_displays() {
+    if (!$this->display_handler->accept_attachments()) {
+      return;
+    }
+
+    // Give other displays an opportunity to attach to the view.
+    foreach ($this->display as $id => $display) {
+      if (!empty($this->display[$id]->handler)) {
+        $this->display[$id]->handler->attach_to($this->current_display);
+      }
+    }
   }
 
   /**
@@ -1100,6 +1089,40 @@ class view extends views_db_object {
     return $view;
   }
 
+  /**
+   * Safely clone a view.
+   *
+   * Because views are complicated objects within objects, and PHP loves to
+   * do references to everything, if a View is not properly and safely
+   * cloned it will still have references to the original view, and can
+   * actually cause the original view to point to objects in the cloned
+   * view. This gets ugly fast.
+   *
+   * This will completely wipe a view clean so it can be considered fresh.
+   */
+  function clone_view() {
+    $clone = version_compare(phpversion(), '5.0') < 0 ? $this : clone($this);
+
+    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after');
+    foreach ($keys as $key) {
+      if (isset($clone->$key)) {
+        unset($clone->$key);
+      }
+    }
+
+    // shallow cloning means that all the display objects
+    // *were not cloned*. We must clone them ourselves.
+    $displays = array();
+    foreach ($clone->display as $id => $display) {
+      $displays[$id] = drupal_clone($display);
+      if (isset($displays[$id]->handler)) {
+        unset($displays[$id]->handler);
+      }
+    }
+    $clone->display = $displays;
+
+    return $clone;
+  }
   /**
    * Make sure the view is completely valid.
    *

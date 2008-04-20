@@ -912,14 +912,13 @@ function views_get_view($name, $reset = FALSE) {
   }
   elseif (empty($view) && !empty($default_view)) {
     $default_view->type = t('Default');
-    return drupal_clone($default_view);
+    return $default_view->clone_view();
   }
   elseif (!empty($view) && !empty($default_view)) {
     $view->type = t('Overridden');
-    return drupal_clone($view);
   }
 
-  return drupal_clone($view);
+  return $view->clone_view();
 }
 
 /**
@@ -1297,4 +1296,3 @@ function views_views_query_substitutions($view) {
   global $language;
   return array('***CURRENT_TIME***' => time(), '***CURRENT_LANGUAGE***' => $language->language);
 }
-
