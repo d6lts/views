@@ -604,6 +604,10 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
         }
       }
 
+      if (!$tids) {
+        return;
+      }
+
       $result = db_query("SELECT * FROM {term_data} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
       while ($term = db_fetch_object($result)) {
         unset($missing[strtolower($term->name)]);

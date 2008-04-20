@@ -587,6 +587,10 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
       }
     }
 
+    if (!$args) {
+      return;
+    }
+
     $result = db_query("SELECT * FROM {users} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
     while ($account = db_fetch_object($result)) {
       unset($missing[strtolower($account->name)]);
