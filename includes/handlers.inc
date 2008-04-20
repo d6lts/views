@@ -463,11 +463,16 @@ class views_many_to_one_helper {
       $field = $this->handler->table . '.' . $this->handler->field;
       if ($this->handler->operator == 'or' && empty($this->handler->options['reduce_duplicates'])) {
         if (empty($this->handler->options['add_table']) || empty($this->handler->view->many_to_one_tables[$field])) {
-          $this->handler->table_alias = $this->handler->query->ensure_table($this->handler->table, $this->handler->relationship);
+          // query optimization, INNER joins are slightly faster, so use them
+          // when we know we can.
+          $join = $this->get_join();
+          $join->type = 'INNER';
+          $this->handler->table_alias = $this->handler->query->ensure_table($this->handler->table, $this->handler->relationship, $join);
           $this->handler->view->many_to_one_tables[$field] = $this->handler->value;
         }
         else {
           $join = $this->get_join();
+          $join->type = 'LEFT';
           if (!empty($this->handler->view->many_to_one_tables[$field])) {
             foreach ($this->handler->view->many_to_one_tables[$field] as $value) {
               $join->extra = array(
@@ -493,6 +498,9 @@ class views_many_to_one_helper {
         $this->handler->table_aliases = array();
         foreach ($this->handler->value as $value) {
           $join = $this->get_join();
+          if ($this->handler->operator == 'and') {
+            $join->type = 'INNER';
+          }
           $join->extra = array(
             array(
               'field' => $this->handler->real_field,
