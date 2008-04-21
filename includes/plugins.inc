@@ -26,6 +26,7 @@ function views_views_plugins() {
         'use pager' => TRUE,
         'use more' => TRUE,
         'accept attachments' => TRUE,
+        'help topic' => 'display-default',
       ),
       'page' => array(
         'title' => t('Page'),
@@ -37,6 +38,7 @@ function views_views_plugins() {
         'use pager' => TRUE,
         'accept attachments' => TRUE,
         'admin' => t('Page'),
+        'help topic' => 'display-page',
       ),
       'block' => array(
         'title' => t('Block'),
@@ -49,6 +51,7 @@ function views_views_plugins() {
         'use more' => TRUE,
         'accept attachments' => TRUE,
         'admin' => t('Block'),
+        'help topic' => 'display-block',
       ),
       'attachment' => array(
         'title' => t('Attachment'),
@@ -56,6 +59,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_display_attachment',
         'theme' => 'views_view',
         'use ajax' => TRUE,
+        'help topic' => 'display-attachment',
       ),
       'feed' => array(
         'title' => t('Feed'),
@@ -66,6 +70,7 @@ function views_views_plugins() {
         'use pager' => FALSE,
         'accept attachments' => FALSE,
         'admin' => t('Feed'),
+        'help topic' => 'display-feed',
       ),
     ),
     'style' => array(
@@ -186,6 +191,7 @@ function views_discover_plugins() {
         continue;
       }
       foreach ($info as $plugin => $def) {
+        $def['module'] = $module_dir;
         if (isset($def['theme']) && !isset($def['path'])) {
           $def['path'] = $path;
           $def['file'] = $file;

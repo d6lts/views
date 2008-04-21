@@ -529,3 +529,7 @@ html.js .views-hidden {
 .views-quick-links li.last {
   padding-right: 0;
 }
+
+.views-edit-view .advanced-help-link {
+  padding-right: 3px;
+}

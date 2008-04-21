@@ -9,6 +9,7 @@
 <?php print $rearrange; ?>
 <?php print $add; ?>
 <div class="views-category-title<?php if ($overridden) { print ' overridden'; }?>">
+  <?php print $item_help_icon; ?>
   <?php print $title; ?>
 </div>
 

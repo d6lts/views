@@ -9,6 +9,7 @@
   <?php // top section ?>
   <div class="top">
     <div class="inside">
+      <?php print $display_help_icon; ?>
       <?php print $remove ?>
       <span class="display-title">
         <?php print $title; ?>

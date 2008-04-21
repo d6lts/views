@@ -1,4 +1,4 @@
-/* $Id */
+/* $Id$ */
 
 table.views-entry {
   margin: 2px 0;
@@ -40,7 +40,7 @@ body form#views-ui-list-views-form {
   top: .65em;
 }
 
-.advanced-help-link {
+.views-entry .advanced-help-link {
   position: relative;
   top: 2px;
   padding-right: 3px;
