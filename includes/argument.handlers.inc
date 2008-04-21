@@ -935,7 +935,7 @@ class views_handler_argument_many_to_one extends views_handler_argument {
 
   function title() {
     if (!$this->argument) {
-      return t('Uncategorized');
+      return !empty($this->definition['empty field name']) ? $this->definition['empty field name'] : t('Uncategorized');
     }
 
     if (!empty($this->options['break_phrase'])) {
@@ -949,11 +949,11 @@ class views_handler_argument_many_to_one extends views_handler_argument {
     // @todo -- both of these should check definition for alternate keywords.
 
     if (empty($this->value)) {
-      return t('Uncategorized');
+      return !empty($this->definition['empty field name']) ? $this->definition['empty field name'] : t('Uncategorized');
     }
 
     if ($this->value === array(-1)) {
-      return t('Invalid input');
+      return !empty($this->definition['invalid input']) ? $this->definition['invalid input'] : t('Invalid input');
     }
 
     return implode($this->operator == 'or' ? ' + ' : ', ', $this->title_query());

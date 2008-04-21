@@ -114,9 +114,10 @@ function hook_views_query_substitutions() {
  * This must either be in the same directory as the .module file or in a subdirectory
  * named 'includes'.
  *
- * @todo -- this hook is not yet implemented
+ * Adding output to the view cam be accomplished by placing text on
+ * $view->attachment_before and $view->attachment_after
  */
-function hook_views_pre_view() {
+function hook_views_pre_view(&$view, &$display_id, &$args) {
   // example code here
 }
 
@@ -127,9 +128,8 @@ function hook_views_pre_view() {
  * This must either be in the same directory as the .module file or in a subdirectory
  * named 'includes'.
  *
- * @todo -- this hook is not yet implemented
  */
-function hook_views_post_view() {
+function hook_views_query_alter(&$view, &$query) {
   // example code here
 }
 

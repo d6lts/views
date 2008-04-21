@@ -8,7 +8,7 @@
 <div class="views-edit-view">
   <?php if ($locked): ?>
     <div class="view-locked">
-      <?php print t('This view is locked by user !user, and may not be modified. This lock is !age old. Click here to !break.', array('!user' => $locked, '!age' => $lock_age, '!break' => $break)); ?>
+      <?php print t('This view is being edited by user !user, and is therefore locked from editing by others. This lock is !age old. Click here to !break.', array('!user' => $locked, '!age' => $lock_age, '!break' => $break)); ?>
     </div>
   <?php endif; ?>
   <div class="views-basic-info<?php if (!empty($view->changed)) { print " changed"; }?>">

@@ -129,7 +129,6 @@ function views1_import($imported) {
 
   $view->name = $imported->name;
   $view->description = $imported->description;
-  $view->view_php = $imported->view_args_php;
 
   if (!empty($imported->page)) {
     $view->add_display('page');

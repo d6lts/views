@@ -228,13 +228,31 @@ class views_handler_filter extends views_handler {
    * that are nicely tailored to the given filter.
    */
   function expose_form(&$form, &$form_state) {
-    // @todo we should break this up into two functions to make it easier
-    // for child objects to put options in the left or right side without
-    // having to override this whole thing.
     $form['expose']['start_left'] = array(
       '#value' => '<div class="views-left-50">',
     );
 
+    $this->expose_form_left($form, $form_state);
+
+    $form['expose']['end_left'] = array(
+      '#value' => '</div>',
+    );
+
+    $form['expose']['start_checkboxes'] = array(
+      '#value' => '<div class="form-checkboxes views-left-40 clear-block">',
+    );
+
+    $this->expose_form_right($form, $form_state);
+
+    $form['expose']['end_checkboxes'] = array(
+      '#value' => '</div>',
+    );
+  }
+
+  /**
+   * Handle the 'left' side fo the exposed options form.
+   */
+  function expose_form_left(&$form, &$form_state) {
     if (!empty($form['operator']['#type'])) {
       $form['expose']['operator'] = array(
         '#type' => 'textfield',
@@ -264,14 +282,12 @@ class views_handler_filter extends views_handler {
       '#title' => t('Label'),
       '#size' => 40,
     );
+  }
 
-    $form['expose']['end_left'] = array(
-      '#value' => '</div>',
-    );
-
-    $form['expose']['start_checkboxes'] = array(
-      '#value' => '<div class="form-checkboxes views-left-40 clear-block">',
-    );
+  /**
+   * Handle the 'right' side fo the exposed options form.
+   */
+  function expose_form_right(&$form, &$form_state) {
     $form['expose']['optional'] = array(
       '#type' => 'checkbox',
       '#title' => t('Optional'),
@@ -291,9 +307,6 @@ class views_handler_filter extends views_handler {
       '#title' => t('Remember'),
       '#description' => t('Remember the last setting the user gave this filter.'),
       '#default_value' => $this->options['expose']['remember'],
-    );
-    $form['expose']['end_checkboxes'] = array(
-      '#value' => '</div>',
     );
   }
 

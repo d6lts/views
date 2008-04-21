@@ -428,16 +428,6 @@ class view extends views_db_object {
       }
     }
 
-    // Execute the initial PHP code that a view can have.
-    if (!empty($this->view_args_php)) {
-      ob_start();
-      $result = eval($this->view_args_php);
-      if (is_array($result)) {
-        $this->args = $result;
-      }
-      ob_end_clean();
-    }
-
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
 
@@ -521,6 +511,12 @@ class view extends views_db_object {
 
     if (variable_get('views_sql_signature', FALSE)) {
       $this->query->add_field(NULL, "'". $this->name .':'. $this->current_display ."'", 'view_name');
+    }
+
+    // Let modules modify the query just prior to finalizing it.
+    foreach (module_implements('views_query_alter') as $module) {
+      $function = $module . '_views_query_alter';
+      $function($this, $this->query);
     }
 
     $this->build_info['query'] = $this->query->query();
@@ -656,6 +652,12 @@ class view extends views_db_object {
       if (!$this->set_display($display_id)) {
         return FALSE;
       }
+    }
+
+    // Let modules modify the view just prior to executing it.
+    foreach (module_implements('views_pre_view') as $module) {
+      $function = $module . '_views_pre_view';
+      $function($this, $display_id, $args);
     }
 
     // Prepare the view with the information we have.

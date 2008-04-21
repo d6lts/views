@@ -258,7 +258,7 @@ function views_ui_cache_load($name) {
     if (!empty($view)) {
       // Check to see if someone else is already editing this view.
       global $user;
-      $view->locked = db_fetch_object(db_query("SELECT s.uid, v.updated FROM {views_object_cache} v INNER JOIN {sessions}  s ON v.sid = s.sid WHERE s.uid != %d and v.name = '%s' and v.obj = 'view' ORDER BY v.updated ASC", $user->uid, $view->name));
+      $view->locked = db_fetch_object(db_query("SELECT s.uid, v.updated FROM {views_object_cache} v INNER JOIN {sessions}  s ON v.sid = s.sid WHERE s.sid != '%s' and v.name = '%s' and v.obj = 'view' ORDER BY v.updated ASC", session_id(), $view->name));
     }
   }
 
@@ -269,6 +269,10 @@ function views_ui_cache_load($name) {
   else {
     return $view;
   }
+}
+
+function views_ui_check_lock($view) {
+
 }
 
 /**
