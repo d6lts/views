@@ -212,7 +212,6 @@ function taxonomy_views_data() {
   );
 
   // @todo: term_relation
-  // @todo: term_synonym
 
   // ----------------------------------------------------------------------
   // term_hierarchy table

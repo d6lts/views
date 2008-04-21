@@ -32,12 +32,12 @@ body form#views-ui-list-views-form {
 #views-ui-list-views-form .form-item {
   padding-right: 1em;
   float: left;
+  margin-top: 0;
 }
 
 #views-ui-list-views-form .form-submit {
   clear: left;
-  position: relative;
-  top: .65em;
+  margin-top: 1.65em;
 }
 
 .views-entry .advanced-help-link {

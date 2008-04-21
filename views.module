@@ -536,7 +536,7 @@ function _views_weight_sort($a, $b) {
  * @return
  *   A keyed array of in the form of 'base_table' => 'Description'.
  */
-function views_fetch_base_table_names() {
+function views_fetch_base_tables() {
   static $base_tables = array();
   if (empty($base_tables)) {
     $weights = array();
@@ -545,15 +545,14 @@ function views_fetch_base_table_names() {
     foreach ($data as $table => $info) {
       if (!empty($info['table']['base'])) {
         $tables[$table] = array(
-          'title' => $info['table']['base']['title'] . '<div class="description">' . $info['table']['base']['help'] . "</div>\n",
+          'title' => $info['table']['base']['title'],
+          'description' => $info['table']['base']['help'],
           'weight' => !empty($info['table']['base']['weight']) ? $info['table']['base']['weight'] : 0,
         );
       }
     }
     uasort($tables, '_views_weight_sort');
-    foreach ($tables as $table => $info) {
-      $base_tables[$table] = $info['title'];
-    }
+    $base_tables = $tables;
   }
 
   return $base_tables;

@@ -388,11 +388,6 @@ class views_handler_field_prerender_list extends views_handler_field {
       '#dependency' => array('radio:options[type]' => array('separator')),
     );
 
-    if (empty($this->options['empty'])) {
-      // @todo: remove this. IT's just to remove notices for alpha4 users
-      $this->options['empty'] = '';
-    }
-
     $form['empty'] = array(
       '#type' => 'textfield',
       '#title' => t('Empty list text'),

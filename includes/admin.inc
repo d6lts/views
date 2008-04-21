@@ -34,6 +34,8 @@ function template_preprocess_views_ui_list_views(&$vars) {
 
   $vars['help_type_icon'] = theme('advanced_help_topic', 'views', 'view-type');
 
+  $base_tables = views_fetch_base_tables();
+
   foreach ($views as $view) {
     if ($form_state['values']['tag'] != 'all') {
       if ($form_state['values']['tag'] == 'none') {
@@ -46,6 +48,10 @@ function template_preprocess_views_ui_list_views(&$vars) {
       }
     }
     if ($form_state['values']['type'] != 'all' && $form_state['values']['type'] != $view->type) {
+      continue;
+    }
+
+    if ($form_state['values']['base'] != 'all' && $form_state['values']['base'] != $view->base_table) {
       continue;
     }
 
@@ -90,6 +96,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
     }
 
     $item->title = $view->get_title();
+    $item->base = !empty($base_tables[$view->base_table]['title']) ? $base_tables[$view->base_table]['title'] : t('Broken');
 
     $item->displays = array();
     foreach ($view->display as $display) {
@@ -188,9 +195,21 @@ function views_ui_list_views_form(&$form_state) {
     '#default_value' => 'all',
   );
 
+  $bases = array();
+  foreach (views_fetch_base_tables() as $table => $info) {
+    $bases[$table] = $info['title'];
+  }
+
+  $form['base'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#options' => array_merge($all, $bases),
+    '#default_value' => 'all',
+  );
+
   $form['type'] = array(
     '#type' => 'select',
-    '#title' => t('View type'),
+    '#title' => t('Storage'),
     '#options' => array(
       'all' => t('<All>'),
       t('Normal') => t('Normal'),
@@ -218,8 +237,8 @@ function views_ui_list_views_form(&$form_state) {
     '#type' => 'select',
     '#title' => t('Order'),
     '#options' => array(
-      'asc' => t('Ascending'),
-      'desc' => t('Descending'),
+      'asc' => t('Up'),
+      'desc' => t('Down'),
     ),
     '#default_value' => 'asc',
   );
@@ -459,12 +478,17 @@ function views_ui_add_form(&$form_state) {
     // TODO: This should be an autocomplete field.
   );
 
+  $base_tables = array();
+  foreach (views_fetch_base_tables() as $table => $info) {
+    $base_tables[$table] = $info['title'] . '<div class="description">' . $info['description'] . '</div>';
+  }
+
   $form['base_table'] = array(
     '#type' => 'radios',
     '#title' => t('View type'),
     '#description' => t('The view type is the primary table for which information is being retrieved. The view type controls what arguments, fields, sort criteria and filters are available, so once this is set it <strong>cannot be changed</strong>.'),
     '#default_value' => $view ? $view->base_table : 'node',
-    '#options' => views_fetch_base_table_names(),
+    '#options' => $base_tables,
   );
 
   if ($view) {
@@ -1619,10 +1643,6 @@ function views_ui_edit_display_form_submit($form, &$form_state) {
   $display->handler->options_submit($form, $form_state);
 
   views_ui_cache_set($form_state['view']);
-  // @todo: Need a safe function to use for drupal_set_message in an ajax environ.
-  // This function would check $form_state for the ajax flag and, if set, simply
-  // discard the message. That way we could set some success messages for the
-  // non-jsy types here.
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 

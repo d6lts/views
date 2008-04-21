@@ -15,7 +15,7 @@
       <tr>
         <td class="view-name">
           <?php print $help_type_icon; ?>
-          <?php print t('<em>@type</em> view: <strong>@view</strong>', array('@type' => $view->type, '@view' => $view->name)); ?>
+          <?php print t('<em>@type</em> @base view: <strong>@view</strong>', array('@type' => $view->type, '@view' => $view->name, '@base' => $view->base)); ?>
           <?php if (!empty($view->tag)): ?>
             &nbsp;(<?php print $view->tag; ?>)
           <?php endif; ?>

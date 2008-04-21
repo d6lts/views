@@ -69,7 +69,7 @@ function upload_views_data() {
     'title' => t('Description'),
     'help' => t('The description of the uploaded file.'),
     'field' => array(
-      'handler' => 'views_handler_field_upload_description', // @todo -- make this linkable, but it's a bit tough
+      'handler' => 'views_handler_field_upload_description',
       'click sortable' => TRUE,
      ),
     'sort' => array(

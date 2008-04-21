@@ -220,7 +220,7 @@ class view extends views_db_object {
     if (empty($this->display[$display_id])) {
       $display_id = 'default';
       if (empty($this->display[$display_id])) {
-        // @todo: Log an error here?
+        vpr(t('set_display called with invalid display id @display', array('@display' => $display_id)));
         return FALSE;
       }
     }
@@ -355,7 +355,6 @@ class view extends views_db_object {
       $argument['handler']->set_relationship();
 
       if (!is_object($argument['handler'])) {
-        // @todo: Set some kind of warning.
         continue;
       }
 
@@ -537,7 +536,6 @@ class view extends views_db_object {
   function _build($key) {
     $array = &$this->$key;
     foreach ($array as $id => $data) {
-      // @todo: we should report an error here if this is not an object.
       if (!empty($array[$id]['handler']) && is_object($array[$id]['handler'])) {
         // Give this handler access to the exposed filter input.
         if (!empty($this->exposed_data)) {
@@ -950,7 +948,6 @@ class view extends views_db_object {
    * much faster.
    */
   function load_views() {
-    // @todo: Integrate this in with caching.
     $result = db_query("SELECT DISTINCT v.* FROM {views_view} v");
     $views = array();
     $vids = array();

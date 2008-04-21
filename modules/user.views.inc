@@ -277,7 +277,6 @@ function user_views_data() {
     ),
   );
 
-  // @todo: tracker default view (in users.default_views.inc -- This really should go in comment)
   return $data;
 }
 

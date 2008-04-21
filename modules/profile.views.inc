@@ -181,7 +181,6 @@ function profile_views_fetch_field($field) {
           'handler' => 'views_handler_sort',
         ),
         'filter' => array(
-          // @todo
           'handler' => 'views_handler_filter_profile_selection',
           'fid' => $field->fid,
         ),

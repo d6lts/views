@@ -1959,22 +1959,6 @@ class views_plugin_display_block extends views_plugin_display {
   }
 
   /**
-   * Validate the options form.
-   */
-  function options_validate($form, &$form_state) {
-    // It is very important to call the parent function here:
-    parent::options_validate($form, $form_state);
-
-    switch ($form_state['section']) {
-      case 'block_description':
-        // @todo: validate the block_description against other views
-
-        // @todo: validate the block_description against aliases.
-        break;
-    }
-  }
-
-  /**
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
