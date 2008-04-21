@@ -27,7 +27,7 @@ function system_views_data() {
   // Advertise this table as a possible base table
   $data['files']['table']['base'] = array(
     'field' => 'fid',
-    'title' => t('Files'),
+    'title' => t('File'),
     'help' => t("Files maintained by Drupal and various modules."),
   );
 

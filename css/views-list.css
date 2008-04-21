@@ -35,9 +35,13 @@ body form#views-ui-list-views-form {
   margin-top: 0;
 }
 
-#views-ui-list-views-form .form-submit {
+#edit-order-wrapper {
   clear: left;
+}
+
+#edit-submit {
   margin-top: 1.65em;
+  float: left;
 }
 
 .views-entry .advanced-help-link {
