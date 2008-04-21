@@ -157,9 +157,8 @@ function node_views_data() {
 
   // published status
   $data['node']['status'] = array(
-    'title' => t('Published'), // The item it appears as on the UI,
-    'help' => t('The published status of the node.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Published'),
+    'help' => t('The published status of the node.'),
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
@@ -173,11 +172,21 @@ function node_views_data() {
     ),
   );
 
+  // published status + extra
+  $data['node']['status_extra'] = array(
+    'title' => t('Published or admin'),
+    'help' => t('Filters out unpublished nodes if the current user cannot view them.'),
+    'filter' => array(
+      'field' => 'status',
+      'handler' => 'views_handler_filter_node_status',
+      'label' => t('Published'),
+    ),
+  );
+
   // promote status
   $data['node']['promote'] = array(
-    'title' => t('Promoted to front page'), // The item it appears as on the UI,
-    'help' => t('The front page of the node.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Promoted to front page'),
+    'help' => t('The front page of the node.'),
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
@@ -1073,17 +1082,20 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
-  function get_value_options() {
-    if (empty($this->value_options)) {
-      $this->value_title = t('Node language');
-      $this->value_options = locale_language_list();
-    }
-  }
+}
 
-  function options(&$options) {
-    parent::options($options);
-    // Set the default value to the default language
-    $options['value'] = language_default('language');
+/**
+ * Filter by published status
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_node_status extends views_handler_filter {
+  function admin_summary() { }
+  function operator_form() { }
+
+  function query() {
+    $table = $this->ensure_my_table();
+    $this->query->add_where($this->options['group'], "$table.status <> 0 OR $table.uid = ***CURRENT_USER*** or ***ADMINISTER_NODES*** = 1");
   }
 }
 
@@ -1360,6 +1372,40 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
 
     return isset($types[$node->type]);
   }
+}
+
+/**
+ * Implementation of hook_views_query_substitutions().
+ */
+function node_views_query_substitutions() {
+  return array('***ADMINISTER_NODES***' => intval(user_access('administer nodes')));
+}
+
+/**
+ * Implementation of hook_views_analyze().
+ */
+function node_views_analyze($view) {
+  $ret = array();
+  // Check for something other than the default display:
+  if ($view->base_table == 'node') {
+    foreach ($view->display as $id => $display) {
+      if (!$display->handler->is_defaulted('access') || !$display->handler->is_defaulted('filters')) {
+        // check for no access control
+        $access = $display->handler->get_option('access');
+        if (empty($access['type']) || $access['type'] == 'none') {
+          $filters = $display->handler->get_option('filters');
+          foreach ($filters as $filter) {
+            if ($filter['table'] == 'node' && ($filter['field'] == 'status' || $filter['field'] == 'status_extra')) {
+              continue 2;
+            }
+          }
+          $ret[] = views_ui_analysis(t('Display %display has no access control but does not contain a filter for published nodes.', array('%display' => $display->display_title)), 'warning');
+        }
+      }
+    }
+  }
+
+  return $ret;
 }
 
 /**

@@ -1439,7 +1439,6 @@ function views_ui_analyze_view_button(&$form_state, $view) {
  */
 function views_ui_analysis($message, $type = 'error') {
   return array('message' => $message, 'type' => $type);
-//  return "<div class=\"$type\">$message</div>";
 }
 
 /**
@@ -1466,6 +1465,7 @@ function views_ui_analyze_view_form(&$form_state) {
 
   $messages = array();
 
+  $view->init_display();
   $messages = module_invoke_all('views_analyze', $view);
 
   if (empty($messages)) {
