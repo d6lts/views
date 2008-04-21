@@ -1282,7 +1282,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
     $extra = node_invoke_nodeapi($item, 'rss item');
     $extra = array_merge($extra,
       array(
-        array('key' => 'pubDate', 'value' => format_date($item->created, 'custom', 'r')),
+        array('key' => 'pubDate', 'value' => gmdate('r', $item->created)),
         array('key' => 'dc:creator', 'value' => $item->name),
         array(
           'key' => 'guid',
