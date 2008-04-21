@@ -274,12 +274,39 @@ function template_preprocess_views_view_grid(&$vars) {
   $columns  = $options['columns'];
 
   $rows = array();
-  $row = array();
-  foreach($vars['rows'] as $count => $item) {
-    $row[] = $item;
-    if (($count + 1) % $columns == 0) {
+
+  if ($options['alignment'] == 'horizontal') {
+    $row = array();
+    foreach ($vars['rows'] as $count => $item) {
+      $row[] = $item;
+      if (($count + 1) % $columns == 0) {
+        $rows[] = $row;
+        $row = array();
+      }
+    }
+    if ($row) {
       $rows[] = $row;
-      $row = array();
+    }
+  }
+  else {
+    $num_rows = floor(count($vars['rows']) / $columns);
+    // The remainders are the 'odd' columns that are slightly longer.
+    $remainders = count($vars['rows']) % $columns;
+    $row = 0;
+    $col = 0;
+    foreach ($vars['rows'] as $count => $item) {
+      $rows[$row][$col] = $item;
+      $row++;
+
+      if (!$remainders && $row == $num_rows) {
+        $row = 0;
+        $col++;
+      }
+      else if ($remainders && $row == $num_rows + 1) {
+        $row = 0;
+        $col++;
+        $remainders--;
+      }
     }
   }
   $vars['rows'] = $rows;

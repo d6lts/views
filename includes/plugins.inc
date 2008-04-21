@@ -2473,6 +2473,7 @@ class views_plugin_style_grid extends views_plugin_style {
   function options($display) {
     return array(
       'columns' => 4,
+      'alignment' => 'horizontal',
     );
   }
 
@@ -2484,6 +2485,13 @@ class views_plugin_style_grid extends views_plugin_style {
       '#type' => 'textfield',
       '#title' => t('Number of columns'),
       '#default_value' => $this->options['columns'],
+    );
+    $form['alignment'] = array(
+      '#type' => 'radios',
+      '#title' => t('Alignment'),
+      '#options' => array('horizontal' => t('Horizontal'), 'vertical' => t('Vertical')),
+      '#default_value' => $this->options['alignment'],
+      '#description' => t('Horizontal alignment will place items starting in the upper left and moving right. Vertical alignment will place items starting in the upper left and moving down.'),
     );
   }
 }
