@@ -5,9 +5,6 @@
  *
  */
 ?>
-<?php if (!module_exists('advanced_help')): ?>
-  <?php print t('If you install the advanced help module from !href, Views will provide more and better help.', array('!href' => l('http://drupal.org/project/advanced_help', 'http://drupal.org/project/advanced_help'))); ?>
-<?php endif; ?>
 <?php print $widgets; ?>
 <?php foreach ($views as $view): ?>
   <table class="views-entry">

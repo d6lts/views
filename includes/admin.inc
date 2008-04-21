@@ -13,9 +13,30 @@ function views_ui_list_views($arg = NULL) {
     return drupal_not_found();
   }
 
+  views_ui_check_advanced_help();
   return theme('views_ui_list_views');
 }
 
+/**
+ * Check to see if the advanced help module is installed, and if not put up
+ * a message.
+ *
+ * Only call this function if the user is already in a position for this to
+ * be useful.
+ */
+function views_ui_check_advanced_help() {
+  if (variable_get('views_hide_help_message', FALSE)) {
+    return;
+  }
+
+  if (!module_exists('advanced_help')) {
+    drupal_set_message(t('If you install the advanced help module from !href, Views will provide more and better help. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/advanced_help', 'http://drupal.org/project/advanced_help'), '@hide' => url('admin/build/views/tools'))));
+  }
+}
+
+/**
+ * Preprocess the list views theme
+ */
 function template_preprocess_views_ui_list_views(&$vars) {
   $items = array();
   $sorts = array();
@@ -609,6 +630,7 @@ function views_ui_break_lock_confirm_submit(&$form, &$form_state) {
  */
 function views_ui_edit_page($view) {
   drupal_set_title(t('Edit view "%view"', array('%view' => $view->name)));
+  views_ui_check_advanced_help();
   return theme('views_ui_edit_view', $view);
 }
 
@@ -2602,6 +2624,12 @@ function views_ui_disable_page($view) {
  * Page callback for the tools - other page
  */
 function views_ui_admin_tools() {
+  $form['clear_cache'] = array(
+    '#type' => 'submit',
+    '#value' => t("Clear Views' cache"),
+    '#submit' => array('views_ui_tools_clear_cache'),
+  );
+
   $form['views_sql_signature'] = array(
     '#type' => 'checkbox',
     '#title' => t('Add Views signature to all SQL queries'),
@@ -2615,7 +2643,23 @@ function views_ui_admin_tools() {
     '#description' => t("Views caches data about tables, modules and views available, to increase performance. By checking this box, Views will skip this cache and always rebuild this data when needed. This can have a serious performance impact on your site."),
     '#default_value' => variable_get('views_skip_cache', FALSE),
   );
+
+  $form['views_hide_help_message'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Ignore missing advanced help module'),
+    '#description' => t("Views uses the advanced help module to provide help text; if this module is not present Views will complain, unless this setting is checked."),
+    '#default_value' => variable_get('views_hide_help_message', FALSE),
+  );
+
   return system_settings_form($form);
+}
+
+/**
+ * Submit hook to clear the views cache.
+ */
+function views_ui_tools_clear_cache() {
+  views_invalidate_cache();
+  drupal_set_message(t('The cache has been cleared.'));
 }
 
 /**
