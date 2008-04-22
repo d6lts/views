@@ -366,14 +366,14 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
         $voc = " AND td.vid IN (" . implode(', ', array_keys(array_filter($this->options['vids']))) . ")";
       }
 
-      $result = db_query("SELECT tn.vid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid IN (" . implode(', ', $vids) . ")$voc ORDER BY td.weight, td.name");
+      $result = db_query("SELECT tn.vid AS node_vid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid IN (" . implode(', ', $vids) . ")$voc ORDER BY td.weight, td.name");
 
       while ($term = db_fetch_object($result)) {
         if (empty($this->options['link_to_taxonomy'])) {
-          $this->items[$term->vid][$term->tid] = check_plain($term->name);
+          $this->items[$term->node_vid][$term->tid] = check_plain($term->name);
         }
         else {
-          $this->items[$term->vid][$term->tid] = l($term->name, taxonomy_term_path($term));
+          $this->items[$term->node_vid][$term->tid] = l($term->name, taxonomy_term_path($term));
         }
       }
     }
