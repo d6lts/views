@@ -361,12 +361,12 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
     }
 
     if ($vids) {
-      $vids = '';
+      $voc = '';
       if (!empty($this->options['limit']) && !empty($this->options['vids'])) {
-        $vids = " AND td.vid IN (" . implode(', ', array_keys(array_filter($this->options['vids']))) . ")";
+        $voc = " AND td.vid IN (" . implode(', ', array_keys(array_filter($this->options['vids']))) . ")";
       }
 
-      $result = db_query("SELECT tn.vid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid IN (" . implode(', ', $vids) . ")$vids ORDER BY td.weight, td.name");
+      $result = db_query("SELECT tn.vid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid IN (" . implode(', ', $vids) . ")$voc ORDER BY td.weight, td.name");
 
       while ($term = db_fetch_object($result)) {
         if (empty($this->options['link_to_taxonomy'])) {

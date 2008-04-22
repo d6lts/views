@@ -44,13 +44,12 @@ function comment_views_data() {
   // ----------------------------------------------------------------
   // Fields
 
-  //subject
-  //@todo choice to mark as new/updated etc
+  // subject
+  // @todo choice to mark as new/updated etc
   $data['comments']['subject'] = array(
-    'title' => t('Subject'),
-    'help' => t('The subject of the comment.'),
+    'title' => t('Title'),
+    'help' => t('The title of the comment.'),
     'field' => array(
-      'field' => 'subject',
       'handler' => 'views_handler_field_comment',
       'click sortable' => TRUE,
     ),
@@ -65,10 +64,10 @@ function comment_views_data() {
     ),
   );
 
-  //comment (the comment body)
+  // comment (the comment body)
   $data['comments']['comment'] = array(
-    'title' => t('Comment body'),
-    'help' => t('The body of the comment.'),
+    'title' => t('Body'),
+    'help' => t('The text of the comment.'),
     'field' => array(
       'handler' => 'views_handler_field_markup',
       'format' => 'format',
@@ -78,12 +77,12 @@ function comment_views_data() {
     ),
   );
 
-  //cid
+  // cid
   $data['comments']['cid'] = array(
     'title' => t('ID'),
     'help' => t('The commment ID of the field'),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_comment',
       'click sortable' => TRUE,
     ),
     'filter' => array(
@@ -97,7 +96,7 @@ function comment_views_data() {
     ),
   );
 
-  //name (of comment author)
+  // name (of comment author)
   $data['comments']['name'] = array(
     'title' => t('Author'),
     'help' => t('The name of the poster.'),
@@ -116,12 +115,12 @@ function comment_views_data() {
     ),
   );
 
-  //homepage
+  // homepage
   $data['comments']['homepage'] = array(
     'title' => t("Author's website"),
-    'help' => t("The website address of the comment's author. Can be a link. The homepage can also be linked with the Name field."),
+    'help' => t("The website address of the comment's author. Can be a link. The homepage can also be linked with the Name field. Will be empty if posted by a registered user."),
     'field' => array(
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_url',
       'click sortable' => TRUE,
     ),
     'filter' => array(
@@ -135,9 +134,9 @@ function comment_views_data() {
     ),
   );
 
-  //timestamp (when comment was posted)
+  // timestamp (when comment was posted)
   $data['comments']['timestamp'] = array(
-    'title' => t('Created date'),
+    'title' => t('Post date'),
     'help' => t('Date and time of when the comment was posted.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
@@ -151,29 +150,24 @@ function comment_views_data() {
     ),
   );
 
-  //status (approved or not)
+  // status (approved or not)
   $data['comments']['status'] = array(
-    'title' => t('Approval status'),
-    'help' => t('The status of the comment. Either approved or not.'),
+    'title' => t('In moderation'),
+    'help' => t('Whether or not the comment is currently in moderation.'),
     'field' => array(
-      // @todo: this needs reversing
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_comment_status',
-      'label' => t('Approved'),
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Moderated'),
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
-    //@todo: make this argument work well for status
-    'argument' => array(
-      'handler' => 'views_handler_argument',
-    ),
   );
 
-  //link to view comment
+  // link to view comment
   $data['comments']['view_comment'] = array(
     'field' => array(
       'title' => t('View link'),
@@ -182,7 +176,7 @@ function comment_views_data() {
     ),
   );
 
-  //link to edit comment
+  // link to edit comment
   $data['comments']['edit_comment'] = array(
     'field' => array(
       'title' => t('Edit link'),
@@ -191,7 +185,7 @@ function comment_views_data() {
     ),
   );
 
-  //link to delete comment
+  // link to delete comment
   $data['comments']['delete_comment'] = array(
     'field' => array(
       'title' => t('Delete link'),
@@ -200,7 +194,7 @@ function comment_views_data() {
     ),
   );
 
-  //link to reply to comment
+  // link to reply to comment
   $data['comments']['replyto_comment'] = array(
     'field' => array(
       'title' => t('Reply-to link'),
@@ -212,7 +206,7 @@ function comment_views_data() {
   $data['comments']['thread'] = array(
     'field' => array(
       'title' => t('Depth'),
-      'help' => t('Display the depth of the comment if it is threaded'),
+      'help' => t('Display the depth of the comment if it is threaded.'),
       'handler' => 'views_handler_field_comment_depth',
     ),
     'sort' => array(
@@ -223,31 +217,34 @@ function comment_views_data() {
   );
 
   $data['comments']['pid'] = array(
+    'title' => t('Parent CID'),
+    'help' => t('The Comment ID of the parent comment.'),
     'field' => array(
-      'title' => t('Parent CID'),
-      'help' => t('Display the CID of the parent comment'),
       'handler' => 'views_handler_field',
+    ),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
     ),
   );
 
   // ----------------------------------------------------------------------
   // node_comment_statistics table
 
-  //define the group
-  $data['node_comment_statistics']['table']['group']  = t('Node Comment Statistics');
+  // define the group
+  $data['node_comment_statistics']['table']['group']  = t('Node comment statistics');
 
-  //joins
+  // joins
   $data['node_comment_statistics']['table']['join'] = array(
     //...to the node table
     'node' => array(
       'left_field' => 'nid',
-      'left' => 'nid',
+      'field' => 'nid',
      ),
   );
 
-  //last_comment_timestamp
+  // last_comment_timestamp
   $data['node_comment_statistics']['last_comment_timestamp'] = array(
-    'title' => t('Created time'),
+    'title' => t('Last post time'),
     'help' => t('Date and time of when the last comment was posted.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
@@ -261,24 +258,20 @@ function comment_views_data() {
     ),
   );
 
-  //last_comment_name (author's name)
+  // last_comment_name (author's name)
   $data['node_comment_statistics']['last_comment_name'] = array(
     'title' => t("Last author's name"),
     'help' => t('The name of the author of the last posted comment.'),
     'field' => array(
-       //@todo as a link to author?
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_ncs_last_comment_name',
       'click sortable' => TRUE,
     ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_string',
-    ),
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'handler' => 'views_handler_sort_ncs_last_comment_name',
     ),
   );
 
-  //comment_count
+  // comment_count
   $data['node_comment_statistics']['comment_count'] = array(
     'title' => t('Comment count'),
     'help' => t('The number of comments a node has.'),
@@ -297,10 +290,10 @@ function comment_views_data() {
     ),
   );
 
-  //todo: number of new comments?
-
-  //todo: last_comment_timestamp (#filter by when the last comment or node change was made)
-  //todo: last_changed (notafield). Show the time when the last comment or node change was made
+  //@todo number of new comments?
+  //@todo user is author or commented
+  //@todo last_comment_timestamp (#filter by when the last comment or node change was made)
+  //@todo last_changed (notafield). Show the time when the last comment or node change was made
 
   return $data;
 }
@@ -318,7 +311,7 @@ class views_handler_sort_comment_thread extends views_handler_sort {
       $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
     }
     else {
-      $alias = $this->table_alias .'_'. $this->real_field .'asc';
+      $alias = $this->table_alias . '_' . $this->real_field . 'asc';
       //@todo is this secure?
       $this->query->add_orderby(NULL, "SUBSTRING({$this->table_alias}.{$this->real_field}, 1, (LENGTH({$this->table_alias}.{$this->real_field}) - 1))", $this->options['order'], $alias);
     }
@@ -373,7 +366,7 @@ class views_handler_field_comment extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->options['link_to_comment'])) {
-      return l($data, "node/". $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-". $values->{$this->aliases['cid']}));
+      return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-" . $values->{$this->aliases['cid']}));
     }
     else {
       return $data;
@@ -434,16 +427,6 @@ class views_handler_field_username_comment extends views_handler_field {
 }
 
 /**
- * Filter handler on comment published status
- */
-class views_handler_filter_comment_status extends views_handler_filter_boolean_operator {
-  function query() {
-    $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . (empty($this->value) ? '<>' : '=') . " %d", COMMENT_PUBLISHED);
-  }
-}
-
-/**
  * Base field handler to present a link.
  *
  * @ingroup views_field_handlers
@@ -476,7 +459,7 @@ class views_handler_field_comment_link extends views_handler_field {
 
   function render($values) {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('view');
-    return l($text, "node/". $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-". $values->{$this->aliases['cid']}));
+    return l($text, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-" . $values->{$this->aliases['cid']}));
   }
 }
 
@@ -501,7 +484,7 @@ class views_handler_field_comment_link_edit extends views_handler_field_comment_
     }
 
     $text = !empty($this->options['text']) ? $this->options['text'] : t('edit');
-    return l($text, "comment/edit/". $values->{$this->aliases['cid']});
+    return l($text, "comment/edit/" . $values->{$this->aliases['cid']});
   }
 }
 
@@ -517,7 +500,7 @@ class views_handler_field_comment_link_delete extends views_handler_field_commen
       return;
     }
     $text = !empty($this->options['text']) ? $this->options['text'] : t('delete');
-    return l($text, "comment/delete/". $values->{$this->aliases['cid']}, array('query' => drupal_get_destination()));
+    return l($text, "comment/delete/" . $values->{$this->aliases['cid']}, array('query' => drupal_get_destination()));
   }
 }
 
@@ -533,9 +516,82 @@ class views_handler_field_comment_link_reply extends views_handler_field_comment
       return;
     }
     $text = !empty($this->options['text']) ? $this->options['text'] : t('reply');
-    return l($text, "comment/reply/". $values->{$this->aliases['nid']} .'/'. $values->{$this->aliases['cid']});
+    return l($text, "comment/reply/" . $values->{$this->aliases['nid']} . '/' . $values->{$this->aliases['cid']});
   }
 }
+
+/**
+ * Field handler to present the name of the last comment poster
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_ncs_last_comment_name extends views_handler_field {
+  function query() {
+    // last_comment_name only contains data if the user is anonymous. So we
+    // have to join in a specially related user table.
+    $this->ensure_my_table();
+    // join 'users' to this table via vid
+    $join = new views_join();
+    $join->construct('users', $this->table_alias, 'last_comment_uid', 'uid');
+    $join->extra = array(array('field' => 'uid', 'operator' => '!=', 'value' => '0'));
+
+    // ncs_user alias so this can work with the sort handler, below.
+//    $this->user_table = $this->query->add_relationship(NULL, $join, 'users', $this->relationship);
+    $this->user_table = $this->query->ensure_table('ncs_users', $this->relationship, $join);
+
+    $this->field_alias = $this->query->add_field(NULL, "COALESCE($this->user_table.name, $this->table_alias.$this->field)", $this->table_alias . '_' . $this->field);
+
+    $this->user_field = $this->query->add_field($this->user_table, 'name');
+    $this->uid = $this->query->add_field($this->table_alias, 'last_comment_uid');
+  }
+
+  function click_sort($order) {
+    $this->query->add_orderby(NULL, "LOWER(COALESCE($this->user_table.name, $this->table_alias.$this->field))", $order, $this->table_alias . '_' . $this->field);
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['link_to_user'] = TRUE;
+  }
+
+  function render($values) {
+    if (!empty($this->options['link_to_user'])) {
+      $account = new stdClass();
+      $account->name = $values->{$this->field_alias};
+      $account->uid = $values->{$this->uid};
+      return theme('username', $account);
+    }
+    else {
+      return check_plain($values->{$this->field_alias});
+    }
+  }
+}
+
+/**
+ * Sort handler to sort by last comment name which might be in 2 different
+ * fields
+ *
+ * @ingroup views_sort_handlers
+ */
+
+class views_handler_sort_ncs_last_comment_name extends views_handler_sort {
+  function query() {
+    $this->ensure_my_table();
+    $join = new views_join();
+    $join->construct('users', $this->table_alias, 'last_comment_uid', 'uid');
+
+// @todo this might be safer if we had an ensure_relationship rather than guessing
+// the table alias. Though if we did that we'd be guessing the relationship name
+// so that doesn't matter that much.
+//    $this->user_table = $this->query->add_relationship(NULL, $join, 'users', $this->relationship);
+    $this->user_table = $this->query->ensure_table('ncs_users', $this->relationship, $join);
+    $this->user_field = $this->query->add_field($this->user_table, 'name');
+
+    // Add the field.
+    $this->query->add_orderby(NULL, "LOWER(COALESCE($this->user_table.name, $this->table_alias.$this->field))", $this->options['order'], $this->table_alias . '_' . $this->field);
+  }
+}
+
 
 /**
  * @}

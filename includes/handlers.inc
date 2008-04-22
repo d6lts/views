@@ -139,7 +139,7 @@ class views_handler extends views_object {
    * Return a string representing this handler's name in the UI.
    */
   function ui_name() {
-    return t('@group: @title', array('@group' => $this->definition['group'], '@title' => $this->definition['title']));
+    return t('!group: !title', array('!group' => $this->definition['group'], '!title' => $this->definition['title']));
   }
 
   /**

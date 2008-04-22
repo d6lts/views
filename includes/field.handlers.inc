@@ -247,7 +247,7 @@ class views_handler_field_boolean extends views_handler_field {
   function options(&$options) {
     parent::options($options);
     $options['type'] = 'yes-no';
-    $options['not'] = FALSE;
+    $options['not'] = !empty($this->definition['reverse']);
   }
 
   function options_form(&$form, &$form_state) {

@@ -241,7 +241,7 @@ function template_preprocess_views_view_table(&$vars) {
         $field_output = $handler->theme($row);
 
         // Don't bother with separators and stuff if the field does not show up.
-        if (!$field_output) {
+        if (!isset($field_output) && isset($vars['rows'][$num][$column])) {
           continue;
         }
 
