@@ -520,7 +520,6 @@ class view extends views_db_object {
     }
 
     $this->build_info['query'] = $this->query->query();
-    $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
     return TRUE;
@@ -568,7 +567,6 @@ class view extends views_db_object {
     if ($query) {
       $replacements = module_invoke_all('views_query_substitutions', $this);
       $query = str_replace(array_keys($replacements), $replacements, $query);
-      $count_query = str_replace(array_keys($replacements), $replacements, $this->build_info['count_query']);
 
       if (is_array($args)) {
         foreach ($args as $id => $arg) {
@@ -581,9 +579,11 @@ class view extends views_db_object {
         db_set_active($this->base_database);
         $external = TRUE;
       }
-      if (!empty($this->pager['use_pager'])) {
-        $count_query = db_rewrite_sql($count_query, $this->base_table, $this->base_field);
 
+      // make count from subselect now
+      $count_query = "SELECT COUNT(*) FROM ($query) AS count_alias";
+
+      if (!empty($this->pager['use_pager'])) {
         $result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
         $this->total_rows = $GLOBALS['pager_total_items'][$this->pager['element']];
       }
@@ -593,7 +593,6 @@ class view extends views_db_object {
 
         // Rewrite and run the count query so we can store how many items this would have
         // matched.
-        $count_query = db_rewrite_sql($count_query, $this->base_table, $this->base_field);
         $this->total_rows = db_result(db_query($count_query, $args));
       }
       else {
