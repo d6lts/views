@@ -294,10 +294,10 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
   function init(&$view, $options) {
     parent::init($view, $options);
     if ($view->base_table == 'node_revisions') {
-      $this->additional_fields['nid'] = array('table' => 'node_revisions', 'field' => 'vid');
+      $this->additional_fields['vid'] = array('table' => 'node_revisions', 'field' => 'vid');
     }
     else {
-      $this->additional_fields['nid'] = array('table' => 'node', 'field' => 'nid');
+      $this->additional_fields['vid'] = array('table' => 'node', 'field' => 'vid');
     }
   }
 
@@ -354,26 +354,26 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
   }
 
   function pre_render($values) {
-    $this->field_alias = $this->aliases['nid'];
-    $nids = array();
+    $this->field_alias = $this->aliases['vid'];
+    $vids = array();
     foreach ($values as $result) {
-      $nids[] = $result->{$this->aliases['nid']};
+      $vids[] = $result->{$this->aliases['vid']};
     }
 
-    if ($nids) {
+    if ($vids) {
       $vids = '';
       if (!empty($this->options['limit']) && !empty($this->options['vids'])) {
         $vids = " AND td.vid IN (" . implode(', ', array_keys(array_filter($this->options['vids']))) . ")";
       }
 
-      $result = db_query("SELECT tn.nid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.nid IN (" . implode(', ', $nids) . ")$vids ORDER BY td.weight, td.name");
+      $result = db_query("SELECT tn.vid, td.* FROM {term_data} td INNER JOIN {term_node} tn ON td.tid = tn.tid WHERE tn.vid IN (" . implode(', ', $vids) . ")$vids ORDER BY td.weight, td.name");
 
       while ($term = db_fetch_object($result)) {
         if (empty($this->options['link_to_taxonomy'])) {
-          $this->items[$term->nid][$term->tid] = check_plain($term->name);
+          $this->items[$term->vid][$term->tid] = check_plain($term->name);
         }
         else {
-          $this->items[$term->nid][$term->tid] = l($term->name, taxonomy_term_path($term));
+          $this->items[$term->vid][$term->tid] = l($term->name, taxonomy_term_path($term));
         }
       }
     }
