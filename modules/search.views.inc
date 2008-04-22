@@ -252,10 +252,8 @@ function search_views_plugins() {
  * @ingroup views_row_plugins
  */
 class views_plugin_row_search_view extends views_plugin_row {
-  function options($display) {
-    return array(
-      'score' => TRUE,
-    );
+  function options(&$options) {
+    $options['score'] = TRUE;
   }
 
   function options_form(&$form, &$form_state) {

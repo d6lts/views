@@ -2468,7 +2468,9 @@ function views_ui_change_style_form_submit($form, &$form_state) {
 
   if (empty($item['style_plugin']) || $item['style_plugin'] != $form_state['values']['style_plugin']) {
     $plugin = views_get_plugin('style', $form_state['values']['style_plugin']);
-    $item['style_options'] = $plugin->options($form_state['view']->display[$form_state['display_id']]);
+    $plugin->init($form_state['view'], $form_state['view']->display[$form_state['display_id']]);
+    $item['style_options'] = array();
+    $plugin->options($item['style_options']);
   }
 
   // Store the data we're given.

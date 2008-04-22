@@ -1237,8 +1237,13 @@ class views_plugin_display extends views_plugin {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('row', $form_state['values'][$section]);
-          // @todo -- change this
-          $this->set_option('row_options', $plugin->options($this->display));
+          if ($plugin) {
+            $row_options = array();
+            $plugin->init($this->view, $this->display);
+            $plugin->options($row_options);
+            // @todo -- change this
+            $this->set_option('row_options', $row_options);
+          }
         }
         break;
       case 'style_plugin':
@@ -1247,8 +1252,13 @@ class views_plugin_display extends views_plugin {
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
           $plugin = views_get_plugin('style', $form_state['values'][$section]);
-          // @todo -- change this
-          $this->set_option('style_options', $plugin->options($this->display));
+          if ($plugin) {
+            $style_options = array();
+            $plugin->init($this->view, $this->display);
+            $plugin->options($style_options);
+            // @todo -- change this
+            $this->set_option('style_options', $style_options);
+          }
         }
         break;
       case 'style_options':
@@ -2375,9 +2385,7 @@ class views_plugin_style extends views_plugin {
    * @todo the options on all plugins should be unified and made to match
    * how handler options work.
    */
-  function options(&$display) {
-    return array();
-  }
+  function options(&$options) { }
 
   /**
    * Provide a form for setting options.
@@ -2438,10 +2446,8 @@ class views_plugin_style_list extends views_plugin_style {
   /**
    * Set default options
    */
-  function options($display) {
-    return array(
-      'type' => 'ul',
-    );
+  function options(&$options) {
+    $options['type'] = 'ul';
   }
 
   /**
@@ -2464,11 +2470,9 @@ class views_plugin_style_grid extends views_plugin_style {
   /**
    * Set default options
    */
-  function options($display) {
-    return array(
-      'columns' => 4,
-      'alignment' => 'horizontal',
-    );
+  function options(&$options) {
+    $options['columns'] = 4;
+    $options['alignment'] = 'horizontal';
   }
 
   /**
@@ -2497,14 +2501,12 @@ class views_plugin_style_table extends views_plugin_style {
   /**
    * Set default options
    */
-  function options($display) {
-    return array(
-      'columns' => array(),
-      'default' => '',
-      'info' => array(),
-      'override' => TRUE,
-      'order' => 'asc',
-    );
+  function options(&$options) {
+    $options['columns'] = array();
+    $options['default'] = '';
+    $options['info'] = array();
+    $options['override'] = TRUE;
+    $options['order'] = 'asc';
   }
 
   /**
@@ -2778,12 +2780,10 @@ function theme_views_ui_style_plugin_table($form) {
  * The default style plugin for summaries.
  */
 class views_plugin_style_summary extends views_plugin_style {
-  function options($display = NULL) {
-    return array(
-      'count' => TRUE,
-      'override' => FALSE,
-      'items_per_page' => 25,
-    );
+  function options(&$options) {
+    $options['count'] = TRUE;
+    $options['override'] = FALSE;
+    $options['items_per_page'] = 25;
   }
 
   function query() {
@@ -2842,11 +2842,9 @@ class views_plugin_style_rss extends views_plugin_style {
     }
   }
 
-  function options($display = NULL) {
-    return array(
-      'description' => '',
-      'mission_description' => FALSE,
-    );
+  function options(&$options) {
+    $options['description'] = '';
+    $options['mission_description'] = FALSE;
   }
 
   function options_form(&$form, &$form_state) {
@@ -2920,9 +2918,7 @@ class views_plugin_row extends views_plugin {
   /**
    * Static member function to set default options.
    */
-  function options(&$display) {
-    return array();
-  }
+  function options(&$options) { }
 
   /**
    * Provide a form for setting options.
