@@ -1,0 +1,3146 @@
+# LANGUAGE translation of Drupal (general)
+# Copyright YEAR NAME <EMAIL@ADDRESS>
+# Generated from files:
+#  views.module,v 1.141 2006/06/25 18:24:56 merlinofchaos
+#  views_ui.module,v 1.28 2006/06/25 18:24:56 merlinofchaos
+#  views_user.inc,v 1.7 2006/06/25 18:24:56 merlinofchaos
+#  views_comment.inc,v 1.3 2006/06/23 22:12:23 merlinofchaos
+#  views_node.inc,v 1.16 2006/06/25 18:24:56 merlinofchaos
+#  views_upload.inc,v 1.1 2006/06/24 01:41:53 merlinofchaos
+#  views_rss.module,v 1.3 2006/06/25 01:57:28 merlinofchaos
+#  views_theme_wizard.module,v 1.2 2006/07/12 23:21:04 merlinofchaos
+#  views.install,v 1.21 2006/07/24 22:44:27 merlinofchaos
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: German translation for views module\n"
+"POT-Creation-Date: 2008-03-31 22:34+0200\n"
+"PO-Revision-Date: 2008-03-31 23:29+0100\n"
+"Last-Translator: Alexander Hass\n"
+"Language-Team: Alexander Hass\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
+"X-Poedit-Language: German\n"
+"X-Poedit-Country: GERMANY\n"
+"X-Poedit-SourceCharset: utf-8\n"
+
+#: views.module:97
+msgid "The views module allows administrators and site designers to create, manage, and display lists of content. Each list managed by the views module is known as a \"view\", and the output of a view is known as a \"display\". Displays are provided in either block or page form, and a single view may have multiple displays. Optional navigation aids, including a system path and menu item, can be set for each page-based display of a view. By default, views may be created that list content (a <em>Node</em> view type), content revisions (a <em>Node revisions</em> view type) or users (a <em>User</em> view type). A view may be restricted to members of specific user roles, and may be added, edited or deleted at the <a href=\"@views-administration\">views administration page</a>."
+msgstr ""
+
+#: views.module:98
+msgid "The \"building block\" design of the views system provides power and flexibility, allowing parameters to be specified only when needed. While an advanced view may use all of available parameters to create complex and highly interactive applications, a simple content listing may specify only a few options. All views rely on a conceptual framework that includes:"
+msgstr ""
+
+#: views.module:100
+msgid "<em>fields</em>, or the individual pieces of data being displayed. Adding the fields <em>Node: Title</em>, <em>Node: Type</em>, and <em>Node: Post date</em> to a node view, for example, includes the title, content type and creation date in the displayed results."
+msgstr ""
+
+#: views.module:101
+msgid "<em>relationships</em>,"
+msgstr "<em>Beziehungen</em>,"
+
+#: views.module:102
+msgid "<em>arguments</em>, or additional parameters that dynamically refine the view results, passed as part of the path. Adding an argument of <em>Node: Type</em> to a node view with a path of \"content\", for example, dynamically filters the displayed items by content type. In this example (shown with Clean URLs enabled), accessing the view through the path \"http://www.example.com/content/page\" displays all posts of the type \"page\", the path \"http://www.example.com/content/story\" displays all posts of the type \"story\", and \"http://www.example.com/content\" displays all posts regardless of type."
+msgstr ""
+
+#: views.module:103
+msgid "<em>sort criteria</em>, which determines the order of items displayed in the view results. Adding the sort criteria <em>Node: Post date</em> (in descending order) to a node <em>view</em>, for example, sorts the displayed posts in descending order by creation date."
+msgstr ""
+
+#: views.module:104
+msgid "<em>filters</em>, which limit items displayed in the results. Adding the filter <em>Node: Published</em> (and setting it equal to \"Published\") to a node view, for example, prevents unpublished items from being displayed."
+msgstr ""
+
+#: views.module:106
+msgid "For more information, see the online handbook entry for <a href=\"@handbook-views\">Views</a> or the <a href=\"@project-views\">Views project page</a>."
+msgstr ""
+
+#: views.module:553
+msgid "Error: missing @component"
+msgstr "Fehler: @component fehlt"
+
+#: views.module:563
+msgid "@group: @field<div class=\"description\">@help</div>"
+msgstr "@group: @field<div class=\"description\">@help</div>"
+
+#: views.module:757
+msgid "Skipping broken view @view"
+msgstr ""
+
+#: views.module:798;838
+#: includes/admin.inc:36
+msgid "Overridden"
+msgstr "Übersschrieben"
+
+#: views.module:801;834
+#: views_ui.module:288
+#: includes/admin.inc:35;352;513
+#: includes/plugins.inc:72
+msgid "Default"
+msgstr "Standard"
+
+#: views.module:1145
+msgid "Apply"
+msgstr "Anwenden"
+
+#: views.module:126
+#: views_ui.module:25
+#: views.info:0;0
+#: views_ui.info:0
+msgid "Views"
+msgstr "Ansichten"
+
+#: views.module:130
+msgid "Ajax callback for view loading."
+msgstr ""
+
+#: views.module:0
+msgid "views"
+msgstr "Ansichten"
+
+#: views_ui.module:176
+msgid "The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match. You can import Views 1 views through the normal Import tab."
+msgstr ""
+
+#: views_ui.module:184
+msgid "administer views"
+msgstr "Ansichten verwalten"
+
+#: views_ui.module:27
+msgid "Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented."
+msgstr ""
+
+#: views_ui.module:31
+#: includes/plugins.inc:55
+msgid "List"
+msgstr "Alle anzeigen"
+
+#: views_ui.module:37
+#: includes/admin.inc:814;814;1583
+msgid "Add"
+msgstr "Hinzufügen"
+
+#: views_ui.module:42
+#: includes/admin.inc:477
+msgid "Import"
+msgstr "Importieren"
+
+#: views_ui.module:48
+msgid "Tools"
+msgstr "Werkzeuge"
+
+#: views_ui.module:54
+msgid "Basic"
+msgstr ""
+
+#: views_ui.module:62
+#: includes/convert.inc:30
+msgid "Convert"
+msgstr "Konvertieren"
+
+#: views_ui.module:63
+msgid "Convert stored Views 1 views."
+msgstr "Konvertiere gespeicherte Views 1 Ansichten."
+
+#: views_ui.module:69;82;87
+msgid "Delete view"
+msgstr "Ansicht löschen"
+
+#: views_ui.module:75
+msgid "Convert view"
+msgstr "Ansicht konvertieren"
+
+#: views_ui.module:110
+#: includes/admin.inc:31
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: views_ui.module:0
+msgid "views_ui"
+msgstr "views_ui"
+
+#: views.install:32
+msgid "Stores the general data for a view."
+msgstr ""
+
+#: views.install:38
+msgid "The view ID of the field, defined by the database."
+msgstr ""
+
+#: views.install:46
+msgid "The unique name of the view. This is the primary field views are loaded from, and is used so that views may be internal and not necessarily in the database. May only be alphanumeric characters plus underscores."
+msgstr ""
+
+#: views.install:52
+msgid "A description of the view for the admin interface."
+msgstr "Eine Beschreibung der Ansicht für die Verwaltungsoberfläche."
+
+#: views.install:58
+msgid "A tag used to group/sort views in the admin interface"
+msgstr ""
+
+#: views.install:62
+msgid "A chunk of PHP code that can be used to provide modifications to the view prior to building."
+msgstr ""
+
+#: views.install:69
+msgid "What table this view is based on, such as node, user, comment, or term."
+msgstr ""
+
+#: views.install:75
+msgid "A boolean to indicate whether or not this view may have its query cached."
+msgstr ""
+
+#: views.install:83
+msgid "Stores information about each display attached to a view."
+msgstr ""
+
+#: views.install:90
+msgid "The view this display is attached to."
+msgstr ""
+
+#: views.install:98
+msgid "An identifier for this display; usually generated from the display_plugin, so should be something like page or page_1 or block_2, etc."
+msgstr ""
+
+#: views.install:105
+msgid "The title of the display, viewable by the administrator."
+msgstr ""
+
+#: views.install:112
+msgid "The type of the display. Usually page, block or embed, but is pluggable so may be other things."
+msgstr ""
+
+#: views.install:117
+msgid "The order in which this display is loaded."
+msgstr ""
+
+#: views.install:121
+msgid "A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type."
+msgstr ""
+
+#: views.install:132
+msgid "A special cache used to store objects that are being edited; it serves to save state in an ordinarily stateless environment."
+msgstr ""
+
+#: views.install:137
+msgid "The session ID this cache object belongs to."
+msgstr ""
+
+#: views.install:142
+msgid "The name of the view this cache is attached to."
+msgstr ""
+
+#: views.install:147
+msgid "The name of the object this cache is attached to; this essentially represents the owner so that several sub-systems can use this cache."
+msgstr ""
+
+#: views.install:154
+msgid "The time this cache was created or updated."
+msgstr ""
+
+#: views.install:158
+msgid "Serialized data being stored."
+msgstr ""
+
+#: views.info:0
+msgid "Create customized lists and queries from your database."
+msgstr ""
+
+#: views_ui.info:0
+msgid "Views UI"
+msgstr "Ansichten UI"
+
+#: views_ui.info:0
+msgid "Administrative interface to views. Without this module, you cannot create or edit your views."
+msgstr ""
+
+#: includes/admin.inc:20;296;466
+#: includes/convert.inc:20
+msgid "View name"
+msgstr "Ansichtsname"
+
+#: includes/admin.inc:21
+#: includes/convert.inc:21
+msgid "Description"
+msgstr "Beschreibung"
+
+#: includes/admin.inc:22;161
+#: includes/handlers.inc:2487
+#: includes/plugins.inc:446;1426;1471
+#: modules/node.views.inc:62;389
+msgid "Title"
+msgstr "Titel"
+
+#: includes/admin.inc:23
+#: includes/plugins.inc:705;1414
+#: modules/node.views.inc:141
+msgid "Type"
+msgstr "Typ"
+
+#: includes/admin.inc:24
+msgid "URL"
+msgstr "URL"
+
+#: includes/admin.inc:25
+#: includes/convert.inc:22
+msgid "Operations"
+msgstr "Operationen"
+
+#: includes/admin.inc:32
+msgid "Export"
+msgstr "Exportieren"
+
+#: includes/admin.inc:33
+msgid "Clone"
+msgstr "Duplizieren"
+
+#: includes/admin.inc:36
+msgid "Revert"
+msgstr "Zurücksetzen"
+
+#: includes/admin.inc:36;389;549
+#: includes/convert.inc:35;109
+msgid "Delete"
+msgstr "Löschen"
+
+#: includes/admin.inc:41
+msgid "Disable"
+msgstr "Deaktivieren"
+
+#: includes/admin.inc:44
+msgid "Enable"
+msgstr "Aktivieren"
+
+#: includes/admin.inc:49
+msgid "Warning! Broken view!"
+msgstr "Warnung! Beschädigte Ansicht!"
+
+#: includes/admin.inc:160;175
+msgid "Query"
+msgstr "Abfrage"
+
+#: includes/admin.inc:166
+#, fuzzy
+msgid "This display has no path."
+msgstr "Diese Anzeige hat keinen Pfad."
+
+#: includes/admin.inc:169
+#: includes/plugins.inc:1345
+#: modules/statistics.views.inc:139
+msgid "Path"
+msgstr "Pfad"
+
+#: includes/admin.inc:175
+msgid "No query was run"
+msgstr ""
+
+#: includes/admin.inc:182
+msgid "Unable to preview due to validation errors."
+msgstr ""
+
+#: includes/admin.inc:229
+msgid "Display"
+msgstr "Anzeige"
+
+#: includes/admin.inc:237
+#: includes/view.inc:1365
+msgid "Arguments"
+msgstr "Argumente"
+
+#: includes/admin.inc:239
+msgid "Separate arguments with a / as though they were a URL path."
+msgstr ""
+
+#: includes/admin.inc:245
+msgid "Preview"
+msgstr "Vorschau"
+
+#: includes/admin.inc:283
+msgid "Clone view @view"
+msgstr "Ansicht @view duplizieren"
+
+#: includes/admin.inc:297
+msgid "This is the unique name of the view. It must contain only alphanumeric characters and underscores; it is used to identify the view internally and to generate unique theming template names for this view. If overriding a module provided view, the name must not be changed or instead a new view will be created."
+msgstr ""
+
+#: includes/admin.inc:304;1218
+msgid "View description"
+msgstr "Beschreibung anzeigen"
+
+#: includes/admin.inc:305;1219
+msgid "This description will appear on the Views administrative UI to tell you what the view is about."
+msgstr ""
+
+#: includes/admin.inc:311;1225
+#, fuzzy
+msgid "View tag"
+msgstr "Kennzeichnung anzeigen"
+
+#: includes/admin.inc:312;1226
+msgid "Enter an optional tag for this view; it is used only to help sort views on the administrative page."
+msgstr ""
+
+#: includes/admin.inc:319
+msgid "View type"
+msgstr "Ansichtstyp"
+
+#: includes/admin.inc:320
+msgid "The view type is the primary table for which information is being retrieved. The view type controls what arguments, fields, sort criteria and filters are available, so once this is set it <strong>cannot be changed</strong>."
+msgstr ""
+
+#: includes/admin.inc:331
+msgid "Next"
+msgstr "nächste Seite"
+
+#: includes/admin.inc:347
+msgid "View name must be alphanumeric or underscores only."
+msgstr "Der Name einer Ansicht darf nur aus Buchstaben und Unterstrichen bestehen."
+
+#: includes/admin.inc:353
+msgid "You must use a unique name for this view."
+msgstr ""
+
+#: includes/admin.inc:385
+#: includes/convert.inc:105
+msgid "Are you sure you want to delete the view %name?"
+msgstr "Soll die Ansicht %name wirklich gelöscht werden?"
+
+#: includes/admin.inc:388
+msgid "Deleting a view cannot be undone."
+msgstr "Das Löschen einer Ansicht kann nicht rückgängig gemacht werden."
+
+#: includes/admin.inc:390;426;542;952
+#: includes/convert.inc:110
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: includes/admin.inc:399
+msgid "The view has been deleted."
+msgstr "Die Ansicht wurde gelöscht."
+
+#: includes/admin.inc:411
+msgid "There is no lock on view %view to break."
+msgstr "Auf der Ansicht %view gibt es keine aufzuhebende Sperre."
+
+#: includes/admin.inc:421
+msgid "Are you sure you want to break the lock on view %name?"
+msgstr "Soll die Sperre auf der Ansicht %name wirklich aufgehoben werden?"
+
+#: includes/admin.inc:424
+msgid "By breaking this lock, any unsaved changes made by !user will be lost!"
+msgstr "Durch Aufheben der Sperre, gehen alle ungespeicherten Änderungen von !user verloren!"
+
+#: includes/admin.inc:425
+msgid "Break lock"
+msgstr "Sperre aufheben"
+
+#: includes/admin.inc:442
+msgid "Edit view \"%view\""
+msgstr "Ansicht „%view“ bearbeiten"
+
+#: includes/admin.inc:467
+msgid "Enter the name to use for this view if it is different from the source view. Leave blank to use the name of the view."
+msgstr ""
+
+#: includes/admin.inc:472
+msgid "Paste view code here"
+msgstr ""
+
+#: includes/admin.inc:494
+msgid "Unable to interpret view code."
+msgstr ""
+
+#: includes/admin.inc:501
+msgid "You are importing a view created in Views version 1. You may need to adjust some parameters to work correctly in version 2."
+msgstr ""
+
+#: includes/admin.inc:504
+msgid "That view is not compatible with this version of Views."
+msgstr ""
+
+#: includes/admin.inc:514
+msgid "A view by that name already exists; please choose a different name"
+msgstr ""
+
+#: includes/admin.inc:535
+msgid "Save"
+msgstr "Speichern"
+
+#: includes/admin.inc:582
+msgid "The view has been saved."
+msgstr "Die Ansicht wurde gespeichert."
+
+#: includes/admin.inc:620
+msgid "Unknown or missing table name"
+msgstr "Unbekannter oder fehlender Tabellenname"
+
+#: includes/admin.inc:625
+msgid "Click on an item to edit that item's details."
+msgstr ""
+
+#: includes/admin.inc:628
+msgid "This view has a broken default display and cannot be used."
+msgstr ""
+
+#: includes/admin.inc:663
+msgid "break this lock"
+msgstr "Diese Sperre aufheben"
+
+#: includes/admin.inc:722
+#: includes/plugins.inc:441;563;575;1336;1580;2099
+msgid "None"
+msgstr "Keines"
+
+#: includes/admin.inc:723
+#, fuzzy
+msgid "Tag"
+msgstr "Kennzeichnung"
+
+#: includes/admin.inc:791
+msgid "Invalid"
+msgstr "Ungültig"
+
+#: includes/admin.inc:791
+msgid "Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!"
+msgstr ""
+
+#: includes/admin.inc:812;812
+msgid "Rearrange"
+msgstr "Umsortieren"
+
+#: includes/admin.inc:842;1676;1888;1990;2075
+msgid "Error: handler for @table > @field doesn't exist!"
+msgstr ""
+
+#: includes/admin.inc:861;861;870;870
+#: includes/plugins.inc:465;480;1379
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/admin.inc:866
+#: includes/plugins.inc:452;470
+msgid "Missing style plugin"
+msgstr ""
+
+#: includes/admin.inc:873
+msgid " &nbsp; Style: !style"
+msgstr ""
+
+#: includes/admin.inc:903
+msgid "Invalid display id while regenerating tabs"
+msgstr ""
+
+#: includes/admin.inc:936
+msgid "Update"
+msgstr "Aktualisieren"
+
+#: includes/admin.inc:1034
+msgid "Unable to initialize default display"
+msgstr ""
+
+#: includes/admin.inc:1065
+msgid "Add display"
+msgstr "Anzeige hinzufügen"
+
+#: includes/admin.inc:1129
+msgid "Remove display"
+msgstr "Anzeige entfernen"
+
+#: includes/admin.inc:1140
+msgid "Restore display"
+msgstr "Anzeige wiederherstellen"
+
+#: includes/admin.inc:1213
+msgid "View details"
+msgstr ""
+
+#: includes/admin.inc:1287;1373;1549;1669;1881;1983;2068
+msgid "Invalid display id @display"
+msgstr "Ungültige Anzeige-ID @display"
+
+#: includes/admin.inc:1377
+msgid "Rearrange @type"
+msgstr "@type neu anordnen"
+
+#: includes/admin.inc:1418
+msgid "Broken field @id"
+msgstr "Beschädigtes Feld @id"
+
+#: includes/admin.inc:1453;1462;1747;1906
+msgid "Remove"
+msgstr "Entfernen"
+
+#: includes/admin.inc:1453;1453
+msgid "Remove this item"
+msgstr "Diesen Eintrag entfernen"
+
+#: includes/admin.inc:1459
+msgid "No fields available."
+msgstr "Keine Felder verfügbar."
+
+#: includes/admin.inc:1462
+#: includes/plugins.inc:1435
+#: modules/book.views.inc:57
+#: modules/taxonomy.views.inc:121
+msgid "Weight"
+msgstr "Reihenfolge"
+
+#: includes/admin.inc:1555
+msgid "Add @type"
+msgstr "@type hinzufügen"
+
+#: includes/admin.inc:1580
+#, fuzzy
+msgid "There are no @types available to add."
+msgstr "Es stehen keine @types zum Hinzufügen zu Verfügung."
+
+#: includes/admin.inc:1708
+#, fuzzy
+msgid "Do not use a relationship"
+msgstr "Es sollte keine Beziehung verwendet werden"
+
+#: includes/admin.inc:1716
+#: includes/view.inc:1381
+msgid "Relationship"
+msgstr "Beziehung"
+
+#: includes/admin.inc:1729
+msgid "Configure @type \"@item\""
+msgstr "@type „@item“ konfigurieren"
+
+#: includes/admin.inc:1896
+msgid "Configure extra settings for @type \"@item\""
+msgstr "Besondere Einstellungen für @type „@item“ konfigurieren"
+
+#: includes/admin.inc:1995
+msgid "Change summary style for @type \"@item\""
+msgstr ""
+
+#: includes/admin.inc:2082
+msgid "Configure summary style for @type \"@item\""
+msgstr ""
+
+#: includes/admin.inc:2175
+msgid "Add Views signature to all SQL queries"
+msgstr "Eine View-Signatur zu allen SQL-Abfragen hinzufügen"
+
+#: includes/admin.inc:2176
+msgid "All Views-generated queries will include a special 'VIEWS' = 'VIEWS' string in the WHERE clause. This makes identifying Views queries in database server logs simpler, but should only be used when troubleshooting."
+msgstr ""
+
+#: includes/admin.inc:2182
+msgid "Disable views data caching"
+msgstr "Datencaching von Ansichten deaktivieren"
+
+#: includes/admin.inc:2183
+msgid "Views caches data about tables, modules and views available, to increase performance. By checking this box, Views will skip this cache and always rebuild this data when needed. This can have a serious performance impact on your site."
+msgstr ""
+
+#: includes/ajax.inc:25
+msgid "Server reports invalid input error."
+msgstr ""
+
+#: includes/ajax.inc:26
+msgid "Error"
+msgstr "Fehler"
+
+#: includes/convert.inc:14
+msgid "There are no Views 1 views stored in the database to convert."
+msgstr ""
+
+#: includes/convert.inc:33
+msgid "Converted"
+msgstr "Konvertiert"
+
+#: includes/convert.inc:68
+msgid "The table below lists Views version 1 views that are stored in the database. You can either convert them to work in Views version 2, or delete them. The views are convertible only if there is no Views 2 view with the same name."
+msgstr ""
+
+#: includes/convert.inc:79
+msgid "Unable to find view."
+msgstr "Ansicht konnte nicht gefunden werden."
+
+#: includes/convert.inc:89
+msgid "Unable to convert view."
+msgstr "Ansicht konnte nicht konvertiert werden."
+
+#: includes/convert.inc:108
+msgid "This action cannot be undone."
+msgstr "Dieser Vorgang kann nicht rückgängig gemacht werden."
+
+#: includes/convert.inc:118
+msgid "The view has been deleted"
+msgstr "Die Ansicht wurde gelöscht."
+
+#: includes/handlers.inc:274
+msgid "@group: @title"
+msgstr "@group: @title"
+
+#: includes/handlers.inc:486;648;1321
+msgid "Label"
+msgstr "Bezeichnung"
+
+#: includes/handlers.inc:488
+msgid "The label for this relationship that will be displayed only administratively."
+msgstr ""
+
+#: includes/handlers.inc:493
+msgid "Require this relationship"
+msgstr ""
+
+#: includes/handlers.inc:494
+msgid "If required, items that do not contain this relationship will not appear."
+msgstr ""
+
+#: includes/handlers.inc:650
+msgid "The label for this field that will be displayed to end users if the style requires it."
+msgstr ""
+
+#: includes/handlers.inc:703
+msgid "Date format"
+msgstr "Datumsformat"
+
+#: includes/handlers.inc:708
+msgid "Custom"
+msgstr "Benutzerdefiniert"
+
+#: includes/handlers.inc:709
+msgid "Time ago"
+msgstr ""
+
+#: includes/handlers.inc:715
+msgid "Custom date format"
+msgstr "Benutzerdefiniertes Datumsformat"
+
+#: includes/handlers.inc:716
+msgid "If \"Custom\", see <a href=\"http://us.php.net/manual/en/function.date.php\">the PHP docs</a> for date formats. If \"Time ago\" this is the the number of different units to display, which defaults to two."
+msgstr ""
+
+#: includes/handlers.inc:732
+msgid "%time ago"
+msgstr "vor %time"
+
+#: includes/handlers.inc:757
+msgid "Output format"
+msgstr "Ausgabeformat"
+
+#: includes/handlers.inc:759
+msgid "Yes/No"
+msgstr "Ja/Nein"
+
+#: includes/handlers.inc:760
+msgid "True/False"
+msgstr "Wahr/Unwahr"
+
+#: includes/handlers.inc:761
+msgid "On/Off"
+msgstr "An/Aus"
+
+#: includes/handlers.inc:767
+#, fuzzy
+msgid "Reverse"
+msgstr "Umgekehrt"
+
+#: includes/handlers.inc:768
+msgid "If checked, true will be displayed as false."
+msgstr "Sobald aktiviert, wird „wahr“ als „unwahr“ angezeigt."
+
+#: includes/handlers.inc:782;1862;1909
+#: includes/plugins.inc:487;496;512;648
+msgid "Yes"
+msgstr "Ja"
+
+#: includes/handlers.inc:782;1862;1909
+#: includes/plugins.inc:487;496;512;648;656
+msgid "No"
+msgstr "Nein"
+
+#: includes/handlers.inc:784;1834;1872
+msgid "True"
+msgstr "Wahr"
+
+#: includes/handlers.inc:784;1872
+msgid "False"
+msgstr "Unwahr"
+
+#: includes/handlers.inc:786
+msgid "On"
+msgstr "An"
+
+#: includes/handlers.inc:786
+msgid "Off"
+msgstr "Aus"
+
+#: includes/handlers.inc:835
+#: modules/statistics.views.inc:243
+msgid "Display as link"
+msgstr "Als Verweis anzeigen"
+
+#: includes/handlers.inc:874
+msgid "Display type"
+msgstr "Anzeigetyp"
+
+#: includes/handlers.inc:876
+#: includes/plugins.inc:1798
+msgid "Unordered list"
+msgstr "Ungeordnete Liste"
+
+#: includes/handlers.inc:877
+#: includes/plugins.inc:1798
+msgid "Ordered list"
+msgstr "Geordnete Liste"
+
+#: includes/handlers.inc:878
+msgid "Simple separator"
+msgstr "Einfacher Separator"
+
+#: includes/handlers.inc:885
+#: includes/plugins.inc:2065
+msgid "Separator"
+msgstr "Separator"
+
+#: includes/handlers.inc:898
+msgid "Empty list text"
+msgstr "Leerer Listentext"
+
+#: includes/handlers.inc:900
+msgid "If the list is empty, you may enter text here that will be displayed."
+msgstr ""
+
+#: includes/handlers.inc:958
+msgid "asc"
+msgstr ""
+
+#: includes/handlers.inc:962
+msgid "desc"
+msgstr ""
+
+#: includes/handlers.inc:974
+msgid "Sort order"
+msgstr "Sortierreihenfolge"
+
+#: includes/handlers.inc:975
+#: includes/plugins.inc:1950
+msgid "Ascending"
+msgstr "Aufsteigend"
+
+#: includes/handlers.inc:975
+#: includes/plugins.inc:1950
+msgid "Descending"
+msgstr "Absteigend"
+
+#: includes/handlers.inc:991
+msgid "views_handler_sort_formula missing default: @formula"
+msgstr ""
+
+#: includes/handlers.inc:1028
+msgid "Granularity"
+msgstr ""
+
+#: includes/handlers.inc:1030
+msgid "Second"
+msgstr "Sekunde"
+
+#: includes/handlers.inc:1031
+msgid "Minute"
+msgstr "Minute"
+
+#: includes/handlers.inc:1032
+msgid "Hour"
+msgstr "Stunde"
+
+#: includes/handlers.inc:1033
+msgid "Day"
+msgstr "Tag"
+
+#: includes/handlers.inc:1034
+msgid "Month"
+msgstr "Monat"
+
+#: includes/handlers.inc:1035
+msgid "Year"
+msgstr "Jahr"
+
+#: includes/handlers.inc:1037
+msgid "The granularity is the smallest unit to use when determining whether two dates are the same; for example, if the granularity is \"Year\" then all dates in 1999, regardless of when they fall in 1999, will be considered the same date."
+msgstr ""
+
+#: includes/handlers.inc:1179
+msgid "Operator"
+msgstr "Operator"
+
+#: includes/handlers.inc:1241
+msgid "Expose"
+msgstr "Hervorheben"
+
+#: includes/handlers.inc:1246
+msgid "This item is currently not exposed. If you <strong>expose</strong> it, users will be able to change the filter as they view it."
+msgstr ""
+
+#: includes/handlers.inc:1253
+msgid "Hide"
+msgstr "Ausblenden"
+
+#: includes/handlers.inc:1258
+msgid "This item is currently exposed. If you <strong>hide</strong> it, users will not able to change the filter as they view it."
+msgstr ""
+
+#: includes/handlers.inc:1300
+msgid "Operator identifier"
+msgstr ""
+
+#: includes/handlers.inc:1302
+msgid "This will appear in the URL after the ? to identify this operator. Leave blank to not expose the operator."
+msgstr ""
+
+#: includes/handlers.inc:1314
+msgid "Filter identifier"
+msgstr ""
+
+#: includes/handlers.inc:1316
+msgid "This will appear in the URL after the ? to identify this filter. Cannot be blank."
+msgstr ""
+
+#: includes/handlers.inc:1334
+msgid "Optional"
+msgstr "Optional"
+
+#: includes/handlers.inc:1335
+msgid "This exposed filter is optional and will have added options to allow it not to be set."
+msgstr ""
+
+#: includes/handlers.inc:1341
+msgid "Force single"
+msgstr ""
+
+#: includes/handlers.inc:1342
+msgid "Force this exposed filter to accept only one option."
+msgstr ""
+
+#: includes/handlers.inc:1348
+msgid "Remember"
+msgstr "Erinnern"
+
+#: includes/handlers.inc:1349
+msgid "Remember the last setting the user gave this filter."
+msgstr ""
+
+#: includes/handlers.inc:1363
+msgid ""
+"The identifier is required if the filter is\n"
+"        exposed."
+msgstr ""
+
+# Beliebig, etc ?
+#: includes/handlers.inc:1452
+#, fuzzy
+msgid "<Any>"
+msgstr "<Jeder>"
+
+#: includes/handlers.inc:1552;1596;2018
+msgid "Is equal to"
+msgstr "Ist gleich mit"
+
+#: includes/handlers.inc:1553;1602;2024
+msgid "Is not equal to"
+msgstr "Ist ungleich zu"
+
+#: includes/handlers.inc:1563;1728;2126
+msgid "Value"
+msgstr "Wert"
+
+#: includes/handlers.inc:1597;1603;2020
+msgid "="
+msgstr "="
+
+#: includes/handlers.inc:1608
+msgid "Contains"
+msgstr "Enthält"
+
+#: includes/handlers.inc:1609
+msgid "contains"
+msgstr "enthält"
+
+#: includes/handlers.inc:1614
+msgid "Contains any word"
+msgstr "Enthält ein beliebiges Wort"
+
+#: includes/handlers.inc:1615
+msgid "has word"
+msgstr "enthält das Wort"
+
+#: includes/handlers.inc:1620
+msgid "Contains all words"
+msgstr "Enthält alle Wörter"
+
+#: includes/handlers.inc:1621
+msgid "has all"
+msgstr "enthält alle"
+
+#: includes/handlers.inc:1626
+msgid "Starts with"
+msgstr "Beginnt mit"
+
+#: includes/handlers.inc:1627
+msgid "begins"
+msgstr "beginnt"
+
+#: includes/handlers.inc:1632
+msgid "Ends with"
+msgstr "Endet mit"
+
+#: includes/handlers.inc:1633
+msgid "ends"
+msgstr "endet"
+
+#: includes/handlers.inc:1638
+msgid "Does not contain"
+msgstr "Enthält nicht"
+
+#: includes/handlers.inc:1639
+msgid "!has"
+msgstr "!has"
+
+#: includes/handlers.inc:1648;2059
+msgid "Is empty (NULL)"
+msgstr "Ist leer (NULL)"
+
+#: includes/handlers.inc:1650;2061
+msgid "empty"
+msgstr "leer"
+
+#: includes/handlers.inc:1654;2065
+msgid "Is not empty (NULL)"
+msgstr "Ist nicht leer (NULL)"
+
+#: includes/handlers.inc:1656;2067
+msgid "not empty"
+msgstr "nicht leer"
+
+#: includes/handlers.inc:1679
+#, fuzzy
+msgid "exposed>"
+msgstr "hervorgehoben"
+
+#: includes/handlers.inc:1686
+msgid "Case sensitive"
+msgstr "Groß- und Kleinschreibung berücksichtigen"
+
+#: includes/handlers.inc:1688
+msgid "Case sensitive filters may be faster; MySQL might ignore case sensitivity."
+msgstr ""
+
+#: includes/handlers.inc:1869;1944
+#, fuzzy
+msgid "exposed"
+msgstr "hervorgehoben"
+
+#: includes/handlers.inc:1899
+msgid "Options"
+msgstr "Optionen"
+
+#: includes/handlers.inc:1923;2309
+msgid "Is one of"
+msgstr "Ist eines von"
+
+#: includes/handlers.inc:1924
+msgid "Is not one of"
+msgstr "Ist keines von"
+
+#: includes/handlers.inc:1956
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: includes/handlers.inc:2006
+msgid "Is less than"
+msgstr "Ist weniger als"
+
+#: includes/handlers.inc:2008
+msgid "<"
+msgstr "<"
+
+#: includes/handlers.inc:2012
+msgid "Is less than or equal to"
+msgstr "Ist weniger als oder gleich"
+
+#: includes/handlers.inc:2014
+msgid "<="
+msgstr "<="
+
+#: includes/handlers.inc:2026
+msgid "!="
+msgstr "!="
+
+#: includes/handlers.inc:2030
+msgid "Is greater than or equal to"
+msgstr "Ist größer als oder gleich"
+
+#: includes/handlers.inc:2032
+msgid ">="
+msgstr ">="
+
+#: includes/handlers.inc:2036
+msgid "Is greater than"
+msgstr "Ist größer als"
+
+#: includes/handlers.inc:2038
+msgid ">"
+msgstr ">"
+
+#: includes/handlers.inc:2042
+msgid "Is between"
+msgstr "Ist zwischen"
+
+#: includes/handlers.inc:2044
+msgid "between"
+msgstr "zwischen"
+
+#: includes/handlers.inc:2048
+msgid "Is not between"
+msgstr "Ist nicht zwischen"
+
+#: includes/handlers.inc:2050
+msgid "not between"
+msgstr "nicht zwischen"
+
+#: includes/handlers.inc:2141
+msgid "Min"
+msgstr "Min"
+
+#: includes/handlers.inc:2147
+msgid "And max"
+msgstr "Und höchstens"
+
+#: includes/handlers.inc:2204
+msgid "@min and @max"
+msgstr "@min und @max"
+
+#: includes/handlers.inc:2225
+msgid "Value type"
+msgstr "Werttyp"
+
+#: includes/handlers.inc:2227
+msgid "A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred."
+msgstr "Ein Datum in einem maschinenlesbaren Format. CCJJ-MM-TT HH:MM:SS ist bevorzugt."
+
+#: includes/handlers.inc:2228
+msgid "An offset from the current time such as \"+1 day\" or \"-2 hours and 30 minutes\""
+msgstr ""
+
+#: includes/handlers.inc:2241;2247;2251
+msgid "Invalid date format."
+msgstr "Ungültiges Datumsformat."
+
+#: includes/handlers.inc:2310
+msgid "Is all of"
+msgstr "Ist alles von"
+
+#: includes/handlers.inc:2311
+msgid "Is none of"
+msgstr "Ist keines von"
+
+#: includes/handlers.inc:2446
+msgid "All"
+msgstr "Alle"
+
+#: includes/handlers.inc:2462
+msgid "Action to take if argument is not present"
+msgstr ""
+
+#: includes/handlers.inc:2470
+msgid "Wildcard"
+msgstr "Platzhalter"
+
+#: includes/handlers.inc:2473
+msgid "If this value is received as an argument, the argument will be ignored; i.e, \"all values\""
+msgstr ""
+
+#: includes/handlers.inc:2478
+#, fuzzy
+msgid "Wildcard title"
+msgstr "Platzhaltertitel"
+
+#: includes/handlers.inc:2481
+msgid "The title to use for the wildcard in substitutions elsewhere."
+msgstr ""
+
+#: includes/handlers.inc:2489
+msgid "The title to use when this argument is present; it will override the title of the view and titles from previous arguments."
+msgstr ""
+
+#: includes/handlers.inc:2502
+msgid "Display all values"
+msgstr "Alle Werte anzeigen"
+
+#: includes/handlers.inc:2507
+msgid "Display page not found"
+msgstr "Seite nicht gefunden anzeigen"
+
+#: includes/handlers.inc:2511
+msgid "Display empty text"
+msgstr "Leerer Text anzeigen"
+
+#: includes/handlers.inc:2516
+msgid "Summary, sorted ascending"
+msgstr "Zusammenfassung, aufsteigend sortiert"
+
+#: includes/handlers.inc:2523
+msgid "Summary, sorted descending"
+msgstr "Zusammenfassung, absteigend sortiert"
+
+#: includes/handlers.inc:2824
+msgid "Glossary mode"
+msgstr ""
+
+#: includes/handlers.inc:2825;2869
+msgid "Glossary mode applies a limit to the number of characters used in the argument, which allows the summary view to act as a glossary."
+msgstr ""
+
+#: includes/handlers.inc:2831
+msgid "Character limit"
+msgstr "Zeichenbegrenzung"
+
+#: includes/handlers.inc:2832
+msgid "How many characters of the argument to filter against. If set to 1, all fields starting with the letter in the argument would be matched."
+msgstr ""
+
+#: includes/handlers.inc:2840
+msgid "Case"
+msgstr ""
+
+#: includes/handlers.inc:2841
+msgid "When printing the argument result, how to transform the case."
+msgstr ""
+
+#: includes/handlers.inc:2843;2857
+msgid "No transform"
+msgstr "Keine Umwandlung"
+
+#: includes/handlers.inc:2844;2858
+msgid "Upper case"
+msgstr "Großschreibung"
+
+#: includes/handlers.inc:2845;2859
+msgid "Lower case"
+msgstr "Kleinschreibung"
+
+#: includes/handlers.inc:2846;2860
+msgid "Capitalize first letter"
+msgstr "Ersten Buchstaben groß schreiben"
+
+#: includes/handlers.inc:2847;2861
+msgid "Capitalize each word"
+msgstr "Jedes Wort groß schreiben"
+
+#: includes/handlers.inc:2854
+msgid "Case in path"
+msgstr ""
+
+#: includes/handlers.inc:2855
+msgid "When printing url paths, how to transform the of the argument. Do not use this unless with Postgres as it uses case sensitive comparisons."
+msgstr ""
+
+#: includes/handlers.inc:2868
+msgid "Transform spaces to dashes in URL"
+msgstr ""
+
+#: includes/plugins.inc:18
+#: modules/node.views_default.inc:17
+msgid "Defaults"
+msgstr "Standards"
+
+#: includes/plugins.inc:19
+msgid "Default settings for this view."
+msgstr ""
+
+#: includes/plugins.inc:29
+#: modules/node.views_default.inc:103
+msgid "Page"
+msgstr "Seite"
+
+#: includes/plugins.inc:30
+msgid "Display the view as a page, with a URL and menu links."
+msgstr ""
+
+#: includes/plugins.inc:37
+msgid "Block"
+msgstr "Block"
+
+#: includes/plugins.inc:38
+msgid "Display the view as a block."
+msgstr "Eine Ansicht als Block anzeigen."
+
+#: includes/plugins.inc:48
+msgid "Unformatted"
+msgstr "Unformatiert"
+
+#: includes/plugins.inc:49
+msgid "Displays rows one after another."
+msgstr ""
+
+#: includes/plugins.inc:56
+msgid "Displays rows as an HTML list."
+msgstr ""
+
+#: includes/plugins.inc:63
+msgid "Table"
+msgstr "Tabelle"
+
+#: includes/plugins.inc:64
+msgid "Displays rows in a table."
+msgstr "Reihen in einer Tabelle anzeigen."
+
+#: includes/plugins.inc:73
+msgid "Displays the default summary view"
+msgstr ""
+
+#: includes/plugins.inc:82
+#: includes/view.inc:1360
+msgid "Fields"
+msgstr "Felder"
+
+#: includes/plugins.inc:83
+msgid "Displays the fields with an optional template."
+msgstr "Die Felder mit einer optionalen Vorlage anzeigen."
+
+#: includes/plugins.inc:412
+msgid "Broken field"
+msgstr "Beschädigtes Feld"
+
+#: includes/plugins.inc:429
+msgid "Basic settings"
+msgstr "Basiseinstellungen"
+
+#: includes/plugins.inc:434
+#: modules/user.views.inc:46
+msgid "Name"
+msgstr "Name"
+
+#: includes/plugins.inc:436
+msgid "Change the name of this display."
+msgstr "Den Namen dieser Anzeige ändern."
+
+#: includes/plugins.inc:448
+msgid "Change the title that this display will use."
+msgstr ""
+
+#: includes/plugins.inc:458
+msgid "Style"
+msgstr "Darstellung"
+
+#: includes/plugins.inc:460
+msgid "Change the style plugin."
+msgstr ""
+
+#: includes/plugins.inc:474
+msgid "Row style"
+msgstr ""
+
+#: includes/plugins.inc:476
+msgid "Change the row plugin."
+msgstr ""
+
+#: includes/plugins.inc:486
+msgid "Use AJAX"
+msgstr "AJAX verwenden"
+
+#: includes/plugins.inc:488
+msgid "Change whether or not this display will use AJAX."
+msgstr ""
+
+#: includes/plugins.inc:495
+msgid "Use pager"
+msgstr "Seitennavigation verwenden"
+
+#: includes/plugins.inc:496
+msgid "Mini"
+msgstr ""
+
+#: includes/plugins.inc:497
+msgid "Change this display's pager setting."
+msgstr ""
+
+#: includes/plugins.inc:503;667
+msgid "Items per page"
+msgstr "Beträge pro Seite"
+
+#: includes/plugins.inc:503;667;2137
+msgid "Items to display"
+msgstr "Anzuzeigende Einträge"
+
+#: includes/plugins.inc:505
+msgid "Change how many items to display."
+msgstr "Die Anzahl der anzuzeigenden Beiträge ändern."
+
+#: includes/plugins.inc:511
+msgid "More link"
+msgstr "[Weiter] Verweis"
+
+#: includes/plugins.inc:513
+msgid "Specify whether this display will provide a \"more\" link."
+msgstr ""
+
+#: includes/plugins.inc:524;707
+msgid "Unrestricted"
+msgstr "Unbeschränkt"
+
+#: includes/plugins.inc:532
+msgid "Multiple roles"
+msgstr "Mehrere Rollen"
+
+#: includes/plugins.inc:544
+msgid "Access"
+msgstr "Zugriff"
+
+#: includes/plugins.inc:546
+msgid "Specify access control settings for this display."
+msgstr ""
+
+#: includes/plugins.inc:566
+msgid "Link display"
+msgstr ""
+
+#: includes/plugins.inc:568
+msgid "Specify which display this display will link to."
+msgstr ""
+
+#: includes/plugins.inc:573;746
+msgid "Header"
+msgstr "Kopfbereich"
+
+#: includes/plugins.inc:573;762
+msgid "Footer"
+msgstr "Fußbereich"
+
+#: includes/plugins.inc:573;778
+msgid "Empty text"
+msgstr "Leerer Text"
+
+#: includes/plugins.inc:589
+msgid "Unknown/missing filter"
+msgstr "Unbekannter/fehlender Filter"
+
+#: includes/plugins.inc:598
+#, fuzzy
+msgid "Change this display's !name."
+msgstr "Den !name dieser Anzeige ändern."
+
+#: includes/plugins.inc:624
+msgid "The name of this display"
+msgstr "Der Name dieser Anzeige"
+
+#: includes/plugins.inc:627
+msgid "This title will appear only in the administrative interface for the View."
+msgstr ""
+
+#: includes/plugins.inc:632
+msgid "The title of this view"
+msgstr "Der Titel dieser Ansicht."
+
+#: includes/plugins.inc:635
+msgid "This title will be displayed with the view, wherever titles are normally displayed; i.e, as the page title, block title, etc."
+msgstr ""
+
+#: includes/plugins.inc:640
+msgid "Use AJAX when available to load this view"
+msgstr ""
+
+#: includes/plugins.inc:644
+msgid "If set, this view will use an AJAX mechanism for paging, table sorting and exposed filters. This means the entire page will not refresh. It is not recommended that you use this if this view is the main content of the page as it will prevent deep linking to specific pages, but it is very useful for side content."
+msgstr ""
+
+#: includes/plugins.inc:653
+msgid "Use a pager for this view"
+msgstr ""
+
+#: includes/plugins.inc:656
+msgid "Full pager"
+msgstr ""
+
+#: includes/plugins.inc:656
+msgid "Mini pager"
+msgstr ""
+
+#: includes/plugins.inc:661
+msgid "Pager element"
+msgstr ""
+
+#: includes/plugins.inc:662
+msgid "Unless you're experiencing problems with pagers related to this view, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array.  Large values will add a lot of commas to your URLs, so avoid if possible."
+msgstr ""
+
+#: includes/plugins.inc:671
+msgid "The number of items to display per page. Enter 0 for no limit."
+msgstr "Die Anzahl der anzuzeigenden Einträge pro Seite. 0 für keine Begrenzung."
+
+#: includes/plugins.inc:676
+msgid "Offset"
+msgstr ""
+
+#: includes/plugins.inc:677
+msgid "The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed."
+msgstr "Anzahl der zu überspringenden Einträge. Beispielsweise werden die ersten 3 Einträge übersprungen und nicht angezeigt, wenn das Feld 3 ist."
+
+#: includes/plugins.inc:682
+msgid "Add a more link to the bottom of the display."
+msgstr ""
+
+#: includes/plugins.inc:685
+msgid "Create more link"
+msgstr "[Weiter] Verweis erstellen"
+
+#: includes/plugins.inc:686
+msgid "This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."
+msgstr ""
+
+#: includes/plugins.inc:691
+msgid "Access restrictions"
+msgstr "Zugriffsberechtigungen"
+
+#: includes/plugins.inc:707
+msgid "By role"
+msgstr "Nach Rolle"
+
+#: includes/plugins.inc:707
+msgid "By perm"
+msgstr "Nach Berechtigung"
+
+#: includes/plugins.inc:716
+msgid "If by role"
+msgstr "Wenn nach Rolle"
+
+#: includes/plugins.inc:719
+msgid "Only the checked roles will be able to access this display."
+msgstr "Nur die aktivierten Rollen werden auf diese Anzeige zugreifen können."
+
+#: includes/plugins.inc:736
+msgid "If by perm"
+msgstr "Wenn nach Berechtigung"
+
+#: includes/plugins.inc:738
+msgid "Only users with the selected permission flag will be able to access this display."
+msgstr ""
+
+#: includes/plugins.inc:749;765
+msgid "Display even if view has no result"
+msgstr "Auch anzeigen, wenn die Ansicht keine Ergebnisse zurückliefert"
+
+#: includes/plugins.inc:756
+msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
+msgstr "Am Anfang der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Verweise oder beliebige andere Inhalte enthalten. (Optional)"
+
+#: includes/plugins.inc:772
+msgid "Text to display beneath the view. May contain an explanation or links or whatever you like. Optional."
+msgstr "Unterhalb der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Verweise oder beliebige andere Inhalte enthalten. (Optional)"
+
+#: includes/plugins.inc:783
+msgid "Text to display if the view has no results. Optional."
+msgstr ""
+
+#: includes/plugins.inc:789
+msgid "How should this view be styled"
+msgstr ""
+
+#: includes/plugins.inc:797
+msgid "Style options"
+msgstr "Darstellungsoptionen"
+
+#: includes/plugins.inc:804
+#, fuzzy
+msgid "Row style options"
+msgstr "Darstellungsoptionen für Zeilen"
+
+#: includes/plugins.inc:817
+msgid "How should each row in this view be styled"
+msgstr ""
+
+#: includes/plugins.inc:825
+msgid "Which display to use for path"
+msgstr ""
+
+#: includes/plugins.inc:834
+msgid "Which display to use to get this display's path for things like summary links, rss feed links, more links, etc."
+msgstr ""
+
+#: includes/plugins.inc:860
+msgid "You must select at least one role if type is \"by role\""
+msgstr ""
+
+#: includes/plugins.inc:951
+msgid "Override"
+msgstr "Übersschreiben"
+
+#: includes/plugins.inc:956
+msgid "This item is currently using default values; modifying this value will modify it for all displays."
+msgstr ""
+
+#: includes/plugins.inc:963
+msgid "Use default"
+msgstr "Standard verwenden"
+
+#: includes/plugins.inc:968
+msgid "This item is currently overriding default values; modifying this value will modify only for this display. Reverting it will remove current values and return to default values."
+msgstr ""
+
+#: includes/plugins.inc:1331
+msgid "Page settings"
+msgstr "Seiteneinstellungen"
+
+#: includes/plugins.inc:1356
+msgid "No menu"
+msgstr "Kein Menü"
+
+#: includes/plugins.inc:1359
+msgid "Normal: @title"
+msgstr "Normal: @title"
+
+#: includes/plugins.inc:1363
+msgid "Tab: @title"
+msgstr "Karteireiter: @title"
+
+#: includes/plugins.inc:1373
+msgid "Menu"
+msgstr "Menü"
+
+#: includes/plugins.inc:1392
+msgid "The menu path or URL of this view"
+msgstr ""
+
+#: includes/plugins.inc:1395
+msgid "This view will be displayed by visiting this path on your site."
+msgstr ""
+
+#: includes/plugins.inc:1401
+msgid "Menu item entry"
+msgstr "Menüeintrag"
+
+#: includes/plugins.inc:1417
+msgid "No menu entry"
+msgstr "Kein Menüeintrag"
+
+#: includes/plugins.inc:1418
+msgid "Normal menu entry"
+msgstr "Normaler Menüeintrag"
+
+#: includes/plugins.inc:1419;1466
+msgid "Menu tab"
+msgstr "Menü als Karteireiter"
+
+#: includes/plugins.inc:1420
+msgid "Default menu tab"
+msgstr "Standard-Menü als Karteireiter"
+
+#: includes/plugins.inc:1429
+msgid "If set to normal or tab, enter the text to use for the menu item."
+msgstr ""
+
+#: includes/plugins.inc:1438
+msgid "If set to tab, enter the weight of the item. The lower th weight the higher/further left it will appear."
+msgstr ""
+
+#: includes/plugins.inc:1444
+msgid "Default tab options"
+msgstr "Standardoptionen für Karteireiter"
+
+#: includes/plugins.inc:1453
+msgid "When providing a menu item as a tab, Drupal needs to know what the parent menu item of that tab will be. Sometimes the parent will already exist, but other times you will need to have one created. The path of a parent item will always be the same path with the last part left off. i.e, if the path to this view is <em>foo/bar/baz</em>, the parent path would be <em>foo/bar</em>."
+msgstr ""
+
+#: includes/plugins.inc:1464
+msgid "Parent menu item"
+msgstr ""
+
+#: includes/plugins.inc:1466
+msgid "Already exists"
+msgstr "Schon vorhanden"
+
+#: includes/plugins.inc:1466
+msgid "Normal menu item"
+msgstr "Normaler Menüeintrag"
+
+#: includes/plugins.inc:1474
+msgid "If creating a parent menu item, enter the title of the item."
+msgstr ""
+
+#: includes/plugins.inc:1480
+msgid "Tab weight"
+msgstr "Karteireitergewichtung"
+
+#: includes/plugins.inc:1484
+msgid "If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be."
+msgstr ""
+
+#: includes/plugins.inc:1575
+msgid "Block settings"
+msgstr "Blockeinstellungen"
+
+#: includes/plugins.inc:1589
+msgid "Admin"
+msgstr ""
+
+#: includes/plugins.inc:1603
+msgid "Block admin description"
+msgstr ""
+
+#: includes/plugins.inc:1606
+msgid "This will appear as the name of this block in administer >> site building >> blocks."
+msgstr ""
+
+#: includes/plugins.inc:1797
+msgid "List type"
+msgstr "Listentyp"
+
+#: includes/plugins.inc:1934
+msgid "You need at least one field before you can configure your table settings"
+msgstr ""
+
+#: includes/plugins.inc:1943
+msgid "Override normal sorting if click sorting is used"
+msgstr ""
+
+#: includes/plugins.inc:1949
+msgid "Default sort order"
+msgstr "Standardsortierung"
+
+#: includes/plugins.inc:1952
+msgid "If a default sort order is selected, what order should it use by default."
+msgstr ""
+
+#: includes/plugins.inc:1972
+msgid "!group: !title"
+msgstr "!group: !title"
+
+#: includes/plugins.inc:2043
+msgid "Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section."
+msgstr ""
+
+#: includes/plugins.inc:2063
+#: includes/view.inc:1361
+msgid "Field"
+msgstr "Feld"
+
+#: includes/plugins.inc:2064
+msgid "Column"
+msgstr "Spalte"
+
+#: includes/plugins.inc:2067
+msgid "Sortable"
+msgstr "Sortierbar"
+
+#: includes/plugins.inc:2071
+msgid "Default sort"
+msgstr "Standardsortierung"
+
+#: includes/plugins.inc:2128
+msgid "Display record count with link"
+msgstr ""
+
+#: includes/plugins.inc:2133
+msgid "Override number of items to display"
+msgstr ""
+
+#: includes/view.inc:782
+msgid "Home"
+msgstr "Startseite"
+
+#: includes/view.inc:829;880
+msgid "Normal"
+msgstr "Normal"
+
+#: includes/view.inc:1023
+msgid "Display @display uses fields but there are none defined for it."
+msgstr ""
+
+#: includes/view.inc:1366
+msgid "Argument"
+msgstr "Argument"
+
+#: includes/view.inc:1370
+msgid "Sort criteria"
+msgstr "Sortierkriterium"
+
+#: includes/view.inc:1371
+msgid "Sort criterion"
+msgstr "Sortierkriterien"
+
+#: includes/view.inc:1375
+msgid "Filters"
+msgstr "Filter"
+
+#: includes/view.inc:1376
+msgid "Filter"
+msgstr "Filter"
+
+#: includes/view.inc:1380
+msgid "Relationships"
+msgstr "Beziehungen"
+
+#: js/ajax.js:0;0;0;0;0;0;0
+msgid "An error occurred."
+msgstr "Es ist ein Fehler aufgetreten."
+
+#: js/ajax_view.js:0;0;0
+msgid "An error occurred"
+msgstr ""
+
+#: js/tabs.js:0
+msgid "jQuery UI Tabs: Mismatching fragment identifier."
+msgstr ""
+
+#: js/tabs.js:0
+msgid "jQuery UI Tabs: Not enough arguments to add tab."
+msgstr ""
+
+#: modules/book.views.inc:21;36;46;73
+msgid "Book"
+msgstr "Buch"
+
+#: modules/book.views.inc:30
+msgid "Top level book"
+msgstr ""
+
+#: modules/book.views.inc:31
+#, fuzzy
+msgid "The book the node is in"
+msgstr "Das Buch, indem der Beitrag enthalten ist."
+
+#: modules/book.views.inc:58
+msgid "The weight of the book page"
+msgstr "Die Reihenfolge der Buchseite"
+
+#: modules/book.views.inc:84
+msgid "Parent"
+msgstr "Übergeordneter Eintrag"
+
+#: modules/book.views.inc:85
+msgid "The parent book node"
+msgstr "Der übergeordnete Buchbeitrag"
+
+#: modules/book.views.inc:90
+msgid "Book parent"
+msgstr "Übergeordnetes Buch"
+
+#: modules/comment.views.inc:21
+msgid "Comment"
+msgstr "Kommentar"
+
+#: modules/comment.views.inc:25
+msgid "Comments"
+msgstr "Kommentare"
+
+#: modules/comment.views.inc:26
+msgid "Your site's comments."
+msgstr "Die Website-Kommentare."
+
+#: modules/comment.views.inc:49
+msgid "Subject"
+msgstr "Betreff"
+
+#: modules/comment.views.inc:50
+msgid "The subject of the comment."
+msgstr "Der Betreff des Kommentars."
+
+#: modules/comment.views.inc:60
+msgid "Comment body"
+msgstr "Kommentartextkörper"
+
+#: modules/comment.views.inc:61
+msgid "The body of the comment."
+msgstr "Der Textkörper des Kommentars."
+
+#: modules/comment.views.inc:70
+msgid "Comment ID"
+msgstr "Kommentar-ID"
+
+#: modules/comment.views.inc:71
+msgid "The commment ID of the field"
+msgstr "Die Kommentar-ID des Feldes"
+
+#: modules/comment.views.inc:80
+msgid "Author's name"
+msgstr "Name des Autors"
+
+#: modules/comment.views.inc:81
+msgid "The name of the poster."
+msgstr "Der Name des Beitragenden."
+
+#: modules/comment.views.inc:90
+msgid "Author's website"
+msgstr "Website des Autors"
+
+#: modules/comment.views.inc:91
+msgid "The website address of the comment's author. Can be a link. The homepage can also be linked with the Name field."
+msgstr ""
+
+#: modules/comment.views.inc:100
+#: modules/node.views.inc:259;424
+#: modules/user.views.inc:116
+msgid "Created date"
+msgstr "Erstellungsdatum"
+
+#: modules/comment.views.inc:101
+#, fuzzy
+msgid "Date and time of when the comment was posted."
+msgstr "Zeitpunkt zu dem der Kommentar gespeichert wurde."
+
+#: modules/comment.views.inc:113
+msgid "Approval status"
+msgstr "Freigabestatus"
+
+#: modules/comment.views.inc:114
+msgid "The status of the comment. Either approved or not."
+msgstr "Der Status des Kommentars. Entweder freigegeben oder nicht."
+
+#: modules/comment.views.inc:129
+msgid "Node Comment Statistics"
+msgstr "Beitragkommentarstatistiken"
+
+#: modules/comment.views.inc:142
+msgid "Created time"
+msgstr "Erstellungszeitpunkt"
+
+#: modules/comment.views.inc:143
+msgid "Date and time of when the last comment was posted."
+msgstr "Zeitpunkt zu dem der letzte Kommentar gespeichert wurde."
+
+#: modules/comment.views.inc:155
+msgid "Last author's name"
+msgstr "Name des letzten Autoren"
+
+#: modules/comment.views.inc:156
+msgid "The name of the author of the last posted comment."
+msgstr "Der Name des Autors von dem letzten Kommentar."
+
+#: modules/comment.views.inc:165
+msgid "Comment count"
+msgstr "Anzahl an Kommentaren"
+
+#: modules/comment.views.inc:166
+msgid "The number of comments a node has."
+msgstr "Die Anzahl der Kommentare zu einem Beitrag."
+
+#: modules/comment.views.inc:207
+msgid "Link this field to its comment"
+msgstr ""
+
+#: modules/comment.views.inc:250
+msgid "Link this field to its user or an author's homepage"
+msgstr ""
+
+#: modules/node.views.inc:23;28;67;335;350;460;1128
+msgid "Node"
+msgstr "Beitrag"
+
+#: modules/node.views.inc:29
+msgid "Nodes are a Drupal site's primary content."
+msgstr ""
+
+#: modules/node.views.inc:63;390
+msgid "The title of the node."
+msgstr "Der Titel des Beitrags."
+
+#: modules/node.views.inc:85
+msgid "Nid"
+msgstr "Nid"
+
+#: modules/node.views.inc:86
+msgid "The node ID of the node."
+msgstr "Die Beitrags-ID des Beitrags."
+
+#: modules/node.views.inc:109
+msgid "Post date"
+msgstr "Beitragsdatum"
+
+# ?
+#: modules/node.views.inc:110
+msgid "The date the node was posted."
+msgstr "Der Zeitpunkt zu dem der Beitrag gespeichert wurde."
+
+#: modules/node.views.inc:125
+msgid "Updated date"
+msgstr "Aktualisierungszeitpunkt"
+
+#: modules/node.views.inc:126
+msgid "The date the node was last updated."
+msgstr "Der Zeitpunkt zu dem der Beitrag das letzte mal aktualisiert wurde."
+
+#: modules/node.views.inc:142
+msgid "The type of a node (for example, \"blog entry\", \"forum post\", \"story\", etc)."
+msgstr "Der Beitragstyp (zum Beispiel: „Blogbeitrag“, „Forumsbeitrag“, „Artikel“, usw)."
+
+#: modules/node.views.inc:157;166
+#: modules/user.views.inc:173
+msgid "Published"
+msgstr "Veröffentlicht"
+
+#: modules/node.views.inc:158
+msgid "The published status of the node."
+msgstr "Den Veröffentlichungsstatus des Beitrags."
+
+#: modules/node.views.inc:175;184
+msgid "Promoted to front page"
+msgstr "Auf der Startseite"
+
+#: modules/node.views.inc:176
+msgid "The front page of the node."
+msgstr "Die Startseite dieses Beitrags."
+
+#: modules/node.views.inc:193;202
+msgid "Sticky"
+msgstr "am Anfang von Listen"
+
+#: modules/node.views.inc:194
+msgid "Whether or not the node is sticky."
+msgstr ""
+
+#: modules/node.views.inc:211
+msgid "Link"
+msgstr "Verweis"
+
+#: modules/node.views.inc:212
+msgid "Provide a simple link to the node."
+msgstr ""
+
+#: modules/node.views.inc:219
+#: modules/user.views.inc:195
+msgid "Edit link"
+msgstr "[Bearbeiten] Verweis"
+
+#: modules/node.views.inc:220
+msgid "Provide a simple link to edit the node."
+msgstr ""
+
+#: modules/node.views.inc:227;448
+#: modules/user.views.inc:203
+msgid "Delete link"
+msgstr "[Löschen] Verweis"
+
+#: modules/node.views.inc:228
+msgid "Provide a simple link to delete the node."
+msgstr ""
+
+#: modules/node.views.inc:241
+msgid "Language"
+msgstr "Sprache"
+
+#: modules/node.views.inc:242
+msgid "Content language, if a translation system is enabled."
+msgstr "Inhaltssprache, wenn ein Übersetzungssystem aktiviert ist."
+
+#: modules/node.views.inc:260
+msgid "In the form of CCYYMMDD."
+msgstr "In der Form von CCJJMMTT."
+
+#: modules/node.views.inc:268
+msgid "Created year + month"
+msgstr "Jahr + Monat wurde erstellt"
+
+#: modules/node.views.inc:269
+msgid "In the form of YYYYMM."
+msgstr "In der Form von JJJJMM."
+
+#: modules/node.views.inc:277
+msgid "Created year"
+msgstr "Erstellungsjahr"
+
+#: modules/node.views.inc:278
+msgid "In the form of YYYY."
+msgstr "In der Form von JJJJ."
+
+#: modules/node.views.inc:286
+msgid "Created month"
+msgstr "Erstellungsmonat"
+
+#: modules/node.views.inc:287
+msgid "In the form of MM (01 - 12)."
+msgstr "In der Form von MM (01 - 12)."
+
+#: modules/node.views.inc:295
+msgid "Created week"
+msgstr "Erstellungswoche"
+
+#: modules/node.views.inc:296
+msgid "In the form of WW (01 - 53)."
+msgstr "In der Form von WW (01 - 53)."
+
+#: modules/node.views.inc:308
+msgid "Node revision"
+msgstr "Beitragsversion"
+
+#: modules/node.views.inc:313
+msgid "Node revisions"
+msgstr "Beitragsversionen"
+
+#: modules/node.views.inc:314
+msgid "Node revisions are a history of changes to nodes."
+msgstr ""
+
+#: modules/node.views.inc:336
+msgid "Body"
+msgstr "Textkörper"
+
+#: modules/node.views.inc:337
+msgid "The actual, full data in the body field; this may not be valid data on all node types."
+msgstr ""
+
+#: modules/node.views.inc:351
+msgid "Teaser"
+msgstr "Anrisstext"
+
+#: modules/node.views.inc:352
+msgid "The stored teaser field. This may not be valid or useful data on all node types."
+msgstr ""
+
+#: modules/node.views.inc:365
+msgid "Vid"
+msgstr "Vid"
+
+#: modules/node.views.inc:366
+msgid "The revision ID of the node revision."
+msgstr "Die Versions-ID der Beitragsversion."
+
+#: modules/node.views.inc:410
+msgid "Log message"
+msgstr "Protokollnachricht"
+
+#: modules/node.views.inc:411
+msgid "The log message entered when the revision was created."
+msgstr ""
+
+#: modules/node.views.inc:425
+msgid "The date the node revision was created."
+msgstr "Der Zeitpunkt zu dem die Beitragsversion erstellt wurde."
+
+#: modules/node.views.inc:440
+msgid "Revert link"
+msgstr ""
+
+#: modules/node.views.inc:441
+msgid "Provide a simple link to revert to the revision."
+msgstr ""
+
+#: modules/node.views.inc:449
+msgid "Provide a simple link to delete the node revision."
+msgstr ""
+
+#: modules/node.views.inc:476
+msgid "Has new content"
+msgstr "Neuer Inhalt vorhanden"
+
+#: modules/node.views.inc:479
+msgid "Show a marker if the node has new or updated content."
+msgstr "Eine Markierung anzeigen, wenn der Beitrag neuen oder aktualisierten Inhalt enthält."
+
+#: modules/node.views.inc:482
+msgid "Show only nodes that have new content."
+msgstr "Nur Beiträge mit neuem Inhalt anzeigen."
+
+#: modules/node.views.inc:509
+msgid "Link this field to its node"
+msgstr ""
+
+#: modules/node.views.inc:579
+#: modules/user.views.inc:337
+msgid "Text to display"
+msgstr ""
+
+#: modules/node.views.inc:590
+#: modules/user.views.inc:353
+msgid "view"
+msgstr "Anzeigen"
+
+#: modules/node.views.inc:619
+#: modules/user.views.inc:371
+msgid "edit"
+msgstr "Bearbeiten"
+
+#: modules/node.views.inc:647;726
+#: modules/user.views.inc:389
+msgid "delete"
+msgstr "Löschen"
+
+#: modules/node.views.inc:687
+msgid "revert"
+msgstr "zurücksetzen"
+
+#: modules/node.views.inc:759
+msgid "Check for new comments as well"
+msgstr "Auch auf neue Kommentare überprüfen."
+
+#: modules/node.views.inc:831
+msgid "Unknown node type"
+msgstr "Unbekannter Beitragstyp"
+
+#: modules/node.views.inc:849;870
+msgid "No title"
+msgstr "Kein Titel"
+
+#: modules/node.views.inc:999
+msgid "Week @week"
+msgstr "@week Woche"
+
+#: modules/node.views.inc:1011
+msgid "Node type"
+msgstr "Beitragstyp"
+
+#: modules/node.views.inc:1076
+msgid "Node language"
+msgstr "Beitragssprache"
+
+#: modules/node.views.inc:1116
+msgid "Unknown language"
+msgstr "Unbekannte Sprache"
+
+#: modules/node.views.inc:1129
+msgid "Display the node with standard node view."
+msgstr "Den Beitrag mit der Standardbeitragsansicht anzeigen."
+
+#: modules/node.views.inc:1155
+msgid "Display only teaser"
+msgstr "Nur den Anrißtext anzeigen"
+
+#: modules/node.views.inc:1160
+msgid "Display links"
+msgstr "Verweise anzeigen"
+
+#: modules/node.views_default.inc:7
+msgid "The basic front page view."
+msgstr "Die Basisansicht der Startseite."
+
+#: modules/poll.views.inc:23
+msgid "Poll"
+msgstr "Umfrage"
+
+#: modules/poll.views.inc:38;47
+#: modules/user.views.inc:164
+msgid "Active"
+msgstr "Aktiv"
+
+#: modules/poll.views.inc:39
+msgid "Whether the poll is open for voting."
+msgstr "Ob die Umfrage offen für die Stimmabgabe ist."
+
+#: modules/profile.views.inc:20;40
+msgid "Profile"
+msgstr "Profil"
+
+#: modules/profile.views.inc:100
+msgid "@field-name"
+msgstr "@field-name"
+
+#: modules/profile.views.inc:107
+#, fuzzy
+msgid "Profile textfield"
+msgstr "Profiltextfeld"
+
+#: modules/profile.views.inc:126
+msgid "Profile textarea"
+msgstr ""
+
+#: modules/profile.views.inc:142
+msgid "Profile checkbox"
+msgstr ""
+
+#: modules/profile.views.inc:159
+msgid "Profile URL"
+msgstr ""
+
+#: modules/profile.views.inc:175
+msgid "Profile selection"
+msgstr ""
+
+#: modules/profile.views.inc:196
+msgid "Profile freeform list %field-name."
+msgstr ""
+
+#: modules/profile.views.inc:208
+#, fuzzy
+msgid "Profile date %field-name."
+msgstr "Profildatum %field-name."
+
+#: modules/statistics.views.inc:23
+msgid "Node statistics"
+msgstr "Beitragsstatistiken"
+
+#: modules/statistics.views.inc:38
+#, fuzzy
+msgid "Total views"
+msgstr "Seitenansichten gesamt"
+
+#: modules/statistics.views.inc:39
+#, fuzzy
+msgid "The total number of times the node has been viewed."
+msgstr "Dies zeigt die Aanzahl an, wie oft ein Beitrag insgesamt gelesen wurde."
+
+#: modules/statistics.views.inc:55
+#, fuzzy
+msgid "Views today"
+msgstr "Heutige Seitenansichten"
+
+#: modules/statistics.views.inc:56
+#, fuzzy
+msgid "The total number of times the node has been viewed today."
+msgstr "Dies zeigt die Anzahl an, wie oft ein Beitrag heute gelesen wurde."
+
+#: modules/statistics.views.inc:72
+#, fuzzy
+msgid "Most recent view"
+msgstr "Die neuste Seitenansicht"
+
+#: modules/statistics.views.inc:73
+msgid "The most recent time the node has been viewed."
+msgstr ""
+
+#: modules/statistics.views.inc:87;92
+msgid "Access log"
+msgstr "Zugriffsprotokoll"
+
+#: modules/statistics.views.inc:93
+msgid "Stores site access information."
+msgstr ""
+
+#: modules/statistics.views.inc:117
+msgid "Session ID"
+msgstr "Session-ID"
+
+#: modules/statistics.views.inc:118
+msgid "Browser session ID of user that visited page."
+msgstr ""
+
+#: modules/statistics.views.inc:128
+msgid "Page title"
+msgstr "Seitentitel"
+
+#: modules/statistics.views.inc:129
+msgid "Title of page visited."
+msgstr "Titel der besuchten Seite."
+
+#: modules/statistics.views.inc:140
+msgid "Internal path to page visited (relative to Drupal root.)"
+msgstr ""
+
+#: modules/statistics.views.inc:150
+msgid "Referrer"
+msgstr "Referrer"
+
+#: modules/statistics.views.inc:151
+msgid "Referrer URI."
+msgstr "Verweiser URI."
+
+#: modules/statistics.views.inc:161
+msgid "Hostname"
+msgstr "Hostadresse"
+
+#: modules/statistics.views.inc:162
+msgid "Hostname of user that visited the page."
+msgstr ""
+
+#: modules/statistics.views.inc:172
+#: modules/user.views.inc:20;24;212
+msgid "User"
+msgstr "Benutzer"
+
+#: modules/statistics.views.inc:173
+msgid "The user who visited the site."
+msgstr ""
+
+#: modules/statistics.views.inc:183
+#, fuzzy
+msgid "Timer"
+msgstr "Timer"
+
+#: modules/statistics.views.inc:184
+msgid "Time in milliseconds that the page took to load."
+msgstr ""
+
+#: modules/statistics.views.inc:200
+msgid "Timestamp"
+msgstr "Zeitstempel"
+
+#: modules/statistics.views.inc:201
+msgid "Timestamp of when the page was visited."
+msgstr "Zeitstempel zu dem die Seite besucht wurde."
+
+#: modules/statistics.views.inc:284
+#: modules/user.views.inc:278
+msgid "Link this field to its user"
+msgstr ""
+
+#: modules/taxonomy.views.inc:25;74;138;156;205;241
+msgid "Taxonomy"
+msgstr "Taxonomie"
+
+#: modules/taxonomy.views.inc:55
+msgid "Vocabulary name"
+msgstr "Vokabularname"
+
+#: modules/taxonomy.views.inc:57
+msgid "Name of the vocabulary a term is a member of. This will be the vocabulary that whichever term the \"Taxonomy: Term\" field is; and can similarly cause duplicates."
+msgstr ""
+
+#: modules/taxonomy.views.inc:63
+msgid "Vocabulary ID"
+msgstr "Vokabular-ID"
+
+#: modules/taxonomy.views.inc:64
+msgid "The taxonomy vocabulary ID"
+msgstr "Die Vokabular-ID der Taxonomie"
+
+#: modules/taxonomy.views.inc:77
+msgid "Terms"
+msgstr "Begriffe"
+
+#: modules/taxonomy.views.inc:78
+msgid "Taxonomy terms are attached to nodes."
+msgstr ""
+
+#: modules/taxonomy.views.inc:104;459
+msgid "Term"
+msgstr "Begriff"
+
+#: modules/taxonomy.views.inc:105
+msgid "Taxonomy terms. Note that using this can cause duplicate nodes to appear in views; you must add filters to reduce the resultset."
+msgstr ""
+
+#: modules/taxonomy.views.inc:122
+msgid "The term weight field"
+msgstr ""
+
+#: modules/taxonomy.views.inc:134
+msgid "Term description"
+msgstr "Begriffsbeschreibung"
+
+#: modules/taxonomy.views.inc:135
+msgid "The description associated with a taxonomy term."
+msgstr "Die einem Taxonomiebegriff zugeordnete Beschreibung."
+
+#: modules/taxonomy.views.inc:146;545
+msgid "Vocabulary"
+msgstr "Vokabular"
+
+#: modules/taxonomy.views.inc:147
+msgid "Filter the results of \"Taxonomy: Term\" to a particular vocabulary."
+msgstr ""
+
+#: modules/taxonomy.views.inc:184
+msgid "Term ID"
+msgstr "Begriff-ID"
+
+#: modules/taxonomy.views.inc:185
+msgid "The taxonomy term ID"
+msgstr "Die Taxonomiebegriff-ID"
+
+#: modules/taxonomy.views.inc:187
+msgid "All terms"
+msgstr "Alle Begriffe"
+
+#: modules/taxonomy.views.inc:188
+msgid "Display all taxonomy terms associated with a node."
+msgstr "Alle einem Beitrag zugeordneten Taxonomiebegriffe anzeigen."
+
+#: modules/taxonomy.views.inc:268
+msgid "Term synonym"
+msgstr "Begriffssynonym"
+
+#: modules/taxonomy.views.inc:269
+msgid "Term synonyms may be used to find terms by alternate names"
+msgstr ""
+
+#: modules/taxonomy.views.inc:304
+msgid "Link this field to its term page"
+msgstr ""
+
+#: modules/taxonomy.views.inc:311
+msgid "Limit terms by vocabulary"
+msgstr ""
+
+#: modules/taxonomy.views.inc:325
+msgid "Vocabularies"
+msgstr "Vokabulare"
+
+#: modules/taxonomy.views.inc:392
+msgid "Link this field to its taxonomy term page"
+msgstr ""
+
+#: modules/taxonomy.views.inc:432
+msgid "No name"
+msgstr "Kein Name"
+
+#: modules/taxonomy.views.inc:512
+msgid "No vocabulary"
+msgstr "Kein Vokabular"
+
+#: modules/taxonomy.views.inc:547
+msgid "Select which vocabulary to show terms for in the regular options"
+msgstr ""
+
+#: modules/taxonomy.views.inc:555
+msgid "Selection type"
+msgstr "Auswahltyp"
+
+#: modules/taxonomy.views.inc:556
+msgid "Dropdown"
+msgstr ""
+
+#: modules/taxonomy.views.inc:556
+msgid "Autocomplete"
+msgstr ""
+
+#: modules/taxonomy.views.inc:568
+msgid "An invalid vocabulary is selected. Please change it in the options."
+msgstr ""
+
+#: modules/taxonomy.views.inc:586;594
+msgid "Select terms from vocabulary @voc"
+msgstr ""
+
+# plural should be used
+#: modules/taxonomy.views.inc:631
+#, fuzzy
+msgid "Unable to find term(s): @terms"
+msgstr "Begriff(e) konnten nicht gefunden werden: @terms"
+
+#: modules/user.views.inc:25
+msgid "Users who have created accounts on your site."
+msgstr ""
+
+#: modules/user.views.inc:47
+msgid "The user or author name."
+msgstr "Der Benutzer oder Name des Autors."
+
+#: modules/user.views.inc:66
+msgid "E-mail"
+msgstr "E-Mail-Adresse"
+
+#: modules/user.views.inc:67
+msgid "Email address for a given user. Only accessible to users with <em>administer users</em> permission"
+msgstr ""
+
+#: modules/user.views.inc:81
+msgid "Uid"
+msgstr "Uid"
+
+#: modules/user.views.inc:82
+msgid "The user ID"
+msgstr "Benutzer ID"
+
+#: modules/user.views.inc:105
+msgid "Picture"
+msgstr "Bild"
+
+#: modules/user.views.inc:106
+msgid "The user's picture, if allowed"
+msgstr ""
+
+#: modules/user.views.inc:117
+msgid "The date the user was created."
+msgstr "Der Zeitpunkt zu dem der Benutzer erstellt wurde."
+
+#: modules/user.views.inc:132
+msgid "Last access"
+msgstr "Letzter Zugriff"
+
+#: modules/user.views.inc:133
+msgid "The user's last access date."
+msgstr ""
+
+#: modules/user.views.inc:148
+msgid "Last login"
+msgstr "Letzte Anmeldung"
+
+#: modules/user.views.inc:149
+msgid "The user's last login date."
+msgstr ""
+
+#: modules/user.views.inc:165
+msgid "Whether a user is active or blocked."
+msgstr ""
+
+#: modules/user.views.inc:182
+msgid "Signature"
+msgstr "Signatur"
+
+#: modules/user.views.inc:183
+msgid "The user's signature."
+msgstr "Die Signatur des Benutzers."
+
+#: modules/user.views.inc:196
+msgid "Provide a simple link to edit the user."
+msgstr ""
+
+#: modules/user.views.inc:204
+msgid "Provide a simple link to delete the user."
+msgstr ""
+
+#: modules/user.views.inc:235
+msgid "Roles"
+msgstr "Rollen"
+
+#: modules/user.views.inc:236
+msgid "Roles that a user belongs to"
+msgstr ""
+
+#: modules/user.views.inc:409
+msgid "Link this field"
+msgstr "Dieses Feld verknüpfen"
+
+#: modules/user.views.inc:412
+msgid "No link"
+msgstr "Keine Verknüpfung"
+
+#: modules/user.views.inc:413
+msgid "To the user"
+msgstr "Mit dem Benutzer"
+
+#: modules/user.views.inc:414
+msgid "With a mailto:"
+msgstr "Mit einem mailto:"
+
+#: modules/user.views.inc:502
+msgid "Anonymous"
+msgstr "Gast"
+
+#: modules/user.views.inc:508
+msgid "No user"
+msgstr "Keine Benutzer"
+
+#: modules/user.views.inc:538
+msgid "Usernames"
+msgstr "Benutzernamen"
+
+#: modules/user.views.inc:539
+msgid "Enter a comma separated list of usernames"
+msgstr ""
+
+#: modules/user.views.inc:569
+msgid "Unable to find user(s): @users"
+msgstr ""
+
+#: theme/views-ui-edit-item.tpl.php:16
+msgid "None defined"
+msgstr "Nicht definiert"
+
+#: theme/views-ui-edit-tab.tpl.php:28
+msgid "View settings"
+msgstr "Einstellungen der Ansicht"
+
+#: theme/views-ui-edit-view.tpl.php:10
+msgid "This view is locked by user !user, and may not be modified. This lock is !age old. Click here to !break."
+msgstr ""
+
+#: theme/views-ui-edit-view.tpl.php:15
+msgid "New view"
+msgstr "Neue Ansicht"
+
+#: theme/views-ui-edit-view.tpl.php:17
+msgid "Changed view"
+msgstr "Ansicht geändert"
+
+#: theme/views-ui-edit-view.tpl.php:19
+msgid "View %name, displaying items of type <strong>@base</strong>."
+msgstr ""
+
+#: theme/theme.inc:180
+msgid "sort by @s"
+msgstr "Nach @s sortieren"
+
+#: theme/theme.inc:290
+msgid "‹‹"
+msgstr "‹‹"
+
+#: theme/theme.inc:291
+msgid "››"
+msgstr "››"
+
+#: theme/theme.inc:301
+msgid "@current of @max"
+msgstr "@current von @max"
+
+#~ msgid "!name: !field"
+#~ msgstr "!name: !field"
+#~ msgid ""
+#~ "This will sort nodes by taxonomy weight and name, as defined in the "
+#~ "category administration."
+#~ msgstr ""
+#~ "Dies sortiert Nodes nach Taxonomiegewichtung und Name, wie in der "
+#~ "Kategorisierungsverwaltung angegeben."
+#~ msgid ""
+#~ "This will filter a view to only nodes that contain a term in the "
+#~ "associated vocabulary."
+#~ msgstr ""
+#~ "Dies filtert eine Ansicht nach Nodes, welche den Begriff eines "
+#~ "zugeordneten Vokabulars enthalten."
+#~ msgid "With updated mark"
+#~ msgstr "Mit Aktualisierungsmarkierung"
+#~ msgid "Equals"
+#~ msgstr "Gleich"
+#~ msgid "This filter allows nodes to be filtered by their creation date."
+#~ msgstr ""
+#~ "Dieser Filter ermöglicht eine Filterung von Nodes nach ihrem "
+#~ "Erstellungsdatum."
+#~ msgid "Views RSS: RSS feed"
+#~ msgstr "RSS Ansichten: RSS Feed"
+#~ msgid "RSS: RSS Feed Selector"
+#~ msgstr "RSS: RSS Feedauswahl"
+#~ msgid "Views module installed tables successfully."
+#~ msgstr "Ansichten Modul hat seine Tabellen erfolgreich installiert."
+#~ msgid "The installation of views module was unsuccessful."
+#~ msgstr "Die Installation des Ansichten Modules ist fehlgeschlagen."
+#~ msgid "The views module creates customized views of node lists."
+#~ msgstr ""
+#~ "Das Ansichtenmodul erstellt angepasste Ansichten von Beitragslisten."
+#~ msgid "Views RSS"
+#~ msgstr "RSS Ansichten"
+#~ msgid "Views Theme Wizard"
+#~ msgstr "Ansichten Theme Wizard"
+#~ msgid "Search: Index"
+#~ msgstr "Suche: Index"
+#~ msgid "As Short Date"
+#~ msgstr "als kurzes Datumsformat"
+#~ msgid "As Medium Date"
+#~ msgstr "als mittleres Datumsformat"
+#~ msgid "As Long Date"
+#~ msgstr "als langes Datumsformat"
+#~ msgid "Granularity: minute"
+#~ msgstr "Eigenschaft: Minute"
+#~ msgid "Granularity: hour"
+#~ msgstr "Eigenschaft: Stunde"
+#~ msgid "Granularity: month"
+#~ msgstr "Eigenschaft: Monat"
+#~ msgid "Granularity: year"
+#~ msgstr "Eigenschaft: Jahr"
+#~ msgid "Is One Of"
+#~ msgstr "Ist eines von"
+#~ msgid "Teaser List"
+#~ msgstr "Liste der Anrisstexte"
+#~ msgid "Full Nodes"
+#~ msgstr "Vollständige Nodes"
+#~ msgid "This allows you to filter books based on parent node."
+#~ msgstr "Dies ermöglicht Bücher nach übergeordneten Beträgen zu filtern."
+#~ msgid "Book: Weight"
+#~ msgstr "Buch: Gewichtung"
+#~ msgid "This will sort the view by book weight, if that is applicable."
+#~ msgstr ""
+#~ "Dies wird die Ansicht nach der Buchgewichtung sortieren, soweit anwendbar."
+#~ msgid "Book: Parent Title"
+#~ msgstr "Buch: vorhergehender Titel"
+#~ msgid "Without Link"
+#~ msgstr "Ohne Verweis"
+#~ msgid "Display the title of the parent node"
+#~ msgstr "Titel der übergeordneten Node anzeigen"
+#~ msgid "Sort by the title of the parent node"
+#~ msgstr "Nach dem Titel der übergeordneten Node sortieren"
+#~ msgid "Book: Parent Node ID"
+#~ msgstr "Buch: vorhergehende Node ID"
+#~ msgid "Comment: Subject"
+#~ msgstr "Kommentar: Betreff"
+#~ msgid "Comment: Comment"
+#~ msgstr "Kommentar: Kommentar"
+#~ msgid "Display the content of a comment."
+#~ msgstr "Den Inhalt eines Kommentars anzeigen."
+#~ msgid "Display the CID of a comment."
+#~ msgstr "Die CID von einem Kommentar anzeigen."
+#~ msgid "Comment: Created Time"
+#~ msgstr "Kommentar: Erstellungszeitpunkt"
+#~ msgid "Comment: Author Name"
+#~ msgstr "Node: Name des Autors"
+#~ msgid "Comment: Pending approval"
+#~ msgstr "Kommentar: Wartet auf Überprüfung"
+#~ msgid "Sort by the created time of comments."
+#~ msgstr "Nach dem Erstellungszeitpunkt von Kommentaren sortieren."
+#~ msgid "Comment: Last Comment Time"
+#~ msgstr "Kommentar: letzter Kommentarzeitpunkt"
+#~ msgid "Comment: Last Comment Author"
+#~ msgstr "Kommentar: letzter Kommentarautor"
+#~ msgid "With New Count"
+#~ msgstr "Mit neuer Anzahl"
+#~ msgid "This will display the comment count."
+#~ msgstr "Zeigt die Anzahl der Kommentare an."
+#~ msgid "Comment: Last Changed Time"
+#~ msgstr "Kommentar: letzter Änderungszeitpunkt"
+#~ msgid "Comment: Comment Count"
+#~ msgstr "Node: Anzahl der Kommentare"
+#~ msgid "This filter allows you to filter by the amount of comments."
+#~ msgstr ""
+#~ "Dieser Filter ermöglicht eine Filterung nach der Anzahl der Kommentare."
+#~ msgid ""
+#~ "This filter allows nodes to be filtered by the timestamp for the last "
+#~ "comment or node edit."
+#~ msgstr ""
+#~ "Dieser Filter erlaubt eine Filterung von Nodes nach dem Zeitstempel des "
+#~ "letzten Kommentars oder Nodebearbeitung."
+#~ msgid "Comment: Last Comment Date"
+#~ msgstr "Kommentar: letztes Kommentardatum"
+#~ msgid ""
+#~ "This will allow you to sort by the date of the most recent comment on a "
+#~ "node."
+#~ msgstr ""
+#~ "Dies ermöglicht in einer Node eine Sortierung des neusten Kommentar nach "
+#~ "dem Datum."
+#~ msgid "This filter allows you to sort by the number of comments."
+#~ msgstr ""
+#~ "Dieser Filter ermöglicht eine Filterung nach der Anzahl der Kommentare."
+#~ msgid "Comment: Last Changed"
+#~ msgstr "Kommentar: letzte Änderung"
+#~ msgid "Sort based on the most recent comment or edit for the node."
+#~ msgstr ""
+#~ "Sortierung basiert auf dem neusten Kommentar oder der letzten Bearbeitung "
+#~ "der Node."
+#~ msgid "@num new"
+#~ msgstr "%num neu"
+#~ msgid "Recent comments"
+#~ msgstr "Neueste Kommentare"
+#~ msgid "Node: ID"
+#~ msgstr "Node: ID"
+#~ msgid "Node: Link to node"
+#~ msgstr "Node: Verweis auf eine Node"
+#~ msgid "Node: Body"
+#~ msgstr "Node: Textkörper"
+#~ msgid "Display the Main Content."
+#~ msgstr "Hauptinhalt anzeigen."
+#~ msgid "Sort by the submission date of the node."
+#~ msgstr "Nach der Beitragszeit der Node sortieren."
+#~ msgid "Sort by the last update date of the node."
+#~ msgstr "Nach der letzten Aktualisierung der Node sortieren."
+#~ msgid "Sort by the node title, alphabetically"
+#~ msgstr "Alphabetisch nach dem Node Titel sortieren"
+#~ msgid "Sort by the node type, alphabetically"
+#~ msgstr "Alphabetisch nach dem Node Typ sortieren"
+#~ msgid "Random"
+#~ msgstr "Zufall"
+#~ msgid "Node: Moderated"
+#~ msgstr "Node: Moderiert"
+#~ msgid "Include or exclude nodes of the selected types."
+#~ msgstr "Ausgewählte Nodetypen einschließen oder ausschließen. "
+#~ msgid "Node: Author is Anonymous"
+#~ msgstr "Node: Autor ist Gast"
+#~ msgid "Node: Author is Current User"
+#~ msgstr "Node: Autor ist der aktuelle Benutzer"
+#~ msgid "This filter allows nodes to be filtered by their title."
+#~ msgstr "Dieser Filter ermöglicht eine Filterung von Nodes nach ihrem Titel."
+#~ msgid ""
+#~ "This filter allows nodes to be filtered by the time they were updated."
+#~ msgstr ""
+#~ "Dieser Filter erlaubt eine Filterung von Nodes nach ihrem "
+#~ "Aktualisierungszeitpunkt."
+#~ msgid "This filter allows nodes to be filtered by their body."
+#~ msgstr ""
+#~ "Dieser Filter erlaubt eine Filterung von Nodes nach ihrem Textkörper."
+#~ msgid "Node: Posted Year"
+#~ msgstr "Node: Beitragsjahr"
+#~ msgid "Node: Posted Month"
+#~ msgstr "Node: Beitragsmonat"
+#~ msgid "Node: Posted Week"
+#~ msgstr "Node: Beitragswoche"
+#~ msgid "Node: Posted Month + Year"
+#~ msgstr "Node: Beitragsmonat und Jahr"
+#~ msgid "Node: Feed Selector"
+#~ msgstr "Node: Feedauswahl"
+#~ msgid "This will display all options of the profile field %field-name. "
+#~ msgstr "Zeigt alle Optionen des Profilfeldes %field-name an."
+#~ msgid "Display the date of the %field-name field."
+#~ msgstr "Das Datum des Feldes %field-name anzeigen."
+#~ msgid "This allows you to sort by vocabulary terms"
+#~ msgstr "Dies ermöglicht eine Sortierung nach Vokabularbegriffen."
+#~ msgid "This allows you to sort by selection options"
+#~ msgstr "Dies ermöglicht eine Sortierung nach Auswahloptionen."
+#~ msgid "This allows you to sort by date"
+#~ msgstr "Dies ermöglicht eine Sortierung nach Datum."
+#~ msgid "This allows you to sort yes/no"
+#~ msgstr "Dies ermöglicht eine Sortierung nach ja/nein."
+#~ msgid "Node: Total Hits"
+#~ msgstr "Node: gesamte Besuche"
+#~ msgid "Node: Last Hit Time"
+#~ msgstr "Node: letzter Zeitpunkt eines Besuches"
+#~ msgid "Recent popular content"
+#~ msgstr "Der beliebteste und neueste Inhalt"
+#~ msgid "Nodes sorted by total page-views"
+#~ msgstr "Nodes werden sortiert nach gesamten Seitenansichten"
+#~ msgid "All-time popular content"
+#~ msgstr "Allzeit beliebte Inhalte"
+#~ msgid "Taxonomy: Terms for @voc-name"
+#~ msgstr "Taxonomie: Begriffe für @voc-name"
+#~ msgid "Taxonomy: Term"
+#~ msgstr "Taxonomie: Begriff"
+#~ msgid "Taxonomy: Term Description"
+#~ msgstr "Taxonomie: Begriffserklärung"
+#~ msgid "Taxonomy: Term Name"
+#~ msgstr "Taxonomie: Name des Begriffes"
+#~ msgid "The taxonomy view with a depth of 0."
+#~ msgstr "Die Taxonomieansicht in einer Tiefe von 0."
+#~ msgid "Uncategorized"
+#~ msgstr "Nicht kategorisiert"
+#~ msgid "Theme wizard"
+#~ msgstr "Theme Wizard"
+#~ msgid "Select a view"
+#~ msgstr "Ansicht auswählen"
+#~ msgid "List Theme Fields"
+#~ msgstr "Theme Felder auflisten"
+#~ msgid "This is a basic theme function"
+#~ msgstr "Dies ist eine basis Themefunktion"
+#~ msgid "Generate Theme"
+#~ msgstr "Theme erstellen"
+#~ msgid "This code goes in your template.php file"
+#~ msgstr "Dieser Code kommt in die Datei template.php"
+#~ msgid "This code goes in a file named views-list-@s.tpl.php"
+#~ msgstr "Dieser Code kommt in eine Datei mit dem Namen views-list-@s.tpl.php"
+#~ msgid "This code goes in a file named views-list-@s.css"
+#~ msgstr "Dieser Code kommt in eine Datei mit dem Namen views-list-@s.css"
+#~ msgid "Grouped List"
+#~ msgstr "Gruppierte Liste"
+#~ msgid "Nested Tree"
+#~ msgstr "Verschachtelter Baum"
+#~ msgid "Select the field on which to group"
+#~ msgstr "Das Feld auswählen, nachdem gruppiert wird"
+#~ msgid ""
+#~ "Please see !s or the views documentation on drupal.org for help here."
+#~ msgstr ""
+#~ "Bitte unter !s oder der Ansichten Dokumentation auf drupal.org für "
+#~ "weitere Hilfe nachsehen."
+#~ msgid "<h3>Fields</h3>\n"
+#~ msgstr "<h3>Felder</h3>\n"
+#~ msgid "<h3>Arguments</h3>\n"
+#~ msgstr "<h3>Argumente</h3>\n"
+#~ msgid "<h3>Filters</h3>\n"
+#~ msgstr "<h3>Filter</h3>\n"
+#~ msgid "<h3>Sorting Critera</h3>\n"
+#~ msgstr "<h3>Sortierkriterium</h3>\n"
+#~ msgid "Edit view"
+#~ msgstr "Ansicht bearbeiten"
+#~ msgid "No Page View"
+#~ msgstr "Keine Seitenansicht"
+#~ msgid "Existing Views"
+#~ msgstr "Existierende Views"
+#~ msgid "<p>No views have currently been defined.</p>"
+#~ msgstr "<p>Bis jetzt wurden keine Ansichten erstellt.</p>"
+#~ msgid "Enabled"
+#~ msgstr "Aktiviert"
+#~ msgid "Disabled"
+#~ msgstr "Deaktiviert"
+#~ msgid "Status"
+#~ msgstr "Status"
+#~ msgid "Default Views"
+#~ msgstr "Standardansichten"
+#~ msgid "Import View Code"
+#~ msgstr "Import Ansichtencode"
+#~ msgid "Cut and paste the results of an Export View here."
+#~ msgstr "Das Ergebnis einer Export Ansicht ausschneiden und hier einfügen."
+#~ msgid "Add a View"
+#~ msgstr "Ansicht hinzufügen"
+#~ msgid "You don't seem to have the following requirements: "
+#~ msgstr "Die folgenden Anforderungen scheinen nicht erfüllt zu sein:"
+#~ msgid "Return Page Not Found"
+#~ msgstr "Die Seite wurde nicht gefunden zurückgeben."
+#~ msgid "Summary, unsorted"
+#~ msgstr "Zusammenfassung, unsortiert"
+#~ msgid "Summary, sorted as view"
+#~ msgstr "Zusammenfassung, sortiert wie Ansicht"
+#~ msgid "Use Empty Text"
+#~ msgstr "Leeren Text verwenden"
+#~ msgid "Add Criteria"
+#~ msgstr "Kriterium hinzufügen"
+#~ msgid "Add Argument"
+#~ msgstr "Argument hinzufügen"
+#~ msgid "Expose Filter"
+#~ msgstr "Hervorhebungsfilter"
+#~ msgid "Basic Information"
+#~ msgstr "Basisinformation"
+#~ msgid "Provide Page View"
+#~ msgstr "Seitenansicht bereitstellen"
+#~ msgid "How the nodes should be displayed to the user."
+#~ msgstr "Wie die Nodes dem Benutzer angezeigt werden."
+#~ msgid "Breadcrumb trail should not include \"Home\""
+#~ msgstr "Pfadnavigation soll die „Startseite“ nicht enthalten"
+#~ msgid ""
+#~ "Text to display at the bottom of the view. May contain an explanation or "
+#~ "links or whatever you like. Optional."
+#~ msgstr ""
+#~ "Am Ende der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, "
+#~ "Verweise oder beliebige andere Inhalte enthalten. (Optional)"
+#~ msgid "Empty Text"
+#~ msgstr "Leerer Text"
+
+#, fuzzy
+#~ msgid "Provide Menu"
+#~ msgstr "Menü bereitstellen"
+#~ msgid "Provide Menu as Tab"
+#~ msgstr "Menü als Karteireiter bereitstellen"
+
+#, fuzzy
+#~ msgid "Provide Block"
+#~ msgstr "Block bereitstellen"
+#~ msgid "Nodes per Block"
+#~ msgstr "Nodes pro Block"
+#~ msgid "Use Page Header"
+#~ msgstr "Kopfbereich der Seite verwenden"
+#~ msgid "Use Page Footer"
+#~ msgstr "Fußbereich der Seite verwenden"
+#~ msgid "Use Page empty"
+#~ msgstr "Leere Seite verwenden"
+#~ msgid "Argument Code"
+#~ msgstr "Argumentcode"
+#~ msgid "Save and edit"
+#~ msgstr "Speichern und Bearbeiten"
+#~ msgid "Delete this item."
+#~ msgstr "Dieses Element löschen."
+#~ msgid "Up"
+#~ msgstr "nach oben"
+#~ msgid "Move this item down."
+#~ msgstr "Dieses Element nach unten verschieben."
+#~ msgid "Top"
+#~ msgstr "Oben"
+#~ msgid "Move this item to the top."
+#~ msgstr "Dieses Element an den Anfang verschieben."
+#~ msgid "Bottom"
+#~ msgstr "Unten"
+#~ msgid "Move this item to the bottom."
+#~ msgstr "Dieses Element ans Ende verschieben."
+#~ msgid "Argument Type"
+#~ msgstr "Argumenttyp"
+#~ msgid "Wildcard Sub"
+#~ msgstr "Unter-Platzhalter"
+#~ msgid ""
+#~ "Arguments are parsed directly from the URL. They are not necessary to any "
+#~ "given view, but allow flexibility."
+#~ msgstr ""
+#~ "Argumente werden direkt aus der URL geparsed. Diese sind nicht notwendig "
+#~ "für eine bestimmte Ansicht, aber erlauben Flexibilität."
+#~ msgid "Lock Operator"
+#~ msgstr "Operatorsperre"
+#~ msgid "Exposed Filters"
+#~ msgstr "Hervorgehobene Filter"
+#~ msgid "Order"
+#~ msgstr "Reihenfolge"
+#~ msgid "Add criteria"
+#~ msgstr "Kriterium hinzufügen"
+#~ msgid "This view currently has no %s defined."
+#~ msgstr "In dieser Ansicht wurde %s nicht festgelegt."
+#~ msgid "Ops"
+#~ msgstr "Ops"
+#~ msgid ""
+#~ "Another user has modified this view, unable to save. You can get this "
+#~ "error by using the Back button to re-edit a view after saving one; if you "
+#~ "do this, be sure to Reload before making any changes!"
+#~ msgstr ""
+#~ "Diese Ansicht kann nicht gespeichert werden, da sie von einem anderen "
+#~ "Benutzer geändert wurde. Dieser Fehler kann auftreten, wenn der "
+#~ "Zurückknopf gedrückt wurde, um eine Ansicht nochmal zu bearbeiten, "
+#~ "nachdem diese gespeichert wurde. Die Seite muss neu geladen werden bevor "
+#~ "Änderungen durchgeführt werden!"
+#~ msgid "View name is required."
+#~ msgstr "Ansichtenname ist erforderlich."
+#~ msgid "View name already in use."
+#~ msgstr "Ansichtenname ist schon in Verwendung."
+#~ msgid "Nodes per page cannot be 0 if using the pager."
+#~ msgstr ""
+#~ "Bei Verwendung der Seitennavigation kann die Anzahl der Nodes pro Seite "
+#~ "nicht 0 sein."
+
+#, fuzzy
+#~ msgid "If being used as a block, Nodes Per Block must be positive."
+#~ msgstr "Sobald als Block verwendet, müssen Nodes pro Block positiv sein."
+#~ msgid "View successfully saved."
+#~ msgstr "Ansicht erfolgreich gespeichert."
+#~ msgid "View successfully added."
+#~ msgstr "Ansicht erfolgreich hinzugefügt."
+#~ msgid "List and Table types require at least one field."
+#~ msgstr "Listen- und Tabellentypen erfordern mindestens ein Feld."
+#~ msgid "You can only set on Default Sort on one field."
+#~ msgstr "Eine Standardsortierung kann nur für ein Feld festgelegt werden."
+#~ msgid "View '%vid' not found."
+#~ msgstr "Ansicht „%vid“ wurde nicht gefunden."
+#~ msgid "File: Id"
+#~ msgstr "Datei: ID"
+#~ msgid "File Id which represents the file."
+#~ msgstr "Datei ID, welche eine Datei repräsentiert."
+#~ msgid "Sort by File Id"
+#~ msgstr "Nach Datei ID sortieren"
+#~ msgid "File: Has file downloads"
+#~ msgstr "Datei: Dateidownloads vorhanden"
+#~ msgid "Exists"
+#~ msgstr "Vorhanden"
+#~ msgid "Filter whether the node has files for download"
+#~ msgstr "Filtert, ob die Node Dateien zum Download anbietet"
+#~ msgid "File: Listed in file downloads"
+#~ msgstr "Datei: Aufgelistet in Dateidownloads"
+#~ msgid "Filter whether the file is listed in downloads"
+#~ msgstr "Filtert, ob die Datei in den Downloads aufgelistet wird"
+#~ msgid "File: All files"
+#~ msgstr "Datei: Alle Dateien"
+#~ msgid "Listed files"
+#~ msgstr "Aufgelistete Dateien"
+#~ msgid "With links"
+#~ msgstr "Mit Verweisen"
+#~ msgid "Without links"
+#~ msgstr "Ohne Verweise"
+#~ msgid "Display all attached files in one field."
+#~ msgstr "Alle angehängten Dateien in einem Feld anzeigen."
+#~ msgid "File: Name"
+#~ msgstr "Datei: Name"
+#~ msgid "Plain"
+#~ msgstr "Einfach"
+#~ msgid "With download link"
+#~ msgstr "Mit Downloadverweis"
+#~ msgid "File: Path"
+#~ msgstr "Datei: Pfad"
+#~ msgid "File: Size"
+#~ msgstr "Datei: Größe"
+#~ msgid "File: Mime type"
+#~ msgstr "Datei: Datentyp"
+#~ msgid "This filter allows nodes to be filtered by mime type."
+#~ msgstr "Dieser Filter erlaubt eine Filterung von Nodes nach ihrem Datentyp."
+#~ msgid "File: Filename"
+#~ msgstr "Datei: Dateiname"
+#~ msgid ""
+#~ "This filter allows nodes to be filtered by the name of attached files."
+#~ msgstr ""
+#~ "Dieser Filter erlaubt eine Filterung von Nodes nach dem Namen der "
+#~ "angehängten Dateien."
+#~ msgid "This filter allows nodes to be filtered by file size."
+#~ msgstr ""
+#~ "Dieser Filter erlaubt eine Filterung von Nodes nach ihrer Dateigröße."
+#~ msgid "File: Sort by Filename"
+#~ msgstr "Datei: nach Dateiname sortieren"
+#~ msgid "Sort by file name"
+#~ msgstr "Nach Dateinamen sortieren"
+#~ msgid "File: File size"
+#~ msgstr "Datei: Dateigröße"
+#~ msgid "Sort by file size."
+#~ msgstr "Nach Dateigröße sortieren"
+#~ msgid "Sort by mime type."
+#~ msgstr "Nach Datentyp sortieren."
+#~ msgid "User: Author Picture"
+#~ msgstr "Benutzer: Autorenbild"
+#~ msgid "Display the user picture of the author."
+#~ msgstr "Benutzerbild des Autors anzeigen."
+#~ msgid "This allows you to sort alphabetically by author."
+#~ msgstr "Dies ermöglicht eine alphabetische Sortierung nach Autor."
+#~ msgid ""
+#~ "This allows you to filter by a particular user. You might not find this "
+#~ "useful if you have a lot of users."
+#~ msgstr ""
+#~ "Dies ermöglicht eine Filterung nach einem bestimmten Benutzer. Bei vielen "
+#~ "Benutzern kann dies unter Umständen nicht sinnvoll sein."
+#~ msgid "Role: Author Role"
+#~ msgstr "Rolle: Autorenrolle"
+#~ msgid "User: UID is Author"
+#~ msgstr "Benutzer: UID ist der Autor"
+#~ msgid "User: Username is Author"
+#~ msgstr "Benutzer: Benutzername ist der Autor"
+#~ msgid "views_handler_arg_username"
+#~ msgstr "views_handler_arg_username"
+#~ msgid "Recent posts"
+#~ msgstr "Neue Beiträge"
+#~ msgid "Author"
+#~ msgstr "Autor"
+#~ msgid "Replies"
+#~ msgstr "Antworten"
+#~ msgid "recent posts for %1"
+#~ msgstr "Neueste Beiträge für %1"
+#~ msgid "Currently Logged In User"
+#~ msgstr "Aktuell angemeldete Benutzer"
+
