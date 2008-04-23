@@ -244,8 +244,6 @@ function node_views_data() {
     ),
   );
 
-  // @todo: filter by authored or commented (this should be in comment.views.inc -- maybe)
-
   // Language field if translation module enabled
   if (module_exists('translation')) {
     $data['node']['language'] = array(

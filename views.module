@@ -1290,3 +1290,34 @@ function views_views_query_substitutions($view) {
   global $language;
   return array('***CURRENT_TIME***' => time(), '***CURRENT_LANGUAGE***' => $language->language);
 }
+
+/**
+ * Embed a view using a PHP snippet.
+ *
+ * This function is meant to be called from PHP snippets, should one wish to
+ * embed a view in a node or something. It's meant to provide the simplest
+ * solution and doesn't really offer a lot of options, but breaking the function
+ * apart is pretty easy, and this provides a worthwhile guide to doing so.
+ *
+ * @param $name
+ *   The name of the view to embed.
+ * @param $display_id
+ *   The display id to embed. If unsure, use 'default', as it will always be
+ *   valid. But things like 'page' or 'block' should work here.
+ * @param ...
+ *   Any additional parameters will be passed as arguments.
+ */
+function views_embed_view($name, $display_id = 'default') {
+  $args = func_get_args();
+  array_shift($args); // remove $name
+  if (count($args)) {
+    array_shift($args); // remove $display_id
+  }
+
+  $view = views_get_view($name);
+  if (!$view) {
+    return;
+  }
+
+  return $view->preview($display_id, $args);
+}

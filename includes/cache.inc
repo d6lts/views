@@ -31,8 +31,17 @@ function _views_fetch_data($table = NULL) {
     // NOTE: This happens whether we retrieve them from cache or otherwise.
     views_include_handlers();
 
-    // @todo: We can probably cache the views_data longer than just the current page run.
-    $cache = module_invoke_all('views_data');
+    $cache = views_cache_get('views_data');
+    if (empty($cache)) {
+      $cache = module_invoke_all('views_data');
+      foreach (module_implements('views_data_alter') as $module) {
+        $function = $module . '_views_data_alter';
+        $function($cache);
+      }
+
+      views_cache_set('views_data', $cache);
+    }
+
     vpr('Views data build time: ' . (microtime() - $start) * 1000 . ' ms');
   }
 

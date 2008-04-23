@@ -519,8 +519,6 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
  * @ingroup views_argument_handlers
  */
 class views_handler_argument_user_uid extends views_handler_argument {
-  // No constructor is necessary.
-
   /**
    * Override the behavior of title(). Get the name of the user.
    */

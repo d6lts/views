@@ -45,7 +45,6 @@ function comment_views_data() {
   // Fields
 
   // subject
-  // @todo choice to mark as new/updated etc
   $data['comments']['subject'] = array(
     'title' => t('Title'),
     'help' => t('The title of the comment.'),
@@ -231,7 +230,7 @@ function comment_views_data() {
   // node_comment_statistics table
 
   // define the group
-  $data['node_comment_statistics']['table']['group']  = t('Node comment statistics');
+  $data['node_comment_statistics']['table']['group']  = t('Node');
 
   // joins
   $data['node_comment_statistics']['table']['join'] = array(
@@ -244,7 +243,7 @@ function comment_views_data() {
 
   // last_comment_timestamp
   $data['node_comment_statistics']['last_comment_timestamp'] = array(
-    'title' => t('Last post time'),
+    'title' => t('Last comment time'),
     'help' => t('Date and time of when the last comment was posted.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
@@ -260,7 +259,7 @@ function comment_views_data() {
 
   // last_comment_name (author's name)
   $data['node_comment_statistics']['last_comment_name'] = array(
-    'title' => t("Last author's name"),
+    'title' => t("Last comment author"),
     'help' => t('The name of the author of the last posted comment.'),
     'field' => array(
       'handler' => 'views_handler_field_ncs_last_comment_name',
@@ -290,12 +289,49 @@ function comment_views_data() {
     ),
   );
 
-  //@todo number of new comments?
-  //@todo user is author or commented
-  //@todo last_comment_timestamp (#filter by when the last comment or node change was made)
-  //@todo last_changed (notafield). Show the time when the last comment or node change was made
+  // last_comment_timestamp
+  $data['node_comment_statistics']['last_updated'] = array(
+    'title' => t('Updated/commented date'),
+    'help' => t('The most recent of last comment posted or node updated time.'),
+    'field' => array(
+      'handler' => 'views_handler_field_ncs_last_updated',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_ncs_last_updated',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_ncs_last_updated',
+    ),
+  );
 
   return $data;
+}
+
+/**
+ * Use views_data_alter to add items to the node table that are
+ * relevant to comments.
+ */
+function comment_views_data_alter(&$data) {
+  $data['node']['new_comments'] = array(
+    'title' => t('New comments'),
+    'help' => t('The number of new comments on the node.'),
+    'field' => array(
+      'handler' => 'views_handler_field_node_new_comments',
+    ),
+  );
+
+  $data['node']['uid_touch'] = array(
+    'title' => t('User posted or commented'),
+    'help' => t('Display comments only if a user posted the node or commented on the node.'),
+    'argument' => array(
+      'field' => 'uid',
+      'name table' => 'users',
+      'name field' => 'name',
+      'handler' => 'views_handler_argument_comment_user_uid',
+    ),
+  );
+
 }
 
 /**
@@ -545,10 +581,6 @@ class views_handler_field_ncs_last_comment_name extends views_handler_field {
     $this->uid = $this->query->add_field($this->table_alias, 'last_comment_uid');
   }
 
-  function click_sort($order) {
-    $this->query->add_orderby(NULL, "LOWER(COALESCE($this->user_table.name, $this->table_alias.$this->field))", $order, $this->table_alias . '_' . $this->field);
-  }
-
   function options(&$options) {
     parent::options($options);
     $options['link_to_user'] = TRUE;
@@ -573,22 +605,190 @@ class views_handler_field_ncs_last_comment_name extends views_handler_field {
  *
  * @ingroup views_sort_handlers
  */
-
 class views_handler_sort_ncs_last_comment_name extends views_handler_sort {
   function query() {
     $this->ensure_my_table();
     $join = new views_join();
     $join->construct('users', $this->table_alias, 'last_comment_uid', 'uid');
 
-// @todo this might be safer if we had an ensure_relationship rather than guessing
-// the table alias. Though if we did that we'd be guessing the relationship name
-// so that doesn't matter that much.
+    // @todo this might be safer if we had an ensure_relationship rather than guessing
+    // the table alias. Though if we did that we'd be guessing the relationship name
+    // so that doesn't matter that much.
 //    $this->user_table = $this->query->add_relationship(NULL, $join, 'users', $this->relationship);
     $this->user_table = $this->query->ensure_table('ncs_users', $this->relationship, $join);
     $this->user_field = $this->query->add_field($this->user_table, 'name');
 
     // Add the field.
     $this->query->add_orderby(NULL, "LOWER(COALESCE($this->user_table.name, $this->table_alias.$this->field))", $this->options['order'], $this->table_alias . '_' . $this->field);
+  }
+}
+
+/**
+ * Field handler to display the newer of last comment / node updated
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_ncs_last_updated extends views_handler_field_date {
+  function query() {
+    $this->ensure_my_table();
+    $this->node_table = $this->query->ensure_table('node', $this->relationship);
+    $this->field_alias = $this->query->add_field(NULL, "GREATEST(" . $this->node_table . ".changed, " . $this->table_alias . ".last_comment_timestamp)", $this->table_alias . '_' . $this->field);
+  }
+}
+
+/**
+ * Sort handler for the newer of last comment / node updated
+ *
+ * @ingroup views_sort_handlers
+ */
+class views_handler_sort_ncs_last_updated extends views_handler_sort_date {
+  function query() {
+    $this->ensure_my_table();
+    $this->node_table = $this->query->ensure_table('node', $this->relationship);
+    $this->field_alias = $this->query->add_orderby(NULL, "GREATEST(" . $this->node_table . ".changed, " . $this->table_alias . ".last_comment_timestamp)", $this->options['order'], $this->table_alias . '_' . $this->field);
+  }
+}
+
+/**
+ * Filter handler for the newer of last comment / node updated
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_ncs_last_updated extends views_handler_filter_date {
+  function query() {
+    $this->ensure_my_table();
+    $this->node_table = $this->query->ensure_table('node', $this->relationship);
+
+    $field = "GREATEST(" . $this->node_table . ".changed, " . $this->table_alias . ".last_comment_timestamp)";
+
+    $info = $this->operators();
+    if (!empty($info[$this->operator]['method'])) {
+      $this->{$info[$this->operator]['method']}($field);
+    }
+  }
+}
+
+/**
+ * Field handler to display the number of new comments
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_new_comments extends views_handler_field_numeric {
+  function construct() {
+    parent::construct();
+    $this->additional_fields['nid'] = 'nid';
+  }
+
+  function options(&$options) {
+    parent::options($options);
+    $options['link_to_comment'] = TRUE;
+    $options['no_empty'] = TRUE;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['link_to_comment'] = array(
+      '#title' => t('Link this field to new comments'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['link_to_comment'],
+    );
+    $form['no_empty'] = array(
+      '#title' => t('Display nothing if no new comments'),
+      '#type' => 'checkbox',
+      '#default_value' => $this->options['no_empty'],
+    );
+  }
+
+  function query() {
+    $this->ensure_my_table();
+    $this->add_additional_fields();
+    $this->field_alias = $this->table . '_' . $this->field;
+  }
+
+  function pre_render(&$values) {
+    global $user;
+    if (!$user->uid || empty($values)) {
+      return;
+    }
+
+    $nids = array();
+    $ids = array();
+    foreach ($values as $id => $result) {
+      $nids[] = $result->{$this->aliases['nid']};
+      $values[$id]->{$this->field_alias} = 0;
+      // Create a reference so we can find this record in the values again.
+      if (empty($ids[$result->{$this->aliases['nid']}])) {
+        $ids[$result->{$this->aliases['nid']}] = array();
+      }
+      $ids[$result->{$this->aliases['nid']}][] = $id;
+    }
+
+    if ($nids) {
+      $result = db_query("SELECT n.nid, COUNT(c.cid) as num_comments FROM {node} n INNER JOIN {comments} c ON n.nid = c.nid LEFT JOIN {history} h ON h.nid = n.nid AND h.uid = %d WHERE n.nid IN (" . implode(', ', $nids) . ") AND c.timestamp > GREATEST(COALESCE(h.timestamp, %d), %d) AND c.status = %d GROUP BY n.nid  ", $user->uid, NODE_NEW_LIMIT, NODE_NEW_LIMIT, COMMENT_PUBLISHED);
+
+      while ($node = db_fetch_object($result)) {
+        foreach ($ids[$node->nid] as $id) {
+          $values[$id]->{$this->field_alias} = $node->num_comments;
+        }
+      }
+
+    }
+  }
+
+  function render_link($data, $values) {
+    if (!empty($this->options['link_to_comment'])) {
+      return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "new"));
+    }
+    else {
+      return $data;
+    }
+  }
+
+  function render($values) {
+    if ($values->{$this->field_alias} || empty($this->options['no_empty'])) {
+      return $this->render_link(parent::render($values), $values);
+    }
+  }
+}
+
+/**
+ * Argument handler to accept a user id to check for nodes that
+ * user posted or commented on.
+ *
+ * @ingroup views_argument_handlers
+ */
+class views_handler_argument_comment_user_uid extends views_handler_argument {
+  function title() {
+    if (!$this->argument) {
+      $title = variable_get('anonymous', t('Anonymous'));
+    }
+    else {
+      $title = db_result(db_query("SELECT u.name FROM {users} u WHERE u.uid = %d", $this->argument));
+    }
+    if (empty($title)) {
+      return t('No user');
+    }
+
+    return check_plain($title);
+  }
+
+  function default_actions($which = NULL) {
+    // Disallow summary views on this argument.
+    if (!$which) {
+      $actions = parent::default_actions();
+      unset($actions['summary asc']);
+      unset($actions['summary desc']);
+      return $actions;
+    }
+
+    if ($which != 'summary asc' && $which != 'summary desc') {
+      return parent::default_actions($which);
+    }
+  }
+
+  function query() {
+    $this->ensure_my_table();
+    $this->query->add_where(0, "$this->table_alias.uid = %d OR (SELECT COUNT(*) FROM {comments} c WHERE c.uid = %d AND c.nid = $this->table_alias.nid)", $this->argument, $this->argument);
   }
 }
 
