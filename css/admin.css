@@ -340,7 +340,7 @@ html.js #views-ajax-pad {
 
 #views-ajax-pad .views-radio-box {
   overflow: auto;
-  max-height: 180px;
+  height: 180px;
 }
 
 #views-ajax-pad fieldset {

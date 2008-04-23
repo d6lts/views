@@ -2004,15 +2004,39 @@ function views_ui_add_item_form(&$form_state) {
     }
   }
 
-  $options = views_fetch_field_names(array_keys($base_tables), $type);
+  $options = views_fetch_fields(array_keys($base_tables), $type);
 
   if (!empty($options)) {
-    $form['name'] = array(
-      '#prefix' => '<div class="views-radio-box">',
-      '#suffix' => '</div>',
-      '#type' => 'checkboxes',
-      '#options' => $options,
+    $groups = array('all' => t('<All>'));
+    $form['group'] = array(
+      '#type' => 'select',
+      '#title' => t('Groups'),
+      '#options' => array(),
+      '#attributes' => array('class' => 'views-master-dependent'),
     );
+
+    $form['name'] = array(
+      '#prefix' => '<div class="views-radio-box form-checkboxes">',
+      '#suffix' => '</div>',
+      '#tree' => TRUE,
+      '#default_value' => 'all',
+    );
+
+    // t('@group: @field<div class="description">@help</div>', array('@group' => $type_strings['group'], '@field' => $type_strings['title'], '@help' => $type_strings['help']));
+
+    foreach ($options as $key => $option) {
+      $group = strtr(strtolower($option['group']), '_ ', '--');
+      $groups[$group] = $option['group'];
+      $form['name'][$key] = array(
+        '#prefix' => '<div class="views-dependent-all views-dependent-' . $group . '">',
+        '#suffix' => '</div>',
+        '#type' => 'checkbox',
+        '#title' => t('!group: !field', array('!group' => $option['group'], '!field' => $option['title'])),
+        '#description' => $option['help'],
+        '#return_value' => $key,
+      );
+    }
+    $form['group']['#options'] = $groups;
   }
   else {
     $form['markup'] = array(
@@ -2139,7 +2163,7 @@ function views_ui_config_item_form(&$form_state) {
         // If this relationship is valid for this type, add it to the list.
         $data = views_fetch_data($relationship['table']);
         $base = $data[$relationship['field']]['relationship']['base'];
-        $base_fields = views_fetch_field_names($base, $form_state['type']);
+        $base_fields = views_fetch_fields($base, $form_state['type']);
         if (isset($base_fields[$handler->table . '.' . $handler->field])) {
           $relationship_handler->init($view, $relationship);
           $relationship_options[$relationship['id']] = $relationship_handler->label();
@@ -2149,7 +2173,7 @@ function views_ui_config_item_form(&$form_state) {
       if (!empty($relationship_options)) {
         // Make sure the existing relationship is even valid. If not, force
         // it to none.
-        $base_fields = views_fetch_field_names($view->base_table, $form_state['type']);
+        $base_fields = views_fetch_fields($view->base_table, $form_state['type']);
         if (isset($base_fields[$handler->table . '.' . $handler->field])) {
           $relationship_options = array_merge(array('none' => t('Do not use a relationship')), $relationship_options);
         }

@@ -162,5 +162,20 @@ Drupal.Views.dependent.autoAttach = function() {
 
 Drupal.behaviors.viewsDependent = function (context) {
   Drupal.Views.dependent.autoAttach();
-}
 
+  // Really large sets of fields are too slow with the above method, so this
+  // is a sort of hacked one that's faster but much less flexible.
+  $("select.views-master-dependent:not(.views-processed)")
+    .addClass('views-processed')
+    .change(function() {
+      var val = $(this).val();
+      if (val == 'all') {
+        $('.views-dependent-all').show(0);
+      }
+      else {
+        $('.views-dependent-all').hide(0);
+        $('.views-dependent-' + val).show(0);
+      }
+    })
+    .trigger('change');
+}
