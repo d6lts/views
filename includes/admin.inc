@@ -1292,6 +1292,11 @@ function views_ui_ajax_forms($key = NULL) {
   return $forms;
 }
 
+/**
+ * Build a form identifier that we can use to see if one form
+ * is the same as another. Since the arguments differ slightly
+ * we do a lot of spiffy concenation here.
+ */
 function views_ui_build_identifier($key, $view, $display_id, $args) {
   $form = views_ui_ajax_forms($key);
   $identifier = implode('-', array($key, $view->name, $display_id));
@@ -1303,6 +1308,10 @@ function views_ui_build_identifier($key, $view, $display_id, $args) {
   return $identifier;
 }
 
+/**
+ * Build up a $form_state object suitable for use with drupal_build_form
+ * based on known information about a form.
+ */
 function views_ui_build_form_state($js, $key, &$view, $display_id, $args) {
   $form = views_ui_ajax_forms($key);
   // Build up form state
@@ -1322,6 +1331,10 @@ function views_ui_build_form_state($js, $key, &$view, $display_id, $args) {
   return $form_state;
 }
 
+/**
+ * Create the URL for one of our standard AJAX forms based upon known
+ * information about the form.
+ */
 function views_ui_build_form_url($form_state) {
   $form = views_ui_ajax_forms($form_state['form_key']);
   $ajax = empty($form_state['ajax']) ? 'nojs' : 'ajax';
@@ -1333,6 +1346,10 @@ function views_ui_build_form_url($form_state) {
   return $url;
 }
 
+/**
+ * Add another form to the stack; clicking 'update' will go to this form
+ * rather than closing the ajax pad.
+ */
 function views_ui_add_form_to_stack($key, &$view, $display_id, $args, $top = FALSE) {
   if (empty($view->stack)) {
     $view->stack = array();
@@ -1351,7 +1368,9 @@ function views_ui_add_form_to_stack($key, &$view, $display_id, $args, $top = FAL
  * Generic entry point to handle forms.
  *
  * We do this for consistency and to make it easy to chain forms
- * together.
+ * together. This only works for forms that use both $view
+ * and $display_id, so we have a couple of ajax forms that we don't
+ * use with this system.
  */
 function views_ui_ajax_form($js, $key, &$view, $display_id) {
   $form = views_ui_ajax_forms($key);
@@ -2261,7 +2280,7 @@ function views_ui_config_item_extra_form(&$form_state) {
 
     }
 
-    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_extra_form', NULL, t('Remove'), 'remove');
   }
   return $form;
 }
@@ -2292,6 +2311,7 @@ function views_ui_config_item_extra_form_submit($form, &$form_state) {
   // Write to cache
   views_ui_cache_set($form_state['view']);
 }
+
 /**
  * Form to change_style items in the views UI.
  */
