@@ -31,7 +31,11 @@ function _views_fetch_data($table = NULL) {
     // NOTE: This happens whether we retrieve them from cache or otherwise.
     views_include_handlers();
 
-    $cache = views_cache_get('views_data');
+    $data = views_cache_get('views_data');
+    if (!empty($data->data)) {
+      $cache = $data->data;
+    }
+
     if (empty($cache)) {
       $cache = module_invoke_all('views_data');
       foreach (module_implements('views_data_alter') as $module) {

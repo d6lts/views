@@ -1241,8 +1241,13 @@ class views_plugin_display extends views_plugin {
             $row_options = array();
             $plugin->init($this->view, $this->display);
             $plugin->options($row_options);
-            // @todo -- change this
             $this->set_option('row_options', $row_options);
+
+            // send ajax form to options page if we use it.
+            if (!empty($plugin->definition['uses options'])) {
+              $form_state['next'] = 'style_options';
+              $form_state['regenerate form'] = TRUE;
+            }
           }
         }
         break;
@@ -1256,8 +1261,13 @@ class views_plugin_display extends views_plugin {
             $style_options = array();
             $plugin->init($this->view, $this->display);
             $plugin->options($style_options);
-            // @todo -- change this
             $this->set_option('style_options', $style_options);
+
+            // send ajax form to options page if we use it.
+            if (!empty($plugin->definition['uses options'])) {
+              $form_state['next'] = 'style_options';
+              $form_state['regenerate form'] = TRUE;
+            }
           }
         }
         break;
