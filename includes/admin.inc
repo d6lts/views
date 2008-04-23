@@ -1245,6 +1245,166 @@ function views_ui_standard_cancel($form, &$form_state) {
 // --------------------------------------------------------------------------
 // Various subforms for editing the pieces of a view.
 
+function views_ui_ajax_forms($key = NULL) {
+  $forms = array(
+    'display' => array(
+      'form_id' => 'views_ui_edit_display_form',
+      'args' => array('section'),
+    ),
+    'remove-display' => array(
+      'form_id' => 'views_ui_remove_display_form',
+      'args' => array(),
+    ),
+    'config-type' => array(
+      'form_id' => 'views_ui_config_type_form',
+      'args' => array('type'),
+    ),
+    'rearrange' => array(
+      'form_id' => 'views_ui_rearrange_form',
+      'args' => array('type'),
+    ),
+    'add-item' => array(
+      'form_id' => 'views_ui_add_item_form',
+      'args' => array('type'),
+    ),
+    'config-item' => array(
+      'form_id' => 'views_ui_config_item_form',
+      'args' => array('type', 'id'),
+    ),
+    'config-item-extra' => array(
+      'form_id' => 'views_ui_config_item_extra_form',
+      'args' => array('type', 'id'),
+    ),
+    'change-style' => array(
+      'form_id' => 'views_ui_change_style_form',
+      'args' => array('type', 'id'),
+    ),
+    'config-style' => array(
+      'form_id' => 'views_ui_config_style_form',
+      'args' => array('type', 'id'),
+    ),
+  );
+
+  if ($key) {
+    return !empty($forms[$key]) ? $forms[$key] : NULL;
+  }
+
+  return $forms;
+}
+
+function views_ui_build_identifier($key, $view, $display_id, $args) {
+  $form = views_ui_ajax_forms($key);
+  $identifier = implode('-', array($key, $view->name, $display_id));
+
+  foreach ($form['args'] as $id) {
+    $arg = (!empty($args)) ? array_shift($args) : NULL;
+    $identifier .= '-' . $arg;
+  }
+  return $identifier;
+}
+
+function views_ui_build_form_state($js, $key, &$view, $display_id, $args) {
+  $form = views_ui_ajax_forms($key);
+  // Build up form state
+  $form_state = array(
+    'form_key' => $key,
+    'form_id' => $form['form_id'],
+    'view' => &$view,
+    'ajax' => $js,
+    'display_id' => $display_id,
+    'no_redirect' => TRUE,
+  );
+
+  foreach ($form['args'] as $id) {
+    $form_state[$id] = (!empty($args)) ? array_shift($args) : NULL;
+  }
+
+  return $form_state;
+}
+
+function views_ui_build_form_url($form_state) {
+  $form = views_ui_ajax_forms($form_state['form_key']);
+  $ajax = empty($form_state['ajax']) ? 'nojs' : 'ajax';
+  $name = $form_state['view']->name;
+  $url = "admin/build/views/$ajax/$form_state[form_key]/$name/$form_state[display_id]";
+  foreach ($form['args'] as $arg) {
+    $url .= '/' . $form_state[$arg];
+  }
+  return $url;
+}
+
+function views_ui_add_form_to_stack($key, &$view, $display_id, $args, $top = FALSE) {
+  if (empty($view->stack)) {
+    $view->stack = array();
+  }
+
+  $stack = array(views_ui_build_identifier($key, $view, $display_id, $args), $key, $view, $display_id, $args);
+  if ($top) {
+    array_unshift($view->stack, $stack);
+  }
+  else {
+    $view->stack[] = $stack;
+  }
+}
+
+/**
+ * Generic entry point to handle forms.
+ *
+ * We do this for consistency and to make it easy to chain forms
+ * together.
+ */
+function views_ui_ajax_form($js, $key, &$view, $display_id) {
+  $form = views_ui_ajax_forms($key);
+  if (empty($form)) {
+    return drupal_not_found();
+  }
+
+  views_include('ajax');
+  $args = func_get_args();
+  // Remove the known args
+  array_splice($args, 0, 4);
+
+  $form_state = views_ui_build_form_state($js, $key, $view, $display_id, $args);
+  // check to see if this is the top form of the stack. If it is, pop
+  // it off; if it isn't, the user clicked somewhere else and the stack is
+  // now irrelevant.
+  if (!empty($view->stack)) {
+    $identifier = views_ui_build_identifier($key, $view, $display_id, $args);
+    $top = array_shift($view->stack);
+    if (array_shift($top) != $identifier) {
+      $view->stack = array();
+    }
+  }
+
+  $output = views_ajax_form_wrapper($form_state['form_id'], $form_state);
+
+  if (!$output) {
+    // Sometimes we need to re-generate the form for multi-step type operations.
+    $object = NULL;
+    if (!empty($view->stack)) {
+      $stack = $view->stack; // copy so the next shift doesn't break the array
+      $top = array_shift($stack);
+      $top[0] = $js; // change identifier into $js setting
+      $form_state = call_user_func_array('views_ui_build_form_state', $top);
+      $form_state['input'] = array(); // this is a new form, make sure it
+      // doesn't try to inherit $_POST info.
+      if (!$js) {
+        return drupal_goto(views_ui_build_form_url($form_state));
+      }
+      $object = views_ajax_form_wrapper($form_state['form_id'], $form_state);
+      $object->url = url(views_ui_build_form_url($form_state));
+    }
+    else if (!$js) {
+      // if nothing on the stack, non-js forms just go back to the main view editor.
+      return drupal_goto("admin/build/views/edit/$view->name");
+    }
+    // regenerate all tabs because changes to the default tab could ripple.
+    return views_ui_regenerate_tabs($view, NULL, $object);
+  }
+
+  return ($js) ? views_ajax_render($output) : $output;
+}
+
 /**
  * AJAX callback to add a display.
  */
@@ -1323,30 +1483,6 @@ function views_ui_add_display_form_submit($form, &$form_state) {
 }
 
 /**
- * AJAX callback to remove a display.
- */
-function views_ui_remove_display($js, $view, $display_id) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'display_id' => $display_id,
-    'ajax' => $js,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_remove_display_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      return views_ui_regenerate_tabs($view, $display_id);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
-}
-
-/**
  * Form to remove a display from a view.
  */
 function views_ui_remove_display_form(&$form_state) {
@@ -1395,9 +1531,6 @@ function views_ui_remove_display_form_submit($form, &$form_state) {
     // Store in cache
     views_ui_cache_set($form_state['view']);
   }
-
-  // Send it back
-  $form_state['redirect'] = array('admin/build/views/edit/' . $form_state['view']->name, NULL, 'views-tab-' . $form_state['display_id']);
 }
 
 /**
@@ -1410,9 +1543,6 @@ function views_ui_remove_display_form_restore($form, &$form_state) {
 
   // Store in cache
   views_ui_cache_set($form_state['view']);
-
-  // Send it back
-  $form_state['redirect'] = array('admin/build/views/edit/' . $form_state['view']->name, NULL, 'views-tab-' . $form_state['display_id']);
 }
 
 /**
@@ -1598,46 +1728,6 @@ function views_ui_edit_details_form_submit($form, &$form_state) {
 }
 
 /**
- * Page callback to edit options on a display of a view.
- */
-function views_ui_edit_display($js, $view, $display_id, $section) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'section' => $section,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_edit_display_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      $object = NULL;
-      if (!empty($form_state['regenerate form'])) {
-        $form_state['input'] = array(); // Remove the input so it can't post.
-        $form_state['executed'] = FALSE;
-        if (!empty($form_state['next'])) {
-          $form_state['section'] = $form_state['next'];
-        }
-        $object = views_ajax_form_wrapper('views_ui_edit_display_form', $form_state);
-        if (!empty($form_state['next'])) {
-          $object->url = url("admin/build/views/ajax/display/$view->name/$display_id/$form_state[next]");
-        }
-
-      }
-      // regenerate all tabs because changes to the default tab could ripple.
-      return views_ui_regenerate_tabs($view, NULL, $object);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
-}
-
-/**
  * Form constructor callback to edit display of a view
  */
 function views_ui_edit_display_form(&$form_state) {
@@ -1672,7 +1762,6 @@ function views_ui_edit_display_form_submit($form, &$form_state) {
   $display->handler->options_submit($form, $form_state);
 
   views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
@@ -1686,39 +1775,6 @@ function views_ui_edit_display_form_override($form, &$form_state) {
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
 }
-
-/**
- * Page callback to config a type.
- */
-function views_ui_config_type($js, $view, $display_id, $type) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'type' => $type,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_config_type_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      $object = NULL;
-      if (!empty($form_state['regenerate form'])) {
-        $form_state['input'] = array(); // Remove the input so it can't post.
-        $form_state['executed'] = FALSE;
-        $object = views_ajax_form_wrapper('views_ui_config_type_form', $form_state);
-      }
-      return views_ui_regenerate_tabs($view, $display_id, $object);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
-}
-
 /**
  * Form to config items in the views UI.
  */
@@ -1752,7 +1808,7 @@ function views_ui_config_type_form(&$form_state) {
 }
 
 /**
- * Submit handler for rearranging form
+ * Submit handler for type configuration form
  */
 function views_ui_config_type_form_submit($form, &$form_state) {
   $types = views_object_types();
@@ -1760,8 +1816,6 @@ function views_ui_config_type_form_submit($form, &$form_state) {
 
   // Store in cache
   views_ui_cache_set($form_state['view']);
-
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
@@ -1769,38 +1823,6 @@ function views_ui_config_type_form_submit($form, &$form_state) {
  */
 function views_ui_config_filters_form(&$form, &$form_state) {
 
-}
-
-/**
- * Page callback to rearrange a type.
- */
-function views_ui_rearrange_type($js, $view, $display_id, $type) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'type' => $type,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_rearrange_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      $object = NULL;
-      if (!empty($form_state['regenerate form'])) {
-        $form_state['input'] = array(); // Remove the input so it can't post.
-        $form_state['executed'] = FALSE;
-        $object = views_ajax_form_wrapper('views_ui_rearrange_form', $form_state);
-      }
-      return views_ui_regenerate_tabs($view, $display_id, $object);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
 }
 
 /**
@@ -1941,43 +1963,6 @@ function views_ui_rearrange_form_submit($form, &$form_state) {
 
   // Store in cache
   views_ui_cache_set($form_state['view']);
-
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-}
-
-/**
- * Page callback to add_item a type.
- */
-function views_ui_add_item($js, $view, $display_id, $type) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'type' => $type,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_add_item_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      $object = NULL;
-      if (!empty($form_state['id'])) {
-        $form_state['input'] = array(); // Remove the input so it can't post.
-        $form_state['executed'] = FALSE;
-        $form_state['stack'] = TRUE; // tell it to continue stacking forms up
-        $object = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
-        // This form is at a different URL than $_GET['q'] so we have to pass via the object.
-        $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
-      }
-      return views_ui_regenerate_tabs($view, $display_id, $object);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
 }
 
 /**
@@ -2029,8 +2014,6 @@ function views_ui_add_item_form(&$form_state) {
       '#default_value' => 'all',
     );
 
-    // t('@group: @field<div class="description">@help</div>', array('@group' => $type_strings['group'], '@field' => $type_strings['title'], '@help' => $type_strings['help']));
-
     foreach ($options as $key => $option) {
       $group = strtr(strtolower($option['group']), '_ ', '--');
       $groups[$group] = $option['group'];
@@ -2062,68 +2045,24 @@ function views_ui_add_item_form_submit($form, &$form_state) {
   $type = $form_state['type'];
   $types = views_object_types();
 
-  $form_state['view']->stack = array();
-
   if (!empty($form_state['values']['name']) && is_array($form_state['values']['name'])) {
     // Loop through each of the items that were checked and add them to the view.
     foreach (array_keys(array_filter($form_state['values']['name'])) as $field) {
       list($table, $field) = explode('.', $field, 2);
       $id = $form_state['view']->add_item($form_state['display_id'], $type, $table, $field);
-      if (empty($form_state['id'])) {
-        $form_state['id'] = $id;
+      // @todo -- check to see if this type has settings, if so add the settings first
+      $handler = views_get_handler($table, $field, $type);
+      if ($handler && $handler->has_extra_options()) {
+        views_ui_add_form_to_stack('config-item-extra', $form_state['view'], $form_state['display_id'], array($type, $id));
       }
-      else {
-        $form_state['view']->stack[] = $id;
-      }
+      views_ui_add_form_to_stack('config-item', $form_state['view'], $form_state['display_id'], array($type, $id));
     }
   }
 
   // Store in cache
   views_ui_cache_set($form_state['view']);
-  if (!empty($form_state['id'])) {
-    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$type/$form_state[id]";
-  }
-  else {
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
 }
 
-/**
- * Page callback to configure an item
- */
-function views_ui_config_item($js, $view, $display_id, $type, $id) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'id' => $id,
-    'type' => $type,
-    'stack' => TRUE,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      $object = NULL;
-      if (!empty($form_state['next'])) {
-        $form_state['input'] = array(); // Remove the input so it can't post.
-        $form_state['executed'] = FALSE;
-        $form_state['id'] = $form_state['next'];
-        $object = views_ajax_form_wrapper('views_ui_config_item_form', $form_state);
-        // This form is at a different URL than $_GET['q'] so we have to pass via the object.
-        $object->url = url("admin/build/views/ajax/config-item/$view->name/$display_id/$type/$form_state[id]");
-      }
-      return views_ui_regenerate_tabs($view, $display_id, $object);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
-}
 
 /**
  * Form to config_item items in the views UI.
@@ -2213,14 +2152,6 @@ function views_ui_config_item_form(&$form_state) {
         $form_state['handler'] = &$handler;
 
     }
-    // Set this hidden field so that when we come back, our stacking state
-    // will be retained.
-
-    $form['stack'] = array(
-      '#type' => 'hidden',
-      // default value means that what we receive in $_POST is more important.
-      '#default_value' => !empty($form_state['stack']),
-    );
 
     views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
   }
@@ -2250,16 +2181,14 @@ function views_ui_config_item_form_submit($form, &$form_state) {
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
-  views_ui_check_stack($form_state);
+  $handler = views_get_handler($item['table'], $item['field'], $form_state['type']);
+  $handler->init($form_state['view'], $item);
+  if ($handler && $handler->needs_style_plugin()) {
+    views_ui_add_form_to_stack('change-style', $form_state['view'], $form_state['display_id'], array($form_state['type'], $form_state['id']), TRUE);
+  }
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  if (isset($form_state['next'])) {
-    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$form_state[type]/$form_state[next]";
-  }
-  else {
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
 }
 
 /**
@@ -2273,12 +2202,6 @@ function views_ui_config_item_form_remove($form, &$form_state) {
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  if (isset($form_state['next'])) {
-    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$form_state[type]/$form_state[next]";
-  }
-  else {
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
 }
 
 /**
@@ -2300,51 +2223,6 @@ function views_ui_config_item_form_expose($form, &$form_state) {
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
   $form_state['force_expose_options'] = TRUE;
-}
-
-/**
- * Check to see if there is another config item on the 'stack' that should
- * be displayed next.
- */
-function views_ui_check_stack(&$form_state) {
-  if (!empty($form_state['view']->stack)) {
-    // If we came in through a 'stack' system, advance to the next.
-    if ($form_state['stack'] || $form_state['values']['stack']) {
-      $form_state['next'] = array_shift($form_state['view']->stack);
-    }
-    else {
-      // Otherwise, the user has clicked elsewhere and come back; our stack needs
-      // to be removed.
-      unset($form_state['view']->stack);
-    }
-  }
-}
-
-/**
- * Page callback to configure an item
- */
-function views_ui_config_item_extra($js, $view, $display_id, $type, $id) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'ajax' => $js,
-    'display_id' => $display_id,
-    'id' => $id,
-    'type' => $type,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_config_item_extra_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      // Sometimes we need to re-generate the form for multi-step type operations.
-      return views_ui_regenerate_tabs($view, $display_id);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
 }
 
 /**
@@ -2411,44 +2289,9 @@ function views_ui_config_item_extra_form_submit($form, &$form_state) {
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
-  views_ui_check_stack($form_state);
-
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  if (isset($form_state['next'])) {
-    $form_state['redirect'] = 'admin/build/views/nojs/config-item/' . $form_state['view']->name . "/$form_state[display_id]/$form_state[type]/$form_state[next]";
-  }
-  else {
-    $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  }
 }
-
-/**
- * Page callback to change the summary style of an argument
- */
-function views_ui_change_style($js, $view, $display_id, $type, $id) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'display_id' => $display_id,
-    'type' => $type,
-    'id' => $id,
-    'ajax' => $js,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_change_style_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      return views_ui_regenerate_tabs($view, $display_id);
-    }
-    return views_ajax_render($output);
-  }
-
-  return $output;
-}
-
 /**
  * Form to change_style items in the views UI.
  */
@@ -2497,9 +2340,9 @@ function views_ui_change_style_form_submit($form, &$form_state) {
   $form_state['handler']->options_submit($form['options'], $form_state);
   $item = $form_state['handler']->options;
 
+  $plugin = views_get_plugin('style', $form_state['values']['style_plugin']);
+  $plugin->init($form_state['view'], $form_state['view']->display[$form_state['display_id']]);
   if (empty($item['style_plugin']) || $item['style_plugin'] != $form_state['values']['style_plugin']) {
-    $plugin = views_get_plugin('style', $form_state['values']['style_plugin']);
-    $plugin->init($form_state['view'], $form_state['view']->display[$form_state['display_id']]);
     $item['style_options'] = array();
     $plugin->options($item['style_options']);
   }
@@ -2510,35 +2353,12 @@ function views_ui_change_style_form_submit($form, &$form_state) {
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
-  // Write to cache
-  views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-}
-
-/**
- * Page callback to config the summary style of an argument
- */
-function views_ui_config_style($js, $view, $display_id, $type, $id) {
-  views_include('ajax');
-  $form_state = array(
-    'view' => &$view,
-    'display_id' => $display_id,
-    'type' => $type,
-    'id' => $id,
-    'ajax' => $js,
-  );
-
-  $output = views_ajax_form_wrapper('views_ui_config_style_form', $form_state);
-
-  if ($js) {
-    // If we don't have an output object, it was submitted. Set up the submission.
-    if (empty($output)) {
-      return views_ui_regenerate_tabs($view, $display_id);
-    }
-    return views_ajax_render($output);
+  if (!empty($plugin->definition['uses options'])) {
+    views_ui_add_form_to_stack('config-style', $form_state['view'], $form_state['display_id'], array($form_state['type'], $form_state['id']), TRUE);
   }
 
-  return $output;
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
 }
 
 /**
@@ -2603,7 +2423,6 @@ function views_ui_config_style_form_submit($form, &$form_state) {
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
-  $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
 }
 
 /**
@@ -2726,4 +2545,3 @@ function views_ui_autocomplete_user($string = '') {
 
   drupal_json($matches);
 }
-

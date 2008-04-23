@@ -1245,8 +1245,7 @@ class views_plugin_display extends views_plugin {
 
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
-              $form_state['next'] = 'style_options';
-              $form_state['regenerate form'] = TRUE;
+              views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('row_options'));
             }
           }
         }
@@ -1265,8 +1264,7 @@ class views_plugin_display extends views_plugin {
 
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
-              $form_state['next'] = 'style_options';
-              $form_state['regenerate form'] = TRUE;
+              views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('style_options'));
             }
           }
         }

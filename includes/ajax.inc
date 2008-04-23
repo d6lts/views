@@ -54,7 +54,7 @@ function views_ajax_form_wrapper($form_id, &$form_state) {
 
   $output = drupal_build_form($form_id, $form_state);
   if (!empty($form_state['ajax']) && empty($form_state['executed'])) {
-    // If the form didn't executed and we're using ajax, build up a
+    // If the form didn't execute and we're using ajax, build up a
     // json command object to render.
     $object = new stdClass();
     $object->display = '';

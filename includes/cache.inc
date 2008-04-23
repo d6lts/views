@@ -55,6 +55,7 @@ function _views_fetch_data($table = NULL) {
   if (isset($cache[$table])) {
     return $cache[$table];
   }
+
   // Return an empty array if there is no match.
   return array();
 }
