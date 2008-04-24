@@ -563,7 +563,7 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
       '#title' => t('Usernames'),
       '#description' => t('Enter a comma separated list of user names.'),
       '#default_value' => implode(', ', $values),
-      '#autocomplete_path' => 'admin/build/views/autocomplete/user',
+      '#autocomplete_path' => 'admin/ajax/autocomplete/user',
     );
   }
 

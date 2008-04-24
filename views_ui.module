@@ -129,19 +129,19 @@ function views_ui_menu() {
     'page arguments' => array(3, 5),
   );
 
+  // autocompletes for handlers and such
+  // Path is not admin/build/views due to menu complications with the wildcards from
+  // the generic ajax callback.
+  $items['admin/views/ajax/autocomplete/user'] = $callback + array(
+    'page callback' => 'views_ui_autocomplete_user',
+  );
+
   // Generic ajax callback
   // display specific parameters
   $items['admin/build/views/%views_ui_js/%/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_ajax_form',
     'page arguments' => array(3, 4, 5),
   );
-
-
-  // autocompletes for handlers and such
-  $items['admin/build/views/autocomplete/user'] = $callback + array(
-    'page callback' => 'views_ui_autocomplete_user',
-  );
-
 
   return $items;
 }
