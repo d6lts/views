@@ -827,7 +827,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('Use a pager for this view');
         $form['use_pager'] = array(
           '#type' => 'radios',
-          '#options' => array(1 => t('Full pager'), 'mini' => t('Mini pager'), 0 => t('No')),
+          '#options' => array(TRUE => t('Full pager'), 'mini' => t('Mini pager'), 0 => t('No')),
           '#default_value' => $this->get_option('use_pager'),
         );
         $form['pager_element'] = array(
