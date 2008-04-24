@@ -75,7 +75,7 @@ function template_preprocess_views_view(&$vars) {
 
   $vars['pager']      = '';
   if (!empty($view->pager['use_pager'])) {
-    $pager_type = $view->pager['use_pager'] == 'mini' ? 'views_mini_pager' : 'pager';
+    $pager_type = ($view->pager['use_pager'] === 'mini' ? 'views_mini_pager' : 'pager');
     $vars['pager']    = theme($pager_type, $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
