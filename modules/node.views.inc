@@ -768,7 +768,7 @@ class views_handler_field_history_user_timestamp extends views_handler_field_nod
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     if (module_exists('comment')) {
-      $form['comment'] = array(
+      $form['comments'] = array(
         '#type' => 'checkbox',
         '#title' => t('Check for new comments as well'),
         '#default_value' => !empty($this->options['comments']),

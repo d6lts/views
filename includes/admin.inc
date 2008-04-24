@@ -179,6 +179,13 @@ function template_preprocess_views_ui_list_views(&$vars) {
  * Provide a form for sorting and filtering the list of views.
  */
 function views_ui_list_views_form(&$form_state) {
+  if (!variable_get('clean_url', FALSE)) {
+    $form['q'] = array(
+      '#type' => 'hidden',
+      '#value' => $_GET['q'],
+    );
+  }
+
   $all = array('all' => t('<All>'));
   $none = array('none' => t('<None>'));
 

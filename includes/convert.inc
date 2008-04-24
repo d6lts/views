@@ -233,35 +233,53 @@ function views1_import($imported) {
   // then see if any other modules want to adapt it using hook_views_convert().
 
   foreach ($imported->field as $field) {
+    $id = NULL;
     if (views_get_handler($field['tablename'], $field['field'], 'field')) {
-      $view->add_item('default', 'field', $field['tablename'], $field['field']);
+      $id = $view->add_item('default', 'field', $field['tablename'], $field['field']);
+    }
+    if ($view->display_handler->get_option('style_plugin') == 'table') {
+      $options = $view->display_handler->get_option('style_options');
+      if (!empty($field['defaultsort'])) {
+        $options['default'] = $id;
+      }
+      if (!empty($field['sortable'])) {
+        $options['info'][$id]['sortable'] = TRUE;
+      }
+      $view->display_handler->set_option('style_options', $options);
+    }
+
+    if (!empty($field['label'])) {
+    $item = $view->get_item('default', 'field', $id);
+      $item['label'] = $field['label'];
+      $view->set_item('default', 'field', $id, $item);
     }
     foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'field', $view, $field);
+      module_invoke($module, 'views_convert', 'default', 'field', $view, $field, $id);
     }
   }
   foreach ($imported->sort as $field) {
+    $id = NULL;
     if (views_get_handler($field['tablename'], $field['field'], 'sort')) {
-      $view->add_item('default', 'sort', $field['tablename'], $field['field']);
+      $id = $view->add_item('default', 'sort', $field['tablename'], $field['field']);
     }
     foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'sort', $view, $field);
+      module_invoke($module, 'views_convert', 'default', 'sort', $view, $field, $id);
     }
   }
   foreach ($imported->argument as $field) {
-    if (views_get_handler($field['tablename'], $field['field'], 'argument')) {
-      $view->add_item('default', 'argument', $field['tablename'], $field['field']);
-    }
+    // Arguments didn't used to be identified by table.name so we just have to
+    // leave that out.
     foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'argument', $view, $field);
+      module_invoke($module, 'views_convert', 'default', 'argument', $view, $field, NULL);
     }
   }
   foreach ($imported->filter as $field) {
+    $id = NULL;
     if (views_get_handler($field['tablename'], $field['field'], 'filter')) {
-      $view->add_item('default', 'filter', $field['tablename'], $field['field']);
+      $id = $view->add_item('default', 'filter', $field['tablename'], $field['field']);
     }
     foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'filter', $view, $field);
+      module_invoke($module, 'views_convert', 'default', 'filter', $view, $field, $id);
     }
   }
   // Exposed filters now get added to the filter array, not as a separate array.
@@ -279,7 +297,7 @@ function views1_import($imported) {
     }
     $count++;
     foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'exposed_filter', $view, $field);
+      module_invoke($module, 'views_convert', 'default', 'exposed_filter', $view, $field, $field['field']);
     }
   }
 
@@ -302,7 +320,15 @@ function views1_convert_style(&$view, &$handler, $type) {
       $handler->set_option('row_options', array('teaser' => true));
       break;
     case 'table':
+      $options = array();
+      $options['columns'] = array();
+      $options['default'] = '';
+      $options['info'] = array();
+      $options['override'] = FALSE;
+      $options['order'] = 'asc';
+
       $handler->set_option('style_plugin', 'table');
+      $handler->set_option('style_options', $options);
       break;
     default:
       // Ask around if anybody else knows.

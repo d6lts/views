@@ -29,6 +29,11 @@ html.js span.views-throbbing {
 div.view div.views-admin-links {
   font-size: xx-small;
   margin-right: 1em;
+  padding-top: 1em;
+}
+
+.block div.view div.views-admin-links {
+  padding-top: 0;
 }
 
 div.view div.views-admin-links ul {
@@ -78,3 +83,4 @@ div.view:hover div.views-hide {
 .views-view-grid tbody {
   border-top: none;
 }
+
