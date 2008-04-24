@@ -2217,8 +2217,6 @@ function views_ui_config_item_form_remove($form, &$form_state) {
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], NULL);
 
-  views_ui_check_stack($form_state);
-
   // Write to cache
   views_ui_cache_set($form_state['view']);
 }
