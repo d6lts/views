@@ -135,6 +135,10 @@ function views_ui_menu() {
   $items['admin/views/ajax/autocomplete/user'] = $callback + array(
     'page callback' => 'views_ui_autocomplete_user',
   );
+  $items['admin/views/ajax/autocomplete/tag'] = $callback + array(
+    'page callback' => 'views_ui_autocomplete_tag',
+  );
+
 
   // Generic ajax callback
   // display specific parameters

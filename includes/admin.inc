@@ -496,7 +496,7 @@ function views_ui_add_form(&$form_state) {
     '#title' => t('View tag'),
     '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
     '#default_value' => $view ? $view->tag : '',
-    // TODO: This should be an autocomplete field.
+    '#autocomplete_path' => 'admin/views/ajax/autocomplete/tag',
   );
 
   $base_tables = array();
@@ -2536,7 +2536,6 @@ function views_ui_tools_clear_cache() {
  * Page callback for views user autocomplete
  */
 function views_ui_autocomplete_user($string = '') {
-  error_log($string);
   // The user enters a comma-separated list of tags. We only autocomplete the last tag.
   $array = drupal_explode_tags($string);
 
@@ -2558,6 +2557,30 @@ function views_ui_autocomplete_user($string = '') {
         $n = '"'. str_replace('"', '""', $account->name) .'"';
       }
       $matches[$prefix . $n] = check_plain($account->name);
+    }
+  }
+
+  drupal_json($matches);
+}
+
+/**
+ * Page callback for views tag autocomplete
+ */
+function views_ui_autocomplete_tag($string = '') {
+  $matches = array();
+  // get matches from default views:
+  views_include('view');
+  $views = _views_discover_default_views();
+  foreach ($views as $view) {
+    if (!empty($view->tag) && strpos($view->tag, $string) === 0) {
+      $matches[$view->tag] = $view->tag;
+    }
+  }
+
+  if ($string) {
+    $result = db_query_range("SELECT DISTINCT tag FROM {views_view} WHERE LOWER(tag) LIKE LOWER('%s%%')", $string, 0, 10 - count($matches));
+    while ($view = db_fetch_object($result)) {
+      $matches[$view->tag] = check_plain($view->tag);
     }
   }
 
