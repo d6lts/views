@@ -13,7 +13,7 @@ function comment_views_default_views() {
   $view = new view;
   $view->name = 'tracker';
   $view->description = t('Shows all new activity on system.');
-  $view->tag = '';
+  $view->tag = t('default');
   $view->view_php = '';
   $view->base_table = 'node';
   $view->is_cacheable = '0';
