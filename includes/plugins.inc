@@ -244,6 +244,14 @@ class views_plugin extends views_object {
     return views_theme_functions($this->definition['theme'], $this->view, $this->display);
   }
 
+  /**
+   * Validate that the plugin is correct and can be saved.
+   *
+   * @return
+   *   An array of error strings to tell the user what is wrong with this
+   *   plugin.
+   */
+  function validate() { return array(); }
 }
 
 /**
@@ -1484,6 +1492,30 @@ class views_plugin_display extends views_plugin {
    * be 'normal'.
    */
   function get_style_type() { return 'normal'; }
+
+  function validate() {
+    $errors = array();
+    // Make sure displays that use fields HAVE fields.
+    if ($this->uses_fields() && !$this->get_option('fields')) {
+      $errors[] = t('Display @display uses fields but there are none defined for it.', array('@display' => $this->display->display_title));
+    }
+
+    if ($this->has_path() && !$this->get_option('path')) {
+      $errors[] = t('Display @display uses path but path is undefined.', array('@display' => $this->display->display_title));
+    }
+
+    $style = $this->get_plugin();
+    if (empty($style)) {
+      $errors[] = t('Display @display has an invalid style plugin.', array('@display' => $this->display->display_title));
+    }
+    else {
+      $result = $style->validate();
+      if (!empty($result) && is_array($result)) {
+        $errors = array_merge($errors, $result);
+      }
+    }
+    return $errors;
+  }
 }
 
 /**
@@ -1746,7 +1778,7 @@ class views_plugin_display_page extends views_plugin_display {
 
     // This adds a 'Settings' link to the style_options setting if the style has options.
     if ($menu['type'] == 'default tab') {
-      $options['menu']['links']['tab_options'] = t('Change settings for this style');
+      $options['menu']['links']['tab_options'] = t('Change settings for the parent menu');
     }
   }
 
@@ -1860,26 +1892,6 @@ class views_plugin_display_page extends views_plugin_display {
   }
 
   /**
-   * Validate the options form.
-   */
-  function options_validate($form, &$form_state) {
-    // It is very important to call the parent function here:
-    parent::options_validate($form, $form_state);
-
-    switch ($form_state['section']) {
-      case 'path':
-        // @todo: validate the path against other views
-
-        // @todo: validate the path against aliases.
-        break;
-      case 'menu':
-        // @todo: validate that there is a title if type != 'none'.
-      case 'tab_options':
-        // @todo: validate that there is a title if type != 'none'
-    }
-  }
-
-  /**
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
@@ -1892,11 +1904,33 @@ class views_plugin_display_page extends views_plugin_display {
         break;
       case 'menu':
         $this->set_option('menu', $form_state['values']['menu']);
+        // send ajax form to options page if we use it.
+        if ($form_state['values']['menu']['type'] == 'default tab') {
+          views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('tab_options'));
+        }
         break;
       case 'tab_options':
         $this->set_option('tab_options', $form_state['values']['tab_options']);
         break;
     }
+  }
+
+  function validate() {
+    $errors = parent::validate();
+
+    $menu = $this->get_option('menu');
+    if (!empty($menu['type']) && $menu['type'] != 'none' && empty($menu['title'])) {
+      $errors[] = t('Display @display is set to use a menu but the menu title is not set.', array('@display' => $this->display->display_title));
+    }
+
+    if ($menu['type'] == 'default tab') {
+      $tab_options = $this->get_option('tab_options');
+      if (!empty($tab_options['type']) && $tab_options['type'] != 'none' && empty($tab_options['title'])) {
+        $errors[] = t('Display @display is set to use a parent menu but the parent menu title is not set.', array('@display' => $this->display->display_title));
+      }
+    }
+
+    return $errors;
   }
 }
 
@@ -2389,27 +2423,8 @@ class views_plugin_style extends views_plugin {
 
   /**
    * Static member function to set default options.
-   *
-   * @todo the options on all plugins should be unified and made to match
-   * how handler options work.
    */
   function options(&$options) { }
-
-  /**
-   * Provide a form for setting options.
-   */
-  function options_form(&$form, &$form_state) { }
-
-  /**
-   * Validate the options form.
-   */
-  function options_validate($form, &$form_state) { }
-
-  /**
-   * Perform any necessary changes to the form values prior to storage.
-   * There is no need for this function to actually store the data.
-   */
-  function options_submit($form, &$form_state) { }
 
   /**
    * Called by the view builder to see if this style handler wants to
@@ -2434,6 +2449,17 @@ class views_plugin_style extends views_plugin {
       $rows[] = $this->row_plugin->render($row);
     }
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
+  }
+
+  function validate() {
+    $errors = parent::validate();
+
+    if ($this->uses_row_plugin()) {
+      $plugin = $this->display->handler->get_plugin('row');
+      if (!empty($plugin)) {
+        $errors[] = t('Style @style requires a row style but the row plugin is invalid.', array('@style' => $this->definition['title']));
+      }
+    }
   }
 }
 
