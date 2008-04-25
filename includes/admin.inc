@@ -13,8 +13,9 @@ function views_ui_list_views($arg = NULL) {
     return drupal_not_found();
   }
 
+  $output = theme('views_ui_list_views');
   views_ui_check_advanced_help();
-  return theme('views_ui_list_views');
+  return $output;
 }
 
 /**
