@@ -638,8 +638,9 @@ function views_ui_break_lock_confirm_submit(&$form, &$form_state) {
  */
 function views_ui_edit_page($view) {
   drupal_set_title(t('Edit view "%view"', array('%view' => $view->name)));
+  $output = theme('views_ui_edit_view', $view);
   views_ui_check_advanced_help();
-  return theme('views_ui_edit_view', $view);
+  return $output;
 }
 
 /**
