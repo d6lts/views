@@ -37,7 +37,7 @@ function _views_prepare_handler($definition, $data, $field) {
       $definition[$key] = $data[$field][$key];
     }
     // Then if that doesn't work, check the table level
-    if (!isset($definition['table'][$key]) && !empty($data['table'][$key])) {
+    else if (!isset($definition['table'][$key]) && !empty($data['table'][$key])) {
       $definition[$key] = $data['table'][$key];
     }
   }
