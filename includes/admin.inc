@@ -84,7 +84,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
     $item = new stdClass();
     $item->ops = array();
     if (empty($view->disabled)) {
-      $item->ops[] = l(t('Edit'), "admin/build/views/edit/$view->name");
+      $item->ops[] = l(t('Edit'), "admin/build/views/edit/$view->name", array('query' => drupal_get_destination()));
       $item->ops[] = l(t('Export'), "admin/build/views/export/$view->name");
       $item->ops[] = l(t('Clone'), "admin/build/views/clone/$view->name");
     }
@@ -2581,7 +2581,7 @@ function views_ui_autocomplete_tag($string = '') {
   $matches = array();
   // get matches from default views:
   views_include('view');
-  $views = _views_discover_default_views();
+  $views = views_discover_default_views();
   foreach ($views as $view) {
     if (!empty($view->tag) && strpos($view->tag, $string) === 0) {
       $matches[$view->tag] = $view->tag;

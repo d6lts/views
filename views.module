@@ -840,14 +840,16 @@ function views_get_applicable_views($type) {
       continue;
     }
 
-    foreach ($view->display as $display) {
-      $plugin = views_fetch_plugin_data('display', $display->display_plugin);
+    // Loop on array keys because something seems to muck with $view->display
+    // a bit in PHP4.
+    foreach (array_keys($view->display) as $id) {
+      $plugin = views_fetch_plugin_data('display', $view->display[$id]->display_plugin);
       if (!empty($plugin[$type])) {
         // This view uses hook menu. Clone it so that different handlers
         // don't trip over each other, and add it to the list.
         $v = $view->clone_view();
-        if ($v->set_display($display->id)) {
-          $result[] = array($v, $display->id);
+        if ($v->set_display($id)) {
+          $result[] = array($v, $id);
         }
         // In PHP 4.4.7 and presumably earlier, if we do not unset $v
         // here, we will find that it actually overwrites references
