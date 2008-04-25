@@ -1362,7 +1362,7 @@ function views_ui_add_form_to_stack($key, &$view, $display_id, $args, $top = FAL
     $view->stack = array();
   }
 
-  $stack = array(views_ui_build_identifier($key, $view, $display_id, $args), $key, $view, $display_id, $args);
+  $stack = array(views_ui_build_identifier($key, $view, $display_id, $args), $key, &$view, $display_id, $args);
   if ($top) {
     array_unshift($view->stack, $stack);
   }
