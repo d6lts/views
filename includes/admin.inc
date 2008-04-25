@@ -1213,6 +1213,12 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
   if (isset($form['#title'])) {
     $form_state['title'] = $form['#title'];
   }
+  if (isset($form['#help_topic'])) {
+    $form_state['help_topic'] = $form['#help_topic'];
+  }
+  if (isset($form['#help_module'])) {
+    $form_state['help_module'] = $form['#help_module'];
+  }
   if (isset($form['#url'])) {
     $form_state['url'] = $form['#url'];
   }

@@ -533,3 +533,9 @@ html.js .views-hidden {
 .views-edit-view .advanced-help-link {
   padding-right: 3px;
 }
+
+#views-ajax-title .advanced-help-link {
+  position: relative;
+  top: 2px;
+  padding-right: 3px;
+}

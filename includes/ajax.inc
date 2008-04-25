@@ -64,6 +64,10 @@ function views_ajax_form_wrapper($form_id, &$form_state) {
     $object->display .= $output;
 
     $object->title = empty($form_state['title']) ? '' : $form_state['title'];
+    if (!empty($form_state['help_topic'])) {
+      $module = !empty($form_state['help_module']) ? $form_state['help_module'] : 'views';
+      $object->title = theme('advanced_help_topic', $module, $form_state['help_topic']) . $object->title;
+    }
     $object->url = empty($form_state['url']) ? url($_GET['q'], array('absolute' => TRUE)) : $form_state['url'];
     $object->js = empty($form_state['js settings']) ? NULL : $form_state['js settings'];
     if (!empty($form_state['#section'])) {
