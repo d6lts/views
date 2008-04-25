@@ -10,7 +10,7 @@
  */
 function _views_create_handler($definition) {
 //  vpr('Instantiating handler ' . $definition['handler']);
-  if (!class_exists($definition['handler'])) {
+  if (empty($definition['handler']) || !class_exists($definition['handler'])) {
     return;
   }
 
