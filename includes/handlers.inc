@@ -10,6 +10,10 @@
  */
 function _views_create_handler($definition) {
 //  vpr('Instantiating handler ' . $definition['handler']);
+  if (!class_exists($definition['handler'])) {
+    return;
+  }
+
   $handler = new $definition['handler'];
   $handler->set_definition($definition);
   // let the handler have something like a constructor.
