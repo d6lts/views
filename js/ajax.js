@@ -211,6 +211,7 @@ Drupal.Views.updatePreviewFilterForm = function() {
   url = url.replace('nojs', 'ajax');
 
   $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
+  $('input[@name=q]', this).remove(); // remove 'q' for live preview.
   $(this).ajaxSubmit({
     url: url,
     data: '',
