@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-04-25 20:21+0200\n"
-"PO-Revision-Date: 2008-04-26 22:43+0100\n"
+"PO-Revision-Date: 2008-04-26 23:54+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -68,8 +68,9 @@ msgstr ""
 
 #: views.module:884;924
 #: includes/admin.inc:92;246;246
+#, fuzzy
 msgid "Overridden"
-msgstr "Übersschrieben"
+msgstr "Übersteuert"
 
 #: views.module:887;920
 #: views_ui.module:284
@@ -258,7 +259,7 @@ msgstr ""
 
 #: includes/admin.inc:34
 msgid "If you install the advanced help module from !href, Views will provide more and better help. <a href=\"@hide\">Hide this message.</a>"
-msgstr ""
+msgstr "Ansichten stellt durch die Installation des Erweiterten-Hilfemoduls von !href eine bessere und ausführlichere Hilfe zu Verfügung. <a href=\"@hide\">Diese Meldung ausblenden.</a>"
 
 #: includes/admin.inc:88;869
 #: theme/theme.inc:93
@@ -371,9 +372,8 @@ msgid "Up"
 msgstr "nach oben"
 
 #: includes/admin.inc:270
-#, fuzzy
 msgid "Down"
-msgstr "Herunter"
+msgstr "nach unten"
 
 #: includes/admin.inc:352;367
 msgid "Query"
@@ -403,7 +403,7 @@ msgstr "Argumente"
 
 #: includes/admin.inc:431
 msgid "Separate arguments with a / as though they were a URL path."
-msgstr ""
+msgstr "Argumente mit einem „/“ voneinander abtrennen, als ob diese ein URL-Pfad wären."
 
 #: includes/admin.inc:437
 msgid "Preview"
@@ -535,7 +535,7 @@ msgstr "Unbekannter oder fehlender Tabellenname"
 
 #: includes/admin.inc:825
 msgid "Click on an item to edit that item's details."
-msgstr ""
+msgstr "Einen Eintrag anklicken, um die Details zu bearbeiten."
 
 #: includes/admin.inc:828
 msgid "This view has a broken default display and cannot be used."
@@ -1424,7 +1424,7 @@ msgstr "Standards"
 
 #: includes/plugins.inc:19
 msgid "Default settings for this view."
-msgstr ""
+msgstr "Standardeinstellungen für diese Ansicht."
 
 #: includes/plugins.inc:32;40
 #: modules/comment.views_default.inc:253
@@ -1595,7 +1595,7 @@ msgstr "Die Anzahl der anzuzeigenden Beiträge ändern."
 
 #: includes/plugins.inc:671
 msgid "More link"
-msgstr "[Weiter] Verweis"
+msgstr "‚Weiter‘-Verweis"
 
 #: includes/plugins.inc:673
 msgid "Specify whether this display will provide a \"more\" link."
@@ -1727,7 +1727,7 @@ msgstr ""
 
 #: includes/plugins.inc:859
 msgid "Create more link"
-msgstr "[Weiter] Verweis erstellen"
+msgstr "‚Weiter‘-Verweis erstellen"
 
 #: includes/plugins.inc:860
 msgid "This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."
@@ -2420,7 +2420,7 @@ msgstr ""
 #: modules/node.views.inc:233
 #: modules/user.views.inc:201
 msgid "Edit link"
-msgstr "[Bearbeiten] Verweis"
+msgstr "‚Bearbeiten‘-Verweis"
 
 #: modules/comment.views.inc:182
 msgid "Provide a simple link to edit the comment."
@@ -2430,7 +2430,7 @@ msgstr ""
 #: modules/node.views.inc:241;458
 #: modules/user.views.inc:209
 msgid "Delete link"
-msgstr "[Löschen] Verweis"
+msgstr "‚Löschen‘-Verweis"
 
 #: modules/comment.views.inc:191
 msgid "Provide a simple link to delete the comment."
@@ -3532,8 +3532,9 @@ msgid "Changed view"
 msgstr "Ansicht geändert"
 
 #: theme/views-ui-edit-view.tpl.php:23
+#, fuzzy
 msgid "View %name, displaying items of type <strong>@base</strong>."
-msgstr ""
+msgstr "Ansicht %name, Einträge vom Typ <strong>@base</strong> anzeigen."
 
 #: theme/views-ui-list-views.tpl.php:15
 msgid "<em>@type</em> @base view: <strong>@view</strong>"
