@@ -249,7 +249,7 @@ function template_preprocess_views_view_table(&$vars) {
         // Place the field into the column, along with an optional separator.
         if (isset($vars['rows'][$num][$column])) {
           if (!empty($options['info'][$column]['separator'])) {
-            $vars['rows'][$num][$column] .= $options['info'][$column]['separator'];
+            $vars['rows'][$num][$column] .= filter_xss_admin($options['info'][$column]['separator']);
           }
         }
         else {
@@ -261,7 +261,6 @@ function template_preprocess_views_view_table(&$vars) {
     }
   }
 }
-
 
 /**
  * Display a view as a grid style.

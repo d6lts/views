@@ -26,8 +26,8 @@ function upload_views_data() {
 
   $data['upload']['table']['join'] = array(
     'node' => array(
-      'left_field' => 'nid',
-      'field' => 'nid',
+      'left_field' => 'vid',
+      'field' => 'vid',
     ),
     'node_revisions' => array(
       'left_field' => 'vid',
@@ -35,8 +35,8 @@ function upload_views_data() {
     ),
     'users' => array(
       'left_table' => 'node',
-      'left_field' => 'nid',
-      'field' => 'nid',
+      'left_field' => 'vid',
+      'field' => 'vid',
     ),
     'files' => array(
       'left_field' => 'fid',
