@@ -41,7 +41,8 @@ function _views_theme_functions($hook, $view, $display = NULL) {
 function template_preprocess_views_view(&$vars) {
   $view = $vars['view'];
 
-  $vars['rows']       = $view->style_handler->render($view->result);
+  $vars['rows']       = !empty($view->result) ? $view->style_handler->render($view->result) : '';
+
   $vars['css_name']   = views_css_safe($view->name);
   $vars['name']       = $view->name;
   $vars['display_id'] = $view->current_display;

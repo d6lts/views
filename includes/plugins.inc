@@ -1409,12 +1409,20 @@ class views_plugin_display extends views_plugin {
   /**
    * Render the header of the view.
    */
-  function render_header() { return $this->render_textarea('header'); }
+  function render_header() {
+    if (!empty($this->view->result) || $this->get_option('header_empty')) {
+      return $this->render_textarea('header');
+    }
+  }
 
   /**
    * Render the footer of the view.
    */
-  function render_footer() { return $this->render_textarea('footer'); }
+  function render_footer() {
+    if (!empty($this->view->result) || $this->get_option('footer_empty')) {
+      return $this->render_textarea('footer');
+    }
+  }
 
   /**
    * Render the empty text of the view.
