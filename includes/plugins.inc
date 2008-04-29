@@ -1386,7 +1386,7 @@ class views_plugin_display extends views_plugin {
    */
   function render_more_link() {
     if ($this->use_more()) {
-      $path = $this->get_path();
+      $path = $this->get_url();
       if ($path) {
         $theme = views_theme_functions('views_more', $this->view, $this->display);
         $path = check_url(url($path));

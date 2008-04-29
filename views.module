@@ -263,10 +263,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
 }
 
 /**
- * Implementation of hook_devel_caches().
- *
- * When the cache is cleared, clear cached views, too.  That
- * makes development a bit easier.
+ * Implementation of hook_flush_caches().
  */
 function views_flush_caches() {
   return array('cache_views');
