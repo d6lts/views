@@ -1135,6 +1135,10 @@ class view extends views_db_object {
 
     foreach ($this->display as $id => $display) {
       if ($display->handler) {
+        if (!empty($display->deleted)) {
+          continue;
+        }
+
         $result = $this->display[$id]->handler->validate();
         if (!empty($result) && is_array($result)) {
           $errors = array_merge($errors, $result);
