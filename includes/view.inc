@@ -45,6 +45,7 @@ class view extends views_db_object {
   // Exposed widget input
   var $exposed_data = array();
   var $exposed_input = array();
+
   /**
    * Constructor
    */
@@ -1104,7 +1105,7 @@ class view extends views_db_object {
     $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after');
     foreach ($keys as $key) {
       if (isset($clone->$key)) {
-        unset($clone->$key);
+        $clone->$key = FALSE;
       }
     }
 

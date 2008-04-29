@@ -215,6 +215,28 @@ function comment_views_data() {
     ),
   );
 
+  $data['comments']['nid'] = array(
+    'title' => t('Node ID'),
+    'help' => t('The node the comment is a reply to.'),
+    'relationship' => array(
+      'base' => 'node',
+      'field' => 'nid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('Node'),
+    ),
+  );
+
+  $data['comments']['uid'] = array(
+    'title' => t('User ID'),
+    'help' => t('The user who wrote the comment.'),
+    'relationship' => array(
+      'base' => 'users',
+      'field' => 'uid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('User'),
+    ),
+  );
+
   $data['comments']['pid'] = array(
     'title' => t('Parent CID'),
     'help' => t('The Comment ID of the parent comment.'),
@@ -222,7 +244,10 @@ function comment_views_data() {
       'handler' => 'views_handler_field',
     ),
     'relationship' => array(
+      'base' => 'comment',
+      'field' => 'cid',
       'handler' => 'views_handler_relationship',
+      'label' => t('Parent comment'),
     ),
   );
 
@@ -375,9 +400,9 @@ class views_handler_field_comment extends views_handler_field {
   /**
    * Override init function to provide generic option to link to comment.
    */
-  function init(&$view, &$data) {
-    parent::init($view, $data);
-    if (!empty($data->link_to_comment)) {
+  function init(&$view, &$options) {
+    parent::init($view, $options);
+    if (!empty($options['link_to_comment'])) {
       $this->additional_fields['cid'] = 'cid';
       $this->additional_fields['nid'] = 'nid';
     }

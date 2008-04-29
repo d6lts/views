@@ -2453,10 +2453,11 @@ class views_plugin_style extends views_plugin {
 
     if ($this->uses_row_plugin()) {
       $plugin = $this->display->handler->get_plugin('row');
-      if (!empty($plugin)) {
+      if (empty($plugin)) {
         $errors[] = t('Style @style requires a row style but the row plugin is invalid.', array('@style' => $this->definition['title']));
       }
     }
+    return $errors;
   }
 }
 
