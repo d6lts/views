@@ -1957,7 +1957,7 @@ class views_plugin_display_block extends views_plugin_display {
       if (empty($desc)) {
         $desc = $this->view->name;
       }
-      return array($delta => array('info' => $desc));
+      return array($delta => array('info' => $desc, 'cache' => BLOCK_NO_CACHE));
     }
   }
 
