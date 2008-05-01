@@ -465,6 +465,7 @@ class views_handler_argument extends views_handler {
       // so look up the join and add it instead.
       if ($this->table_alias != $this->table) {
         $j = views_get_table_join($this->name_table, $this->table);
+        dsm($this->table);
         if ($j) {
           $join = drupal_clone($j);
           $join->left_table = $this->table_alias;
@@ -515,17 +516,15 @@ class views_handler_argument extends views_handler {
   }
 
   /**
-   * Provides a link from the summary to the next level; this will be called
-   * once per row of a summary.
+   * Provide the argument to use to link from the summary to the next level;
+   * this will be called once per row of a summary, and used as part of
+   * $view->get_url().
    *
    * @param $data
    *   The query results for the row.
-   * @param $url
-   *   The base URL to use.
    */
-  function summary_link($data, $url) {
-    $value = $data->{$this->base_alias};
-    return url("$url/$value");
+  function summary_argument($data) {
+    return $data->{$this->base_alias};
   }
 
   /**
@@ -621,7 +620,7 @@ class views_handler_argument extends views_handler {
 /**
  * Abstract argument handler for simple formulae.
  *
- * Child classes of this object should implement summary_link, at least.
+ * Child classes of this object should implement summary_argument, at least.
  */
 class views_handler_argument_formula extends views_handler_argument {
   var $formula = NULL;
@@ -824,21 +823,12 @@ class views_handler_argument_string extends views_handler_argument {
     $this->query->add_where(0, "$field = '%s'", $argument);
   }
 
-  /**
-   * Provides a link from the summary to the next level; this will be called
-   * once per row of a summary.
-   *
-   * @param $data
-   *   The query results for the row.
-   * @param $url
-   *   The base URL to use.
-   */
-  function summary_link($data, $url) {
+  function summary_argument($data) {
     $value = $this->case_transform($data->{$this->base_alias}, 'path_case');
     if (!empty($this->options['transform_dash'])) {
       $value = strtr($value, ' ', '-');
     }
-    return url("$url/$value");
+    return $value;
   }
 
   function case_transform($string, $option) {
@@ -986,13 +976,13 @@ class views_handler_argument_many_to_one extends views_handler_argument {
     return $this->summary_basics();
   }
 
-  function summary_link($data, $url) {
+  function summary_argument($data) {
     $value = $data->{$this->base_alias};
     if (empty($value)) {
       $value = 0;
     }
 
-    return url("$url/$value");
+    return $value;
   }
 
   /**

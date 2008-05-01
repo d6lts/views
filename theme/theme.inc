@@ -75,9 +75,11 @@ function template_preprocess_views_view(&$vars) {
   $vars['attachment_after'] = !empty($view->attachment_after) ? $view->attachment_after : '';
 
   $vars['pager']      = '';
+
+  $exposed_input = isset($view->exposed_data_raw) ? $view->exposed_data_raw : NULL;
   if (!empty($view->pager['use_pager'])) {
     $pager_type = ($view->pager['use_pager'] === 'mini' ? 'views_mini_pager' : 'pager');
-    $vars['pager']    = theme($pager_type, $view->exposed_input, $view->pager['items_per_page'], $view->pager['element']);
+    $vars['pager']    = theme($pager_type, $exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
   // if administrator, add some links. These used to be tabs, but this is better.
@@ -176,9 +178,17 @@ function template_preprocess_views_view_summary(&$vars) {
   $view     = $vars['view'];
   $argument = $view->argument[$view->build_info['summary_level']]['handler'];
 
+  $url_options = array();
+
+  if (!empty($view->exposed_raw_input)) {
+    $url_options['query'] = $view->exposed_raw_input;
+  }
   foreach ($vars['rows'] as $id => $row) {
     $vars['rows'][$id]->link = $argument->summary_name($row);
-    $vars['rows'][$id]->url = $argument->summary_link($row, $view->get_url());
+    $args = $view->args;
+    $args[$argument->position] = $argument->summary_argument($row);
+
+    $vars['rows'][$id]->url = url($view->get_url($args), $url_options);
     $vars['rows'][$id]->count = intval($row->{$argument->count_alias});
   }
 }

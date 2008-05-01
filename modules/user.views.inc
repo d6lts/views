@@ -265,6 +265,11 @@ function user_views_data() {
       'left_field' => 'rid',
       'field' => 'rid',
     ),
+    // needed for many to one helper sometimes
+    'users_roles' => array(
+      'left_field' => 'rid',
+      'field' => 'rid',
+    ),
     'node' => array(
       'left_table' => 'users_roles',
       'left_field' => 'rid',

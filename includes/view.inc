@@ -359,9 +359,11 @@ class view extends views_db_object {
         continue;
       }
 
-      $arg = isset($this->args[$position]) ? $this->args[$position] : ($this->args[$position] = $argument['handler']->get_default_argument());
+      $arg = isset($this->args[$position]) ? $this->args[$position] : $argument['handler']->get_default_argument();
 
       if (isset($arg)) {
+        // make sure default args get put back.
+        $this->args[$position] = $arg;
         // handle argument that is present.
         // @todo: Do we want to put in argument placeholders here
         // So that we can try to cache queries with arguments too?
@@ -402,6 +404,7 @@ class view extends views_db_object {
       }
       else {
         // determine default condition and handle.
+        $argument['handler']->position = $position;
         $status = $argument['handler']->default_action();
         break;
       }
@@ -826,7 +829,10 @@ class view extends views_db_object {
       }
     }
 
-    return implode('/', array_merge($pieces, $args));
+    if (!empty($args)) {
+      $pieces = array_merge($pieces, $args);
+    }
+    return implode('/', $pieces);
   }
 
   /**
