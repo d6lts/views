@@ -338,11 +338,28 @@ function comment_views_data() {
  * relevant to comments.
  */
 function comment_views_data_alter(&$data) {
+  // new comments
   $data['node']['new_comments'] = array(
     'title' => t('New comments'),
     'help' => t('The number of new comments on the node.'),
     'field' => array(
       'handler' => 'views_handler_field_node_new_comments',
+    ),
+  );
+
+  // Comment status of the node
+  $data['node']['comment'] = array(
+    'title' => t('Comment status'),
+    'help' => t('Whether or not comments are enabled or disabled on the node.'),
+    'field' => array(
+      'handler' => 'views_handler_field_node_comment',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_comment',
     ),
   );
 
@@ -817,6 +834,39 @@ class views_handler_argument_comment_user_uid extends views_handler_argument {
   }
 }
 
+/**
+ * Display node comment status
+ *
+ * @ingroup views_field_handlers
+ */
+class views_handler_field_node_comment extends views_handler_field {
+  function render($values) {
+    switch ($values->{$this->field_alias}) {
+      case COMMENT_NODE_DISABLED:
+      default:
+        return t('Disabled');
+      case COMMENT_NODE_READ_ONLY:
+        return t('Read only');
+      case COMMENT_NODE_READ_WRITE:
+        return t('Read/Write');
+    }
+  }
+}
+
+/**
+ * Filter based on comment node status
+ *
+ * @ingroup views_filter_handlers
+ */
+class views_handler_filter_node_comment extends views_handler_filter_in_operator {
+  function get_value_options() {
+    $this->value_options = array(
+      COMMENT_NODE_DISABLED => t('Disabled'),
+      COMMENT_NODE_READ_ONLY => t('Read only'),
+      COMMENT_NODE_READ_WRITE => t('Read/Write'),
+    );
+  }
+}
 
 /**
  * @}
