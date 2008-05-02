@@ -320,6 +320,10 @@ class views_handler_filter extends views_handler {
         exposed.'));
       }
     }
+
+    if (!empty($form_state['values']['options']['expose']['identifier']) && $form_state['values']['options']['expose']['identifier'] == 'value') {
+      form_error($form['expose']['identifier'], t('This identifier is not allowed.'));
+    }
   }
 
   /**
@@ -328,6 +332,9 @@ class views_handler_filter extends views_handler {
    */
   function expose_submit($form, &$form_state) { }
 
+  /**
+   * Provide default options for exposed filters.
+   */
   function expose_options() {
     $this->options['expose'] = array(
       'operator' => $this->options['id'] . '_oper',
@@ -338,6 +345,7 @@ class views_handler_filter extends views_handler {
       'optional' => TRUE,
     );
   }
+
   /**
    * Render our chunk of the exposed filter form when selecting
    *
@@ -381,7 +389,9 @@ class views_handler_filter extends views_handler {
         $form[$value]['#default_value'] = 'All';
       }
 
-      unset($form['value']);
+      if ($value != 'value') {
+        unset($form['value']);
+      }
     }
   }
 

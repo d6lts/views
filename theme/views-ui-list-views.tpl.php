@@ -1,8 +1,9 @@
 <?php
-// $Id*
+// $Id$
 /**
  * @file
  *
+ * Displays the list of views on the administration screen.
  */
 ?>
 <?php print $widgets; ?>
