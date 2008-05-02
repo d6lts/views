@@ -275,6 +275,7 @@ function views_ui_list_views_form(&$form_state) {
   $form['submit'] = array(
     '#name' => '', // so it won't in the $_GET args
     '#type' => 'submit',
+    '#id' => 'edit-views-apply',
     '#value' => t('Apply'),
   );
 
