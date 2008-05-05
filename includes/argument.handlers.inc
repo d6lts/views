@@ -173,7 +173,7 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->options['validate_type'],
     );
 
-    $validate_types = array('none' => t('<No validation>'));
+    $validate_types = array('none' => t('<Basic validation>'));
     $plugins = views_fetch_plugin_data('argument validator');
     foreach ($plugins as $id => $info) {
       $valid = TRUE;
@@ -203,30 +203,16 @@ class views_handler_argument extends views_handler {
       }
     }
 
-    // Only show validators if there are any to use.
-    if (count($validate_types) > 1) {
-      asort($validate_types);
-      $form['validate_type']['#options'] = $validate_types;
-      // Show this gadget if *anything* but 'none' is selected
-      $dependency = array_keys($validate_types);
-      // get rid of 'none';
-      array_shift($dependency);
+    asort($validate_types);
+    $form['validate_type']['#options'] = $validate_types;
+    // Show this gadget if *anything* but 'none' is selected
 
-      $form['validate_fail'] = array(
-        '#type' => 'select',
-        '#title' => t('Action to take if argument does not validate'),
-        '#default_value' => $this->options['validate_fail'],
-        '#options' => $validate_options,
-        '#process' => array('views_process_dependency'),
-        '#dependency' => array('edit-options-validate-type' => $dependency),
-      );
-    }
-    else {
-      $form['validate_type'] = array(
-        '#type' => 'value',
-        '#value' => 'none',
-      );
-    }
+    $form['validate_fail'] = array(
+      '#type' => 'select',
+      '#title' => t('Action to take if argument does not validate'),
+      '#default_value' => $this->options['validate_fail'],
+      '#options' => $validate_options,
+    );
   }
 
   /**
@@ -598,7 +584,7 @@ class views_handler_argument extends views_handler {
     $this->argument_validated = TRUE;
 
     if ($this->options['validate_type'] == 'none') {
-      return $this->argument_validated;
+      return $this->validate_argument_basic($arg);
     }
 
     $plugin = views_get_plugin('argument validator', $this->options['validate_type']);
@@ -607,8 +593,27 @@ class views_handler_argument extends views_handler {
       $this->argument_validated = $plugin->validate_argument($arg);
     }
 
-    // If the plugin isn't found, all arguments are valid.
-    return $this->argument_validated;
+    // If the plugin isn't found, fall back to the basic validation path:
+    return $this->validate_argument_basic($arg);
+  }
+
+  /**
+   * Provide a basic argument validation.
+   *
+   * This can be overridden for more complex types; the basic
+   * validator only checks to see if the argument is not NULL
+   * or is numeric if the definition says it's numeric.
+   */
+  function validate_argument_basic($arg) {
+    if (!isset($arg) || $arg === '') {
+      return FALSE;
+    }
+
+    if (isset($this->definition['numeric']) && !is_numeric($arg)) {
+      return FALSE;
+    }
+
+    return TRUE;
   }
 
   /**
