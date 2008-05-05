@@ -2152,7 +2152,7 @@ class views_plugin_display_attachment extends views_plugin_display {
         }
         $form['displays'] = array(
           '#type' => 'checkboxes',
-          '#description' => t('Attach before or after the parent display?'),
+          '#description' => t('Select which display or displays this should attach to.'),
           '#options' => $displays,
           '#default_value' => $this->get_option('displays'),
         );
