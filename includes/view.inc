@@ -1136,7 +1136,12 @@ class view extends views_db_object {
     $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after');
     foreach ($keys as $key) {
       if (isset($clone->$key)) {
-        $clone->$key = FALSE;
+        if (is_object($clone->$key)) {
+          unset($clone->$key);
+        }
+        else {
+          $clone->$key = FALSE;
+        }
       }
     }
 
