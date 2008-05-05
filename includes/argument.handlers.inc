@@ -112,6 +112,10 @@ class views_handler_argument extends views_handler {
       '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use "%1" for the first argument, "%2" for the second, etc.'),
     );
 
+    $form['clear_start'] = array(
+      '#value' => '<div class="clear-block">',
+    );
+
     $form['defaults_start'] = array(
       '#value' => '<div class="views-left-50">',
     );
@@ -127,7 +131,7 @@ class views_handler_argument extends views_handler {
     );
 
     $form['wildcard'] = array(
-      '#prefix' => '<div class="views-left-50">',
+      '#prefix' => '<div class="views-right-50">',
       // prefix and no suffix means these two items will be grouped together.
       '#type' => 'textfield',
       '#title' => t('Wildcard'),
@@ -135,6 +139,7 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->options['wildcard'],
       '#description' => t('If this value is received as an argument, the argument will be ignored; i.e, "all values"'),
     );
+
     $form['wildcard_substitution'] = array(
       '#suffix' => '</div>',
       '#type' => 'textfield',
@@ -142,6 +147,10 @@ class views_handler_argument extends views_handler {
       '#size' => 20,
       '#default_value' => $this->options['wildcard_substitution'],
       '#description' => t('The title to use for the wildcard in substitutions elsewhere.'),
+    );
+
+    $form['clear_stop'] = array(
+      '#value' => '</div>',
     );
 
     $options = array();
