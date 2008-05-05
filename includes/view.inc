@@ -587,17 +587,38 @@ class view extends views_db_object {
       // make count from subselect now
       $count_query = "SELECT COUNT(*) FROM ($query) AS count_alias";
 
-      if (!empty($this->pager['use_pager'])) {
-        $result = pager_query($query, $this->pager['items_per_page'], $this->pager['element'], $count_query, $args);
-        $this->total_rows = $GLOBALS['pager_total_items'][$this->pager['element']];
-      }
-      else if (!empty($this->pager['items_per_page'])) {
+      if (!empty($this->pager['items_per_page'])) {
+        // We no longer use pager_query() here because pager_query() does not
+        // support an offset. This is fine as we don't actually need pager
+        // query; we've already been doing most of what it does, and we
+        // just need to do a little more playing with globals.
+        $this->total_rows = db_result(db_query($count_query, $args));
+
+        if (!empty($this->pager['use_pager'])) {
+          // dump information about what we already know into the globals
+          global $pager_page_array, $pager_total, $pager_total_items;
+          // total rows in query
+          $pager_total_items[$this->pager['element']] = $this->total_rows;
+          // total pages
+          $pager_total[$this->pager['element']] = ceil($pager_total_items[$this->pager['element']] / $this->pager['items_per_page']);
+
+          // What page was requested:
+          $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
+
+          // If the requested page was within range. $this->pager['current_page']
+          // defaults to 0 so we don't need to set it in an out-of-range condition.
+          if (!empty($pager_page_array[$this->pager['element']])) {
+            $page = intval($pager_page_array[$this->pager['element']]);
+            if ($page > 0 && $page < $pager_total[$this->pager['element']] - 1) {
+              $this->pager['current_page'] = $page;
+            }
+          }
+          $pager_page_array[$this->pager['element']] = $this->pager['current_page'];
+        }
+
         $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
         $result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
 
-        // Rewrite and run the count query so we can store how many items this would have
-        // matched.
-        $this->total_rows = db_result(db_query($count_query, $args));
       }
       else {
         $result = db_query($query, $args);
