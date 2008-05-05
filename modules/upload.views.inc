@@ -44,27 +44,6 @@ function upload_views_data() {
     ),
   );
 
-  $data['upload']['fid'] = array(
-    'title' => t('Attached files'),
-    'help' => t('All files attached to a node with upload.module.'),
-    'field' => array(
-      'handler' => 'views_handler_field_upload_fid',
-    ),
-    'filter' => array(
-      'handler' => 'views_handler_filter_upload_fid',
-      'title' => t('Has attached files'),
-      'help' => t('Only display items with attached files. This can cause duplicates if there are multiple attached files.'),
-    ),
-    'relationship' => array(
-      'title' => t('Uploaded files'),
-      'help' => t('Add a relationship to gain access to more file data for files uploaded by upload.module.'),
-      'base' => 'files',
-      'field' => 'fid',
-      'handler' => 'views_handler_relationship',
-      'label' => t('Files'),
-    ),
-  );
-
   $data['upload']['description'] = array(
     'title' => t('Description'),
     'help' => t('The description of the uploaded file.'),
@@ -117,6 +96,32 @@ function upload_views_data() {
   return $data;
 }
 
+function upload_views_data_alter(&$data) {
+  $data['node']['upload_fid'] = array(
+    'title' => t('Attached files'),
+    'help' => t('All files attached to a node with upload.module.'),
+    'real field' => 'vid',
+    'field' => array(
+      'handler' => 'views_handler_field_upload_fid',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_upload_fid',
+      'title' => t('Has attached files'),
+      'help' => t('Only display items with attached files. This can cause duplicates if there are multiple attached files.'),
+    ),
+    'relationship' => array(
+      'title' => t('Attached files'),
+      'help' => t('Add a relationship to gain access to more file data for files uploaded by upload.module. Note that this relationship will cause duplicate nodes if there are multiple files attached to the node.'),
+      'relationship table' => 'upload',
+      'relationship field' => 'fid',
+      'base' => 'files',
+      'field' => 'fid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('Files'),
+    ),
+  );
+}
+
 /**
  * Field handler to provide a list of roles.
  *
@@ -125,7 +130,6 @@ function upload_views_data() {
 class views_handler_field_upload_fid extends views_handler_field_prerender_list {
   function construct() {
     parent::construct();
-    $this->additional_fields['nid'] = array('table' => 'node', 'field' => 'nid');
   }
 
   function options_form(&$form, &$form_state) {
@@ -143,30 +147,24 @@ class views_handler_field_upload_fid extends views_handler_field_prerender_list 
     );
   }
 
-
-  function query() {
-    $this->add_additional_fields();
-    $this->field_alias = $this->aliases['nid'];
-  }
-
   function pre_render($values) {
-    $nids = array();
+    $vids = array();
     $this->items = array();
 
     $data = array();
     foreach ($values as $result) {
-      $nids[] = $result->{$this->aliases['nid']};
+      $vids[] = $result->{$this->field_alias};
     }
 
-    if ($nids) {
+    if ($vids) {
       // Support "only listed files" option.
       $where = '';
       if (!empty($this->options['only_listed'])) {
         $where = " AND u.list <> 0";
       }
-      $result = db_query("SELECT u.nid, u.fid, f.filepath, u.description FROM {upload} u LEFT JOIN {files} f ON f.fid = u.fid WHERE u.nid IN (" . implode(', ', $nids) . ")$where ORDER BY u.weight, u.description");
+      $result = db_query("SELECT u.vid, u.fid, f.filepath, u.description FROM {upload} u LEFT JOIN {files} f ON f.fid = u.fid WHERE u.vid IN (" . implode(', ', $vids) . ")$where ORDER BY u.weight, u.description");
       while ($file = db_fetch_object($result)) {
-        $this->items[$file->nid][$file->fid] = $this->render_link(check_plain($file->description), $file);
+        $this->items[$file->vid][$file->fid] = $this->render_link(check_plain($file->description), $file);
       }
     }
   }
@@ -212,12 +210,14 @@ class views_handler_field_upload_description extends views_handler_field_prerend
       return;
     }
 
-    $nids = array();
+    $fids = array();
     $this->items = array();
 
     $data = array();
     foreach ($values as $result) {
-      $fids[] = $result->{$this->aliases['fid']};
+      if ($result->{$this->aliases['fid']}) {
+        $fids[] = $result->{$this->aliases['fid']};
+      }
     }
 
     if ($fids) {
@@ -239,7 +239,7 @@ class views_handler_field_upload_description extends views_handler_field_prerend
    * Data should be made XSS safe prior to calling this function.
    */
   function render_link($data, $value) {
-    if (!empty($this->options['link_to_file'])) {
+    if (!empty($this->options['link_to_file']) && $value->{$this->aliases['fid']}) {
       $values = $this->items[$value->{$this->aliases['fid']}];
       return l($data, file_create_url($values->filepath), array('html' => TRUE));
     }
@@ -262,7 +262,7 @@ class views_handler_filter_upload_fid extends views_handler_filter_boolean_opera
 
   function query() {
     $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . (empty($this->value) ? 'IS' : 'IS NOT') . " NULL");
+    $this->query->add_where($this->options['group'], "(SELECT COUNT(*) FROM {upload} u WHERE u.vid = $this->table_alias.$this->real_field) " . (empty($this->value) ? '=' : '<>') . " 0");
   }
 }
 

@@ -17,6 +17,20 @@
  */
 class views_handler_relationship extends views_handler {
   /**
+   * Init handler to let relationships live on tables other than
+   * the table they operate on.
+   */
+  function init(&$view, $options) {
+    parent::init($view, $options);
+    if (isset($this->definition['relationship table'])) {
+      $this->table = $this->definition['relationship table'];
+    }
+    if (isset($this->definition['relationship field'])) {
+      $this->field = $this->definition['relationship field'];
+    }
+  }
+
+  /**
    * Get this field's label.
    */
   function label() {
@@ -67,7 +81,7 @@ class views_handler_relationship extends views_handler {
     $def['table'] = $this->definition['base'];
     $def['field'] = $base_field;
     $def['left_table'] = $this->table;
-    $def['left_field'] = $this->real_field;
+    $def['left_field'] = $this->field;
     if (!empty($this->options['required'])) {
       $def['type'] = 'INNER';
     }
