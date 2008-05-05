@@ -678,6 +678,8 @@ class view extends views_db_object {
       }
     }
 
+    views_set_current_view($this);
+
     // Let modules modify the view just prior to executing it.
     foreach (module_implements('views_pre_view') as $module) {
       $function = $module . '_views_pre_view';
@@ -707,6 +709,8 @@ class view extends views_db_object {
         return FALSE;
       }
     }
+
+    views_set_current_view($this);
 
     // Prepare the view with the information we have.
     $this->set_arguments($args);
