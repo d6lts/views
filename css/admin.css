@@ -545,7 +545,7 @@ html.js .views-hidden {
   padding-right: 3px;
 }
 
-.views-edit-view input,
-.views-edit-view textarea {
+.views-tabset input,
+.views-tabset textarea {
   max-width: 95%;
 }
