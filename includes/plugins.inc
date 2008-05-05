@@ -1655,7 +1655,7 @@ class views_plugin_display_page extends views_plugin_display {
           $items[$path]['type'] = MENU_LOCAL_TASK;
           break;
         case 'default tab':
-          $items[$path]['type'] = MENU_LOCAL_TASK;
+          $items[$path]['type'] = MENU_DEFAULT_LOCAL_TASK;
           break;
       }
 
