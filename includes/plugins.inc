@@ -132,9 +132,10 @@ function views_views_plugins() {
       'fields' => array(
         'title' => t('Fields'),
         'help' => t('Displays the fields with an optional template.'),
-        'handler' => 'views_plugin_row',
+        'handler' => 'views_plugin_row_fields',
         'theme' => 'views_view_fields',
         'uses fields' => TRUE,
+        'uses options' => TRUE,
         'type' => 'normal',
       ),
     ),
@@ -2984,6 +2985,61 @@ class views_plugin_row extends views_plugin {
    */
   function render($row) {
     return theme($this->theme_functions(), $this->view, $this->options, $row);
+  }
+}
+
+/**
+ * The basic 'fields' row plugin
+ *
+ * This displays fields one after another, giving options for inline
+ * or not.
+ */
+class views_plugin_row_fields extends views_plugin_row {
+  function options(&$options) {
+    $options['inline'] = array();
+    $options['separator'] = '';
+  }
+
+  /**
+   * Provide a form for setting options.
+   */
+  function options_form(&$form, &$form_state) {
+    $fields = $this->display->handler->get_option('fields');
+    $options = array();
+    foreach ($fields as $field => $info) {
+      $handler = views_get_handler($info['table'], $info['field'], 'field');
+      if ($handler) {
+        $options[$field] = $handler->ui_name();
+      }
+    }
+
+    if (empty($this->options['inline'])) {
+      $this->options['inline'] = array();
+    }
+
+    $form['inline'] = array(
+      '#type' => 'checkboxes',
+      '#title' => t('Inline fields'),
+      '#options' => $options,
+      '#default_value' => $this->options['inline'],
+      '#description' => t('Inline fields will be displayed next to each other rather than one after another.'),
+    );
+
+    $form['separator'] = array(
+      '#title' => t('Separator'),
+      '#type' => 'textfield',
+      '#size' => 10,
+      '#default_value' => isset($this->options['separator']) ? $this->options['separator'] : '',
+      '#description' => t('The separator may be placed between inline fields to keep them from squishing up next to each other. You can use HTML in this field.'),
+    );
+  }
+
+  /**
+   * Perform any necessary changes to the form values prior to storage.
+   * There is no need for this function to actually store the data.
+   */
+  function options_submit($form, &$form_state) {
+    $form_state['values']['row_options']['inline'] = array_filter($form_state['values']['row_options']['inline']);
   }
 }
 

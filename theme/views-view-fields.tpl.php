@@ -11,18 +11,25 @@
  *   - $field->class: The safe class id to use.
  *   - $field->handler: The Views field handler object controlling this field. Do not use
  *     var_export to dump this object, as it can't handle the recursion.
+ *   - $field->inline: Whether or not the field should be inline.
+ *   - $field->inline_html: either div or span based on the above flag.
+ *   - $field->separator: an optional separator that may appear before a field.
  * - $row: The raw result object from the query, with all data it fetched.
  *
  * @ingroup views_templates
  */
 ?>
 <?php foreach ($fields as $id => $field): ?>
-  <div class="views-field-<?php print $field->class; ?>">
+  <?php if (!empty($field->separator)): ?>
+    <?php print $field->separator; ?>
+  <?php endif; ?>
+
+  <<?php print $field->inline_html;?> class="views-field-<?php print $field->class; ?>">
     <?php if ($field->label): ?>
       <label class="views-label-<?php print $field->class; ?>">
         <?php print $field->label; ?>:
       </label>
     <?php endif; ?>
       <span class="field-content"><?php print $field->content; ?></span>
-  </div>
+  </<?php print $field->inline_html;?>>
 <?php endforeach; ?>
