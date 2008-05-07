@@ -80,19 +80,39 @@ function search_views_data() {
     ),
   );
 
-  // search node links
-  $data['search_node_links']['from'] = array(
-    'title' => t('Links From'),
-    'help' => t('Nodes that link from the node'),
-    'argument' => array(
-      'handler' => 'views_handler_argument_search_node_links_from',
+  // Search node links: forward links.
+  $data['search_node_links_from']['table']['group'] = t('Search');
+  $data['search_node_links_from']['table']['join'] = array(
+    'node' => array(
+      'arguments' => array('search_node_links', 'node', 'nid', 'nid', NULL, 'INNER'),
     ),
   );
-  $data['search_node_links']['to'] = array(
-    'title' => t('Links To'),
-    'help' => t('Nodes that link to the node'),
+  $data['search_node_links_from']['sid'] = array(
+    'title' => t('Links from'),
+    'help' => t('Nodes that link from the node.'),
     'argument' => array(
-      'handler' => 'views_handler_argument_search_node_links_to',
+      'handler' => 'views_handler_argument_node_nid',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_equality',
+    ),
+  );
+
+  // Search node links: backlinks.
+  $data['search_node_links_to']['table']['group'] = t('Search');
+  $data['search_node_links_to']['table']['join'] = array(
+    'node' => array(
+      'arguments' => array('search_node_links', 'node', 'nid', 'sid', NULL, 'INNER'),
+    ),
+  );
+  $data['search_node_links_to']['nid'] = array(
+    'title' => t('Links to'),
+    'help' => t('Nodes that link to the node.'),
+    'argument' => array(
+      'handler' => 'views_handler_argument_node_nid',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_equality',
     ),
   );
 

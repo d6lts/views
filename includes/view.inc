@@ -1308,19 +1308,6 @@ class views_db_object {
   }
 
   /**
-   * Generate PHP code for a single field.
-   */
-  function _export_field($field) {
-    if (is_array($this->$field) && empty($this->$field)) {
-      return 'array()';
-    }
-    if (is_bool($this->$field)) {
-      return $this->$field ? 'TRUE' : 'FALSE';
-    }
-    return var_export($this->$field, TRUE);
-  }
-
-  /**
    * Export a loaded row, such as an argument, field or the view itself to PHP code.
    *
    * @param $identifier
@@ -1353,7 +1340,7 @@ class views_db_object {
           $this->$field = unserialize($this->$field);
         }
       }
-      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . $this->_export_field($field) . ";\n";
+      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($this->$field) . ";\n";
     }
     return $output;
   }
