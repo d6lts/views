@@ -1824,7 +1824,7 @@ function views_ui_config_type_form(&$form_state) {
   }
   $display = &$view->display[$display_id];
   $form['#title'] = check_plain($display->display_title) . ': ';
-  $form['#title'] .= t('Configure @type', array('@type' => strtolower($types[$type]['title'])));
+  $form['#title'] .= t('Configure @type', array('@type' => $types[$type]['ltitle']));
   $form['#section'] = $display_id . 'config-item';
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
@@ -1874,7 +1874,7 @@ function views_ui_rearrange_form(&$form_state) {
   }
   $display = &$view->display[$display_id];
   $form['#title'] = check_plain($display->display_title) . ': ';
-  $form['#title'] .= t('Rearrange @type', array('@type' => strtolower($types[$type]['title'])));
+  $form['#title'] .= t('Rearrange @type', array('@type' => $types[$type]['ltitle']));
   $form['#section'] = $display_id . 'rearrange-item';
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
@@ -2015,7 +2015,7 @@ function views_ui_add_item_form(&$form_state) {
 
   $types = views_object_types();
   $form['#title'] = check_plain($display->display_title) . ': ';
-  $form['#title'] .= t('Add @type', array('@type' => strtolower($types[$type]['title'])));
+  $form['#title'] .= t('Add @type', array('@type' => $types[$type]['ltitle']));
   $form['#section'] = $display_id . 'add-item';
 
   // Figure out all the base tables allowed based upon what the relationships provide.
@@ -2065,7 +2065,7 @@ function views_ui_add_item_form(&$form_state) {
   }
   else {
     $form['markup'] = array(
-      '#value' => '<div class="form-item">' . t('There are no @types available to add.', array('@types' =>  strtolower($types[$type]['title']))) . '</div>',
+      '#value' => '<div class="form-item">' . t('There are no @types available to add.', array('@types' =>  $types[$type]['ltitle'])) . '</div>',
     );
   }
   views_ui_standard_form_buttons($form, $form_state, 'views_ui_add_item_form', t('Add'));
@@ -2180,7 +2180,7 @@ function views_ui_config_item_form(&$form_state) {
       }
 
       $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-      $form['#title'] .= t('Configure @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
+      $form['#title'] .= t('Configure @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
 
       $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
@@ -2286,7 +2286,7 @@ function views_ui_config_item_extra_form(&$form_state) {
       $types = views_object_types();
 
       $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-      $form['#title'] .= t('Configure extra settings for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
+      $form['#title'] .= t('Configure extra settings for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
 
       $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
@@ -2351,7 +2351,7 @@ function views_ui_change_style_form(&$form_state) {
     }
     $handler->init($view, $item);
     $types = views_object_types();
-    $form['#title'] = t('Change summary style for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
+    $form['#title'] = t('Change summary style for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-' . $id .'-style-plugin';
 
@@ -2422,7 +2422,7 @@ function views_ui_config_style_form(&$form_state) {
     $types = views_object_types();
 
     $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-    $form['#title'] .= t('Configure summary style for @type "@item"', array('@type' => strtolower($types[$type]['stitle']), '@item' => $handler->ui_name()));
+    $form['#title'] .= t('Configure summary style for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-style-options';
 
