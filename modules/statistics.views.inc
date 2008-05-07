@@ -18,32 +18,30 @@
 function statistics_views_data() {
   // Basic table information.
 
-  // Define the base group of this table. Fields that don't
-  // have a group defined will go into this field by default.
+  // ----------------------------------------------------------------
+  // node_counter table
+
   $data['node_counter']['table']['group']  = t('Node statistics');
 
-  // For other base tables, explain how we join
   $data['node_counter']['table']['join'] = array(
+    // ...to the node table
     'node' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('node_counter', 'node', 'nid', 'nid'),
-     ),
+      'left_field' => 'nid',
+      'field' => 'nid',
+    ),
   );
-
-  // ----------------------------------------------------------------
-  // Fields
 
   // totalcount
   $data['node_counter']['totalcount'] = array(
-    'title' => t('Total views'), // The item it appears as on the UI,
-    'help' => t('The total number of times the node has been viewed.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Total views'),
+    'help' => t('The total number of times the node has been viewed.'),
+
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
      ),
     'filter' => array(
-      'handler' => 'views_handler_filter_gtlt',
+      'handler' => 'views_handler_filter_numeric',
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
@@ -52,15 +50,15 @@ function statistics_views_data() {
 
   // daycount
   $data['node_counter']['daycount'] = array(
-    'title' => t('Views today'), // The item it appears as on the UI,
-    'help' => t('The total number of times the node has been viewed today.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Views today'),
+    'help' => t('The total number of times the node has been viewed today.'),
+
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
      ),
     'filter' => array(
-      'handler' => 'views_handler_filter_gtlt',
+      'handler' => 'views_handler_filter_numeric',
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
@@ -69,9 +67,9 @@ function statistics_views_data() {
 
   // timestamp
   $data['node_counter']['timestamp'] = array(
-    'title' => t('Most recent view'), // The item it appears as on the UI,
-    'help' => t('The most recent time the node has been viewed.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Most recent view'),
+    'help' => t('The most recent time the node has been viewed.'),
+
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
@@ -82,8 +80,9 @@ function statistics_views_data() {
   );
 
 
-  // Define the base group of this table. Fields that don't
-  // have a group defined will go into this field by default.
+  // ----------------------------------------------------------------
+  // accesslog table
+
   $data['accesslog']['table']['group']  = t('Access log');
 
   // Advertise this table as a possible base table
@@ -97,98 +96,127 @@ function statistics_views_data() {
   // For other base tables, explain how we join
   $data['accesslog']['table']['join'] = array(
     'users' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('accesslog', 'users', 'uid', 'uid'),
+      'field' => 'uid',
+      'left_field' => 'uid',
      ),
   );
-  $data['users']['table']['join'] = array(
-    'accesslog' => array(
-      'handler' => 'views_join', // this is actually optional
-      'arguments' => array('users', 'accesslog', 'uid', 'uid'),
-     ),
-  );
-
-
-  // ----------------------------------------------------------------
-  // Fields
 
   // session id
   $data['accesslog']['sid'] = array(
-    'title' => t('Session ID'), // The item it appears as on the UI,
-    'help' => t('Browser session ID of user that visited page.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Session ID'),
+    'help' => t('Browser session ID of user that visited page.'),
+
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
+     ),
+     'filter' => array(
+      'handler' => 'views_handler_filter_string',
+     ),
+     'argument' => array(
+       'handler' => 'views_handler_argument_string',
+     ),
+     'sort' => array(
+      'handler' => 'views_handler_sort',
      ),
   );
 
   // title
   $data['accesslog']['title'] = array(
-    'title' => t('Page title'), // The item it appears as on the UI,
-    'help' => t('Title of page visited.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Page title'),
+    'help' => t('Title of page visited.'),
+
     'field' => array(
       'handler' => 'views_handler_field_accesslog_path',
       'click sortable' => TRUE,
+     ),
+     'filter' => array(
+      'handler' => 'views_handler_filter_string',
+     ),
+     'sort' => array(
+      'handler' => 'views_handler_sort',
+     ),
+     'argument' => array(
+      'handler' => 'views_handler_argument_string',
      ),
   );
 
   // path
   $data['accesslog']['path'] = array(
-    'title' => t('Path'), // The item it appears as on the UI,
-    'help' => t('Internal path to page visited (relative to Drupal root.)'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Path'),
+    'help' => t('Internal path to page visited (relative to Drupal root.)'),
+
     'field' => array(
       'handler' => 'views_handler_field_accesslog_path',
       'click sortable' => TRUE,
      ),
+     'filter' => array(
+       'handler' => 'views_handler_filter_string',
+     ),
+     'sort' => array(
+       'handler' => 'views_handler_sort',
+     ),
+     //No argument here.  Can't send forward slashes as arguments.
+     //Can be worked around by node ID.
+     //(but what about aliases?)
   );
 
   // referrer
   $data['accesslog']['url'] = array(
-    'title' => t('Referrer'), // The item it appears as on the UI,
-    'help' => t('Referrer URI.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Referrer'),
+    'help' => t('Referrer URI.'),
     'field' => array(
       'handler' => 'views_handler_field_url',
       'click sortable' => TRUE,
      ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
   );
 
   // hostname
   $data['accesslog']['hostname'] = array(
-    'title' => t('Hostname'), // The item it appears as on the UI,
-    'help' => t('Hostname of user that visited the page.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Hostname'),
+    'help' => t('Hostname of user that visited the page.'),
     'field' => array(
       'handler' => 'views_handler_field',
       'click sortable' => TRUE,
      ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
   );
 
-  // hostname
+  // user
   $data['accesslog']['uid'] = array(
-    'title' => t('User'), // The item it appears as on the UI,
-    'help' => t('The user who visited the site.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
-    'field' => array(
-      'handler' => 'views_handler_field_uid',
-      'click sortable' => TRUE,
+    'title' => t('User'),
+    'help' => t('The user who visited the site.'),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'users',
+      'field' => 'uid',
      ),
   );
 
   // timer
   $data['accesslog']['timer'] = array(
-    'title' => t('Timer'), // The item it appears as on the UI,
-    'help' => t('Time in milliseconds that the page took to load.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Timer'),
+    'help' => t('Time in milliseconds that the page took to load.'),
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_gtlt',
+      'handler' => 'views_handler_filter_numeric',
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
@@ -197,15 +225,17 @@ function statistics_views_data() {
 
   // timestamp
   $data['accesslog']['timestamp'] = array(
-    'title' => t('Timestamp'), // The item it appears as on the UI,
-    'help' => t('Timestamp of when the page was visited.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Timestamp'),
+    'help' => t('Timestamp of when the page was visited.'),
     'field' => array(
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
     ),
   );
 
@@ -224,7 +254,7 @@ class views_handler_field_accesslog_path extends views_handler_field {
    */
   function init(&$view, &$data) {
     parent::init($view, $data);
-    if (isset($data['display_as_link']) && $data['field'] != 'path') {
+    if (isset($data['display_as_link'])) {
       $this->additional_fields[] = 'path';
     }
   }
@@ -249,51 +279,10 @@ class views_handler_field_accesslog_path extends views_handler_field {
   function render($values) {
     $title = check_plain($values->{$this->field_alias});
     if (!empty($this->options['display_as_link'])) {
-      return l($title, $values->accesslog_path, array('html' => TRUE));
+      return l($title, $values->{$this->aliases['path']}, array('html' => TRUE));
     }
     else {
       return $title;
-    }
-  }
-}
-
-
-/**
- * Field handler to provide simple renderer that allows using a themed user link
- *
- * @ingroup views_field_handlers
- */
-class views_handler_field_uid extends views_handler_field {
-  function init(&$view, &$data) {
-    parent::init($view, $data);
-    if (!empty($this->options['link_to_user'])) {
-      $this->additional_fields['name'] = array('table' => 'users', 'field' => 'name');
-    }
-  }
-
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_user'] = TRUE;
-  }
-
-  /**
-   * Provide link to node option
-   */
-  function options_form(&$form, &$form_state) {
-    $form['link_to_user'] = array(
-      '#title' => t('Link this field to its user'),
-      '#type' => 'checkbox',
-      '#default_value' => $this->options['link_to_user'],
-    );
-  }
-
-  function render($values) {
-    if (!empty($this->options['link_to_user'])) {
-      $account = (object) array('uid' => $values->{$this->field_alias}, 'name' => $values->{$this->aliases['name']});
-      return theme('username', $account);
-    }
-    else {
-      return $values->{$this->field_alias};
     }
   }
 }
