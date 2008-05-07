@@ -1250,7 +1250,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
   }
 
   function op_simple($field) {
-    $value = strtotime($this->value['value'], 0);
+    $value = intval(strtotime($this->value['value'], 0));
     if ($this->value['type'] == 'offset') {
       $value = '***CURRENT_TIME***' . sprintf('%+d', $value); // keep sign
     }
