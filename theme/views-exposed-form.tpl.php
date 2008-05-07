@@ -41,6 +41,8 @@
         </div>
       </div>
     <?php endforeach; ?>
+    <div class="views-exposed-widget">
+      <?php print $button ?>
+    </div>
   </div>
-  <?php print $button ?>
 </div>

@@ -4,6 +4,10 @@
   padding: .5em 1em 0 0;
 }
 
+.views-exposed-form .views-exposed-widget .form-submit {
+  margin-top: 1.6em;
+}
+
 .views-exposed-form .form-item,
 .views-exposed-form .form-submit {
   margin-top: 0;
