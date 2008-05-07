@@ -176,7 +176,7 @@ function user_views_data() {
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator',
-      'label' => t('Published'),
+      'label' => t('Active'),
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
