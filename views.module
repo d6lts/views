@@ -249,8 +249,35 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
           $items = array_merge($items, $result);
         }
       }
+
+      // block.module has a delta length limit of 32, but our deltas can
+      // unfortunately be longer because view names can be 32 and display IDs
+      // can also be 32. So for very long deltas, change to md5 hashes.
+      $hashes = array();
+
+      // get the keys because we're modifying the array and we don't want to
+      // confuse PHP too much.
+      $keys = array_keys($items);
+      foreach ($keys as $delta) {
+        if (strlen($delta) >= 32) {
+          $hash = md5($delta);
+          $hashes[$hash] = $delta;
+          $items[$hash] = $items[$delta];
+          unset($items[$delta]);
+        }
+      }
+
+      variable_set('views_block_hashes', $hashes);
       return $items;
     case 'view':
+      // if this is 32, this should be an md5 hash.
+      if (strlen($delta) == 32) {
+        $hashes = variable_get('views_block_hashes', array());
+        if (!empty($hashes[$delta])) {
+          $delta = $hashes[$delta];
+        }
+      }
+
       list($name, $display_id) = explode('-', $delta);
       // Load the view
       if ($view = views_get_view($name)) {
