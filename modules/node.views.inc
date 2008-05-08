@@ -1316,7 +1316,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
 }
 
 /**
- * Provide PHP code to validate whether or not an argument is ok.
+ * Validate whether an argument is an acceptable node.
  */
 class views_plugin_argument_validate_node extends views_plugin_argument_validate {
   var $option_name = 'validate_argument_node_type';
@@ -1357,7 +1357,7 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
     }
 
     // Save the title() handlers some work.
-    $this->argument->validated_title = $node->title;
+    $this->argument->validated_title = check_plain($node->title);
 
     $types = array_filter($this->argument->options[$this->option_name]);
     if (empty($types)) {

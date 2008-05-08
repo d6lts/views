@@ -580,21 +580,18 @@ class views_handler_argument extends views_handler {
       return $this->argument_validated;
     }
 
-    // Assume valid unless told otherwise:
-    $this->argument_validated = TRUE;
-
     if ($this->options['validate_type'] == 'none') {
-      return $this->validate_argument_basic($arg);
+      return $this->argument_validated = $this->validate_argument_basic($arg);
     }
 
     $plugin = views_get_plugin('argument validator', $this->options['validate_type']);
     if ($plugin) {
       $plugin->init($this->view, $this, $this->options['validate_type']);
-      $this->argument_validated = $plugin->validate_argument($arg);
+      return $this->argument_validated = $plugin->validate_argument($arg);
     }
 
     // If the plugin isn't found, fall back to the basic validation path:
-    return $this->validate_argument_basic($arg);
+    return $this->argument_validated = $this->validate_argument_basic($arg);
   }
 
   /**

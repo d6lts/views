@@ -3231,7 +3231,7 @@ class views_plugin_argument_validate_php extends views_plugin_argument_validate 
       '#type' => 'textarea',
       '#title' => t('PHP validate code'),
       '#default_value' => $this->get_argument(),
-      '#description' => t('Enter PHP code that returns a value to use for this argument. Do not use &lt;?php ?&gt;. The argument to validate will be "$argument" and the view will be "$view"'),
+      '#description' => t('Enter PHP code that returns a value to use for this argument. Do not use &lt;?php ?&gt;. The argument to validate will be "$argument" and the view will be "$view". You may change the argument by setting "$handler->argument".'),
       '#process' => array('views_process_dependency'),
       '#dependency' => array('edit-options-validate-type' => array($this->id)),
     );
@@ -3250,6 +3250,8 @@ class views_plugin_argument_validate_php extends views_plugin_argument_validate 
   function validate_argument($argument) {
     // set up variables to make it easier to reference during the argument.
     $view = &$view;
+    $handler = &$this->argument;
+
     ob_start();
     $result = eval($this->argument->options[$this->option_name]);
     ob_end_clean();
