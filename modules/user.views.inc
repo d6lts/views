@@ -250,7 +250,7 @@ function user_views_data() {
       'handler' => 'views_handler_argument_users_roles_rid',
       'name table' => 'role',
       'name field' => 'name',
-      'empty name field' => t('No role'),
+      'empty field name' => t('No role'),
       'numeric' => TRUE,
     ),
   );
@@ -590,6 +590,9 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     }
 
     if (!$args) {
+      if ($uids) {
+        $form_state['values']['options']['value'] = $uids;
+      }
       return;
     }
 

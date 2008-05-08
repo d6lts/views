@@ -362,6 +362,7 @@ class view extends views_db_object {
       $arg = isset($this->args[$position]) ? $this->args[$position] : $argument['handler']->get_default_argument();
       $argument['handler']->position = $position;
 
+
       if (isset($arg)) {
         // make sure default args get put back.
         $this->args[$position] = $arg;

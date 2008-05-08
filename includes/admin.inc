@@ -174,6 +174,13 @@ function template_preprocess_views_ui_list_views(&$vars) {
 
   views_add_css('views-list');
   $vars['views'] = $i;
+
+  $getting_started = theme('advanced_help_topic', 'views', 'getting-started', 'title');
+  if (!$getting_started) {
+    $getting_started = t('Install the advanced help module for the getting started');
+  }
+
+  $vars['help'] = t('Not sure what to do? Try the "!getting-started" page.', array('!getting-started' => $getting_started));
 }
 
 /**
@@ -315,7 +322,7 @@ function views_ui_preview($js, $view) {
 
   $output = drupal_build_form('views_ui_preview_form', $form_state);
   $args = array();
-  if (!empty($form_state['view_args'])) {
+  if (isset($form_state['view_args']) && $form_state['view_args'] !== '') {
     $args = explode('/', $form_state['view_args']);
   }
 

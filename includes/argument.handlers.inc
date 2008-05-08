@@ -531,8 +531,8 @@ class views_handler_argument extends views_handler {
    */
   function summary_name($data) {
     $value = $data->{$this->name_alias};
-    if (empty($value) && !empty($this->definition['empty name field'])) {
-      $value = $this->definition['empty name field'];
+    if (empty($value) && !empty($this->definition['empty field name'])) {
+      $value = $this->definition['empty field name'];
     }
     return check_plain($value);
   }
@@ -923,6 +923,12 @@ class views_handler_argument_many_to_one extends views_handler_argument {
   }
 
   function query() {
+    if (empty($this->argument)) {
+      parent::ensure_my_table();
+      $this->query->add_where(0, "$this->table_alias.$this->real_field IS NULL");
+      return;
+    }
+
     if (!empty($this->options['break_phrase'])) {
       views_break_phrase($this->argument, $this);
     }

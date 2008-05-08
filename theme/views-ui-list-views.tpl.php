@@ -6,6 +6,7 @@
  * Displays the list of views on the administration screen.
  */
 ?>
+<p><?php print $help; ?></p>
 <?php print $widgets; ?>
 <?php foreach ($views as $view): ?>
   <table class="views-entry">
