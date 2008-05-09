@@ -27,22 +27,26 @@
       <?php if ($default): ?>
         <div class="views-category">
           <div class="views-category-title"><?php print t('View settings'); ?></div>
-          <div class="<?php $details_class; if (!empty($details_changed)) { print ' changed'; }?>">
-            <?php print $details ?>
+          <div class="views-category-content">
+            <div class="<?php $details_class; if (!empty($details_changed)) { print ' changed'; }?>">
+              <?php print $details ?>
+            </div>
           </div>
         </div>
       <?php endif; ?>
 
       <?php foreach ($categories as $category_id => $category): ?>
         <div class="views-category">
-        <div class="views-category-title views-category-<?php print $category_id; ?>">
-          <?php print $category['title']; ?>
-        </div>
-        <?php foreach ($category['data'] as $data): ?>
-          <div class="<?php print $data['class']; if (!empty($data['overridden'])) { print ' overridden'; } if (!empty($data['changed'])) { print ' changed'; }?>">
-            <?php print $data['links'] . $data['content'] ?>
+          <div class="views-category-title views-category-<?php print $category_id; ?>">
+            <?php print $category['title']; ?>
           </div>
-        <?php endforeach; ?>
+          <div class="views-category-content">
+            <?php foreach ($category['data'] as $data): ?>
+              <div class="<?php print $data['class']; if (!empty($data['overridden'])) { print ' overridden'; } if (!empty($data['changed'])) { print ' changed'; }?>">
+                <?php print $data['links'] . $data['content'] ?>
+              </div>
+            <?php endforeach; ?>
+          </div>
         </div>
       <?php endforeach; ?>
     </div>
