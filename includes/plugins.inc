@@ -1958,7 +1958,12 @@ class views_plugin_display_block extends views_plugin_display {
       if (empty($desc)) {
         $desc = $this->view->name;
       }
-      return array($delta => array('info' => $desc, 'cache' => BLOCK_NO_CACHE));
+      return array(
+        $delta => array(
+          'info' => $desc,
+          'cache' => $this->get_cache_type()
+        )
+      );
     }
   }
 
@@ -2000,6 +2005,45 @@ class views_plugin_display_block extends views_plugin_display {
       'title' => t('Admin'),
       'value' => $block_description,
     );
+
+    $cache_type = $this->get_option('block_caching');
+    if (empty($cache_type)) {
+      $cache_type = BLOCK_NO_CACHE;
+    }
+
+    $types = $this->block_caching_modes();
+    $options['block_caching'] = array(
+      'category' => 'block',
+      'title' => t('Caching'),
+      'value' => $types[$this->get_cache_type()],
+    );
+  }
+
+  /**
+   * Provide a list of core's block caching modes.
+   */
+  function block_caching_modes() {
+    return array(
+      BLOCK_NO_CACHE => t('Do not cache'),
+      BLOCK_CACHE_GLOBAL => t('Cache once for everything (global)'),
+      BLOCK_CACHE_PER_PAGE => t('Per page'),
+      BLOCK_CACHE_PER_ROLE => t('Per role'),
+      BLOCK_CACHE_PER_ROLE | BLOCK_CACHE_PER_PAGE => t('Per role per page'),
+      BLOCK_CACHE_PER_USER => t('Per user'),
+      BLOCK_CACHE_PER_USER | BLOCK_CACHE_PER_PAGE => t('Per user per page'),
+    );
+  }
+
+  /**
+   * Provide a single method to figure caching type, keeping a sensible default
+   * for when it's unset.
+   */
+  function get_cache_type() {
+    $cache_type = $this->get_option('block_caching');
+    if (empty($cache_type)) {
+      $cache_type = BLOCK_NO_CACHE;
+    }
+    return $cache_type;
   }
 
   /**
@@ -2018,6 +2062,16 @@ class views_plugin_display_block extends views_plugin_display {
           '#default_value' => $this->get_option('block_description'),
         );
         break;
+      case 'block_caching':
+        $form['#title'] .= t('Block caching type');
+
+        $form['block_caching'] = array(
+          '#type' => 'radios',
+          '#description' => t("This sets the default status for Drupal's built-in block caching method; this requires that caching be turned on in block administration, and be careful because you have little control over when this cache is flushed."),
+          '#options' => $this->block_caching_modes(),
+          '#default_value' => $this->get_cache_type(),
+        );
+        break;
     }
   }
 
@@ -2031,6 +2085,9 @@ class views_plugin_display_block extends views_plugin_display {
     switch ($form_state['section']) {
       case 'block_description':
         $this->set_option('block_description', $form_state['values']['block_description']);
+        break;
+      case 'block_caching':
+        $this->set_option('block_caching', $form_state['values']['block_caching']);
         break;
     }
   }
