@@ -359,16 +359,19 @@ class view extends views_db_object {
         continue;
       }
 
-      $arg = isset($this->args[$position]) ? $this->args[$position] : $argument['handler']->get_default_argument();
+      $arg = isset($this->args[$position]) ? $this->args[$position] : NULL;
       $argument['handler']->position = $position;
 
+      if (isset($arg) || $argument['handler']->has_default_argument()) {
+        if (!isset($arg)) {
+          $arg = $argument['handler']->get_default_argument();
+          // make sure default args get put back.
+          if (isset($arg)) {
+            $this->args[$position] = $arg;
+          }
+        }
 
-      if (isset($arg)) {
-        // make sure default args get put back.
-        $this->args[$position] = $arg;
-        // handle argument that is present.
-        // @todo: Do we want to put in argument placeholders here
-        // So that we can try to cache queries with arguments too?
+        // Set the argument, which will also validate that the argument can be set.
         if (!$argument['handler']->set_argument($arg)) {
           $status = $argument['handler']->validate_fail($arg);
           break;
