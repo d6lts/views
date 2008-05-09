@@ -375,6 +375,50 @@ class views_query {
     }
 
     if ($this->ensure_path($table, $relationship, $join)) {
+
+      // Attempt to eliminate redundant joins.  If this table's
+      // relationship and join exactly matches an existing table's
+      // relationship and join, we do not have to join to it again;
+      // just return the existing table's alias.  See
+      // http://groups.drupal.org/node/11288 for details.
+      //
+      // This can be done safely here but not lower down in
+      // queue_table(), because queue_table() is also used by
+      // add_table() which requires the ability to intentionally add
+      // the same table with the same join multiple times.  For
+      // example, a view that filters on 3 taxonomy terms using AND
+      // needs to join term_data 3 times with the same join.
+      
+      // If we do not have join info, get it the same way queue_table
+      // will get it.
+      if (!isset($join)) {
+        $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
+      }
+
+      // If we have join info, scan through the table queue to see if
+      // a matching join and relationship exists.  If so, use it.
+      if (isset($join)) {
+        // adjust_join() will be called again inside queue_table() and may
+        // not be safe to call multiple times on the same object.  It
+        // returns a copy, though, so just keep the copy separate
+        // instead of assigning it to $join.
+        $join_copy = $this->adjust_join($join, $relationship);
+
+        // TODO: Scanning through $this->table_queue results in an
+        // O(N^2) algorithm, and this code runs every time the view is
+        // instantiated (Views 2 does not currently cache queries).
+        // There are a couple possible "improvements" but we should do
+        // some performance testing before picking one.
+        foreach ($this->table_queue as $queued_table) {
+          // In PHP 4 and 5, the == operation returns TRUE for two objects
+          // if they are instances of the same class and have the same
+          // attributes and values.
+          if ($queued_table['relationship'] == $relationship && $queued_table['join'] == $join_copy) {
+            return $queued_table['table'];
+          }
+        }
+      }
+        
       return $this->queue_table($table, $relationship, $join);
     }
   }
