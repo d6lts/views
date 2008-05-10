@@ -1329,6 +1329,10 @@ function views_filters($view) {
 }
 
 function _views_build_filters_form($view) {
+  // When the form is retrieved through an AJAX callback, the cache hasn't
+  // been loaded yet. The cache is necesssary for _views_get_filters().
+  views_load_cache();
+
   $filters = _views_get_filters();
   foreach ($view->exposed_filter as $count => $expose) {
     $id = $expose['id'];

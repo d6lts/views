@@ -77,13 +77,13 @@ function _views_get_tables($full = false) {
     }
     else {
       $table_data = module_invoke_all('views_tables');
-      
+
       // allow modules to alter the definitions supplied others
       foreach (module_implements('views_tables_alter') as $module) {
         $function = $module . '_views_tables_alter';
         $function($table_data);
       }
-      
+
       $views_tables['tables'] = $table_data;
 
       foreach ($table_data as $name => $table) {
@@ -99,7 +99,15 @@ function _views_get_tables($full = false) {
                 $data['option'] = array('#type' => 'select', '#options' => $data['option']);
               }
             }
-            if ($data['list']) {
+            if ($data['value'] && !is_array($data['value'])) {
+              if ($data['value'] == 'string' || $data['value'] == 'integer') {
+                $data['value'] = array('#type' => 'textfield', '#size' => 10, '#maxlength' => 255);
+              }
+              else {
+                $data['value'] = array('#type' => 'select', '#values' => $data['value']);
+              }
+            }
+            else if ($data['list']) {
               $data['value'] = array('#type' => 'select', '#options' => $data['list'], '#validate' => array('views_filter_validate_array' => array($data['name'])));
               if ($data['list-type'] != 'select') {
                 $data['value']['#multiple'] = TRUE;
