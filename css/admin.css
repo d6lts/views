@@ -365,14 +365,14 @@ a.views-button-configure,
 a.views-button-add,
 a.views-button-rearrange,
 a.views-button-remove {
-	background:transparent url(../images/sprites.png);
-	display: inline-block;
-	float: right;
-	height: 12px;
-	width: 16px;
-	margin: 2px 0px 1px 0px;
-	border-bottom: #C2C9CE 1px solid;
-	border-right: #C2C9CE 1px solid;
+  background:transparent url(../images/sprites.png);
+  display: inline-block;
+  float: right;
+  height: 12px;
+  width: 16px;
+  margin: 2px 0px 1px 0px;
+  border-bottom: #C2C9CE 1px solid;
+  border-right: #C2C9CE 1px solid;
 }
 
 a.views-button-remove {

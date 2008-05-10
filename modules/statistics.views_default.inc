@@ -17,7 +17,7 @@ function statistics_views_default_views() {
   $view->base_table = 'node';
   $view->is_cacheable = '0';
   $view->api_version = 2;
-  $view->disabled = FALSE; // Edit this to true to make a default view disabled initially
+  $view->disabled = TRUE; // Edit this to true to make a default view disabled initially
   $view->display = array();
     $display = new views_display;
     $display->id = 'default';

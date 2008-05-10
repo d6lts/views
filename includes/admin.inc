@@ -889,7 +889,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   foreach ($view->display as $id => $display) {
     if ($display->handler->has_path()) {
       $path = $display->handler->get_path();
-      if (strpos('%', $path) === FALSE && !isset($paths[$path])) {
+      if (strpos($path, '%') === FALSE && !isset($paths[$path])) {
         $vars['quick_links_raw'][] = array(
           'title' => t('View "!display"', array('!display' => $display->display_title)),
           'alt' => t("Go to the real page for this display"),
