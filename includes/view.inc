@@ -285,10 +285,13 @@ class view extends views_db_object {
   function _pre_query() {
     foreach (views_object_types() as $key => $info) {
       $item = &$this->$key;
+      $position = 0;
       foreach ($item as $id => $info) {
         if (!empty($info['handler'])) {
+          $item[$id]['handler']->position = $position;
           $item[$id]['handler']->pre_query();
         }
+        $position++;
       }
     }
   }

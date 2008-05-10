@@ -41,6 +41,7 @@ class views_handler_argument extends views_handler {
       $this->options['default_argument_type'] = 'fixed';
     }
   }
+
   /**
    * Give an argument the opportunity to modify the breadcrumb, if it wants.
    * This only gets called on displays where a breadcrumb is actually used.
