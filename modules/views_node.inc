@@ -874,6 +874,7 @@ function views_handler_node_edit($fieldinfo, $fielddata, $value, $data) {
   // try to build a fake node object
   $data->type = $data->node_type;
   $data->uid = $data->node_uid;
+  $data->status = 1;
   if (node_access('update', $data)) {
     $link_text = $fielddata['options'] ? $fielddata['options'] : t('Edit');
     return l($link_text, "node/$data->nid/edit");
@@ -887,6 +888,7 @@ function views_handler_node_edit_destination($fieldinfo, $fielddata, $value, $da
   // try to build a fake node object
   $data->type = $data->node_type;
   $data->uid = $data->node_uid;
+  $data->status = 1;
   if (node_access('update', $data)) {
     $link_text = $fielddata['options'] ? $fielddata['options'] : t('Edit');
     return l($link_text, "node/$data->nid/edit", NULL, drupal_get_destination());
@@ -900,6 +902,7 @@ function views_handler_node_delete($fieldinfo, $fielddata, $value, $data) {
   // try to build a fake node object
   $data->type = $data->node_type;
   $data->uid = $data->node_uid;
+  $data->status = 1;
   if (node_access('delete', $data)) {
     $link_text = $fielddata['options'] ? $fielddata['options'] : t('Delete');
     return l($link_text, "node/$data->nid/delete");
@@ -913,6 +916,7 @@ function views_handler_node_delete_destination($fieldinfo, $fielddata, $value, $
   // try to build a fake node object
   $data->type = $data->node_type;
   $data->uid = $data->node_uid;
+  $data->status = 1;
   if (node_access('delete', $data)) {
     $link_text = $fielddata['options'] ? $fielddata['options'] : t('Delete');
     return l($link_text, "node/$data->nid/delete", NULL, drupal_get_destination());
