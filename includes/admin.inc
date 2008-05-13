@@ -811,7 +811,7 @@ function views_ui_edit_view_form_cancel($form, &$form_state) {
 }
 
 function views_ui_edit_view_form_delete($form, &$form_state) {
-  // Remove this view from cache so edits will be lost.
+  // Redirect to the delete confirm page
   $form_state['redirect'] = array('admin/build/views/delete/' . $form_state['view']->name, 'cancel=admin/build/views/edit/' . $form_state['view']->name);
 }
 

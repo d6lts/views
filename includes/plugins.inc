@@ -888,13 +888,13 @@ class views_plugin_display extends views_plugin {
           '#suffix' => '</div>',
           '#title' => t('Type'),
           '#type' => 'radios',
-          '#options' => array('none' => t('Unrestricted'), 'role' => t('By role'), 'perm' => t('By perm')),
+          '#options' => array('none' => t('Unrestricted'), 'role' => t('By role'), 'perm' => t('By permission')),
           '#default_value' => $access['type'],
         );
         $form['access']['role'] = array(
           // Add an id to the surrounding div because checkboxes don't get ids
           // as a whole group. =(
-          '#prefix' => '<div class="views-left-25"><div id="edit-access-role">',
+          '#prefix' => '<div class="views-left-30"><div id="edit-access-role">',
           '#suffix' => '</div></div>',
           '#type' => 'checkboxes',
           '#title' => t('If by role'),
@@ -917,7 +917,7 @@ class views_plugin_display extends views_plugin {
           '#suffix' => '</div>',
           '#type' => 'select',
           '#options' => $perms,
-          '#title' => t('If by perm'),
+          '#title' => t('If by permission'),
           '#default_value' => $access['perm'],
           '#description' => t('Only users with the selected permission flag will be able to access this display.'),
           '#process' => array('views_process_dependency'),
@@ -1670,6 +1670,7 @@ class views_plugin_display_page extends views_plugin_display {
           $bit = array_pop($bits);
 
           // we can't do this if they tried to make the last path bit variable.
+          // @todo: We can validate this.
           if ($bit != '%views_arg' && !empty($bits)) {
             $default_path = implode('/', $bits);
             $items[$default_path] = array(
@@ -1692,9 +1693,9 @@ class views_plugin_display_page extends views_plugin_display {
                 $items[$default_path]['type'] = MENU_LOCAL_TASK;
                 break;
             }
-          }
-          if (isset($tab_options['weight'])) {
-            $items[$default_path]['weight'] = intval($tab_options['weight']);
+            if (isset($tab_options['weight'])) {
+              $items[$default_path]['weight'] = intval($tab_options['weight']);
+            }
           }
 
         }

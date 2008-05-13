@@ -709,7 +709,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       '#type' => 'radios',
       '#title' => t('Vocabulary'),
       '#options' => $options,
-      '#description' => t('Select which vocabulary to show terms for in the regular options'),
+      '#description' => t('Select which vocabulary to show terms for in the regular options.'),
       '#default_value' => $this->options['vid'],
     );
 
@@ -950,7 +950,12 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         return empty($test);
       case 'name':
       case 'convert':
-        $result = db_fetch_object(db_query("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE td.name = '%s' OR ts.name = '%s'", $argument, $argument));
+        $and = '';
+        if (!empty($vids)) {
+          $and = " AND td.vid IN(" . implode(', ', $vids) . ')';
+        }
+
+        $result = db_fetch_object(db_query("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE (td.name = '%s' OR ts.name = '%s')$and", $argument, $argument));
         if (!$result) {
           return FALSE;
         }
@@ -959,7 +964,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
           $this->argument->argument = $result->tid;
         }
 
-        return empty($vids) || !empty($vids[$result->vid]);
+        return TRUE;
     }
   }
 }
