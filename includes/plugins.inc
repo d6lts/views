@@ -1899,10 +1899,36 @@ class views_plugin_display_page extends views_plugin_display {
     }
   }
 
-  /**
-   * Perform any necessary changes to the form values prior to storage.
-   * There is no need for this function to actually store the data.
-   */
+  function options_validate($form, &$form_state) {
+    // It is very important to call the parent function here:
+    parent::options_validate($form, $form_state);
+    switch ($form_state['section']) {
+      case 'path':
+        if (strpos($form_state['values']['path'], '$arg') !== FALSE) {
+          form_error($form['path'], t('"$arg" is no longer supported. Use % instead.'));
+        }
+        break;
+      case 'menu':
+        $path = $this->get_option('path');
+        if ($form_state['values']['menu']['type'] == 'normal' && strpos($path, '%') !== FALSE) {
+          form_error($form['menu']['type'], t('Views cannot make normal menu items for paths with a % in them.'));
+        }
+
+        if ($form_state['values']['menu']['type'] == 'default tab' || $form_state['values']['menu']['type'] == 'tab') {
+          $bits = explode('/', $path);
+          $last = array_pop($bits);
+          if ($last == '%') {
+            form_error($form['menu']['type'], t('A display whose path ends with a % cannot be a tab.'));
+          }
+        }
+
+        if ($form_state['values']['menu']['type'] != 'none' && empty($form_state['values']['menu']['title'])) {
+          form_error($form['menu']['title'], t('Title is required for this menu type.'));
+        }
+        break;
+    }
+  }
+
   function options_submit($form, &$form_state) {
     // It is very important to call the parent function here:
     parent::options_submit($form, $form_state);
