@@ -444,7 +444,7 @@ class views_handler_filter extends views_handler {
 
   /**
    * Check to see if input from the exposed filters should change
-   * the behavior if this filter.
+   * the behavior of this filter.
    */
   function accept_exposed_input($input) {
     if (empty($this->options['exposed'])) {
@@ -1099,7 +1099,7 @@ class views_handler_filter_numeric extends views_handler_filter {
     if ($which == 'all' || $which == 'value') {
       $form['value']['value'] = array(
         '#type' => 'textfield',
-        '#title' => t('Value'),
+        '#title' => empty($form_state['exposed']) ? t('Value') : '',
         '#size' => 30,
         '#default_value' => $this->value['value'],
       );
@@ -1114,13 +1114,13 @@ class views_handler_filter_numeric extends views_handler_filter {
     if ($which == 'all' || $which == 'minmax') {
       $form['value']['min'] = array(
         '#type' => 'textfield',
-        '#title' => t('Min'),
+        '#title' => empty($form_state['exposed']) ? t('Min') : '',
         '#size' => 30,
         '#default_value' => $this->value['min'],
       );
       $form['value']['max'] = array(
         '#type' => 'textfield',
-        '#title' => t('And max'),
+        '#title' => empty($form_state['exposed']) ? t('And max') : t('And'),
         '#size' => 30,
         '#default_value' => $this->value['max'],
       );
@@ -1196,21 +1196,29 @@ class views_handler_filter_date extends views_handler_filter_numeric {
    * Add a type selector to the value form
    */
   function value_form(&$form, &$form_state) {
-    $form['value']['type'] = array(
-      '#type' => 'radios',
-      '#title' => t('Value type'),
-      '#options' => array(
-        'date' => t('A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred.'),
-        'offset' => t('An offset from the current time such as "+1 day" or "-2 hours and 30 minutes"'),
-      ),
-      '#default_value' => $this->value['type'],
-    );
+    if (empty($form_state['exposed'])) {
+      $form['value']['type'] = array(
+        '#type' => 'radios',
+        '#title' => t('Value type'),
+        '#options' => array(
+          'date' => t('A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred.'),
+          'offset' => t('An offset from the current time such as "+1 day" or "-2 hours and 30 minutes"'),
+        ),
+        '#default_value' => $this->value['type'],
+      );
+    }
     parent::value_form($form, $form_state);
   }
 
   function options_validate(&$form, &$form_state) {
     parent::options_validate($form, $form_state);
     $operators = $this->operators();
+
+    if (!empty($form_state['values']['options']['expose']['optional'])) {
+      // Who cares what the value is if it's exposed and optional.
+      return;
+    }
+
     if ($operators[$form_state['values']['options']['operator']]['values'] == 1) {
       $convert = strtotime($form_state['values']['options']['value']['value']);
       if ($convert == -1 || $convert === FALSE) {
@@ -1229,14 +1237,26 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
   }
 
+  function accept_exposed_input($input) {
+    if (empty($this->options['exposed'])) {
+      return TRUE;
+    }
+
+    if (!empty($this->options['expose']['identifier'])) {
+      $value = &$input[$this->options['expose']['identifier']];
+      $value['type'] = $this->value['type'];
+    }
+    return parent::accept_exposed_input($input);
+  }
+
   function op_between($field) {
     if ($this->operator == 'between') {
-      $a = strtotime($this->value['min'], 0);
-      $b = strtotime($this->value['max'], 0);
+      $a = intval(strtotime($this->value['min'], 0));
+      $b = intval(strtotime($this->value['max'], 0));
     }
     else {
-      $a = strtotime($this->value['max'], 0);
-      $b = strtotime($this->value['min'], 0);
+      $a = intval(strtotime($this->value['max'], 0));
+      $b = intval(strtotime($this->value['min'], 0));
     }
 
     if ($this->value['type'] == 'offset') {
