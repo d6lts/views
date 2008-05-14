@@ -2743,6 +2743,13 @@ class views_plugin_style_table extends views_plugin_style {
       '#title' => t('Override normal sorting if click sorting is used'),
       '#default_value' => !empty($this->options['override']),
     );
+    
+    $form['sticky'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Enable Drupal style "sticky" table headers (Javascript)'),
+      '#default_value' => !empty($this->options['sticky']),
+      '#description' => t('(Sticky header effects will not be active for preview below, only on live output.)'),
+    );
 
     $form['order'] = array(
       '#type' => 'select',

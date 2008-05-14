@@ -279,6 +279,12 @@ function template_preprocess_views_view_table(&$vars) {
       }
     }
   }
+
+  $vars['class'] = 'views-table';
+  if (!empty($options['sticky'])) {
+    drupal_add_js('misc/tableheader.js');
+    $vars['class'] .= " sticky-enabled";
+  }
 }
 
 /**
