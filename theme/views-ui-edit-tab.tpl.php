@@ -7,10 +7,12 @@
 ?>
 <div class="clear-block views-display views-display-<?php print $display->id; if (!empty($display->deleted)) { print ' views-display-deleted'; }; ?>">
   <?php // top section ?>
+  <?php if ($remove): ?>
+    <div class="remove-display"><?php print $remove ?></div>
+  <?php endif; ?>
   <div class="top">
     <div class="inside">
       <?php print $display_help_icon; ?>
-      <?php print $remove ?>
       <span class="display-title">
         <?php print $title; ?>
       </span>

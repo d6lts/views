@@ -1554,7 +1554,6 @@ function views_ui_remove_display_form(&$form_state) {
     );
   }
   $form['#action'] = url("admin/build/views/nojs/remove-display/$view->name/$display_id");
-  $form['#id'] = 'views-add-display-form';
   $form['#attributes'] = array('class' => 'views-ajax-form');
 
   return $form;
