@@ -39,6 +39,7 @@
 
   <?php print $save_button ?>
 
+  <h2><?php print t('Live preview'); ?></h2>
   <div id='views-live-preview'>
     <?php print $preview ?>
   </div>
