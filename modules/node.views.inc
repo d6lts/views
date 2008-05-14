@@ -248,7 +248,7 @@ function node_views_data() {
   if (module_exists('translation')) {
     $data['node']['language'] = array(
       'title' => t('Language'),
-      'help' => t('Content language, if a translation system is enabled.'),
+      'help' => t('The language the content is in.'),
       'field' => array(
         'handler' => 'views_handler_field_node_language',
         'click sortable' => TRUE,
@@ -1086,6 +1086,14 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Language');
+      $languages = array('***CURRENT_LANGUAGE***' => t("Current user's language"));
+      $languages = array_merge($languages, locale_language_list());
+      $this->value_options = $languages;
+    }
+  }
 }
 
 /**
@@ -1378,7 +1386,10 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
  * Implementation of hook_views_query_substitutions().
  */
 function node_views_query_substitutions() {
-  return array('***ADMINISTER_NODES***' => intval(user_access('administer nodes')));
+  global $language;
+  return array(
+    '***ADMINISTER_NODES***' => intval(user_access('administer nodes')),
+  );
 }
 
 /**
