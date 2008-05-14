@@ -413,7 +413,7 @@ function &views_get_page_view() {
 function &views_set_current_view(&$view = NULL) {
   static $cache = NULL;
   if (isset($view)) {
-    $cache = $view;
+    $cache = &$view;
   }
 
   return $cache;
