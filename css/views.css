@@ -33,11 +33,12 @@ html.js span.views-throbbing {
 div.view div.views-admin-links {
   font-size: xx-small;
   margin-right: 1em;
-  padding-top: 1em;
+  margin-top: 1em;
+  width: 95%;
 }
 
 .block div.view div.views-admin-links {
-  padding-top: 0;
+  margin-top: 0;
 }
 
 div.view div.views-admin-links ul {
@@ -56,6 +57,12 @@ div.view div.views-admin-links li {
 div.view div.views-admin-links-hover a,
 div.view div.views-admin-links:hover a {
   color: #000;
+}
+
+div.view div.views-admin-links-hover,
+div.view div.views-admin-links:hover {
+  background-color: white;
+  border: 1px solid black;
 }
 
 div.view div.views-admin-links a:before {
