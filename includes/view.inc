@@ -616,7 +616,7 @@ class view extends views_db_object {
           // defaults to 0 so we don't need to set it in an out-of-range condition.
           if (!empty($pager_page_array[$this->pager['element']])) {
             $page = intval($pager_page_array[$this->pager['element']]);
-            if ($page > 0 && $page < $pager_total[$this->pager['element']] - 1) {
+            if ($page > 0 && $page < $pager_total[$this->pager['element']]) {
               $this->pager['current_page'] = $page;
             }
           }
