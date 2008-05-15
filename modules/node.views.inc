@@ -1174,6 +1174,12 @@ function node_views_plugins() {
         'handler' => 'views_plugin_argument_validate_node',
       ),
     ),
+    'argument default' => array(
+      'node' => array(
+        'title' => t('Node ID from URL'),
+        'handler' => 'views_plugin_argument_default_node',
+      ),
+    ),
   );
 }
 
@@ -1381,6 +1387,23 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
     }
 
     return isset($types[$node->type]);
+  }
+}
+
+/**
+ * Default argument plugin to extract a node via menu_get_object
+ */
+class views_plugin_argument_default_node extends views_plugin_argument_default {
+  function argument_form(&$form, &$form_state) {
+  }
+
+  function get_argument() {
+    foreach (range(1, 3) as $i) {
+      $node = menu_get_object('node', $i);
+      if (!empty($node)) {
+        return $node->nid;
+      }
+    }
   }
 }
 

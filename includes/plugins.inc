@@ -3261,7 +3261,7 @@ class views_plugin_argument_default_php extends views_plugin_argument_default {
     }
 
     // set up variables to make it easier to reference during the argument.
-    $view = &$view;
+    $view = &$this->view;
     $argument = &$this->argument;
     ob_start();
     $result = eval($this->argument->options[$this->option_name]);
