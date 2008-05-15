@@ -34,11 +34,6 @@ function comment_views_data() {
       'left_field' => 'nid',
       'field' => 'nid',
     ),
-    //...to the user table
-    'users' => array(
-      'left_field' => 'uid',
-      'field' => 'uid',
-    ),
   );
 
   // ----------------------------------------------------------------
