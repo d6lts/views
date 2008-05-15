@@ -41,7 +41,7 @@ function _views_theme_functions($hook, $view, $display = NULL) {
 function template_preprocess_views_view(&$vars) {
   $view = $vars['view'];
 
-  $vars['rows']       = !empty($view->result) ? $view->style_handler->render($view->result) : '';
+  $vars['rows']       = !empty($view->result) ? $view->style_plugin->render($view->result) : '';
 
   $vars['css_name']   = views_css_safe($view->name);
   $vars['name']       = $view->name;
@@ -207,8 +207,8 @@ function template_preprocess_views_view_summary(&$vars) {
 function template_preprocess_views_view_table(&$vars) {
   $view     = $vars['view'];
   $result   = $view->result;
-  $options  = $view->style_handler->options;
-  $handler  = $view->style_handler;
+  $options  = $view->style_plugin->options;
+  $handler  = $view->style_plugin;
 
   $fields   = $view->field;
   $columns  = $handler->sanitize_columns($options['columns'], $fields);
@@ -293,8 +293,8 @@ function template_preprocess_views_view_table(&$vars) {
 function template_preprocess_views_view_grid(&$vars) {
   $view     = $vars['view'];
   $result   = $view->result;
-  $options  = $view->style_handler->options;
-  $handler  = $view->style_handler;
+  $options  = $view->style_plugin->options;
+  $handler  = $view->style_plugin;
 
   $columns  = $options['columns'];
 
@@ -348,7 +348,7 @@ function template_preprocess_views_view_rss(&$vars) {
   $options  = &$vars['options'];
   $items    = &$vars['rows'];
 
-  $style    = &$view->style_handler;
+  $style    = &$view->style_plugin;
 
   if (!empty($options['mission_description'])) {
     $description = variable_get('site_mission', '');

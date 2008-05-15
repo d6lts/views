@@ -716,6 +716,8 @@ function views_get_plugin($type, $plugin) {
  * @param $key
  *   For style plugins, this is an optional type to restrict to. May be 'normal',
  *   'summary', 'feed' or others based on the neds of the display.
+ * @param $base
+ *   An array of possible base tables.
  *
  * @return
  *   A keyed array of in the form of 'base_table' => 'Description'.
@@ -730,7 +732,7 @@ function views_fetch_plugin_names($type, $key = NULL, $base = array()) {
     if ($key && (empty($plugin['type']) || $plugin['type'] != $key)) {
       continue;
     }
-    if (empty($plugin['no ui']) && (empty($base) || empty($plugin['base']) || array_intersect(array_keys($base), $plugin['base']))) {
+    if (empty($plugin['no ui']) && (empty($base) || empty($plugin['base']) || array_intersect($base, $plugin['base']))) {
       $plugins[$type][$id] = $plugin['title'];
     }
   }

@@ -378,11 +378,20 @@ function comment_views_plugins() {
   return array(
     'module' => 'views', // This just tells views our themes are in Views.
     'row' => array(
+      'comment' => array(
+        'title' => t('Comment'),
+        'help' => t('Display the comment with standard comment view.'),
+        'handler' => 'views_plugin_row_comment_view',
+        'theme' => 'views_view_row_comment',
+        'base' => array('comments'), // only works with 'comment' as base.
+        'uses options' => TRUE,
+        'type' => 'normal',
+      ),
       'comment_rss' => array(
         'title' => t('Comment'),
         'help' => t('Display the comment as RSS.'),
         'handler' => 'views_plugin_row_comment_rss',
-        'base' => array('comment'), // only works with 'comment' as base.
+        'base' => array('comments'), // only works with 'comment' as base.
         'type' => 'feed',
       ),
     ),
@@ -882,6 +891,68 @@ class views_handler_filter_node_comment extends views_handler_filter_in_operator
 }
 
 /**
+ * Plugin which performs a comment_view on the resulting object.
+ *
+ * @ingroup views_plugin_rows
+ */
+class views_plugin_row_comment_view extends views_plugin_row {
+  function options(&$options) {
+    $options['links'] = TRUE;
+  }
+
+  function options_form(&$form, &$form_state) {
+    $form['links'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Display links'),
+      '#default_value' => $this->options['links'],
+    );
+  }
+
+  function pre_render($result) {
+    $cids = array();
+    $this->comments = array();
+
+    foreach ($result as $row) {
+      $cids[] = $row->cid;
+    }
+
+    if (count($cids) > 1) {
+      $placeholder = " IN (" . implode(', ', array_fill(0, sizeof($cids), '%d')) . ")";
+    }
+    else {
+      $placeholder = " = %d";
+    }
+
+    $cresult = db_query("SELECT c.cid as cid, c.pid, c.nid, c.subject, c.comment, c.format, c.timestamp, c.name, c.mail, c.homepage, u.uid, u.name AS registered_name, u.signature, u.picture, u.data, c.thread, c.status FROM {comments} c INNER JOIN {users} u ON c.uid = u.uid WHERE c.cid $placeholder", $cids);
+    while ($comment = db_fetch_object($cresult)) {
+      $comment = drupal_unpack($comment);
+      $comment->name = $comment->uid ? $comment->registered_name : $comment->name;
+      $comment->depth = count(explode('.', $comment->thread)) - 1;
+      $this->comments[$comment->cid] = $comment;
+    }
+  }
+}
+
+/**
+ * Template helper for theme_views_view_row_comment
+ */
+function template_preprocess_views_view_row_comment(&$vars) {
+  $options = $vars['options'];
+  $view = &$vars['view'];
+  $plugin = &$view->style_plugin->row_plugin;
+  $comment = $plugin->comments[$vars['row']->cid];
+  $node = node_load($comment->nid);
+
+  $links = '';
+  if (!empty($options['links'])) {
+    $links = module_invoke_all('link', 'comment', $comment, 0);
+    drupal_alter('link', $links, $node);
+  }
+
+  $vars['comment'] = theme('comment_view', $comment, $node, $links);
+}
+
+/**
  * Plugin which formats the comments as RSS items.
  *
  * @ingroup views_plugin_rows
@@ -891,8 +962,8 @@ class views_plugin_row_comment_rss extends views_plugin_row {
   function render($row) {
     global $base_url;
 
-    if (empty($this->view->style_handler->namespaces)) {
-      $this->view->style_handler->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
+    if (empty($this->view->style_plugin->namespaces)) {
+      $this->view->style_plugin->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
     }
 
     // Load the specified comment:

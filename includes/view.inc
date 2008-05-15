@@ -247,7 +247,7 @@ class view extends views_db_object {
    * check the view object first, then ask the display handler.
    */
   function init_style() {
-    if (isset($this->style_handler)) {
+    if (isset($this->style_plugin)) {
       return;
     }
 
@@ -257,14 +257,14 @@ class view extends views_db_object {
     }
 
     vpr("Init_style: $this->style_plugin");
-    $this->style_handler = views_get_plugin('style', $this->style_plugin);
+    $this->style_plugin = views_get_plugin('style', $this->style_plugin);
 
-    if (empty($this->style_handler)) {
+    if (empty($this->style_plugin)) {
       return FALSE;
     }
 
     // init the new display handler with data.
-    $this->style_handler->init($this, $this->display[$this->current_display], $this->style_options);
+    $this->style_plugin->init($this, $this->display[$this->current_display], $this->style_options);
   }
 
   /**
@@ -522,14 +522,14 @@ class view extends views_db_object {
     // so waiting as long as possible is important. But we need to know
     // about the style when we go to build fields.
     $this->init_style();
-    if ($this->style_handler->uses_fields()) {
+    if ($this->style_plugin->uses_fields()) {
       $this->_build('field');
     }
 
     // Build our sort criteria if we were instructed to do so.
     if (!empty($this->build_sort)) {
       // Allow the style handler to deal with sorting.
-      if ($this->style_handler->build_sort()) {
+      if ($this->style_plugin->build_sort()) {
         $this->_build('sort');
       }
     }
@@ -538,7 +538,7 @@ class view extends views_db_object {
     $this->display_handler->query();
 
     // Allow style handler to affect the query:
-    $this->style_handler->query();
+    $this->style_plugin->query();
 
     if (variable_get('views_sql_signature', FALSE)) {
       $this->query->add_field(NULL, "'". $this->name .':'. $this->current_display ."'", 'view_name');
@@ -680,9 +680,11 @@ class view extends views_db_object {
     // Initialize the style plugin.
     $this->init_style();
 
+    $this->style_plugin->pre_render($this->result);
+
     // Give field handlers the opportunity to perform additional queries
     // using the entire resultset prior to rendering.
-    if ($this->style_handler->uses_fields()) {
+    if ($this->style_plugin->uses_fields()) {
       foreach ($this->field as $id => $field) {
         if (!empty($this->field[$id]['handler'])) {
           $this->field[$id]['handler']->pre_render($this->result);

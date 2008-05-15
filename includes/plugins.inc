@@ -973,7 +973,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('How should this view be styled');
         $form['style_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('style', $this->get_style_type(), $this->view->get_base_tables()),
+          '#options' => views_fetch_plugin_names('style', $this->get_style_type(), array($this->view->base_table)),
           '#default_value' => $this->get_option('style_plugin'),
           '#description' => t('If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary.'),
         );
@@ -1001,7 +1001,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('How should each row in this view be styled');
         $form['row_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('row', $this->get_style_type(), $this->view->get_base_tables()),
+          '#options' => views_fetch_plugin_names('row', $this->get_style_type(), array($this->view->base_table)),
           '#default_value' => $this->get_option('row_plugin'),
         );
         break;
@@ -2327,7 +2327,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
    * to the style handler.
    */
   function render() {
-    return $this->view->style_handler->render($this->view->result);
+    return $this->view->style_plugin->render($this->view->result);
   }
 
   function defaultable_sections($section = NULL) {
@@ -2523,6 +2523,18 @@ class views_plugin_style extends views_plugin {
    * any non-TRUE value, normal sorting will NOT be added to the query.
    */
   function build_sort() { return TRUE; }
+
+  /**
+   * Allow the style to do stuff before each row is rendered.
+   *
+   * @param $result
+   *   The full array of results from the query.
+   */
+  function pre_render($result) {
+    if (!empty($this->row_plugin)) {
+      $this->row_plugin->pre_render($result);
+    }
+  }
 
   /**
    * Render the display in this style.
@@ -3069,6 +3081,14 @@ class views_plugin_row extends views_plugin {
    * There is no need for this function to actually store the data.
    */
   function options_submit($form, &$form_state) { }
+
+  /**
+   * Allow the style to do stuff before each row is rendered.
+   *
+   * @param $result
+   *   The full array of results from the query.
+   */
+  function pre_render($result) { }
 
   /**
    * Render a row object. This usually passes through to a theme template

@@ -1180,6 +1180,8 @@ function node_views_plugins() {
 /**
  * Plugin which performs a node_view on the resulting object.
  *
+ * Most of the code on this object is in the theme function.
+ *
  * @ingroup views_plugin_rows
  */
 class views_plugin_row_node_view extends views_plugin_row {
@@ -1266,8 +1268,8 @@ class views_plugin_row_node_rss extends views_plugin_row {
       $item_length = variable_get('feed_item_length', 'teaser');
     }
 
-    if (empty($this->view->style_handler->namespaces)) {
-      $this->view->style_handler->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
+    if (empty($this->view->style_plugin->namespaces)) {
+      $this->view->style_plugin->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
     }
 
     // Load the specified node:
@@ -1305,7 +1307,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
     );
     foreach ($extra as $element) {
       if (isset($element['namespace'])) {
-        $this->view->style_handler->namespaces = array_merge($this->view->style_handler->namespaces, $element['namespace']);
+        $this->view->style_plugin->namespaces = array_merge($this->view->style_plugin->namespaces, $element['namespace']);
       }
     }
 
