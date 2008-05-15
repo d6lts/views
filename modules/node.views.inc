@@ -34,23 +34,18 @@ function node_views_data() {
   // For other base tables, explain how we join
   $data['node']['table']['join'] = array(
     // this explains how the 'node' table (named in the line above)
-    // links toward the users table.
-    'users' => array(
+    // links toward the node_revisions table.
+    'node_revisions' => array(
       'handler' => 'views_join', // this is actually optional
-      'left_table' => 'users', // Because this is a direct link it could be left out.
-      'left_field' => 'uid',
-      'field' => 'uid',
+      'left_table' => 'node_revisions', // Because this is a direct link it could be left out.
+      'left_field' => 'nid',
+      'field' => 'nid',
       // also supported:
       // 'type' => 'INNER',
       // 'extra' => array(array('field' => 'fieldname', 'value' => 'value', 'operator' => '='))
-      // Unfortunately, you can't specify other tables here, but you can construct
-      // alternative joins in the handlers that can do that.
+      //   Unfortunately, you can't specify other tables here, but you can construct
+      //   alternative joins in the handlers that can do that.
       // 'table' => 'the actual name of this table in the database',
-     ),
-    'node_revisions' => array(
-       // We link directly to node_revisions so we don't have to specify it.'
-      'left_field' => 'nid',
-      'field' => 'nid',
      ),
   );
 
@@ -330,12 +325,17 @@ function node_views_data() {
       'left_field' => 'vid',
       'field' => 'vid',
     ),
-    // Links to user table through node table.
-    'users' => array(
-      // Since it doesn't link to the user table, we must specify
-      'left_table' => 'node',
-      'left_field' => 'vid',
-      'field' => 'vid',
+  );
+
+  // uid field
+  $data['node_revisions']['uid'] = array(
+    'title' => t('User'),
+    'help' => t('Relate a node revision to the user who created the revision.'),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'users',
+      'field' => 'uid',
+      'label' => t('user'),
     ),
   );
 

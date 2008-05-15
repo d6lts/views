@@ -1070,7 +1070,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'analyze-theme-display':
         $form['#title'] .= t('Theming information (display)');
-        $output = '';
+        $output = '<p>' . t('Back to !info.', array('!info' => $this->option_link(t('theming information'), 'analyze-theme'))) . '</p>';
 
         if (empty($this->definition['theme'])) {
           $output .= t('This display has no theming information');
@@ -1089,7 +1089,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'analyze-theme-style':
         $form['#title'] .= t('Theming information (style)');
-        $output = '';
+        $output = '<p>' . t('Back to !info.', array('!info' => $this->option_link(t('theming information'), 'analyze-theme'))) . '</p>';
 
         $plugin = $this->get_plugin();
 
@@ -1110,7 +1110,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'analyze-theme-row':
         $form['#title'] .= t('Theming information (row style)');
-        $output = '';
+        $output = '<p>' . t('Back to !info.', array('!info' => $this->option_link(t('theming information'), 'analyze-theme'))) . '</p>';
 
         $plugin = $this->get_plugin('row');
 
@@ -1131,7 +1131,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'analyze-theme-field':
         $form['#title'] .= t('Theming information (row style)');
-        $output = '';
+        $output = '<p>' . t('Back to !info.', array('!info' => $this->option_link(t('theming information'), 'analyze-theme'))) . '</p>';
 
         $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
         $template =  "<?php\n";
@@ -2743,7 +2743,7 @@ class views_plugin_style_table extends views_plugin_style {
       '#title' => t('Override normal sorting if click sorting is used'),
       '#default_value' => !empty($this->options['override']),
     );
-    
+
     $form['sticky'] = array(
       '#type' => 'checkbox',
       '#title' => t('Enable Drupal style "sticky" table headers (Javascript)'),

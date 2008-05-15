@@ -33,7 +33,7 @@ function user_views_data() {
       'left_field' => 'uid',
       'field' => 'uid',
     ),
-    // This will be the revision author, not the node author.
+    // This goes to the node so that we have consistent authorship.
     'node_revisions' => array(
       'left_field' => 'uid',
       'field' => 'uid',
