@@ -973,7 +973,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('How should this view be styled');
         $form['style_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('style', $this->get_style_type()),
+          '#options' => views_fetch_plugin_names('style', $this->get_style_type(), $this->view->get_base_tables()),
           '#default_value' => $this->get_option('style_plugin'),
           '#description' => t('If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary.'),
         );
@@ -1001,7 +1001,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('How should each row in this view be styled');
         $form['row_plugin'] =  array(
           '#type' => 'radios',
-          '#options' => views_fetch_plugin_names('row', $this->get_style_type()),
+          '#options' => views_fetch_plugin_names('row', $this->get_style_type(), $this->view->get_base_tables()),
           '#default_value' => $this->get_option('row_plugin'),
         );
         break;
