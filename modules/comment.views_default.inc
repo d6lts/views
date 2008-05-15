@@ -312,7 +312,228 @@ function comment_views_default_views() {
     ),
   );
   $view->display['page'] = $display;
-
   $views[$view->name] = $view;
+
+  $view = new view;
+  $view->name = 'comments_recent';
+  $view->description = t('Contains a block and a page to list recent comments; the block will automatically link to the page, which displays the comment body as well as a link to the node.');
+  $view->tag = 'default';
+  $view->view_php = '';
+  $view->base_table = 'comments';
+  $view->is_cacheable = '0';
+  $view->api_version = 2;
+  $view->disabled = FALSE; // Edit this to true to make a default view disabled initially
+  $view->display = array();
+    $display = new views_display;
+    $display->id = 'default';
+    $display->display_title = t('Defaults');
+    $display->display_plugin = 'default';
+    $display->position = '1';
+    $display->display_options = array(
+    'style_plugin' => 'list',
+    'style_options' => array(
+      'type' => 'ul',
+    ),
+    'row_plugin' => 'fields',
+    'row_options' => array(),
+    'relationships' => array(
+      'nid' => array(
+        'id' => 'nid',
+        'table' => 'comments',
+        'field' => 'nid',
+        'label' => 'Node',
+        'required' => FALSE,
+      ),
+    ),
+    'fields' => array(
+      'subject' => array(
+        'id' => 'subject',
+        'table' => 'comments',
+        'field' => 'subject',
+        'label' => '',
+        'link_to_comment' => 1,
+        'relationship' => 'none',
+      ),
+      'timestamp' => array(
+        'id' => 'timestamp',
+        'table' => 'comments',
+        'field' => 'timestamp',
+        'label' => '',
+        'date_format' => 'time ago',
+        'custom_date_format' => '',
+        'relationship' => 'none',
+      ),
+    ),
+    'sorts' => array(
+      'timestamp' => array(
+        'id' => 'timestamp',
+        'table' => 'comments',
+        'field' => 'timestamp',
+        'order' => 'DESC',
+        'granularity' => 'second',
+        'relationship' => 'none',
+      ),
+    ),
+    'arguments' => array(),
+    'filters' => array(
+      'status_extra' => array(
+        'id' => 'status_extra',
+        'table' => 'node',
+        'field' => 'status_extra',
+        'operator' => '=',
+        'value' => '',
+        'group' => 0,
+        'exposed' => FALSE,
+        'expose' => array(
+          'operator' => FALSE,
+          'label' => '',
+        ),
+        'relationship' => 'nid',
+        'expose_button' => array(
+          'button' => 'Expose',
+        ),
+      ),
+    ),
+    'items_per_page' => 5,
+    'use_more' => 1,
+    'offset' => 0,
+    'title' => t('Recent comments'),
+  );
+  $view->display['default'] = $display;
+    $display = new views_display;
+    $display->id = 'page';
+    $display->display_title = t('Page');
+    $display->display_plugin = 'page';
+    $display->position = '2';
+    $display->display_options = array(
+    'defaults' => array(
+      'access' => TRUE,
+      'title' => TRUE,
+      'header' => TRUE,
+      'header_format' => TRUE,
+      'header_empty' => TRUE,
+      'footer' => TRUE,
+      'footer_format' => TRUE,
+      'footer_empty' => TRUE,
+      'empty' => TRUE,
+      'empty_format' => TRUE,
+      'use_ajax' => TRUE,
+      'items_per_page' => FALSE,
+      'offset' => FALSE,
+      'use_pager' => FALSE,
+      'pager_element' => FALSE,
+      'use_more' => TRUE,
+      'distinct' => TRUE,
+      'link_display' => TRUE,
+      'style_plugin' => FALSE,
+      'style_options' => FALSE,
+      'row_plugin' => FALSE,
+      'row_options' => FALSE,
+      'relationships' => TRUE,
+      'fields' => FALSE,
+      'sorts' => TRUE,
+      'arguments' => TRUE,
+      'filters' => TRUE,
+    ),
+    'relationships' => array(),
+    'fields' => array(
+      'title' => array(
+        'id' => 'title',
+        'table' => 'node',
+        'field' => 'title',
+        'label' => t('Reply to'),
+        'relationship' => 'nid',
+        'link_to_node' => 1,
+      ),
+      'timestamp' => array(
+        'id' => 'timestamp',
+        'table' => 'comments',
+        'field' => 'timestamp',
+        'label' => '',
+        'date_format' => 'time ago',
+        'custom_date_format' => '',
+        'relationship' => 'none',
+      ),
+      'subject' => array(
+        'id' => 'subject',
+        'table' => 'comments',
+        'field' => 'subject',
+        'label' => '',
+        'link_to_comment' => 1,
+        'relationship' => 'none',
+      ),
+      'comment' => array(
+        'id' => 'comment',
+        'table' => 'comments',
+        'field' => 'comment',
+        'label' => '',
+        'relationship' => 'none',
+      ),
+    ),
+    'sorts' => array(),
+    'arguments' => array(),
+    'filters' => array(),
+    'path' => 'comments/recent',
+    'items_per_page' => 25,
+    'offset' => 0,
+    'use_pager' => '1',
+    'pager_element' => 0,
+    'style_plugin' => 'default',
+    'style_options' => array(),
+    'row_plugin' => 'fields',
+    'row_options' => array(
+      'inline' => array(
+        'title' => 'title',
+        'timestamp' => 'timestamp',
+      ),
+      'separator' => '&nbsp;',
+    ),
+  );
+  $view->display['page'] = $display;
+    $display = new views_display;
+    $display->id = 'block';
+    $display->display_title = t('Block');
+    $display->display_plugin = 'block';
+    $display->position = '3';
+    $display->display_options = array(
+    'defaults' => array(
+      'access' => TRUE,
+      'title' => TRUE,
+      'header' => TRUE,
+      'header_format' => TRUE,
+      'header_empty' => TRUE,
+      'footer' => TRUE,
+      'footer_format' => TRUE,
+      'footer_empty' => TRUE,
+      'empty' => TRUE,
+      'empty_format' => TRUE,
+      'use_ajax' => TRUE,
+      'items_per_page' => TRUE,
+      'offset' => TRUE,
+      'use_pager' => TRUE,
+      'pager_element' => TRUE,
+      'use_more' => TRUE,
+      'distinct' => TRUE,
+      'link_display' => TRUE,
+      'style_plugin' => TRUE,
+      'style_options' => TRUE,
+      'row_plugin' => TRUE,
+      'row_options' => TRUE,
+      'relationships' => TRUE,
+      'fields' => TRUE,
+      'sorts' => TRUE,
+      'arguments' => TRUE,
+      'filters' => TRUE,
+    ),
+    'relationships' => array(),
+    'fields' => array(),
+    'sorts' => array(),
+    'arguments' => array(),
+    'filters' => array(),
+    'block_description' => 'Recent comments view',
+  );
+  $view->display['block'] = $display;
+  $views[$view->name] = $view;
+
   return $views;
 }

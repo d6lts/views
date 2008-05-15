@@ -9,7 +9,7 @@ function search_views_default_views() {
 
   $view = new view;
   $view->name = 'backlinks';
-  $view->description = t('What links here.');
+  $view->description = t('Displays a list of nodes that link to the node, using the search backlinks table.');
   $view->tag = t('default');
   $view->view_php = '';
   $view->base_table = 'node';
@@ -24,20 +24,20 @@ function search_views_default_views() {
   $display->position = '1';
   $display->display_options = array (
   'style_plugin' => 'list',
-  'style_options' => 
+  'style_options' =>
   array (
     'type' => 'ol',
   ),
   'row_plugin' => 'fields',
-  'row_options' => 
+  'row_options' =>
   array (
   ),
-  'relationships' => 
+  'relationships' =>
   array (
   ),
-  'fields' => 
+  'fields' =>
   array (
-    'title' => 
+    'title' =>
     array (
       'id' => 'title',
       'table' => 'node',
@@ -47,19 +47,19 @@ function search_views_default_views() {
       'link_to_node' => 1,
     ),
   ),
-  'sorts' => 
+  'sorts' =>
   array (
   ),
-  'arguments' => 
+  'arguments' =>
   array (
-    'nid' => 
+    'nid' =>
     array (
       'id' => 'nid',
       'table' => 'search_node_links_to',
       'field' => 'nid',
       'default_action' => 'not found',
       'style_plugin' => 'default_summary',
-      'style_options' => 
+      'style_options' =>
       array (
         'count' => true,
         'override' => false,
@@ -75,15 +75,15 @@ function search_views_default_views() {
       'relationship' => 'none',
       'default_argument_fixed' => '',
       'default_argument_php' => '',
-      'validate_argument_node_type' => 
+      'validate_argument_node_type' =>
       array (
       ),
       'validate_argument_php' => '',
     ),
   ),
-  'filters' => 
+  'filters' =>
   array (
-    'status' => 
+    'status' =>
     array (
       'id' => 'status',
       'table' => 'node',
@@ -92,13 +92,13 @@ function search_views_default_views() {
       'value' => 1,
       'group' => 0,
       'exposed' => false,
-      'expose' => 
+      'expose' =>
       array (
         'operator' => false,
         'label' => '',
       ),
       'relationship' => 'none',
-      'expose_button' => 
+      'expose_button' =>
       array (
         'button' => 'Expose',
       ),
@@ -118,7 +118,7 @@ function search_views_default_views() {
   $display->display_plugin = 'page';
   $display->position = '2';
   $display->display_options = array (
-  'defaults' => 
+  'defaults' =>
   array (
     'access' => true,
     'title' => true,
@@ -148,23 +148,23 @@ function search_views_default_views() {
     'arguments' => true,
     'filters' => true,
   ),
-  'relationships' => 
+  'relationships' =>
   array (
   ),
-  'fields' => 
+  'fields' =>
   array (
   ),
-  'sorts' => 
+  'sorts' =>
   array (
   ),
-  'arguments' => 
+  'arguments' =>
   array (
   ),
-  'filters' => 
+  'filters' =>
   array (
   ),
   'path' => 'node/%/backlinks',
-  'menu' => 
+  'menu' =>
   array (
     'type' => 'tab',
     'title' => t('What links here'),
@@ -178,7 +178,7 @@ function search_views_default_views() {
   $display->display_plugin = 'block';
   $display->position = '3';
   $display->display_options = array (
-  'defaults' => 
+  'defaults' =>
   array (
     'access' => true,
     'title' => true,
@@ -208,25 +208,25 @@ function search_views_default_views() {
     'arguments' => false,
     'filters' => true,
   ),
-  'relationships' => 
+  'relationships' =>
   array (
   ),
-  'fields' => 
+  'fields' =>
   array (
   ),
-  'sorts' => 
+  'sorts' =>
   array (
   ),
-  'arguments' => 
+  'arguments' =>
   array (
-    'nid' => 
+    'nid' =>
     array (
       'id' => 'nid',
       'table' => 'search_node_links_to',
       'field' => 'nid',
       'default_action' => 'default',
       'style_plugin' => 'default_summary',
-      'style_options' => 
+      'style_options' =>
       array (
         'count' => true,
         'override' => false,
@@ -234,7 +234,7 @@ function search_views_default_views() {
       ),
       'wildcard' => '',
       'wildcard_substitution' => '',
-      'title' => t('What links here'),
+      'title' => t('Displays a list of nodes that link to the node, using the search backlinks table.'),
       'default_argument_type' => 'php',
       'default_argument' => '',
       'validate_type' => 'node',
@@ -242,13 +242,13 @@ function search_views_default_views() {
       'relationship' => 'none',
       'default_argument_fixed' => '',
       'default_argument_php' => 'return ($node = menu_get_object()) ? $node->nid : FALSE;',
-      'validate_argument_node_type' => 
+      'validate_argument_node_type' =>
       array (
       ),
       'validate_argument_php' => '',
     ),
   ),
-  'filters' => 
+  'filters' =>
   array (
   ),
   'items_per_page' => 6,
@@ -257,12 +257,12 @@ function search_views_default_views() {
   'pager_element' => 0,
   'use_more' => 1,
   'style_plugin' => 'list',
-  'style_options' => 
+  'style_options' =>
   array (
     'type' => 'ul',
   ),
   'row_plugin' => 'fields',
-  'row_options' => 
+  'row_options' =>
   array (
   ),
   'block_description' => t('What links here'),
