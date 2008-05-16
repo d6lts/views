@@ -853,17 +853,19 @@ class views_handler_argument_node_type extends views_handler_argument {
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_nid extends views_handler_argument {
+class views_handler_argument_node_nid extends views_handler_argument_numeric {
   /**
    * Override the behavior of title(). Get the title of the node.
    */
-  function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT n.title FROM {node} n WHERE n.nid = %d"), $this->argument));
-    if (empty($title)) {
-      return t('No title');
-    }
+  function title_query() {
+    $titles = array();
+    $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
 
-    return check_plain($title);
+    $result = db_query("SELECT n.title FROM {node} n WHERE n.nid IN ($placeholders)", $this->value);
+    while ($term = db_fetch_object($result)) {
+      $titles[] = check_plain($term->title);
+    }
+    return $titles;
   }
 }
 
@@ -872,19 +874,21 @@ class views_handler_argument_node_nid extends views_handler_argument {
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_vid extends views_handler_argument {
+class views_handler_argument_node_vid extends views_handler_argument_numeric {
   // No constructor is necessary.
 
   /**
    * Override the behavior of title(). Get the title of the revision.
    */
-  function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT r.title FROM {node_revisions} r INNER JOIN {node} n ON r.nid = n.nid WHERE r.vid = %d"), $this->argument));
-    if (empty($title)) {
-      return t('No title');
-    }
+  function title_query() {
+    $titles = array();
+    $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
 
-    return check_plain($title);
+    $result = db_query("SELECT n.title FROM {node_revisions} n WHERE n.nid IN ($placeholders)", $this->value);
+    while ($term = db_fetch_object($result)) {
+      $titles[] = check_plain($term->title);
+    }
+    return $titles;
   }
 }
 
@@ -1366,27 +1370,90 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
       '#dependency' => array('edit-options-validate-type' => array($this->id)),
     );
 
-    $this->check_access($form);
+    $form['validate_argument_node_access'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Validate user has access to the node'),
+      '#default_value' => !empty($this->argument->options['validate_argument_node_access']),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-options-validate-type' => array($this->id)),
+    );
+
+    $form['validate_argument_nid_type'] = array(
+      '#type' => 'select',
+      '#title' => t('Argument type'),
+      '#options' => array(
+        'nid' => t('Node ID'),
+        'nids' => t('Node IDs separated by , or +'),
+      ),
+      '#default_value' => isset($this->argument->options['validate_argument_nid_type']) ? $this->argument->options['validate_argument_nid_type'] : 'nid',
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('edit-options-validate-type' => array($this->id)),
+    );
   }
 
   function validate_argument($argument) {
-    if (!is_numeric($argument)) {
-      return FALSE;
-    }
-    $node = node_load($argument);
-    if (!$node) {
-      return FALSE;
-    }
-
-    // Save the title() handlers some work.
-    $this->argument->validated_title = check_plain($node->title);
-
     $types = array_filter($this->argument->options[$this->option_name]);
-    if (empty($types)) {
-      return TRUE;
-    }
 
-    return isset($types[$node->type]);
+    $type = isset($this->argument->options['validate_argument_nid_type']) ? $this->argument->options['validate_argument_nid_type'] : 'nid';
+
+    switch ($type) {
+      case 'nid':
+        if (!is_numeric($argument)) {
+          return FALSE;
+        }
+        $node = node_load($argument);
+        if (!$node) {
+          return FALSE;
+        }
+
+        if (!empty($this->argument->options['validate_argument_node_access'])) {
+          if (!node_access('view', $node)) {
+            return FALSE;
+          }
+        }
+
+        // Save the title() handlers some work.
+        $this->argument->validated_title = check_plain($node->title);
+
+        if (empty($types)) {
+          return TRUE;
+        }
+
+        return isset($types[$node->type]);
+      break;
+      case 'nids':
+        $nids = new stdClass();
+        $nids->value = array($argument);
+        $nids = views_break_phrase($argument, $nids);
+        if ($nids->value == -1) {
+          return FALSE;
+        }
+
+        $placeholders = implode(', ', array_fill(0, sizeof($nids->value), '%d'));
+
+        $test = drupal_map_assoc($nids->value);
+        $titles = array();
+
+        $result = db_query("SELECT * FROM {node} WHERE nid IN ($placeholders)", $nids->value);
+        while ($node = db_fetch_object($result)) {
+          if ($types && empty($types[$node->type])) {
+            return FALSE;
+          }
+
+          if (!empty($this->argument->options['validate_argument_node_access'])) {
+            if (!node_access('view', $node)) {
+              return FALSE;
+            }
+          }
+
+          $titles[] = check_plain($node->title);
+          unset($test[$node->nid]);
+        }
+
+        $this->argument->validated_title = implode($nids->operator == 'or' ? ' + ' : ', ', $titles);
+        // If this is not empty, we did not find a nid.
+        return empty($test);
+    }
   }
 }
 

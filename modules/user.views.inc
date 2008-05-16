@@ -592,22 +592,23 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_user_uid extends views_handler_argument {
+class views_handler_argument_user_uid extends views_handler_argument_numeric {
   /**
    * Override the behavior of title(). Get the name of the user.
    */
-  function title() {
+  function title_query() {
     if (!$this->argument) {
-      $title = variable_get('anonymous', t('Anonymous'));
-    }
-    else {
-      $title = db_result(db_query("SELECT u.name FROM {users} u WHERE u.uid = %d", $this->argument));
-    }
-    if (empty($title)) {
-      return t('No user');
+      return array(variable_get('anonymous', t('Anonymous')));
     }
 
-    return check_plain($title);
+    $titles = array();
+    $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
+
+    $result = db_query("SELECT u.name FROM {users} u WHERE u.uid IN ($placeholders)", $this->value);
+    while ($term = db_fetch_object($result)) {
+      $titles[] = check_plain($term->name);
+    }
+    return $titles;
   }
 }
 
