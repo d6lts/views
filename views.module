@@ -410,10 +410,10 @@ function &views_get_page_view() {
  * Set the current 'current view' that is being built/rendered so that it is
  * easy for other modules or items in drupal_eval to identify
  */
-function &views_set_current_view(&$view = NULL) {
+function &views_set_current_view($view = NULL) {
   static $cache = NULL;
   if (isset($view)) {
-    $cache = &$view;
+    $cache = $view;
   }
 
   return $cache;
