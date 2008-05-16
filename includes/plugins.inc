@@ -1134,22 +1134,17 @@ class views_plugin_display extends views_plugin {
         $output = '<p>' . t('Back to !info.', array('!info' => $this->option_link(t('theming information'), 'analyze-theme'))) . '</p>';
 
         $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
-        $template =  "<?php\n";
-        $template .= " /**\n";
-        $template .= "  * Variables available:\n";
-        $template .= "  * - \$view: The view object\n";
-        $template .= "  * - \$field: The field handler object that can process the input\n";
-        $template .= "  * - \$row: The raw SQL result that can be used\n";
-        $template .= "  */\n";
-        $template .= "?>/\n";
-        $template .= "<?php print \$field->render(\$row); ?>\n";
-        $output .= '<pre>' . check_plain($template) . '</pre>';
+
+        // Field templates aren't registered the normal way...and they're always
+        // this one, anyhow.
+        $output .= '<pre>' . check_plain(file_get_contents(drupal_get_path('module', 'views') . '/theme/views-view-field.tpl.php')) . '</pre>';
 
         $form['analysis'] = array(
           '#prefix' => '<div class="form-item">',
           '#suffix' => '</div>',
           '#value' => $output,
         );
+        $form_state['ok_button'] = TRUE;
         break;
     }
   }

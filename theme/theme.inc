@@ -180,6 +180,17 @@ function theme_views_view_field($view, $field, $row) {
 }
 
 /**
+ * Process a single field within a view.
+ *
+ * This preprocess function isn't normally run, as a function is used by
+ * default, for performance. However, by creating a template, this
+ * preprocess should get pickedup.
+ */
+function template_preprocess_views_view_field(&$vars) {
+  $vars['output'] = $vars['field']->render($vars['row']);
+}
+
+/**
  * Preprocess theme function to print a single record from a row, with fields
  */
 function template_preprocess_views_view_summary(&$vars) {
