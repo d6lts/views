@@ -16,10 +16,10 @@
 .views-tabset .views-tabs {
   background: #F6F6F6;
   border-top: #D6DBDE 1px solid;
-  border-left: #EFEFEF 1px solid;
-  border-bottom: #EFEFEF 1px solid;
+  border-bottom: #D6DBDE 1px solid;
+  border-left: #D6DBDE 1px solid;
   float: left;
-  width: 116px;
+  width: 117px;
   margin-right: 0;
 }
 
@@ -38,30 +38,44 @@
 }
 
 .views-tabset .views-tabs ul li {
-  background: #fff;
+  background: #efefef;
   list-style-type: none;
   list-style-image: none;
   line-height: 100%;
   border-bottom: #D6DBDE 1px solid;
   margin: 0;
-  padding: 0.5em;
+  padding: 0;
   position: relative;
 }
 
 .views-tabset .views-tabs ul li.active {
-  background: #D6DBDE;
+  background: #fff url(../images/arrow-active.png) no-repeat right;
   position: relative;
+  width: 118px;
+  margin-right: -1px;
 }
 
 .views-tabset .views-tabs ul li a {
+  display: block;
   font-size: 90%;
   color: #777;
   font-weight: normal;
+  padding: 0.5em;
+}
+
+.views-tabset .views-tabs ul li a:hover {
+  background-color: #f6f6f6;
+  text-decoration: none;
 }
 
 .views-tabset .views-tabs ul li.active a {
   color: #000;
   font-weight: bold;
+}
+
+.views-tabset .views-tabs ul li.active a:hover {
+  color: #000;
+  background: #fff url(../images/arrow-active.png) no-repeat right;
 }
 
 .views-tabset .extra {
@@ -79,7 +93,7 @@
  */
 .views-tabset .views-display {
   border: #D6DBDE 1px solid;
-  margin-left: 117px; /* 118 -1 causes borders to overlap */
+  margin-left: 118px; /* 118 -1 causes borders to overlap */
 //  min-height: 302px;
 //  _height: 300px;  /*stupid IE hack */
 }
@@ -175,7 +189,6 @@ div.views-display-deleted div.tab-section {
 .views-basic-info {
   margin: 0.5em 0em 0 0;
   padding: 0.5em;
-  font-weight: bold;
 }
 
 /*
@@ -190,14 +203,14 @@ div.views-display-deleted div.tab-section {
   background: #f6f6f6;
   border-left: #D6DBDE 1px solid;
   border-right: #D6DBDE 1px solid;
-  margin: 0 0 0 117px;
+  margin: 0 0 0 118px;
   padding: 1em 1em 0em 1em;
   font-weight: bold;
 }
 
 #views-ajax-pad .message {
   background: #f6f6f6;
-  margin-left: 117px;
+  margin-left: 118px;
   border: #D6DBDE 1px solid;
   border-top: 0;
   /* padding: 3em 0em; */
@@ -207,7 +220,7 @@ div.views-display-deleted div.tab-section {
 
 #views-ajax-pad form {
   background: #fff;
-  margin-left: 117px;
+  margin-left: 118px;
   border: #D6DBDE 1px solid;
   padding-top: 3px;
   border-top: 0;
@@ -215,7 +228,7 @@ div.views-display-deleted div.tab-section {
 
 #views-ajax-pad .views-messages {
   background: transparent;
-  margin-left: 117px;
+  margin-left: 118px;
   padding: 5px;
   border: #D6DBDE 1px solid;
   border-top: 0;
@@ -488,12 +501,11 @@ form#views-add-display-form {
 }
 
 #views-ui-edit-view-form {
-  margin: 0 0 0 117px;
+  margin: 0 0 0 118px;
   padding: 0 0 0 1em;
 }
 
 #views-live-preview {
-  border-top: 1px solid black;
   padding-top: .5em;
 }
 
