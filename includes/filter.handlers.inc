@@ -418,6 +418,7 @@ class views_handler_filter extends views_handler {
     }
     if (!empty($this->options['expose']['single']) && isset($form['#multiple'])) {
       unset($form['#multiple']);
+      $form['#size'] = NULL;
     }
 
     if ($type == 'value' && !empty($this->options['expose']['optional']) && $form['#type'] == 'select' && empty($form['#multiple'])) {
