@@ -464,7 +464,6 @@ class views_handler_argument extends views_handler {
       // so look up the join and add it instead.
       if ($this->table_alias != $this->table) {
         $j = views_get_table_join($this->name_table, $this->table);
-        dsm($this->table);
         if ($j) {
           $join = drupal_clone($j);
           $join->left_table = $this->table_alias;

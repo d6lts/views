@@ -99,7 +99,7 @@ class views_handler_relationship extends views_handler {
     $this->ensure_my_table();
 
     // use a short alias for this:
-    $alias = $def['table'];
+    $alias = $def['table'] . '_' . $def['left_table'];
 
     $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base'], $this->relationship);
   }
