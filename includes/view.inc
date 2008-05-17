@@ -251,13 +251,13 @@ class view extends views_db_object {
       return;
     }
 
-    if (!isset($this->style_plugin)) {
-      $this->style_plugin = $this->display_handler->get_option('style_plugin');
+    if (!isset($this->alternate_style_plugin)) {
+      $this->plugin_name = $this->display_handler->get_option('style_plugin');
       $this->style_options = $this->display_handler->get_option('style_options');
     }
 
     vpr("Init_style: $this->style_plugin");
-    $this->style_plugin = views_get_plugin('style', $this->style_plugin);
+    $this->style_plugin = views_get_plugin('style', $this->plugin_name);
 
     if (empty($this->style_plugin)) {
       return FALSE;

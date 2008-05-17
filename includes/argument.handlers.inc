@@ -414,7 +414,7 @@ class views_handler_argument extends views_handler {
 
     // Change the display style to the summary style for this
     // argument.
-    $this->view->style_plugin = $this->options['style_plugin'];
+    $this->view->plugin_name = $this->options['style_plugin'];
     $this->view->style_options = $this->options['style_options'];
 
     // Clear out the normal primary field and whatever else may have
