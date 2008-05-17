@@ -336,12 +336,28 @@ class views_handler_argument_term_node_tid_depth extends views_handler_argument 
       '#default_value' => $this->options['depth'],
       '#description' => t('The depth will match nodes tagged with terms in the hierarchy. For example, if you have the term "fruit" and a child term "apple", with a depth of 1 (or higher) then filtering for the term "fruit" will get nodes that are tagged with "apple". If negative, the reverse is true; searching for "apple" will pick up nodes tagged with "fruit" if depth is -1 (or lower).'),
     );
+
     $form['break_phrase'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Allow multiple terms per argument.'),
+      '#title' => t('Allow multiple terms per argument'),
       '#description' => t('If selected, users can enter multiple arguments in the form of 1+2+3. Due to the number of JOINs it would require, AND will be treated as OR with this argument.'),
       '#default_value' => !empty($this->options['break_phrase']),
     );
+
+    $form['set_breadcrumb'] = array(
+      '#type' => 'checkbox',
+      '#title' => t("Set the breadcrumb for the term parents"),
+      '#description' => t('If selected, the breadcrumb trail will include all parent terms, each one linking to this view. Note that this only works if just one term was received.'),
+      '#default_value' => !empty($this->options['set_breadcrumb']),
+    );
+  }
+
+  function set_breadcrumb(&$breadcrumb) {
+    if (empty($this->options['set_breadcrumb']) || !is_numeric($this->argument)) {
+      return;
+    }
+
+    return views_taxonomy_set_breadcrumb($breadcrumb, $this);
   }
 
   /**
@@ -419,8 +435,26 @@ class views_handler_argument_term_node_tid_depth extends views_handler_argument 
     // TODO review text
     return t('No name');
   }
-
 }
+
+function views_taxonomy_set_breadcrumb(&$breadcrumb, &$argument) {
+  if (empty($argument->options['set_breadcrumb'])) {
+    return;
+  }
+
+  $args = $argument->view->args;
+  $parents = taxonomy_get_parents_all($argument->argument);
+  foreach (array_reverse($parents) as $parent) {
+    // Unfortunately parents includes the current argument. Skip.
+    if ($parent->tid == $argument->argument) {
+      continue;
+    }
+    $args[$argument->position] = $parent->tid;
+    $path = $argument->view->get_url($args);
+    $breadcrumb[$path] = check_plain($parent->name);
+  }
+}
+
 
 /**
  * Argument handler for to modify depth for a previous term.
@@ -839,6 +873,24 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
  * @ingroup views_argument_handlers
  */
 class views_handler_argument_term_node_tid extends views_handler_argument_many_to_one {
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['set_breadcrumb'] = array(
+      '#type' => 'checkbox',
+      '#title' => t("Set the breadcrumb for the term parents"),
+      '#description' => t('If selected, the breadcrumb trail will include all parent terms, each one linking to this view. Note that this only works if just one term was received.'),
+      '#default_value' => !empty($this->options['set_breadcrumb']),
+    );
+  }
+
+  function set_breadcrumb(&$breadcrumb) {
+    if (empty($this->options['set_breadcrumb']) || !is_numeric($this->argument)) {
+      return;
+    }
+
+    return views_taxonomy_set_breadcrumb($breadcrumb, $this);
+  }
+
   function title_query() {
     $titles = array();
     $placeholders = implode(', ', array_fill(0, sizeof($this->value), '%d'));
