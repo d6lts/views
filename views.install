@@ -187,7 +187,7 @@ function views_update_6000() {
   // views_schema_1 rather than the default schema. This will be important
   // if we have table updates.
   $schema = views_schema_1();
-  _drupal_initialize_schema($module, $schema);
+  _drupal_initialize_schema('views', $schema);
 
   foreach ($schema as $name => $table) {
     db_create_table($ret, $name, $table);

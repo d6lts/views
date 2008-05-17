@@ -5,6 +5,7 @@ table.views-entry {
   border: 1px solid #ccc;
   background-color: white;
   clear: left;
+  width: 100%;
 }
 
 table.views-entry tbody {
