@@ -647,6 +647,38 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
 
   function value_validate(&$form, &$form_state) {
     $values = drupal_explode_tags($form_state['values']['options']['value']);
+    $uids = $this->validate_user_strings($form['value'], $values);
+
+    if ($uids) {
+      $form_state['values']['options']['value'] = $uids;
+    }
+  }
+
+  function exposed_validate(&$form, &$form_state) {
+    if (empty($this->options['exposed'])) {
+      return;
+    }
+
+    if (empty($this->options['expose']['identifier'])) {
+      return;
+    }
+
+    $identifier = $this->options['expose']['identifier'];
+    $values = drupal_explode_tags($form_state['values'][$identifier]);
+
+    $uids = $this->validate_user_strings($form[$identifier], $values);
+
+    if ($uids) {
+      $form_state['values'][$identifier] = $uids;
+    }
+  }
+
+  /**
+   * Validate the user string. Since this can come from either the form
+   * or the exposed filter, this is abstracted out a bit so it can
+   * handle the multiple input sources.
+   */
+  function validate_user_strings(&$form, $values) {
     $uids = array();
     $placeholders = array();
     $args = array();
@@ -663,10 +695,7 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     }
 
     if (!$args) {
-      if ($uids) {
-        $form_state['values']['options']['value'] = $uids;
-      }
-      return;
+      return $uids;
     }
 
     $result = db_query("SELECT * FROM {users} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
@@ -676,10 +705,10 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     }
 
     if ($missing) {
-      form_error($form['value'], t('Unable to find user(s): @users', array('@users', implode(', ', $missing))));
+      form_error($form, format_plural(count($missing), 'Unable to find user: @users', 'Unable to find users: @users', array('@users' => implode(', ', array_keys($missing)))));
     }
 
-    $form_state['values']['options']['value'] = $uids;
+    return $uids;
   }
 
   function value_submit() {

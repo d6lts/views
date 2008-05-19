@@ -747,15 +747,28 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       '#default_value' => $this->options['vid'],
     );
 
+    $form['markup_start'] = array(
+      '#value' => '<div class="views-left-40">',
+    );
+
     $form['type'] = array(
-      '#prefix' => '<div class="views-left-40">',
-      '#suffix' => '</div>',
       '#type' => 'radios',
       '#title' => t('Selection type'),
       '#options' => array('select' => t('Dropdown'), 'textfield' => t('Autocomplete')),
       '#default_value' => $this->options['type'],
     );
 
+    $form['hierarchy'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Show hierarchy in dropdown'),
+      '#default_value' => !empty($this->options['hierarchy']),
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('radio:options[type]' => array('select')),
+    );
+
+    $form['markup_end'] = array(
+      '#value' => '</div>',
+    );
   }
 
   function value_form(&$form, &$form_state) {
@@ -789,16 +802,33 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       );
     }
     else {
-      $form['value'] = _taxonomy_term_select(
-        t('Select terms from vocabulary @voc', array('@voc' => $vocabulary->name)),
-        'value',
-        $this->value,
-        $vocabulary->vid,
-        '',
-        TRUE,
-        NULL
+      if (!empty($this->options['hierarchy'])) {
+        $tree = taxonomy_get_tree($vocabulary->vid);
+        $options = array();
+
+        if ($tree) {
+          foreach ($tree as $term) {
+            $choice = new stdClass();
+            $choice->option = array($term->tid => str_repeat('-', $term->depth) . $term->name);
+            $options[] = $choice;
+          }
+        }
+      }
+      else {
+        $options = array();
+        $result = db_query("SELECT * FROM {term_data} WHERE vid = %d ORDER BY weight, name", $vocabulary->vid);
+        while ($term = db_fetch_object($result)) {
+          $options[$term->tid] = check_plain($term->name);
+        }
+      }
+
+      $form['value'] = array(
+        '#type' => 'select',
+        '#title' => t('Select terms from vocabulary @voc', array('@voc' => $vocabulary->name)),
+        '#multiple' => TRUE,
+        '#options' => $options,
+        '#size' => min(9, count($options)),
       );
-      unset($form['value']['#weight']);
     }
 
     if (empty($form_state['exposed'])) {
@@ -807,45 +837,79 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     }
   }
 
-  function value_validate($form, &$form_state) {
-    if ($this->options['type'] == 'textfield') {
-      $values = drupal_explode_tags($form_state['values']['options']['value']);
-      if (empty($values)) {
-        $form_state['values']['options']['value'] = array();
-        return;
-      }
+  function value_validate(&$form, &$form_state) {
+    // We only validate if they've chosen the text field style.
+    if ($this->options['type'] != 'textfield') {
+      return;
+    }
 
-      $tids = array();
-      $placeholders = array();
-      $args = array();
-      $results = array();
-      foreach ($values as $value) {
-        if (strtolower($value) == 'anonymous') {
-          $tids[] = 0;
-        }
-        else {
-          $missing[strtolower($value)] = TRUE;
-          $args[] = $value;
-          $placeholders[] = "'%s'";
-        }
-      }
+    $values = drupal_explode_tags($form_state['values']['options']['value']);
+    $tids = $this->validate_term_strings($form['value'], $values);
 
-      if (!$tids) {
-        return;
-      }
-
-      $result = db_query("SELECT * FROM {term_data} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
-      while ($term = db_fetch_object($result)) {
-        unset($missing[strtolower($term->name)]);
-        $tids[] = $term->tid;
-      }
-
-      if ($missing) {
-        form_error($form['value'], t('Unable to find term(s): @terms', array('@terms', implode(', ', $missing))));
-      }
-
+    if ($tids) {
       $form_state['values']['options']['value'] = $tids;
     }
+  }
+
+  function exposed_validate(&$form, &$form_state) {
+    // We only validate if they've chosen the text field style.
+    if ($this->options['type'] != 'textfield') {
+      return;
+    }
+
+    if (empty($this->options['exposed'])) {
+      return;
+    }
+
+    if (empty($this->options['expose']['identifier'])) {
+      return;
+    }
+
+    $identifier = $this->options['expose']['identifier'];
+    $values = drupal_explode_tags($form_state['values'][$identifier]);
+
+    $uids = $this->validate_term_strings($form[$identifier], $values);
+
+    if ($uids) {
+      $form_state['values'][$identifier] = $uids;
+    }
+  }
+
+  /**
+   * Validate the user string. Since this can come from either the form
+   * or the exposed filter, this is abstracted out a bit so it can
+   * handle the multiple input sources.
+   */
+  function validate_term_strings(&$form, $values) {
+    if (empty($values)) {
+      return array();
+    }
+
+    $tids = array();
+    $placeholders = array();
+    $args = array();
+    $results = array();
+    foreach ($values as $value) {
+      $missing[strtolower($value)] = TRUE;
+      $args[] = $value;
+      $placeholders[] = "'%s'";
+    }
+
+    if (!$args) {
+      return;
+    }
+
+    $result = db_query("SELECT * FROM {term_data} WHERE name IN (" . implode(', ', $placeholders) . ")", $args);
+    while ($term = db_fetch_object($result)) {
+      unset($missing[strtolower($term->name)]);
+      $tids[] = $term->tid;
+    }
+
+    if ($missing) {
+      form_error($form, format_plural(count($missing), 'Unable to find term: @terms', 'Unable to find terms: @terms', array('@terms' => implode(', ', array_keys($missing)))));
+    }
+
+    return $tids;
   }
 
   function value_submit($form, &$form_state) {
