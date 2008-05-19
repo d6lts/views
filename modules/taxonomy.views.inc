@@ -822,6 +822,11 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
         }
       }
 
+      // Since we're overriding, allow the list of options to be reduced.
+      if (!empty($form_state['exposed']) && !empty($this->options['expose']['reduce'])) {
+        $options = $this->reduce_value_options($options);
+      }
+
       $form['value'] = array(
         '#type' => 'select',
         '#title' => t('Select terms from vocabulary @voc', array('@voc' => $vocabulary->name)),

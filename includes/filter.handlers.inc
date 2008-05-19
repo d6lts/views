@@ -849,14 +849,10 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
   }
 
   function expose_options() {
-    $this->options['expose'] = array(
-      'operator' => '',
-      'identifier' => $this->options['id'],
-      'label' => $this->value_value,
-      'remember' => FALSE,
-      'single' => TRUE,
-      'optional' => FALSE,
-    );
+    parent::expose_options();
+    $this->options['expose']['operator'] = '';
+    $this->options['expose']['label'] = $this->value_value;
+    $this->options['expose']['optional'] = FALSE;
   }
 
   function query() {
@@ -870,6 +866,8 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
  * Simple filter to handle matching of multiple options selectable via checkboxes
  */
 class views_handler_filter_in_operator extends views_handler_filter {
+  var $value_form_type = 'checkboxes';
+
   function construct() {
     parent::construct();
     $this->value_title = t('Options');
@@ -883,6 +881,21 @@ class views_handler_filter_in_operator extends views_handler_filter {
    */
   function get_value_options() {
     $this->value_options = array(t('Yes'), t('No'));
+  }
+
+  function expose_options() {
+    parent::expose_options();
+    $this->options['expose']['reduce'] = FALSE;
+  }
+
+  function expose_form_right(&$form, &$form_state) {
+    parent::expose_form_right($form, $form_state);
+    $form['expose']['reduce'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Limit list to selected items'),
+      '#description' => t('If checked, the selected items presented to the user will be the only ones selected here.'),
+      '#default_value' => !empty($this->options['expose']['reduce']), // safety
+    );
   }
 
   function options(&$options) {
@@ -903,12 +916,70 @@ class views_handler_filter_in_operator extends views_handler_filter {
 
   function value_form(&$form, &$form_state) {
     $this->get_value_options();
+    $options = $this->value_options;
+    if (!empty($form_state['exposed']) && !empty($this->options['expose']['reduce'])) {
+      $options = $this->reduce_value_options();
+    }
+
     $form['value'] = array(
-      '#type' => 'checkboxes',
+      '#type' => $this->value_form_type,
       '#title' => $this->value_title,
-      '#options' => $this->value_options,
+      '#options' => $options,
       '#default_value' => (array) $this->value,
+      // These are only valid for 'select' type, but do no harm to checkboxes.
+      '#multiple' => TRUE,
+      '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
     );
+  }
+
+  /**
+   * When using exposed filters, we may be required to reduce the set.
+   */
+  function reduce_value_options($input = NULL) {
+    if (!isset($input)) {
+      $input = $this->value_options;
+    }
+
+    // Because options may be an array of strings, or an array of mixed arrays
+    // and strings (optgroups) or an array of objects, we have to
+    // step through and handle each one individually.
+    $options = array();
+    foreach ($input as $id => $option) {
+      if (is_array($option)) {
+        $options[$id] = $this->reduce_value_options($option);
+        continue;
+      }
+      else if (is_object($option)) {
+        $keys = array_keys($option->choice);
+        $key = array_shift($keys);
+        if (isset($this->value[$key])) {
+          $options[$id] = $option;
+        }
+      }
+      else if (isset($this->value[$id])) {
+        $options[$id] = $option;
+      }
+    }
+    return $options;
+  }
+
+  function accept_exposed_input($input) {
+    // A very special override because the All state for this type of
+    // filter could have a default:
+    if (empty($this->options['exposed'])) {
+      return TRUE;
+    }
+
+    // If this is single and optional, this says that yes this filter will
+    // participate, but using the default settings.
+    if (!empty($this->options['expose']['single']) && !empty($this->options['expose']['optional'])) {
+      $identifier = $this->options['expose']['identifier'];
+      if ($input[$identifier] == 'All') {
+        return TRUE;
+      }
+    }
+
+    return parent::accept_exposed_input($input);
   }
 
   function value_submit($form, &$form_state) {
@@ -1363,16 +1434,10 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
     );
   }
 
+  var $value_form_type = 'select';
+
   function value_form(&$form, &$form_state) {
-    $this->get_value_options();
-    $form['value'] = array(
-      '#type' => 'select',
-      '#title' => $this->value_title,
-      '#options' => $this->value_options,
-      '#multiple' => TRUE,
-      '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
-      '#default_value' => (array) $this->value,
-    );
+    parent::options_form();
 
     if (empty($form_state['exposed'])) {
       $this->helper->options_form($form, $form_state);
