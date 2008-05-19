@@ -345,6 +345,16 @@ html.js #views-ajax-pad {
   width: 50%;
 }
 
+#views-ajax-pad .views-right-60 {
+  float: right;
+  width: 60%;
+}
+
+#views-ajax-pad .views-right-70 {
+  float: right;
+  width: 70%;
+}
+
 #views-ajax-pad .views-left-75 {
   float: left;
   width: 75%;

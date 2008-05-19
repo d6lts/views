@@ -58,8 +58,10 @@ class views_handler_filter extends views_handler {
    */
   function options_form(&$form, &$form_state) {
     $this->show_expose_button($form, $form_state);
+    $form['op_val_start'] = array('#value' => '<div class="clear-block">');
     $this->show_operator_form($form, $form_state);
     $this->show_value_form($form, $form_state);
+    $form['op_val_end'] = array('#value' => '</div>');
     $this->show_expose_form($form, $form_state);
   }
 
@@ -134,7 +136,7 @@ class views_handler_filter extends views_handler {
    */
   function show_value_form(&$form, &$form_state) {
     $this->value_form($form, $form_state);
-    $form['value']['#prefix'] = '<div class="views-left-60">';
+    $form['value']['#prefix'] = '<div class="views-right-70">';
     $form['value']['#suffix'] = '</div>';
   }
 
