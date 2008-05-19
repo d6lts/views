@@ -852,12 +852,12 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
   }
 
   function exposed_validate(&$form, &$form_state) {
-    // We only validate if they've chosen the text field style.
-    if ($this->options['type'] != 'textfield') {
+    if (empty($this->options['exposed'])) {
       return;
     }
 
-    if (empty($this->options['exposed'])) {
+    // We only validate if they've chosen the text field style.
+    if ($this->options['type'] != 'textfield') {
       return;
     }
 

@@ -1213,27 +1213,57 @@ class views_handler_filter_date extends views_handler_filter_numeric {
 
   function options_validate(&$form, &$form_state) {
     parent::options_validate($form, $form_state);
-    $operators = $this->operators();
 
     if (!empty($form_state['values']['options']['expose']['optional'])) {
       // Who cares what the value is if it's exposed and optional.
       return;
     }
 
-    if ($operators[$form_state['values']['options']['operator']]['values'] == 1) {
-      $convert = strtotime($form_state['values']['options']['value']['value']);
+    $this->validate_valid_time($form['value'], $form_state['values']['options']['operator'], $form_state['values']['options']['value']);
+  }
+
+  function exposed_validate(&$form, &$form_state) {
+    if (empty($this->options['exposed'])) {
+      return;
+    }
+
+    if (!empty($this->options['expose']['optional'])) {
+      // Who cares what the value is if it's exposed and optional.
+      return;
+    }
+
+    $value = &$form_state['values'][$this->options['expose']['identifier']];
+    if (!empty($this->options['expose']['operator'])) {
+      $operator = $form_state['values'][$this->options['expose']['operator']];
+    }
+    else {
+      $operator = $this->operator;
+    }
+
+    $this->validate_valid_time($this->options['expose']['identifier'], $operator, $value);
+
+  }
+
+  /**
+   * Validate that the time values convert to something usable.
+   */
+  function validate_valid_time(&$form, $operator, $value) {
+    $operators = $this->operators();
+
+    if ($operators[$operator]['values'] == 1) {
+      $convert = strtotime($value['value']);
       if ($convert == -1 || $convert === FALSE) {
-        form_error($form['value']['value'], t('Invalid date format.'));
+        form_error($form['value'], t('Invalid date format.'));
       }
     }
     else {
-      $min = strtotime($form_state['values']['options']['value']['min']);
+      $min = strtotime($value['min']);
       if ($min == -1 || $min === FALSE) {
-        form_error($form['value']['min'], t('Invalid date format.'));
+        form_error($form['min'], t('Invalid date format.'));
       }
-      $max = strtotime($form_state['values']['options']['value']['max']);
+      $max = strtotime($value['max']);
       if ($max == -1 || $max === FALSE) {
-        form_error($form['value']['max'], t('Invalid date format.'));
+        form_error($form['max'], t('Invalid date format.'));
       }
     }
   }
@@ -1247,6 +1277,27 @@ class views_handler_filter_date extends views_handler_filter_numeric {
       $value = &$input[$this->options['expose']['identifier']];
       $value['type'] = $this->value['type'];
     }
+
+    // Don't filter if value(s) are empty.
+    $operators = $this->operators();
+    if (!empty($this->options['expose']['operator'])) {
+      $operator = $form_state['values'][$this->options['expose']['operator']];
+    }
+    else {
+      $operator = $this->operator;
+    }
+
+    if ($operators[$operator]['values'] == 1) {
+      if ($value['value'] == '') {
+        return FALSE;
+      }
+    }
+    else {
+      if ($value['min'] == '' || $value['max'] == '') {
+        return FALSE;
+      }
+    }
+
     return parent::accept_exposed_input($input);
   }
 
