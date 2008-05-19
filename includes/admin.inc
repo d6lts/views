@@ -84,7 +84,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
     $item = new stdClass();
     $item->ops = array();
     if (empty($view->disabled)) {
-      $item->ops[] = l(t('Edit'), "admin/build/views/edit/$view->name", array('query' => drupal_get_destination()));
+      $item->ops[] = l(t('Edit'), "admin/build/views/edit/$view->name");
       $item->ops[] = l(t('Export'), "admin/build/views/export/$view->name");
       $item->ops[] = l(t('Clone'), "admin/build/views/clone/$view->name");
     }
