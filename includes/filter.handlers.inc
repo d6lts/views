@@ -1435,9 +1435,8 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
   }
 
   var $value_form_type = 'select';
-
   function value_form(&$form, &$form_state) {
-    parent::options_form();
+    parent::value_form($form, $form_state);
 
     if (empty($form_state['exposed'])) {
       $this->helper->options_form($form, $form_state);

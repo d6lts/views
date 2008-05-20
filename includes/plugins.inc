@@ -947,7 +947,7 @@ class views_plugin_display extends views_plugin {
         $form['footer_empty'] = array(
           '#type' => 'checkbox',
           '#title' => t('Display even if view has no result'),
-          '#default_value' => $this->get_option('header_empty'),
+          '#default_value' => $this->get_option('footer_empty'),
         );
         $form['footer'] = array(
           '#type' => 'textarea',
