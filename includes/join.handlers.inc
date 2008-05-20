@@ -108,34 +108,70 @@ class views_join {
             $join_table = $info['table'] . '.';
           }
 
-          // And now deal with the value and the operator
-          $value = $info['value'];
-          if (is_array($value) && !empty($value)) {
-            $extra = "$join_table$info[field] IN ('". implode("','", $value) ."')";
-          }
-          else {
-            $operator = "=";
-            if (!empty($info['operator'])) {
-              $operator = $info['operator'];
-            }
+          // And now deal with the value and the operator.  Set $q to
+          // a single-quote for non-numeric values and the
+          // empty-string for numeric values, then wrap all values in $q.
+          $raw_value = $this->db_safe($info['value']);
+          $q = (empty($info['numeric']) ? "'" : '');
 
-            if (empty($info['numeric'])) {
-              $extra .= "$join_table$info[field] $operator '$value'";
+          if (is_array($raw_value)) {
+            $operator = !empty($info['operator']) ? $info['operator'] : 'IN';
+            // Transform from IN() notation to = notation if just one value.
+            if (count($raw_value) == 1) {
+              $value = $q . array_shift($raw_value) . $q;
+              $operator = $operator == 'NOT IN' ? '!=' : '=';
             }
             else {
-              $extra .= "$join_table$info[field] $operator $value";
+              $value = "($q" . implode("$q, $q", $raw_value) . "$q)";
             }
           }
-          $extras[] = $extra;
+          else {
+            $operator = !empty($info['operator']) ? $info['operator'] : '=';
+            $value = "$q$raw_value$q";
+          }
+          $extras[] = "$join_table$info[field] $operator $value";
         }
+
         if ($extras) {
-          $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+          if (count($extras) == 1) {
+            $output .= ' AND ' . array_shift($extras);
+          }
+          else {
+            $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+          }
         }
       }
       else if ($this->extra && is_string($this->extra)) {
         $output .= " AND ($this->extra)";
       }
     }
+    return $output;
+  }
+
+  /**
+   * Ensure that input is db safe. We only check strings and ints tho
+   * so something that needs floats in their joins needs to do their
+   * own type checking.
+   */
+  function db_safe($input) {
+    if (is_array($input)) {
+      $output = array();
+      foreach ($input as $value) {
+        if (empty($info['numeric'])) {
+          $output[] = db_escape_string($value);
+        }
+        else {
+          $output[] = intval($value);
+        }
+      }
+    }
+    else if (empty($info['numeric'])) {
+      $output = db_escape_string($input);
+    }
+    else {
+      $output = intval($input);
+    }
+
     return $output;
   }
 }
