@@ -1335,7 +1335,11 @@ function drupal_build_form($form_id, &$form_state) {
  */
 function views_views_query_substitutions($view) {
   global $language;
-  return array('***CURRENT_TIME***' => time(), '***CURRENT_LANGUAGE***' => $language->language);
+  return array(
+    '***CURRENT_TIME***' => time(),
+    '***CURRENT_LANGUAGE***' => $language->language,
+    '***NO_LANGUAGE***' => '',
+  );
 }
 
 /**
