@@ -2122,6 +2122,23 @@ function views_ui_config_item_form(&$form_state) {
       $handler->init($view, $item);
       $types = views_object_types();
 
+      if (!$view->display_handler->is_default_display()) {
+        if ($view->display_handler->is_defaulted($types[$type]['plural'])) {
+          $form['options']['override'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using default values.'),
+            '#suffix' => '</div>',
+          );
+        }
+        else {
+          $form['options']['override'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using overridden values.'),
+            '#suffix' => '</div>',
+          );
+        }
+      }
+
       // A whole bunch of code to figure out what relationships are valid for
       // this item.
       $relationships = $view->display_handler->get_option('relationships');
