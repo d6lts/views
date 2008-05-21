@@ -334,7 +334,7 @@ class views_handler_argument_term_node_tid_depth extends views_handler_argument 
       '#type' => 'weight',
       '#title' => t('Depth'),
       '#default_value' => $this->options['depth'],
-      '#description' => t('The depth will match nodes tagged with terms in the hierarchy. For example, if you have the term "fruit" and a child term "apple", with a depth of 1 (or higher) then filtering for the term "fruit" will get nodes that are tagged with "apple". If negative, the reverse is true; searching for "apple" will pick up nodes tagged with "fruit" if depth is -1 (or lower).'),
+      '#description' => t('The depth will match nodes tagged with terms in the hierarchy. For example, if you have the term "fruit" and a child term "apple", with a depth of 1 (or higher) then filtering for the term "fruit" will get nodes that are tagged with "apple" as well as "fruit". If negative, the reverse is true; searching for "apple" will also pick up nodes tagged with "fruit" if depth is -1 (or lower).'),
     );
 
     $form['break_phrase'] = array(

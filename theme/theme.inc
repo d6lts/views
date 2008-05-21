@@ -83,7 +83,7 @@ function template_preprocess_views_view(&$vars) {
   }
 
   // if administrator, add some links. These used to be tabs, but this is better.
-  if (user_access('administer views')) {
+  if (user_access('administer views') && module_exists('views_ui')) {
     $vars['admin_links_raw'] = array(
       array(
         'title' => t('Edit'),
