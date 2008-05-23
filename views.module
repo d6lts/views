@@ -1258,10 +1258,7 @@ function views_exposed_form(&$form_state) {
     '#value' => t('Apply'),
   );
 
-
   $form['#action'] = url($view->get_url());
-  $form['#process'] = array('views_exposed_process');
-
   $form['#theme'] = views_theme_functions('views_exposed_form', $view, $display);
 
   // If using AJAX, we need the form plugin.
@@ -1271,7 +1268,6 @@ function views_exposed_form(&$form_state) {
   views_add_js('dependent');
   return $form;
 }
-
 
 /**
  * Validate handler for exposed filters
