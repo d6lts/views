@@ -888,7 +888,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
 
   $paths = array();
   foreach ($view->display as $id => $display) {
-    if ($display->handler->has_path()) {
+    if (!empty($display->handler) && $display->handler->has_path()) {
       $path = $display->handler->get_path();
       if (strpos($path, '%') === FALSE && !isset($paths[$path])) {
         $vars['quick_links_raw'][] = array(
@@ -2551,16 +2551,16 @@ function views_ui_admin_tools() {
     '#description' => t("Views uses the advanced help module to provide help text; if this module is not present Views will complain, unless this setting is checked."),
     '#default_value' => variable_get('views_hide_help_message', FALSE),
   );
-  
+
   $form['views_devel_output'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable views performance statistics via the Devel module'),
     '#description' => t("Tick this to enable some Views query and performance statistics <em>if Devel is installed</em>."),
     '#default_value' => variable_get('views_devel_output', FALSE),
   );
-  
+
   $regions = system_region_list(variable_get('theme_default', 'garland'));
-  
+
   $form['views_devel_region'] = array(
     '#type' => 'select',
     '#title' => t('Page region to output performance statistics'),
