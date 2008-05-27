@@ -2551,6 +2551,22 @@ function views_ui_admin_tools() {
     '#description' => t("Views uses the advanced help module to provide help text; if this module is not present Views will complain, unless this setting is checked."),
     '#default_value' => variable_get('views_hide_help_message', FALSE),
   );
+  
+  $form['views_devel_output'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Enable views performance statistics via the Devel module'),
+    '#description' => t("Tick this to enable some Views query and performance statistics <em>if Devel is installed</em>."),
+    '#default_value' => variable_get('views_devel_output', FALSE),
+  );
+  
+  $regions = system_region_list(variable_get('theme_default', 'garland'));
+  
+  $form['views_devel_region'] = array(
+    '#type' => 'select',
+    '#title' => t('Page region to output performance statistics'),
+    '#default_value' => variable_get('views_devel_region', 'footer'),
+    '#options' => $regions,
+  );
 
   return system_settings_form($form);
 }
