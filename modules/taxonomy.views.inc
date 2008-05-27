@@ -861,8 +861,13 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       return;
     }
 
+    $identifier = $this->options['expose']['identifier'];
+
     // We only validate if they've chosen the text field style.
     if ($this->options['type'] != 'textfield') {
+      if (!empty($this->options['expose']['single']) && $form_state['values'][$identifier] != 'All')  {
+        $form_state['values'][$identifier] = array($form_state['values'][$identifier]);
+      }
       return;
     }
 
@@ -870,13 +875,12 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
       return;
     }
 
-    $identifier = $this->options['expose']['identifier'];
     $values = drupal_explode_tags($form_state['values'][$identifier]);
 
-    $uids = $this->validate_term_strings($form[$identifier], $values);
+    $tids = $this->validate_term_strings($form[$identifier], $values);
 
     if ($uids) {
-      $form_state['values'][$identifier] = $uids;
+      $form_state['values'][$identifier] = $tids;
     }
   }
 

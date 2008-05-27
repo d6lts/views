@@ -479,7 +479,7 @@ class views_many_to_one_helper {
       // For 'or' if we're not reducing duplicates, we get the absolute simplest:
       $field = $this->handler->table . '.' . $this->handler->field;
       if ($this->handler->operator == 'or' && empty($this->handler->options['reduce_duplicates'])) {
-        if (empty($this->handler->options['add_table']) || empty($this->handler->view->many_to_one_tables[$field])) {
+        if (empty($this->handler->options['add_table']) && empty($this->handler->view->many_to_one_tables[$field])) {
           // query optimization, INNER joins are slightly faster, so use them
           // when we know we can.
           $join = $this->get_join();
