@@ -124,7 +124,7 @@ class views_tabset {
    */
   function render() {
     views_add_js('tabs');
-    views_add_css('tabs');
+    views_add_css('views-tabs');
 
     if (empty($this->selected)) {
       $keys = array_keys($this->tabs);

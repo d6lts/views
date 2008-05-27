@@ -389,7 +389,7 @@ function views_ui_preview($js, $view) {
   $output .= $preview;
 
   if (!$js) {
-    views_add_css('admin');
+    views_add_css('views-admin');
     drupal_set_title($view->get_title());
     return $output;
   }
@@ -903,7 +903,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
   }
 
   $vars['quick_links'] = theme('links', $vars['quick_links_raw']);
-  views_add_css('admin');
+  views_add_css('views-admin');
   views_add_css('views');
   views_add_js('ajax');
   drupal_add_js('misc/jquery.form.js');
@@ -1247,7 +1247,7 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
 
   // If this isn't an ajaxy form, then we want to set the title.
   drupal_set_title($form['#title']);
-  views_add_css('admin');
+  views_add_css('views-admin');
 }
 
 /**
