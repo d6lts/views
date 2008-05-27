@@ -1906,7 +1906,7 @@ class views_plugin_display_page extends views_plugin_display {
       case 'menu':
         $path = $this->get_option('path');
         if ($form_state['values']['menu']['type'] == 'normal' && strpos($path, '%') !== FALSE) {
-          form_error($form['menu']['type'], t('Views cannot make normal menu items for paths with a % in them.'));
+          form_error($form['menu']['type'], t('Views cannot create normal menu items for paths with a % in them.'));
         }
 
         if ($form_state['values']['menu']['type'] == 'default tab' || $form_state['values']['menu']['type'] == 'tab') {
@@ -2998,7 +2998,7 @@ class views_plugin_style_rss extends views_plugin_style {
       '#type' => 'textfield',
       '#title' => t('RSS description'),
       '#default_value' => $this->options['description'],
-      '#description' => t('This will appear in the RSS feed iself.'),
+      '#description' => t('This will appear in the RSS feed itself.'),
       '#process' => array('views_process_dependency'),
       '#dependency' => array('edit-style-options-override' => array(FALSE)),
     );

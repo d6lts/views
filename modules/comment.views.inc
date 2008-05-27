@@ -345,7 +345,7 @@ function comment_views_data_alter(&$data) {
   // Comment status of the node
   $data['node']['comment'] = array(
     'title' => t('Comment status'),
-    'help' => t('Whether or not comments are enabled or disabled on the node.'),
+    'help' => t('Whether comments are enabled or disabled on the node.'),
     'field' => array(
       'handler' => 'views_handler_field_node_comment',
       'click sortable' => TRUE,
