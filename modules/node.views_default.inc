@@ -327,10 +327,6 @@ function node_views_default_views() {
           'label' => '',
         ),
         'relationship' => 'none',
-        'expose_button' =>
-        array (
-          'button' => 'Expose',
-        ),
       ),
     ),
     'items_per_page' => 10,
