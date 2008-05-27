@@ -228,12 +228,11 @@ function user_views_data() {
       'field' => 'uid',
     ),
     'node' => array(
-      'table' => 'users',
       'left_field' => 'uid',
       'field' => 'uid',
     ),
     'node_revisions' => array(
-      'table' => 'users',
+      'left_table' => 'node',
       'left_field' => 'uid',
       'field' => 'uid',
     ),
