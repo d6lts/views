@@ -411,7 +411,7 @@ class view extends views_db_object {
         // check the default action of this argument.
         if ($this->display_handler->uses_breadcrumb() && $argument['handler']->uses_breadcrumb()) {
           $path = $this->get_url($breadcrumb_args);
-          if (strpos('%', $path) === FALSE) {
+          if (strpos($path, '%') === FALSE) {
             $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
           }
         }
