@@ -471,7 +471,7 @@ class views_handler_argument extends views_handler {
         }
       }
       else {
-        $this->name_table_alias = $this->query->ensure_table($this->name_table);
+        $this->name_table_alias = $this->query->ensure_table($this->name_table, $this->relationship);
       }
     }
     else {

@@ -628,10 +628,8 @@ function views_fetch_fields($base, $type) {
           if (!empty($info['join'])) {
             $bases = array_keys($info['join']);
           }
-          // And if this table IS a base table it obviously joins to itself.
-          if (!empty($info['base'])) {
-            $bases[] = $table;
-          }
+          // And it obviously joins to itself.
+          $bases[] = $table;
           continue;
         }
         foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {

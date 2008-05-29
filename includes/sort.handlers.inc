@@ -129,7 +129,7 @@ class views_handler_sort_date extends views_handler_sort {
    */
   function query() {
     $this->ensure_my_table();
-    switch($this->options['granularity']) {
+    switch ($this->options['granularity']) {
       case 'second':
       default:
         $this->query->add_orderby($this->table_alias, $this->real_field, $this->options['order']);
