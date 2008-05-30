@@ -11,6 +11,54 @@
  */
 
 /**
+ * Menu callback to load a view via AJAX.
+ */
+function views_ajax() {
+  if (isset($_REQUEST['view_name']) && isset($_REQUEST['view_display_id'])) {
+    $name = $_REQUEST['view_name'];
+    $display_id = $_REQUEST['view_display_id'];
+    $args = !empty($_REQUEST['view_args']) ? explode('/', $_REQUEST['view_args']) : array();
+    $path = isset($_REQUEST['view_path']) ? $_REQUEST['view_path'] : NULL;
+    views_include('ajax');
+    $object = new stdClass();
+
+    $object->status = FALSE;
+    $object->display = '';
+
+    // Load the view.
+    if ($view = views_get_view($name)) {
+      if ($view->access($display_id)) {
+
+        // Fix 'q' for paging.
+        if (!empty($path)) {
+          $_GET['q'] = $path;
+        }
+
+        $errors = $view->validate();
+        if ($errors === TRUE) {
+          $object->status = TRUE;
+          $object->title = $view->get_title();
+          $object->display .= $view->preview($display_id, $args);
+        }
+        else {
+          foreach ($errors as $error) {
+            drupal_set_message($error, 'error');
+          }
+        }
+        // Register the standard JavaScript callback.
+        $object->__callbacks = array('Drupal.Views.Ajax.ajaxViewResponse');
+        // Allow other modules to extend the data returned.
+        drupal_alter('ajax_data', $object, 'views', $view);
+      }
+    }
+    $messages = theme('status_messages');
+    $object->messages = $messages ? '<div class="views-messages">'. $messages .'</div>' : '';
+
+    views_ajax_render($object);
+  }
+}
+
+/**
  * Simple render function to make sure output is what we want.
  *
  * This function renders an object into JSON, and that object contains

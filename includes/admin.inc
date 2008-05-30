@@ -2636,3 +2636,186 @@ function views_ui_autocomplete_tag($string = '') {
 
   drupal_json($matches);
 }
+
+// ------------------------------------------------------------------
+// Get information from the Views data
+
+function _views_weight_sort($a, $b) {
+  if ($a['weight'] != $b['weight']) {
+    return $a['weight'] < $b['weight'] ? -1 : 1;
+  }
+  if ($a['title'] != $b['title']) {
+    return $a['title'] < $b['title'] ? -1 : 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Fetch a list of all base tables available
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
+ */
+function views_fetch_base_tables() {
+  static $base_tables = array();
+  if (empty($base_tables)) {
+    $weights = array();
+    $tables = array();
+    $data = views_fetch_data();
+    foreach ($data as $table => $info) {
+      if (!empty($info['table']['base'])) {
+        $tables[$table] = array(
+          'title' => $info['table']['base']['title'],
+          'description' => $info['table']['base']['help'],
+          'weight' => !empty($info['table']['base']['weight']) ? $info['table']['base']['weight'] : 0,
+        );
+      }
+    }
+    uasort($tables, '_views_weight_sort');
+    $base_tables = $tables;
+  }
+
+  return $base_tables;
+}
+
+function _views_sort_types($a, $b) {
+  if ($a['group'] != $b['group']) {
+    return $a['group'] < $b['group'] ? -1 : 1;
+  }
+
+  if ($a['title'] != $b['title']) {
+    return $a['title'] < $b['title'] ? -1 : 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Fetch a list of all fields available for a given base type.
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
+ */
+function views_fetch_fields($base, $type) {
+  static $fields = array();
+  if (empty($fields)) {
+    $data = views_fetch_data();
+    $start = microtime();
+    // This constructs this ginormous multi dimensional array to
+    // collect the important data about fields. In the end,
+    // the structure looks a bit like this (using nid as an example)
+    // $strings['nid']['filter']['title'] = 'string'.
+    //
+    // This is constructed this way because the above referenced strings
+    // can appear in different places in the actual data structure so that
+    // the data doesn't have to be repeated a lot. This essentially lets
+    // each field have a cheap kind of inheritance.
+
+    foreach ($data as $table => $table_data) {
+      $bases = array();
+      $strings = array();
+      foreach ($table_data as $field => $info) {
+        // Collect table data from this table
+        if ($field == 'table') {
+          // calculate what tables this table can join to.
+          if (!empty($info['join'])) {
+            $bases = array_keys($info['join']);
+          }
+          // And it obviously joins to itself.
+          $bases[] = $table;
+          continue;
+        }
+        foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
+          if (!empty($info[$key])) {
+            foreach (array('title', 'group', 'help', 'base') as $string) {
+              // First, try the lowest possible level
+              if (!empty($info[$key][$string])) {
+                $strings[$field][$key][$string] = $info[$key][$string];
+              }
+              // Then try the field level
+              elseif (!empty($info[$string])) {
+                $strings[$field][$key][$string] = $info[$string];
+              }
+              // Finally, try the table level
+              elseif (!empty($table_data['table'][$string])) {
+                $strings[$field][$key][$string] = $table_data['table'][$string];
+              }
+              else {
+                if ($string != 'base') {
+                  $strings[$field][$key][$string] = t("Error: missing @component", array('@component' => $string));
+                }
+              }
+            }
+          }
+        }
+      }
+      foreach ($bases as $base_name) {
+        foreach ($strings as $field => $field_strings) {
+          foreach ($field_strings as $type_name => $type_strings) {
+            $fields[$base_name][$type_name]["$table.$field"] = $type_strings;
+          }
+        }
+      }
+    }
+//    vsm('Views UI data build time: ' . (microtime() - $start) * 1000 . ' ms');
+  }
+
+  // If we have an array of base tables available, go through them
+  // all and add them together. Duplicate keys will be lost and that's
+  // Just Fine.
+  if (is_array($base)) {
+    $strings = array();
+    foreach ($base as $base_table) {
+      if (isset($fields[$base_table][$type])) {
+        $strings += $fields[$base_table][$type];
+      }
+    }
+    uasort($strings, '_views_sort_types');
+    return $strings;
+  }
+
+  if (isset($fields[$base][$type])) {
+    uasort($fields[$base][$type], '_views_sort_types');
+    return $fields[$base][$type];
+  }
+  return array();
+}
+
+/**
+ * Fetch a list of all base tables available
+ *
+ * @param $type
+ *   Either 'display', 'style' or 'row'
+ * @param $key
+ *   For style plugins, this is an optional type to restrict to. May be 'normal',
+ *   'summary', 'feed' or others based on the neds of the display.
+ * @param $base
+ *   An array of possible base tables.
+ *
+ * @return
+ *   A keyed array of in the form of 'base_table' => 'Description'.
+ */
+function views_fetch_plugin_names($type, $key = NULL, $base = array()) {
+  $data = views_fetch_plugin_data();
+
+  $plugins[$type] = array();
+
+  foreach ($data[$type] as $id => $plugin) {
+    // Skip plugins that don't conform to our key.
+    if ($key && (empty($plugin['type']) || $plugin['type'] != $key)) {
+      continue;
+    }
+    if (empty($plugin['no ui']) && (empty($base) || empty($plugin['base']) || array_intersect($base, $plugin['base']))) {
+      $plugins[$type][$id] = $plugin['title'];
+    }
+  }
+
+  if (!empty($plugins[$type])) {
+    asort($plugins[$type]);
+    return $plugins[$type];
+  }
+  // fall-through
+  return array();
+}
+

@@ -636,6 +636,195 @@ function views_break_phrase($str, $filter = NULL) {
   return $filter;
 }
 
+// --------------------------------------------------------------------------
+// Date helper functions
+
+/**
+ * Figure out what timezone we're in; needed for some date manipulations.
+ */
+function views_get_timezone() {
+  global $user;
+  if (variable_get('configurable_timezones', 1) && $user->uid && strlen($user->timezone)) {
+    $timezone = $user->timezone;
+  }
+  else {
+    $timezone = variable_get('date_default_timezone', 0);
+  }
+
+  // set up the database timezone
+  if (in_array($GLOBALS['db_type'], array('mysql', 'mysqli'))) {
+    static $already_set = false;
+    if (!$already_set) {
+      if ($GLOBALS['db_type'] == 'mysqli' || version_compare(mysql_get_server_info(), '4.1.3', '>=')) {
+        db_query("SET @@session.time_zone = '+00:00'");
+      }
+      $already_set = true;
+    }
+  }
+
+  return $timezone;
+}
+
+/**
+ * Helper function to create cross-database SQL dates.
+ *
+ * @param $field
+ *   The real table and field name, like 'tablename.fieldname'.
+ * @param $field_type
+ *   The type of date field, 'int' or 'datetime'.
+ * @param $set_offset
+ *   The name of a field that holds the timezone offset or a fixed timezone
+ *   offset value. If not provided, the normal Drupal timezone handling
+ *   will be used, i.e. $set_offset = 0 will make no timezone adjustment.
+ * @return
+ *   An appropriate SQL string for the db type and field type.
+ */
+function views_date_sql_field($field, $field_type = 'int', $set_offset = NULL) {
+  $db_type = $GLOBALS['db_type'];
+  $offset = $set_offset !== NULL ? $set_offset : views_get_timezone();
+  switch ($db_type) {
+    case 'mysql':
+    case 'mysqli':
+      switch ($field_type) {
+        case 'int':
+          $field = "FROM_UNIXTIME($field)";
+          break;
+        case 'datetime':
+          break;
+      }
+      if (!empty($offset)) {
+        $field = "($field + INTERVAL $offset SECOND)";
+      }
+      return $field;
+    case 'pgsql':
+      switch ($field_type) {
+        case 'int':
+          $field = "$field::ABSTIME";
+          break;
+        case 'datetime':
+          break;
+      }
+      if (!empty($offset)) {
+        $field = "($field + 'INTERVAL $offset SECONDS')";
+      }
+      return $field;
+  }
+}
+
+/**
+ * Helper function to create cross-database SQL date formatting.
+ *
+ * @param $format
+ *   A format string for the result, like 'Y-m-d H:i:s'.
+ * @param $field
+ *   The real table and field name, like 'tablename.fieldname'.
+ * @param $field_type
+ *   The type of date field, 'int' or 'datetime'.
+ * @param $set_offset
+ *   The name of a field that holds the timezone offset or a fixed timezone
+ *   offset value. If not provided, the normal Drupal timezone handling
+ *   will be used, i.e. $set_offset = 0 will make no timezone adjustment.
+ * @return
+ *   An appropriate SQL string for the db type and field type.
+ */
+function views_date_sql_format($format, $field, $field_type = 'int', $set_offset = NULL) {
+  $db_type = $GLOBALS['db_type'];
+  $field = views_date_sql_field($field, $field_type, $set_offset);
+  switch ($db_type) {
+    case 'mysql':
+    case 'mysqli':
+      $replace = array(
+        'Y' => '%Y',
+        'm' => '%m',
+        'd' => '%%d',
+        'H' => '%H',
+        'i' => '%i',
+        's' => '%s',
+        );
+      $format = strtr($format, $replace);
+      return "DATE_FORMAT($field, '$format')";
+    case 'pgsql':
+      $replace = array(
+        'Y' => 'YY',
+        'm' => 'MM',
+        'd' => 'DD',
+        'H' => 'HH24',
+        'i' => 'MI',
+        's' => 'SS',
+        );
+      $format = strtr($format, $replace);
+      return "TO_CHAR($field, '$format')";
+  }
+}
+
+/**
+ * Helper function to create cross-database SQL date extraction.
+ *
+ * @param $extract_type
+ *   The type of value to extract from the date, like 'MONTH'.
+ * @param $field
+ *   The real table and field name, like 'tablename.fieldname'.
+ * @param $field_type
+ *   The type of date field, 'int' or 'datetime'.
+ * @param $set_offset
+ *   The name of a field that holds the timezone offset or a fixed timezone
+ *   offset value. If not provided, the normal Drupal timezone handling
+ *   will be used, i.e. $set_offset = 0 will make no timezone adjustment.
+ * @return
+ *   An appropriate SQL string for the db type and field type.
+ */
+function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set_offset = NULL) {
+  $db_type = $GLOBALS['db_type'];
+  $field = views_date_sql_field($field, $field_type, $set_offset);
+
+  // Note there is no space after FROM to avoid db_rewrite problems
+  // see http://drupal.org/node/79904.
+  switch ($extract_type) {
+  case('DATE'):
+    return $field;
+  case('YEAR'):
+    return "EXTRACT(YEAR FROM($field))";
+  case('MONTH'):
+    return "EXTRACT(MONTH FROM($field))";
+  case('DAY'):
+    return "EXTRACT(DAY FROM($field))";
+  case('HOUR'):
+    return "EXTRACT(HOUR FROM($field))";
+  case('MINUTE'):
+    return "EXTRACT(MINUTE FROM($field))";
+  case('SECOND'):
+    return "EXTRACT(SECOND FROM($field))";
+  case('WEEK'):  // ISO week number for date
+    switch ($db_type) {
+      case('mysql'):
+      case('mysqli'):
+        // WEEK using arg 3 in mysql should return the same value as postgres EXTRACT
+        return "WEEK($field, 3)";
+      case('pgsql'):
+        return "EXTRACT(WEEK FROM($field))";
+    }
+  case('DOW'):
+    switch ($db_type) {
+      case('mysql'):
+      case('mysqli'):
+        // mysql returns 1 for Sunday through 7 for Saturday
+        // php date functions and postgres use 0 for Sunday and 6 for Saturday
+        return "INTEGER(DAYOFWEEK($field) - 1)";
+      case('pgsql'):
+        return "EXTRACT(DOW FROM($field))";
+    }
+  case('DOY'):
+    switch ($db_type) {
+      case('mysql'):
+      case('mysqli'):
+        return "DAYOFYEAR($field)";
+      case('pgsql'):
+        return "EXTRACT(DOY FROM($field))";
+    }
+  }
+
+}
+
 views_include('join.handlers');
 views_include('relationship.handlers');
 views_include('field.handlers');
