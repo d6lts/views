@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-05-23 10:25+0200\n"
-"PO-Revision-Date: 2008-05-23 16:44+0100\n"
+"PO-Revision-Date: 2008-06-01 11:33+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -131,7 +131,7 @@ msgstr "Werkzeuge"
 
 #: views_ui.module:52
 msgid "Basic"
-msgstr "Bais"
+msgstr "Basis"
 
 #: views_ui.module:60
 #: includes/convert.inc:30
@@ -301,7 +301,7 @@ msgstr "Newsfeed der Startseite"
 
 #: includes/admin.inc:34
 msgid "If you install the advanced help module from !href, Views will provide more and better help. <a href=\"@hide\">Hide this message.</a>"
-msgstr "Ansichten stellt durch die Installation des Erweiterten-Hilfemoduls von !href eine bessere und ausführlichere Hilfe zu Verfügung. <a href=\"@hide\">Diese Meldung ausblenden.</a>"
+msgstr "Ansichten stellt durch die Installation des erweiterten Hilfemoduls von !href eine bessere und ausführlichere Hilfe zu Verfügung. <a href=\"@hide\">Diese Meldung ausblenden.</a>"
 
 #: includes/admin.inc:88;878
 #: theme/theme.inc:96
@@ -1471,7 +1471,7 @@ msgstr "Werttyp"
 
 #: includes/filter.handlers.inc:1278
 msgid "A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred."
-msgstr "Ein Datum in einem maschinenlesbaren Format. CCJJ-MM-TT HH:MM:SS ist bevorzugt."
+msgstr "Ein Datum in einem maschinenlesbaren Format. JJJJ-MM-TT HH:MM:SS ist bevorzugt."
 
 #: includes/filter.handlers.inc:1279
 msgid "An offset from the current time such as \"+1 day\" or \"-2 hours and 30 minutes\""
@@ -1613,7 +1613,7 @@ msgstr ""
 
 #: includes/plugins.inc:618
 msgid "Style"
-msgstr "Darstellung"
+msgstr "Design"
 
 #: includes/plugins.inc:620
 msgid "Change the style plugin."
@@ -2842,8 +2842,9 @@ msgid "Last Post"
 msgstr "Letzter Beitrag"
 
 #: modules/comment.views_default.inc:158
+#, fuzzy
 msgid " new"
-msgstr "neu"
+msgstr " neu"
 
 #: modules/comment.views_default.inc:192
 msgid "Recent posts for %1"
@@ -2870,8 +2871,9 @@ msgid "Nodes are a Drupal site's primary content."
 msgstr "Beiträge sind der primäre Inhalt einer Drupal-Website."
 
 #: modules/node.views.inc:57
+#, fuzzy
 msgid "Nid"
-msgstr "Nid"
+msgstr "NID"
 
 #: modules/node.views.inc:58
 msgid "The node ID of the node."
@@ -2963,7 +2965,7 @@ msgstr "Erstellungsdatum"
 
 #: modules/node.views.inc:264
 msgid "In the form of CCYYMMDD."
-msgstr "In der Form von CCJJMMTT."
+msgstr "In der Form von JJJJMMTT."
 
 #: modules/node.views.inc:272
 msgid "Created year + month"
@@ -3362,7 +3364,7 @@ msgstr "Referrer"
 
 #: modules/statistics.views.inc:167
 msgid "Referrer URI."
-msgstr "Verweiser URI."
+msgstr "Verweiser-URI."
 
 #: modules/statistics.views.inc:182
 msgid "Hostname"
@@ -3707,7 +3709,7 @@ msgstr "Kern-Newsfeed"
 
 #: modules/taxonomy.views_default.inc:247
 msgid "Views 1 feed"
-msgstr "View 1 Newsfeed"
+msgstr "Views 1 Newsfeed"
 
 #: modules/upload.views.inc:25
 msgid "Upload"
@@ -3767,7 +3769,7 @@ msgstr "Uid"
 
 #: modules/user.views.inc:49
 msgid "The user ID"
-msgstr "Benutzer ID"
+msgstr "Benutzer-ID"
 
 #: modules/user.views.inc:70
 msgid "Current"
