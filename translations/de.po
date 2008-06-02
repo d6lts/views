@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-05-23 10:25+0200\n"
-"PO-Revision-Date: 2008-06-01 11:33+0100\n"
+"PO-Revision-Date: 2008-06-02 08:27+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -69,7 +69,7 @@ msgstr "Beschädigte Ansicht @view wurde übersprungen"
 #: views.module:912;952
 #: includes/admin.inc:92;253;253
 msgid "Overridden"
-msgstr "Übersschrieben"
+msgstr "Übersteuert"
 
 #: views.module:915;948
 #: views_ui.module:284
@@ -1955,7 +1955,7 @@ msgstr "Beim Typ „nach Rolle“ muss mindestens eine Rolle ausgewählt sein."
 
 #: includes/plugins.inc:1310
 msgid "Override"
-msgstr "Übersschreiben"
+msgstr "Übersteuern"
 
 #: includes/plugins.inc:1315
 msgid "This item is currently using default values; modifying this value will modify it for all displays."
@@ -2302,7 +2302,7 @@ msgstr ""
 
 #: includes/plugins.inc:2944
 msgid "Override number of items to display"
-msgstr "Die Anzahl der anzuzeigenden Einträge überschreiben"
+msgstr "Die Anzahl der anzuzeigenden Einträge übersteuern"
 
 #: includes/plugins.inc:2995
 msgid "Use the site mission for the description"
