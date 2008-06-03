@@ -52,11 +52,15 @@ function search_views_data() {
       'left_table' => 'search_index',
       'left_field' => 'sid',
       'field' => 'sid',
+      'extra' => 'search_index.type = search_dataset.type',
+      'type' => 'INNER',
     ),
     'users' => array(
       'left_table' => 'search_index',
       'left_field' => 'sid',
       'field' => 'sid',
+      'extra' => 'search_index.type = search_dataset.type',
+      'type' => 'INNER',
     ),
   );
 
@@ -179,7 +183,7 @@ class views_handler_filter_search extends views_handler_filter {
     $key = $this->options['expose']['identifier'];
     if (!empty($form_state['values'][$key])) {
       $this->search_query = search_parse_query($form_state['values'][$key]);
-      $this->search_query[0] = str_replace('d.', 'search_data.', $this->search_query[0]);
+      $this->search_query[0] = str_replace('d.', 'search_dataset.', $this->search_query[0]);
       $this->search_query[2] = str_replace('i.', 'search_index.', $this->search_query[2]);
 
       if ($this->search_query[2] == '') {
@@ -202,7 +206,7 @@ class views_handler_filter_search extends views_handler_filter {
    */
   function query() {
     $this->ensure_my_table();
-    if (!isset($this->search_query)) {
+    if (!isset($this->search_query) || empty($this->search_query[3])) {
       if ($this->operator == 'required') {
         $this->query->add_where($this->options['group'], '0');
       }
@@ -216,10 +220,7 @@ class views_handler_filter_search extends views_handler_filter {
       $this->query->add_where($this->options['group'], $this->search_query[2], $this->search_query[3]);
       $this->query->add_where($this->options['group'], "search_index.type = '%s'", $this->view->base_table);
       if (!$this->search_query[5]) {
-        $join = new views_join_search_dataset;
-        $join->construct();
-        $this->query->add_relationship(NULL, $join, 'search_index');
-        $this->query->add_table('search_dataset', 'search_index', $join);
+        $this->query->add_table('search_dataset');
         $this->query->add_where($this->options['group'], $this->search_query[0], $this->search_query[1]);
       }
       // @note: i don't think that this needed since we restrict based on type
@@ -228,18 +229,6 @@ class views_handler_filter_search extends views_handler_filter {
       $this->query->add_having($this->options['group'], 'COUNT(*) >= %d', $this->search_query[4]);
       // @todo: normalize the score
     }
-  }
-}
-
-class views_join_search_dataset extends views_join {
-  function construct() {
-    parent::construct('search_dataset', 'sid', array(), 'LEFT');
-  }
-
-  function join($table, &$query) {
-    $output = parent::join($table, $query);
-    $output .= " AND table[alias].type = search_dataset.type";
-    return $output;
   }
 }
 
