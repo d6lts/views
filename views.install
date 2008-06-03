@@ -6,7 +6,6 @@
  */
 
 function views_install() {
-  drupal_set_message('Installing views');
   drupal_install_schema('views');
   db_query("UPDATE {system} SET weight = 10 WHERE name = 'views'");
 }
