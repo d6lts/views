@@ -588,7 +588,8 @@ class view extends views_db_object {
       return TRUE;
     }
 
-    $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field);
+    $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field, array('view' => &$this));
+
     $args = $this->build_info['query_args'];
 
     vpr($query);
