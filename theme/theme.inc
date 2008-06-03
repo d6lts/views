@@ -141,7 +141,7 @@ function template_preprocess_views_view_fields(&$vars) {
   // Loop through the fields for this view.
   $inline = FALSE;
   foreach ($view->field as $id => $field) {
-    if (!empty($field['handler']) && is_object($field['handler'])) {
+    if (!empty($field['handler']) && is_object($field['handler']) && empty($field['exclude'])) {
       $object = new stdClass();
 
       $object->content = $field['handler']->theme($vars['row']);
@@ -217,7 +217,14 @@ function template_preprocess_views_view_summary(&$vars) {
  */
 function template_preprocess_views_view_table(&$vars) {
   $view     = $vars['view'];
-  $result   = $view->result;
+
+  // We need the raw data for this grouping, which is passed in as $vars['rows'].
+  // However, the template also needs to use for the rendered fields.  We
+  // therefore swap the raw data out to a new variable and reset $vars['rows']
+  // so that it can get rebuilt.
+  $result   = $vars['rows'];
+  $vars['rows'] = array();
+
   $options  = $view->style_plugin->options;
   $handler  = $view->style_plugin;
 
@@ -231,10 +238,10 @@ function template_preprocess_views_view_table(&$vars) {
   if ($query) {
     $query = '&' . $query;
   }
-
+  
   foreach ($columns as $field => $column) {
     // render the header labels
-    if ($field == $column) {
+    if ($field == $column && empty($fields[$field]['exclude'])) {
       $label = check_plain(!empty($fields[$field]['handler']) ? $fields[$field]['handler']->label() : '');
       if (empty($options['info'][$field]['sortable'])) {
         $vars['header'][$field] = $label;
@@ -267,7 +274,7 @@ function template_preprocess_views_view_table(&$vars) {
 
     // Render each field into its appropriate column.
     foreach ($result as $num => $row) {
-      if (!empty($fields[$field]['handler']) && is_object($fields[$field]['handler'])) {
+      if (!empty($fields[$field]['handler']) && is_object($fields[$field]['handler']) && empty($fields[$field]['exclude'])) {
         $handler = &$fields[$field]['handler'];
         $field_output = $handler->theme($row);
 

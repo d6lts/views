@@ -10,6 +10,9 @@
  * @ingroup views_templates
  */
 ?>
+<?php if (!empty($title)) : ?>
+  <h3><?php print $title; ?></h3>
+<?php endif; ?>
 <table class="views-view-grid">
   <tbody>
     <?php foreach ($rows as $row_number => $columns): ?>

@@ -80,6 +80,8 @@ function views_views_plugins() {
         'handler' => 'views_plugin_style_default',
         'theme' => 'views_view_unformatted',
         'uses row plugin' => TRUE,
+        'uses options' => TRUE,
+        'uses grouping' => TRUE,
         'type' => 'normal',
       ),
       'list' => array(
@@ -2485,6 +2487,14 @@ class views_plugin_style extends views_plugin {
     if ($this->uses_row_plugin() && $display->handler->get_option('row_plugin')) {
       $this->row_plugin = $display->handler->get_plugin('row');
     }
+    
+    $this->options += array(
+      'grouping' => '',
+    );
+    
+    $this->definition += array(
+      'uses grouping' => TRUE,
+    );
   }
 
   /**
@@ -2510,7 +2520,34 @@ class views_plugin_style extends views_plugin {
   /**
    * Static member function to set default options.
    */
-  function options(&$options) { }
+  function options(&$options) {
+    $options['grouping'] = '';
+  }
+
+  function options_form(&$form, &$form_state) {
+    // Only fields-based views can handle grouping.  Style plugins can also exclude 
+    // themselves from being groupable by setting their "use grouping" definiton
+    // key to FALSE.
+    // @TODO: Document "uses grouping" in docs.php when docs.php is written.
+    if ($this->uses_fields() && $this->definition['uses grouping']) {
+      $options = array('' => t('<None>'));
+      foreach ($this->display->handler->get_option('fields') as $field) {
+        $label = (empty($field['label']) ? '' : $field['label'] . ' ' ) ;
+        $options[$field['id']] = $label . '(' . $field['id'] .')';
+      }
+
+      // If there are no fields, we can't group on them.
+      if (count($options) > 1) {
+        $form['grouping'] = array(
+          '#type' => 'select',
+          '#title' => t('Grouping field'),
+          '#options' => $options,
+          '#default_value' => $this->options['grouping'],
+          '#description' => t('You may optionally specify a field by which to group the records.  Leave blank to not group.'),
+        );
+      }
+    }
+  }
 
   /**
    * Called by the view builder to see if this style handler wants to
@@ -2542,11 +2579,50 @@ class views_plugin_style extends views_plugin {
       vpr('views_plugin_style_default: Missing row plugin');
       return;
     }
-    $rows = array();
-    foreach ($this->view->result as $row) {
-      $rows[] = $this->row_plugin->render($row);
+
+    // Group the rows according to the grouping field, if specified.
+    $sets = $this->render_grouping($this->view->result, $this->options['grouping']);
+
+    // Render each group separately and concatenate.  Plugins may override this
+    // method if they wish some other way of handling grouping.
+    $output = '';
+    foreach ($sets as $title => $records) {
+      $rows = array();
+      foreach ($records as $label => $row) {
+        $rows[] = $this->row_plugin->render($row);
+      }
+      $output .= theme($this->theme_functions(), $this->view, $this->options, $rows, $title);
     }
-    return theme($this->theme_functions(), $this->view, $this->options, $rows);
+    return $output;
+  }
+  
+  /**
+   * Group records as needed for rendering.
+   *
+   * @param $records
+   *   An array of records from the view to group.
+   * @param $grouping_field
+   *   The field id on which to group.  If empty, the result set will be given
+   *   a single group with an empty string as a label.
+   * @return 
+   *   The grouped record set.
+   */
+  function render_grouping($records, $grouping_field = '') {
+    $sets = array();
+    if ($grouping_field) {
+      foreach ($records as $row) {
+        // Group on the rendered version of the field, not the raw.  That way,
+        // we can control any special formatting of the grouping field through
+        // the admin or theme layer or anywhere else we'd like.
+        $grouping = $this->view->field[$grouping_field]['handler']->theme($row);
+        $sets[$grouping][] = $row;
+      }
+    }
+    else {
+      // Create a single group with an empty grouping field.
+      $sets[''] = $records;
+    }
+    return $sets;
   }
 
   function validate() {
@@ -2567,19 +2643,28 @@ class views_plugin_style extends views_plugin {
  * decorations.
  */
 class views_plugin_style_default extends views_plugin_style {
+  /**
+   * Set default options
+   */
+  function options(&$options) {
+    parent::options($options);
+  }
+
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     // @todo -- separator option
   }
 }
 
 /**
- * Style plugin to render each item in an ordered or unordered list
+ * Style plugin to render each item in an ordered or unordered list.
  */
 class views_plugin_style_list extends views_plugin_style {
   /**
    * Set default options
    */
   function options(&$options) {
+    parent::options($options);
     $options['type'] = 'ul';
   }
 
@@ -2587,6 +2672,7 @@ class views_plugin_style_list extends views_plugin_style {
    * Render the given style.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['type'] = array(
       '#type' => 'radios',
       '#title' => t('List type'),
@@ -2604,6 +2690,7 @@ class views_plugin_style_grid extends views_plugin_style {
    * Set default options
    */
   function options(&$options) {
+    parent::options($options);
     $options['columns'] = 4;
     $options['alignment'] = 'horizontal';
   }
@@ -2612,6 +2699,7 @@ class views_plugin_style_grid extends views_plugin_style {
    * Render the given style.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $form['columns'] = array(
       '#type' => 'textfield',
       '#title' => t('Number of columns'),
@@ -2635,6 +2723,7 @@ class views_plugin_style_table extends views_plugin_style {
    * Set default options
    */
   function options(&$options) {
+    parent::options($options);
     $options['columns'] = array();
     $options['default'] = '';
     $options['info'] = array();
@@ -2735,6 +2824,7 @@ class views_plugin_style_table extends views_plugin_style {
    * Render the given style.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
     $fields = $this->display->handler->get_option('fields');
     if (empty($fields)) {
       $form['error_markup'] = array(
@@ -2862,7 +2952,13 @@ class views_plugin_style_table extends views_plugin_style {
    * Render the table style.
    */
   function render() {
-    return theme($this->theme_functions(), $this->view, $this->options, array());
+    $sets = $this->render_grouping($this->view->result, $this->options['grouping']);
+
+    $output = '';
+    foreach ($sets as $title => $records) {
+      $output .= theme($this->theme_functions(), $this->view, $this->options, $records, $title);
+    }
+    return $output;
   }
 }
 

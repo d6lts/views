@@ -25,6 +25,18 @@ class views_handler_field extends views_handler {
     if (!empty($this->definition['additional fields'])) {
       $this->additional_fields = $this->definition['additional fields'];
     }
+    
+    if (!isset($this->options['exclude'])) {
+      $this->options['exclude'] = '';
+    }
+  }
+  
+  function init(&$view, $options) {
+    parent::init($view, $options);
+    
+    $this->options += array(
+      'exclude' => FALSE,
+    );
   }
 
   /**
@@ -116,6 +128,12 @@ class views_handler_field extends views_handler {
       '#title' => t('Label'),
       '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
       '#description' => t('The label for this field that will be displayed to end users if the style requires it.'),
+    );
+    $form['exclude'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Exclude from display'),
+      '#default_value' => $this->options['exclude'],
+      '#description' => t('Check this box to not display this field, but still load it in the view.  Use this option to not show a grouping field in each record, or when doing advanced theming.'),
     );
   }
 
