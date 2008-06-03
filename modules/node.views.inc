@@ -909,13 +909,14 @@ class views_handler_argument_node_vid extends views_handler_argument_numeric {
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_created_fulldate extends views_handler_argument_formula {
+class views_handler_argument_node_created_fulldate extends views_handler_argument_date {
   /**
    * Constructor implementation
    */
   function construct() {
-    $this->formula = views_date_sql_format('Ymd', "***table***.$this->real_field");
     $this->format = 'F j, Y';
+    $this->arg_format = 'Ymd';
+    $this->formula = views_date_sql_format($this->arg_format, "***table***.$this->real_field");
   }
 
   /**
@@ -939,11 +940,12 @@ class views_handler_argument_node_created_fulldate extends views_handler_argumen
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_created_year extends views_handler_argument_formula {
+class views_handler_argument_node_created_year extends views_handler_argument_date {
   /**
    * Constructor implementation
    */
   function construct() {
+    $this->arg_format = 'Y';
     $this->formula = views_date_sql_extract('YEAR', "***table***.$this->real_field");
   }
 }
@@ -953,15 +955,16 @@ class views_handler_argument_node_created_year extends views_handler_argument_fo
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_created_year_month extends views_handler_argument_formula {
+class views_handler_argument_node_created_year_month extends views_handler_argument_date {
   /**
    * Constructor implementation
    */
   function construct() {
-    $this->formula = views_date_sql_format('Ym', "***table***.$this->real_field");
     $this->format = 'F, Y';
+    $this->arg_format = 'Ym';
+    $this->formula = views_date_sql_format($this->arg_format, "***table***.$this->real_field");
   }
-
+  
   /**
    * Provide a link to the next level of the view
    */
@@ -983,13 +986,14 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_created_month extends views_handler_argument_formula {
+class views_handler_argument_node_created_month extends views_handler_argument_date {
   /**
    * Constructor implementation
    */
   function construct() {
     $this->formula = views_date_sql_extract('MONTH', "***table***.$this->real_field");
     $this->format = 'F';
+    $this->arg_format = 'm';
   }
 
   /**
@@ -1015,15 +1019,16 @@ class views_handler_argument_node_created_month extends views_handler_argument_f
 }
 
 /**
- * Argument handler for a full date (CCYYMMDD)
+ * Argument handler for a week.
  *
  * @ingroup views_argument_handlers
  */
-class views_handler_argument_node_created_week extends views_handler_argument_formula {
+class views_handler_argument_node_created_week extends views_handler_argument_date {
   /**
    * Constructor implementation
    */
   function construct() {
+    $this->arg_format = 'w';
     $this->formula = views_date_sql_extract('WEEK', "***table***.$this->real_field");
   }
 
