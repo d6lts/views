@@ -102,7 +102,7 @@ function _views_discover_default_views() {
   if (!isset($cache)) {
     $data = views_cache_get('views_default_views', TRUE);
 
-    if (isset($data->data)) {
+    if (isset($data->data) && is_array($data->data)) {
       $cache = $data->data;
     }
     else {
