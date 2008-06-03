@@ -630,15 +630,16 @@ function views_break_phrase($str, $filter = NULL) {
     $filter->value = explode(',', $str);
   }
 
+  // Keep an 'error' value if invalid strings were given.
+  if (!empty($str) && empty($filter->value)) {
+    $filter->value = array(-1);
+  }
+
   // Doubly ensure that all values are numeric only.
   foreach ($filter->value as $id => $value) {
     $filter->value[$id] = intval($value);
   }
 
-  // Keep an 'error' value if invalid strings were given.
-  if (!empty($str) && empty($filter->value)) {
-    $filter->value = array(-1);
-  }
   return $filter;
 }
 
