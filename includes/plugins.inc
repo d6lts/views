@@ -988,7 +988,7 @@ class views_plugin_display extends views_plugin {
         $form['offset'] = array(
           '#type' => 'textfield',
           '#title' => t('Offset'),
-          '#description' => t('The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed.'),
+          '#description' => t('The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed. Offset can not be used if items to display is 0; instead use a very large number there.'),
           '#default_value' => intval($this->get_option('offset')),
         );
         break;
