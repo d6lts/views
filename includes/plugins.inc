@@ -2052,6 +2052,10 @@ class views_plugin_display_page extends views_plugin_display {
         if (strpos($form_state['values']['path'], '$arg') !== FALSE) {
           form_error($form['path'], t('"$arg" is no longer supported. Use % instead.'));
         }
+
+        // automatically remove '/' from path.
+        $form_state['values']['path'] = trim($form_state['values']['path'], '/');
+
         break;
       case 'menu':
         $path = $this->get_option('path');
