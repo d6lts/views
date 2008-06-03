@@ -24,8 +24,14 @@ class views_handler_filter extends views_handler {
   function init(&$view, $options) {
     parent::init($view, $options);
 
-    $this->operator = $options['operator'];
-    $this->value = $options['value'];
+    $this->operator = $this->options['operator'];
+    $this->value = $this->options['value'];
+
+    // Compatibility: Set use_operator to true if the old way of using
+    // the operator is set and use_operator is NULL (was never set).
+    if (!empty($options['exposed']) && !empty($options['expose']['operator']) && !isset($options['expose']['use_operator'])) {
+      $this->options['expose']['use_operator'] = TRUE;
+    }
   }
 
   function option_definition() {
@@ -258,12 +264,22 @@ class views_handler_filter extends views_handler {
    */
   function expose_form_left(&$form, &$form_state) {
     if (!empty($form['operator']['#type'])) {
+      $form['expose']['use_operator'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Unlock operator'),
+        '#description' => t('When checked, the operator will be exposed to the user'),
+        '#default_value' => !empty($this->options['expose']['use_operator']),
+      );
       $form['expose']['operator'] = array(
         '#type' => 'textfield',
         '#default_value' => $this->options['expose']['operator'],
         '#title' => t('Operator identifier'),
         '#size' => 40,
-        '#description' => t('This will appear in the URL after the ? to identify this operator. Leave blank to not expose the operator.'),
+        '#description' => t('This will appear in the URL after the ? to identify this operator.'),
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array(
+          'edit-options-expose-use-operator' => array(1)
+        ),
       );
     }
     else {
@@ -341,7 +357,8 @@ class views_handler_filter extends views_handler {
    */
   function expose_options() {
     $this->options['expose'] = array(
-      'operator' => $this->options['id'] . '_oper',
+      'use_operator' => FALSE,
+      'operator' => $this->options['id'] . '_op',
       'identifier' => $this->options['id'],
       'label' => $this->ui_name(),
       'remember' => FALSE,
@@ -360,7 +377,7 @@ class views_handler_filter extends views_handler {
       return;
     }
 
-    if (!empty($this->options['expose']['operator'])) {
+    if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator'])) {
       $operator = $this->options['expose']['operator'];
       $this->operator_form($form, $form_state);
       $form[$operator] = $form['operator'];
@@ -456,7 +473,7 @@ class views_handler_filter extends views_handler {
       return TRUE;
     }
 
-    if (!empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
+    if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
       $this->operator = $input[$this->options['expose']['operator']];
       if ($this->options['expose']['remember']) {
         $_SESSION['views'][$this->view->name][$this->view->current_display][$this->options['expose']['operator']] = $input[$this->options['expose']['operator']];
@@ -680,7 +697,7 @@ class views_handler_filter_string extends views_handler_filter {
       $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
     }
     if (!empty($form_state['exposed'])) {
-      if (empty($this->options['expose']['operator'])) {
+      if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator'])) {
         // exposed and locked.
         $which = in_array($this->operator, $this->operator_values(1)) ? 'value' : 'none';
       }
@@ -1161,7 +1178,7 @@ class views_handler_filter_numeric extends views_handler_filter {
     }
 
     if (!empty($form_state['exposed'])) {
-      if (empty($this->options['expose']['operator'])) {
+      if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator'])) {
         // exposed and locked.
         $which = in_array($this->operator, $this->operator_values(2)) ? 'minmax' : 'value';
       }
@@ -1310,7 +1327,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
 
     $value = &$form_state['values'][$this->options['expose']['identifier']];
-    if (!empty($this->options['expose']['operator'])) {
+    if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator'])) {
       $operator = $form_state['values'][$this->options['expose']['operator']];
     }
     else {
@@ -1357,7 +1374,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
 
     // Don't filter if value(s) are empty.
     $operators = $this->operators();
-    if (!empty($this->options['expose']['operator'])) {
+    if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator'])) {
       $operator = $form_state['values'][$this->options['expose']['operator']];
     }
     else {
