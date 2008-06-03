@@ -375,11 +375,12 @@ class view extends views_db_object {
     foreach ($this->argument as $id => $arg) {
       $position++;
       $argument = &$this->argument[$id];
-      $argument['handler']->set_relationship();
 
       if (!is_object($argument['handler'])) {
         continue;
       }
+
+      $argument['handler']->set_relationship();
 
       $arg = isset($this->args[$position]) ? $this->args[$position] : NULL;
       $argument['handler']->position = $position;

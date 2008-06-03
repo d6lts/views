@@ -964,7 +964,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
     $this->arg_format = 'Ym';
     $this->formula = views_date_sql_format($this->arg_format, "***table***.$this->real_field");
   }
-  
+
   /**
    * Provide a link to the next level of the view
    */
