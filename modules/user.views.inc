@@ -372,9 +372,10 @@ class views_handler_field_user extends views_handler_field {
     }
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_user'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_user'] = array('default' => TRUE);
+    return $options;
   }
 
   /**
@@ -433,9 +434,10 @@ class views_handler_field_user_link extends views_handler_field {
     $this->additional_fields['uid'] = 'uid';
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['text'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['text'] = array('default' => '', 'translatable' => TRUE);
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -506,9 +508,10 @@ class views_handler_field_user_link_delete extends views_handler_field_user_link
  * @ingroup views_field_handlers
  */
 class views_handler_field_user_mail extends views_handler_field_user {
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_user'] = 'mailto';
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_user'] = array('default' => 'mailto');
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {

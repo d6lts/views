@@ -767,6 +767,11 @@ function views_ui_edit_view_form(&$form_state, $view) {
  * Validate that a view is complete and whole.
  */
 function views_ui_edit_view_form_validate($form, $form_state) {
+  // Do not validate cancel or delete.
+  if (empty($form_state['clicked_button']['#value']) || $form_state['clicked_button']['#value'] != t('Save')) {
+    return;
+  }
+
   $errors = $form_state['view']->validate();
   if ($errors !== TRUE) {
     foreach ($errors as $error) {
@@ -988,7 +993,7 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
     }
 
     $data['content'] .= $display->handler->option_link($option['value'], $id, '', empty($option['desc']) ? '' : $option['desc']);
-    if (!empty($display->display_options['defaults'][$id])) {
+    if (!empty($display->handler->options['defaults'][$id])) {
       $display_id = 'default';
     }
     else {
@@ -1058,7 +1063,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   $vars['add'] = l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link', 'title' => t('Add')), 'html' => true));
 
-  $vars['overridden'] = (!$display->handler->is_default_display() && empty($display->display_options['defaults'][$types[$type]['plural']]));
+  $vars['overridden'] = !$display->handler->is_default_display() && !$display->handler->is_defaulted($types[$type]['plural']);
 
   $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
 //  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
@@ -1069,6 +1074,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
   if (!isset($relationships)) {
     // Get relationship labels
     $relationships = array();
+    // @todo: get_handlers()
     foreach ($display->handler->get_option('relationships') as $id => $relationship) {
       $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
       if (empty($handler)) {
@@ -1079,6 +1085,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
   }
 
+  // @todo: get_handlers()
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $fields[$id] = array();
 
@@ -1893,6 +1900,7 @@ function views_ui_rearrange_form(&$form_state) {
 
   // Get relationship labels
   $relationships = array();
+  // @todo: get_handlers()
   foreach ($display->handler->get_option('relationships') as $id => $relationship) {
     $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
     if (empty($handler)) {
@@ -1902,6 +1910,7 @@ function views_ui_rearrange_form(&$form_state) {
     $relationships[$id] = $handler->label();
   }
 
+  // @todo: get_handlers()
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $form[$id] = array('#tree' => TRUE);
     $form[$id]['weight'] = array(
@@ -2394,9 +2403,10 @@ function views_ui_change_style_form_submit($form, &$form_state) {
 
   $plugin = views_get_plugin('style', $form_state['values']['style_plugin']);
   $plugin->init($form_state['view'], $form_state['view']->display[$form_state['display_id']]);
+
+  // If changing style plugin, reset options to defaults.
   if (empty($item['style_plugin']) || $item['style_plugin'] != $form_state['values']['style_plugin']) {
-    $item['style_options'] = array();
-    $plugin->options($item['style_options']);
+    $item['style_options'] = $plugin->options;
   }
 
   // Store the data we're given.

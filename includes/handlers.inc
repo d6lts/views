@@ -17,6 +17,7 @@ function _views_create_handler($definition) {
   $handler = new $definition['handler'];
   $handler->set_definition($definition);
   // let the handler have something like a constructor.
+  // @todo: deprecated. Remove.
   if (isset($definition['arguments'])) {
     call_user_func_array(array(&$handler, 'construct'), $definition['arguments']);
   }
@@ -87,21 +88,10 @@ function views_get_table_join($table, $base_table) {
  * It creates a common interface to create consistency amongst
  * handlers and data.
  *
- * The default handler has no constructor, so there's no need to jank with
- * parent::views_handler() here.
- *
  * This class would be abstract in PHP5, but PHP4 doesn't understand that.
  *
  */
 class views_handler extends views_object {
-  /**
-   * A constructor for the handler base object
-   *
-   * This should be overridden to provide for a consistent constructor
-   * mechanism.
-   */
-  function construct() { }
-
   /**
    * init the handler with necessary data.
    * @param $view
@@ -112,7 +102,7 @@ class views_handler extends views_object {
    */
   function init(&$view, $options) {
     $this->view = &$view;
-    $this->options = &$options;
+    $this->unpack_options($this->options, $options);
 
     // This exist on most handlers, but not all. So they are still optional.
     if (isset($options['table'])) {
@@ -145,11 +135,6 @@ class views_handler extends views_object {
   function ui_name() {
     return t('!group: !title', array('!group' => $this->definition['group'], '!title' => $this->definition['title']));
   }
-
-  /**
-   * Provide defaults for the handler.
-   */
-  function options(&$option) { }
 
   /**
    * Provide a form for setting options.
@@ -335,7 +320,24 @@ class views_handler extends views_object {
     // get the join from this table that links back to the base table.
     return drupal_clone(views_get_table_join($this->table, $this->query->base_table));
   }
+}
 
+/**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_broken extends views_handler {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
 }
 
 /**
@@ -349,6 +351,10 @@ class views_handler extends views_object {
 class views_many_to_one_helper {
   function views_many_to_one_helper(&$handler) {
     $this->handler = &$handler;
+  }
+
+  function option_definition(&$options) {
+    $options['reduce_duplicates'] = array('default' => FALSE);
   }
 
   function options_form(&$form, &$form_state) {
@@ -824,10 +830,3 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
   }
 
 }
-
-views_include('join.handlers');
-views_include('relationship.handlers');
-views_include('field.handlers');
-views_include('sort.handlers');
-views_include('filter.handlers');
-views_include('argument.handlers');

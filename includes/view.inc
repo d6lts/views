@@ -1523,6 +1523,9 @@ class views_db_object {
 
 /**
  * A display type in a view.
+ *
+ * This is just the database storage mechanism, and isn't terribly important
+ * to the behavior of the display at all.
  */
 class views_display extends views_db_object {
   var $db_table = 'views_display';
@@ -1537,7 +1540,6 @@ class views_display extends views_db_object {
 
     // Create a handler to fill in default values.
     $handler = views_get_plugin('display', $type);
-    $handler->options($this);
   }
 }
 

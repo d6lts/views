@@ -21,6 +21,8 @@ class views_handler_field extends views_handler {
    * Construct a new field handler.
    */
   function construct() {
+    parent::construct();
+
     $this->additional_fields = array();
     if (!empty($this->definition['additional fields'])) {
       $this->additional_fields = $this->definition['additional fields'];
@@ -110,12 +112,12 @@ class views_handler_field extends views_handler {
     return $this->options['label'];
   }
 
-  /**
-   * Provide a default label
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['label'] = $this->definition['title'];
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['label'] = array('default' => $this->definition['title'], 'translatable' => TRUE);
+
+    return $options;
   }
 
   /**
@@ -203,13 +205,13 @@ class views_handler_field extends views_handler {
  * A handler to provide proper displays for dates.
  */
 class views_handler_field_date extends views_handler_field {
-  /**
-   * Fill in default options.
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['date_format'] = 'small';
-    $options['custom_date_format'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['date_format'] = array('default' => 'small');
+    $options['custom_date_format'] = array('default' => '');
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -262,10 +264,13 @@ class views_handler_field_date extends views_handler_field {
  * Allows for display of true/false, yes/no, on/off.
  */
 class views_handler_field_boolean extends views_handler_field {
-  function options(&$options) {
-    parent::options($options);
-    $options['type'] = 'yes-no';
-    $options['not'] = !empty($this->definition['reverse']);
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['type'] = array('default' => 'yes-no');
+    $options['not'] = array('definition bool' => 'reverse');
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -315,6 +320,8 @@ class views_handler_field_markup extends views_handler_field {
    * Constructor; calls to base object constructor.
    */
   function construct() {
+    parent::construct();
+
     $this->format = $this->definition['format'];
 
     $this->additional_fields = array();
@@ -344,6 +351,14 @@ class views_handler_field_xss extends views_handler_field {
  * Field handler to provide simple renderer that turns a URL into a clickable link.
  */
 class views_handler_field_url extends views_handler_field {
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['display_as_link'] = array('default' => TRUE);
+
+    return $options;
+  }
+
   /**
    * Provide link to the page being visited.
    */
@@ -378,11 +393,14 @@ class views_handler_field_url extends views_handler_field {
  * @ingroup views_field_handlers
  */
 class views_handler_field_prerender_list extends views_handler_field {
-  function options(&$options) {
-    parent::options($options);
-    $options['type'] = 'separator';
-    $options['separator'] = ', ';
-    $options['empty'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['type'] = array('default' => 'separator');
+    $options['separator'] = array('default' => ', ');
+    $options['empty'] = array('default' => '', 'translatable' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -440,14 +458,17 @@ class views_handler_field_file_size extends views_handler_field {
 }
 
 class views_handler_field_numeric extends views_handler_field {
-  function options(&$options) {
-    parent::options($options);
-    $options['set_precision'] = FALSE;
-    $options['precision'] = 0;
-    $options['decimal'] = '.';
-    $options['separator'] = ',';
-    $options['prefix'] = '';
-    $options['suffix'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['set_precision'] = array('default' => FALSE);
+    $options['precision'] = array('default' => 0);
+    $options['decimal'] = array('default' => '.', 'translatable' => TRUE);
+    $options['separator'] = array('default' => ',', 'translatable' => TRUE);
+    $options['prefix'] = array('default' => '', 'translatable' => TRUE);
+    $options['suffix'] = array('default' => '', 'translatable' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {

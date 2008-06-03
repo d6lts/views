@@ -254,6 +254,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       variable_set('views_block_hashes', $hashes);
       return $items;
     case 'view':
+      $start = microtime();
       // if this is 32, this should be an md5 hash.
       if (strlen($delta) == 32) {
         $hashes = variable_get('views_block_hashes', array());
@@ -266,7 +267,9 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       // Load the view
       if ($view = views_get_view($name)) {
         if ($view->access($display_id)) {
-          return $view->execute_display($display_id);
+          $output = $view->execute_display($display_id);
+          vpr("Block $view->name execute time: " . (microtime() - $start) * 1000 . "ms");
+          return $output;
         }
       }
       break;
@@ -429,7 +432,14 @@ function views_include_handlers() {
     return;
   }
 
+  views_include('base');
   views_include('handlers');
+  views_include('join.handlers');
+  views_include('relationship.handlers');
+  views_include('field.handlers');
+  views_include('sort.handlers');
+  views_include('filter.handlers');
+  views_include('argument.handlers');
   views_include('cache');
   views_include('plugins');
   _views_include_handlers();
@@ -468,6 +478,7 @@ function views_get_handler($table, $field, $key) {
   }
   // DEBUG -- identify missing handlers
   vpr("Missing handler: $table $field $key");
+  return new views_handler_broken;
 }
 
 /**
@@ -673,26 +684,6 @@ function views_get_view($name, $reset = FALSE) {
   return $view->clone_view();
 }
 
-/**
- * Basic definition for many views objects
- */
-class views_object {
-  /**
-   * Views handlers use a special construct function so that we can more
-   * easily construct them with variable arguments.
-   */
-  function construct() { }
-
-  /**
-   * Let the handler know what its full definition is.
-   */
-  function set_definition($definition) {
-    $this->definition = $definition;
-    if (isset($definition['field'])) {
-      $this->real_field = $definition['field'];
-    }
-  }
-}
 
 // ------------------------------------------------------------------
 // Views debug helper functions

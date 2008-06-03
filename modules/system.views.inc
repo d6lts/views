@@ -189,6 +189,12 @@ class views_handler_field_file extends views_handler_field {
     }
   }
 
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_file'] = array('default' => FALSE);
+    return $options;
+  }
+
   /**
    * Provide link to file option
    */

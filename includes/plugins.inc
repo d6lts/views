@@ -275,6 +275,22 @@ class views_plugin extends views_object {
  * basic mechanisms for different output methods.
  */
 class views_plugin_display extends views_plugin {
+  function init(&$view, &$display, $options = NULL) {
+    $this->view = &$view;
+    $this->display = &$display;
+
+    // Make some modifications:
+    if (!isset($options)) {
+      $options = $display->display_options;
+    }
+
+    if ($this->is_default_display() && isset($options['defaults'])) {
+      unset($options['defaults']);
+    }
+
+    $this->unpack_options($this->options, $options);
+  }
+
   /**
    * Determine if this display is the 'default' display which contains
    * fallback settings
@@ -386,52 +402,167 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
-   * This is called when a new display is created that has never been
-   * saved to the database. It provides appropriate defaults for the
-   * display, if necessary.
+   * Set default options.
+   *
+   * Displays put their options in a different place than everything else; also
+   * displays spread their options out. We don't want to set defaults for
+   * items that are normally defaulted elsewhere.
    */
-  function options(&$display) {
-    // Set the following options to use the default display, forcing
-    // them to pass through unless we override.
-    $display->display_options['defaults'] = array(
-      'access' => TRUE,
-      'title' => TRUE,
-      'header' => TRUE,
-      'header_format' => TRUE,
-      'header_empty' => TRUE,
-      'footer' => TRUE,
-      'footer_format' => TRUE,
-      'footer_empty' => TRUE,
-      'empty' => TRUE,
-      'empty_format' => TRUE,
+  function _set_option_defaults(&$storage, $options, $level = 0) {
+    foreach ($options as $option => $definition) {
+      // If defaulted to elsewhere and we're not the default display, skip.
+      if ($level == 0 && !$this->is_default_display() && !empty($options['defaults']['default'][$option])) {
+        continue;
+      }
 
-      'use_ajax' => TRUE,
-      'items_per_page' => TRUE,
-      'offset' => TRUE,
-      'use_pager' => TRUE,
-      'pager_element'  => TRUE,
-      'use_more' => TRUE,
-      'distinct' => TRUE,
+      if (isset($definition['contains']) && is_array($definition['contains'])) {
+        $storage[$option] = array();
+        $this->_set_option_defaults($storage[$option], $definition['contains'], $level++);
+      }
+      else {
+        $storage[$option] = isset($definition['default']) ? $definition['default'] : NULL;
+      }
+    }
+  }
 
-      'link_display' => TRUE,
+  function option_definition() {
+    $options = array(
+      'defaults' => array(
+        'default' => array(
+          'access' => TRUE,
+          'title' => TRUE,
+          'header' => TRUE,
+          'header_format' => TRUE,
+          'header_empty' => TRUE,
+          'footer' => TRUE,
+          'footer_format' => TRUE,
+          'footer_empty' => TRUE,
+          'empty' => TRUE,
+          'empty_format' => TRUE,
 
-      'style_plugin' => TRUE,
-      'style_options' => TRUE,
-      'row_plugin' => TRUE,
-      'row_options' => TRUE,
+          'use_ajax' => TRUE,
+          'items_per_page' => TRUE,
+          'offset' => TRUE,
+          'use_pager' => TRUE,
+          'pager_element'  => TRUE,
+          'use_more' => TRUE,
+          'distinct' => TRUE,
 
-      'relationships' => TRUE,
-      'fields' => TRUE,
-      'sorts' => TRUE,
-      'arguments' => TRUE,
-      'filters' => TRUE,
+          'link_display' => TRUE,
+
+          'style_plugin' => TRUE,
+          'style_options' => TRUE,
+          'row_plugin' => TRUE,
+          'row_options' => TRUE,
+
+          'relationships' => TRUE,
+          'fields' => TRUE,
+          'sorts' => TRUE,
+          'arguments' => TRUE,
+          'filters' => TRUE,
+        ),
+      ),
+      'relationships' => array(
+        'default' => array(),
+        'export' => 'export_item',
+      ),
+      'fields' => array(
+        'default' => array(),
+        'export' => 'export_item',
+      ),
+      'sorts' => array(
+        'default' => array(),
+        'export' => 'export_item',
+      ),
+      'arguments' => array(
+        'default' => array(),
+        'export' => 'export_item',
+      ),
+      'filters' => array(
+        'default' => array(),
+        'export' => 'export_item',
+      ),
+      'access' => array(
+        'contains' => array(
+          'type' => array('default' => 'none'),
+          'role' => array('default' => array()),
+          'perm' => array('default' => ''),
+         ),
+      ),
+      'title' => array(
+        'default' => '',
+        'translatable' => TRUE,
+      ),
+      'header' => array(
+        'default' => '',
+        'translatable' => TRUE,
+      ),
+      'header_format' => array(
+        'default' => FILTER_FORMAT_DEFAULT,
+      ),
+      'header_empty' => array(
+        'default' => FALSE,
+      ),
+      'footer' => array(
+        'default' => '',
+        'translatable' => TRUE,
+      ),
+      'footer_format' => array(
+        'default' => FILTER_FORMAT_DEFAULT,
+      ),
+      'footer_empty' => array(
+        'default' => FALSE,
+      ),
+      'empty' => array(
+        'default' => '',
+        'translatable' => TRUE,
+      ),
+      'empty_format' => array(
+        'default' => FILTER_FORMAT_DEFAULT,
+      ),
+      'use_ajax' => array(
+        'default' => FALSE,
+      ),
+      'items_per_page' => array(
+        'default' => 10,
+      ),
+      'offset' => array(
+        'default' => 0,
+      ),
+      'use_pager' => array(
+        'default' => FALSE,
+      ),
+      'pager_element' => array(
+        'default' => 0,
+      ),
+      'use_more' => array(
+        'default' => FALSE,
+      ),
+      'link_display' => array(
+        'default' => '',
+      ),
+      'distinct' => array(
+        'default' => FALSE,
+      ),
+
+      'style_plugin' => array(
+        'default' => 'default',
+      ),
+      'style_options' => array(
+        'default' => array(),
+      ),
+      'row_plugin' => array(
+        'default' => 'fields',
+      ),
+      'row_options' => array(
+        'default' => array(),
+      ),
     );
 
-    $display->display_options['relationships'] = array();
-    $display->display_options['fields'] = array();
-    $display->display_options['sorts'] = array();
-    $display->display_options['arguments'] = array();
-    $display->display_options['filters'] = array();
+    if ($this->is_default_display()) {
+      unset($options['defaults']);
+    }
+    return $options;
   }
 
   /**
@@ -506,7 +637,7 @@ class views_plugin_display extends views_plugin {
    *   TRUE for the default display
    */
   function is_defaulted($option) {
-    return !$this->is_default_display() && !empty($this->default_display) && !empty($this->display->display_options['defaults'][$option]);
+    return !$this->is_default_display() && !empty($this->default_display) && !empty($this->options['defaults'][$option]);
   }
 
   /**
@@ -518,8 +649,8 @@ class views_plugin_display extends views_plugin {
       return $this->default_display->get_option($option);
     }
 
-    if (array_key_exists($option, $this->display->display_options)) {
-      return $this->display->display_options[$option];
+    if (array_key_exists($option, $this->options)) {
+      return $this->options[$option];
     }
   }
 
@@ -554,11 +685,15 @@ class views_plugin_display extends views_plugin {
    * default display, if directed to do so.
    */
   function set_option($option, $value) {
-    if (!$this->is_default_display() && !empty($this->default_display) && !empty($this->display->display_options['defaults'][$option])) {
+    if ($this->is_defaulted($option)) {
       return $this->default_display->set_option($option, $value);
     }
 
-    return $this->display->display_options[$option] = $value;
+    // Set this in two places: On the handler where we'll notice it
+    // but also on the display object so it gets saved. This should
+    // only be a temporary fix.
+    $this->display->display_options[$option] = $value;
+    return $this->options[$option] = $value;
   }
 
   /**
@@ -685,6 +820,7 @@ class views_plugin_display extends views_plugin {
     );
 
     $access = $this->get_option('access');
+    // @todo -- this should be no longer necessary
     if (!is_array($access)) {
       $access = array('type' => 'none');
     }
@@ -788,8 +924,9 @@ class views_plugin_display extends views_plugin {
 
     // Set the 'section' to hilite on the form.
     // If it's the item we're looking at is pulling from the default display,
-    // reflect that.
-    if (!empty($this->display->display_options['defaults'][$form_state['section']])) {
+    // reflect that. Don't use is_defaulted since we want it to show up even
+    // on the default display.
+    if (!empty($this->options['defaults'][$form_state['section']])) {
       $form['#section'] = 'default-' . $form_state['section'];
     }
     else {
@@ -882,6 +1019,7 @@ class views_plugin_display extends views_plugin {
         );
 
         $access = $this->get_option('access');
+        // @todo this should be no longer necessary
         if (empty($access)) {
           $access = array('type' => 'none', 'role' => array(), 'perm' => '');
         }
@@ -1045,6 +1183,7 @@ class views_plugin_display extends views_plugin {
           }
 
           if ($plugin->uses_fields()) {
+            // @todo: get_handlers()
             $fields = $this->get_option('fields');
             foreach ($fields as $field => $info) {
               $handler = views_get_handler($info['table'], $info['field'], 'field');
@@ -1237,18 +1376,19 @@ class views_plugin_display extends views_plugin {
         // the plugin.
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
+          $this->set_option('row_options', array());
+/*
           $plugin = views_get_plugin('row', $form_state['values'][$section]);
           if ($plugin) {
-            $row_options = array();
             $plugin->init($this->view, $this->display);
-            $plugin->options($row_options);
-            $this->set_option('row_options', $row_options);
+            $this->set_option('row_options', $plugin->options);
 
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
               views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('row_options'));
             }
           }
+*/
         }
         break;
       case 'style_plugin':
@@ -1256,18 +1396,19 @@ class views_plugin_display extends views_plugin {
         // the plugin.
         if ($this->get_option($section) != $form_state['values'][$section]) {
           $this->set_option($section, $form_state['values'][$section]);
+          $this->set_option('style_options', array());
+/*
           $plugin = views_get_plugin('style', $form_state['values'][$section]);
           if ($plugin) {
-            $style_options = array();
             $plugin->init($this->view, $this->display);
-            $plugin->options($style_options);
-            $this->set_option('style_options', $style_options);
+            $this->set_option('style_options', $plugin->options);
 
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
               views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('style_options'));
             }
           }
+*/
         }
         break;
       case 'style_options':
@@ -1306,7 +1447,7 @@ class views_plugin_display extends views_plugin {
       '#prefix' => '<div class="views-override clear-block">',
       '#suffix' => '</div>',
     );
-    if (!empty($this->display->display_options['defaults'][$section])) {
+    if ($this->is_defaulted($section)) {
       $form['override']['button'] = array(
         '#type' => 'submit',
         '#value' => t('Override'),
@@ -1348,18 +1489,21 @@ class views_plugin_display extends views_plugin {
       return;
     }
 
-    $new_state = empty($this->display->display_options['defaults'][$section]);
+    $new_state = empty($this->options['defaults'][$section]);
 
     // For each option that is part of this group, fix our settings.
     foreach ($options as $option) {
       if ($new_state) {
         // Revert to defaults.
+        unset($this->options[$option]);
         unset($this->display->display_options[$option]);
       }
       else {
         // copy existing values into our display.
-        $this->display->display_options[$option] = $this->get_option($option);
+        $this->options[$option] = $this->get_option($option);
+        $this->display->display_options[$option] = $this->options[$option];
       }
+      $this->options['defaults'][$option] = $new_state;
       $this->display->display_options['defaults'][$option] = $new_state;
     }
   }
@@ -1530,21 +1674,6 @@ class views_plugin_display_default extends views_plugin_display {
    */
   function is_default_display() { return TRUE; }
 
-  function options(&$display) {
-    // Make sure the default display has a style plugin to start with.
-    $display->display_options['style_plugin'] = 'default';
-    $display->display_options['style_options'] = array();
-    $display->display_options['row_plugin'] = 'fields';
-    $display->display_options['row_options'] = array();
-    $display->display_options['relationships'] = array();
-    $display->display_options['fields'] = array();
-    $display->display_options['sorts'] = array();
-    $display->display_options['arguments'] = array();
-    $display->display_options['filters'] = array();
-
-    $display->display_options['items_per_page'] = 10;
-  }
-
   /**
    * The default execute handler fully renders the view.
    *
@@ -1593,6 +1722,28 @@ class views_plugin_display_page extends views_plugin_display {
   function has_path() { return TRUE; }
   function uses_breadcrumb() { return TRUE; }
 
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['path'] = array('default' => '');
+    $options['menu'] = array(
+      'contains' => array(
+        'type' => array('default' => 'none'),
+        'title' => array('default' => '', 'transleateable' => TRUE),
+        'weight' => array('default' => 0),
+       ),
+    );
+    $options['tab_options'] = array(
+      'contains' => array(
+        'type' => array('default' => 'none'),
+        'title' => array('default' => '', 'transleateable' => TRUE),
+        'weight' => array('default' => 0),
+       ),
+    );
+
+    return $options;
+  }
+
   /**
    * Add this display's path information to Drupal's menu system.
    */
@@ -1616,8 +1767,6 @@ class views_plugin_display_page extends views_plugin_display {
     $path = implode('/', $bits);
 
     if ($path) {
-      // NOTE: This is the very simple 'menu normal item' version. The
-      // tab version needs to come later. Maybe it should be its own plugin.
       $items[$path] = array(
         // default views page entry
         'page callback' => 'views_page',
@@ -1694,7 +1843,6 @@ class views_plugin_display_page extends views_plugin_display {
               $items[$default_path]['weight'] = intval($tab_options['weight']);
             }
           }
-
         }
       }
     }
@@ -1969,6 +2117,15 @@ class views_plugin_display_page extends views_plugin_display {
  * The plugin that handles a block.
  */
 class views_plugin_display_block extends views_plugin_display {
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['block_description'] = array('default' => '', 'translatable' => TRUE);
+    $options['block_caching'] = array('default' => BLOCK_NO_CACHE);
+
+    return $options;
+  }
+
   /**
    * The default block handler doesn't support configurable items,
    * but extended block handlers might be able to do interesting
@@ -2126,11 +2283,14 @@ class views_plugin_display_block extends views_plugin_display {
  * The plugin that handles an attachment display.
  */
 class views_plugin_display_attachment extends views_plugin_display {
-  function options(&$display) {
-    parent::options($display);
-    $display->display_options['attachment_position'] = 'before';
-    $display->display_options['inherit_arguments'] = TRUE;
-    $display->display_options['displays'] = array();
+  function option_definition () {
+    $options = parent::option_definition();
+
+    $options['attachment_position'] = array('default' => 'before');
+    $options['inherit_arguments'] = array('default' => TRUE);
+    $options['display'] = array('default' => array());
+
+    return $options;
   }
 
   function execute() {
@@ -2335,17 +2495,21 @@ class views_plugin_display_feed extends views_plugin_display_page {
     return parent::defaultable_sections($section);
   }
 
-  function options(&$display) {
-    parent::options($display);
-    $display->display_options['displays'] = array();
-    $display->display_options['style_plugin'] = 'rss';
-    $display->display_options['style_options'] = array('mission_description' => FALSE, 'description' => '');
-    $display->display_options['row_plugin'] = '';
-    $display->display_options['defaults']['style_plugin'] = FALSE;
-    $display->display_options['defaults']['style_options'] = FALSE;
-    $display->display_options['defaults']['row_plugin'] = FALSE;
-    $display->display_options['defaults']['row_options'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
 
+    $options['displays'] = array('default' => array());
+
+    // Overrides for standard stuff:
+    $options['style_plugin']['default'] = 'rss';
+    $options['style_options']['default']  = array('mission_description' => FALSE, 'description' => '');
+    $options['row_plugin']['default'] = '';
+    $options['defaults']['default']['style_plugin'] = FALSE;
+    $options['defaults']['default']['style_options'] = FALSE;
+    $options['defaults']['default']['row_plugin'] = FALSE;
+    $options['defaults']['default']['row_options'] = FALSE;
+
+    return $options;
   }
 
   function options_summary(&$categories, &$options) {
@@ -2477,21 +2641,18 @@ class views_plugin_style extends views_plugin {
   function init(&$view, &$display, $options = NULL) {
     $this->view = &$view;
     $this->display = &$display;
-    if (isset($options)) {
-      $this->options = $options;
-    }
-    else {
-      $this->options = $display->handler->get_option('style_options');
-    }
+
+    // Overlay incoming options on top of defaults
+    $this->unpack_options($this->options, isset($options) ? $options : $display->handler->get_option('style_options'));
 
     if ($this->uses_row_plugin() && $display->handler->get_option('row_plugin')) {
       $this->row_plugin = $display->handler->get_plugin('row');
     }
-    
+
     $this->options += array(
       'grouping' => '',
     );
-    
+
     $this->definition += array(
       'uses grouping' => TRUE,
     );
@@ -2517,23 +2678,29 @@ class views_plugin_style extends views_plugin {
     return !empty($this->definition['uses fields']);
   }
 
-  /**
-   * Static member function to set default options.
-   */
-  function options(&$options) {
-    $options['grouping'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['grouping'] = array('default' => '');
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
-    // Only fields-based views can handle grouping.  Style plugins can also exclude 
+    // Only fields-based views can handle grouping.  Style plugins can also exclude
     // themselves from being groupable by setting their "use grouping" definiton
     // key to FALSE.
     // @TODO: Document "uses grouping" in docs.php when docs.php is written.
     if ($this->uses_fields() && $this->definition['uses grouping']) {
       $options = array('' => t('<None>'));
-      foreach ($this->display->handler->get_option('fields') as $field) {
-        $label = (empty($field['label']) ? '' : $field['label'] . ' ' ) ;
-        $options[$field['id']] = $label . '(' . $field['id'] .')';
+      foreach ($this->display->handler->get_option('fields') as $field => $info) {
+        $handlers[$field] = views_get_handler($info['table'], $info['field'], 'field');
+        $handlers[$field]->init($this->view, $info);
+
+        if ($label = $handlers[$field]->label()) {
+          $options[$field] = $label;
+        }
+        else {
+          $options[$field] = $handlers[$field]->ui_name();
+        }
       }
 
       // If there are no fields, we can't group on them.
@@ -2595,7 +2762,7 @@ class views_plugin_style extends views_plugin {
     }
     return $output;
   }
-  
+
   /**
    * Group records as needed for rendering.
    *
@@ -2604,7 +2771,7 @@ class views_plugin_style extends views_plugin {
    * @param $grouping_field
    *   The field id on which to group.  If empty, the result set will be given
    *   a single group with an empty string as a label.
-   * @return 
+   * @return
    *   The grouped record set.
    */
   function render_grouping($records, $grouping_field = '') {
@@ -2663,9 +2830,12 @@ class views_plugin_style_list extends views_plugin_style {
   /**
    * Set default options
    */
-  function options(&$options) {
-    parent::options($options);
-    $options['type'] = 'ul';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['type'] = array('default' => 'ul');
+
+    return $options;
   }
 
   /**
@@ -2689,10 +2859,13 @@ class views_plugin_style_grid extends views_plugin_style {
   /**
    * Set default options
    */
-  function options(&$options) {
-    parent::options($options);
-    $options['columns'] = 4;
-    $options['alignment'] = 'horizontal';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['columns'] = array('default' => '4');
+    $options['alignment'] = array('default' => 'horizontal');
+
+    return $options;
   }
 
   /**
@@ -2719,16 +2892,17 @@ class views_plugin_style_grid extends views_plugin_style {
  * Style plugin to render each item as a row in a table.
  */
 class views_plugin_style_table extends views_plugin_style {
-  /**
-   * Set default options
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['columns'] = array();
-    $options['default'] = '';
-    $options['info'] = array();
-    $options['override'] = TRUE;
-    $options['order'] = 'asc';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['columns'] = array('default' => array());
+    $options['default'] = array('default' => '');
+    $options['info'] = array('default' => array());
+    $options['override'] = array('default' => TRUE);
+    $options['sticky'] = array('default' => FALSE);
+    $options['order'] = array('default' => 'asc');
+
+    return $options;
   }
 
   /**
@@ -2825,6 +2999,7 @@ class views_plugin_style_table extends views_plugin_style {
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
+    // @todo: get_handlers()
     $fields = $this->display->handler->get_option('fields');
     if (empty($fields)) {
       $form['error_markup'] = array(
@@ -2873,7 +3048,7 @@ class views_plugin_style_table extends views_plugin_style {
         $field_names[$field] = $label;
       }
       else {
-        $field_names[$field] = t('!group: !title', array('!group' => $handlers[$field]->definition['group'], '!title' => $handlers[$field]->definition['title']));
+        $field_names[$field] = $handlers[$field]->ui_name();
       }
     }
 
@@ -3016,10 +3191,14 @@ function theme_views_ui_style_plugin_table($form) {
  * The default style plugin for summaries.
  */
 class views_plugin_style_summary extends views_plugin_style {
-  function options(&$options) {
-    $options['count'] = TRUE;
-    $options['override'] = FALSE;
-    $options['items_per_page'] = 25;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['count'] = array('default' => TRUE);
+    $options['override'] = array('default' => FALSE);
+    $options['items_per_page'] = array('default' => 25);
+
+    return $options;
   }
 
   function query() {
@@ -3079,9 +3258,13 @@ class views_plugin_style_rss extends views_plugin_style {
     }
   }
 
-  function options(&$options) {
-    $options['description'] = '';
-    $options['mission_description'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['description'] = array('default' => '', 'translatable' => TRUE);
+    $options['mission_description'] = array('default' => '', 'translatable' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -3142,20 +3325,17 @@ class views_plugin_row extends views_plugin {
   /**
    * Initialize the row plugin.
    */
-  function init(&$view, &$display) {
+  function init(&$view, &$display, $options = NULL) {
     $this->view = &$view;
     $this->display = &$display;
-    $this->options = $display->handler->get_option('row_options');
+
+    // Overlay incoming options on top of defaults
+    $this->unpack_options($this->options, isset($options) ? $options : $display->handler->get_option('row_options'));
   }
 
   function uses_fields() {
     return !empty($this->definition['uses fields']);
   }
-
-  /**
-   * Static member function to set default options.
-   */
-  function options(&$options) { }
 
   /**
    * Provide a form for setting options.
@@ -3197,9 +3377,12 @@ class views_plugin_row extends views_plugin {
  * or not.
  */
 class views_plugin_row_fields extends views_plugin_row {
-  function options(&$options) {
-    $options['inline'] = array();
-    $options['separator'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['inline'] = array('default' => array());
+    $options['separator'] = array('default' => '');
+    return $options;
   }
 
   /**

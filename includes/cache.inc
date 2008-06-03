@@ -67,7 +67,6 @@ function _views_fetch_plugin_data($type = NULL, $plugin = NULL) {
   static $cache = NULL;
   if (!isset($cache)) {
     $start = microtime();
-    views_include('plugins');
     views_include_handlers();
 
     $cache = views_discover_plugins();

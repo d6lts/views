@@ -510,6 +510,12 @@ class views_handler_field_node extends views_handler_field {
     $this->additional_fields['nid'] = 'nid';
   }
 
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_node'] = array('default' => FALSE);
+    return $options;
+  }
+
   /**
    * Provide link to node option
    */
@@ -577,9 +583,12 @@ class views_handler_field_node_link extends views_handler_field {
     $this->additional_fields['nid'] = 'nid';
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['text'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['text'] = array('default' => '', 'translatable' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -760,9 +769,12 @@ class views_handler_field_history_user_timestamp extends views_handler_field_nod
     }
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['comments'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['comments'] = array('default' => FALSE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -1195,9 +1207,13 @@ function node_views_plugins() {
  * @ingroup views_plugin_rows
  */
 class views_plugin_row_node_view extends views_plugin_row {
-  function options(&$options) {
-    $options['teaser'] = TRUE;
-    $options['links'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['teaser'] = array('default' => TRUE);
+    $options['links'] = array('default' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -1238,7 +1254,7 @@ function template_preprocess_views_view_row_node(&$vars) {
 /**
  * Automatically allow view-based node templates if called from a view.
  */
-function views_preprocess_node($vars) {
+function views_preprocess_node(&$vars) {
   if (!empty($vars['node']->view) && !empty($vars['node']->view->name)) {
     $vars['template_files'][] = 'node-view-' . $vars['node']->view->name;
   }
@@ -1251,8 +1267,12 @@ function views_preprocess_node($vars) {
  * @ingroup views_plugin_rows
  */
 class views_plugin_row_node_rss extends views_plugin_row {
-  function options(&$options) {
-    $options['item_length'] = 'default';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['item_length'] = array('default' => 'default');
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {

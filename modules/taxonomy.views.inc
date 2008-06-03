@@ -322,10 +322,14 @@ function taxonomy_views_data_alter(&$data) {
  * because it uses a subquery to find nodes with
  */
 class views_handler_argument_term_node_tid_depth extends views_handler_argument {
-  function options(&$options) {
-    parent::options($options);
-    $options['depth'] = 0;
-    $options['break_phrase'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['depth'] = array('default' => 0);
+    $options['break_phrase'] = array('default' => FALSE);
+    $options['set_breadcrumb'] = array('default' => FALSE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -528,14 +532,14 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
     }
   }
 
-  /**
-   * Provide meaningful defaults
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_taxonomy'] = TRUE;
-    $options['limit'] = FALSE;
-    $options['vids'] = array();
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['link_to_taxonomy'] = array('default' => TRUE);
+    $options['limit'] = array('default' => FALSE);
+    $options['vids'] = array('default' => array());
+
+    return $options;
   }
 
   /**
@@ -624,6 +628,12 @@ class views_handler_field_taxonomy extends views_handler_field {
     parent::construct();
     $this->additional_fields['vid'] = 'vid';
     $this->additional_fields['tid'] = 'tid';
+  }
+
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_taxonomy'] = array('default' => FALSE);
+    return $options;
   }
 
   /**
@@ -725,16 +735,25 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
 
   function get_value_options() { /* don't overwrite the value options */ }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['type'] = 'textfield';
-    $options['vid'] = db_result(db_query('SELECT MIN(vid) FROM {vocabulary} v'));
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['type'] = array('default' => 'textfield');
+    $options['vid'] = array('default' => 0);
+
+    return $options;
   }
 
   function extra_options_form(&$form, &$form_state) {
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {
       $options[$voc->vid] = $voc->name;
+    }
+
+    // We only do this when the form is displayed so this query doesn't run
+    // unnecessarily just when the object is constructed.
+    if ($this->options['vid'] == 0) {
+      $this->options['vid'] = db_result(db_query('SELECT MIN(vid) FROM {vocabulary} v'));
     }
 
     $form['vid'] = array(
@@ -946,6 +965,12 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
  * @ingroup views_argument_handlers
  */
 class views_handler_argument_term_node_tid extends views_handler_argument_many_to_one {
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['set_breadcrumb'] = array('default' => FALSE);
+    return $options;
+  }
+
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
     $form['set_breadcrumb'] = array(

@@ -84,8 +84,7 @@ function views_ajax_render($output = NULL, $title = NULL, $url = NULL, $js = NUL
     $output->js = $js;
   }
 
-  drupal_set_header('Content-Type: text/javascript; charset=utf-8');
-  print drupal_to_js($output);
+  drupal_json($output);
   exit;
 }
 

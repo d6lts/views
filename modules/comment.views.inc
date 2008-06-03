@@ -447,9 +447,10 @@ class views_handler_field_comment extends views_handler_field {
     }
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_comment'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_comment'] = array('default' => TRUE);
+    return $options;
   }
 
   /**
@@ -493,9 +494,10 @@ class views_handler_field_username_comment extends views_handler_field {
     $this->additional_fields['homepage'] = 'homepage';
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_user'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['link_to_user'] = array('default' => TRUE);
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -538,9 +540,10 @@ class views_handler_field_comment_link extends views_handler_field {
     $this->additional_fields['nid'] = 'nid';
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['text'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['text'] = array('default' => '', 'translatable' => TRUE);
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -645,9 +648,12 @@ class views_handler_field_ncs_last_comment_name extends views_handler_field {
     $this->uid = $this->query->add_field($this->table_alias, 'last_comment_uid');
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_user'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['link_to_user'] = array('default' => TRUE);
+
+    return $options;
   }
 
   function render($values) {
@@ -743,10 +749,13 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
     $this->additional_fields['nid'] = 'nid';
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['link_to_comment'] = TRUE;
-    $options['no_empty'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['link_to_comment'] = array('default' => TRUE);
+    $options['no_empty'] = array('default' => TRUE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -896,8 +905,10 @@ class views_handler_filter_node_comment extends views_handler_filter_in_operator
  * @ingroup views_plugin_rows
  */
 class views_plugin_row_comment_view extends views_plugin_row {
-  function options(&$options) {
-    $options['links'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['links'] = array('default' => TRUE);
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {

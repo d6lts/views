@@ -28,19 +28,21 @@ class views_handler_filter extends views_handler {
     $this->value = $options['value'];
   }
 
-  /**
-   * Provide a simple default initializer -- should be overridden.
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = '=';
-    $options['value'] = '';
-    $options['group'] = 0;
-    $options['exposed'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['operator'] = array('default' => '=');
+    $options['value'] = array('default' => '');
+    $options['group'] = array('default' => '0');
+    $options['exposed'] = array('default' => FALSE);
     $options['expose'] = array(
-      'operator' => FALSE,
-      'label' => '',
+      'contains' => array(
+        'operator' => array('default' => FALSE),
+        'label' => array('default' => '', 'translatable' => TRUE),
+      ),
     );
+
+    return $options;
   }
 
   /**
@@ -512,15 +514,6 @@ class views_handler_filter_equality extends views_handler_filter {
   var $no_single = TRUE;
 
   /**
-   * Provide basic defaults for the equality operator
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = '=';
-    $options['value'] = '';
-  }
-
-  /**
    * Provide simple equality operator
    */
   function operator_options() {
@@ -551,14 +544,12 @@ class views_handler_filter_string extends views_handler_filter {
   // exposed filter options
   var $no_single = TRUE;
 
-  /**
-   * Provide basic defaults for the equality operator
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = '=';
-    $options['value'] = '';
-    $options['case'] = TRUE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['case'] = array('default' => TRUE);
+
+    return $options;
   }
 
   /**
@@ -814,9 +805,12 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
     parent::construct();
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['value'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['value']['default'] = FALSE;
+
+    return $options;
   }
 
   function operator_form(&$form, &$form_state) {
@@ -898,10 +892,13 @@ class views_handler_filter_in_operator extends views_handler_filter {
     );
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = 'in';
-    $options['value'] = array();
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['operator']['default'] = 'in';
+    $options['value']['default'] = array();
+
+    return $options;
   }
 
   /**
@@ -1039,15 +1036,18 @@ class views_handler_filter_in_operator extends views_handler_filter {
  */
 class views_handler_filter_numeric extends views_handler_filter {
   var $no_single = TRUE;
-  /**
-   * Provide basic defaults for the filter
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = '=';
-    $options['value']['min'] = '';
-    $options['value']['max'] = '';
-    $options['value']['value'] = '';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['value'] = array(
+      'contains' => array(
+        'min' => array('default' => ''),
+        'max' => array('default' => ''),
+        'value' => array('default' => ''),
+      ),
+    );
+
+    return $options;
   }
 
   function operators() {
@@ -1261,9 +1261,13 @@ class views_handler_filter_numeric extends views_handler_filter {
 }
 
 class views_handler_filter_date extends views_handler_filter_numeric {
-  function options(&$options) {
-    parent::options($options);
-    $options['value']['type'] = 'date';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    // value is already set up properly, we're just adding our new field to it.
+    $options['value']['type']['default'] = 'date';
+
+    return $options;
   }
 
   /**
@@ -1417,10 +1421,13 @@ class views_handler_filter_many_to_one extends views_handler_filter_in_operator 
     $this->helper = new views_many_to_one_helper($this);
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['operator'] = 'or';
-    $options['value'] = array();
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['operator']['default'] = 'or';
+    $options['value']['default'] = array();
+
+    return $options;
   }
 
   /**

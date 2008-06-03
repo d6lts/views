@@ -20,6 +20,8 @@ class views_handler_argument extends views_handler {
    * Constructor
    */
   function construct() {
+    parent::construct();
+
     if (!empty($this->definition['name field'])) {
       $this->name_field = $this->definition['name field'];
     }
@@ -79,23 +81,21 @@ class views_handler_argument extends views_handler {
     return !empty($info['style plugin']);
   }
 
-  /**
-   * Provide defaults for the argument when a new one is created.
-   */
-  function options(&$options) {
-    parent::options($options);
-    $options['default_action'] = 'ignore';
-    $options['style_plugin'] = 'default_summary';
-    // provide default options for the summary style.
-    $options['style_options'] = array();
-    views_plugin_style_summary::options($options['style_options']);
-    $options['wildcard'] = 'all';
-    $options['wildcard_substitution'] = t('All');
-    $options['title'] = '';
-    $options['default_argument_type'] = 'fixed';
-    $options['default_argument'] = '';
-    $options['validate_type'] = 'none';
-    $options['validate_fail'] = 'not found';
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['default_action'] = array('default' => 'ignore');
+    $options['style_plugin'] = array('default' => 'default_summary');
+    $options['style_options'] = array('default' => array());
+    $options['wildcard'] = array('default' => 'all');
+    $options['wildcard_substitution'] = array('default' => t('All'), 'translatable' => TRUE);
+    $options['title'] = array('default' => '', 'translatable' => TRUE);
+    $options['default_argument_type'] = array('default' => 'fixed');
+    $options['default_argument'] = array('default' => '');
+    $options['validate_type'] = array('default' => 'none');
+    $options['validate_fail'] = array('default' => 'not found');
+
+    return $options;
   }
 
   /**
@@ -642,6 +642,8 @@ class views_handler_argument_formula extends views_handler_argument {
    * Constructor
    */
   function construct() {
+    parent::construct();
+
     if (!empty($this->definition['formula'])) {
       $this->formula = $this->definition['formula'];
     }
@@ -694,13 +696,21 @@ class views_handler_argument_string extends views_handler_argument {
     }
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['glossary'] = FALSE;
-    $options['limit'] = 0;
-    $options['case'] = 'none';
-    $options['path_case'] = 'none';
-    $options['transform_dash'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['glossary'] = array('default' => FALSE);
+    $options['limit'] = array('default' => 0);
+    $options['case'] = array('default' => 'none');
+    $options['path_case'] = array('default' => 'none');
+    $options['transform_dash'] = array('default' => FALSE);
+
+    if (!empty($this->definition['many to one'])) {
+      $options['add_table'] = array('default' => FALSE);
+      $options['require_value'] = array('default' => FALSE);
+    }
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -872,9 +882,13 @@ class views_handler_argument_string extends views_handler_argument {
  * break_phrase.
  */
 class views_handler_argument_numeric extends views_handler_argument {
-  function options(&$options) {
-    parent::options($options);
-    $options['break_phrase'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['break_phrase'] = array('default' => FALSE);
+    $options['not'] = array('default' => FALSE);
+
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
@@ -964,10 +978,18 @@ class views_handler_argument_many_to_one extends views_handler_argument {
     $this->value = array();
   }
 
-  function options(&$options) {
-    parent::options($options);
-    $options['break_phrase'] = FALSE;
-    $options['add_table'] = FALSE;
+  function option_definition() {
+    $options = parent::option_definition();
+
+    if (!empty($this->definition['numeric'])) {
+      $options['break_phrase'] = array('default' => FALSE);
+    }
+
+    $options['add_table'] = array('default' => FALSE);
+    $options['require_value'] = array('default' => FALSE);
+
+    views_many_to_one_helper::option_definition($options);
+    return $options;
   }
 
   function options_form(&$form, &$form_state) {
