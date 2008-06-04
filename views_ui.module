@@ -162,7 +162,7 @@ function views_ui_help($path, $arg) {
 /*
  * Implementation of hook_perm()
  */
-function views_ui_perm() {
+function views_perm() {
   return array('administer views');
 }
 

@@ -90,6 +90,13 @@ function views_theme() {
   return $hooks;
 }
 
+/*
+ * Implementation of hook_perm()
+ */
+function views_ui_perm() {
+  return array('access all views');
+}
+
 /**
  * Implementation of hook_menu().
  */
