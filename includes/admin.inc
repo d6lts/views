@@ -383,10 +383,14 @@ function views_ui_preview($js, $view) {
     $info = '';
   }
 
-  $output .= '<div class="views-query-info">';
-  $output .= $info;
-  $output .= '</div>';
-  $output .= $preview;
+  $info = '<div class="views-query-info">' . $info . '</div>';
+
+  if (variable_get('views_ui_query_on_top', FALSE)) {
+    $output .= $info . $preview;
+  }
+  else {
+    $output .= $preview . $info;
+  }
 
   if (!$js) {
     views_add_css('views-admin');
@@ -2564,6 +2568,14 @@ function views_ui_admin_tools() {
     '#description' => t("Views uses the advanced help module to provide help text; if this module is not present Views will complain, unless this setting is checked."),
     '#default_value' => variable_get('views_hide_help_message', FALSE),
   );
+
+  $form['views_ui_query_on_top'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show query above live preview'),
+    '#description' => t("The live preview feature will show you the output of the view you're creating, as well as the view. Check here to show the query and other information above the view; leave this unchecked to show that information below the view."),
+    '#default_value' => variable_get('views_ui_query_on_top', FALSE),
+  );
+
 
   $form['views_devel_output'] = array(
     '#type' => 'checkbox',
