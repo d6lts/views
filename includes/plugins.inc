@@ -933,7 +933,6 @@ class views_plugin_display extends views_plugin {
         }
       }
 
-//      $output[] = t('!name: !field', array('!name' => $name, '!field' => $this->option_link($field, $type)));
       $options[$type] = array(
         'category' => 'basic',
         'title' => $name,
@@ -1154,6 +1153,16 @@ class views_plugin_display extends views_plugin {
           '#default_value' => $this->get_option('style_plugin'),
           '#description' => t('If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary.'),
         );
+
+        $style_plugin = views_fetch_plugin_data('style', $this->get_option('style_plugin'));
+        if (!empty($style_plugin['uses options'])) {
+          $form['markup'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#suffix' => '</div>',
+            '#value' => t('You may also adjust the !settings for the currently selected style by clicking on the icon.', array('!settings' => $this->option_link(t('settings'), 'style_options'))),
+          );
+        }
+
         break;
       case 'style_options':
         $form['#title'] .= t('Style options');
@@ -1181,6 +1190,16 @@ class views_plugin_display extends views_plugin {
           '#options' => views_fetch_plugin_names('row', $this->get_style_type(), array($this->view->base_table)),
           '#default_value' => $this->get_option('row_plugin'),
         );
+
+        $row_plugin = views_fetch_plugin_data('row', $this->get_option('row_plugin'));
+        if (!empty($row_plugin['uses options'])) {
+          $form['markup'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#suffix' => '</div>',
+            '#value' => t('You may also adjust the !settings for the currently selected row style by clicking on the icon.', array('!settings' => $this->option_link(t('settings'), 'row_options'))),
+          );
+        }
+
         break;
       case 'link_display':
         $form['#title'] .= t('Which display to use for path');
