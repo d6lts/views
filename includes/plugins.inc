@@ -680,6 +680,43 @@ class views_plugin_display extends views_plugin {
     }
   }
 
+  function &get_handler($type, $id) {
+    if (!isset($this->handlers[$type])) {
+      $this->get_handlers($type);
+    }
+
+    if (isset($this->handlers[$type][$id])) {
+      return $this->handlers[$type][$id];
+    }
+
+    // So we can return a reference.
+    $null = NULL;
+    return $null;
+  }
+
+  /**
+   * Get a full array of handlers for $type. This caches them.
+   */
+  function get_handlers($type) {
+    if (!isset($this->handlers[$type])) {
+      $this->handlers[$type] = array();
+      $types = views_object_types();
+      $plural = $types[$type]['plural'];
+      foreach ($this->get_option($plural) as $id => $info) {
+        $handler = views_get_handler($info['table'], $info['field'], $type);
+        if ($handler) {
+          $handler->init($this->view, $info);
+          $this->handlers[$type][$id] = &$handler;
+        }
+
+        // Prevent reference problems.
+        unset($handler);
+      }
+    }
+
+    return $this->handlers[$type];
+  }
+
   /**
    * Intelligently set an option either from this display or from the
    * default display, if directed to do so.
@@ -1183,14 +1220,8 @@ class views_plugin_display extends views_plugin {
           }
 
           if ($plugin->uses_fields()) {
-            // @todo: get_handlers()
-            $fields = $this->get_option('fields');
-            foreach ($fields as $field => $info) {
-              $handler = views_get_handler($info['table'], $info['field'], 'field');
-              if ($handler) {
-                $handler->init($this->view, $info);
-                $funcs[] = $this->option_link(t('Field @field', array('@field' => $handler->ui_name())), 'analyze-theme-field') . ': ' . $this->format_themes($handler->theme_functions());
-              }
+            foreach ($this->get_handlers('field') as $handler) {
+              $funcs[] = $this->option_link(t('Field @field', array('@field' => $handler->ui_name())), 'analyze-theme-field') . ': ' . $this->format_themes($handler->theme_functions());
             }
           }
         }
@@ -2700,15 +2731,13 @@ class views_plugin_style extends views_plugin {
     // @TODO: Document "uses grouping" in docs.php when docs.php is written.
     if ($this->uses_fields() && $this->definition['uses grouping']) {
       $options = array('' => t('<None>'));
-      foreach ($this->display->handler->get_option('fields') as $field => $info) {
-        $handlers[$field] = views_get_handler($info['table'], $info['field'], 'field');
-        $handlers[$field]->init($this->view, $info);
+      foreach ($this->display->handler->get_handlers('field') as $field => $handler) {
 
-        if ($label = $handlers[$field]->label()) {
+        if ($label = $handler->label()) {
           $options[$field] = $label;
         }
         else {
-          $options[$field] = $handlers[$field]->ui_name();
+          $options[$field] = $handler->ui_name();
         }
       }
 
@@ -3008,9 +3037,8 @@ class views_plugin_style_table extends views_plugin_style {
    */
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    // @todo: get_handlers()
-    $fields = $this->display->handler->get_option('fields');
-    if (empty($fields)) {
+    $handlers = $this->display->handler->get_handlers('field');
+    if (empty($handlers)) {
       $form['error_markup'] = array(
         '#value' => t('You need at least one field before you can configure your table settings'),
         '#prefix' => '<div class="error form-item description">',
@@ -3047,17 +3075,12 @@ class views_plugin_style_table extends views_plugin_style {
     $columns = $this->sanitize_columns($this->options['columns']);
 
     // Create an array of allowed columns from the data we know:
-    $field_names = array();
-    $handlers = array();
-    foreach ($fields as $field => $info) {
-      $handlers[$field] = views_get_handler($info['table'], $info['field'], 'field');
-      $handlers[$field]->init($this->view, $info);
-
-      if ($label = $handlers[$field]->label()) {
+    foreach ($handlers as $field => $handler) {
+      if ($label = $handler->label()) {
         $field_names[$field] = $label;
       }
       else {
-        $field_names[$field] = $handlers[$field]->ui_name();
+        $field_names[$field] = $handler->ui_name();
       }
     }
 
@@ -3398,13 +3421,9 @@ class views_plugin_row_fields extends views_plugin_row {
    * Provide a form for setting options.
    */
   function options_form(&$form, &$form_state) {
-    $fields = $this->display->handler->get_option('fields');
     $options = array();
-    foreach ($fields as $field => $info) {
-      $handler = views_get_handler($info['table'], $info['field'], 'field');
-      if ($handler) {
-        $options[$field] = $handler->ui_name();
-      }
+    foreach ($this->display->handler->get_handlers('field') as $field => $handler) {
+      $options[$field] = $handler->ui_name();
     }
 
     if (empty($this->options['inline'])) {
