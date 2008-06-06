@@ -2369,7 +2369,7 @@ class views_plugin_display_attachment extends views_plugin_display {
 
     $options['attachment_position'] = array('default' => 'before');
     $options['inherit_arguments'] = array('default' => TRUE);
-    $options['display'] = array('default' => array());
+    $options['displays'] = array('default' => array());
 
     return $options;
   }

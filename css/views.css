@@ -61,8 +61,7 @@ div.view div.views-admin-links:hover a {
 
 div.view div.views-admin-links-hover,
 div.view div.views-admin-links:hover {
-  background-color: white;
-  border: 1px solid black;
+  background: transparent;;
 }
 
 div.view div.views-admin-links a:before {
