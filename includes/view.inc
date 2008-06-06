@@ -725,7 +725,11 @@ class view extends views_db_object {
     $this->display_handler->pre_execute();
 
     // Execute the view
-    return $this->display_handler->execute();
+    $output = $this->display_handler->execute();
+
+    // unset current view so we can be properly destructed later on.
+    views_set_current_view(FALSE);
+    return $output;
   }
 
   /**
@@ -753,7 +757,11 @@ class view extends views_db_object {
     $this->display_handler->pre_execute();
 
     // Preview the view.
-    return $this->display_handler->preview();
+    $output = $this->display_handler->preview();
+
+    // unset current view so we can be properly destructed later on.
+    views_set_current_view(FALSE);
+    return $output;
   }
 
   /**
@@ -1206,6 +1214,42 @@ class view extends views_db_object {
 
     return $clone;
   }
+
+  /**
+   * Unset references so that a $view object may be properly garbage
+   * collected.
+   */
+  function destroy() {
+    foreach (array_keys($this->display) as $display_id) {
+      if (isset($this->display[$display_id]->handler)) {
+        $this->display[$display_id]->handler->destroy();
+      }
+
+      foreach (views_object_types() as $type => $info) {
+        if (isset($this->$type)) {
+          foreach ($this->$type as $item) {
+            if (isset($item['handler'])) {
+              $item['handler']->destroy();
+            }
+          }
+        }
+      }
+
+      if (isset($this->style_plugin)) {
+        $this->style_plugin->destroy();
+        unset($this->style_plugin);
+      }
+
+      if (isset($this->display_handler)) {
+        unset($this->display_handler);
+      }
+
+      if (isset($this->query)) {
+        unset($this->query);
+      }
+    }
+  }
+
   /**
    * Make sure the view is completely valid.
    *
@@ -1539,9 +1583,6 @@ class views_display extends views_db_object {
     $this->display_plugin = $type;
     $this->id = $id;
     $this->display_title = $title;
-
-    // Create a handler to fill in default values.
-    $handler = views_get_plugin('display', $type);
   }
 }
 

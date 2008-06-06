@@ -111,4 +111,18 @@ class views_object {
       $this->real_field = $definition['field'];
     }
   }
+
+  function destroy() {
+    if (isset($this->view)) {
+      unset($this->view);
+    }
+
+    if (isset($this->display)) {
+      unset($this->display);
+    }
+
+    if (isset($this->query)) {
+      unset($this->query);
+    }
+  }
 }

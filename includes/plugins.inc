@@ -275,6 +275,8 @@ class views_plugin extends views_object {
  * basic mechanisms for different output methods.
  */
 class views_plugin_display extends views_plugin {
+  var $handlers = array();
+
   function init(&$view, &$display, $options = NULL) {
     $this->view = &$view;
     $this->display = &$display;
@@ -289,6 +291,18 @@ class views_plugin_display extends views_plugin {
     }
 
     $this->unpack_options($this->options, $options);
+  }
+
+  function destroy() {
+    parent::destroy();
+
+    foreach ($this->handlers as $handler) {
+      $handler->destroy();
+    }
+
+    if (isset($this->default_display)) {
+      unset($this->default_display);
+    }
   }
 
   /**
@@ -2508,6 +2522,8 @@ class views_plugin_display_attachment extends views_plugin_display {
         $this->view->attachment_after .= $attachment;
         break;
     }
+
+    $view->destroy();
   }
 
   /**
@@ -2715,6 +2731,14 @@ class views_plugin_style extends views_plugin {
     $this->definition += array(
       'uses grouping' => TRUE,
     );
+  }
+
+  function destroy() {
+    parent::destroy();
+
+    if (isset($this->row_plugin)) {
+      $this->row_plugin->destroy();
+    }
   }
 
   /**
