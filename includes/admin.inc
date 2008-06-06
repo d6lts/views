@@ -2591,6 +2591,12 @@ function views_ui_admin_tools() {
     '#default_value' => variable_get('views_ui_query_on_top', FALSE),
   );
 
+  $form['views_no_hover_links'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Do not show hover links over views'),
+    '#description' => t("To make it easier to administrate your views, Views provides 'hover' links to take you to the edit and export screen of a view whenever the view is used. This can be distracting on some themes, though; if it is problematic, you can turn it off here."),
+    '#default_value' => variable_get('views_no_hover_links', FALSE),
+  );
 
   $form['views_devel_output'] = array(
     '#type' => 'checkbox',
