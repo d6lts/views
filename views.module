@@ -719,7 +719,13 @@ function views_get_view($name, $reset = FALSE) {
  */
 function views_debug($message) {
   if (module_exists('devel') && variable_get('views_devel_output', FALSE)) {
-    drupal_set_content(variable_get('views_devel_region', 'footer'), dpr($message, TRUE));
+    if (is_string($message)) {
+      $output = $message;
+    }
+    else {
+      $output = var_export($message, TRUE);
+    }
+    drupal_set_content(variable_get('views_devel_region', 'footer'), '<pre>' . $output . '</pre>');
   }
 }
 

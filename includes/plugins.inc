@@ -113,10 +113,18 @@ function views_views_plugins() {
         'type' => 'normal',
       ),
       'default_summary' => array(
-        'title' => t('Default'),
-        'help' => t('Displays the default summary view'),
+        'title' => t('List'),
+        'help' => t('Displays the default summary summary as a list.'),
         'handler' => 'views_plugin_style_summary',
         'theme' => 'views_view_summary',
+        'type' => 'summary', // only shows up as a summary style
+        'uses options' => TRUE,
+      ),
+      'unformatted_summary' => array(
+        'title' => t('Unformatted'),
+        'help' => t('Displays the summary unformatted, with option for one after another or inline.'),
+        'handler' => 'views_plugin_style_summary_unformatted',
+        'theme' => 'views_view_summary_unformatted',
         'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
       ),
@@ -3309,6 +3317,32 @@ class views_plugin_style_summary extends views_plugin_style {
       $rows[] = $row;
     }
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
+  }
+}
+
+/**
+ * The default style plugin for summaries.
+ */
+class views_plugin_style_summary_unformatted extends views_plugin_style_summary {
+  function option_definition() {
+    $options = parent::option_definition();
+    $options['inline'] = array('default' => FALSE);
+    $options['separator'] = array('default' => '');
+    return $options;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['inline'] = array(
+      '#type' => 'checkbox',
+      '#default_value' => !empty($this->options['inline']),
+      '#title' => t('Display items inline'),
+    );
+    $form['separator'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Separator'),
+      '#default_value' => $this->options['separator'],
+    );
   }
 }
 

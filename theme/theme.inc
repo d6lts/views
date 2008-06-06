@@ -213,6 +213,35 @@ function template_preprocess_views_view_summary(&$vars) {
 }
 
 /**
+ * Template preprocess theme function to print summary basically
+ * unformatted.
+ */
+function template_preprocess_views_view_summary_unformatted(&$vars) {
+  $view     = $vars['view'];
+  $argument = $view->argument[$view->build_info['summary_level']]['handler'];
+
+  $url_options = array();
+
+  if (!empty($view->exposed_raw_input)) {
+    $url_options['query'] = $view->exposed_raw_input;
+  }
+
+  $count = 0;
+  foreach ($vars['rows'] as $id => $row) {
+    // only false on first time:
+    if ($count++) {
+      $vars['rows'][$id]->separator = filter_xss_admin($vars['options']['separator']);
+    }
+    $vars['rows'][$id]->link = $argument->summary_name($row);
+    $args = $view->args;
+    $args[$argument->position] = $argument->summary_argument($row);
+
+    $vars['rows'][$id]->url = url($view->get_url($args), $url_options);
+    $vars['rows'][$id]->count = intval($row->{$argument->count_alias});
+  }
+}
+
+/**
  * Display a view as a table style.
  */
 function template_preprocess_views_view_table(&$vars) {
@@ -238,7 +267,7 @@ function template_preprocess_views_view_table(&$vars) {
   if ($query) {
     $query = '&' . $query;
   }
-  
+
   foreach ($columns as $field => $column) {
     // render the header labels
     if ($field == $column && empty($fields[$field]['exclude'])) {
