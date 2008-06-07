@@ -462,6 +462,7 @@ class view extends views_db_object {
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
 
+    $start = microtime();
     // If that fails, let's build!
     $this->build_info = array();
 
@@ -515,6 +516,7 @@ class view extends views_db_object {
 
     // Arguments can, in fact, cause this whole thing to abort.
     if (!$this->_build_arguments()) {
+      $this->build_time = microtime() - $start;
       return $this->built;
     }
 
@@ -553,6 +555,7 @@ class view extends views_db_object {
     $this->build_info['query'] = $this->query->query();
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
+    $this->build_time = microtime() - $start;
     return TRUE;
   }
 
@@ -615,6 +618,7 @@ class view extends views_db_object {
       // make count from subselect now
       $count_query = "SELECT COUNT(*) FROM ($query) AS count_alias";
 
+      $start = microtime();
       if (!empty($this->pager['items_per_page'])) {
         // We no longer use pager_query() here because pager_query() does not
         // support an offset. This is fine as we don't actually need pager
@@ -660,7 +664,7 @@ class view extends views_db_object {
         db_set_active();
       }
     }
-
+    $this->execute_time = microtime() - $start;
     $this->executed = TRUE;
   }
 
@@ -678,6 +682,7 @@ class view extends views_db_object {
       return;
     }
 
+    $start = microtime();
     // Initialize the style plugin.
     $this->init_style();
 
@@ -693,7 +698,9 @@ class view extends views_db_object {
       }
     }
 
-    return $this->display_handler->render();
+    $output = $this->display_handler->render();
+    $this->render_time = microtime() - $start;
+    return $output;
   }
 
   /**

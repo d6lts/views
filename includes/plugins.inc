@@ -2826,9 +2826,6 @@ class views_plugin_style extends views_plugin {
 
   /**
    * Render the display in this style.
-   *
-   * @param $rows
-   *   The full results of the query, loaded into an array of objects.
    */
   function render() {
     if (empty($this->row_plugin)) {

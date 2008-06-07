@@ -368,6 +368,10 @@ function views_ui_preview($js, $view) {
 
       $rows[] = array('<strong>' . t('Path') . '</strong>', $path);
 
+      $rows[] = array('<strong>' . t('Query build time') . '</strong>', t('@time ms', array('@time' => intval($view->build_time * 100000) / 100)));
+      $rows[] = array('<strong>' . t('Query execute time') . '</strong>', t('@time ms', array('@time' => intval($view->execute_time * 100000) / 100)));
+      $rows[] = array('<strong>' . t('View render time') . '</strong>', t('@time ms', array('@time' => intval($view->render_time * 100000) / 100)));
+      drupal_alter('views_preview_info', $rows, $view);
 
       $info = theme('table', array(), $rows);
     }
