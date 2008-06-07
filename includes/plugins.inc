@@ -2511,6 +2511,7 @@ class views_plugin_display_attachment extends views_plugin_display {
     // Get a fresh view because our current one has a lot of stuff on it because it's
     // already been executed.
     $view = $this->view->clone_view();
+    $view->original_args = $view->args;
 
     $args = $this->get_option('inherit_arguments') ? $this->view->args : array();
 
