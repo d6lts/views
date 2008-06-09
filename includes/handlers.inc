@@ -338,6 +338,12 @@ class views_handler_broken extends views_handler {
       '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
     );
   }
+
+  function label() {
+    return $this->ui_name();
+  }
+
+  function pre_render() { }
 }
 
 /**
