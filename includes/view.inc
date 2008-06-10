@@ -321,7 +321,7 @@ class view extends views_db_object {
     // Load the requested items from the display onto the object.
     $this->$key = $this->display_handler->get_handlers($key);
 
-    // This reference deals with difficult PHP indirection.
+    // This reference deals with difficult PHP indirection.6/10/2008
     $handlers = &$this->$key;
 
     // Run through and test for accessibility.
@@ -1140,18 +1140,18 @@ class view extends views_db_object {
   /**
    * Export a view as PHP code.
    */
-  function export() {
+  function export($indent = '') {
     $output = '';
-    $output .= $this->export_row('view');
+    $output .= $this->export_row('view', $indent);
     // Set the API version
-    $output .= '$view->api_version = 2' . ";\n";
-    $output .= '$view->disabled = FALSE; // Edit this to true to make a default view disabled initially' . "\n";
+    $output .= $indent . '$view->api_version = 2' . ";\n";
+    $output .= $indent . '$view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */' . "\n";
 
     foreach ($this->db_objects() as $key) {
-      $output .= '$view->' . $key . ' = array()' . ";\n";
+      $output .= $indent . '$view->' . $key . ' = array()' . ";\n";
       foreach ($this->$key as $id => $object) {
-        $output .= $object->export_row($key, '  ');
-        $output .= '$view->' . $key . '[\'' . $id . '\'] = $' . $key . ";\n";
+        $output .= $object->export_row($key, $indent);
+        $output .= $indent . '$view->' . $key . '[\'' . $id . '\'] = $' . $key . ";\n";
       }
     }
     return $output;
@@ -1426,7 +1426,7 @@ class views_db_object {
           $this->$field = unserialize($this->$field);
         }
       }
-      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($this->$field) . ";\n";
+      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($this->$field, $indent) . ";\n";
     }
     return $output;
   }
@@ -1495,7 +1495,6 @@ class views_db_object {
     );
 
     $handler = views_get_handler($table, $field, $type);
-    $handler->options($new_item);
 
     $fields[$id] = $new_item;
     $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);
@@ -1557,6 +1556,19 @@ class views_db_object {
 
     // Store.
     $this->display[$display_id]->handler->set_option($types[$type]['plural'], $fields);
+  }
+
+  /**
+   * Set an option on an item.
+   *
+   * Use this only if you have just 1 or 2 options to set; if you have
+   * many, consider getting the item, adding the options and doing
+   * set_item yourself.
+   */
+  function set_item_option($display_id, $type, $id, $option, $value) {
+    $item = $this->get_item($display_id, $type, $id);
+    $item[$option] = $value;
+    $this->set_item($display_id, $type, $id, $item);
   }
 }
 
