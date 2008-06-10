@@ -1141,12 +1141,33 @@ class view extends views_db_object {
    * Export a view as PHP code.
    */
   function export($indent = '') {
+    $this->init_display();
     $output = '';
     $output .= $this->export_row('view', $indent);
     // Set the API version
     $output .= $indent . '$view->api_version = 2' . ";\n";
     $output .= $indent . '$view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */' . "\n";
 
+    foreach ($this->display as $id => $display) {
+      $output .= $indent . '$handler = $view->new_display(' . views_var_export($display->display_plugin, $indent) . ', ' . views_var_export($display->display_title, $indent) . ', \'' . $id . "');\n";
+      foreach ($display->handler->option_definition() as $option => $definition) {
+        // Special handling for some items
+        switch ($option) {
+          case 'defaults':
+            // skip these
+            break;
+          default:
+            if (!$display->handler->is_defaulted($option)) {
+              $value = $display->handler->get_option($option);
+              if ((!isset($definition['default']) && !empty($value)) || $value != $definition['default']) {
+                $output .= $indent . '$handler->override_option(\'' . $option . '\', ' . views_var_export($value, $indent) . ");\n";
+              }
+            }
+        }
+      }
+    }
+
+/*
     foreach ($this->db_objects() as $key) {
       $output .= $indent . '$view->' . $key . ' = array()' . ";\n";
       foreach ($this->$key as $id => $object) {
@@ -1154,6 +1175,7 @@ class view extends views_db_object {
         $output .= $indent . '$view->' . $key . '[\'' . $id . '\'] = $' . $key . ";\n";
       }
     }
+*/
     return $output;
   }
 
@@ -1436,12 +1458,15 @@ class views_db_object {
    *
    * @param $type
    *   The plugin type from the views plugin data. Defaults to 'page'.
-   *
+   * @param $title
+   *   The title of the display; optional, may be filled in from default.
+   * @param $id
+   *   The id to use.
    * @return
    *   The key to the display in $view->display, so that the new display
    *   can be easily located.
    */
-  function add_display($type = 'page') {
+  function add_display($type = 'page', $title = NULL, $id = NULL) {
     if (empty($type)) {
       return FALSE;
     }
@@ -1451,16 +1476,22 @@ class views_db_object {
       return FALSE;
     }
 
-    $id = $type;
-    $title = $plugin['title'];
+    // 'default' is singular and is unique, so just go with 'default'
+    // for it. For all others, start counting.
+    if (empty($id)) {
+      $id = ($type == 'default') ? $type : $type . '_1';
+      $title = $plugin['title'];
 
-    $count = 0;
+      $count = 1;
 
-    // Loop through IDs based upon our style plugin name until
-    // we find one that is unused.
-    while (!empty($this->display[$id])) {
-      $id = $type . '_' . ++$count;
-      $title = $plugin['title'] . ' ' . $count;
+      // Loop through IDs based upon our style plugin name until
+      // we find one that is unused.
+      while (!empty($this->display[$id])) {
+        $id = $type . '_' . ++$count;
+        if (empty($title)) {
+          $title = $plugin['title'] . ' ' . $count;
+        }
+      }
     }
 
     // Create the new display object
@@ -1473,26 +1504,57 @@ class views_db_object {
   }
 
   /**
+   * Create a new display and a display handler for it.
+   * @param $type
+   *   The plugin type from the views plugin data. Defaults to 'page'.
+   * @param $title
+   *   The title of the display; optional, may be filled in from default.
+   * @param $id
+   *   The id to use.
+   * @return
+   *   A reference to the new handler object.
+   */
+  function &new_display($type = 'page', $title = NULL, $id = NULL) {
+    $id = $this->add_display($type, $title, $id);
+
+    // Create a handler
+    $this->display[$id]->handler = views_get_plugin('display', $this->display[$id]->display_plugin);
+    if (!empty($this->display[$id]->handler)) {
+      // Initialize the new display handler with data.
+      $this->display[$id]->handler->init($this, $this->display[$id]);
+      // If this is NOT the default display handler, let it know which is
+      if ($id != 'default') {
+        $this->display[$id]->handler->default_display = &$this->display['default']->handler;
+      }
+    }
+
+    return $this->display[$id]->handler;
+  }
+
+  /**
    * Add an item with a handler to the view.
    *
    * These items may be fields, filters, sort criteria, or arguments.
    */
-  function add_item($display_id, $type, $table, $field) {
+  function add_item($display_id, $type, $table, $field, $options = array(), $id = NULL) {
     $types = views_object_types();
     $this->set_display($display_id);
 
     $fields = $this->display[$display_id]->handler->get_option($types[$type]['plural']);
 
-    $count = 0;
-    $id = $field;
-    while (!empty($fields[$id])) {
-      $id = $field . '_' . ++$count;
+    if (empty($id)) {
+      $count = 0;
+      $id = $field;
+      while (!empty($fields[$id])) {
+        $id = $field . '_' . ++$count;
+      }
     }
+
     $new_item = array(
       'id' => $id,
       'table' => $table,
       'field' => $field,
-    );
+    ) + $options;
 
     $handler = views_get_handler($table, $field, $type);
 

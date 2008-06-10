@@ -994,7 +994,7 @@ function views_views_exportables($op = 'list', $views = NULL, $name = 'foo') {
     $code = "/**\n";
     $code .= " * Implementation of hook_default_view_views().\n";
     $code .= " */\n";
-    $code .= "function " . $name . "_default_views() {\n";
+    $code .= "function " . $name . "_views_default_views() {\n";
     foreach ($views as $view => $truth) {
       $code .= $all_views[$view]->export('  ');
       $code .= '  $views[$view->name] = $view;' . "\n\n";

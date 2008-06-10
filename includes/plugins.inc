@@ -706,6 +706,9 @@ class views_plugin_display extends views_plugin {
     }
   }
 
+  /**
+   * Get the handler object for a single handler.
+   */
   function &get_handler($type, $id) {
     if (!isset($this->handlers[$type])) {
       $this->get_handlers($type);
@@ -757,6 +760,14 @@ class views_plugin_display extends views_plugin {
     // only be a temporary fix.
     $this->display->display_options[$option] = $value;
     return $this->options[$option] = $value;
+  }
+
+  /**
+   * Set an option and force it to be an override.
+   */
+  function override_option($option, $value) {
+    $this->set_override($option, FALSE);
+    $this->set_option($option, $value);
   }
 
   /**
@@ -1429,11 +1440,16 @@ class views_plugin_display extends views_plugin {
       case 'display_title':
         $this->display->display_title = $form_state['values']['display_title'];
         break;
-      case 'title':
       case 'access':
-      case 'link_display':
-      case 'use_ajax':
+        $form_state['values'][$section]['role'] = array_filter($form_state['values'][$section]['role']);
         $this->set_option($section, $form_state['values'][$section]);
+        break;
+      case 'title':
+      case 'link_display':
+        $this->set_option($section, $form_state['values'][$section]);
+        break;
+      case 'use_ajax':
+        $this->set_option($section, (bool)$form_state['values'][$section]);
         break;
       case 'use_pager':
         $this->set_option($section, $form_state['values'][$section]);
@@ -1559,13 +1575,15 @@ class views_plugin_display extends views_plugin {
   /**
    * Flip the override setting for the given section.
    */
-  function set_override($section) {
+  function set_override($section, $new_state = NULL) {
     $options = $this->defaultable_sections($section);
     if (!$options) {
       return;
     }
 
-    $new_state = empty($this->options['defaults'][$section]);
+    if (!isset($new_state)) {
+      $new_state = empty($this->options['defaults'][$section]);
+    }
 
     // For each option that is part of this group, fix our settings.
     foreach ($options as $option) {
