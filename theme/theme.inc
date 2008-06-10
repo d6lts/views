@@ -143,12 +143,12 @@ function template_preprocess_views_view_fields(&$vars) {
   // Loop through the fields for this view.
   $inline = FALSE;
   foreach ($view->field as $id => $field) {
-    if (!empty($field['handler']) && is_object($field['handler']) && empty($field['exclude'])) {
+    if (empty($field->definition['exclude'])) {
       $object = new stdClass();
 
-      $object->content = $field['handler']->theme($vars['row']);
-      if (isset($field['handler']->field_alias) && isset($vars['row']->{$field['handler']->field_alias})) {
-        $object->raw = $vars['row']->{$field['handler']->field_alias};
+      $object->content = $view->field[$id]->theme($vars['row']);
+      if (isset($view->field[$id]->field_alias) && isset($vars['row']->{$view->field[$id]->field_alias})) {
+        $object->raw = $vars['row']->{$view->field[$id]->field_alias};
       }
       else {
         $object->raw = NULL; // make sure it exists to reduce NOTICE
@@ -161,9 +161,9 @@ function template_preprocess_views_view_fields(&$vars) {
 
       $inline = $object->inline;
 
-      $object->handler = $field['handler'];
+      $object->handler = $view->field[$id];
       $object->class = views_css_safe($id);
-      $object->label = check_plain($field['handler']->label());
+      $object->label = check_plain($view->field[$id]->label());
       $vars['fields'][$id] = $object;
     }
   }
@@ -197,7 +197,7 @@ function template_preprocess_views_view_field(&$vars) {
  */
 function template_preprocess_views_view_summary(&$vars) {
   $view     = $vars['view'];
-  $argument = $view->argument[$view->build_info['summary_level']]['handler'];
+  $argument = $view->argument[$view->build_info['summary_level']];
 
   $url_options = array();
 
@@ -220,7 +220,7 @@ function template_preprocess_views_view_summary(&$vars) {
  */
 function template_preprocess_views_view_summary_unformatted(&$vars) {
   $view     = $vars['view'];
-  $argument = $view->argument[$view->build_info['summary_level']]['handler'];
+  $argument = $view->argument[$view->build_info['summary_level']];
 
   $url_options = array();
 
@@ -259,7 +259,7 @@ function template_preprocess_views_view_table(&$vars) {
   $options  = $view->style_plugin->options;
   $handler  = $view->style_plugin;
 
-  $fields   = $view->field;
+  $fields   = &$view->field;
   $columns  = $handler->sanitize_columns($options['columns'], $fields);
 
   $active   = !empty($handler->active) ? $handler->active : '';
@@ -272,8 +272,8 @@ function template_preprocess_views_view_table(&$vars) {
 
   foreach ($columns as $field => $column) {
     // render the header labels
-    if ($field == $column && empty($fields[$field]['exclude'])) {
-      $label = check_plain(!empty($fields[$field]['handler']) ? $fields[$field]['handler']->label() : '');
+    if ($field == $column && empty($fields[$field]->definition['exclude'])) {
+      $label = check_plain(!empty($fields[$field]) ? $fields[$field]->label() : '');
       if (empty($options['info'][$field]['sortable'])) {
         $vars['header'][$field] = $label;
       }
@@ -305,9 +305,8 @@ function template_preprocess_views_view_table(&$vars) {
 
     // Render each field into its appropriate column.
     foreach ($result as $num => $row) {
-      if (!empty($fields[$field]['handler']) && is_object($fields[$field]['handler']) && empty($fields[$field]['exclude'])) {
-        $handler = &$fields[$field]['handler'];
-        $field_output = $handler->theme($row);
+      if (!empty($fields[$field]) && empty($fields[$field]->definition['exclude'])) {
+        $field_output = $fields[$field]->theme($row);
 
         // Don't bother with separators and stuff if the field does not show up.
         if (!isset($field_output) && isset($vars['rows'][$num][$column])) {

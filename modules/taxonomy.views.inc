@@ -497,7 +497,7 @@ class views_handler_argument_term_node_tid_depth_modifier extends views_handler_
         continue;
       }
 
-      if (!is_object($this->view->argument[$key]['handler'])) {
+      if (empty($this->view->argument[$key])) {
         continue;
       }
 
@@ -505,7 +505,7 @@ class views_handler_argument_term_node_tid_depth_modifier extends views_handler_
         unset($handler);
       }
 
-      $handler = &$this->view->argument[$key]['handler'];
+      $handler = &$this->view->argument[$key];
       if (empty($handler->definition['accept depth modifier'])) {
         continue;
       }

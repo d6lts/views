@@ -288,12 +288,8 @@ class view extends views_db_object {
       '#global' => TRUE,
     );
 
-    $relationships = $this->display_handler->get_option('relationships');
-    foreach ($relationships as $relationship) {
-      $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
-      if ($handler) {
-        $base_tables[$handler->definition['base']] = TRUE;
-      }
+    foreach ($this->display_handler->get_handlers('relationship') as $handler) {
+      $base_tables[$handler->definition['base']] = TRUE;
     }
     return $base_tables;
   }
@@ -303,13 +299,11 @@ class view extends views_db_object {
    */
   function _pre_query() {
     foreach (views_object_types() as $key => $info) {
-      $item = &$this->$key;
+      $handlers = &$this->$key;
       $position = 0;
-      foreach ($item as $id => $info) {
-        if (!empty($info['handler'])) {
-          $item[$id]['handler']->position = $position;
-          $item[$id]['handler']->pre_query();
-        }
+      foreach ($handlers as $id => $handler) {
+        $handlers[$id]->position = $position;
+        $handlers[$id]->pre_query();
         $position++;
       }
     }
@@ -325,27 +319,16 @@ class view extends views_db_object {
    */
   function _init_handler($key, $info) {
     // Load the requested items from the display onto the object.
-    $this->$key = $this->display_handler->get_option($info['plural']);
+    $this->$key = $this->display_handler->get_handlers($key);
 
-    // Create a shortcut
-    $items = &$this->$key;
+    // This reference deals with difficult PHP indirection.
+    $handlers = &$this->$key;
 
-    // Then run through and initialize a handler for each item.
-    foreach ($items as $id => $data) {
-      $handler = views_get_handler($data['table'], $data['field'], $key);
-      if (is_object($handler)) {
-        $handler->init($this, $data);
-        // Remove any handlers which are inaccessible to the current user. For example, see users.mail
-        if ($handler->access()) {
-          // Deal with difficult PHP indirection:
-          $items[$id]['handler'] = &$handler;
-        }
-        else {
-          unset($items[$id]);
-        }
+    // Run through and test for accessibility.
+    foreach ($handlers as $id => $handler) {
+      if (!$handler->access()) {
+        unset($handlers[$id]);
       }
-      // Protect against reference mangling in PHP4.
-      unset($handler);
     }
   }
 
@@ -376,18 +359,18 @@ class view extends views_db_object {
       $position++;
       $argument = &$this->argument[$id];
 
-      if (!is_object($argument['handler'])) {
+      if ($argument->broken()) {
         continue;
       }
 
-      $argument['handler']->set_relationship();
+      $argument->set_relationship();
 
       $arg = isset($this->args[$position]) ? $this->args[$position] : NULL;
-      $argument['handler']->position = $position;
+      $argument->position = $position;
 
-      if (isset($arg) || $argument['handler']->has_default_argument()) {
+      if (isset($arg) || $argument->has_default_argument()) {
         if (!isset($arg)) {
-          $arg = $argument['handler']->get_default_argument();
+          $arg = $argument->get_default_argument();
           // make sure default args get put back.
           if (isset($arg)) {
             $this->args[$position] = $arg;
@@ -395,22 +378,22 @@ class view extends views_db_object {
         }
 
         // Set the argument, which will also validate that the argument can be set.
-        if (!$argument['handler']->set_argument($arg)) {
-          $status = $argument['handler']->validate_fail($arg);
+        if (!$argument->set_argument($arg)) {
+          $status = $argument->validate_fail($arg);
           break;
         }
 
-        if ($argument['handler']->is_wildcard()) {
-          $arg_title = $argument['handler']->wildcard_title();
+        if ($argument->is_wildcard()) {
+          $arg_title = $argument->wildcard_title();
         }
         else {
-          $arg_title = $argument['handler']->get_title();
-          $argument['handler']->query();
+          $arg_title = $argument->get_title();
+          $argument->query();
         }
 
         // Since we're really generating the breadcrumb for the item above us,
         // check the default action of this argument.
-        if ($this->display_handler->uses_breadcrumb() && $argument['handler']->uses_breadcrumb()) {
+        if ($this->display_handler->uses_breadcrumb() && $argument->uses_breadcrumb()) {
           $path = $this->get_url($breadcrumb_args);
           if (strpos($path, '%') === FALSE) {
             $this->build_info['breadcrumb'][$path] = str_replace(array_keys($substitutions), $substitutions, $title);
@@ -418,11 +401,11 @@ class view extends views_db_object {
         }
 
         // Allow the argument to muck with this breadcrumb.
-        $argument['handler']->set_breadcrumb($this->build_info['breadcrumb']);
+        $argument->set_breadcrumb($this->build_info['breadcrumb']);
 
         // Test to see if we should use this argument's title
-        if (!empty($argument['title'])) {
-          $title = $argument['title'];
+        if (!empty($argument->definition['title'])) {
+          $title = $argument->definition['title'];
         }
 
         // Add this argument's substitution
@@ -432,9 +415,12 @@ class view extends views_db_object {
       }
       else {
         // determine default condition and handle.
-        $status = $argument['handler']->default_action();
+        $status = $argument->default_action();
         break;
       }
+
+      // Be safe with references and loops:
+      unset($argument);
     }
 
     // set the title in the build info.
@@ -563,17 +549,17 @@ class view extends views_db_object {
    * Internal method to build an individual set of handlers.
    */
   function _build($key) {
-    $array = &$this->$key;
-    foreach ($array as $id => $data) {
-      if (!empty($array[$id]['handler']) && is_object($array[$id]['handler'])) {
+    $handlers = &$this->$key;
+    foreach ($handlers as $id => $data) {
+      if (!empty($handlers[$id]) && is_object($handlers[$id])) {
         // Give this handler access to the exposed filter input.
         if (!empty($this->exposed_data)) {
-          if (!$array[$id]['handler']->accept_exposed_input($this->exposed_data)) {
+          if (!$handlers[$id]->accept_exposed_input($this->exposed_data)) {
             continue;
           }
         }
-        $array[$id]['handler']->set_relationship();
-        $array[$id]['handler']->query();
+        $handlers[$id]->set_relationship();
+        $handlers[$id]->query();
       }
     }
   }
@@ -691,9 +677,9 @@ class view extends views_db_object {
     // Give field handlers the opportunity to perform additional queries
     // using the entire resultset prior to rendering.
     if ($this->style_plugin->uses_fields()) {
-      foreach ($this->field as $id => $field) {
-        if (!empty($this->field[$id]['handler'])) {
-          $this->field[$id]['handler']->pre_render($this->result);
+      foreach ($this->field as $id => $handler) {
+        if (!empty($this->field[$id])) {
+          $this->field[$id]->pre_render($this->result);
         }
       }
     }
@@ -1234,11 +1220,11 @@ class view extends views_db_object {
 
       foreach (views_object_types() as $type => $info) {
         if (isset($this->$type)) {
-          foreach ($this->$type as $item) {
-            if (isset($item['handler'])) {
-              $item['handler']->destroy();
-            }
+          $handlers = &$this->$type;
+          foreach ($handlers as $id => $item) {
+            $handlers[$id]->destroy();
           }
+          unset($handlers);
         }
       }
 

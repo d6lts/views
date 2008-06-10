@@ -250,18 +250,18 @@ class views_handler extends views_object {
     $relationship = $this->options['relationship'];
 
     // Ignore missing/broken relationships.
-    if (empty($this->view->relationship[$relationship]) || empty($this->view->relationship[$relationship]['handler'])) {
+    if (empty($this->view->relationship[$relationship])) {
       return;
     }
 
     // Check to see if the relationship has already processed. If not, then we
     // cannot process it.
-    if (empty($this->view->relationship[$relationship]['handler']->alias)) {
+    if (empty($this->view->relationship[$relationship]->alias)) {
       return;
     }
 
     // Finally!
-    $this->relationship = $this->view->relationship[$relationship]['handler']->alias;
+    $this->relationship = $this->view->relationship[$relationship]->alias;
   }
 
   /**
@@ -320,6 +320,12 @@ class views_handler extends views_object {
     // get the join from this table that links back to the base table.
     return drupal_clone(views_get_table_join($this->table, $this->query->base_table));
   }
+
+  /**
+   * Determine if the handler is considered 'broken', meaning it's a
+   * a placeholder used when a handler can't be found.
+   */
+  function broken() { }
 }
 
 /**
@@ -344,6 +350,11 @@ class views_handler_broken extends views_handler {
   }
 
   function pre_render() { }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { }
 }
 
 /**

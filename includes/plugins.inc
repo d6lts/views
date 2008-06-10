@@ -304,8 +304,12 @@ class views_plugin_display extends views_plugin {
   function destroy() {
     parent::destroy();
 
-    foreach ($this->handlers as $handler) {
-      $handler->destroy();
+    foreach ($this->handlers as $type => $handlers) {
+      foreach ($handlers as $id => $handler) {
+        if (is_object($handler)) {
+          $this->handlers[$type][$id]->destroy();
+        }
+      }
     }
 
     if (isset($this->default_display)) {
@@ -326,8 +330,8 @@ class views_plugin_display extends views_plugin {
   function uses_exposed() {
     if (!isset($this->has_exposed)) {
       foreach (array('field', 'filter') as $type) {
-        foreach ($this->view->$type as $key => $info) {
-          if (!empty($info['handler']) && $info['handler']->is_exposed()) {
+        foreach ($this->view->$type as $key => $handler) {
+          if ($handler->is_exposed()) {
             // one is all we need; if we find it, return true.
             $this->has_exposed = TRUE;
             return TRUE;
@@ -2868,7 +2872,7 @@ class views_plugin_style extends views_plugin {
         // Group on the rendered version of the field, not the raw.  That way,
         // we can control any special formatting of the grouping field through
         // the admin or theme layer or anywhere else we'd like.
-        $grouping = $this->view->field[$grouping_field]['handler']->theme($row);
+        $grouping = $this->view->field[$grouping_field]->theme($row);
         $sets[$grouping][] = $row;
       }
     }
@@ -3024,7 +3028,7 @@ class views_plugin_style_table extends views_plugin_style {
     $this->active = $sort;
 
     // Tell the field to click sort.
-    $this->view->field[$sort]['handler']->click_sort($this->order);
+    $this->view->field[$sort]->click_sort($this->order);
 
     // Let the builder know whether or not we're overriding the default sorts.
     return empty($this->options['override']);

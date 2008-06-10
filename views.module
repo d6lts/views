@@ -208,7 +208,7 @@ function views_arg_load($value, $name, $display_id, $index) {
 
     if (isset($indexes[$index])) {
       if (isset($view->argument[$indexes[$index]])) {
-        $arg = $view->argument[$indexes[$index]]['handler']->validate_argument($value) ? $value : FALSE;
+        $arg = $view->argument[$indexes[$index]]->validate_argument($value) ? $value : FALSE;
         $view->destroy();
         return $arg;
       }
@@ -805,8 +805,8 @@ function views_exposed_form(&$form_state) {
 
   // Go through each filter and let it generate its info.
   foreach ($view->filter as $id => $filter) {
-    $filter['handler']->exposed_form($form, $form_state);
-    if ($info = $filter['handler']->exposed_info()) {
+    $view->filter[$id]->exposed_form($form, $form_state);
+    if ($info = $view->filter[$id]->exposed_info()) {
       $form['#info']['filter-' . $id] = $info;
     }
   }
@@ -835,9 +835,9 @@ function views_exposed_form(&$form_state) {
  */
 function views_exposed_form_validate(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $var = &$form_state['view']->$type;
-    foreach ($var as $key => $info) {
-      $var[$key]['handler']->exposed_validate($form, $form_state);
+    $handlers = &$form_state['view']->$type;
+    foreach ($handlers as $key => $handler) {
+      $handlers[$key]->exposed_validate($form, $form_state);
     }
   }
 }
@@ -847,9 +847,9 @@ function views_exposed_form_validate(&$form, &$form_state) {
  */
 function views_exposed_form_submit(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $var = &$form_state['view']->$type;
-    foreach ($var as $key => $info) {
-      $var[$key]['handler']->exposed_submit($form, $form_state);
+    $handlers = &$form_state['view']->$type;
+    foreach ($handlers as $key => $info) {
+      $handlers[$key]->exposed_submit($form, $form_state);
     }
   }
   $form_state['view']->exposed_data = $form_state['values'];
