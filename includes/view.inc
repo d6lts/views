@@ -404,8 +404,8 @@ class view extends views_db_object {
         $argument->set_breadcrumb($this->build_info['breadcrumb']);
 
         // Test to see if we should use this argument's title
-        if (!empty($argument->definition['title'])) {
-          $title = $argument->definition['title'];
+        if (!empty($argument->options['title'])) {
+          $title = $argument->options['title'];
         }
 
         // Add this argument's substitution

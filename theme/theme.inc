@@ -143,7 +143,7 @@ function template_preprocess_views_view_fields(&$vars) {
   // Loop through the fields for this view.
   $inline = FALSE;
   foreach ($view->field as $id => $field) {
-    if (empty($field->definition['exclude'])) {
+    if (empty($field->options['exclude'])) {
       $object = new stdClass();
 
       $object->content = $view->field[$id]->theme($vars['row']);
@@ -272,7 +272,7 @@ function template_preprocess_views_view_table(&$vars) {
 
   foreach ($columns as $field => $column) {
     // render the header labels
-    if ($field == $column && empty($fields[$field]->definition['exclude'])) {
+    if ($field == $column && empty($fields[$field]->options['exclude'])) {
       $label = check_plain(!empty($fields[$field]) ? $fields[$field]->label() : '');
       if (empty($options['info'][$field]['sortable'])) {
         $vars['header'][$field] = $label;
@@ -305,7 +305,7 @@ function template_preprocess_views_view_table(&$vars) {
 
     // Render each field into its appropriate column.
     foreach ($result as $num => $row) {
-      if (!empty($fields[$field]) && empty($fields[$field]->definition['exclude'])) {
+      if (!empty($fields[$field]) && empty($fields[$field]->options['exclude'])) {
         $field_output = $fields[$field]->theme($row);
 
         // Don't bother with separators and stuff if the field does not show up.
