@@ -142,6 +142,9 @@ function node_views_data() {
       'handler' => 'views_handler_field_node_type',
       'click sortable' => TRUE,
     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
     'filter' => array(
       'handler' => 'views_handler_filter_node_type',
     ),
