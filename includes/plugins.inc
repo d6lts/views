@@ -1625,8 +1625,13 @@ class views_plugin_display extends views_plugin {
       $path = $this->get_path();
       if ($path) {
         $path = $this->view->get_url(NULL, $path);
+        $url_options = array();
+        if (!empty($view->exposed_raw_input)) {
+          $url_options['query'] = $view->exposed_raw_input;
+        }
+
         $theme = views_theme_functions('views_more', $this->view, $this->display);
-        $path = check_url(url($path));
+        $path = check_url(url($path), $url_options);
         return theme($theme, $path);
       }
     }
@@ -3374,7 +3379,12 @@ class views_plugin_style_summary_unformatted extends views_plugin_style_summary 
 class views_plugin_style_rss extends views_plugin_style {
   function attach_to($display_id, $path, $title) {
     $display = $this->view->display[$display_id]->handler;
-    $url = url($this->view->get_url(NULL, $path));
+    $url_options = array();
+    if (!empty($view->exposed_raw_input)) {
+      $url_options['query'] = $view->exposed_raw_input;
+    }
+
+    $url = url($this->view->get_url(NULL, $path), $url_options);
     if ($display->has_path()) {
       if (empty($this->preview)) {
         drupal_add_feed($url, $title);
