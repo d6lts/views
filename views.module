@@ -441,6 +441,11 @@ function views_add_css($file) {
  * Include views .js files.
  */
 function views_add_js($file) {
+  // If javascript has been disabled by the user, never add js files.
+  if (variable_get('views_no_javascript', FALSE)) {
+    return;
+  }
+
   static $base = TRUE;
   if ($base) {
     drupal_add_js(drupal_get_path('module', 'views') . "/js/base.js");

@@ -2614,8 +2614,15 @@ function views_ui_admin_tools() {
   $form['views_devel_output'] = array(
     '#type' => 'checkbox',
     '#title' => t('Enable views performance statistics via the Devel module'),
-    '#description' => t("Tick this to enable some Views query and performance statistics <em>if Devel is installed</em>."),
+    '#description' => t("Check this to enable some Views query and performance statistics <em>if Devel is installed</em>."),
     '#default_value' => variable_get('views_devel_output', FALSE),
+  );
+
+  $form['views_no_javascript'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Disable javascript with Views'),
+    '#description' => t("If you are having problems with the javascript, you can disable it here; the Views UI should degrade and still be usable without javascript, it just not as good."),
+    '#default_value' => variable_get('views_no_javascript', FALSE),
   );
 
   $regions = system_region_list(variable_get('theme_default', 'garland'));
