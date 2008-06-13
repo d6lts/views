@@ -1184,6 +1184,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'style_plugin':
         $form['#title'] .= t('How should this view be styled');
+        $form['#help_topic'] = 'style';
         $form['style_plugin'] =  array(
           '#type' => 'radios',
           '#options' => views_fetch_plugin_names('style', $this->get_style_type(), array($this->view->base_table)),
@@ -1205,8 +1206,13 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('Style options');
         $style = TRUE;
         $type = 'style_plugin';
+        $name = $this->get_option('style_plugin');
 
       case 'row_options':
+        if (!isset($name)) {
+          $name = $this->get_option('row_plugin');
+      }
+        $form['#help_topic'] = 'style-' . $name;
         // if row, $style will be empty.
         if (empty($style)) {
           $form['#title'] .= t('Row style options');
