@@ -206,7 +206,6 @@ class views_handler_argument extends views_handler {
 
     asort($validate_types);
     $form['validate_type']['#options'] = $validate_types;
-    // Show this gadget if *anything* but 'none' is selected
 
     $form['validate_fail'] = array(
       '#type' => 'select',
@@ -492,7 +491,7 @@ class views_handler_argument extends views_handler {
    */
   function summary_basics($count_field = TRUE) {
     // Add the number of nodes counter
-    $count_alias = $this->query->add_field(NULL, 'COUNT('. $this->query->base_table .'.'. $this->query->base_field . ')', 'num_records');
+    $count_alias = $this->query->add_field(NULL, 'COUNT(' . $this->query->base_table . '.' . $this->query->base_field . ')', 'num_records');
     $this->query->add_groupby($this->name_alias);
 
     if ($count_field) {
@@ -682,18 +681,18 @@ class views_handler_argument_formula extends views_handler_argument {
 
 /**
  * Abstract argument handler for dates.
- * 
+ *
  * Adds an option to set a default argument based on the current date.
- * 
+ *
  * @param $arg_format
- *   The format string to use on the current time when 
+ *   The format string to use on the current time when
  *   creating a default date argument.
- * 
+ *
  */
 class views_handler_argument_date extends views_handler_argument_formula {
   var $option_name = 'default_argument_date';
   var $arg_format = 'Y-m-d';
-  
+
   /**
    * Add an option to set the default value to the current date.
    */
@@ -701,9 +700,9 @@ class views_handler_argument_date extends views_handler_argument_formula {
     parent::default_argument_form($form, $form_state);
     $form['default_argument_type']['#options'] += array('date' => t('Current date'));
   }
-  
+
   /**
-   * Set the empty argument value to the current date, 
+   * Set the empty argument value to the current date,
    * formatted appropriately for this argument.
    */
   function get_default_argument($raw = FALSE) {

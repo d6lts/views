@@ -529,7 +529,7 @@ class view extends views_db_object {
     $this->style_plugin->query();
 
     if (variable_get('views_sql_signature', FALSE)) {
-      $this->query->add_field(NULL, "'". $this->name .':'. $this->current_display ."'", 'view_name');
+      $this->query->add_field(NULL, "'" . $this->name . ':' . $this->current_display . "'", 'view_name');
     }
 
     // Let modules modify the query just prior to finalizing it.

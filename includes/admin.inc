@@ -2395,7 +2395,7 @@ function views_ui_change_style_form(&$form_state) {
     $types = views_object_types();
     $form['#title'] = t('Change summary style for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
 
-    $form['#section'] = $display_id . '-' . $type . '-' . $id .'-style-plugin';
+    $form['#section'] = $display_id . '-' . $type . '-' . $id . '-style-plugin';
 
     $form['style_plugin'] =  array(
       '#type' => 'radios',
@@ -2667,7 +2667,7 @@ function views_ui_autocomplete_user($string = '') {
       $n = $account->name;
       // Commas and quotes in terms are special cases, so encode 'em.
       if (strpos($account->name, ',') !== FALSE || strpos($account->name, '"') !== FALSE) {
-        $n = '"'. str_replace('"', '""', $account->name) .'"';
+        $n = '"' . str_replace('"', '""', $account->name) . '"';
       }
       $matches[$prefix . $n] = check_plain($account->name);
     }

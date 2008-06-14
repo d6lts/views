@@ -46,7 +46,7 @@ function _drupal_build_form($form_id, &$form_state) {
       array_unshift($args_temp, $form_id);
 
       $form = call_user_func_array('drupal_retrieve_form', $args_temp);
-      $form_build_id = 'form-'. md5(mt_rand());
+      $form_build_id = 'form-' . md5(mt_rand());
       $form['#build_id'] = $form_build_id;
 
       if ($form_state['method'] == 'get' && !isset($form['#method'])) {
@@ -122,7 +122,7 @@ function drupal_rebuild_form_new($form_id, &$form_state, $args, $form_build_id =
 
   if (!isset($form_build_id)) {
     // We need a new build_id for the new version of the form.
-    $form_build_id = 'form-'. md5(mt_rand());
+    $form_build_id = 'form-' . md5(mt_rand());
   }
   $form['#build_id'] = $form_build_id;
   drupal_prepare_form($form_id, $form, $form_state);
@@ -189,8 +189,8 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
       // here, as we've finished with them. The in-memory copies are still
       // here, though.
       if (variable_get('cache', CACHE_DISABLED) == CACHE_DISABLED && !empty($form_state['values']['form_build_id'])) {
-        cache_clear_all('form_'. $form_state['values']['form_build_id'], 'cache_form');
-        cache_clear_all('storage_'. $form_state['values']['form_build_id'], 'cache_form');
+        cache_clear_all('form_' . $form_state['values']['form_build_id'], 'cache_form');
+        cache_clear_all('storage_' . $form_state['values']['form_build_id'], 'cache_form');
       }
 
       // If batches were set in the submit handlers, we process them now,

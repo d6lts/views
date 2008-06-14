@@ -143,8 +143,9 @@ function views_cache_set($cid, $data, $use_language = FALSE) {
     return;
   }
   if ($use_language) {
-    $cid .= ':'. $language->language;
+    $cid .= ':' . $language->language;
   }
+
   cache_set($cid, $data, 'cache_views');
 }
 
@@ -165,7 +166,7 @@ function views_cache_get($cid, $use_language = FALSE) {
     return 0;
   }
   if ($use_language) {
-    $cid .= ':'. $language->language;
+    $cid .= ':' . $language->language;
   }
 
   return cache_get($cid, 'cache_views');

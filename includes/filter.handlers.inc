@@ -756,7 +756,7 @@ class views_handler_filter_string extends views_handler_filter {
   }
 
   function op_word($field, $upper) {
-    preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' '. $this->value, $matches, PREG_SET_ORDER);
+    preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' ' . $this->value, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
       $phrase = false;
       // Strip off phrase quotes
@@ -773,7 +773,7 @@ class views_handler_filter_string extends views_handler_filter {
       }
     }
     if ($this->operator == 'word') {
-      $where = '('. implode(' OR ', $where) .')';
+      $where = '(' . implode(' OR ', $where) . ')';
     }
     else {
       $where = implode(' AND ', $where);

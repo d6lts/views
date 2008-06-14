@@ -52,7 +52,7 @@ function views_ajax() {
       }
     }
     $messages = theme('status_messages');
-    $object->messages = $messages ? '<div class="views-messages">'. $messages .'</div>' : '';
+    $object->messages = $messages ? '<div class="views-messages">' . $messages . '</div>' : '';
 
     views_ajax_render($object);
   }

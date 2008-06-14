@@ -1357,7 +1357,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
       case 'teaser':
         $item_text = $item->teaser;
         if (!empty($item->readmore)) {
-          $item_text .= '<p>'. l(t('read more'), 'node/'. $item->nid, array('absolute' => TRUE, 'attributes' => array('target' => '_blank'))) .'</p>';
+          $item_text .= '<p>' . l(t('read more'), 'node/' . $item->nid, array('absolute' => TRUE, 'attributes' => array('target' => '_blank'))) . '</p>';
         }
         break;
       case 'title':
