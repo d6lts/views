@@ -669,6 +669,10 @@ class view extends views_db_object {
     }
 
     $start = microtime();
+    if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
+      $this->start_query_capture();
+    }
+
     // Initialize the style plugin.
     $this->init_style();
 
@@ -685,6 +689,9 @@ class view extends views_db_object {
     }
 
     $output = $this->display_handler->render();
+    if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
+      $this->end_query_capture();
+    }
     $this->render_time = microtime() - $start;
     return $output;
   }
@@ -966,6 +973,61 @@ class view extends views_db_object {
   }
 
   /**
+   * Set up query capturing.
+   *
+   * db_query() stores the queries that it runs in global $queries,
+   * bit only if dev_query is set to true. In this case, we want
+   * to temporarily override that setting if it's not and we
+   * can do that without forcing a db rewrite by just manipulating
+   * $conf. This is kind of evil but it works.
+   */
+  function start_query_capture() {
+    global $conf, $queries;
+    if (empty($conf['dev_query'])) {
+      $this->fix_dev_query = TRUE;
+      $conf['dev_query'] = TRUE;
+    }
+
+    // Record the last query key used; anything already run isn't
+    // a query that we are interested in.
+    $this->last_query_key = NULL;
+
+    if (!empty($queries)) {
+      $keys = array_keys($queries);
+      $this->last_query_key = array_pop($keys);
+    }
+  }
+
+  /**
+   * Add the list of queries run during render to buildinfo.
+   *
+   * @see view::start_query_capture()
+   */
+  function end_query_capture() {
+    global $conf, $queries;
+    if (!empty($this->fix_dev_query)) {
+      $conf['dev_query'] = FALSE;
+    }
+
+    // make a copy of the array so we can manipulate it with array_splice.
+    $temp = $queries;
+
+    // Scroll through the queries until we get to our last query key.
+    // Unset anything in our temp array.
+    if (isset($this->last_query_key)) {
+      while (list($id, $query) = each($queries)) {
+        if ($id == $this->last_query_key) {
+          break;
+        }
+
+        unset($temp[$id]);
+      }
+    }
+
+    $this->additional_queries = $temp;
+  }
+
+  /**
    * Load a view from the database based upon either vid or name.
    *
    * This is a static factory method that implements internal caching for
@@ -1167,15 +1229,6 @@ class view extends views_db_object {
       }
     }
 
-/*
-    foreach ($this->db_objects() as $key) {
-      $output .= $indent . '$view->' . $key . ' = array()' . ";\n";
-      foreach ($this->$key as $id => $object) {
-        $output .= $object->export_row($key, $indent);
-        $output .= $indent . '$view->' . $key . '[\'' . $id . '\'] = $' . $key . ";\n";
-      }
-    }
-*/
     return $output;
   }
 

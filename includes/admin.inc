@@ -329,6 +329,7 @@ function views_ui_preview($js, $view) {
   $errors = $view->validate();
   if ($errors === TRUE) {
     $view->ajax = $js;
+    $view->live_preview = TRUE;
 
     // Store the current view URL for later use:
     $view->set_display($form_state['display_id']);
@@ -358,6 +359,18 @@ function views_ui_preview($js, $view) {
         $query = preg_replace_callback(DB_QUERY_REGEXP, '_db_query_callback', $query);
       }
       $rows[] = array('<strong>' . t('Query') . '</strong>', '<pre>' . check_plain($query) . '</pre>');
+      if (!empty($view->additional_queries)) {
+        $queries = '<strong>' . t('These queries were run during view rendering:') . '</strong>';
+        foreach ($view->additional_queries as $query) {
+          if ($queries) {
+            $queries .= "\n";
+          }
+          $queries .= t('[@time ms] ', array('@time' => intval($query[1] * 100000) / 100)) . $query[0];
+        }
+
+        $rows[] = array('<strong>' . t('Other queries') . '</strong>', '<pre>' . $queries . '</pre>');
+      }
+
       $rows[] = array('<strong>' . t('Title') . '</strong>', filter_xss_admin($view->get_title()));
       if (isset($path)) {
         $path = l($path, $path);
@@ -2602,6 +2615,13 @@ function views_ui_admin_tools() {
     '#title' => t('Show query above live preview'),
     '#description' => t("The live preview feature will show you the output of the view you're creating, as well as the view. Check here to show the query and other information above the view; leave this unchecked to show that information below the view."),
     '#default_value' => variable_get('views_ui_query_on_top', FALSE),
+  );
+
+  $form['views_show_additional_queries'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show other queries run during render during live preview'),
+    '#description' => t("Drupal has the potential to run many queries while a view is being rendered. Checking this box will display every query run during view render as part of the live preview."),
+    '#default_value' => variable_get('views_show_additional_queries', FALSE),
   );
 
   $form['views_no_hover_links'] = array(

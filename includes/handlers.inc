@@ -729,7 +729,7 @@ function views_date_sql_field($field, $field_type = 'int', $set_offset = NULL) {
           break;
       }
       if (!empty($offset)) {
-        $field = "($field + 'INTERVAL $offset SECONDS')";
+        $field = "($field + INTERVAL '$offset SECONDS')";
       }
       return $field;
   }
