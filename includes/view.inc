@@ -708,6 +708,7 @@ class view extends views_db_object {
       }
     }
 
+    $old_view = views_get_current_view();
     views_set_current_view($this);
 
     // Let modules modify the view just prior to executing it.
@@ -728,7 +729,7 @@ class view extends views_db_object {
     $output = $this->display_handler->execute();
 
     // unset current view so we can be properly destructed later on.
-    views_set_current_view(FALSE);
+    views_set_current_view(isset($old_view) ? $old_view : FALSE);
     return $output;
   }
 
@@ -744,6 +745,7 @@ class view extends views_db_object {
       }
     }
 
+    $old_view = views_get_current_view();
     views_set_current_view($this);
 
     // Prepare the view with the information we have.
@@ -760,7 +762,8 @@ class view extends views_db_object {
     $output = $this->display_handler->preview();
 
     // unset current view so we can be properly destructed later on.
-    views_set_current_view(FALSE);
+    // Return the previous value in case we're an attachment.
+    views_set_current_view(isset($old_view) ? $old_view : FALSE);
     return $output;
   }
 

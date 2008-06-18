@@ -9,6 +9,11 @@
  * @defgroup views_filter_handlers Views' filter handlers
  * @{
  * Handlers to tell Views how to filter queries.
+ *
+ * Definition items:
+ * - allow empty: If true, the 'IS NULL' and 'IS NOT NULL' operators become
+ *   available as standard operators.
+ * -
  */
 
 /**
@@ -526,6 +531,29 @@ class views_handler_filter extends views_handler {
 }
 
 /**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_filter_broken extends views_handler_filter {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+  function query() { /* No query to run */ }
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { return TRUE; }
+}
+
+/**
  * Simple filter to handle equal to / not equal to filters
  */
 class views_handler_filter_equality extends views_handler_filter {
@@ -811,6 +839,9 @@ class views_handler_filter_string extends views_handler_filter {
 
 /**
  * Simple filter to handle matching of boolean values
+ *
+ * Definition items:
+ * - label: (REQUIRED) The label for the checkbox.
  */
 class views_handler_filter_boolean_operator extends views_handler_filter {
   // exposed filter options
@@ -879,6 +910,10 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
 
 /**
  * Simple filter to handle matching of multiple options selectable via checkboxes
+ *
+ * Definition items:
+ * - numeric: If set to true, this item will use numeric operators instead of string.
+ *
  */
 class views_handler_filter_in_operator extends views_handler_filter {
   var $value_form_type = 'checkboxes';

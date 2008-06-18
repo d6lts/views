@@ -413,7 +413,7 @@ function hook_views_admin_links_alter(&$links, $view) {
  *
  * @see theme_table
  */
-function hook_views_admin_links_alter(&$rows, $view) {
+function hook_views_preview_info_alter(&$rows, $view) {
   // example code here
 }
 

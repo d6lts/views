@@ -13,6 +13,24 @@
  * Base class for arguments.
  *
  * The basic argument works for very simple arguments such as nid and uid
+ *
+ * Definition terms for this handler:
+ * - name field: The field to use for the name to use in the summary, which is
+ *               the displayed output. For example, for the node: nid argument,
+ *               the argument itself is the nid, but node.title is displayed.
+ * - name table: The table to use for the name, should it not be in the same
+ *               table as the argument.
+ * - empty field name: For arguments that can have no value, such as taxonomy
+ *                     which can have "no term", this is the string which
+ *                     will be displayed for this lack of value. Be sure to use
+ *                     t().
+ * - validate type: A little used string to allow an argument to restrict
+ *                  which validator is available to just one. Use the
+ *                  validator ID. This probably should not be used at all,
+ *                  and may disappear or change.
+ * - numeric: If set to TRUE this field is numeric and will use %d instead of
+ *            %s in queries.
+ *
  */
 class views_handler_argument extends views_handler {
   var $name_field = NULL;
@@ -636,9 +654,35 @@ class views_handler_argument extends views_handler {
 }
 
 /**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_argument_broken extends views_handler_argument {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+  function query() { /* No query to run */ }
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { return TRUE; }
+}
+
+/**
  * Abstract argument handler for simple formulae.
  *
  * Child classes of this object should implement summary_argument, at least.
+ *
+ * Definition terms:
+ * - formula: The formula to use for this handler.
  */
 class views_handler_argument_formula extends views_handler_argument {
   var $formula = NULL;
@@ -693,6 +737,11 @@ class views_handler_argument_formula extends views_handler_argument {
  *   The format string to use on the current time when
  *   creating a default date argument.
  *
+ * Definitions terms:
+ * - many to one: If true, the "many to one" helper will be used.
+ * - invalid input: A string to give to the user for obviously invalid input.
+ *                  This is deprecated in favor of argument validators.
+ * @see views_many_to_one_helper
  */
 class views_handler_argument_date extends views_handler_argument_formula {
   var $option_name = 'default_argument_date';
@@ -1007,6 +1056,9 @@ class views_handler_argument_numeric extends views_handler_argument {
  * An argument handler for use in fields that have a many to one relationship
  * with the table(s) to the left. This adds a bunch of options that are
  * reasonably common with this type of relationship.
+ * Definition terms:
+ * - numeric: If true, the field will be considered numeric. Generally
+ *            views_handler_argument_numeric should be used instead, though.
  */
 class views_handler_argument_many_to_one extends views_handler_argument {
   function init(&$view, &$options) {

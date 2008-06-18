@@ -64,7 +64,39 @@ class views_handler_sort extends views_handler {
 }
 
 /**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_sort_broken extends views_handler_sort {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+  function query() { /* No query to run */ }
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { return TRUE; }
+}
+
+/**
  * Base sort handler that has no options and performs a simple sort
+ *
+ * Definition items:
+ * - formula: The formula to use to sort on, such as with a random sort.
+ *            The formula should be an array, with keys for database
+ *            types, and 'default' for non-specified. 'default' is
+ *            required, all others ('mysql', 'mysqli' and 'pgsql' are
+ *            optional). It is recommended you use 'default' for mysql
+ *            and create specific overrides for pgsql when the formulae
+ *            differ.
  */
 class views_handler_sort_formula extends views_handler_sort {
   /**

@@ -90,6 +90,24 @@ function views_get_table_join($table, $base_table) {
  *
  * This class would be abstract in PHP5, but PHP4 doesn't understand that.
  *
+ * Definition terms:
+ * - table: The actual table this uses; only specify if different from
+ *          the table this is attached to.
+ * - real field: The actual field this uses; only specify if different from
+ *               the field this item is attached to.
+ * - group: A text string representing the 'group' this item is attached to,
+ *          for display in the UI. Examples: "Node", "Taxonomy", "Comment",
+ *          "User", etc. This may be inherited from the parent definition or
+ *          the 'table' definition.
+ * - title: The title for this handler in the UI. This may be inherited from
+ *          the parent definition or the 'table' definition.
+ * - help: A more informative string to give to the user to explain what this
+ *         field/handler is or does.
+ * - access callback: If this field should have access control, this could
+ *                    be a function to use. 'user_access' is a common
+ *                    function to use here. If not specified, no access
+ *                    control is provided.
+ * - access arguments: An array of arguments for the access callback.
  */
 class views_handler extends views_object {
   /**
@@ -329,41 +347,18 @@ class views_handler extends views_object {
 }
 
 /**
- * A special handler to take the place of missing or broken handlers.
- */
-class views_handler_broken extends views_handler {
-  function ui_name() {
-    return t('Broken/missing handler');
-  }
-
-  function ensure_my_table() { /* No table to ensure! */ }
-
-  function options_form(&$form, &$form_state) {
-    $form['markup'] = array(
-      '#prefix' => '<div class="form-item description">',
-      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
-    );
-  }
-
-  function label() {
-    return $this->ui_name();
-  }
-
-  function pre_render() { }
-
-  /**
-   * Determine if the handler is considered 'broken'
-   */
-  function broken() { }
-}
-
-/**
  * This many to one helper object is used on both arguments and filters.
  *
  * @todo This requires extensive documentation on how this class is to
  * be used. For now, look at the arguments and filters that use it. Lots
  * of stuff is just pass-through but there are definitely some interesting
  * areas where they interact.
+ *
+ * Any handler that uses this can have the following possibly additional
+ * definition terms:
+ * - numeric: If true, treat this field as numeric, using %d instead of %s in
+ *            queries.
+ *
  */
 class views_many_to_one_helper {
   function views_many_to_one_helper(&$handler) {

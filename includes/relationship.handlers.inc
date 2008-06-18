@@ -14,6 +14,22 @@
 /**
  * Simple relationship handler that allows a new version of the primary table
  * to be linked in.
+ *
+ * The base relationship handler can only handle a single join. Some relationships
+ * are more complex and might require chains of joins; for those, you must
+ * utilize a custom relationship handler.
+ *
+ * Definition items:
+ * - base: The new base table this relationship will be adding. This does not
+ *   have to be a declared base table, but if there are no tables that
+ *   utilize this base table, it won't be very effective.
+ * - relationship table: The actual table this relationship operates against.
+ *   This is analogous to using a 'table' override.
+ * - relationship field: The actual field this relationsihp operates against.
+ *   This is analogous to using a 'real field' override.
+ * - label: The default label to provide for this relationship, which is
+ *   shown in parentheses next to any field/sort/filter/argument that uses
+ *   the relationship.
  */
 class views_handler_relationship extends views_handler {
   /**
@@ -104,6 +120,29 @@ class views_handler_relationship extends views_handler {
 
     $this->alias = $this->query->add_relationship($alias, $join, $this->definition['base'], $this->relationship);
   }
+}
+
+/**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_relationship_broken extends views_handler_relationship {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+  function query() { /* No query to run */ }
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { return TRUE; }
 }
 
 /**

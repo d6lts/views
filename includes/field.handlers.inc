@@ -13,6 +13,14 @@
 
 /**
  * Base field handler that has no options and renders an unformatted field.
+ *
+ * Definition terms:
+ * - additional fields: An array of fields that should be added to the query
+ *                      for some purpose. The array is in the form of:
+ *                      array('identifier' => array('table' => tablename,
+ *                      'field' => fieldname); as many fields as are necessary
+ *                      may be in this array.
+ * - click sortable: If TRUE, this field may be click sorted.
  */
 class views_handler_field extends views_handler {
   var $field_alias = 'unknown';
@@ -27,15 +35,15 @@ class views_handler_field extends views_handler {
     if (!empty($this->definition['additional fields'])) {
       $this->additional_fields = $this->definition['additional fields'];
     }
-    
+
     if (!isset($this->options['exclude'])) {
       $this->options['exclude'] = '';
     }
   }
-  
+
   function init(&$view, $options) {
     parent::init($view, $options);
-    
+
     $this->options += array(
       'exclude' => FALSE,
     );
@@ -202,6 +210,30 @@ class views_handler_field extends views_handler {
 }
 
 /**
+ * A special handler to take the place of missing or broken handlers.
+ */
+class views_handler_field_broken extends views_handler_field {
+  function ui_name() {
+    return t('Broken/missing handler');
+  }
+
+  function ensure_my_table() { /* No table to ensure! */ }
+  function query() { /* No query to run */ }
+  function options_form(&$form, &$form_state) {
+    $form['markup'] = array(
+      '#prefix' => '<div class="form-item description">',
+      '#value' => t('The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item.'),
+    );
+  }
+
+  /**
+   * Determine if the handler is considered 'broken'
+   */
+  function broken() { return TRUE; }
+}
+
+
+/**
  * A handler to provide proper displays for dates.
  */
 class views_handler_field_date extends views_handler_field {
@@ -314,6 +346,10 @@ class views_handler_field_boolean extends views_handler_field {
 /**
  * A handler to run a field through check_markup, using a companion
  * format field.
+ *
+ * - format: (REQUIRED) The field in this table used to control the format
+ *           such as the 'format' field in the node, which goes with the
+ *           'body' field.
  */
 class views_handler_field_markup extends views_handler_field {
   /**
@@ -457,6 +493,14 @@ class views_handler_field_file_size extends views_handler_field {
   }
 }
 
+/**
+ * Render a field as a numeric value
+ *
+ * Definition terms:
+ * - float: If true this field contains a decimal value. If unset this field
+ *          will be assumed to be integer.
+ * -
+ */
 class views_handler_field_numeric extends views_handler_field {
   function option_definition() {
     $options = parent::option_definition();
