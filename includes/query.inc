@@ -378,12 +378,22 @@ class views_query {
       return $relationship;
     }
 
-    if (!empty($join)) {
-      $join = $this->adjust_join($join, $relationship);
+    // If we do not have join info, fetch it.
+    if (!isset($join)) {
+      $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
     }
 
-    if ($this->ensure_path($table, $relationship, $join)) {
+    // If it can't be fetched, this won't work.
+    if (empty($join)) {
+      return;
+    }
 
+    // Adjust this join for the relationship, which will ensure that the 'base'
+    // table it links to is correct. Tables adjoined to a relationship
+    // join to a link point, not the base table.
+    $join = $this->adjust_join($join, $relationship);
+
+    if ($this->ensure_path($table, $relationship, $join)) {
       // Attempt to eliminate redundant joins.  If this table's
       // relationship and join exactly matches an existing table's
       // relationship and join, we do not have to join to it again;
@@ -397,33 +407,20 @@ class views_query {
       // example, a view that filters on 3 taxonomy terms using AND
       // needs to join term_data 3 times with the same join.
 
-      // If we do not have join info, get it the same way queue_table
-      // will get it.
-      if (!isset($join)) {
-        $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
-      }
+      // scan through the table queue to see if a matching join and
+      // relationship exists.  If so, use it instead of this join.
 
-      // If we have join info, scan through the table queue to see if
-      // a matching join and relationship exists.  If so, use it.
-      if (isset($join)) {
-        // adjust_join() will be called again inside queue_table() and may
-        // not be safe to call multiple times on the same object.  It
-        // returns a copy, though, so just keep the copy separate
-        // instead of assigning it to $join.
-        $join_copy = $this->adjust_join($join, $relationship);
-
-        // TODO: Scanning through $this->table_queue results in an
-        // O(N^2) algorithm, and this code runs every time the view is
-        // instantiated (Views 2 does not currently cache queries).
-        // There are a couple possible "improvements" but we should do
-        // some performance testing before picking one.
-        foreach ($this->table_queue as $queued_table) {
-          // In PHP 4 and 5, the == operation returns TRUE for two objects
-          // if they are instances of the same class and have the same
-          // attributes and values.
-          if ($queued_table['relationship'] == $relationship && $queued_table['join'] == $join_copy) {
-            return $queued_table['table'];
-          }
+      // TODO: Scanning through $this->table_queue results in an
+      // O(N^2) algorithm, and this code runs every time the view is
+      // instantiated (Views 2 does not currently cache queries).
+      // There are a couple possible "improvements" but we should do
+      // some performance testing before picking one.
+      foreach ($this->table_queue as $queued_table) {
+        // In PHP 4 and 5, the == operation returns TRUE for two objects
+        // if they are instances of the same class and have the same
+        // attributes and values.
+        if ($queued_table['relationship'] == $relationship && $queued_table['join'] == $join) {
+          return $queued_table['table'];
         }
       }
 

@@ -116,9 +116,6 @@ class views_handler_argument extends views_handler {
     return $options;
   }
 
-  /**
-   * Provide a default options form for the argument.
-   */
   function options_form(&$form, &$form_state) {
     $defaults = $this->default_actions();
 
@@ -1057,8 +1054,9 @@ class views_handler_argument_numeric extends views_handler_argument {
  * with the table(s) to the left. This adds a bunch of options that are
  * reasonably common with this type of relationship.
  * Definition terms:
- * - numeric: If true, the field will be considered numeric. Generally
- *            views_handler_argument_numeric should be used instead, though.
+ * - numeric: If true, the field will be considered numeric. Probably should
+ *   always be set TRUE as views_handler_argument_string has many to one
+ *   capabilities.
  */
 class views_handler_argument_many_to_one extends views_handler_argument {
   function init(&$view, &$options) {
