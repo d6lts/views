@@ -189,8 +189,6 @@ class views_query {
       $alias = $alias_base . '_' . $count++;
     }
 
-    $join = $this->adjust_join($join, $link_point);
-
     if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
       $this->relationships[$alias] = array(
         'link' => $link_point,
