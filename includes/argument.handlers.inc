@@ -961,6 +961,11 @@ class views_handler_argument_string extends views_handler_argument {
   function title() {
     return check_plain($this->case_transform($this->argument, 'case'));
   }
+
+  function summary_name($data) {
+    return $this->case_transform(parent::summary_name($data), 'case');
+  }
+
 }
 
 /**
