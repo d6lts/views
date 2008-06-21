@@ -480,17 +480,21 @@ class views_handler_filter extends views_handler {
       return TRUE;
     }
 
+    // Figure out which display id is responsible for the filters, so we
+    // know where to look for session stored values.
+    $display_id = ($this->view->display_handler->is_defaulted('filters')) ? 'default' : $this->view->current_display;
+
     if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
       $this->operator = $input[$this->options['expose']['operator']];
       if ($this->options['expose']['remember']) {
-        $_SESSION['views'][$this->view->name][$this->view->current_display][$this->options['expose']['operator']] = $input[$this->options['expose']['operator']];
+        $_SESSION['views'][$this->view->name][$display_id][$this->options['expose']['operator']] = $input[$this->options['expose']['operator']];
       }
     }
 
     if (!empty($this->options['expose']['identifier'])) {
       $value = $input[$this->options['expose']['identifier']];
       if ($this->options['expose']['remember']) {
-        $_SESSION['views'][$this->view->name][$this->view->current_display][$this->options['expose']['identifier']] = $value;
+        $_SESSION['views'][$this->view->name][$display_id][$this->options['expose']['identifier']] = $value;
       }
 
       // Various ways to check for the absence of optional input.

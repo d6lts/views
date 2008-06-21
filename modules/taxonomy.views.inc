@@ -41,12 +41,6 @@ function taxonomy_views_data() {
       'left_field' => 'vid',
       'field' => 'vid',
     ),
-    // vocabulary links to users via term_data
-    'users' => array(
-      'left_table' => 'term_data',
-      'left_field' => 'vid',
-      'field' => 'vid',
-    ),
   );
 
   // vocabulary name
@@ -86,11 +80,6 @@ function taxonomy_views_data() {
       'field' => 'tid',
     ),
     'node_revision' => array(
-      'left_table' => 'term_node',
-      'left_field' => 'tid',
-      'field' => 'tid',
-    ),
-    'users' => array(
       'left_table' => 'term_node',
       'left_field' => 'tid',
       'field' => 'tid',
@@ -176,12 +165,6 @@ function taxonomy_views_data() {
       'left_field' => 'vid',
       'field' => 'vid',
     ),
-    'users' => array(
-      // Links to users via node.nid
-      'left_table' => 'node',
-      'left_field' => 'vid',
-      'field' => 'vid',
-    ),
     'term_hierarchy' => array(
       'left_field' => 'tid',
       'field' => 'tid',
@@ -241,12 +224,6 @@ function taxonomy_views_data() {
       'left_field' => 'tid',
       'field' => 'tid',
     ),
-    'users' => array(
-      // links to users thorugh term_data
-      'left_table' => 'term_data',
-      'left_field' => 'tid',
-      'field' => 'tid',
-    ),
   );
 
   // ----------------------------------------------------------------------
@@ -266,12 +243,6 @@ function taxonomy_views_data() {
       'field' => 'tid',
     ),
     'node_revisions' => array(
-      'left_table' => 'term_node',
-      'left_field' => 'tid',
-      'field' => 'tid',
-    ),
-    'users' => array(
-      // Links to users via node
       'left_table' => 'term_node',
       'left_field' => 'tid',
       'field' => 'tid',

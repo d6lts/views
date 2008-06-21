@@ -1,0 +1,8 @@
+<!-- $Id$ -->
+Views allows modules to describe their tables relationships to each other, as well as fields, filters, sort criteria and arguments via hook_views_data(). Whenever Views deems it necessary, this hook is called, the data aggregated together and cached.
+
+Views also allows modules to create new display types, style types, row styles, argument default handlers and argument validators via hook_views_plugins().
+
+These hooks are kept in a file named MODULENAME.views.inc. This file is automatically included upon need, so there is no need to try and include this in hook_init or any other method of including .inc files. This file should store hook_data, all handlers and plugins, as well as any other hooks and subsidiary data that will only be used by your module when Views is active.
+
+There are two similar files, MODULENAME.views_default.inc and MODULENAME.views_convert.inc which contain default views and views 1 to views 2 convert helpers, respectively.

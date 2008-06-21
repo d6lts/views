@@ -802,13 +802,20 @@ function views_exposed_form(&$form_state) {
     unset($input['page']);
     unset($input['q']);
     // If we have no input at all, check for remembered input via session.
-    if (empty($input) && !empty($_SESSION['views'][$view->name][$view->current_display])) {
-      $input = $_SESSION['views'][$view->name][$view->current_display];
+
+    // If filters are not overridden, store the 'remember' settings on the
+    // default display. If they are, store them on this display. This way,
+    // multiple displays in the same view can share the same filters and
+    // remember settings.
+    $display_id = ($view->display_handler->is_defaulted('filters')) ? 'default' : $view->current_display;
+
+    if (empty($input) && !empty($_SESSION['views'][$view->name][$display_id])) {
+      $input = $_SESSION['views'][$view->name][$display_id];
     }
-    $form['#post'] = $input;
+    $form_state['input'] = $input;
   }
   else {
-    $form['#post'] = $view->exposed_input;
+    $form_state['input'] = $view->exposed_input;
   }
 
   // Let form plugins know this is for exposed widgets.

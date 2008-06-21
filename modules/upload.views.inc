@@ -33,11 +33,6 @@ function upload_views_data() {
       'left_field' => 'vid',
       'field' => 'vid',
     ),
-    'users' => array(
-      'left_table' => 'node',
-      'left_field' => 'vid',
-      'field' => 'vid',
-    ),
     'files' => array(
       'left_field' => 'fid',
       'field' => 'fid',
