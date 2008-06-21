@@ -656,6 +656,19 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     }
   }
 
+  function accept_exposed_input($input) {
+    $rc = parent::accept_exposed_input($input);
+
+    if ($rc) {
+      // If we have previously validated input, override.
+      if (isset($this->validated_exposed_input)) {
+        $this->value = $this->validated_exposed_input;
+      }
+    }
+
+    return $rc;
+  }
+
   function exposed_validate(&$form, &$form_state) {
     if (empty($this->options['exposed'])) {
       return;
@@ -671,7 +684,7 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     $uids = $this->validate_user_strings($form[$identifier], $values);
 
     if ($uids) {
-      $form_state['values'][$identifier] = $uids;
+      $this->validated_exposed_input = $uids;
     }
   }
 

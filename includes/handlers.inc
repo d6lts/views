@@ -328,6 +328,11 @@ class views_handler extends views_object {
   function accept_exposed_input($input) { return TRUE; }
 
   /**
+   * If set to remember exposed input in the session, store it there.
+   */
+  function store_exposed_input($input, $status) { return TRUE; }
+
+  /**
    * Get the join object that should be used for this handler.
    *
    * This method isn't used a great deal, but it's very handy for easily

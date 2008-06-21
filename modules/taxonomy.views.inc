@@ -846,6 +846,19 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     }
   }
 
+  function accept_exposed_input($input) {
+    $rc = parent::accept_exposed_input($input);
+
+    if ($rc) {
+      // If we have previously validated input, override.
+      if (isset($this->validated_exposed_input)) {
+        $this->value = $this->validated_exposed_input;
+      }
+    }
+
+    return $rc;
+  }
+
   function exposed_validate(&$form, &$form_state) {
     if (empty($this->options['exposed'])) {
       return;
@@ -856,7 +869,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     // We only validate if they've chosen the text field style.
     if ($this->options['type'] != 'textfield') {
       if (!empty($this->options['expose']['single']) && $form_state['values'][$identifier] != 'All')  {
-        $form_state['values'][$identifier] = array($form_state['values'][$identifier]);
+        $this->validated_exposed_input = array($form_state['values'][$identifier]);
       }
       return;
     }
@@ -868,9 +881,8 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     $values = drupal_explode_tags($form_state['values'][$identifier]);
 
     $tids = $this->validate_term_strings($form[$identifier], $values);
-
-    if ($uids) {
-      $form_state['values'][$identifier] = $tids;
+    if ($tids) {
+      $this->validated_exposed_input = $tids;
     }
   }
 

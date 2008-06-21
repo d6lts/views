@@ -480,22 +480,13 @@ class views_handler_filter extends views_handler {
       return TRUE;
     }
 
-    // Figure out which display id is responsible for the filters, so we
-    // know where to look for session stored values.
-    $display_id = ($this->view->display_handler->is_defaulted('filters')) ? 'default' : $this->view->current_display;
 
     if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator']) && isset($input[$this->options['expose']['operator']])) {
       $this->operator = $input[$this->options['expose']['operator']];
-      if ($this->options['expose']['remember']) {
-        $_SESSION['views'][$this->view->name][$display_id][$this->options['expose']['operator']] = $input[$this->options['expose']['operator']];
-      }
     }
 
     if (!empty($this->options['expose']['identifier'])) {
       $value = $input[$this->options['expose']['identifier']];
-      if ($this->options['expose']['remember']) {
-        $_SESSION['views'][$this->view->name][$display_id][$this->options['expose']['identifier']] = $value;
-      }
 
       // Various ways to check for the absence of optional input.
       if (!empty($this->options['expose']['optional'])) {
@@ -518,6 +509,50 @@ class views_handler_filter extends views_handler {
     }
 
     return TRUE;
+  }
+
+  function store_exposed_input($input, $status) {
+    if (empty($this->options['exposed']) || empty($this->options['expose']['identifier'])) {
+      return TRUE;
+    }
+
+    if (empty($this->options['expose']['remember'])) {
+      return;
+    }
+
+    // Figure out which display id is responsible for the filters, so we
+    // know where to look for session stored values.
+    $display_id = ($this->view->display_handler->is_defaulted('filters')) ? 'default' : $this->view->current_display;
+
+    // shortcut test.
+    $operator = !empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator']);
+
+    // false means that we got a setting that means to recuse ourselves,
+    // so we should erase whatever happened to be there.
+    if (!$status && isset($_SESSION['views'][$this->view->name][$display_id])) {
+      $session = &$_SESSION['views'][$this->view->name][$display_id];
+      if ($operator && isset($session[$this->options['expose']['operator']])) {
+        unset($session[$this->options['expose']['operator']]);
+      }
+
+      if (isset($session[$this->options['expose']['identifier']])) {
+        unset($session[$this->options['expose']['identifier']]);
+      }
+    }
+
+    if ($status) {
+      if (!isset($_SESSION['views'][$this->view->name][$display_id])) {
+        $_SESSION['views'][$this->view->name][$display_id] = array();
+      }
+
+      $session = &$_SESSION['views'][$this->view->name][$display_id];
+
+      if ($operator && isset($input[$this->options['expose']['operator']])) {
+        $session[$this->options['expose']['operator']] = $input[$this->options['expose']['operator']];
+      }
+
+      $session[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
+    }
   }
 
   /**
