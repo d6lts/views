@@ -189,6 +189,11 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->options['validate_type'],
     );
 
+    $form['validate_options_div_prefix'] = array(
+      '#id' => 'views-validator-options',
+      '#value' => '<fieldset id="views-validator-options"><legend>' . t('Validator options') . '</legend>',
+    );
+
     $validate_types = array('none' => t('<Basic validation>'));
     $plugins = views_fetch_plugin_data('argument validator');
     foreach ($plugins as $id => $info) {
@@ -227,6 +232,10 @@ class views_handler_argument extends views_handler {
       '#title' => t('Action to take if argument does not validate'),
       '#default_value' => $this->options['validate_fail'],
       '#options' => $validate_options,
+    );
+
+    $form['validate_options_div_suffix'] = array(
+      '#value' => '</fieldset>',
     );
   }
 
@@ -293,6 +302,18 @@ class views_handler_argument extends views_handler {
     $plugins = views_fetch_plugin_data('argument default');
     $options = array();
 
+    // This construct uses 'hidden' and not markup because process doesn't
+    // run. It also has an extra div because the dependency wants to hide
+    // the parent in situations like this, so we need a second div to
+    // make this work.
+    $form['default_options_div_prefix'] = array(
+      '#type' => 'hidden',
+      '#id' => 'views-default-options',
+      '#prefix' => '<div><fieldset id="views-default-options"><legend>' . t('Provide default argument options') . '</legend>',
+      '#process' => array('views_process_dependency'),
+      '#dependency' => array('radio:options[default_action]' => array('default')),
+    );
+
     $form['default_argument_type'] = array(
       '#prefix' => '<div id="edit-options-default-argument-type-wrapper">',
       '#suffix' => '</div>',
@@ -315,6 +336,10 @@ class views_handler_argument extends views_handler {
         }
       }
     }
+
+    $form['default_options_div_suffix'] = array(
+      '#value' => '</fieldset></div>',
+    );
 
     asort($options);
     $form['default_argument_type']['#options'] = $options;

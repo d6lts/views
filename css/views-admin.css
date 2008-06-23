@@ -606,3 +606,9 @@ html.js .views-hidden {
 .remove-display input {
   margin: 0 !important;
 }
+
+.views-validator-options {
+  padding: 0 1em;
+  margin: 0 1em;
+  border: 1px solid;
+}

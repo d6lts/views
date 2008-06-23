@@ -550,7 +550,7 @@ function theme_views_mini_pager($tags = array(), $limit = 10, $element = 0, $par
  * - views-view-fields.tpl.php
  *
  * Important! When adding a new template to your theme, be sure to flush the
- * theme registry cache! Simply visit admin/build/themes.
+ * theme registry cache!
  *
  * @see _views_theme_functions
  * @}

@@ -1292,7 +1292,7 @@ class views_plugin_display extends views_plugin {
         $form['important'] = array(
           '#prefix' => '<div class="form-item description">',
           '#suffix' => '</div>',
-          '#value' => '<p>' . t('<strong>Important!</strong> When you add a new template to your theme, be sure to clear the theme registry cache. You can do this by visiting administer >> site building >> themes -- just loading the page should clear the cache.') . '</p>',
+          '#value' => '<p>' . t('<strong>Important!</strong> When you add a new template to your theme, be sure to clear the theme registry cache. Click on the help icon for more information about this!') . '</p>',
         );
 
         $form['analysis'] = array(
