@@ -2612,7 +2612,16 @@ class views_plugin_display_feed extends views_plugin_display_page {
       return FALSE;
     }
 
-    return parent::defaultable_sections($section);
+    $sections = parent::defaultable_sections($section);
+
+    // Tell views our sitename_title option belongs in the title section.
+    if ($section == 'title') {
+      $sections[] = 'sitename_title';
+    }
+    elseif (!$section) {
+      $sections['title'][] = 'sitename_title';
+    }
+    return $sections;
   }
 
   function option_definition() {
@@ -2623,6 +2632,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
     // Overrides for standard stuff:
     $options['style_plugin']['default'] = 'rss';
     $options['style_options']['default']  = array('mission_description' => FALSE, 'description' => '');
+    $options['sitename_title']['default'] = FALSE;
     $options['row_plugin']['default'] = '';
     $options['defaults']['default']['style_plugin'] = FALSE;
     $options['defaults']['default']['style_options'] = FALSE;
@@ -2641,6 +2651,10 @@ class views_plugin_display_feed extends views_plugin_display_page {
     $categories['page'] = array(
       'title' => t('Feed settings'),
     );
+
+    if ($this->get_option('sitename_title')) {
+      $options['title']['value'] = t('Using the site name');
+    }
 
     // I don't think we want to give feeds menus directly.
     unset($options['menu']);
@@ -2675,6 +2689,19 @@ class views_plugin_display_feed extends views_plugin_display_page {
     parent::options_form($form, $form_state);
 
     switch ($form_state['section']) {
+      case 'title':
+        $title = $form['title'];
+        // A little juggling to move the 'title' field beyond our checkbox.
+        unset($form['title']);
+        $form['sitename_title'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Use the site name for the title'),
+          '#default_value' => $this->get_option('sitename_title'),
+        );
+        $form['title'] = $title;
+        $form['title']['#process'] = array('views_process_dependency');
+        $form['title']['#dependency'] = array('edit-sitename-title' => array(FALSE));
+        break;
       case 'displays':
         $form['#title'] .= t('Attach to');
         $displays = array();
@@ -2703,6 +2730,9 @@ class views_plugin_display_feed extends views_plugin_display_page {
     // It is very important to call the parent function here:
     parent::options_submit($form, $form_state);
     switch ($form_state['section']) {
+      case 'title':
+        $this->set_option('sitename_title', $form_state['values']['sitename_title']);
+        break;
       case 'displays':
         $this->set_option($form_state['section'], $form_state['values'][$form_state['section']]);
         break;

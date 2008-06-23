@@ -405,10 +405,19 @@ function template_preprocess_views_view_rss(&$vars) {
     $description = $options['description'];
   }
 
+  if ($view->display_handler->get_option('sitename_title')) {
+    $title = variable_get('site_name', 'Drupal');
+    if ($slogan = variable_get('site_slogan', '')) {
+      $title .= ' - ' . $slogan;
+    }
+  }
+  else {
+    $title = $view->get_title();
+  }
+ 
   // Figure out which display which has a path we're using for this feed. If there isn't
   // one, use the global $base_url
   $link_display = $view->display_handler->get_link_display();
-
 
   // Compare the link to the default home page; if it's the default home page, just use $base_url.
   if (empty($vars['link'])) {
@@ -416,7 +425,7 @@ function template_preprocess_views_view_rss(&$vars) {
   }
 
   $vars['namespaces'] = drupal_attributes($style->namespaces);
-  $vars['channel'] = format_rss_channel($view->get_title(), $vars['link'], $description, $items, $language->language);
+  $vars['channel'] = format_rss_channel($title, $vars['link'], $description, $items, $language->language);
 
   drupal_set_header('Content-Type: application/rss+xml; charset=utf-8');
 }
