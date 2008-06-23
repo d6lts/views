@@ -1292,13 +1292,28 @@ class views_plugin_display extends views_plugin {
         $form['important'] = array(
           '#prefix' => '<div class="form-item description">',
           '#suffix' => '</div>',
-          '#value' => '<p>' . t('<strong>Important!</strong> When you add a new template to your theme, be sure to clear the theme registry cache. Click on the help icon for more information about this!') . '</p>',
+          '#value' => '<p>' . t('This section lists all possible templates for the display plugin and for the style plugins, ordered roughly from the least specific to the most specific. The active template for each plugin -- which is the most specific template found on the system -- is highlighted in bold.') . '</p>',
         );
 
         $form['analysis'] = array(
           '#prefix' => '<div class="form-item">',
           '#suffix' => '</div>',
           '#value' => theme('item_list', $funcs),
+        );
+
+        $form['rescan_button'] = array(
+          '#prefix' => '<div class="form-item">',
+          '#suffix' => '</div>',
+        );
+        $form['rescan_button']['button'] = array(
+          '#type' => 'submit',
+          '#value' => t('Rescan template files'),
+          '#submit' => array('views_ui_config_item_form_rescan'),
+        );
+        $form['rescan_button']['markup'] = array(
+          '#prefix' => '<div class="description">',
+          '#suffix' => '</div>',
+          '#value' => t("<strong>Important!</strong> When adding, removing, or renaming template files, it is necessary to make Drupal aware of the changes by making it rescan the files on your system. By clicking this button you clear Drupal's theme registry and thereby trigger this rescanning process. The highlighted templates above will then reflect the new state of your system."),
         );
 
         $form_state['ok_button'] = TRUE;

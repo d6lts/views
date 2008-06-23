@@ -2666,6 +2666,16 @@ function views_ui_tools_clear_cache() {
 }
 
 /**
+ * Submit hook to clear Drupal's theme registry (thereby triggering
+ * a templates rescan).
+ */
+function views_ui_config_item_form_rescan($form, &$form_state) {
+  drupal_rebuild_theme_registry();
+  $form_state['rerender'] = TRUE;
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
  * Page callback for views user autocomplete
  */
 function views_ui_autocomplete_user($string = '') {
