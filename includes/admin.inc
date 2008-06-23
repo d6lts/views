@@ -731,6 +731,7 @@ function views_ui_import_validate($form, &$form_state) {
   if (!is_object($view)) {
     form_error($form['view'], t('Unable to interpret view code.'));
   }
+
   if (empty($view->api_version) || $view->api_version < 2) {
     // Check for some value that would only exist on a Views 1 view.
     if (isset($view->url) || isset($view->page) || isset($view->block)) {
@@ -741,6 +742,11 @@ function views_ui_import_validate($form, &$form_state) {
     else {
       form_error($form['view'], t('That view is not compatible with this version of Views.'));
     }
+  }
+
+  // View name must be alphanumeric or underscores, no other punctuation.
+  if (!empty($form_state['values']['name']) && preg_match('/[^a-zA-Z0-9_]/', $form_state['values']['name'])) {
+    form_error($form['name'], t('View name must be alphanumeric or underscores only.'));
   }
 
   if ($form_state['values']['name']) {
