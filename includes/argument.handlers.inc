@@ -532,7 +532,7 @@ class views_handler_argument extends views_handler {
   function summary_basics($count_field = TRUE) {
     // Add the number of nodes counter
     $field = $this->query->base_table . '.' . $this->query->base_field;
-    if (!empty($this->query->distinct) && empty($query->query->no_distinct)) {
+    if (!$this->display->handler->get_option('distinct') && empty($this->query->no_distinct)) {
       $field = "DISTINCT($field)";
     }
 
