@@ -71,7 +71,6 @@ Drupal.Views.dependent.autoAttach = function() {
       }
       // Add this ID
       Drupal.Views.dependent.bindings[bind_id].push(id);
-      console.log(bind_id + ': ' + id);
       // Big long if statement.
       // Drupal.settings.viewsAjax.formRelationships[id].values[bind_id] holds the possible values
 
