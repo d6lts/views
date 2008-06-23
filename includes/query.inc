@@ -752,9 +752,6 @@ class views_query {
    *   must also be in the SELECT portion. If an $alias isn't specified
    *   one will be generated for from the $field; however, if the
    *   $field is a formula, this alias will likely fail.
-   *
-   * @return $alias
-   *   The alias created.
    */
   function add_orderby($table, $field, $order, $alias = '') {
     if ($table) {
