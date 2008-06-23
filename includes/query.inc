@@ -777,8 +777,9 @@ class views_query {
     $this->orderby[] = "$as " . strtoupper($order);
 
     // If grouping, all items in the order by must also be in the
-    // group by clause.
-    if ($this->groupby) {
+    // group by clause. Check $table to ensure that this is not a
+    // formula.
+    if ($this->groupby && $table) {
       $this->add_groupby($as);
     }
   }
