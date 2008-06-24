@@ -2677,6 +2677,16 @@ function views_ui_tools_clear_cache() {
  */
 function views_ui_config_item_form_rescan($form, &$form_state) {
   drupal_rebuild_theme_registry();
+
+  // The 'Theme: Information' page is about to be shown again. That page
+  // analyzes the output of theme_get_registry(). However, this latter
+  // function uses an internal cache (which was initialized before we
+  // called drupal_rebuild_theme_registry()) so it won't reflect the
+  // current state of our theme registry. The only way to clear that cache
+  // is to re-initialize the theme system:
+  unset($GLOBALS['theme']);
+  init_theme();
+  
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
 }
