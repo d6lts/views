@@ -1417,12 +1417,19 @@ class views_plugin_display extends views_plugin {
     }
 
     $output = '';
-    $found = FALSE;
+    $picked = FALSE;
     foreach ($themes as $theme) {
       $template = strtr($theme, '_', '-') . $extension;
-      if (!$found && !empty($registry[$theme])) {
-        $template = '<strong>' . $template . '</strong>';
-        $found = TRUE;
+      if (!$picked && !empty($registry[$theme])) {
+        $template_path = isset($registry[$theme]['path']) ? $registry[$theme]['path'] . '/' : './';
+        if (file_exists($template_path . $template)) {
+          $hint = t('File found, in folder @template-path', array('@template-path' => $template_path));
+          $template = '<strong title="'. $hint .'">' . $template . '</strong>';
+        }
+        else {
+          $template = '<strong class="error">' . $template . ' ' . t('(File not found, in folder @template-path)', array('@template-path' => $template_path)) . '</strong>';
+        }
+        $picked = TRUE;
       }
       $fixed[] = $template;
     }
