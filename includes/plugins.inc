@@ -1489,40 +1489,31 @@ class views_plugin_display extends views_plugin {
         // This if prevents resetting options to default if they don't change
         // the plugin.
         if ($this->get_option($section) != $form_state['values'][$section]) {
-          $this->set_option($section, $form_state['values'][$section]);
-          $this->set_option('row_options', array());
-/*
           $plugin = views_get_plugin('row', $form_state['values'][$section]);
           if ($plugin) {
-            $plugin->init($this->view, $this->display);
-            $this->set_option('row_options', $plugin->options);
+            $this->set_option($section, $form_state['values'][$section]);
+            $this->set_option('row_options', array());
 
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
               views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('row_options'));
             }
           }
-*/
         }
         break;
       case 'style_plugin':
         // This if prevents resetting options to default if they don't change
         // the plugin.
         if ($this->get_option($section) != $form_state['values'][$section]) {
-          $this->set_option($section, $form_state['values'][$section]);
-          $this->set_option('style_options', array());
-/*
           $plugin = views_get_plugin('style', $form_state['values'][$section]);
           if ($plugin) {
-            $plugin->init($this->view, $this->display);
-            $this->set_option('style_options', $plugin->options);
-
+            $this->set_option($section, $form_state['values'][$section]);
+            $this->set_option('style_options', array());
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
               views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('style_options'));
             }
           }
-*/
         }
         break;
       case 'style_options':
