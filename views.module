@@ -794,29 +794,8 @@ function vpr_trace() {
 function views_exposed_form(&$form_state) {
   $view = &$form_state['view'];
   $display = &$form_state['display'];
-  // Fill our input either from $_GET or from something previously set on the
-  // view.
-  if (empty($view->exposed_input)) {
-    $input = $_GET;
-    // unset items that are definitely not our input:
-    unset($input['page']);
-    unset($input['q']);
-    // If we have no input at all, check for remembered input via session.
 
-    // If filters are not overridden, store the 'remember' settings on the
-    // default display. If they are, store them on this display. This way,
-    // multiple displays in the same view can share the same filters and
-    // remember settings.
-    $display_id = ($view->display_handler->is_defaulted('filters')) ? 'default' : $view->current_display;
-
-    if (empty($input) && !empty($_SESSION['views'][$view->name][$display_id])) {
-      $input = $_SESSION['views'][$view->name][$display_id];
-    }
-    $form_state['input'] = $input;
-  }
-  else {
-    $form_state['input'] = $view->exposed_input;
-  }
+  $form_state['input'] = $view->get_exposed_input();
 
   // Let form plugins know this is for exposed widgets.
   $form_state['exposed'] = TRUE;

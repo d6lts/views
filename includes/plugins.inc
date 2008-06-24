@@ -3432,8 +3432,9 @@ class views_plugin_style_rss extends views_plugin_style {
   function attach_to($display_id, $path, $title) {
     $display = $this->view->display[$display_id]->handler;
     $url_options = array();
-    if (!empty($view->exposed_raw_input)) {
-      $url_options['query'] = $view->exposed_raw_input;
+    $input = $this->view->get_exposed_input();
+    if ($input) {
+      $url_options['query'] = $input;
     }
 
     $url = url($this->view->get_url(NULL, $path), $url_options);
