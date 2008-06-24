@@ -513,6 +513,13 @@ class view extends views_db_object {
         'no_redirect' => TRUE,
       );
 
+      // Some types of displays (eg. attachments) may wish to use the exposed
+      // filters of their parent displays instead of showning an additional
+      // exposed filter form for the attachment as well as that for the parent.
+      if (!$this->display_handler->displays_exposed()) {
+        unset($form_state['rerender']);
+      }
+
       if (!empty($this->ajax)) {
         $form_state['ajax'] = TRUE;
       }

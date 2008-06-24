@@ -345,6 +345,19 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
+   * Determine if this display should display the exposed
+   * filters widgets, so the view will know whether or not
+   * to render them.
+   *
+   * Regardless of what this function
+   * returns, exposed filters will not be used nor
+   * displayed unless uses_exposed() returns TRUE.
+   */
+  function displays_exposed() {
+    return TRUE;
+  }
+
+  /**
    * Does the display use AJAX?
    */
   function use_ajax() {
@@ -2418,6 +2431,7 @@ class views_plugin_display_attachment extends views_plugin_display {
 
     $options['attachment_position'] = array('default' => 'before');
     $options['inherit_arguments'] = array('default' => TRUE);
+    $options['inherit_exposed_filters'] = array('default' => FALSE);
     $options['displays'] = array('default' => array());
 
     return $options;
@@ -2458,6 +2472,12 @@ class views_plugin_display_attachment extends views_plugin_display {
       'category' => 'attachment',
       'title' => t('Inherit arguments'),
       'value' => $this->get_option('inherit_arguments') ? t('Yes') : t('No'),
+    );
+
+    $options['inherit_exposed_filters'] = array(
+      'category' => 'attachment',
+      'title' => t('Inherit exposed filters'),
+      'value' => $this->get_option('inherit_exposed_filters') ? t('Yes') : t('No'),
     );
 
     $options['attachment_position'] = array(
@@ -2505,6 +2525,15 @@ class views_plugin_display_attachment extends views_plugin_display {
           '#default_value' => $this->get_option('inherit_arguments'),
         );
         break;
+      case 'inherit_exposed_filters':
+        $form['#title'] .= t('Inherit exposed filters');
+        $form['inherit_exposed_filters'] = array(
+          '#type' => 'checkbox',
+          '#title' => t('Inherit'),
+          '#description' => t('Should this display inherit its exposed filter values from the parent display to which it is attached?'),
+          '#default_value' => $this->get_option('inherit_exposed_filters'),
+        );
+        break;
       case 'attachment_position':
         $form['#title'] .= t('Position');
         $form['attachment_position'] = array(
@@ -2541,6 +2570,7 @@ class views_plugin_display_attachment extends views_plugin_display {
     parent::options_submit($form, $form_state);
     switch ($form_state['section']) {
       case 'inherit_arguments':
+      case 'inherit_exposed_filters':
       case 'attachment_position':
       case 'displays':
         $this->set_option($form_state['section'], $form_state['values'][$form_state['section']]);
@@ -2585,9 +2615,25 @@ class views_plugin_display_attachment extends views_plugin_display {
   }
 
   /**
-   * Attachment views do not use exposed widgets.
+   * Attachment displays only use exposed widgets if
+   * they are set to inherit the exposed filter settings
+   * of their parent display.
    */
-  function uses_exposed() { return FALSE; }
+  function uses_exposed() {
+    if (!empty($this->options['inherit_exposed_filters']) && parent::uses_exposed()) {
+      return TRUE;
+    }
+    return FALSE;
+  }
+  
+  /**
+   * If an attachment is set to inherit the exposed filter
+   * settings from its parent display, then don't render and
+   * display a second set of exposed filter widgets.
+   */
+  function displays_exposed() {
+    return $this->options['inherit_exposed_filters'] ? FALSE : TRUE;
+  }
 }
 
 /**
