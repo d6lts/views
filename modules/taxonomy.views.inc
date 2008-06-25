@@ -94,7 +94,7 @@ function taxonomy_views_data() {
   // Term name field
   $data['term_data']['name'] = array(
     'title' => t('Term'),
-    'help' => t('Taxonomy terms. Note that using this can cause duplicate nodes to appear in views; you must add filters to reduce the resultset.'),
+    'help' => t('Taxonomy terms. Note that using this can cause duplicate nodes to appear in views; you must add filters to reduce the result set.'),
     'field' => array(
       'handler' => 'views_handler_field_taxonomy',
       'click sortable' => TRUE,

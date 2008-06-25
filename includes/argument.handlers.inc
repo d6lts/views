@@ -894,7 +894,7 @@ class views_handler_argument_string extends views_handler_argument {
   }
 
   /**
-   * Build the summary query based on a formula
+   * Build the summary query based on a string
    */
   function summary_query() {
     if (empty($this->definition['many to one'])) {

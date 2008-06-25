@@ -2131,7 +2131,7 @@ class views_plugin_display_page extends views_plugin_display {
           '#title' => t('Weight'),
           '#type' => 'textfield',
           '#default_value' => isset($menu['weight']) ? $menu['weight'] : 0,
-          '#description' => t('If set to tab, enter the weight of the item. The lower th weight the higher/further left it will appear.'),
+          '#description' => t('If set to tab, enter the weight of the item. The lower the weight the higher/further left it will appear.'),
           '#process' => array('views_process_dependency'),
           '#dependency' => array('radio:menu[type]' => array('tab', 'default tab')),
         );
@@ -3329,7 +3329,7 @@ class views_plugin_style_table extends views_plugin_style {
     $form['description_markup'] = array(
       '#prefix' => '<div class="description form-item">',
       '#suffix' => '</div>',
-      '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section.'),
+      '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column click sortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section.'),
     );
   }
 

@@ -74,7 +74,7 @@ function comment_views_data() {
   // cid
   $data['comments']['cid'] = array(
     'title' => t('ID'),
-    'help' => t('The commment ID of the field'),
+    'help' => t('The comment ID of the field'),
     'field' => array(
       'handler' => 'views_handler_field_comment',
       'click sortable' => TRUE,
