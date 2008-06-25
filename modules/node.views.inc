@@ -1499,6 +1499,10 @@ class views_plugin_argument_default_node extends views_plugin_argument_default {
         return $node->nid;
       }
     }
+
+    if (arg(0) == 'node' && is_numeric(arg(1))) {
+      return arg(1);
+    }
   }
 }
 

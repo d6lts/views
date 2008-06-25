@@ -353,6 +353,17 @@ class views_plugin_argument_default_user extends views_plugin_argument_default {
         }
       }
     }
+
+    if (arg(0) == 'user' && is_numeric(arg(1))) {
+      return arg(1);
+    }
+
+    if (arg(0) == 'node' && is_numeric(arg(1))) {
+      $node = node_load(arg(1));
+      if ($node) {
+        return $node->uid;
+      }
+    }
   }
 }
 
