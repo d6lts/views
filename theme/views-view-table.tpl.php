@@ -23,7 +23,7 @@
         <th class="views-field views-field-<?php print $fields[$field]; ?>">
           <?php print $label; ?>
         </th>
-      <?php endforeach ?>
+      <?php endforeach; ?>
     </tr>
   </thead>
   <tbody>
