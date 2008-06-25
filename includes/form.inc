@@ -172,7 +172,7 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
   // from the POST data is set and matches the current form_id.
 
   if ((!empty($form['#programmed'])) || (!empty($form['#post']) && (isset($form['#post']['form_id']) && ($form['#post']['form_id'] == $form_id)))) {
-    drupal_validate_form($form_id, $form, $form_state);
+    drupal_validate_form_new($form_id, $form, $form_state);
 
     // form_clean_id() maintains a cache of element IDs it has seen,
     // so it can prevent duplicates. We want to be sure we reset that
@@ -227,6 +227,31 @@ function drupal_process_form_new($form_id, &$form, &$form_state) {
       }
     }
   }
+}
+
+/**
+ * The original version of drupal_validate_form does not have an override for
+ * the static check to only validate a form id once. Unfortunately, we need
+ * to be able to overridet his.
+ */
+function drupal_validate_form_new($form_id, $form, &$form_state) {
+  static $validated_forms = array();
+
+  if (isset($validated_forms[$form_id]) && empty($form_state['must_validate'])) {
+    return;
+  }
+
+  // If the session token was set by drupal_prepare_form(), ensure that it
+  // matches the current user's session.
+  if (isset($form['#token'])) {
+    if (!drupal_valid_token($form_state['values']['form_token'], $form['#token'])) {
+      // Setting this error will cause the form to fail validation.
+      form_set_error('form_token', t('Validation error, please try again. If this error persists, please contact the site administrator.'));
+    }
+  }
+
+  _form_validate($form, $form_state, $form_id);
+  $validated_forms[$form_id] = TRUE;
 }
 
 /**

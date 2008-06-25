@@ -792,6 +792,9 @@ function vpr_trace() {
  * Be sure that $view and $display are references.
  */
 function views_exposed_form(&$form_state) {
+  // Make sure that we validate because this form might be submitted
+  // multiple times per page.
+  $form_state['must_validate'] = TRUE;
   $view = &$form_state['view'];
   $display = &$form_state['display'];
 
