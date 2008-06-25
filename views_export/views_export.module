@@ -14,7 +14,7 @@
 function views_export_menu() {
   $items = array();
   $items['admin/build/views/tools/export'] = array(
-    'title' => t('Bulk export'),
+    'title' => 'Bulk export',
     'access arguments' => array('use views exporter'),
     'page callback' => 'views_export_export',
     'type' => MENU_LOCAL_TASK,
