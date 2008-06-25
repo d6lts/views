@@ -1059,7 +1059,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         $tids = new stdClass();
         $tids->value = $argument;
         $tids = views_break_phrase($argument, $tids);
-        if ($tids->value == -1) {
+        if ($tids->value == array(-1)) {
           return FALSE;
         }
 

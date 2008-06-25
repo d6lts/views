@@ -256,6 +256,7 @@ class views_handler_argument extends views_handler {
       'not found' => array(
         'title' => t('Hide view / Page not found (404)'),
         'method' => 'default_not_found',
+        'hard fail' => TRUE, // This is a hard fail condition
       ),
       'empty' => array(
         'title' => t('Display empty text'),
@@ -621,7 +622,7 @@ class views_handler_argument extends views_handler {
   /**
    * Validate that this argument works. By default, all arguments are valid.
    */
-  function validate_argument($arg) {
+  function validate_arg($arg) {
     // By using % in URLs, arguments could be validated twice; this eases
     // that pain.
     if (isset($this->argument_validated)) {
@@ -640,6 +641,22 @@ class views_handler_argument extends views_handler {
 
     // If the plugin isn't found, fall back to the basic validation path:
     return $this->argument_validated = $this->validate_argument_basic($arg);
+  }
+
+  /**
+   * Called by the menu system to validate an argument.
+   *
+   * This checks to see if this is a 'soft fail', which means that if the
+   * argument fails to validate, but there is an action to take anyway,
+   * then validation cannot actually fail.
+   */
+  function validate_argument($arg) {
+    $validate_info = $this->default_actions($this->options['validate_fail']);
+    if (empty($validate_info['hard fail'])) {
+      return TRUE;
+    }
+
+    return $this->validate_arg($arg);
   }
 
   /**
@@ -672,7 +689,7 @@ class views_handler_argument extends views_handler {
       return TRUE;
     }
 
-    return $this->validate_argument($arg);
+    return $this->validate_arg($arg);
   }
 }
 

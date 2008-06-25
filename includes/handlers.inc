@@ -648,8 +648,9 @@ function views_break_phrase($str, $filter = NULL) {
   }
 
   // Keep an 'error' value if invalid strings were given.
-  if (!empty($str) && empty($filter->value)) {
+  if (!empty($str) && (empty($filter->value) || !is_array($filter->value))) {
     $filter->value = array(-1);
+    return $filter;
   }
 
   // Doubly ensure that all values are numeric only.
