@@ -1827,7 +1827,12 @@ function views_ui_edit_display_form(&$form_state) {
 
   // Get form from the handler.
   $display->handler->options_form($form, $form_state);
-  views_ui_standard_form_buttons($form, $form_state, 'views_ui_edit_display_form');
+  $name = NULL;
+  if (isset($form_state['update_name'])) {
+    $name = $form_state['update_name'];
+  }
+
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_edit_display_form', $name);
   return $form;
 }
 
@@ -1878,8 +1883,8 @@ function views_ui_config_type_form(&$form_state) {
   $form['#section'] = $display_id . 'config-item';
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
-    $display->handler->add_override_button($form, $types[$type]['plural']);
     $form_state['section'] = $types[$type]['plural'];
+    $display->handler->add_override_button($form, $form_state, $form_state['section']);
   }
 
   if (!empty($types[$type]['options']) && function_exists($types[$type]['options'])) {
@@ -1888,7 +1893,12 @@ function views_ui_config_type_form(&$form_state) {
     $types[$type]['options']($form, $form_state);
   }
 
-  views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_type_form');
+  $name = NULL;
+  if (isset($form_state['update_name'])) {
+    $name = $form_state['update_name'];
+  }
+
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_type_form', $name);
   return $form;
 }
 
@@ -1928,8 +1938,8 @@ function views_ui_rearrange_form(&$form_state) {
   $form['#section'] = $display_id . 'rearrange-item';
 
   if ($display->handler->defaultable_sections($types[$type]['plural'])) {
-    $display->handler->add_override_button($form, $types[$type]['plural']);
     $form_state['section'] = $types[$type]['plural'];
+    $display->handler->add_override_button($form, $form_state, $form_state['section']);
   }
 
   $count = 0;
@@ -1986,6 +1996,11 @@ function views_ui_rearrange_form(&$form_state) {
     'hidden' => TRUE,
     'limit' => 0,
   );
+
+  $name = NULL;
+  if (isset($form_state['update_name'])) {
+    $name = $form_state['update_name'];
+  }
 
   views_ui_standard_form_buttons($form, $form_state, 'views_ui_rearrange_form');
   return $form;
@@ -2167,21 +2182,9 @@ function views_ui_config_item_form(&$form_state) {
       $handler->init($view, $item);
       $types = views_object_types();
 
-      if (!$view->display_handler->is_default_display()) {
-        if ($view->display_handler->is_defaulted($types[$type]['plural'])) {
-          $form['options']['override'] = array(
-            '#prefix' => '<div class="form-item description">',
-            '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using default values.'),
-            '#suffix' => '</div>',
-          );
-        }
-        else {
-          $form['options']['override'] = array(
-            '#prefix' => '<div class="form-item description">',
-            '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using overridden values.'),
-            '#suffix' => '</div>',
-          );
-        }
+      if ($view->display_handler->defaultable_sections($types[$type]['plural'])) {
+        $form_state['section'] = $types[$type]['plural'];
+        $view->display_handler->add_override_button($form['options'], $form_state, $form_state['section']);
       }
 
       // A whole bunch of code to figure out what relationships are valid for
@@ -2244,11 +2247,15 @@ function views_ui_config_item_form(&$form_state) {
 
       // Get form from the handler.
       $handler->options_form($form['options'], $form_state);
-        $form_state['handler'] = &$handler;
-
+      $form_state['handler'] = &$handler;
     }
 
-    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', NULL, t('Remove'), 'remove');
+    $name = NULL;
+    if (isset($form_state['update_name'])) {
+      $name = $form_state['update_name'];
+    }
+
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_form', $name, t('Remove'), 'remove');
   }
   return $form;
 }
@@ -2686,7 +2693,7 @@ function views_ui_config_item_form_rescan($form, &$form_state) {
   // is to re-initialize the theme system:
   unset($GLOBALS['theme']);
   init_theme();
-  
+
   $form_state['rerender'] = TRUE;
   $form_state['rebuild'] = TRUE;
 }

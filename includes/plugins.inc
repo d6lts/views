@@ -1004,7 +1004,7 @@ class views_plugin_display extends views_plugin {
    */
   function options_form(&$form, &$form_state) {
     if ($this->defaultable_sections($form_state['section'])) {
-      $this->add_override_button($form, $form_state['section']);
+      $this->add_override_button($form, $form_state, $form_state['section']);
     }
     $form['#title'] = check_plain($this->display->display_title) . ': ';
 
@@ -1563,7 +1563,7 @@ class views_plugin_display extends views_plugin {
    * change whether this info is stored on the default display or on
    * the current display.
    */
-  function add_override_button(&$form, $section) {
+  function add_override_button(&$form, &$form_state, $section) {
     if ($this->is_default_display()) {
       return;
     }
@@ -1583,6 +1583,8 @@ class views_plugin_display extends views_plugin {
         '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using default values.'),
         '#suffix' => '</div>',
       );
+
+      $form_state['update_name'] = t('Update default display');
     }
     else {
       $form['override']['button'] = array(
@@ -1595,6 +1597,8 @@ class views_plugin_display extends views_plugin {
         '#value' => theme('advanced_help_topic', 'views', 'overrides') . t('Status: using overridden values.'),
         '#suffix' => '</div>',
       );
+
+      $form_state['update_name'] = NULL;
     }
   }
 
@@ -2625,7 +2629,7 @@ class views_plugin_display_attachment extends views_plugin_display {
     }
     return FALSE;
   }
-  
+
   /**
    * If an attachment is set to inherit the exposed filter
    * settings from its parent display, then don't render and
