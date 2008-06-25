@@ -3725,6 +3725,7 @@ class views_plugin_argument_default extends views_plugin {
     if (!$this->access()) {
       $form[$this->option_name]['#disabled'] = TRUE;
       $form[$this->option_name]['#value'] = $form[$this->option_name]['#default_value'];
+      $form[$this->option_name]['#description'] .= ' <strong>' . t('Note: you do not have permission to modify this. If you change the default argument type, this setting will be lost and you will NOT be able to get it back.') . '</strong>';
     }
   }
 
@@ -3827,7 +3828,8 @@ class views_plugin_argument_validate extends views_plugin {
   function check_access(&$form) {
     if (!$this->access()) {
       $form[$this->option_name]['#disabled'] = TRUE;
-      $form[$this->option_name]['#value'] = $form[$this->option_name]['#validate_value'];
+      $form[$this->option_name]['#value'] = $form[$this->option_name]['#default_value'];
+      $form[$this->option_name]['#description'] .= ' <strong>' . t('Note: you do not have permission to modify this. If you change the validator, this setting will be lost and you will NOT be able to get it back.') . '</strong>';
     }
   }
 

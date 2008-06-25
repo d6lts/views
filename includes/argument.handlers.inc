@@ -184,15 +184,15 @@ class views_handler_argument extends views_handler {
 
     $form['default_action']['#options'] = $options;
 
+    $form['validate_options_div_prefix'] = array(
+      '#id' => 'views-validator-options',
+      '#value' => '<fieldset id="views-validator-options"><legend>' . t('Validator options') . '</legend>',
+    );
+
     $form['validate_type'] = array(
       '#type' => 'select',
       '#title' => t('Validator'),
       '#default_value' => $this->options['validate_type'],
-    );
-
-    $form['validate_options_div_prefix'] = array(
-      '#id' => 'views-validator-options',
-      '#value' => '<fieldset id="views-validator-options"><legend>' . t('Validator options') . '</legend>',
     );
 
     $validate_types = array('none' => t('<Basic validation>'));
@@ -217,7 +217,7 @@ class views_handler_argument extends views_handler {
         $plugin = views_get_plugin('argument validator', $id);
         if ($plugin) {
           $plugin->init($this->view, $this, $id);
-          if ($plugin->access()) {
+          if ($plugin->access() || $this->options['validate_type'] == $id) {
             $plugin->validate_form($form, $form_state, $id);
             $validate_types[$id] = $info['title'];
           }
