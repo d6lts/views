@@ -131,10 +131,10 @@ function views1_import($imported) {
   $view->description = $imported->description;
 
   if (!empty($imported->page)) {
-    $view->add_display('page');
+    $page_display = $view->add_display('page');
   }
   if (!empty($imported->block)) {
-    $view->add_display('block');
+    $block_display = $view->add_display('block');
   }
   $view->init_display();
 
@@ -159,9 +159,8 @@ function views1_import($imported) {
   }
 
   $handler->set_option('access', $access);
-
   if (!empty($imported->page)) {
-    $handler = &$view->display['page']->handler;
+    $handler = &$view->display[$page_display]->handler;
     $url = str_replace('$arg', '%', $imported->url);
     $handler->set_option('path', $url);
     if ($imported->menu) {
@@ -193,7 +192,7 @@ function views1_import($imported) {
   }
 
   if (!empty($imported->block)) {
-    $handler = &$view->display['block']->handler;
+    $handler = &$view->display[$block_display]->handler;
 
     if ($imported->block_title) {
       $handler->set_override('title');
