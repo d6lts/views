@@ -93,6 +93,7 @@ function upload_views_data() {
 
 function upload_views_data_alter(&$data) {
   $data['node']['upload_fid'] = array(
+    'group' => t('Upload'),
     'title' => t('Attached files'),
     'help' => t('All files attached to a node with upload.module.'),
     'real field' => 'vid',

@@ -1,0 +1,53 @@
+<!-- $Id$ -->
+In Views, a handler is an object that is part of the view and is part of the query building flow. 
+
+Handlers are objects; much of the time, the base handlers will work, but often you'll need to override the handler for something. One typical handler override will be views_handler_filter_operator_in which allows you to have a filter select from a list of options; you'll need to override this to provide your list.
+
+Handlers have two distint code flows; the UI flow and the view building flow.
+
+For the query flow:
+
+<dl>
+<dt>handler->construct()</dt>
+<dd>Create the initial handler; at this time it is not yet attached to a view. It is here that you can set basic defaults if needed, but there will be no knowledge of the environment yet.</dd>
+<dt>handler->set_definition()</dt>
+<dd>Set the data from hook_views_data() relevant to the handler.</dd>
+<dt>handler->init()</dt>
+<dd>Attach the handler to a view, and usually provides the options from the display.</dd>
+<dt>handler->pre_query()</dt>
+<dd>Run prior to the query() stage to do early processing.</dd>
+<dt>handler->query()</dt>
+<dd>Do the bulk of the work this handler needs to do to add itself to the query.</dd>
+</dl>
+
+Fields, being the only handlers concerned with output, also have an extended piece of the flow:
+<dl>
+<dt>handler->pre_render()</dt>
+<dd>Called prior to the actual rendering, this allows handlers to query for extra data; the entire resultset is available here, and this is where items that have "multiple values" per record can do their extra query for all of the records available. There are several examples of this at work in the code.</dd>
+<dt>handler->render()</dt>
+<dd>This does the actual work of rendering the field.</dd>
+</dl>
+
+Most handlers are just extensions of existing classes with a few tweaks that are specific to the field in question. For example:
+
+<pre>
+/**
+ * Filter by node type
+ */
+class views_handler_filter_node_type extends views_handler_filter_in_operator {
+  function get_value_options() {
+    if (!isset($this->value_options)) {
+      $this->value_title = t('Node type');
+      $types = node_get_types();
+      foreach ($types as $type => $info) {
+        $options[$type] = $info->name;
+      }
+      $this->value_options = $options;
+    }
+  }
+}
+</pre>
+
+<i>views_handler_filter_in_operator</i> provides a simple mechanism to set the list used and the rest of the handler is perfectly fine for this.
+
+The best place to learn more about handlers and how they work is to explore <a href="http://views.doc.logrus.com">the views API site</a> and use existing handlers as a guide and a model. Understanding how views_handler and its child classes work is handy but you can do a lot just following these models.

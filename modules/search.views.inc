@@ -167,7 +167,6 @@ class views_handler_filter_search extends views_handler_filter {
     $key = $this->options['expose']['identifier'];
     $form[$key] = array(
       '#type' => 'textfield',
-      '#title' => t('Search'),
       '#size' => 15,
       '#default_value' => $this->value,
       '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
