@@ -138,20 +138,81 @@ Quite a few more fields are available in this definition:
 
 <h2>Describing fields on tables</h2>
 Aside from the special table tag, each table can also have an unlimited number of field designations; these correspond roughly to fields on the table, though it is very common to use non-fields to display data that isn't directly in a field, such as data arrived from formulae, or special links related to the object the table is part of.
-  In Views 2, there is an implicit relationship between users and node.
 
-  "realtime" joins are most effectively created with relationships; that way multiple systems can use the joins.
+Each field is described in the view data with an array, keyed to the database name of the field. This array may contain some information fields, plus an entry in each of the five types of items Views has per field: argument, field, filter, relationship, sort. For example:
 
-  'fieldname' => 
-    'group',
-    'title',
-    'help',
-    'real field' =>
+<pre>
+$data['node']['nid'] = array(
+  'title' => t('Nid'),
+  'help' => t('The node ID of the node.'), // The help that appears on the UI,
+  // Information for displaying the nid
+  'field' => array(
+    'handler' => 'views_handler_field_node',
+    'click sortable' => TRUE,
+  ),
+  // Information for accepting a nid as an argument
+  'argument' => array(
+    'handler' => 'views_handler_argument_node_nid',
+    'name field' => 'title', // the field to display in the summary.
+    'numeric' => TRUE,
+    'validate type' => 'nid',
+  ),
+  // Information for accepting a nid as a filter
+  'filter' => array(
+    'handler' => 'views_handler_filter_numeric',
+  ),
+  // Information for sorting on a nid.
+  'sort' => array(
+    'handler' => 'views_handler_sort',
+  ),
+);
+</pre>
 
-    'field', 
-    'filter'
-    'sort'
-    'relationship'
-    'argument'
-      
-    one of each per field, 
+The above example describes the 'nid' field on the 'node' table, providing 4 of the 5 handlers. Note that while field is normally expected to be the database name of the field, it doesn't have to be; you can use an alias (which is how you get multiple handlers per field) or something completely made up for items that aren't tied to the database. For example:
+
+<pre>
+$data['node']['edit_node'] = array(
+  'field' => array(
+    'title' => t('Edit link'),
+    'help' => t('Provide a simple link to edit the node.'),
+    'handler' => 'views_handler_field_node_link_edit',
+  ),
+);
+</pre>
+
+The above handler definition an edit link to a node, but this isn't a field in and of itself. For aliased fields, here is another example:
+
+<pre>
+$data['users']['uid_current'] = array(
+  'real field' => 'uid',
+  'title' => t('Current'),
+  'help' => t('Filter the view to the currently logged in user.'),
+  'filter' => array(
+    'handler' => 'views_handler_filter_user_current',
+  ),
+);
+</pre>
+
+The above definition provides an alternate filter handler on the uid field for the current user.
+
+The following items are allowed in the field definition:
+
+<dl>
+<dt>group, title, help</dt>
+<dd>As above, these fields are for the UI. If placed here, any of these fields will override a setting on the base table.</dd>
+<dt>real field</dt>
+<dd>If this field is an alias, the "real field" may be placed here, and the handler will never know the difference.</dd>
+
+<dt>field</dt>
+<dd>A handler definition for the "Field" section, which is a field that may be displayed in a view. The definition is an array; the contents of the array are completely up to the handler, other than the 'handler' definition. If omitted, handler will default to 'views_handler_field'.</dd>
+<dt>filter</dt>
+<dd>A handler definition for the "Filters" section, which will be used to apply WHERE clauses to the view. The definition is an array; the contents of the array are completely up to the handler, other than the 'handler' definition. If omitted, handler will default to 'views_handler_filter'.</dd>
+<dt>sort</dt>
+<dd>A handler definition for the "Sort criteria" section, which will be used to add an ORDER BY clause to the view. The definition is an array; the contents of the array are completely up to the handler, other than the 'handler' definition. If omitted, handler will default to 'views_handler_sort'.</dd>
+<dt>relationship</dt>
+<dd>A handler definition for the "Field" section, which is a way to bring in new or alternative base tables in the view. The definition is an array; the contents of the array are completely up to the handler, other than the 'handler' definition. If omitted, handler will default to 'views_handler_relationship'. The basic relationship handler requires 'base' and 'field' to be set; 'base' and 'field' represent the "right" half of the join that will use this field as the left side.</dd>
+<dt>argument</dt>
+<dd>A handler definition for the "Field" section, which is method of accepting user input from the URL or some other source. The definition is an array; the contents of the array are completely up to the handler, other than the 'handler' definition. If omitted, handler will default to 'views_handler_argument'.</dd>
+</dl>
+
+For more information about what handlers need/use what data, visit <a href="http://views.doc.logrus.com">the Views API site</a> and check out the available handlers.

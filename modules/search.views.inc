@@ -135,8 +135,6 @@ function search_views_data() {
 
 /**
  * Field handler to provide simple renderer that allows linking to a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_filter_search extends views_handler_filter {
   function option_definition() {
@@ -256,8 +254,6 @@ function search_views_plugins() {
 
 /**
  * Plugin which performs a node_view on the resulting object.
- *
- * @ingroup views_row_plugins
  */
 class views_plugin_row_search_view extends views_plugin_row {
   function option_definition() {

@@ -501,8 +501,6 @@ function node_views_data() {
 
 /**
  * Field handler to provide simple renderer that allows linking to a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node extends views_handler_field {
   /**
@@ -552,8 +550,6 @@ class views_handler_field_node extends views_handler_field {
 
 /**
  * Field handler to translate a language into its readable form.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_language extends views_handler_field_node {
   function render($values) {
@@ -565,8 +561,6 @@ class views_handler_field_node_language extends views_handler_field_node {
 
 /**
  * Field handler to translate a node type into its readable form.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_type extends views_handler_field_node {
   function render($values) {
@@ -577,8 +571,6 @@ class views_handler_field_node_type extends views_handler_field_node {
 
 /**
  * Field handler to present a link to the node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_link extends views_handler_field {
   function construct() {
@@ -617,8 +609,6 @@ class views_handler_field_node_link extends views_handler_field {
 
 /**
  * Field handler to present a link node edit.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_link_edit extends views_handler_field_node_link {
   function construct() {
@@ -647,8 +637,6 @@ class views_handler_field_node_link_edit extends views_handler_field_node_link {
 
 /**
  * Field handler to present a link to delete a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_link_delete extends views_handler_field_node_link {
   function construct() {
@@ -677,8 +665,6 @@ class views_handler_field_node_link_delete extends views_handler_field_node_link
 
 /**
  * Field handler to present a link to revert a node to a revision
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_revision_link_revert extends views_handler_field_node_link {
   function construct() {
@@ -717,8 +703,6 @@ class views_handler_field_node_revision_link_revert extends views_handler_field_
 
 /**
  * Field handler to present delete a node revision.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_revision_link_delete extends views_handler_field_node_link {
   function construct() {
@@ -756,8 +740,6 @@ class views_handler_field_node_revision_link_delete extends views_handler_field_
 
 /**
  * Field handler to display the marker for new content.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_field_history_user_timestamp extends views_handler_field_node {
   function init(&$view, $options) {
@@ -830,8 +812,6 @@ class views_handler_field_history_user_timestamp extends views_handler_field_nod
 
 /**
  * Argument handler to accept a node type.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_type extends views_handler_argument {
   function construct() {
@@ -865,8 +845,6 @@ class views_handler_argument_node_type extends views_handler_argument {
 
 /**
  * Argument handler to accept a node id.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_nid extends views_handler_argument_numeric {
   /**
@@ -886,8 +864,6 @@ class views_handler_argument_node_nid extends views_handler_argument_numeric {
 
 /**
  * Argument handler to accept a node revision id.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_vid extends views_handler_argument_numeric {
   // No constructor is necessary.
@@ -909,8 +885,6 @@ class views_handler_argument_node_vid extends views_handler_argument_numeric {
 
 /**
  * Argument handler for a full date (CCYYMMDD)
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_fulldate extends views_handler_argument_date {
   /**
@@ -940,8 +914,6 @@ class views_handler_argument_node_created_fulldate extends views_handler_argumen
 
 /**
  * Argument handler for a year (CCYY)
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_year extends views_handler_argument_date {
   /**
@@ -955,8 +927,6 @@ class views_handler_argument_node_created_year extends views_handler_argument_da
 
 /**
  * Argument handler for a year plus month (CCYYMM)
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_year_month extends views_handler_argument_date {
   /**
@@ -986,8 +956,6 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
 
 /**
  * Argument handler for a month (MM)
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_month extends views_handler_argument_date {
   /**
@@ -1023,8 +991,6 @@ class views_handler_argument_node_created_month extends views_handler_argument_d
 
 /**
  * Argument handler for a week.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_created_week extends views_handler_argument_date {
   /**
@@ -1046,8 +1012,6 @@ class views_handler_argument_node_created_week extends views_handler_argument_da
 
 /**
  * Filter by node type
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_type extends views_handler_filter_in_operator {
   function get_value_options() {
@@ -1064,8 +1028,6 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
 
 /**
  * Filter for new content
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_history_user_timestamp extends views_handler_filter {
   function query() {
@@ -1106,8 +1068,6 @@ class views_handler_filter_history_user_timestamp extends views_handler_filter {
 
 /**
  * Filter by language
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_language extends views_handler_filter_in_operator {
   function get_value_options() {
@@ -1122,8 +1082,6 @@ class views_handler_filter_node_language extends views_handler_filter_in_operato
 
 /**
  * Filter by published status
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_status extends views_handler_filter {
   function admin_summary() { }
@@ -1137,8 +1095,6 @@ class views_handler_filter_node_status extends views_handler_filter {
 
 /**
  * Argument handler to accept a language.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_node_language extends views_handler_argument {
   function construct() {
@@ -1211,8 +1167,6 @@ function node_views_plugins() {
  * Plugin which performs a node_view on the resulting object.
  *
  * Most of the code on this object is in the theme function.
- *
- * @ingroup views_plugin_rows
  */
 class views_plugin_row_node_view extends views_plugin_row {
   function option_definition() {
@@ -1271,8 +1225,6 @@ function views_preprocess_node(&$vars) {
 /**
  * Plugin which performs a node_view on the resulting object
  * and formats it as an RSS item.
- *
- * @ingroup views_plugin_rows
  */
 class views_plugin_row_node_rss extends views_plugin_row {
   function option_definition() {

@@ -222,8 +222,6 @@ function profile_views_fetch_field($field) {
  *
  * The dates are stored serialized, which makes them mostly useless from
  * SQL. About all we can do is unserialize and display them.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_profile_date extends views_handler_field_date {
   function options_form(&$form, &$form_state) {
@@ -304,8 +302,6 @@ class views_handler_field_profile_date extends views_handler_field_date {
  *
  * The dates are stored serialized, which makes them mostly useless from
  * SQL. About all we can do is unserialize and display them.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_profile_list extends views_handler_field_prerender_list {
   /**
@@ -325,8 +321,6 @@ class views_handler_field_profile_list extends views_handler_field_prerender_lis
 
 /**
  * Filter by a selection widget in the profile.
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_profile_selection extends views_handler_filter_in_operator {
   function get_value_options() {

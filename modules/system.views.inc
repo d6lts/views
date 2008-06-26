@@ -175,8 +175,6 @@ function system_views_data() {
 
 /**
  * Field handler to provide simple renderer that allows linking to a file.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_file extends views_handler_field {
   /**
@@ -241,8 +239,6 @@ function _views_file_status($choice = NULL) {
 
 /**
  * Field handler to translate a node type into its readable form.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_file_status extends views_handler_field {
   function render($values) {
@@ -252,8 +248,6 @@ class views_handler_field_file_status extends views_handler_field {
 
 /**
  * Filter by file status
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_file_status extends views_handler_filter_in_operator {
   function get_value_options() {
@@ -265,8 +259,6 @@ class views_handler_filter_file_status extends views_handler_filter_in_operator 
 
 /**
  * Argument handler to accept a file id.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_file_fid extends views_handler_argument {
   /**

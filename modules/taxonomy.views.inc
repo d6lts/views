@@ -489,8 +489,6 @@ class views_handler_argument_term_node_tid_depth_modifier extends views_handler_
 
 /**
  * Field handler for terms.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_term_node_tid extends views_handler_field_prerender_list {
   function init(&$view, $options) {
@@ -585,8 +583,6 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
 /**
  * Field handler to provide simple renderer that allows linking to a taxonomy
  * term.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_taxonomy extends views_handler_field {
   /**
@@ -659,8 +655,6 @@ class views_handler_argument_taxonomy extends views_handler_argument {
 
 /**
  * Filter by vocabulary id
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_vocabulary_vid extends views_handler_filter_in_operator {
   function get_value_options() {
@@ -678,8 +672,6 @@ class views_handler_filter_vocabulary_vid extends views_handler_filter_in_operat
 
 /**
  * Argument handler to accept a user id.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_vocabulary_vid extends views_handler_argument {
   /**
@@ -698,8 +690,6 @@ class views_handler_argument_vocabulary_vid extends views_handler_argument {
 
 /**
  * Filter by term id
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_term_node_tid extends views_handler_filter_many_to_one {
   function has_extra_options() { return TRUE; }
@@ -944,8 +934,6 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
 
 /**
  * Allow taxonomy term ID(s) as argument
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_term_node_tid extends views_handler_argument_many_to_one {
   function option_definition() {

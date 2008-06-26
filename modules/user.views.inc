@@ -369,8 +369,6 @@ class views_plugin_argument_default_user extends views_plugin_argument_default {
 
 /**
  * Field handler to provide simple renderer that allows linking to a user.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user extends views_handler_field {
   /**
@@ -417,8 +415,6 @@ class views_handler_field_user extends views_handler_field {
 
 /**
  * Field handler to provide simple renderer that allows using a themed user link
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_name extends views_handler_field_user {
   function render_link($data, $values) {
@@ -436,8 +432,6 @@ class views_handler_field_user_name extends views_handler_field_user {
 
 /**
  * Field handler to present a link to the user.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_link extends views_handler_field {
   function construct() {
@@ -479,8 +473,6 @@ class views_handler_field_user_link extends views_handler_field {
 
 /**
  * Field handler to present a link to user edit.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_link_edit extends views_handler_field_user_link {
   // An example of field level access control.
@@ -497,8 +489,6 @@ class views_handler_field_user_link_edit extends views_handler_field_user_link {
 
 /**
  * Field handler to present a link to user delete.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_link_delete extends views_handler_field_user_link {
   // An example of field level access control.
@@ -515,8 +505,6 @@ class views_handler_field_user_link_delete extends views_handler_field_user_link
 
 /**
  * Field handler to provide acess control for the email field
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_mail extends views_handler_field_user {
   function option_definition() {
@@ -549,8 +537,6 @@ class views_handler_field_user_mail extends views_handler_field_user {
 
 /**
  * Field handler to provide simple renderer that allows using a themed user link
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_picture extends views_handler_field {
   function construct() {
@@ -572,8 +558,6 @@ class views_handler_field_user_picture extends views_handler_field {
 
 /**
  * Field handler to provide a list of roles.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_user_roles extends views_handler_field_prerender_list {
   function construct() {
@@ -605,8 +589,6 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
 
 /**
  * Argument handler to accept a user id.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_user_uid extends views_handler_argument_numeric {
   /**
@@ -630,8 +612,6 @@ class views_handler_argument_user_uid extends views_handler_argument_numeric {
 
 /**
  * Filter handler for usernames
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_user_name extends views_handler_filter_in_operator {
   function value_form(&$form, &$form_state) {
@@ -767,8 +747,6 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
 
 /**
  * Filter handler for the current user
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_user_current extends views_handler_filter_boolean_operator {
   function construct() {
@@ -784,8 +762,6 @@ class views_handler_filter_user_current extends views_handler_filter_boolean_ope
 
 /**
  * Filter handler for user roles
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_user_roles extends views_handler_filter_many_to_one {
   function get_value_options() {
@@ -804,8 +780,6 @@ function user_views_query_substitutions($view) {
 
 /**
  * Allow role ID(s) as argument
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_users_roles_rid extends views_handler_argument_many_to_one {
   function title_query() {

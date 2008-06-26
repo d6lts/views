@@ -432,8 +432,6 @@ class views_handler_field_comment_depth extends views_handler_field {
 
 /**
  * Field handler to allow linking to a comment
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_comment extends views_handler_field {
   /**
@@ -481,8 +479,6 @@ class views_handler_field_comment extends views_handler_field {
 
 /**
  * Field handler to allow linking to a user account or homepage
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_username_comment extends views_handler_field {
   /**
@@ -530,8 +526,6 @@ class views_handler_field_username_comment extends views_handler_field {
 
 /**
  * Base field handler to present a link.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_comment_link extends views_handler_field {
   function construct() {
@@ -568,8 +562,6 @@ class views_handler_field_comment_link extends views_handler_field {
 
 /**
  * Field handler to present a link node edit.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_comment_link_edit extends views_handler_field_comment_link {
   function construct() {
@@ -593,8 +585,6 @@ class views_handler_field_comment_link_edit extends views_handler_field_comment_
 
 /**
  * Field handler to present a link to delete a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_comment_link_delete extends views_handler_field_comment_link {
   function render($values) {
@@ -609,8 +599,6 @@ class views_handler_field_comment_link_delete extends views_handler_field_commen
 
 /**
  * Field handler to present a link to delete a node.
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_comment_link_reply extends views_handler_field_comment_link {
   function render($values) {
@@ -625,8 +613,6 @@ class views_handler_field_comment_link_reply extends views_handler_field_comment
 
 /**
  * Field handler to present the name of the last comment poster
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_ncs_last_comment_name extends views_handler_field {
   function query() {
@@ -672,8 +658,6 @@ class views_handler_field_ncs_last_comment_name extends views_handler_field {
 /**
  * Sort handler to sort by last comment name which might be in 2 different
  * fields
- *
- * @ingroup views_sort_handlers
  */
 class views_handler_sort_ncs_last_comment_name extends views_handler_sort {
   function query() {
@@ -695,8 +679,6 @@ class views_handler_sort_ncs_last_comment_name extends views_handler_sort {
 
 /**
  * Field handler to display the newer of last comment / node updated
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_ncs_last_updated extends views_handler_field_date {
   function query() {
@@ -708,8 +690,6 @@ class views_handler_field_ncs_last_updated extends views_handler_field_date {
 
 /**
  * Sort handler for the newer of last comment / node updated
- *
- * @ingroup views_sort_handlers
  */
 class views_handler_sort_ncs_last_updated extends views_handler_sort_date {
   function query() {
@@ -721,8 +701,6 @@ class views_handler_sort_ncs_last_updated extends views_handler_sort_date {
 
 /**
  * Filter handler for the newer of last comment / node updated
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_ncs_last_updated extends views_handler_filter_date {
   function query() {
@@ -740,8 +718,6 @@ class views_handler_filter_ncs_last_updated extends views_handler_filter_date {
 
 /**
  * Field handler to display the number of new comments
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_new_comments extends views_handler_field_numeric {
   function construct() {
@@ -827,8 +803,6 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
 /**
  * Argument handler to accept a user id to check for nodes that
  * user posted or commented on.
- *
- * @ingroup views_argument_handlers
  */
 class views_handler_argument_comment_user_uid extends views_handler_argument {
   function title() {
@@ -867,8 +841,6 @@ class views_handler_argument_comment_user_uid extends views_handler_argument {
 
 /**
  * Display node comment status
- *
- * @ingroup views_field_handlers
  */
 class views_handler_field_node_comment extends views_handler_field {
   function render($values) {
@@ -886,8 +858,6 @@ class views_handler_field_node_comment extends views_handler_field {
 
 /**
  * Filter based on comment node status
- *
- * @ingroup views_filter_handlers
  */
 class views_handler_filter_node_comment extends views_handler_filter_in_operator {
   function get_value_options() {
@@ -901,8 +871,6 @@ class views_handler_filter_node_comment extends views_handler_filter_in_operator
 
 /**
  * Plugin which performs a comment_view on the resulting object.
- *
- * @ingroup views_plugin_rows
  */
 class views_plugin_row_comment_view extends views_plugin_row {
   function option_definition() {
@@ -965,8 +933,6 @@ function template_preprocess_views_view_row_comment(&$vars) {
 
 /**
  * Plugin which formats the comments as RSS items.
- *
- * @ingroup views_plugin_rows
  */
 class views_plugin_row_comment_rss extends views_plugin_row {
 
