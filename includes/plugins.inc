@@ -256,6 +256,19 @@ class views_plugin extends views_object {
   }
 
   /**
+   * Provide a list of additional theme functions for the theme information page
+   */
+  function additional_theme_functions() {
+    $funcs = array();
+    if (!empty($this->definition['additional themes'])) {
+      foreach ($this->definition['additional themes'] as $theme) {
+        $funcs[] = views_theme_functions($theme, $this->view, $this->display);
+      }
+    }
+    return $funcs;
+  }
+
+  /**
    * Validate that the plugin is correct and can be saved.
    *
    * @return
@@ -1282,16 +1295,34 @@ class views_plugin_display extends views_plugin {
         // delegates to the style.
         if (!empty($this->definition['theme'])) {
           $funcs[] = $this->option_link(t('Display output'), 'analyze-theme-display') . ': '  . $this->format_themes($this->theme_functions());
+          $themes = $this->additional_theme_functions();
+          if ($themes) {
+            foreach ($themes as $theme) {
+              $funcs[] = $this->option_link(t('Alternative display output'), 'analyze-theme-display') . ': '  . $this->format_themes($theme);
+            }
+          }
         }
 
         $plugin = $this->get_plugin();
         if ($plugin) {
-          $funcs[] = $this->option_link(t('Style output'), 'analyze-theme-style') . ': ' . $this->format_themes($plugin->theme_functions());
+          $funcs[] = $this->option_link(t('Style output'), 'analyze-theme-style') . ': ' . $this->format_themes($plugin->theme_functions(), $plugin->additional_theme_functions());
+          $themes = $plugin->additional_theme_functions();
+          if ($themes) {
+            foreach ($themes as $theme) {
+              $funcs[] = $this->option_link(t('Alternative style'), 'analyze-theme-style') . ': '  . $this->format_themes($theme);
+            }
+          }
 
           if ($plugin->uses_row_plugin()) {
             $row_plugin = $this->get_plugin('row');
             if ($row_plugin) {
               $funcs[] = $this->option_link(t('Row style output'), 'analyze-theme-row') . ': ' . $this->format_themes($row_plugin->theme_functions());
+              $themes = $row_plugin->additional_theme_functions();
+              if ($themes) {
+                foreach ($themes as $theme) {
+                  $funcs[] = $this->option_link(t('Alternative row style'), 'analyze-theme-row') . ': '  . $this->format_themes($theme);
+                }
+              }
             }
           }
 
@@ -1342,6 +1373,14 @@ class views_plugin_display extends views_plugin {
           $output .= '<p>' . t('This is the default theme template used for this display.') . '</p>';
           $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['path'] . '/' . strtr($this->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
+
+        if (!empty($this->definition['additional themes'])) {
+          foreach ($this->definition['additional themes'] as $theme) {
+            $output .= '<p>' . t('This is an alternative template for this display.') . '</p>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+          }
+        }
+
         $form['analysis'] = array(
           '#prefix' => '<div class="form-item">',
           '#suffix' => '</div>',
@@ -1363,6 +1402,14 @@ class views_plugin_display extends views_plugin {
           $output .= '<p>' . t('This is the default theme template used for this style.') . '</p>';
           $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
+
+        if (!empty($plugin->definition['additional themes'])) {
+          foreach ($plugin->definition['additional themes'] as $theme) {
+            $output .= '<p>' . t('This is an alternative template for this style.') . '</p>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+          }
+        }
+
         $form['analysis'] = array(
           '#prefix' => '<div class="form-item">',
           '#suffix' => '</div>',
@@ -1384,6 +1431,14 @@ class views_plugin_display extends views_plugin {
           $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
           $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
+
+        if (!empty($plugin->definition['additional themes'])) {
+          foreach ($plugin->definition['additional themes'] as $theme) {
+            $output .= '<p>' . t('This is an alternative template for this row style.') . '</p>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+          }
+        }
+
         $form['analysis'] = array(
           '#prefix' => '<div class="form-item">',
           '#suffix' => '</div>',
@@ -1436,7 +1491,7 @@ class views_plugin_display extends views_plugin {
       if (!$picked && !empty($registry[$theme])) {
         $template_path = isset($registry[$theme]['path']) ? $registry[$theme]['path'] . '/' : './';
         if (file_exists($template_path . $template)) {
-          $hint = t('File found, in folder @template-path', array('@template-path' => $template_path));
+          $hint = t('File found in folder @template-path', array('@template-path' => $template_path));
           $template = '<strong title="'. $hint .'">' . $template . '</strong>';
         }
         else {
