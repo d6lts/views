@@ -137,6 +137,7 @@ function search_views_data() {
  * Field handler to provide simple renderer that allows linking to a node.
  */
 class views_handler_filter_search extends views_handler_filter {
+  var $no_single = TRUE;
   function option_definition() {
     $options = parent::option_definition();
 
@@ -202,17 +203,17 @@ class views_handler_filter_search extends views_handler_filter {
    * and $this->value respectively.
    */
   function query() {
-    $this->ensure_my_table();
     if (!isset($this->search_query) || empty($this->search_query[3])) {
       if ($this->operator == 'required') {
         $this->query->add_where($this->options['group'], '0');
       }
     }
     else {
+      $this->ensure_my_table();
       $join = new views_join;
       $join->construct('search_total', 'search_index', 'word', 'word');
       $this->query->add_relationship(NULL, $join, 'search_index');
-#      $this->query->add_table('search_total', 'search_index', $join);
+//      $this->query->add_table('search_total', 'search_index', $join);
       $this->query->add_field('', "SUM(search_index.score * search_total.count)", 'score');
       $this->query->add_where($this->options['group'], $this->search_query[2], $this->search_query[3]);
       $this->query->add_where($this->options['group'], "search_index.type = '%s'", $this->view->base_table);
@@ -221,7 +222,6 @@ class views_handler_filter_search extends views_handler_filter {
         $this->query->add_where($this->options['group'], $this->search_query[0], $this->search_query[1]);
       }
       // @note: i don't think that this needed since we restrict based on type
-//    $this->query->add_groupby('node.type'); // isn't this the same as search_index.type?
       $this->query->add_groupby("search_index.sid");
       $this->query->add_having($this->options['group'], 'COUNT(*) >= %d', $this->search_query[4]);
       // @todo: normalize the score
