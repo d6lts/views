@@ -2176,7 +2176,6 @@ function views_ui_config_item_form(&$form_state) {
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
-      break;
     }
     else {
       $handler->init($view, $item);
@@ -2831,6 +2830,7 @@ function views_fetch_fields($base, $type) {
     foreach ($data as $table => $table_data) {
       $bases = array();
       $strings = array();
+      $skip_bases = array();
       foreach ($table_data as $field => $info) {
         // Collect table data from this table
         if ($field == 'table') {
@@ -2844,6 +2844,11 @@ function views_fetch_fields($base, $type) {
         }
         foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
           if (!empty($info[$key])) {
+            if (!empty($info['skip base'])) {
+              foreach ((array) $info['skip base'] as $base) {
+                $skip_bases[$field][$key] = $base;
+              }
+            }
             foreach (array('title', 'group', 'help', 'base') as $string) {
               // First, try the lowest possible level
               if (!empty($info[$key][$string])) {
@@ -2869,7 +2874,9 @@ function views_fetch_fields($base, $type) {
       foreach ($bases as $base_name) {
         foreach ($strings as $field => $field_strings) {
           foreach ($field_strings as $type_name => $type_strings) {
-            $fields[$base_name][$type_name]["$table.$field"] = $type_strings;
+            if (empty($skip_bases[$field][$type_name])) {
+              $fields[$base_name][$type_name]["$table.$field"] = $type_strings;
+            }
           }
         }
       }
