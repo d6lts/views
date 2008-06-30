@@ -239,7 +239,7 @@ function comment_views_data() {
       'handler' => 'views_handler_field',
     ),
     'relationship' => array(
-      'base' => 'comment',
+      'base' => 'comments',
       'field' => 'cid',
       'handler' => 'views_handler_relationship',
       'label' => t('Parent comment'),
