@@ -1327,8 +1327,8 @@ class views_plugin_display extends views_plugin {
           }
 
           if ($plugin->uses_fields()) {
-            foreach ($this->get_handlers('field') as $handler) {
-              $funcs[] = $this->option_link(t('Field @field', array('@field' => $handler->ui_name())), 'analyze-theme-field') . ': ' . $this->format_themes($handler->theme_functions());
+            foreach ($this->get_handlers('field') as $id => $handler) {
+              $funcs[] = $this->option_link(t('Field @field (ID: @id)', array('@field' => $handler->ui_name(), '@id' => $id)), 'analyze-theme-field') . ': ' . $this->format_themes($handler->theme_functions());
             }
           }
         }
@@ -2389,6 +2389,7 @@ class views_plugin_display_block extends views_plugin_display {
       'value' => $block_description,
     );
 
+/* -- removed until core fixes this.
     $cache_type = $this->get_option('block_caching');
     if (empty($cache_type)) {
       $cache_type = BLOCK_NO_CACHE;
@@ -2400,6 +2401,7 @@ class views_plugin_display_block extends views_plugin_display {
       'title' => t('Caching'),
       'value' => $types[$this->get_cache_type()],
     );
+*/
   }
 
   /**
@@ -3049,10 +3051,13 @@ class views_plugin_style extends views_plugin {
     $sets = array();
     if ($grouping_field) {
       foreach ($records as $row) {
+        $grouping = '';
         // Group on the rendered version of the field, not the raw.  That way,
         // we can control any special formatting of the grouping field through
         // the admin or theme layer or anywhere else we'd like.
-        $grouping = $this->view->field[$grouping_field]->theme($row);
+        if (isset($this->view->field[$grouping_field])) {
+          $grouping = $this->view->field[$grouping_field]->theme($row);
+        }
         $sets[$grouping][] = $row;
       }
     }
