@@ -269,7 +269,7 @@ function taxonomy_views_data_alter(&$data) {
     'group' => t('Taxonomy'),
     'title' => t('Term ID (with depth)'),
     'help' => t('The depth filter is more complex, so provides fewer options.'),
-    'real field' => 'nid',
+    'real field' => 'vid',
     'argument' => array(
       'handler' => 'views_handler_argument_term_node_tid_depth',
       'accept depth modifier' => TRUE,
@@ -375,7 +375,7 @@ class views_handler_argument_term_node_tid_depth extends views_handler_argument 
       $placeholder = "= %d";
       $tids = array($this->argument);
     }
-    $subquery = "\n  SELECT tn.nid FROM {term_node} tn\n";
+    $subquery = "\n  SELECT tn.vid FROM {term_node} tn\n";
     $where = "  WHERE tn.tid $placeholder\n";
     $args = $tids;
     $last = "tn";
