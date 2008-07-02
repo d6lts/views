@@ -849,6 +849,11 @@ function views_ui_edit_view_form_submit($form, &$form_state) {
 function views_ui_edit_view_form_cancel($form, &$form_state) {
   // Remove this view from cache so edits will be lost.
   views_object_cache_clear('view', $form_state['view']->name);
+  if (empty($form['view']->vid)) {
+    // I seem to have to drupal_goto here because I can't get fapi to
+    // honor the redirect target. Not sure what I screwed up here.
+    drupal_goto('admin/build/views');
+  }
 }
 
 function views_ui_edit_view_form_delete($form, &$form_state) {
