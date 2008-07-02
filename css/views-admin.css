@@ -516,8 +516,8 @@ form#views-add-display-form select {
 }
 
 #views-ui-edit-view-form {
-  margin: 0 0 0 118px;
-  padding: 0 0 0 1em;
+  margin: 0;
+  padding: 0;
 }
 
 #views-live-preview {
