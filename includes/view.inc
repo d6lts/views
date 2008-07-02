@@ -1543,7 +1543,12 @@ class views_db_object {
           $this->$field = unserialize($this->$field);
         }
       }
-      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($this->$field, $indent) . ";\n";
+      $value = $this->$field;
+      if ($info['type'] == 'int') {
+        $value = ($info['size'] == 'tiny') ? (bool) $value : (int) $value;
+      }
+
+      $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($value, $indent) . ";\n";
     }
     return $output;
   }
