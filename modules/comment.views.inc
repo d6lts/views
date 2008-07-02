@@ -211,7 +211,7 @@ function comment_views_data() {
   );
 
   $data['comments']['nid'] = array(
-    'title' => t('Node ID'),
+    'title' => t('Node'),
     'help' => t('The node the comment is a reply to.'),
     'relationship' => array(
       'base' => 'node',
@@ -222,7 +222,7 @@ function comment_views_data() {
   );
 
   $data['comments']['uid'] = array(
-    'title' => t('User ID'),
+    'title' => t('User'),
     'help' => t('The user who wrote the comment.'),
     'relationship' => array(
       'base' => 'users',
@@ -239,6 +239,8 @@ function comment_views_data() {
       'handler' => 'views_handler_field',
     ),
     'relationship' => array(
+      'title' => t('Parent comment'),
+      'help' => t('The parent comment.'),
       'base' => 'comments',
       'field' => 'cid',
       'handler' => 'views_handler_relationship',

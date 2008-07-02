@@ -28,7 +28,7 @@ function book_views_data() {
 
   $data['book']['bid'] = array(
     'title' => t('Top level book'),
-    'help' => t('The book the node is in'),
+    'help' => t('The book the node is in.'),
     'relationship' => array(
       'base' => 'node',
       'field' => 'bid',
@@ -108,7 +108,7 @@ function book_views_data() {
 
   $data['book_parent']['nid'] = array(
     'title' => t('Parent'),
-    'help' => t('The parent book node'),
+    'help' => t('The parent book node.'),
     'relationship' => array(
       'base' => 'node',
       'field' => 'nid',
