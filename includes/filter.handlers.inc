@@ -823,6 +823,7 @@ class views_handler_filter_string extends views_handler_filter {
   }
 
   function op_word($field, $upper) {
+    $where = array();
     preg_match_all('/ (-?)("[^"]+"|[^" ]+)/i', ' ' . $this->value, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
       $phrase = false;
@@ -839,6 +840,11 @@ class views_handler_filter_string extends views_handler_filter {
         $values[] = trim($word, " ,!?");
       }
     }
+
+    if (!$where) {
+      return;
+    }
+
     if ($this->operator == 'word') {
       $where = '(' . implode(' OR ', $where) . ')';
     }

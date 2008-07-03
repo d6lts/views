@@ -646,7 +646,7 @@ class views_plugin_display extends views_plugin {
     // If unknown, pick the first one.
     if (empty($display_id) || empty($this->view->display[$display_id])) {
       foreach ($this->view->display as $display_id => $display) {
-        if ($display->handler->has_path()) {
+        if (!empty($display->handler) && $display->handler->has_path()) {
           return $display_id;
         }
       }
