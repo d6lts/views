@@ -1410,6 +1410,10 @@ class views_db_object {
     }
 
     $schema = drupal_get_schema($this->db_table);
+    
+    if (!$schema) {
+      return;
+    }
 
     // Go through our schema and build correlations.
     foreach ($schema['fields'] as $field => $info) {
