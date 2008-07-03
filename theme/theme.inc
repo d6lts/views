@@ -142,6 +142,7 @@ function template_preprocess_views_view_fields(&$vars) {
 
   // Loop through the fields for this view.
   $inline = FALSE;
+  $vars['fields'] = array(); // ensure it's at least an empty array.
   foreach ($view->field as $id => $field) {
     if (empty($field->options['exclude'])) {
       $object = new stdClass();
@@ -414,7 +415,7 @@ function template_preprocess_views_view_rss(&$vars) {
   else {
     $title = $view->get_title();
   }
- 
+
   // Figure out which display which has a path we're using for this feed. If there isn't
   // one, use the global $base_url
   $link_display = $view->display_handler->get_link_display();
