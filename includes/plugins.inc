@@ -1136,7 +1136,7 @@ class views_plugin_display extends views_plugin {
           '#prefix' => '<div class="views-left-30"><div id="edit-access-role">',
           '#suffix' => '</div></div>',
           '#type' => 'checkboxes',
-          '#title' => t('If by role'),
+          '#title' => t('Role'),
           '#default_value' => $access['role'],
           '#options' => views_ui_get_roles(),
           '#description' => t('Only the checked roles will be able to access this display. Note that users with "access all views" can see any view, regardless of role.'),
@@ -1156,7 +1156,7 @@ class views_plugin_display extends views_plugin {
           '#suffix' => '</div>',
           '#type' => 'select',
           '#options' => $perms,
-          '#title' => t('If by permission'),
+          '#title' => t('Permission'),
           '#default_value' => $access['perm'],
           '#description' => t('Only users with the selected permission flag will be able to access this display. Note that users with "access all views" can see any view, regardless of other permissions.'),
           '#process' => array('views_process_dependency'),
@@ -2058,6 +2058,10 @@ class views_plugin_display_page extends views_plugin_display {
     // Prior to this being called, the $view should already be set to this
     // display, and arguments should be set on the view.
     $this->view->build();
+    if (!empty($this->view->build_info['fail'])) {
+      return drupal_not_found();
+    }
+
     $this->view->get_breadcrumb(TRUE);
 
     // And the title, which is much easier.
