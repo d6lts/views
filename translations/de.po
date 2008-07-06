@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-07-06 13:10+0200\n"
-"PO-Revision-Date: 2008-07-06 23:34+0100\n"
+"PO-Revision-Date: 2008-07-06 23:40+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -1921,7 +1921,7 @@ msgstr "Rolle"
 
 #: includes/plugins.inc:1142
 msgid "Only the checked roles will be able to access this display. Note that users with \"access all views\" can see any view, regardless of role."
-msgstr "Nur die aktivierten Rollen werden auf diese Anzeige zugreifen können. Beachten, dass Benutzer mit dem Zugriff auf alle Ansichten unabhängig von alle Ansichten sehen können"
+msgstr "Nur die aktivierten Rollen werden auf diese Anzeige zugreifen können. Beachten, dass Benutzer mit dem „Zugriff auf alle Ansichten“ alle Ansichten unabhängig von ihrer Rolle sehen können."
 
 #: includes/plugins.inc:1159
 msgid "Permission"
@@ -2111,7 +2111,7 @@ msgstr "Status: Standardwerte werden verwendet."
 
 #: includes/plugins.inc:1642
 msgid "Update default display"
-msgstr "Aktualisierung der Standardanzeige"
+msgstr "Standardanzeige aktualisieren"
 
 #: includes/plugins.inc:1647
 msgid "Use default"
