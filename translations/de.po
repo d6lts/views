@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-07-06 13:10+0200\n"
-"PO-Revision-Date: 2008-07-06 16:54+0100\n"
+"PO-Revision-Date: 2008-07-06 23:34+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -281,7 +281,6 @@ msgid "Warning! Broken view!"
 msgstr "Warnung! Beschädigte Ansicht!"
 
 #: includes/admin.inc:121
-#, fuzzy
 msgid "Broken"
 msgstr "Beschädigt"
 
@@ -389,7 +388,6 @@ msgid "Other queries"
 msgstr "Andere Abfragen"
 
 #: includes/admin.inc:379
-#, fuzzy
 msgid "This display has no path."
 msgstr "Diese Anzeige hat keinen Pfad."
 
@@ -580,7 +578,7 @@ msgstr "Diese Ansicht enthält eine beschädigte Standardanzeige und kann nicht 
 
 #: includes/admin.inc:919
 msgid "break this lock"
-msgstr "Diese Sperre aufheben"
+msgstr "Sperre aufheben"
 
 #: includes/admin.inc:925
 #: theme/theme.inc:97
@@ -1031,7 +1029,7 @@ msgstr ""
 
 #: includes/argument.handlers.inc:917;1164
 msgid "Do not display items with no value in summary"
-msgstr ""
+msgstr "Einträge ohne Wert in der Zusammenfassung nicht anzeigen"
 
 #: includes/argument.handlers.inc:1043;1149
 msgid "Allow multiple terms per argument."
@@ -1123,8 +1121,9 @@ msgid "Custom"
 msgstr "Benutzerdefiniert"
 
 #: includes/field.handlers.inc:261
+#, fuzzy
 msgid "Time ago"
-msgstr ""
+msgstr "Zeit vergangen"
 
 #: includes/field.handlers.inc:267
 msgid "Custom date format"
@@ -1298,7 +1297,6 @@ msgid "This item is currently exposed. If you <strong>hide</strong> it, users wi
 msgstr ""
 
 #: includes/filter.handlers.inc:276
-#, fuzzy
 msgid "Unlock operator"
 msgstr "Operator entsperren"
 
@@ -1922,9 +1920,8 @@ msgid "Role"
 msgstr "Rolle"
 
 #: includes/plugins.inc:1142
-#, fuzzy
 msgid "Only the checked roles will be able to access this display. Note that users with \"access all views\" can see any view, regardless of role."
-msgstr "Nur die aktivierten Rollen werden auf diese Anzeige zugreifen können."
+msgstr "Nur die aktivierten Rollen werden auf diese Anzeige zugreifen können. Beachten, dass Benutzer mit dem Zugriff auf alle Ansichten unabhängig von alle Ansichten sehen können"
 
 #: includes/plugins.inc:1159
 msgid "Permission"
@@ -2094,11 +2091,11 @@ msgstr ""
 
 #: includes/plugins.inc:1494
 msgid "File found in folder @template-path"
-msgstr ""
+msgstr "Datei wurde im Verzeichnis @template-path gefunden"
 
 #: includes/plugins.inc:1498
 msgid "(File not found, in folder @template-path)"
-msgstr ""
+msgstr "(Datei wurde im Verzeichnis @template-path nicht gefunden)"
 
 #: includes/plugins.inc:1525
 msgid "You must select at least one role if type is \"by role\""
@@ -2110,12 +2107,11 @@ msgstr "Übersteuern"
 
 #: includes/plugins.inc:1638
 msgid "Status: using default values."
-msgstr ""
+msgstr "Status: Standardwerte werden verwendet."
 
 #: includes/plugins.inc:1642
-#, fuzzy
 msgid "Update default display"
-msgstr "Die Standardanzeige konnte nicht initialisiert werden."
+msgstr "Aktualisierung der Standardanzeige"
 
 #: includes/plugins.inc:1647
 msgid "Use default"
@@ -2123,7 +2119,7 @@ msgstr "Standard verwenden"
 
 #: includes/plugins.inc:1652
 msgid "Status: using overridden values."
-msgstr ""
+msgstr "Status: Übersteuerte Werte werden verwendet."
 
 #: includes/plugins.inc:1842
 msgid "Display @display uses fields but there are none defined for it."
@@ -2191,11 +2187,11 @@ msgstr "Standard-Menü als Karteireiter"
 
 #: includes/plugins.inc:2184
 msgid "If set to normal or tab, enter the text to use for the menu item."
-msgstr ""
+msgstr "Den zu verwendenden Text für den Menüeintrag eingeben, wenn dieser auf Normal oder Tabulator eingestellt wird."
 
 #: includes/plugins.inc:2193
 msgid "If set to tab, enter the weight of the item. The lower the weight the higher/further left it will appear."
-msgstr ""
+msgstr "Die Reihenfolge des Eintrages eingeben, wenn dieser als Tabulator eingestellt wird."
 
 #: includes/plugins.inc:2199
 msgid "Default tab options"
@@ -2219,7 +2215,7 @@ msgstr "Normaler Menüeintrag"
 
 #: includes/plugins.inc:2229
 msgid "If creating a parent menu item, enter the title of the item."
-msgstr ""
+msgstr "Einen Titel für den Eintrag eingeben, wenn ein übergeordneter Menüeintrag erstellt wird."
 
 #: includes/plugins.inc:2235
 msgid "Tab weight"
@@ -2227,20 +2223,19 @@ msgstr "Karteireitergewichtung"
 
 #: includes/plugins.inc:2239
 msgid "If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be."
-msgstr ""
+msgstr "Die Reihenfolge des Tabulators eingeben, wenn der übergeordnete Menüeintrag ein Tabulator ist. Umso niedriger die Zahl ist, desto weiter links wird er angezeigt."
 
 #: includes/plugins.inc:2253
 msgid "\"$arg\" is no longer supported. Use % instead."
 msgstr "„$arg“ wird nicht mehr unterstützt. Stattdessen kann % verwendet werden."
 
 #: includes/plugins.inc:2263
-#, fuzzy
 msgid "Views cannot create normal menu items for paths with a % in them."
-msgstr "Ansichten können keinen normalen Menüeintrag für Pfade mit einem % erstellen."
+msgstr "Ansichten können keine normalen Menüeinträge für Pfade mit einem % erstellen."
 
 #: includes/plugins.inc:2270
 msgid "A display whose path ends with a % cannot be a tab."
-msgstr ""
+msgstr "Eine Anzeige deren Pfad mit einem % abschließt kann kein Tabulator sein."
 
 #: includes/plugins.inc:2275
 msgid "Title is required for this menu type."
@@ -2248,11 +2243,11 @@ msgstr "Ein Titel ist für diesen Menütyp erforderlich."
 
 #: includes/plugins.inc:2306
 msgid "Display @display is set to use a menu but the menu title is not set."
-msgstr ""
+msgstr "Die Anzeige @display ist konfiguriert ein Menü zu verwenden, aber der Menütitel ist nicht vorhanden."
 
 #: includes/plugins.inc:2312
 msgid "Display @display is set to use a parent menu but the parent menu title is not set."
-msgstr ""
+msgstr "Die Anzeige @display ist konfiguriert ein übergeordnetes Menü zu verwenden, aber der übergeordnete Menütitel ist nicht vorhanden."
 
 #: includes/plugins.inc:2378
 msgid "Block settings"
@@ -2298,7 +2293,7 @@ msgstr ""
 
 #: includes/plugins.inc:2450
 msgid "This will appear as the name of this block in administer >> site building >> blocks."
-msgstr ""
+msgstr "Dies wird als der Name dieses Blocks in Verwalten >> Strukturierung >> Blöcke erscheinen."
 
 #: includes/plugins.inc:2455
 msgid "Block caching type"
@@ -2498,7 +2493,6 @@ msgid "This will appear in the RSS feed itself."
 msgstr "Dies wird in dem RSS-Newsfeed erscheinen."
 
 #: includes/plugins.inc:3709
-#, fuzzy
 msgid "Inline fields"
 msgstr "Inline-Felder"
 
@@ -2569,7 +2563,7 @@ msgstr "Standard für views_handler_sort_formula ist nicht vorhanden: @formula"
 
 #: includes/sort.handlers.inc:148
 msgid "Granularity"
-msgstr ""
+msgstr "Granularität"
 
 #: includes/sort.handlers.inc:150
 msgid "Second"
@@ -2597,7 +2591,7 @@ msgstr "Jahr"
 
 #: includes/sort.handlers.inc:157
 msgid "The granularity is the smallest unit to use when determining whether two dates are the same; for example, if the granularity is \"Year\" then all dates in 1999, regardless of when they fall in 1999, will be considered the same date."
-msgstr ""
+msgstr "Die Granularität ist die Kleinste zu verwendende Einheit, wenn die Gleichheit zweiter Datumsangaben ermittelt werden soll. Sollte beispielsweise die Granularität das „Jahr“ sein, wird jedes Datum in 1999 ungeachtet dem Tag in 1999, als das gleiche Datum betrachtet."
 
 #: includes/view.inc:255
 msgid "set_display called with invalid display id @display"
@@ -2687,7 +2681,6 @@ msgid "Top level book"
 msgstr "In Moderation"
 
 #: modules/book.views.inc:31
-#, fuzzy
 msgid "The book the node is in."
 msgstr "Das Buch, indem der Beitrag enthalten ist."
 
@@ -2731,7 +2724,7 @@ msgstr "Kommentar"
 
 #: modules/comment.views.inc:27
 msgid "Comments are responses to node content."
-msgstr ""
+msgstr "Kommentare sind Antworten auf Inhalte von Beiträgen."
 
 #: modules/comment.views.inc:45
 msgid "The title of the comment."
@@ -2751,7 +2744,6 @@ msgid "ID"
 msgstr "ID"
 
 #: modules/comment.views.inc:77
-#, fuzzy
 msgid "The comment ID of the field"
 msgstr "Die Kommentar-ID des Feldes"
 
@@ -2786,7 +2778,7 @@ msgstr "In Moderation"
 
 #: modules/comment.views.inc:150
 msgid "Whether or not the comment is currently in moderation."
-msgstr ""
+msgstr "Ob sich der Kommentar derzeit in Moderation befindet oder nicht."
 
 #: modules/comment.views.inc:157
 #: modules/node.views.inc:203;212
@@ -2849,7 +2841,7 @@ msgstr "Beitrag"
 
 #: modules/comment.views.inc:215
 msgid "The node the comment is a reply to."
-msgstr ""
+msgstr "Der Beitrag auf den sich diese Antwort bezieht."
 
 #: modules/comment.views.inc:225;231
 #: modules/node.views.inc:353
@@ -2933,8 +2925,9 @@ msgid "User posted or commented"
 msgstr ""
 
 #: modules/comment.views.inc:365
+#, fuzzy
 msgid "Display comments only if a user posted the node or commented on the node."
-msgstr ""
+msgstr "Kommentare nur anzeigen, wenn ein Benutzer den Beitrag gespeichert oder kommentiert hat."
 
 #: modules/comment.views.inc:385
 msgid "Display the comment with standard comment view."
@@ -3020,7 +3013,6 @@ msgid "Nodes are a Drupal site's primary content."
 msgstr "Beiträge sind der primäre Inhalt einer Drupal-Website."
 
 #: modules/node.views.inc:57
-#, fuzzy
 msgid "Nid"
 msgstr "Beitrags-ID"
 
@@ -3159,7 +3151,7 @@ msgstr "Beitragsversion"
 
 #: modules/node.views.inc:339
 msgid "Node revisions are a history of changes to nodes."
-msgstr ""
+msgstr "Beitragsversionen sind eine Historie von Änderungen an Beiträgen."
 
 #: modules/node.views.inc:354
 msgid "Relate a node revision to the user who created the revision."
@@ -3446,7 +3438,6 @@ msgid "Node statistics"
 msgstr "Beitragsstatistiken"
 
 #: modules/statistics.views.inc:36
-#, fuzzy
 msgid "Total views"
 msgstr "Seitenansichten gesamt"
 
@@ -3455,7 +3446,6 @@ msgid "The total number of times the node has been viewed."
 msgstr "Dies zeigt die Anzahl an, wie oft ein Beitrag insgesamt gelesen wurde."
 
 #: modules/statistics.views.inc:53
-#, fuzzy
 msgid "Views today"
 msgstr "Heutige Seitenansichten"
 
@@ -3464,13 +3454,12 @@ msgid "The total number of times the node has been viewed today."
 msgstr "Dies zeigt die Anzahl an, wie oft ein Beitrag heute gelesen wurde."
 
 #: modules/statistics.views.inc:70
-#, fuzzy
 msgid "Most recent view"
-msgstr "Die neusten Seitenansichten"
+msgstr "Die neuste Seitenansicht"
 
 #: modules/statistics.views.inc:71
 msgid "The most recent time the node has been viewed."
-msgstr ""
+msgstr "Der letzte Zeitpunkt zu dem der Beitrag gelesen wurde."
 
 #: modules/statistics.views.inc:86;91
 msgid "Access log"
@@ -3485,7 +3474,6 @@ msgid "Session ID"
 msgstr "Session-ID"
 
 #: modules/statistics.views.inc:107
-#, fuzzy
 msgid "Browser session ID of user that visited page."
 msgstr "Die Browser-Session-ID des Benutzers, der diese Seite besucht hat."
 
@@ -3514,17 +3502,14 @@ msgid "Hostname"
 msgstr "Hostadresse"
 
 #: modules/statistics.views.inc:183
-#, fuzzy
 msgid "Hostname of user that visited the page."
-msgstr "Hostname des Benutzers, der die Seite besucht hat."
+msgstr "Der Hostname des Benutzers, der die Seite besucht hat."
 
 #: modules/statistics.views.inc:202
-#, fuzzy
 msgid "The user who visited the site."
 msgstr "Der Benutzer, der die Website besucht hat."
 
 #: modules/statistics.views.inc:212
-#, fuzzy
 msgid "Timer"
 msgstr "Timer"
 
@@ -3846,7 +3831,7 @@ msgstr "Angehängte Dateien"
 
 #: modules/upload.views.inc:111
 msgid "All files attached to a node with upload.module."
-msgstr ""
+msgstr "Alle mit dem Upload-Modul an einen Beitrag angehängten Dateien."
 
 #: modules/upload.views.inc:118;277
 msgid "Has attached files"
@@ -3854,7 +3839,7 @@ msgstr "Angehängte Dateien vorhanden"
 
 #: modules/upload.views.inc:119
 msgid "Only display items with attached files. This can cause duplicates if there are multiple attached files."
-msgstr ""
+msgstr "Nur Einträge mit angehängten Dateien anzeigen. Sollten mehrere angehängte Dateien vorhanden sein, kann dies zu Duplikaten führen."
 
 #: modules/upload.views.inc:123
 msgid "Add a relationship to gain access to more file data for files uploaded by upload.module. Note that this relationship will cause duplicate nodes if there are multiple files attached to the node."
@@ -3870,7 +3855,7 @@ msgstr "Nur „aufgelistete“ Dateianhänge anzeigen"
 
 #: modules/user.views.inc:28
 msgid "Users who have created accounts on your site."
-msgstr ""
+msgstr "Benutzer, die Konten auf der Website erstellt haben."
 
 #: modules/user.views.inc:48
 msgid "Uid"
@@ -3906,7 +3891,7 @@ msgstr "Bild"
 
 #: modules/user.views.inc:115
 msgid "The user's picture, if allowed."
-msgstr ""
+msgstr "Das Bild des Benutzers, soweit zulässig."
 
 #: modules/user.views.inc:126
 msgid "The date the user was created."
@@ -3918,7 +3903,7 @@ msgstr "Letzter Zugriff"
 
 #: modules/user.views.inc:142
 msgid "The user's last access date."
-msgstr ""
+msgstr "Letztes Zugriffsdatum des Benutzers."
 
 #: modules/user.views.inc:157
 msgid "Last login"
@@ -3926,7 +3911,7 @@ msgstr "Letzte Anmeldung"
 
 #: modules/user.views.inc:158
 msgid "The user's last login date."
-msgstr ""
+msgstr "Letztes Anmeldedatum des Benutzers."
 
 #: modules/user.views.inc:174
 msgid "Whether a user is active or blocked."
@@ -4048,7 +4033,7 @@ msgstr "Einstellungen der Ansicht"
 
 #: theme/views-ui-edit-view.tpl.php:11
 msgid "This view is being edited by user !user, and is therefore locked from editing by others. This lock is !age old. Click here to !break."
-msgstr ""
+msgstr "Diese Ansicht wird gerade von !user bearbeitet und ist deshalb für die Bearbeitung durch andere gesperrt. Diese Sperre ist !age alt. Hier klicken um !break."
 
 #: theme/views-ui-edit-view.tpl.php:16
 msgid "New view"
@@ -4068,7 +4053,7 @@ msgstr "Live-Vorschau"
 
 #: theme/views-ui-list-views.tpl.php:17
 msgid "<em>@type</em> @base view: <strong>@view</strong>"
-msgstr ""
+msgstr "<em>@type</em> @base-Ansicht: <strong>@view</strong>"
 
 #: theme/views-ui-list-views.tpl.php:27
 msgid "Title: @title"
@@ -4099,7 +4084,6 @@ msgid "@current of @max"
 msgstr "@current von @max"
 
 #: views_export/views_export.module:76
-#, fuzzy
 msgid "There are no views to be exported at this time."
 msgstr "Derzeit gibt es keine zu exportierenden Ansichten."
 
@@ -4140,7 +4124,7 @@ msgstr "Exporteur für Ansichten"
 
 #: views_export/views_export.info:0
 msgid "Allows exporting multiple views at once."
-msgstr ""
+msgstr "Ermöglicht den Export mehrerer Ansichten auf einmal."
 
 #~ msgid "If by role"
 #~ msgstr "Wenn nach Rolle"
