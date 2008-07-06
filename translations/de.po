@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-07-06 13:10+0200\n"
-"PO-Revision-Date: 2008-07-06 16:21+0100\n"
+"PO-Revision-Date: 2008-07-06 16:54+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -57,7 +57,7 @@ msgstr "Ansichten"
 
 #: views.module:114
 msgid "Ajax callback for view loading."
-msgstr "Ein Ajax-Rückfrage für das Laden der Ansicht."
+msgstr "Ajax-Rückfrage für das Laden der Ansicht."
 
 #: views.module:0
 msgid "views"
@@ -167,7 +167,7 @@ msgstr ""
 
 #: views.install:104
 msgid "The title of the display, viewable by the administrator."
-msgstr "Der für einen Verwalter sichtbare Titel der Anzeige."
+msgstr "Der für einen Administrator sichtbare Titel der Anzeige."
 
 #: views.install:111
 msgid "The type of the display. Usually page, block or embed, but is pluggable so may be other things."
@@ -494,7 +494,7 @@ msgstr "Soll die Ansicht %name wirklich zurückgesetzt werden?"
 
 #: includes/admin.inc:614
 msgid "Reverting the view will delete the view that is in the database, reverting it to the original default view. Any changes you have made will be lost and cannot be recovered."
-msgstr "Eine Ansicht zurückzusetzten wird diese Ansicht in der Datenbank löschen und auf die Orginalansicht zurücksetzten. Alle vorgenommenen Änderungen gehen verloren und können nicht wiederhergestellt werden."
+msgstr "Eine Ansicht zurückzusetzten wird die Ansicht in der Datenbank löschen und auf die Orginalansicht zurücksetzten. Alle vorgenommenen Änderungen gehen verloren und können nicht wiederhergestellt werden."
 
 #: includes/admin.inc:617
 #: includes/convert.inc:105
@@ -548,7 +548,7 @@ msgstr "Code der Ansicht konnte nicht Interpretiert werden."
 
 #: includes/admin.inc:740
 msgid "You are importing a view created in Views version 1. You may need to adjust some parameters to work correctly in version 2."
-msgstr "Es wird eine Ansicht aus Views-Version-1 importiert. Hier müssen möglicherweise einige Parameter angepasst werden, damit diese mit Version 2 richtig zusammenarbeitet."
+msgstr "Es wird eine Ansicht aus Views-Version 1 importiert. Hier müssen möglicherweise einige Parameter angepasst werden, damit diese mit Version 2 richtig zusammenarbeitet."
 
 #: includes/admin.inc:743
 msgid "That view is not compatible with this version of Views."
@@ -556,7 +556,7 @@ msgstr "Diese Ansicht ist inkompatibel mit dieser Ansichtenversion."
 
 #: includes/admin.inc:758
 msgid "A view by that name already exists; please choose a different name"
-msgstr "Eine Ansicht mit diesem Namen ist schon vorhanden. Bitte einen anderen Namen auswählen."
+msgstr "Eine Ansicht mit diesem Namen ist schon vorhanden. Bitte einen anderen Namen wählen."
 
 #: includes/admin.inc:779;807
 msgid "Save"
@@ -628,7 +628,7 @@ msgstr "Einstellungen"
 #: includes/admin.inc:1160
 #: includes/plugins.inc:849;867
 msgid "Missing style plugin"
-msgstr "Fehlendes Designplugin"
+msgstr "Fehlendes Design-Plugin"
 
 #: includes/admin.inc:1164
 #: includes/plugins.inc:862;877
@@ -827,7 +827,7 @@ msgstr ""
 
 #: includes/admin.inc:2653
 msgid "Enable views performance statistics via the Devel module"
-msgstr "Performancestatistiken von Ansichten über das Devel-Modul aktivieren"
+msgstr "Performancestatistiken für Ansichten mittels Devel-Modul aktivieren"
 
 # not literally
 #: includes/admin.inc:2654
@@ -843,9 +843,10 @@ msgstr "JavaScript mit Ansichten deaktivieren"
 msgid "If you are having problems with the javascript, you can disable it here; the Views UI should degrade and still be usable without javascript, it just not as good."
 msgstr ""
 
+# not literally
 #: includes/admin.inc:2669
 msgid "Page region to output performance statistics"
-msgstr "Seitenregion in der Performancestatistiken ausgegeben werden sollen"
+msgstr "Performancestatistiken in folgender Seitenregion ausgegeben"
 
 #: includes/admin.inc:2682
 msgid "The cache has been cleared."
@@ -950,7 +951,7 @@ msgstr "Standardtyp für Argumente"
 #: includes/sort.handlers.inc:71
 #, fuzzy
 msgid "Broken/missing handler"
-msgstr "Unbekannter/fehlender Filter"
+msgstr "Beschädigter/fehlender Filter"
 
 #: includes/argument.handlers.inc:718
 #: includes/field.handlers.inc:225
@@ -1469,7 +1470,7 @@ msgstr "Die Liste auf ausgewählte Einträge begrenzen"
 
 #: includes/filter.handlers.inc:991
 msgid "If checked, the selected items presented to the user will be the only ones selected here."
-msgstr "Sobald aktiviert, werden die nur die hier ausgewählten Einträge dem Benutzer präsentiert."
+msgstr "Sobald aktiviert, werden nur die hier ausgewählten Einträge dem Benutzer präsentiert."
 
 #: includes/filter.handlers.inc:1010;1539
 msgid "Is one of"
@@ -1599,7 +1600,7 @@ msgstr "Standardeinstellungen für diese Ansicht."
 # not literally
 #: includes/plugins.inc:33
 msgid "Display the view as a page, with a URL and menu links."
-msgstr "Die Ansicht als Seite anzeigen, mit einer URL und Menüeinträgen."
+msgstr "Die Ansicht als Seite mit einer URL und Menüeinträgen anzeigen."
 
 #: includes/plugins.inc:44;53
 msgid "Block"
@@ -2368,14 +2369,12 @@ msgid "Feed settings"
 msgstr "Newsfeed-Einstellungen"
 
 #: includes/plugins.inc:2780
-#, fuzzy
 msgid "Using the site name"
-msgstr "Den Namen der Website verwenden"
+msgstr "Der Name der Website wird verwendet"
 
 #: includes/plugins.inc:2822
-#, fuzzy
 msgid "Use the site name for the title"
-msgstr "Die Websitebeschreibung für die Beschreibung verwenden."
+msgstr "Den Namen der Website für den Titel verwenden."
 
 #: includes/plugins.inc:2845
 msgid "This view will be displayed by visiting this path on your site. It is recommended that the path be something like \"path/%/%/feed\" or \"path/%/%/rss.xml\", putting one % in the path for each argument you have defined in the view."
@@ -3818,9 +3817,8 @@ msgid "Upload"
 msgstr "Upload"
 
 #: modules/upload.views.inc:44
-#, fuzzy
 msgid "The node the uploaded file is attached to"
-msgstr "Die Beschreibung der hochgeladen Datei."
+msgstr "Der Beitrag an dem die hochgeladene Datei angehängt ist."
 
 #: modules/upload.views.inc:46
 msgid "upload"
