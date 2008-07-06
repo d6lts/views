@@ -3,41 +3,42 @@
 # LANGUAGE translation of Drupal (general)
 # Copyright YEAR NAME <EMAIL@ADDRESS>
 # Generated from files:
-#  views.module,v 1.294 2008/06/11 19:32:46 merlinofchaos
-#  admin.inc,v 1.115 2008/06/11 19:32:47 merlinofchaos
+#  views.module,v 1.300 2008/06/25 21:10:10 merlinofchaos
+#  admin.inc,v 1.123 2008/07/02 18:43:08 merlinofchaos
 #  views_ui.module,v 1.99 2008/06/04 00:09:53 merlinofchaos
-#  views_export.module,v 1.1 2008/06/12 16:17:25 merlinofchaos
+#  views_export.module,v 1.2 2008/06/25 21:42:20 merlinofchaos
 #  views.info,v 1.7 2007/08/12 06:52:14 merlinofchaos
 #  views_ui.info,v 1.10 2008/01/09 00:05:08 merlinofchaos
 #  views_export.info,v 1.1 2008/06/12 16:17:25 merlinofchaos
-#  plugins.inc,v 1.118 2008/06/13 15:50:00 merlinofchaos
-#  convert.inc,v 1.9 2008/06/11 18:42:11 merlinofchaos
-#  theme.inc,v 1.50 2008/06/10 22:10:20 merlinofchaos
+#  plugins.inc,v 1.134 2008/07/04 16:47:20 merlinofchaos
+#  convert.inc,v 1.11 2008/06/26 16:41:01 merlinofchaos
+#  theme.inc,v 1.53 2008/07/03 15:54:08 merlinofchaos
 #  views.install,v 1.41 2008/06/03 23:50:44 merlinofchaos
-#  docs.php,v 1.7 2008/06/07 00:12:11 merlinofchaos
-#  node.views.inc,v 1.72 2008/06/11 01:22:03 merlinofchaos
-#  view.inc,v 1.108 2008/06/10 22:10:20 merlinofchaos
-#  system.views.inc,v 1.5 2008/06/03 22:34:46 merlinofchaos
-#  user.views.inc,v 1.44 2008/06/03 22:34:46 merlinofchaos
-#  argument.handlers.inc,v 1.25 2008/06/03 22:36:55 merlinofchaos
-#  comment.views.inc,v 1.16 2008/06/03 22:34:46 merlinofchaos
-#  statistics.views.inc,v 1.6 2008/06/03 22:34:46 merlinofchaos
-#  upload.views.inc,v 1.8 2008/06/03 22:34:46 merlinofchaos
-#  book.views.inc,v 1.3 2008/04/10 20:23:30 merlinofchaos
-#  taxonomy.views.inc,v 1.31 2008/06/10 18:35:26 merlinofchaos
-#  ajax.inc,v 1.14 2008/06/03 22:34:46 merlinofchaos
-#  field.handlers.inc,v 1.12 2008/06/03 22:34:46 merlinofchaos
-#  filter.handlers.inc,v 1.20 2008/06/03 23:34:39 merlinofchaos
-#  relationship.handlers.inc,v 1.5 2008/06/03 22:34:46 merlinofchaos
-#  handlers.inc,v 1.84 2008/06/10 18:35:26 merlinofchaos
-#  sort.handlers.inc,v 1.5 2008/06/03 22:34:46 merlinofchaos
+#  docs.php,v 1.8 2008/06/18 15:25:46 merlinofchaos
+#  node.views.inc,v 1.76 2008/07/02 18:14:03 merlinofchaos
+#  view.inc,v 1.116 2008/07/03 18:01:44 merlinofchaos
+#  system.views.inc,v 1.6 2008/06/26 00:58:29 merlinofchaos
+#  user.views.inc,v 1.47 2008/06/26 00:58:29 merlinofchaos
+#  argument.handlers.inc,v 1.40 2008/07/04 20:43:33 merlinofchaos
+#  comment.views.inc,v 1.20 2008/07/02 17:42:57 merlinofchaos
+#  statistics.views.inc,v 1.7 2008/06/26 00:58:29 merlinofchaos
+#  upload.views.inc,v 1.12 2008/06/30 16:37:14 merlinofchaos
+#  book.views.inc,v 1.4 2008/07/02 17:42:57 merlinofchaos
+#  taxonomy.views.inc,v 1.37 2008/07/02 18:53:40 merlinofchaos
+#  ajax.inc,v 1.15 2008/06/14 17:42:42 merlinofchaos
+#  field.handlers.inc,v 1.13 2008/06/18 15:25:46 merlinofchaos
+#  filter.handlers.inc,v 1.25 2008/07/03 05:05:12 merlinofchaos
+#  relationship.handlers.inc,v 1.7 2008/06/30 16:37:14 merlinofchaos
+#  sort.handlers.inc,v 1.6 2008/06/18 15:25:46 merlinofchaos
+#  form.inc,v 1.10 2008/06/25 21:10:10 merlinofchaos
+#  handlers.inc,v 1.88 2008/06/25 22:20:01 merlinofchaos
 #  ajax.js,v 1.21 2008/05/27 22:31:59 merlinofchaos
 #  ajax_view.js,v 1.5 2008/05/27 22:31:59 merlinofchaos
 #  tabs.js,v 1.3 2008/03/30 15:58:26 merlinofchaos
 #  poll.views.inc,v 1.2 2008/03/12 04:32:07 merlinofchaos
-#  profile.views.inc,v 1.6 2008/04/21 17:52:10 merlinofchaos
-#  search.views.inc,v 1.7 2008/06/03 23:53:05 merlinofchaos
-#  views.views.inc,v 1.3 2008/06/03 22:34:46 merlinofchaos
+#  profile.views.inc,v 1.7 2008/06/26 00:58:29 merlinofchaos
+#  search.views.inc,v 1.11 2008/06/27 00:39:07 merlinofchaos
+#  views.views.inc,v 1.4 2008/06/26 00:58:29 merlinofchaos
 #  views-more.tpl.php,v 1.2 2008/04/11 08:46:26 merlinofchaos
 #  views-ui-edit-item.tpl.php,v 1.7 2008/05/09 19:32:12 merlinofchaos
 #  views-ui-edit-tab.tpl.php,v 1.10 2008/05/14 00:30:25 merlinofchaos
@@ -48,7 +49,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
-"POT-Creation-Date: 2008-06-15 10:44+0200\n"
+"POT-Creation-Date: 2008-07-06 13:10+0200\n"
 "PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
 "Last-Translator: NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <EMAIL@ADDRESS>\n"
@@ -57,19 +58,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
-#: views.module:625
+#: views.module:640
 msgid "Skipping broken view @view"
 msgstr ""
 
-#: views.module:672;712 includes/admin.inc:92;253;253;599
+#: views.module:687;727 includes/admin.inc:92;253;253;612
 msgid "Overridden"
 msgstr ""
 
-#: views.module:675;708 views_ui.module:284 includes/admin.inc:91;252;252;566;738
+#: views.module:690;723 views_ui.module:284 includes/admin.inc:91;252;252;579;757
 msgid "Default"
 msgstr ""
 
-#: views.module:824 includes/admin.inc:286 views_export/views_export.module:116
+#: views.module:828 includes/admin.inc:286 views_export/views_export.module:116
 msgid "Apply"
 msgstr ""
 
@@ -97,11 +98,11 @@ msgstr ""
 msgid "List"
 msgstr ""
 
-#: views_ui.module:35 includes/admin.inc:1081;1081;2093
+#: views_ui.module:35 includes/admin.inc:1105;1105;2132
 msgid "Add"
 msgstr ""
 
-#: views_ui.module:40 includes/admin.inc:702
+#: views_ui.module:40 includes/admin.inc:715
 msgid "Import"
 msgstr ""
 
@@ -261,11 +262,11 @@ msgstr ""
 msgid "If you install the advanced help module from !href, Views will provide more and better help. <a href=\"@hide\">Hide this message.</a>"
 msgstr ""
 
-#: includes/admin.inc:88;900 theme/theme.inc:96 views_export/views_export.module:128
+#: includes/admin.inc:88;924 theme/theme.inc:96 views_export/views_export.module:128
 msgid "Export"
 msgstr ""
 
-#: includes/admin.inc:89;905 theme/theme.inc:101
+#: includes/admin.inc:89;929 theme/theme.inc:101
 msgid "Clone"
 msgstr ""
 
@@ -273,7 +274,7 @@ msgstr ""
 msgid "Revert"
 msgstr ""
 
-#: includes/admin.inc:92;612;774 includes/convert.inc:35;109
+#: includes/admin.inc:92;625;793 includes/convert.inc:35;109
 msgid "Delete"
 msgstr ""
 
@@ -301,15 +302,15 @@ msgstr ""
 msgid "Not sure what to do? Try the \"!getting-started\" page."
 msgstr ""
 
-#: includes/admin.inc:197;250;2059
+#: includes/admin.inc:197;250;2098
 msgid "<All>"
 msgstr ""
 
-#: includes/admin.inc:198 includes/plugins.inc:2820
+#: includes/admin.inc:198 includes/plugins.inc:2975
 msgid "<None>"
 msgstr ""
 
-#: includes/admin.inc:213;264;985 views_export/views_export.module:146
+#: includes/admin.inc:213;264;1009 views_export/views_export.module:146
 msgid "Tag"
 msgstr ""
 
@@ -317,7 +318,7 @@ msgstr ""
 msgid "Displays"
 msgstr ""
 
-#: includes/admin.inc:241;266 includes/plugins.inc:1102;2079 modules/node.views.inc:139
+#: includes/admin.inc:241;266 includes/plugins.inc:1128;2169 modules/node.views.inc:139
 msgid "Type"
 msgstr ""
 
@@ -325,7 +326,7 @@ msgstr ""
 msgid "Storage"
 msgstr ""
 
-#: includes/admin.inc:251;251 includes/view.inc:993;1043
+#: includes/admin.inc:251;251 includes/view.inc:1097;1147
 msgid "Normal"
 msgstr ""
 
@@ -333,19 +334,19 @@ msgstr ""
 msgid "Sort by"
 msgstr ""
 
-#: includes/admin.inc:262 includes/plugins.inc:805 modules/system.views.inc:69 modules/user.views.inc:59;79
+#: includes/admin.inc:262 includes/plugins.inc:831 modules/system.views.inc:69 modules/user.views.inc:59;79
 msgid "Name"
 msgstr ""
 
-#: includes/admin.inc:263;361 includes/argument.handlers.inc:111 includes/plugins.inc:817;2091;2136 modules/comment.views.inc:44 modules/node.views.inc:84;402
+#: includes/admin.inc:263;374 includes/argument.handlers.inc:127 includes/plugins.inc:843;2181;2226 modules/comment.views.inc:44 modules/node.views.inc:84;420
 msgid "Title"
 msgstr ""
 
-#: includes/admin.inc:265;369 includes/plugins.inc:2008 modules/statistics.views.inc:146 modules/system.views.inc:88
+#: includes/admin.inc:265;382 includes/plugins.inc:2098 modules/statistics.views.inc:146 modules/system.views.inc:88
 msgid "Path"
 msgstr ""
 
-#: includes/admin.inc:267 includes/convert.inc:21 modules/upload.views.inc:48 views_export/views_export.module:146
+#: includes/admin.inc:267 includes/convert.inc:21 modules/upload.views.inc:56 views_export/views_export.module:146
 msgid "Description"
 msgstr ""
 
@@ -361,447 +362,459 @@ msgstr ""
 msgid "Down"
 msgstr ""
 
-#: includes/admin.inc:360;379
+#: includes/admin.inc:361;392
 msgid "Query"
 msgstr ""
 
-#: includes/admin.inc:366
-msgid "This display has no path."
+#: includes/admin.inc:363
+msgid "These queries were run during view rendering:"
+msgstr ""
+
+#: includes/admin.inc:368
+msgid "[@time ms] "
 msgstr ""
 
 #: includes/admin.inc:371
-msgid "Query build time"
-msgstr ""
-
-#: includes/admin.inc:371;372;373
-msgid "@time ms"
-msgstr ""
-
-#: includes/admin.inc:372
-msgid "Query execute time"
-msgstr ""
-
-#: includes/admin.inc:373
-msgid "View render time"
+msgid "Other queries"
 msgstr ""
 
 #: includes/admin.inc:379
-msgid "No query was run"
+msgid "This display has no path."
+msgstr ""
+
+#: includes/admin.inc:384
+msgid "Query build time"
+msgstr ""
+
+#: includes/admin.inc:384;385;386
+msgid "@time ms"
+msgstr ""
+
+#: includes/admin.inc:385
+msgid "Query execute time"
 msgstr ""
 
 #: includes/admin.inc:386
+msgid "View render time"
+msgstr ""
+
+#: includes/admin.inc:392
+msgid "No query was run"
+msgstr ""
+
+#: includes/admin.inc:399
 msgid "Unable to preview due to validation errors."
 msgstr ""
 
-#: includes/admin.inc:437
+#: includes/admin.inc:450
 msgid "Display"
 msgstr ""
 
-#: includes/admin.inc:445 includes/view.inc:1670
+#: includes/admin.inc:458 includes/view.inc:1774
 msgid "Arguments"
 msgstr ""
 
-#: includes/admin.inc:447
+#: includes/admin.inc:460
 msgid "Separate arguments with a / as though they were a URL path."
 msgstr ""
 
-#: includes/admin.inc:453
+#: includes/admin.inc:466
 msgid "Preview"
 msgstr ""
 
-#: includes/admin.inc:491
+#: includes/admin.inc:504
 msgid "Clone view @view"
 msgstr ""
 
-#: includes/admin.inc:504;691 includes/convert.inc:20
+#: includes/admin.inc:517;704 includes/convert.inc:20
 msgid "View name"
 msgstr ""
 
-#: includes/admin.inc:505
+#: includes/admin.inc:518
 msgid "This is the unique name of the view. It must contain only alphanumeric characters and underscores; it is used to identify the view internally and to generate unique theming template names for this view. If overriding a module provided view, the name must not be changed or instead a new view will be created."
 msgstr ""
 
-#: includes/admin.inc:513;1769
+#: includes/admin.inc:526;1793
 msgid "View description"
 msgstr ""
 
-#: includes/admin.inc:514;1770
+#: includes/admin.inc:527;1794
 msgid "This description will appear on the Views administrative UI to tell you what the view is about."
 msgstr ""
 
-#: includes/admin.inc:520;1776
+#: includes/admin.inc:533;1800
 msgid "View tag"
 msgstr ""
 
-#: includes/admin.inc:521;1777
+#: includes/admin.inc:534;1801
 msgid "Enter an optional tag for this view; it is used only to help sort views on the administrative page."
 msgstr ""
 
-#: includes/admin.inc:533
+#: includes/admin.inc:546
 msgid "View type"
 msgstr ""
 
-#: includes/admin.inc:534
+#: includes/admin.inc:547
 msgid "The view type is the primary table for which information is being retrieved. The view type controls what arguments, fields, sort criteria and filters are available, so once this is set it <strong>cannot be changed</strong>."
 msgstr ""
 
-#: includes/admin.inc:545
+#: includes/admin.inc:558
 msgid "Next"
 msgstr ""
 
-#: includes/admin.inc:561
+#: includes/admin.inc:574;749
 msgid "View name must be alphanumeric or underscores only."
 msgstr ""
 
-#: includes/admin.inc:567
+#: includes/admin.inc:580
 msgid "You must use a unique name for this view."
 msgstr ""
 
-#: includes/admin.inc:600
+#: includes/admin.inc:613
 msgid "Are you sure you want to revert the view %name?"
 msgstr ""
 
-#: includes/admin.inc:601
+#: includes/admin.inc:614
 msgid "Reverting the view will delete the view that is in the database, reverting it to the original default view. Any changes you have made will be lost and cannot be recovered."
 msgstr ""
 
-#: includes/admin.inc:604 includes/convert.inc:105
+#: includes/admin.inc:617 includes/convert.inc:105
 msgid "Are you sure you want to delete the view %name?"
 msgstr ""
 
-#: includes/admin.inc:605
+#: includes/admin.inc:618
 msgid "Deleting a view cannot be undone."
 msgstr ""
 
-#: includes/admin.inc:613;649;767;1225 includes/convert.inc:110
+#: includes/admin.inc:626;662;786;1249 includes/convert.inc:110
 msgid "Cancel"
 msgstr ""
 
-#: includes/admin.inc:622
+#: includes/admin.inc:635
 msgid "The view has been deleted."
 msgstr ""
 
-#: includes/admin.inc:634
+#: includes/admin.inc:647
 msgid "There is no lock on view %view to break."
 msgstr ""
 
-#: includes/admin.inc:644
+#: includes/admin.inc:657
 msgid "Are you sure you want to break the lock on view %name?"
 msgstr ""
 
-#: includes/admin.inc:647
+#: includes/admin.inc:660
 msgid "By breaking this lock, any unsaved changes made by !user will be lost!"
 msgstr ""
 
-#: includes/admin.inc:648
+#: includes/admin.inc:661
 msgid "Break lock"
 msgstr ""
 
-#: includes/admin.inc:665
+#: includes/admin.inc:678
 msgid "Edit view \"%view\""
 msgstr ""
 
-#: includes/admin.inc:692
+#: includes/admin.inc:705
 msgid "Enter the name to use for this view if it is different from the source view. Leave blank to use the name of the view."
 msgstr ""
 
-#: includes/admin.inc:697
+#: includes/admin.inc:710
 msgid "Paste view code here"
 msgstr ""
 
-#: includes/admin.inc:719
+#: includes/admin.inc:732
 msgid "Unable to interpret view code."
 msgstr ""
 
-#: includes/admin.inc:726
+#: includes/admin.inc:740
 msgid "You are importing a view created in Views version 1. You may need to adjust some parameters to work correctly in version 2."
 msgstr ""
 
-#: includes/admin.inc:729
+#: includes/admin.inc:743
 msgid "That view is not compatible with this version of Views."
 msgstr ""
 
-#: includes/admin.inc:739
+#: includes/admin.inc:758
 msgid "A view by that name already exists; please choose a different name"
 msgstr ""
 
-#: includes/admin.inc:760;788
+#: includes/admin.inc:779;807
 msgid "Save"
 msgstr ""
 
-#: includes/admin.inc:812
+#: includes/admin.inc:831
 msgid "The view has been saved."
 msgstr ""
 
-#: includes/admin.inc:851
+#: includes/admin.inc:875
 msgid "Unknown or missing table name"
 msgstr ""
 
-#: includes/admin.inc:856
+#: includes/admin.inc:880
 msgid "Click on an item to edit that item's details."
 msgstr ""
 
-#: includes/admin.inc:859
+#: includes/admin.inc:883
 msgid "This view has a broken default display and cannot be used."
 msgstr ""
 
-#: includes/admin.inc:895
+#: includes/admin.inc:919
 msgid "break this lock"
 msgstr ""
 
-#: includes/admin.inc:901 theme/theme.inc:97
+#: includes/admin.inc:925 theme/theme.inc:97
 msgid "Export this view"
 msgstr ""
 
-#: includes/admin.inc:906 theme/theme.inc:102
+#: includes/admin.inc:930 theme/theme.inc:102
 msgid "Create a copy of this view"
 msgstr ""
 
-#: includes/admin.inc:917
+#: includes/admin.inc:941
 msgid "View \"!display\""
 msgstr ""
 
-#: includes/admin.inc:918
+#: includes/admin.inc:942
 msgid "Go to the real page for this display"
 msgstr ""
 
-#: includes/admin.inc:984 includes/plugins.inc:812;943;955;1999;2293;2467;2659;3299
+#: includes/admin.inc:1008 includes/plugins.inc:838;969;981;2089;2383;2566;2798;3457
 msgid "None"
 msgstr ""
 
-#: includes/admin.inc:1058
+#: includes/admin.inc:1082
 msgid "Invalid"
 msgstr ""
 
-#: includes/admin.inc:1058
+#: includes/admin.inc:1082
 msgid "Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!"
 msgstr ""
 
-#: includes/admin.inc:1079;1079
+#: includes/admin.inc:1103;1103
 msgid "Rearrange"
 msgstr ""
 
-#: includes/admin.inc:1112;2144;2323;2391;2476
+#: includes/admin.inc:1136;2183;2353;2421;2506
 msgid "Error: handler for @table > @field doesn't exist!"
 msgstr ""
 
-#: includes/admin.inc:1131;1131;1140
+#: includes/admin.inc:1155;1155;1164
 msgid "Settings"
 msgstr ""
 
-#: includes/admin.inc:1136 includes/plugins.inc:823;841
+#: includes/admin.inc:1160 includes/plugins.inc:849;867
 msgid "Missing style plugin"
 msgstr ""
 
-#: includes/admin.inc:1140 includes/plugins.inc:836;851
+#: includes/admin.inc:1164 includes/plugins.inc:862;877
 msgid "Change settings for this style"
 msgstr ""
 
-#: includes/admin.inc:1143
+#: includes/admin.inc:1167
 msgid " &nbsp; Style: !style"
 msgstr ""
 
-#: includes/admin.inc:1174
+#: includes/admin.inc:1198
 msgid "Invalid display id while regenerating tabs"
 msgstr ""
 
-#: includes/admin.inc:1207
+#: includes/admin.inc:1231
 msgid "Update"
 msgstr ""
 
-#: includes/admin.inc:1225
+#: includes/admin.inc:1249
 msgid "Ok"
 msgstr ""
 
-#: includes/admin.inc:1494
+#: includes/admin.inc:1518
 msgid "Unable to initialize default display"
 msgstr ""
 
-#: includes/admin.inc:1526
+#: includes/admin.inc:1550
 msgid "Add display"
 msgstr ""
 
-#: includes/admin.inc:1566
+#: includes/admin.inc:1590
 msgid "Remove display"
 msgstr ""
 
-#: includes/admin.inc:1577
+#: includes/admin.inc:1601
 msgid "Restore display"
 msgstr ""
 
-#: includes/admin.inc:1649
+#: includes/admin.inc:1673
 msgid "Analyze"
 msgstr ""
 
-#: includes/admin.inc:1669
+#: includes/admin.inc:1693
 msgid "This view has only a default display and therefore will not be placed anywhere on your site; perhaps you want to add a page or a block display."
 msgstr ""
 
-#: includes/admin.inc:1681
+#: includes/admin.inc:1705
 msgid "View analysis"
 msgstr ""
 
-#: includes/admin.inc:1690
+#: includes/admin.inc:1714
 msgid "View analysis can find nothing to report."
 msgstr ""
 
-#: includes/admin.inc:1764
+#: includes/admin.inc:1788
 msgid "View details"
 msgstr ""
 
-#: includes/admin.inc:1805;1854;1904;2045;2137;2316;2384;2469
+#: includes/admin.inc:1829;1883;1938;2084;2176;2346;2414;2499
 msgid "Invalid display id @display"
 msgstr ""
 
-#: includes/admin.inc:1858
+#: includes/admin.inc:1887
 msgid "Configure @type"
 msgstr ""
 
-#: includes/admin.inc:1908
+#: includes/admin.inc:1942
 msgid "Rearrange @type"
 msgstr ""
 
-#: includes/admin.inc:1951
+#: includes/admin.inc:1985
 msgid "Broken field @id"
 msgstr ""
 
-#: includes/admin.inc:1986;1995;2232;2341
+#: includes/admin.inc:2025;2034;2262;2371
 msgid "Remove"
 msgstr ""
 
-#: includes/admin.inc:1986;1986
+#: includes/admin.inc:2025;2025
 msgid "Remove this item"
 msgstr ""
 
-#: includes/admin.inc:1992
+#: includes/admin.inc:2031
 msgid "No fields available."
 msgstr ""
 
-#: includes/admin.inc:1995 includes/plugins.inc:2100 modules/book.views.inc:57 modules/taxonomy.views.inc:126 modules/upload.views.inc:82
+#: includes/admin.inc:2034 includes/plugins.inc:2190 modules/book.views.inc:57 modules/taxonomy.views.inc:115 modules/upload.views.inc:90
 msgid "Weight"
 msgstr ""
 
-#: includes/admin.inc:2051
+#: includes/admin.inc:2090
 msgid "Add @type"
 msgstr ""
 
-#: includes/admin.inc:2062
+#: includes/admin.inc:2101
 msgid "Groups"
 msgstr ""
 
-#: includes/admin.inc:2081
+#: includes/admin.inc:2120
 msgid "!group: !field"
 msgstr ""
 
-#: includes/admin.inc:2090
+#: includes/admin.inc:2129
 msgid "There are no @types available to add."
 msgstr ""
 
-#: includes/admin.inc:2155 includes/plugins.inc:1556
-msgid "Status: using default values."
-msgstr ""
-
-#: includes/admin.inc:2162 includes/plugins.inc:1568
-msgid "Status: using overridden values."
-msgstr ""
-
-#: includes/admin.inc:2200
+#: includes/admin.inc:2226
 msgid "Do not use a relationship"
 msgstr ""
 
-#: includes/admin.inc:2209 includes/view.inc:1694;1695
+#: includes/admin.inc:2235 includes/view.inc:1798;1799
 msgid "Relationship"
 msgstr ""
 
-#: includes/admin.inc:2222
+#: includes/admin.inc:2248
 msgid "Configure @type \"@item\""
 msgstr ""
 
-#: includes/admin.inc:2331
+#: includes/admin.inc:2361
 msgid "Configure extra settings for @type \"@item\""
 msgstr ""
 
-#: includes/admin.inc:2396
+#: includes/admin.inc:2426
 msgid "Change summary style for @type \"@item\""
 msgstr ""
 
-#: includes/admin.inc:2419;2433
+#: includes/admin.inc:2449;2463
 msgid "Internal error: broken plugin."
 msgstr ""
 
-#: includes/admin.inc:2483
+#: includes/admin.inc:2513
 msgid "Configure summary style for @type \"@item\""
 msgstr ""
 
-#: includes/admin.inc:2575
+#: includes/admin.inc:2605
 msgid "Clear Views' cache"
 msgstr ""
 
-#: includes/admin.inc:2581
+#: includes/admin.inc:2611
 msgid "Add Views signature to all SQL queries"
 msgstr ""
 
-#: includes/admin.inc:2582
+#: includes/admin.inc:2612
 msgid "All Views-generated queries will include a special 'VIEWS' = 'VIEWS' string in the WHERE clause. This makes identifying Views queries in database server logs simpler, but should only be used when troubleshooting."
 msgstr ""
 
-#: includes/admin.inc:2588
+#: includes/admin.inc:2618
 msgid "Disable views data caching"
 msgstr ""
 
-#: includes/admin.inc:2589
+#: includes/admin.inc:2619
 msgid "Views caches data about tables, modules and views available, to increase performance. By checking this box, Views will skip this cache and always rebuild this data when needed. This can have a serious performance impact on your site."
 msgstr ""
 
-#: includes/admin.inc:2595
+#: includes/admin.inc:2625
 msgid "Ignore missing advanced help module"
 msgstr ""
 
-#: includes/admin.inc:2596
+#: includes/admin.inc:2626
 msgid "Views uses the advanced help module to provide help text; if this module is not present Views will complain, unless this setting is checked."
 msgstr ""
 
-#: includes/admin.inc:2602
+#: includes/admin.inc:2632
 msgid "Show query above live preview"
 msgstr ""
 
-#: includes/admin.inc:2603
+#: includes/admin.inc:2633
 msgid "The live preview feature will show you the output of the view you're creating, as well as the view. Check here to show the query and other information above the view; leave this unchecked to show that information below the view."
 msgstr ""
 
-#: includes/admin.inc:2609
+#: includes/admin.inc:2639
+msgid "Show other queries run during render during live preview"
+msgstr ""
+
+#: includes/admin.inc:2640
+msgid "Drupal has the potential to run many queries while a view is being rendered. Checking this box will display every query run during view render as part of the live preview."
+msgstr ""
+
+#: includes/admin.inc:2646
 msgid "Do not show hover links over views"
 msgstr ""
 
-#: includes/admin.inc:2610
+#: includes/admin.inc:2647
 msgid "To make it easier to administrate your views, Views provides 'hover' links to take you to the edit and export screen of a view whenever the view is used. This can be distracting on some themes, though; if it is problematic, you can turn it off here."
 msgstr ""
 
-#: includes/admin.inc:2616
+#: includes/admin.inc:2653
 msgid "Enable views performance statistics via the Devel module"
 msgstr ""
 
-#: includes/admin.inc:2617
+#: includes/admin.inc:2654
 msgid "Check this to enable some Views query and performance statistics <em>if Devel is installed</em>."
 msgstr ""
 
-#: includes/admin.inc:2623
+#: includes/admin.inc:2660
 msgid "Disable javascript with Views"
 msgstr ""
 
-#: includes/admin.inc:2624
+#: includes/admin.inc:2661
 msgid "If you are having problems with the javascript, you can disable it here; the Views UI should degrade and still be usable without javascript, it just not as good."
 msgstr ""
 
-#: includes/admin.inc:2632
+#: includes/admin.inc:2669
 msgid "Page region to output performance statistics"
 msgstr ""
 
-#: includes/admin.inc:2645
+#: includes/admin.inc:2682
 msgid "The cache has been cleared."
 msgstr ""
 
-#: includes/admin.inc:2809
+#: includes/admin.inc:2872
 msgid "Error: missing @component"
 msgstr ""
 
@@ -813,171 +826,187 @@ msgstr ""
 msgid "Error"
 msgstr ""
 
-#: includes/argument.handlers.inc:91
+#: includes/argument.handlers.inc:110
 msgid "All"
 msgstr ""
 
-#: includes/argument.handlers.inc:113
+#: includes/argument.handlers.inc:129
 msgid "The title to use when this argument is present; it will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use \"%1\" for the first argument, \"%2\" for the second, etc."
 msgstr ""
 
-#: includes/argument.handlers.inc:126
+#: includes/argument.handlers.inc:142
 msgid "Action to take if argument is not present"
 msgstr ""
 
-#: includes/argument.handlers.inc:138
+#: includes/argument.handlers.inc:154
 msgid "Wildcard"
 msgstr ""
 
-#: includes/argument.handlers.inc:141
+#: includes/argument.handlers.inc:157
 msgid "If this value is received as an argument, the argument will be ignored; i.e, \"all values\""
 msgstr ""
 
-#: includes/argument.handlers.inc:147
+#: includes/argument.handlers.inc:163
 msgid "Wildcard title"
 msgstr ""
 
-#: includes/argument.handlers.inc:150
+#: includes/argument.handlers.inc:166
 msgid "The title to use for the wildcard in substitutions elsewhere."
 msgstr ""
 
-#: includes/argument.handlers.inc:173
+#: includes/argument.handlers.inc:189
+msgid "Validator options"
+msgstr ""
+
+#: includes/argument.handlers.inc:194
 msgid "Validator"
 msgstr ""
 
-#: includes/argument.handlers.inc:177
+#: includes/argument.handlers.inc:198
 msgid "<Basic validation>"
 msgstr ""
 
-#: includes/argument.handlers.inc:213
+#: includes/argument.handlers.inc:233
 msgid "Action to take if argument does not validate"
 msgstr ""
 
-#: includes/argument.handlers.inc:228
+#: includes/argument.handlers.inc:252
 msgid "Display all values"
 msgstr ""
 
-#: includes/argument.handlers.inc:233
+#: includes/argument.handlers.inc:257
 msgid "Hide view / Page not found (404)"
 msgstr ""
 
-#: includes/argument.handlers.inc:237
+#: includes/argument.handlers.inc:262
 msgid "Display empty text"
 msgstr ""
 
-#: includes/argument.handlers.inc:242
+#: includes/argument.handlers.inc:267
 msgid "Summary, sorted ascending"
 msgstr ""
 
-#: includes/argument.handlers.inc:249
+#: includes/argument.handlers.inc:274
 msgid "Summary, sorted descending"
 msgstr ""
 
-#: includes/argument.handlers.inc:256
+#: includes/argument.handlers.inc:281
 msgid "Provide default argument"
 msgstr ""
 
-#: includes/argument.handlers.inc:287
+#: includes/argument.handlers.inc:314
+msgid "Provide default argument options"
+msgstr ""
+
+#: includes/argument.handlers.inc:324
 msgid "Default argument type"
 msgstr ""
 
-#: includes/argument.handlers.inc:702
+#: includes/argument.handlers.inc:710 includes/field.handlers.inc:217 includes/filter.handlers.inc:577 includes/relationship.handlers.inc:132 includes/sort.handlers.inc:71
+msgid "Broken/missing handler"
+msgstr ""
+
+#: includes/argument.handlers.inc:718 includes/field.handlers.inc:225 includes/filter.handlers.inc:585 includes/relationship.handlers.inc:140 includes/sort.handlers.inc:79
+msgid "The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item."
+msgstr ""
+
+#: includes/argument.handlers.inc:804
 msgid "Current date"
 msgstr ""
 
-#: includes/argument.handlers.inc:757
+#: includes/argument.handlers.inc:859
 msgid "Glossary mode"
 msgstr ""
 
-#: includes/argument.handlers.inc:758
+#: includes/argument.handlers.inc:860
 msgid "Glossary mode applies a limit to the number of characters used in the argument, which allows the summary view to act as a glossary."
 msgstr ""
 
-#: includes/argument.handlers.inc:764
+#: includes/argument.handlers.inc:866
 msgid "Character limit"
 msgstr ""
 
-#: includes/argument.handlers.inc:765
+#: includes/argument.handlers.inc:867
 msgid "How many characters of the argument to filter against. If set to 1, all fields starting with the letter in the argument would be matched."
 msgstr ""
 
-#: includes/argument.handlers.inc:773
+#: includes/argument.handlers.inc:875
 msgid "Case"
 msgstr ""
 
-#: includes/argument.handlers.inc:774
+#: includes/argument.handlers.inc:876
 msgid "When printing the argument result, how to transform the case."
 msgstr ""
 
-#: includes/argument.handlers.inc:776;790
+#: includes/argument.handlers.inc:878;892
 msgid "No transform"
 msgstr ""
 
-#: includes/argument.handlers.inc:777;791
+#: includes/argument.handlers.inc:879;893
 msgid "Upper case"
 msgstr ""
 
-#: includes/argument.handlers.inc:778;792
+#: includes/argument.handlers.inc:880;894
 msgid "Lower case"
 msgstr ""
 
-#: includes/argument.handlers.inc:779;793
+#: includes/argument.handlers.inc:881;895
 msgid "Capitalize first letter"
 msgstr ""
 
-#: includes/argument.handlers.inc:780;794
+#: includes/argument.handlers.inc:882;896
 msgid "Capitalize each word"
 msgstr ""
 
-#: includes/argument.handlers.inc:787
+#: includes/argument.handlers.inc:889
 msgid "Case in path"
 msgstr ""
 
-#: includes/argument.handlers.inc:788
+#: includes/argument.handlers.inc:890
 msgid "When printing url paths, how to transform the of the argument. Do not use this unless with Postgres as it uses case sensitive comparisons."
 msgstr ""
 
-#: includes/argument.handlers.inc:801
+#: includes/argument.handlers.inc:903
 msgid "Transform spaces to dashes in URL"
 msgstr ""
 
-#: includes/argument.handlers.inc:808;1046
+#: includes/argument.handlers.inc:910;1157
 msgid "Allow multiple arguments to work together."
 msgstr ""
 
-#: includes/argument.handlers.inc:809;1047
+#: includes/argument.handlers.inc:911;1158
 msgid "If selected, multiple instances of this argument can work together, as though multiple terms were supplied to the same argument. This setting is not compatible with the \"Reduce duplicates\" setting."
 msgstr ""
 
-#: includes/argument.handlers.inc:815;1053
+#: includes/argument.handlers.inc:917;1164
 msgid "Do not display items with no value in summary"
 msgstr ""
 
-#: includes/argument.handlers.inc:936;1038
+#: includes/argument.handlers.inc:1043;1149
 msgid "Allow multiple terms per argument."
 msgstr ""
 
-#: includes/argument.handlers.inc:937
+#: includes/argument.handlers.inc:1044
 msgid "If selected, users can enter multiple arguments in the form of 1+2+3 or 1,2,3."
 msgstr ""
 
-#: includes/argument.handlers.inc:943
+#: includes/argument.handlers.inc:1050
 msgid "Exclude the argument"
 msgstr ""
 
-#: includes/argument.handlers.inc:944
+#: includes/argument.handlers.inc:1051
 msgid "If selected, the numbers entered in the argument will be excluded rather than limiting the view."
 msgstr ""
 
-#: includes/argument.handlers.inc:951;963;1088;1102 modules/taxonomy.views.inc:120;204;287
+#: includes/argument.handlers.inc:1058;1070;1199;1213 modules/taxonomy.views.inc:109;187;258
 msgid "Uncategorized"
 msgstr ""
 
-#: includes/argument.handlers.inc:967;1106
+#: includes/argument.handlers.inc:1074;1217
 msgid "Invalid input"
 msgstr ""
 
-#: includes/argument.handlers.inc:1039
+#: includes/argument.handlers.inc:1150
 msgid "If selected, users can enter multiple arguments in the form of 1+2+3 (for OR) or 1,2,3 (for AND)."
 msgstr ""
 
@@ -1013,476 +1042,472 @@ msgstr ""
 msgid "The view has been deleted"
 msgstr ""
 
-#: includes/field.handlers.inc:130 includes/filter.handlers.inc:304 includes/relationship.handlers.inc:60
+#: includes/field.handlers.inc:138 includes/filter.handlers.inc:309 includes/relationship.handlers.inc:78
 msgid "Label"
 msgstr ""
 
-#: includes/field.handlers.inc:132
+#: includes/field.handlers.inc:140
 msgid "The label for this field that will be displayed to end users if the style requires it."
 msgstr ""
 
-#: includes/field.handlers.inc:136
+#: includes/field.handlers.inc:144
 msgid "Exclude from display"
 msgstr ""
 
-#: includes/field.handlers.inc:138
+#: includes/field.handlers.inc:146
 msgid "Check this box to not display this field, but still load it in the view.  Use this option to not show a grouping field in each record, or when doing advanced theming."
 msgstr ""
 
-#: includes/field.handlers.inc:223
+#: includes/field.handlers.inc:255
 msgid "Date format"
 msgstr ""
 
-#: includes/field.handlers.inc:228
+#: includes/field.handlers.inc:260
 msgid "Custom"
 msgstr ""
 
-#: includes/field.handlers.inc:229
+#: includes/field.handlers.inc:261
 msgid "Time ago"
 msgstr ""
 
-#: includes/field.handlers.inc:235
+#: includes/field.handlers.inc:267
 msgid "Custom date format"
 msgstr ""
 
-#: includes/field.handlers.inc:236
+#: includes/field.handlers.inc:268
 msgid "If \"Custom\", see <a href=\"http://us.php.net/manual/en/function.date.php\">the PHP docs</a> for date formats. If \"Time ago\" this is the the number of different units to display, which defaults to two."
 msgstr ""
 
-#: includes/field.handlers.inc:252
+#: includes/field.handlers.inc:284
 msgid "%time ago"
 msgstr ""
 
-#: includes/field.handlers.inc:280
+#: includes/field.handlers.inc:312
 msgid "Output format"
 msgstr ""
 
-#: includes/field.handlers.inc:282
+#: includes/field.handlers.inc:314
 msgid "Yes/No"
 msgstr ""
 
-#: includes/field.handlers.inc:283
+#: includes/field.handlers.inc:315
 msgid "True/False"
 msgstr ""
 
-#: includes/field.handlers.inc:284
+#: includes/field.handlers.inc:316
 msgid "On/Off"
 msgstr ""
 
-#: includes/field.handlers.inc:290
+#: includes/field.handlers.inc:322
 msgid "Reverse"
 msgstr ""
 
-#: includes/field.handlers.inc:291
+#: includes/field.handlers.inc:323
 msgid "If checked, true will be displayed as false."
 msgstr ""
 
-#: includes/field.handlers.inc:305 includes/filter.handlers.inc:853;898 includes/plugins.inc:858;867;884;892;1035;2446
+#: includes/field.handlers.inc:337 includes/filter.handlers.inc:929;978 includes/plugins.inc:884;893;910;918;1061;2539;2545
 msgid "Yes"
 msgstr ""
 
-#: includes/field.handlers.inc:305 includes/filter.handlers.inc:853;898 includes/plugins.inc:858;867;884;892;1035;1043;2446
+#: includes/field.handlers.inc:337 includes/filter.handlers.inc:929;978 includes/plugins.inc:884;893;910;918;1061;1069;2539;2545
 msgid "No"
 msgstr ""
 
-#: includes/field.handlers.inc:307 includes/filter.handlers.inc:822;863
+#: includes/field.handlers.inc:339 includes/filter.handlers.inc:898;939
 msgid "True"
 msgstr ""
 
-#: includes/field.handlers.inc:307 includes/filter.handlers.inc:863
+#: includes/field.handlers.inc:339 includes/filter.handlers.inc:939
 msgid "False"
 msgstr ""
 
-#: includes/field.handlers.inc:309
+#: includes/field.handlers.inc:341
 msgid "On"
 msgstr ""
 
-#: includes/field.handlers.inc:309
+#: includes/field.handlers.inc:341
 msgid "Off"
 msgstr ""
 
-#: includes/field.handlers.inc:368 modules/statistics.views.inc:276
+#: includes/field.handlers.inc:404 modules/statistics.views.inc:274
 msgid "Display as link"
 msgstr ""
 
-#: includes/field.handlers.inc:410 modules/node.views.inc:1289
+#: includes/field.handlers.inc:446 modules/node.views.inc:1259
 msgid "Display type"
 msgstr ""
 
-#: includes/field.handlers.inc:412 includes/plugins.inc:2971
+#: includes/field.handlers.inc:448 includes/plugins.inc:3129
 msgid "Unordered list"
 msgstr ""
 
-#: includes/field.handlers.inc:413 includes/plugins.inc:2971
+#: includes/field.handlers.inc:449 includes/plugins.inc:3129
 msgid "Ordered list"
 msgstr ""
 
-#: includes/field.handlers.inc:414
+#: includes/field.handlers.inc:450
 msgid "Simple separator"
 msgstr ""
 
-#: includes/field.handlers.inc:421 includes/plugins.inc:3265;3376;3557
+#: includes/field.handlers.inc:457 includes/plugins.inc:3423;3534;3716
 msgid "Separator"
 msgstr ""
 
-#: includes/field.handlers.inc:429
+#: includes/field.handlers.inc:465
 msgid "Empty list text"
 msgstr ""
 
-#: includes/field.handlers.inc:431
+#: includes/field.handlers.inc:467
 msgid "If the list is empty, you may enter text here that will be displayed."
 msgstr ""
 
-#: includes/field.handlers.inc:480
+#: includes/field.handlers.inc:524
 msgid "Round"
 msgstr ""
 
-#: includes/field.handlers.inc:481
+#: includes/field.handlers.inc:525
 msgid "If checked, the number will be rounded."
 msgstr ""
 
-#: includes/field.handlers.inc:486
+#: includes/field.handlers.inc:530
 msgid "Precision"
 msgstr ""
 
-#: includes/field.handlers.inc:488
+#: includes/field.handlers.inc:532
 msgid "Specify how many digits to print after the decimal point."
 msgstr ""
 
-#: includes/field.handlers.inc:495
+#: includes/field.handlers.inc:539
 msgid "Decimal point"
 msgstr ""
 
-#: includes/field.handlers.inc:497
+#: includes/field.handlers.inc:541
 msgid "What single character to use as a decimal point."
 msgstr ""
 
-#: includes/field.handlers.inc:503
+#: includes/field.handlers.inc:547
 msgid "Thousands separator"
 msgstr ""
 
-#: includes/field.handlers.inc:505
+#: includes/field.handlers.inc:549
 msgid "What single character to use as the thousands separator."
 msgstr ""
 
-#: includes/field.handlers.inc:510
+#: includes/field.handlers.inc:554
 msgid "Prefix"
 msgstr ""
 
-#: includes/field.handlers.inc:512
+#: includes/field.handlers.inc:556
 msgid "Text to put before the number, such as currency symbol."
 msgstr ""
 
-#: includes/field.handlers.inc:516
+#: includes/field.handlers.inc:560
 msgid "Suffix"
 msgstr ""
 
-#: includes/field.handlers.inc:518
+#: includes/field.handlers.inc:562
 msgid "Text to put after the number, such as currency symbol."
 msgstr ""
 
-#: includes/filter.handlers.inc:119
+#: includes/filter.handlers.inc:124
 msgid "Operator"
 msgstr ""
 
-#: includes/filter.handlers.inc:183
+#: includes/filter.handlers.inc:188
 msgid "Expose"
 msgstr ""
 
-#: includes/filter.handlers.inc:188
+#: includes/filter.handlers.inc:193
 msgid "This item is currently not exposed. If you <strong>expose</strong> it, users will be able to change the filter as they view it."
 msgstr ""
 
-#: includes/filter.handlers.inc:195
+#: includes/filter.handlers.inc:200
 msgid "Hide"
 msgstr ""
 
-#: includes/filter.handlers.inc:200
+#: includes/filter.handlers.inc:205
 msgid "This item is currently exposed. If you <strong>hide</strong> it, users will not able to change the filter as they view it."
 msgstr ""
 
-#: includes/filter.handlers.inc:271
+#: includes/filter.handlers.inc:276
 msgid "Unlock operator"
 msgstr ""
 
-#: includes/filter.handlers.inc:272
+#: includes/filter.handlers.inc:277
 msgid "When checked, the operator will be exposed to the user"
 msgstr ""
 
-#: includes/filter.handlers.inc:278
+#: includes/filter.handlers.inc:283
 msgid "Operator identifier"
 msgstr ""
 
-#: includes/filter.handlers.inc:280
+#: includes/filter.handlers.inc:285
 msgid "This will appear in the URL after the ? to identify this operator."
 msgstr ""
 
-#: includes/filter.handlers.inc:297
+#: includes/filter.handlers.inc:302
 msgid "Filter identifier"
 msgstr ""
 
-#: includes/filter.handlers.inc:299
+#: includes/filter.handlers.inc:304
 msgid "This will appear in the URL after the ? to identify this filter. Cannot be blank."
 msgstr ""
 
-#: includes/filter.handlers.inc:315
+#: includes/filter.handlers.inc:320
 msgid "Optional"
 msgstr ""
 
-#: includes/filter.handlers.inc:316
+#: includes/filter.handlers.inc:321
 msgid "This exposed filter is optional and will have added options to allow it not to be set."
 msgstr ""
 
-#: includes/filter.handlers.inc:322
+#: includes/filter.handlers.inc:327
 msgid "Force single"
 msgstr ""
 
-#: includes/filter.handlers.inc:323
+#: includes/filter.handlers.inc:328
 msgid "Force this exposed filter to accept only one option."
 msgstr ""
 
-#: includes/filter.handlers.inc:329
+#: includes/filter.handlers.inc:334
 msgid "Remember"
 msgstr ""
 
-#: includes/filter.handlers.inc:330
+#: includes/filter.handlers.inc:335
 msgid "Remember the last setting the user gave this filter."
 msgstr ""
 
-#: includes/filter.handlers.inc:341
+#: includes/filter.handlers.inc:346
 msgid "The identifier is required if the filter is\n        exposed."
 msgstr ""
 
-#: includes/filter.handlers.inc:347
+#: includes/filter.handlers.inc:352
 msgid "This identifier is not allowed."
 msgstr ""
 
-#: includes/filter.handlers.inc:448
+#: includes/filter.handlers.inc:453
 msgid "<Any>"
 msgstr ""
 
-#: includes/filter.handlers.inc:540;582;1089
+#: includes/filter.handlers.inc:607;649;1169
 msgid "Is equal to"
 msgstr ""
 
-#: includes/filter.handlers.inc:541;588;1095
+#: includes/filter.handlers.inc:608;655;1175
 msgid "Is not equal to"
 msgstr ""
 
-#: includes/filter.handlers.inc:551;714;1197
+#: includes/filter.handlers.inc:618;781;1277
 msgid "Value"
 msgstr ""
 
-#: includes/filter.handlers.inc:583;589;1091
+#: includes/filter.handlers.inc:650;656;1171
 msgid "="
 msgstr ""
 
-#: includes/filter.handlers.inc:594
+#: includes/filter.handlers.inc:661
 msgid "Contains"
 msgstr ""
 
-#: includes/filter.handlers.inc:595
+#: includes/filter.handlers.inc:662
 msgid "contains"
 msgstr ""
 
-#: includes/filter.handlers.inc:600
+#: includes/filter.handlers.inc:667
 msgid "Contains any word"
 msgstr ""
 
-#: includes/filter.handlers.inc:601
+#: includes/filter.handlers.inc:668
 msgid "has word"
 msgstr ""
 
-#: includes/filter.handlers.inc:606
+#: includes/filter.handlers.inc:673
 msgid "Contains all words"
 msgstr ""
 
-#: includes/filter.handlers.inc:607
+#: includes/filter.handlers.inc:674
 msgid "has all"
 msgstr ""
 
-#: includes/filter.handlers.inc:612
+#: includes/filter.handlers.inc:679
 msgid "Starts with"
 msgstr ""
 
-#: includes/filter.handlers.inc:613
+#: includes/filter.handlers.inc:680
 msgid "begins"
 msgstr ""
 
-#: includes/filter.handlers.inc:618
+#: includes/filter.handlers.inc:685
 msgid "Ends with"
 msgstr ""
 
-#: includes/filter.handlers.inc:619
+#: includes/filter.handlers.inc:686
 msgid "ends"
 msgstr ""
 
-#: includes/filter.handlers.inc:624
+#: includes/filter.handlers.inc:691
 msgid "Does not contain"
 msgstr ""
 
-#: includes/filter.handlers.inc:625
+#: includes/filter.handlers.inc:692
 msgid "!has"
 msgstr ""
 
-#: includes/filter.handlers.inc:634;1130
+#: includes/filter.handlers.inc:701;1210
 msgid "Is empty (NULL)"
 msgstr ""
 
-#: includes/filter.handlers.inc:636;1132
+#: includes/filter.handlers.inc:703;1212
 msgid "empty"
 msgstr ""
 
-#: includes/filter.handlers.inc:640;1136
+#: includes/filter.handlers.inc:707;1216
 msgid "Is not empty (NULL)"
 msgstr ""
 
-#: includes/filter.handlers.inc:642;1138
+#: includes/filter.handlers.inc:709;1218
 msgid "not empty"
 msgstr ""
 
-#: includes/filter.handlers.inc:665
+#: includes/filter.handlers.inc:732
 msgid "exposed>"
 msgstr ""
 
-#: includes/filter.handlers.inc:672
+#: includes/filter.handlers.inc:739
 msgid "Case sensitive"
 msgstr ""
 
-#: includes/filter.handlers.inc:674
+#: includes/filter.handlers.inc:741
 msgid "Case sensitive filters may be faster; MySQL might ignore case sensitivity."
 msgstr ""
 
-#: includes/filter.handlers.inc:860;1009
+#: includes/filter.handlers.inc:936;1089
 msgid "exposed"
 msgstr ""
 
-#: includes/filter.handlers.inc:888
+#: includes/filter.handlers.inc:968
 msgid "Options"
 msgstr ""
 
-#: includes/filter.handlers.inc:910
+#: includes/filter.handlers.inc:990
 msgid "Limit list to selected items"
 msgstr ""
 
-#: includes/filter.handlers.inc:911
+#: includes/filter.handlers.inc:991
 msgid "If checked, the selected items presented to the user will be the only ones selected here."
 msgstr ""
 
-#: includes/filter.handlers.inc:930;1459
+#: includes/filter.handlers.inc:1010;1539
 msgid "Is one of"
 msgstr ""
 
-#: includes/filter.handlers.inc:931
+#: includes/filter.handlers.inc:1011
 msgid "Is not one of"
 msgstr ""
 
-#: includes/filter.handlers.inc:1022 modules/system.views.inc:236
+#: includes/filter.handlers.inc:1102 modules/system.views.inc:234
 msgid "Unknown"
 msgstr ""
 
-#: includes/filter.handlers.inc:1077
+#: includes/filter.handlers.inc:1157
 msgid "Is less than"
 msgstr ""
 
-#: includes/filter.handlers.inc:1079
+#: includes/filter.handlers.inc:1159
 msgid "<"
 msgstr ""
 
-#: includes/filter.handlers.inc:1083
+#: includes/filter.handlers.inc:1163
 msgid "Is less than or equal to"
 msgstr ""
 
-#: includes/filter.handlers.inc:1085
+#: includes/filter.handlers.inc:1165
 msgid "<="
 msgstr ""
 
-#: includes/filter.handlers.inc:1097
+#: includes/filter.handlers.inc:1177
 msgid "!="
 msgstr ""
 
-#: includes/filter.handlers.inc:1101
+#: includes/filter.handlers.inc:1181
 msgid "Is greater than or equal to"
 msgstr ""
 
-#: includes/filter.handlers.inc:1103
+#: includes/filter.handlers.inc:1183
 msgid ">="
 msgstr ""
 
-#: includes/filter.handlers.inc:1107
+#: includes/filter.handlers.inc:1187
 msgid "Is greater than"
 msgstr ""
 
-#: includes/filter.handlers.inc:1109
+#: includes/filter.handlers.inc:1189
 msgid ">"
 msgstr ""
 
-#: includes/filter.handlers.inc:1113
+#: includes/filter.handlers.inc:1193
 msgid "Is between"
 msgstr ""
 
-#: includes/filter.handlers.inc:1115
+#: includes/filter.handlers.inc:1195
 msgid "between"
 msgstr ""
 
-#: includes/filter.handlers.inc:1119
+#: includes/filter.handlers.inc:1199
 msgid "Is not between"
 msgstr ""
 
-#: includes/filter.handlers.inc:1121
+#: includes/filter.handlers.inc:1201
 msgid "not between"
 msgstr ""
 
-#: includes/filter.handlers.inc:1212
+#: includes/filter.handlers.inc:1292
 msgid "Min"
 msgstr ""
 
-#: includes/filter.handlers.inc:1218
+#: includes/filter.handlers.inc:1298
 msgid "And max"
 msgstr ""
 
-#: includes/filter.handlers.inc:1218
+#: includes/filter.handlers.inc:1298
 msgid "And"
 msgstr ""
 
-#: includes/filter.handlers.inc:1275
+#: includes/filter.handlers.inc:1355
 msgid "@min and @max"
 msgstr ""
 
-#: includes/filter.handlers.inc:1301
+#: includes/filter.handlers.inc:1381
 msgid "Value type"
 msgstr ""
 
-#: includes/filter.handlers.inc:1303
+#: includes/filter.handlers.inc:1383
 msgid "A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred."
 msgstr ""
 
-#: includes/filter.handlers.inc:1304
+#: includes/filter.handlers.inc:1384
 msgid "An offset from the current time such as \"+1 day\" or \"-2 hours and 30 minutes\""
 msgstr ""
 
-#: includes/filter.handlers.inc:1354;1360;1364
+#: includes/filter.handlers.inc:1434;1440;1444
 msgid "Invalid date format."
 msgstr ""
 
-#: includes/filter.handlers.inc:1460
+#: includes/filter.handlers.inc:1540
 msgid "Is all of"
 msgstr ""
 
-#: includes/filter.handlers.inc:1461
+#: includes/filter.handlers.inc:1541
 msgid "Is none of"
 msgstr ""
 
-#: includes/handlers.inc:136
+#: includes/form.inc:249
+msgid "Validation error, please try again. If this error persists, please contact the site administrator."
+msgstr ""
+
+#: includes/handlers.inc:154
 msgid "!group: !title"
-msgstr ""
-
-#: includes/handlers.inc:336
-msgid "Broken/missing handler"
-msgstr ""
-
-#: includes/handlers.inc:344
-msgid "The handler for this item is broken or missing and cannot be used. If a module provided the handler and was disabled, re-enabling the module may restore it. Otherwise, you should probably delete this item."
 msgstr ""
 
 #: includes/handlers.inc:380
@@ -1565,7 +1590,7 @@ msgstr ""
 msgid "Generates an RSS feed from a view."
 msgstr ""
 
-#: includes/plugins.inc:143 includes/view.inc:1663
+#: includes/plugins.inc:143 includes/view.inc:1767
 msgid "Fields"
 msgstr ""
 
@@ -1585,775 +1610,847 @@ msgstr ""
 msgid "Numeric"
 msgstr ""
 
-#: includes/plugins.inc:783
+#: includes/plugins.inc:809
 msgid "Broken field"
 msgstr ""
 
-#: includes/plugins.inc:800
+#: includes/plugins.inc:826
 msgid "Basic settings"
 msgstr ""
 
-#: includes/plugins.inc:807
+#: includes/plugins.inc:833
 msgid "Change the name of this display."
 msgstr ""
 
-#: includes/plugins.inc:819
+#: includes/plugins.inc:845
 msgid "Change the title that this display will use."
 msgstr ""
 
-#: includes/plugins.inc:829
+#: includes/plugins.inc:855
 msgid "Style"
 msgstr ""
 
-#: includes/plugins.inc:831
+#: includes/plugins.inc:857
 msgid "Change the style plugin."
 msgstr ""
 
-#: includes/plugins.inc:845
+#: includes/plugins.inc:871
 msgid "Row style"
 msgstr ""
 
-#: includes/plugins.inc:847
+#: includes/plugins.inc:873
 msgid "Change the row plugin."
 msgstr ""
 
-#: includes/plugins.inc:857
+#: includes/plugins.inc:883
 msgid "Use AJAX"
 msgstr ""
 
-#: includes/plugins.inc:859
+#: includes/plugins.inc:885
 msgid "Change whether or not this display will use AJAX."
 msgstr ""
 
-#: includes/plugins.inc:866
+#: includes/plugins.inc:892
 msgid "Use pager"
 msgstr ""
 
-#: includes/plugins.inc:867
+#: includes/plugins.inc:893
 msgid "Mini"
 msgstr ""
 
-#: includes/plugins.inc:868
+#: includes/plugins.inc:894
 msgid "Change this display's pager setting."
 msgstr ""
 
-#: includes/plugins.inc:875;1054
+#: includes/plugins.inc:901;1080
 msgid "Items per page"
 msgstr ""
 
-#: includes/plugins.inc:875;1054;3339
+#: includes/plugins.inc:901;1080;3497
 msgid "Items to display"
 msgstr ""
 
-#: includes/plugins.inc:876
+#: includes/plugins.inc:902
 msgid "Unlimited"
 msgstr ""
 
-#: includes/plugins.inc:877
+#: includes/plugins.inc:903
 msgid "Change how many items to display."
 msgstr ""
 
-#: includes/plugins.inc:883
+#: includes/plugins.inc:909
 msgid "More link"
 msgstr ""
 
-#: includes/plugins.inc:885
+#: includes/plugins.inc:911
 msgid "Specify whether this display will provide a \"more\" link."
 msgstr ""
 
-#: includes/plugins.inc:891;1081
+#: includes/plugins.inc:917;1107
 msgid "Distinct"
 msgstr ""
 
-#: includes/plugins.inc:893;1078
+#: includes/plugins.inc:919;1104
 msgid "Display only distinct items, without duplicates."
 msgstr ""
 
-#: includes/plugins.inc:904;1104
+#: includes/plugins.inc:930;1130
 msgid "Unrestricted"
 msgstr ""
 
-#: includes/plugins.inc:912
+#: includes/plugins.inc:938
 msgid "Multiple roles"
 msgstr ""
 
-#: includes/plugins.inc:924
+#: includes/plugins.inc:950
 msgid "Access"
 msgstr ""
 
-#: includes/plugins.inc:926
+#: includes/plugins.inc:952
 msgid "Specify access control settings for this display."
 msgstr ""
 
-#: includes/plugins.inc:946
+#: includes/plugins.inc:972
 msgid "Link display"
 msgstr ""
 
-#: includes/plugins.inc:948
+#: includes/plugins.inc:974
 msgid "Specify which display this display will link to."
 msgstr ""
 
-#: includes/plugins.inc:953;1143
+#: includes/plugins.inc:979;1169
 msgid "Header"
 msgstr ""
 
-#: includes/plugins.inc:953;1159
+#: includes/plugins.inc:979;1185
 msgid "Footer"
 msgstr ""
 
-#: includes/plugins.inc:953;1175
+#: includes/plugins.inc:979;1201
 msgid "Empty text"
 msgstr ""
 
-#: includes/plugins.inc:969
+#: includes/plugins.inc:995
 msgid "Unknown/missing filter"
 msgstr ""
 
-#: includes/plugins.inc:977
+#: includes/plugins.inc:1003
 msgid "Change this display's !name."
 msgstr ""
 
-#: includes/plugins.inc:983
+#: includes/plugins.inc:1009
 msgid "Theme"
 msgstr ""
 
-#: includes/plugins.inc:984
+#: includes/plugins.inc:1010
 msgid "Information"
 msgstr ""
 
-#: includes/plugins.inc:985
+#: includes/plugins.inc:1011
 msgid "Get information on how to theme this display"
 msgstr ""
 
-#: includes/plugins.inc:1011
+#: includes/plugins.inc:1037
 msgid "The name of this display"
 msgstr ""
 
-#: includes/plugins.inc:1014
+#: includes/plugins.inc:1040
 msgid "This title will appear only in the administrative interface for the View."
 msgstr ""
 
-#: includes/plugins.inc:1019
+#: includes/plugins.inc:1045
 msgid "The title of this view"
 msgstr ""
 
-#: includes/plugins.inc:1022
+#: includes/plugins.inc:1048
 msgid "This title will be displayed with the view, wherever titles are normally displayed; i.e, as the page title, block title, etc."
 msgstr ""
 
-#: includes/plugins.inc:1027
+#: includes/plugins.inc:1053
 msgid "Use AJAX when available to load this view"
 msgstr ""
 
-#: includes/plugins.inc:1031
+#: includes/plugins.inc:1057
 msgid "If set, this view will use an AJAX mechanism for paging, table sorting and exposed filters. This means the entire page will not refresh. It is not recommended that you use this if this view is the main content of the page as it will prevent deep linking to specific pages, but it is very useful for side content."
 msgstr ""
 
-#: includes/plugins.inc:1040
+#: includes/plugins.inc:1066
 msgid "Use a pager for this view"
 msgstr ""
 
-#: includes/plugins.inc:1043
+#: includes/plugins.inc:1069
 msgid "Full pager"
 msgstr ""
 
-#: includes/plugins.inc:1043
+#: includes/plugins.inc:1069
 msgid "Mini pager"
 msgstr ""
 
-#: includes/plugins.inc:1048
+#: includes/plugins.inc:1074
 msgid "Pager element"
 msgstr ""
 
-#: includes/plugins.inc:1049
+#: includes/plugins.inc:1075
 msgid "Unless you're experiencing problems with pagers related to this view, you should leave this at 0. If using multiple pagers on one page you may need to set this number to a higher value so as not to conflict within the ?page= array. Large values will add a lot of commas to your URLs, so avoid if possible."
 msgstr ""
 
-#: includes/plugins.inc:1058
+#: includes/plugins.inc:1084
 msgid "The number of items to display per page. Enter 0 for no limit."
 msgstr ""
 
-#: includes/plugins.inc:1063
+#: includes/plugins.inc:1089
 msgid "Offset"
 msgstr ""
 
-#: includes/plugins.inc:1064
+#: includes/plugins.inc:1090
 msgid "The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed. Offset can not be used if items to display is 0; instead use a very large number there."
 msgstr ""
 
-#: includes/plugins.inc:1069
+#: includes/plugins.inc:1095
 msgid "Add a more link to the bottom of the display."
 msgstr ""
 
-#: includes/plugins.inc:1072
+#: includes/plugins.inc:1098
 msgid "Create more link"
 msgstr ""
 
-#: includes/plugins.inc:1073
+#: includes/plugins.inc:1099
 msgid "This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."
 msgstr ""
 
-#: includes/plugins.inc:1082
+#: includes/plugins.inc:1108
 msgid "This will make the view display only distinct items. If there are multiple identical items, each will be displayed only once. You can use this to try and remove duplicates from a view, though it does not always work. Note that this can slow queries down, so use it with caution."
 msgstr ""
 
-#: includes/plugins.inc:1087
+#: includes/plugins.inc:1113
 msgid "Access restrictions"
 msgstr ""
 
-#: includes/plugins.inc:1104
+#: includes/plugins.inc:1130
 msgid "By role"
 msgstr ""
 
-#: includes/plugins.inc:1104
+#: includes/plugins.inc:1130
 msgid "By permission"
 msgstr ""
 
-#: includes/plugins.inc:1113
-msgid "If by role"
+#: includes/plugins.inc:1139
+msgid "Role"
 msgstr ""
 
-#: includes/plugins.inc:1116
+#: includes/plugins.inc:1142
 msgid "Only the checked roles will be able to access this display. Note that users with \"access all views\" can see any view, regardless of role."
 msgstr ""
 
-#: includes/plugins.inc:1133
-msgid "If by permission"
+#: includes/plugins.inc:1159
+msgid "Permission"
 msgstr ""
 
-#: includes/plugins.inc:1135
+#: includes/plugins.inc:1161
 msgid "Only users with the selected permission flag will be able to access this display. Note that users with \"access all views\" can see any view, regardless of other permissions."
 msgstr ""
 
-#: includes/plugins.inc:1146;1162
+#: includes/plugins.inc:1172;1188
 msgid "Display even if view has no result"
 msgstr ""
 
-#: includes/plugins.inc:1153
+#: includes/plugins.inc:1179
 msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
 msgstr ""
 
-#: includes/plugins.inc:1169
+#: includes/plugins.inc:1195
 msgid "Text to display beneath the view. May contain an explanation or links or whatever you like. Optional."
 msgstr ""
 
-#: includes/plugins.inc:1180
+#: includes/plugins.inc:1206
 msgid "Text to display if the view has no results. Optional."
 msgstr ""
 
-#: includes/plugins.inc:1186
+#: includes/plugins.inc:1212
 msgid "How should this view be styled"
 msgstr ""
 
-#: includes/plugins.inc:1192
+#: includes/plugins.inc:1218
 msgid "If the style you choose has settings, be sure to click the settings button that will appear next to it in the View summary."
 msgstr ""
 
-#: includes/plugins.inc:1200
+#: includes/plugins.inc:1226
 msgid "You may also adjust the !settings for the currently selected style by clicking on the icon."
 msgstr ""
 
-#: includes/plugins.inc:1200;1242
+#: includes/plugins.inc:1226;1269
 msgid "settings"
 msgstr ""
 
-#: includes/plugins.inc:1206
+#: includes/plugins.inc:1232
 msgid "Style options"
 msgstr ""
 
-#: includes/plugins.inc:1218
+#: includes/plugins.inc:1244
 msgid "Row style options"
 msgstr ""
 
-#: includes/plugins.inc:1230
+#: includes/plugins.inc:1256
 msgid "How should each row in this view be styled"
 msgstr ""
 
-#: includes/plugins.inc:1242
+#: includes/plugins.inc:1269
 msgid "You may also adjust the !settings for the currently selected row style by clicking on the icon."
 msgstr ""
 
-#: includes/plugins.inc:1248
+#: includes/plugins.inc:1275
 msgid "Which display to use for path"
 msgstr ""
 
-#: includes/plugins.inc:1257
+#: includes/plugins.inc:1284
 msgid "Which display to use to get this display's path for things like summary links, rss feed links, more links, etc."
 msgstr ""
 
-#: includes/plugins.inc:1262
+#: includes/plugins.inc:1289
 msgid "Theming information"
 msgstr ""
 
-#: includes/plugins.inc:1270
+#: includes/plugins.inc:1297
 msgid "Display output"
 msgstr ""
 
-#: includes/plugins.inc:1275
+#: includes/plugins.inc:1301
+msgid "Alternative display output"
+msgstr ""
+
+#: includes/plugins.inc:1308
 msgid "Style output"
 msgstr ""
 
-#: includes/plugins.inc:1280
+#: includes/plugins.inc:1312
+msgid "Alternative style"
+msgstr ""
+
+#: includes/plugins.inc:1319
 msgid "Row style output"
 msgstr ""
 
-#: includes/plugins.inc:1286
-msgid "Field @field"
-msgstr ""
-
-#: includes/plugins.inc:1294
-msgid "<strong>Important!</strong> When you add a new template to your theme, be sure to clear the theme registry cache. You can do this by visiting administer >> site building >> themes -- just loading the page should clear the cache."
-msgstr ""
-
-#: includes/plugins.inc:1306
-msgid "Theming information (display)"
-msgstr ""
-
-#: includes/plugins.inc:1307;1326;1347;1368
-msgid "Back to !info."
-msgstr ""
-
-#: includes/plugins.inc:1307;1326;1347;1368
-msgid "theming information"
-msgstr ""
-
-#: includes/plugins.inc:1310
-msgid "This display has no theming information"
-msgstr ""
-
-#: includes/plugins.inc:1313
-msgid "This is the default theme template used for this display."
-msgstr ""
-
-#: includes/plugins.inc:1325
-msgid "Theming information (style)"
+#: includes/plugins.inc:1323
+msgid "Alternative row style"
 msgstr ""
 
 #: includes/plugins.inc:1331
+msgid "Field @field (ID: @id)"
+msgstr ""
+
+#: includes/plugins.inc:1339
+msgid "This section lists all possible templates for the display plugin and for the style plugins, ordered roughly from the least specific to the most specific. The active template for each plugin -- which is the most specific template found on the system -- is highlighted in bold."
+msgstr ""
+
+#: includes/plugins.inc:1354
+msgid "Rescan template files"
+msgstr ""
+
+#: includes/plugins.inc:1360
+msgid "<strong>Important!</strong> When adding, removing, or renaming template files, it is necessary to make Drupal aware of the changes by making it rescan the files on your system. By clicking this button you clear Drupal's theme registry and thereby trigger this rescanning process. The highlighted templates above will then reflect the new state of your system."
+msgstr ""
+
+#: includes/plugins.inc:1366
+msgid "Theming information (display)"
+msgstr ""
+
+#: includes/plugins.inc:1367;1394;1423;1452
+msgid "Back to !info."
+msgstr ""
+
+#: includes/plugins.inc:1367;1394;1423;1452
+msgid "theming information"
+msgstr ""
+
+#: includes/plugins.inc:1370
+msgid "This display has no theming information"
+msgstr ""
+
+#: includes/plugins.inc:1373
+msgid "This is the default theme template used for this display."
+msgstr ""
+
+#: includes/plugins.inc:1379
+msgid "This is an alternative template for this display."
+msgstr ""
+
+#: includes/plugins.inc:1393
+msgid "Theming information (style)"
+msgstr ""
+
+#: includes/plugins.inc:1399
 msgid "This display has no style theming information"
 msgstr ""
 
-#: includes/plugins.inc:1334
+#: includes/plugins.inc:1402
 msgid "This is the default theme template used for this style."
 msgstr ""
 
-#: includes/plugins.inc:1346;1367
+#: includes/plugins.inc:1408
+msgid "This is an alternative template for this style."
+msgstr ""
+
+#: includes/plugins.inc:1422;1451
 msgid "Theming information (row style)"
 msgstr ""
 
-#: includes/plugins.inc:1352
+#: includes/plugins.inc:1428
 msgid "This display has no row style theming information"
 msgstr ""
 
-#: includes/plugins.inc:1355;1370
+#: includes/plugins.inc:1431;1454
 msgid "This is the default theme template used for this row style."
 msgstr ""
 
-#: includes/plugins.inc:1434
+#: includes/plugins.inc:1437
+msgid "This is an alternative template for this row style."
+msgstr ""
+
+#: includes/plugins.inc:1494
+msgid "File found in folder @template-path"
+msgstr ""
+
+#: includes/plugins.inc:1498
+msgid "(File not found, in folder @template-path)"
+msgstr ""
+
+#: includes/plugins.inc:1525
 msgid "You must select at least one role if type is \"by role\""
 msgstr ""
 
-#: includes/plugins.inc:1551
+#: includes/plugins.inc:1633
 msgid "Override"
 msgstr ""
 
-#: includes/plugins.inc:1563
+#: includes/plugins.inc:1638
+msgid "Status: using default values."
+msgstr ""
+
+#: includes/plugins.inc:1642
+msgid "Update default display"
+msgstr ""
+
+#: includes/plugins.inc:1647
 msgid "Use default"
 msgstr ""
 
-#: includes/plugins.inc:1756
+#: includes/plugins.inc:1652
+msgid "Status: using overridden values."
+msgstr ""
+
+#: includes/plugins.inc:1842
 msgid "Display @display uses fields but there are none defined for it."
 msgstr ""
 
-#: includes/plugins.inc:1760
+#: includes/plugins.inc:1846
 msgid "Display @display uses path but path is undefined."
 msgstr ""
 
-#: includes/plugins.inc:1765
+#: includes/plugins.inc:1851
 msgid "Display @display has an invalid style plugin."
 msgstr ""
 
-#: includes/plugins.inc:1994
+#: includes/plugins.inc:2084
 msgid "Page settings"
 msgstr ""
 
-#: includes/plugins.inc:2019
+#: includes/plugins.inc:2109
 msgid "No menu"
 msgstr ""
 
-#: includes/plugins.inc:2022
+#: includes/plugins.inc:2112
 msgid "Normal: @title"
 msgstr ""
 
-#: includes/plugins.inc:2026
+#: includes/plugins.inc:2116
 msgid "Tab: @title"
 msgstr ""
 
-#: includes/plugins.inc:2036
+#: includes/plugins.inc:2126
 msgid "Menu"
 msgstr ""
 
-#: includes/plugins.inc:2042
+#: includes/plugins.inc:2132
 msgid "Change settings for the parent menu"
 msgstr ""
 
-#: includes/plugins.inc:2055
+#: includes/plugins.inc:2145
 msgid "The menu path or URL of this view"
 msgstr ""
 
-#: includes/plugins.inc:2059
+#: includes/plugins.inc:2149
 msgid "This view will be displayed by visiting this path on your site. You may use \"%\" in your URL to represent values that will be used for arguments: For example, \"node/%/feed\"."
 msgstr ""
 
-#: includes/plugins.inc:2065
+#: includes/plugins.inc:2155
 msgid "Menu item entry"
 msgstr ""
 
-#: includes/plugins.inc:2082
+#: includes/plugins.inc:2172
 msgid "No menu entry"
 msgstr ""
 
-#: includes/plugins.inc:2083
+#: includes/plugins.inc:2173
 msgid "Normal menu entry"
 msgstr ""
 
-#: includes/plugins.inc:2084;2131
+#: includes/plugins.inc:2174;2221
 msgid "Menu tab"
 msgstr ""
 
-#: includes/plugins.inc:2085
+#: includes/plugins.inc:2175
 msgid "Default menu tab"
 msgstr ""
 
-#: includes/plugins.inc:2094
+#: includes/plugins.inc:2184
 msgid "If set to normal or tab, enter the text to use for the menu item."
 msgstr ""
 
-#: includes/plugins.inc:2103
-msgid "If set to tab, enter the weight of the item. The lower th weight the higher/further left it will appear."
+#: includes/plugins.inc:2193
+msgid "If set to tab, enter the weight of the item. The lower the weight the higher/further left it will appear."
 msgstr ""
 
-#: includes/plugins.inc:2109
+#: includes/plugins.inc:2199
 msgid "Default tab options"
 msgstr ""
 
-#: includes/plugins.inc:2118
+#: includes/plugins.inc:2208
 msgid "When providing a menu item as a tab, Drupal needs to know what the parent menu item of that tab will be. Sometimes the parent will already exist, but other times you will need to have one created. The path of a parent item will always be the same path with the last part left off. i.e, if the path to this view is <em>foo/bar/baz</em>, the parent path would be <em>foo/bar</em>."
 msgstr ""
 
-#: includes/plugins.inc:2129
+#: includes/plugins.inc:2219
 msgid "Parent menu item"
 msgstr ""
 
-#: includes/plugins.inc:2131
+#: includes/plugins.inc:2221
 msgid "Already exists"
 msgstr ""
 
-#: includes/plugins.inc:2131
+#: includes/plugins.inc:2221
 msgid "Normal menu item"
 msgstr ""
 
-#: includes/plugins.inc:2139
+#: includes/plugins.inc:2229
 msgid "If creating a parent menu item, enter the title of the item."
 msgstr ""
 
-#: includes/plugins.inc:2145
+#: includes/plugins.inc:2235
 msgid "Tab weight"
 msgstr ""
 
-#: includes/plugins.inc:2149
+#: includes/plugins.inc:2239
 msgid "If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be."
 msgstr ""
 
-#: includes/plugins.inc:2163
+#: includes/plugins.inc:2253
 msgid "\"$arg\" is no longer supported. Use % instead."
 msgstr ""
 
-#: includes/plugins.inc:2173
+#: includes/plugins.inc:2263
 msgid "Views cannot create normal menu items for paths with a % in them."
 msgstr ""
 
-#: includes/plugins.inc:2180
+#: includes/plugins.inc:2270
 msgid "A display whose path ends with a % cannot be a tab."
 msgstr ""
 
-#: includes/plugins.inc:2185
+#: includes/plugins.inc:2275
 msgid "Title is required for this menu type."
 msgstr ""
 
-#: includes/plugins.inc:2216
+#: includes/plugins.inc:2306
 msgid "Display @display is set to use a menu but the menu title is not set."
 msgstr ""
 
-#: includes/plugins.inc:2222
+#: includes/plugins.inc:2312
 msgid "Display @display is set to use a parent menu but the parent menu title is not set."
 msgstr ""
 
-#: includes/plugins.inc:2288
+#: includes/plugins.inc:2378
 msgid "Block settings"
 msgstr ""
 
-#: includes/plugins.inc:2302
+#: includes/plugins.inc:2392
 msgid "Admin"
 msgstr ""
 
-#: includes/plugins.inc:2314
-msgid "Caching"
-msgstr ""
-
-#: includes/plugins.inc:2324
+#: includes/plugins.inc:2416
 msgid "Do not cache"
 msgstr ""
 
-#: includes/plugins.inc:2325
+#: includes/plugins.inc:2417
 msgid "Cache once for everything (global)"
 msgstr ""
 
-#: includes/plugins.inc:2326
+#: includes/plugins.inc:2418
 msgid "Per page"
 msgstr ""
 
-#: includes/plugins.inc:2327
+#: includes/plugins.inc:2419
 msgid "Per role"
 msgstr ""
 
-#: includes/plugins.inc:2328
+#: includes/plugins.inc:2420
 msgid "Per role per page"
 msgstr ""
 
-#: includes/plugins.inc:2329
+#: includes/plugins.inc:2421
 msgid "Per user"
 msgstr ""
 
-#: includes/plugins.inc:2330
+#: includes/plugins.inc:2422
 msgid "Per user per page"
 msgstr ""
 
-#: includes/plugins.inc:2355
+#: includes/plugins.inc:2447
 msgid "Block admin description"
 msgstr ""
 
-#: includes/plugins.inc:2358
+#: includes/plugins.inc:2450
 msgid "This will appear as the name of this block in administer >> site building >> blocks."
 msgstr ""
 
-#: includes/plugins.inc:2363
+#: includes/plugins.inc:2455
 msgid "Block caching type"
 msgstr ""
 
-#: includes/plugins.inc:2367
+#: includes/plugins.inc:2459
 msgid "This sets the default status for Drupal's built-in block caching method; this requires that caching be turned on in block administration, and be careful because you have little control over when this cache is flushed."
 msgstr ""
 
-#: includes/plugins.inc:2418
+#: includes/plugins.inc:2511
 msgid "Before"
 msgstr ""
 
-#: includes/plugins.inc:2419
+#: includes/plugins.inc:2512
 msgid "After"
 msgstr ""
 
-#: includes/plugins.inc:2420
+#: includes/plugins.inc:2513
 msgid "Both"
 msgstr ""
 
-#: includes/plugins.inc:2440
+#: includes/plugins.inc:2533
 msgid "Attachment settings"
 msgstr ""
 
-#: includes/plugins.inc:2445;2486
+#: includes/plugins.inc:2538;2585
 msgid "Inherit arguments"
 msgstr ""
 
-#: includes/plugins.inc:2451;2495
+#: includes/plugins.inc:2544;2594
+msgid "Inherit exposed filters"
+msgstr ""
+
+#: includes/plugins.inc:2550;2603
 msgid "Position"
 msgstr ""
 
-#: includes/plugins.inc:2457;2649
+#: includes/plugins.inc:2556;2788
 msgid "Multiple displays"
 msgstr ""
 
-#: includes/plugins.inc:2472;2504;2664;2678
+#: includes/plugins.inc:2571;2612;2803;2830
 msgid "Attach to"
 msgstr ""
 
-#: includes/plugins.inc:2489
+#: includes/plugins.inc:2588;2597
 msgid "Inherit"
 msgstr ""
 
-#: includes/plugins.inc:2490
+#: includes/plugins.inc:2589
 msgid "Should this display inherit its arguments from the parent display to which it is attached?"
 msgstr ""
 
-#: includes/plugins.inc:2498;2687
+#: includes/plugins.inc:2598
+msgid "Should this display inherit its exposed filter values from the parent display to which it is attached?"
+msgstr ""
+
+#: includes/plugins.inc:2606;2839
 msgid "Attach before or after the parent display?"
 msgstr ""
 
-#: includes/plugins.inc:2513
+#: includes/plugins.inc:2621
 msgid "Select which display or displays this should attach to."
 msgstr ""
 
-#: includes/plugins.inc:2641
+#: includes/plugins.inc:2776
 msgid "Feed settings"
 msgstr ""
 
-#: includes/plugins.inc:2693
+#: includes/plugins.inc:2780
+msgid "Using the site name"
+msgstr ""
+
+#: includes/plugins.inc:2822
+msgid "Use the site name for the title"
+msgstr ""
+
+#: includes/plugins.inc:2845
 msgid "This view will be displayed by visiting this path on your site. It is recommended that the path be something like \"path/%/%/feed\" or \"path/%/%/rss.xml\", putting one % in the path for each argument you have defined in the view."
 msgstr ""
 
-#: includes/plugins.inc:2835
+#: includes/plugins.inc:2990
 msgid "Grouping field"
 msgstr ""
 
-#: includes/plugins.inc:2838
+#: includes/plugins.inc:2993
 msgid "You may optionally specify a field by which to group the records.  Leave blank to not group."
 msgstr ""
 
-#: includes/plugins.inc:2923
+#: includes/plugins.inc:3081
 msgid "Style @style requires a row style but the row plugin is invalid."
 msgstr ""
 
-#: includes/plugins.inc:2970
+#: includes/plugins.inc:3128
 msgid "List type"
 msgstr ""
 
-#: includes/plugins.inc:3000
+#: includes/plugins.inc:3158
 msgid "Number of columns"
 msgstr ""
 
-#: includes/plugins.inc:3005
+#: includes/plugins.inc:3163
 msgid "Alignment"
 msgstr ""
 
-#: includes/plugins.inc:3006
+#: includes/plugins.inc:3164
 msgid "Horizontal"
 msgstr ""
 
-#: includes/plugins.inc:3006
+#: includes/plugins.inc:3164
 msgid "Vertical"
 msgstr ""
 
-#: includes/plugins.inc:3008
+#: includes/plugins.inc:3166
 msgid "Horizontal alignment will place items starting in the upper left and moving right. Vertical alignment will place items starting in the upper left and moving down."
 msgstr ""
 
-#: includes/plugins.inc:3127
+#: includes/plugins.inc:3285
 msgid "You need at least one field before you can configure your table settings"
 msgstr ""
 
-#: includes/plugins.inc:3136
+#: includes/plugins.inc:3294
 msgid "Override normal sorting if click sorting is used"
 msgstr ""
 
-#: includes/plugins.inc:3142
+#: includes/plugins.inc:3300
 msgid "Enable Drupal style \"sticky\" table headers (Javascript)"
 msgstr ""
 
-#: includes/plugins.inc:3144
+#: includes/plugins.inc:3302
 msgid "(Sticky header effects will not be active for preview below, only on live output.)"
 msgstr ""
 
-#: includes/plugins.inc:3149
+#: includes/plugins.inc:3307
 msgid "Default sort order"
 msgstr ""
 
-#: includes/plugins.inc:3150 includes/sort.handlers.inc:60
+#: includes/plugins.inc:3308 includes/sort.handlers.inc:60
 msgid "Ascending"
 msgstr ""
 
-#: includes/plugins.inc:3150 includes/sort.handlers.inc:60
+#: includes/plugins.inc:3308 includes/sort.handlers.inc:60
 msgid "Descending"
 msgstr ""
 
-#: includes/plugins.inc:3152
+#: includes/plugins.inc:3310
 msgid "If a default sort order is selected, what order should it use by default."
 msgstr ""
 
-#: includes/plugins.inc:3238
-msgid "Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column clicksortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section."
+#: includes/plugins.inc:3396
+msgid "Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column click sortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section."
 msgstr ""
 
-#: includes/plugins.inc:3263 includes/view.inc:1665
+#: includes/plugins.inc:3421 includes/view.inc:1769
 msgid "Field"
 msgstr ""
 
-#: includes/plugins.inc:3264
+#: includes/plugins.inc:3422
 msgid "Column"
 msgstr ""
 
-#: includes/plugins.inc:3267
+#: includes/plugins.inc:3425
 msgid "Sortable"
 msgstr ""
 
-#: includes/plugins.inc:3271
+#: includes/plugins.inc:3429
 msgid "Default sort"
 msgstr ""
 
-#: includes/plugins.inc:3330
+#: includes/plugins.inc:3488
 msgid "Display record count with link"
 msgstr ""
 
-#: includes/plugins.inc:3335
+#: includes/plugins.inc:3493
 msgid "Override number of items to display"
 msgstr ""
 
-#: includes/plugins.inc:3372
+#: includes/plugins.inc:3530
 msgid "Display items inline"
 msgstr ""
 
-#: includes/plugins.inc:3421
+#: includes/plugins.inc:3580
 msgid "Use the site mission for the description"
 msgstr ""
 
-#: includes/plugins.inc:3425
+#: includes/plugins.inc:3584
 msgid "RSS description"
 msgstr ""
 
-#: includes/plugins.inc:3427
+#: includes/plugins.inc:3586
 msgid "This will appear in the RSS feed itself."
 msgstr ""
 
-#: includes/plugins.inc:3550
+#: includes/plugins.inc:3709
 msgid "Inline fields"
 msgstr ""
 
-#: includes/plugins.inc:3553
+#: includes/plugins.inc:3712
 msgid "Inline fields will be displayed next to each other rather than one after another."
 msgstr ""
 
-#: includes/plugins.inc:3561
+#: includes/plugins.inc:3720
 msgid "The separator may be placed between inline fields to keep them from squishing up next to each other. You can use HTML in this field."
 msgstr ""
 
-#: includes/plugins.inc:3611
+#: includes/plugins.inc:3770
 msgid "Default argument"
 msgstr ""
 
-#: includes/plugins.inc:3653
+#: includes/plugins.inc:3792
+msgid "Note: you do not have permission to modify this. If you change the default argument type, this setting will be lost and you will NOT be able to get it back."
+msgstr ""
+
+#: includes/plugins.inc:3813
 msgid "PHP argument code"
 msgstr ""
 
-#: includes/plugins.inc:3656
+#: includes/plugins.inc:3816
 msgid "Enter PHP code that returns a value to use for this argument. Do not use &lt;?php ?&gt;. You must return only a single value for just this argument."
 msgstr ""
 
-#: includes/plugins.inc:3760
+#: includes/plugins.inc:3896
+msgid "Note: you do not have permission to modify this. If you change the validator, this setting will be lost and you will NOT be able to get it back."
+msgstr ""
+
+#: includes/plugins.inc:3921
 msgid "PHP validate code"
 msgstr ""
 
-#: includes/plugins.inc:3762
+#: includes/plugins.inc:3923
 msgid "Enter PHP code that returns TRUE or FALSE. No return is the same as FALSE, so be SURE to return something if you do not want to declare the argument invalid. Do not use &lt;?php ?&gt;. The argument to validate will be \"$argument\" and the view will be \"$view\". You may change the argument by setting \"$handler->argument\"."
 msgstr ""
 
-#: includes/relationship.handlers.inc:62
+#: includes/relationship.handlers.inc:80
 msgid "The label for this relationship that will be displayed only administratively."
 msgstr ""
 
-#: includes/relationship.handlers.inc:67
+#: includes/relationship.handlers.inc:85
 msgid "Require this relationship"
 msgstr ""
 
-#: includes/relationship.handlers.inc:68
+#: includes/relationship.handlers.inc:86
 msgid "If required, items that do not contain this relationship will not appear."
 msgstr ""
 
@@ -2369,103 +2466,103 @@ msgstr ""
 msgid "Sort order"
 msgstr ""
 
-#: includes/sort.handlers.inc:76
+#: includes/sort.handlers.inc:108
 msgid "views_handler_sort_formula missing default: @formula"
 msgstr ""
 
-#: includes/sort.handlers.inc:116
+#: includes/sort.handlers.inc:148
 msgid "Granularity"
 msgstr ""
 
-#: includes/sort.handlers.inc:118
+#: includes/sort.handlers.inc:150
 msgid "Second"
 msgstr ""
 
-#: includes/sort.handlers.inc:119
+#: includes/sort.handlers.inc:151
 msgid "Minute"
 msgstr ""
 
-#: includes/sort.handlers.inc:120
+#: includes/sort.handlers.inc:152
 msgid "Hour"
 msgstr ""
 
-#: includes/sort.handlers.inc:121
+#: includes/sort.handlers.inc:153
 msgid "Day"
 msgstr ""
 
-#: includes/sort.handlers.inc:122
+#: includes/sort.handlers.inc:154
 msgid "Month"
 msgstr ""
 
-#: includes/sort.handlers.inc:123
+#: includes/sort.handlers.inc:155
 msgid "Year"
 msgstr ""
 
-#: includes/sort.handlers.inc:125
+#: includes/sort.handlers.inc:157
 msgid "The granularity is the smallest unit to use when determining whether two dates are the same; for example, if the granularity is \"Year\" then all dates in 1999, regardless of when they fall in 1999, will be considered the same date."
 msgstr ""
 
-#: includes/view.inc:224
+#: includes/view.inc:255
 msgid "set_display called with invalid display id @display"
 msgstr ""
 
-#: includes/view.inc:946
+#: includes/view.inc:995
 msgid "Home"
 msgstr ""
 
-#: includes/view.inc:1664
+#: includes/view.inc:1768
 msgid "fields"
 msgstr ""
 
-#: includes/view.inc:1666
+#: includes/view.inc:1770
 msgid "field"
 msgstr ""
 
-#: includes/view.inc:1671
+#: includes/view.inc:1775
 msgid "arguments"
 msgstr ""
 
-#: includes/view.inc:1672;1673
+#: includes/view.inc:1776;1777
 msgid "Argument"
 msgstr ""
 
-#: includes/view.inc:1677
+#: includes/view.inc:1781
 msgid "Sort criteria"
 msgstr ""
 
-#: includes/view.inc:1678
+#: includes/view.inc:1782
 msgid "sort criteria"
 msgstr ""
 
-#: includes/view.inc:1679
+#: includes/view.inc:1783
 msgid "Sort criterion"
 msgstr ""
 
-#: includes/view.inc:1680
+#: includes/view.inc:1784
 msgid "sort criterion"
 msgstr ""
 
-#: includes/view.inc:1684
+#: includes/view.inc:1788
 msgid "Filters"
 msgstr ""
 
-#: includes/view.inc:1685
+#: includes/view.inc:1789
 msgid "filters"
 msgstr ""
 
-#: includes/view.inc:1686
+#: includes/view.inc:1790
 msgid "Filter"
 msgstr ""
 
-#: includes/view.inc:1687
+#: includes/view.inc:1791
 msgid "filter"
 msgstr ""
 
-#: includes/view.inc:1692
+#: includes/view.inc:1796
 msgid "Relationships"
 msgstr ""
 
-#: includes/view.inc:1693
+#: includes/view.inc:1797
 msgid "relationships"
 msgstr ""
 
@@ -2490,14 +2587,14 @@ msgid "Top level book"
 msgstr ""
 
 #: modules/book.views.inc:31
-msgid "The book the node is in"
+msgid "The book the node is in."
 msgstr ""
 
 #: modules/book.views.inc:58
 msgid "The weight of the book page."
 msgstr ""
 
-#: modules/book.views.inc:69 modules/comment.views.inc:202 modules/taxonomy.views.inc:339
+#: modules/book.views.inc:69 modules/comment.views.inc:202 modules/taxonomy.views.inc:310
 msgid "Depth"
 msgstr ""
 
@@ -2518,14 +2615,14 @@ msgid "Parent"
 msgstr ""
 
 #: modules/book.views.inc:111
-msgid "The parent book node"
+msgid "The parent book node."
 msgstr ""
 
 #: modules/book.views.inc:116
 msgid "Book parent"
 msgstr ""
 
-#: modules/comment.views.inc:22;26;382;391
+#: modules/comment.views.inc:22;26;384;393
 msgid "Comment"
 msgstr ""
 
@@ -2537,7 +2634,7 @@ msgstr ""
 msgid "The title of the comment."
 msgstr ""
 
-#: modules/comment.views.inc:63 modules/node.views.inc:348
+#: modules/comment.views.inc:63 modules/node.views.inc:366
 msgid "Body"
 msgstr ""
 
@@ -2550,7 +2647,7 @@ msgid "ID"
 msgstr ""
 
 #: modules/comment.views.inc:77
-msgid "The commment ID of the field"
+msgid "The comment ID of the field"
 msgstr ""
 
 #: modules/comment.views.inc:95
@@ -2585,7 +2682,7 @@ msgstr ""
 msgid "Whether or not the comment is currently in moderation."
 msgstr ""
 
-#: modules/comment.views.inc:157
+#: modules/comment.views.inc:157 modules/node.views.inc:203;212
 msgid "Moderated"
 msgstr ""
 
@@ -2597,7 +2694,7 @@ msgstr ""
 msgid "Provide a simple link to view the comment."
 msgstr ""
 
-#: modules/comment.views.inc:176 modules/node.views.inc:231 modules/user.views.inc:204
+#: modules/comment.views.inc:176 modules/node.views.inc:249 modules/user.views.inc:204
 msgid "Edit link"
 msgstr ""
 
@@ -2605,7 +2702,7 @@ msgstr ""
 msgid "Provide a simple link to edit the comment."
 msgstr ""
 
-#: modules/comment.views.inc:185 modules/node.views.inc:239;461 modules/user.views.inc:212
+#: modules/comment.views.inc:185 modules/node.views.inc:257;479 modules/user.views.inc:212
 msgid "Delete link"
 msgstr ""
 
@@ -2633,28 +2730,20 @@ msgstr ""
 msgid "Sort by the threaded order. This will keep child comments together with their parents."
 msgstr ""
 
-#: modules/comment.views.inc:214 modules/node.views.inc:1413
-msgid "Node ID"
+#: modules/comment.views.inc:214;220;255 modules/node.views.inc:24;29;89;365;380;491;1152;1161;1171 modules/upload.views.inc:43
+msgid "Node"
 msgstr ""
 
 #: modules/comment.views.inc:215
 msgid "The node the comment is a reply to."
 msgstr ""
 
-#: modules/comment.views.inc:220;253 modules/node.views.inc:24;29;89;347;362;473;1178;1187;1197
-msgid "Node"
-msgstr ""
-
-#: modules/comment.views.inc:225
-msgid "User ID"
+#: modules/comment.views.inc:225;231 modules/node.views.inc:353 modules/statistics.views.inc:201 modules/user.views.inc:23;27;221
+msgid "User"
 msgstr ""
 
 #: modules/comment.views.inc:226
 msgid "The user who wrote the comment."
-msgstr ""
-
-#: modules/comment.views.inc:231 modules/node.views.inc:335 modules/statistics.views.inc:201 modules/user.views.inc:23;27;221
-msgid "User"
 msgstr ""
 
 #: modules/comment.views.inc:236
@@ -2665,71 +2754,75 @@ msgstr ""
 msgid "The Comment ID of the parent comment."
 msgstr ""
 
-#: modules/comment.views.inc:245
+#: modules/comment.views.inc:242;247
 msgid "Parent comment"
 msgstr ""
 
-#: modules/comment.views.inc:266
+#: modules/comment.views.inc:243
+msgid "The parent comment."
+msgstr ""
+
+#: modules/comment.views.inc:268
 msgid "Last comment time"
 msgstr ""
 
-#: modules/comment.views.inc:267
+#: modules/comment.views.inc:269
 msgid "Date and time of when the last comment was posted."
 msgstr ""
 
-#: modules/comment.views.inc:282
+#: modules/comment.views.inc:284
 msgid "Last comment author"
 msgstr ""
 
-#: modules/comment.views.inc:283
+#: modules/comment.views.inc:285
 msgid "The name of the author of the last posted comment."
 msgstr ""
 
-#: modules/comment.views.inc:295
+#: modules/comment.views.inc:297
 msgid "Comment count"
 msgstr ""
 
-#: modules/comment.views.inc:296
+#: modules/comment.views.inc:298
 msgid "The number of comments a node has."
 msgstr ""
 
-#: modules/comment.views.inc:314
+#: modules/comment.views.inc:316
 msgid "Updated/commented date"
 msgstr ""
 
-#: modules/comment.views.inc:315
+#: modules/comment.views.inc:317
 msgid "The most recent of last comment posted or node updated time."
 msgstr ""
 
-#: modules/comment.views.inc:338
+#: modules/comment.views.inc:340
 msgid "New comments"
 msgstr ""
 
-#: modules/comment.views.inc:339
+#: modules/comment.views.inc:341
 msgid "The number of new comments on the node."
 msgstr ""
 
-#: modules/comment.views.inc:347
+#: modules/comment.views.inc:349
 msgid "Comment status"
 msgstr ""
 
-#: modules/comment.views.inc:348
+#: modules/comment.views.inc:350
 msgid "Whether comments are enabled or disabled on the node."
 msgstr ""
 
-#: modules/comment.views.inc:362
+#: modules/comment.views.inc:364
 msgid "User posted or commented"
 msgstr ""
 
-#: modules/comment.views.inc:363
+#: modules/comment.views.inc:365
 msgid "Display comments only if a user posted the node or commented on the node."
 msgstr ""
 
-#: modules/comment.views.inc:383
+#: modules/comment.views.inc:385
 msgid "Display the comment with standard comment view."
 msgstr ""
 
-#: modules/comment.views.inc:392
+#: modules/comment.views.inc:394
 msgid "Display the comment as RSS."
 msgstr ""
 
@@ -2737,59 +2830,59 @@ msgstr ""
 msgid "Link this field to its comment"
 msgstr ""
 
-#: modules/comment.views.inc:506
+#: modules/comment.views.inc:504
 msgid "Link this field to its user or an author's homepage"
 msgstr ""
 
-#: modules/comment.views.inc:553 modules/node.views.inc:601 modules/user.views.inc:447
+#: modules/comment.views.inc:549 modules/node.views.inc:611 modules/user.views.inc:452
 msgid "Text to display"
 msgstr ""
 
-#: modules/comment.views.inc:564 modules/node.views.inc:612 modules/user.views.inc:463
+#: modules/comment.views.inc:560 modules/node.views.inc:622 modules/user.views.inc:468
 msgid "view"
 msgstr ""
 
-#: modules/comment.views.inc:589 modules/node.views.inc:643 modules/user.views.inc:481
+#: modules/comment.views.inc:583 modules/node.views.inc:651 modules/user.views.inc:484
 msgid "edit"
 msgstr ""
 
-#: modules/comment.views.inc:605 modules/node.views.inc:673;752 modules/user.views.inc:499
+#: modules/comment.views.inc:597 modules/node.views.inc:679;754 modules/user.views.inc:500
 msgid "delete"
 msgstr ""
 
-#: modules/comment.views.inc:621
+#: modules/comment.views.inc:611
 msgid "reply"
 msgstr ""
 
-#: modules/comment.views.inc:764
+#: modules/comment.views.inc:742
 msgid "Link this field to new comments"
 msgstr ""
 
-#: modules/comment.views.inc:769
+#: modules/comment.views.inc:747
 msgid "Display nothing if no new comments"
 msgstr ""
 
-#: modules/comment.views.inc:836 modules/user.views.inc:606
+#: modules/comment.views.inc:812 modules/user.views.inc:599
 msgid "Anonymous"
 msgstr ""
 
-#: modules/comment.views.inc:842
+#: modules/comment.views.inc:818
 msgid "No user"
 msgstr ""
 
-#: modules/comment.views.inc:878;895
+#: modules/comment.views.inc:852;867
 msgid "Disabled"
 msgstr ""
 
-#: modules/comment.views.inc:880;896
+#: modules/comment.views.inc:854;868
 msgid "Read only"
 msgstr ""
 
-#: modules/comment.views.inc:882;897
+#: modules/comment.views.inc:856;869
 msgid "Read/Write"
 msgstr ""
 
-#: modules/comment.views.inc:917 modules/node.views.inc:1235
+#: modules/comment.views.inc:887 modules/node.views.inc:1207
 msgid "Display links"
 msgstr ""
 
@@ -2805,7 +2898,7 @@ msgstr ""
 msgid "The node ID of the node."
 msgstr ""
 
-#: modules/node.views.inc:85;403
+#: modules/node.views.inc:85;421
 msgid "The title of the node."
 msgstr ""
 
@@ -2825,7 +2918,7 @@ msgstr ""
 msgid "The type of a node (for example, \"blog entry\", \"forum post\", \"story\", etc)."
 msgstr ""
 
-#: modules/node.views.inc:158;166;180 modules/upload.views.inc:74
+#: modules/node.views.inc:158;166;180 modules/upload.views.inc:82
 msgid "Published"
 msgstr ""
 
@@ -2849,155 +2942,159 @@ msgstr ""
 msgid "The front page of the node."
 msgstr ""
 
-#: modules/node.views.inc:203;212
+#: modules/node.views.inc:204
+msgid "Whether or not the node is moderated."
+msgstr ""
+
+#: modules/node.views.inc:221;230
 msgid "Sticky"
 msgstr ""
 
-#: modules/node.views.inc:204
+#: modules/node.views.inc:222
 msgid "Whether or not the node is sticky."
 msgstr ""
 
-#: modules/node.views.inc:223
+#: modules/node.views.inc:241
 msgid "Link"
 msgstr ""
 
-#: modules/node.views.inc:224
+#: modules/node.views.inc:242
 msgid "Provide a simple link to the node."
 msgstr ""
 
-#: modules/node.views.inc:232
+#: modules/node.views.inc:250
 msgid "Provide a simple link to edit the node."
 msgstr ""
 
-#: modules/node.views.inc:240
+#: modules/node.views.inc:258
 msgid "Provide a simple link to delete the node."
 msgstr ""
 
-#: modules/node.views.inc:248;1115
+#: modules/node.views.inc:266;1093
 msgid "Language"
 msgstr ""
 
-#: modules/node.views.inc:249
+#: modules/node.views.inc:267
 msgid "The language the content is in."
 msgstr ""
 
-#: modules/node.views.inc:266;437 modules/user.views.inc:125
+#: modules/node.views.inc:284;455 modules/user.views.inc:125
 msgid "Created date"
 msgstr ""
 
-#: modules/node.views.inc:267
+#: modules/node.views.inc:285
 msgid "In the form of CCYYMMDD."
 msgstr ""
 
-#: modules/node.views.inc:275
+#: modules/node.views.inc:293
 msgid "Created year + month"
 msgstr ""
 
-#: modules/node.views.inc:276
+#: modules/node.views.inc:294
 msgid "In the form of YYYYMM."
 msgstr ""
 
-#: modules/node.views.inc:284
+#: modules/node.views.inc:302
 msgid "Created year"
 msgstr ""
 
-#: modules/node.views.inc:285
+#: modules/node.views.inc:303
 msgid "In the form of YYYY."
 msgstr ""
 
-#: modules/node.views.inc:293
+#: modules/node.views.inc:311
 msgid "Created month"
 msgstr ""
 
-#: modules/node.views.inc:294
+#: modules/node.views.inc:312
 msgid "In the form of MM (01 - 12)."
 msgstr ""
 
-#: modules/node.views.inc:302
+#: modules/node.views.inc:320
 msgid "Created week"
 msgstr ""
 
-#: modules/node.views.inc:303
+#: modules/node.views.inc:321
 msgid "In the form of WW (01 - 53)."
 msgstr ""
 
-#: modules/node.views.inc:315;320
+#: modules/node.views.inc:333;338
 msgid "Node revision"
 msgstr ""
 
-#: modules/node.views.inc:321
+#: modules/node.views.inc:339
 msgid "Node revisions are a history of changes to nodes."
 msgstr ""
 
-#: modules/node.views.inc:336
+#: modules/node.views.inc:354
 msgid "Relate a node revision to the user who created the revision."
 msgstr ""
 
-#: modules/node.views.inc:341
+#: modules/node.views.inc:359
 msgid "user"
 msgstr ""
 
-#: modules/node.views.inc:349
+#: modules/node.views.inc:367
 msgid "The actual, full data in the body field; this may not be valid data on all node types."
 msgstr ""
 
-#: modules/node.views.inc:363
+#: modules/node.views.inc:381
 msgid "Teaser"
 msgstr ""
 
-#: modules/node.views.inc:364
+#: modules/node.views.inc:382
 msgid "The stored teaser field. This may not be valid or useful data on all node types."
 msgstr ""
 
-#: modules/node.views.inc:377
+#: modules/node.views.inc:395
 msgid "Vid"
 msgstr ""
 
-#: modules/node.views.inc:378
+#: modules/node.views.inc:396
 msgid "The revision ID of the node revision."
 msgstr ""
 
-#: modules/node.views.inc:423
+#: modules/node.views.inc:441
 msgid "Log message"
 msgstr ""
 
-#: modules/node.views.inc:424
+#: modules/node.views.inc:442
 msgid "The log message entered when the revision was created."
 msgstr ""
 
-#: modules/node.views.inc:438
+#: modules/node.views.inc:456
 msgid "The date the node revision was created."
 msgstr ""
 
-#: modules/node.views.inc:453
+#: modules/node.views.inc:471
 msgid "Revert link"
 msgstr ""
 
-#: modules/node.views.inc:454
+#: modules/node.views.inc:472
 msgid "Provide a simple link to revert to the revision."
 msgstr ""
 
-#: modules/node.views.inc:462
+#: modules/node.views.inc:480
 msgid "Provide a simple link to delete the node revision."
 msgstr ""
 
-#: modules/node.views.inc:489
+#: modules/node.views.inc:507
 msgid "Has new content"
 msgstr ""
 
-#: modules/node.views.inc:492
+#: modules/node.views.inc:510
 msgid "Show a marker if the node has new or updated content."
 msgstr ""
 
-#: modules/node.views.inc:495
+#: modules/node.views.inc:513
 msgid "Show only nodes that have new content."
 msgstr ""
 
-#: modules/node.views.inc:528
+#: modules/node.views.inc:544
 msgid "Link this field to its node"
 msgstr ""
 
-#: modules/node.views.inc:713
+#: modules/node.views.inc:717
 msgid "revert"
 msgstr ""
 
@@ -3005,83 +3102,87 @@ msgstr ""
 msgid "Check for new comments as well"
 msgstr ""
 
-#: modules/node.views.inc:860
+#: modules/node.views.inc:858
 msgid "Unknown node type"
 msgstr ""
 
-#: modules/node.views.inc:1043
+#: modules/node.views.inc:1027
 msgid "Week @week"
 msgstr ""
 
-#: modules/node.views.inc:1055
+#: modules/node.views.inc:1037
 msgid "Node type"
 msgstr ""
 
-#: modules/node.views.inc:1116
+#: modules/node.views.inc:1094
 msgid "Current user's language"
 msgstr ""
 
-#: modules/node.views.inc:1116
+#: modules/node.views.inc:1094
 msgid "No language"
 msgstr ""
 
-#: modules/node.views.inc:1166
+#: modules/node.views.inc:1140
 msgid "Unknown language"
 msgstr ""
 
-#: modules/node.views.inc:1179;1188
+#: modules/node.views.inc:1153;1162
 msgid "Display the node with standard node view."
 msgstr ""
 
-#: modules/node.views.inc:1203
+#: modules/node.views.inc:1177
 msgid "Node ID from URL"
 msgstr ""
 
-#: modules/node.views.inc:1230
+#: modules/node.views.inc:1202
 msgid "Display only teaser"
 msgstr ""
 
-#: modules/node.views.inc:1291
+#: modules/node.views.inc:1261
 msgid "Full text"
 msgstr ""
 
-#: modules/node.views.inc:1292
+#: modules/node.views.inc:1262
 msgid "Title plus teaser"
 msgstr ""
 
-#: modules/node.views.inc:1293
+#: modules/node.views.inc:1263
 msgid "Title only"
 msgstr ""
 
-#: modules/node.views.inc:1294
+#: modules/node.views.inc:1264
 msgid "Use default RSS settings"
 msgstr ""
 
-#: modules/node.views.inc:1360
+#: modules/node.views.inc:1330
 msgid "read more"
 msgstr ""
 
-#: modules/node.views.inc:1393
+#: modules/node.views.inc:1363
 msgid "Types"
 msgstr ""
 
-#: modules/node.views.inc:1396
+#: modules/node.views.inc:1366
 msgid "If you wish to validate for specific node types, check them; if none are checked, all nodes will pass."
 msgstr ""
 
-#: modules/node.views.inc:1403
+#: modules/node.views.inc:1373
 msgid "Validate user has access to the node"
 msgstr ""
 
-#: modules/node.views.inc:1411 modules/taxonomy.views.inc:1044
+#: modules/node.views.inc:1381 modules/taxonomy.views.inc:1015
 msgid "Argument type"
 msgstr ""
 
-#: modules/node.views.inc:1414
+#: modules/node.views.inc:1383
+msgid "Node ID"
+msgstr ""
+
+#: modules/node.views.inc:1384
 msgid "Node IDs separated by , or +"
 msgstr ""
 
-#: modules/node.views.inc:1533
+#: modules/node.views.inc:1507
 msgid "Display %display has no access control but does not contain a filter for published nodes."
 msgstr ""
 
@@ -3133,7 +3234,7 @@ msgstr ""
 msgid "Profile date %field-name."
 msgstr ""
 
-#: modules/search.views.inc:23;77;88;106;172;247
+#: modules/search.views.inc:23;77;88;106;244
 msgid "Search"
 msgstr ""
 
@@ -3169,35 +3270,35 @@ msgstr ""
 msgid "The terms to search for."
 msgstr ""
 
-#: modules/search.views.inc:156
+#: modules/search.views.inc:155
 msgid "On empty input"
 msgstr ""
 
-#: modules/search.views.inc:159
+#: modules/search.views.inc:158
 msgid "Show All"
 msgstr ""
 
-#: modules/search.views.inc:160
+#: modules/search.views.inc:159
 msgid "Show None"
 msgstr ""
 
-#: modules/search.views.inc:175
+#: modules/search.views.inc:173
 msgid "Enter the terms you wish to search for."
 msgstr ""
 
-#: modules/search.views.inc:190
+#: modules/search.views.inc:188
 msgid "You must include at least one positive keyword with @count characters or more."
 msgstr ""
 
-#: modules/search.views.inc:194
+#: modules/search.views.inc:192
 msgid "Search for either of the two terms with uppercase <strong>OR</strong>. For example, <strong>cats OR dogs</strong>."
 msgstr ""
 
-#: modules/search.views.inc:248
+#: modules/search.views.inc:245
 msgid "Display the results with standard search view."
 msgstr ""
 
-#: modules/search.views.inc:274
+#: modules/search.views.inc:269
 msgid "Display score"
 msgstr ""
 
@@ -3349,265 +3450,273 @@ msgstr ""
 msgid "The date the file was uploaded."
 msgstr ""
 
-#: modules/system.views.inc:204 modules/upload.views.inc:145;216
+#: modules/system.views.inc:202 modules/upload.views.inc:152;221
 msgid "Link this field to download the file"
 msgstr ""
 
-#: modules/system.views.inc:231
+#: modules/system.views.inc:229
 msgid "Temporary"
 msgstr ""
 
-#: modules/system.views.inc:232
+#: modules/system.views.inc:230
 msgid "Permanent"
 msgstr ""
 
-#: modules/system.views.inc:278
+#: modules/system.views.inc:270
 msgid "No title"
 msgstr ""
 
-#: modules/taxonomy.views.inc:24;73;143;161;219;255;298;309
+#: modules/taxonomy.views.inc:24;67;132;150;202;232;269;280
 msgid "Taxonomy"
 msgstr ""
 
-#: modules/taxonomy.views.inc:54
+#: modules/taxonomy.views.inc:48
 msgid "Vocabulary name"
 msgstr ""
 
-#: modules/taxonomy.views.inc:56
+#: modules/taxonomy.views.inc:50
 msgid "Name of the vocabulary a term is a member of. This will be the vocabulary that whichever term the \"Taxonomy: Term\" field is; and can similarly cause duplicates."
 msgstr ""
 
-#: modules/taxonomy.views.inc:62
+#: modules/taxonomy.views.inc:56
 msgid "Vocabulary ID"
 msgstr ""
 
-#: modules/taxonomy.views.inc:63
+#: modules/taxonomy.views.inc:57
 msgid "The taxonomy vocabulary ID"
 msgstr ""
 
-#: modules/taxonomy.views.inc:76;107
+#: modules/taxonomy.views.inc:70;96
 msgid "Term"
 msgstr ""
 
-#: modules/taxonomy.views.inc:77
+#: modules/taxonomy.views.inc:71
 msgid "Taxonomy terms are attached to nodes."
 msgstr ""
 
-#: modules/taxonomy.views.inc:108
-msgid "Taxonomy terms. Note that using this can cause duplicate nodes to appear in views; you must add filters to reduce the resultset."
+#: modules/taxonomy.views.inc:97
+msgid "Taxonomy terms. Note that using this can cause duplicate nodes to appear in views; you must add filters to reduce the result set."
 msgstr ""
 
-#: modules/taxonomy.views.inc:118
+#: modules/taxonomy.views.inc:107
 msgid "Taxonomy term name"
 msgstr ""
 
-#: modules/taxonomy.views.inc:127
+#: modules/taxonomy.views.inc:116
 msgid "The term weight field"
 msgstr ""
 
-#: modules/taxonomy.views.inc:139
+#: modules/taxonomy.views.inc:128
 msgid "Term description"
 msgstr ""
 
-#: modules/taxonomy.views.inc:140
+#: modules/taxonomy.views.inc:129
 msgid "The description associated with a taxonomy term."
 msgstr ""
 
-#: modules/taxonomy.views.inc:151;763
+#: modules/taxonomy.views.inc:140;724
 msgid "Vocabulary"
 msgstr ""
 
-#: modules/taxonomy.views.inc:152
+#: modules/taxonomy.views.inc:141
 msgid "Filter the results of \"Taxonomy: Term\" to a particular vocabulary."
 msgstr ""
 
-#: modules/taxonomy.views.inc:193;1046
+#: modules/taxonomy.views.inc:176;1017
 msgid "Term ID"
 msgstr ""
 
-#: modules/taxonomy.views.inc:194
+#: modules/taxonomy.views.inc:177
 msgid "The taxonomy term ID"
 msgstr ""
 
-#: modules/taxonomy.views.inc:196
+#: modules/taxonomy.views.inc:179
 msgid "All terms"
 msgstr ""
 
-#: modules/taxonomy.views.inc:197
+#: modules/taxonomy.views.inc:180
 msgid "Display all taxonomy terms associated with a node."
 msgstr ""
 
-#: modules/taxonomy.views.inc:282
+#: modules/taxonomy.views.inc:253
 msgid "Term synonym"
 msgstr ""
 
-#: modules/taxonomy.views.inc:283
+#: modules/taxonomy.views.inc:254
 msgid "Term synonyms may be used to find terms by alternate names."
 msgstr ""
 
-#: modules/taxonomy.views.inc:299
+#: modules/taxonomy.views.inc:270
 msgid "Term ID (with depth)"
 msgstr ""
 
-#: modules/taxonomy.views.inc:300
+#: modules/taxonomy.views.inc:271
 msgid "The depth filter is more complex, so provides fewer options."
 msgstr ""
 
-#: modules/taxonomy.views.inc:310
+#: modules/taxonomy.views.inc:281
 msgid "Term ID depth modifier"
 msgstr ""
 
-#: modules/taxonomy.views.inc:311
+#: modules/taxonomy.views.inc:282
 msgid "Allows the \"depth\" for Taxonomy: Term ID (with depth) to be modified via an additional argument."
 msgstr ""
 
-#: modules/taxonomy.views.inc:341
+#: modules/taxonomy.views.inc:312
 msgid "The depth will match nodes tagged with terms in the hierarchy. For example, if you have the term \"fruit\" and a child term \"apple\", with a depth of 1 (or higher) then filtering for the term \"fruit\" will get nodes that are tagged with \"apple\" as well as \"fruit\". If negative, the reverse is true; searching for \"apple\" will also pick up nodes tagged with \"fruit\" if depth is -1 (or lower)."
 msgstr ""
 
-#: modules/taxonomy.views.inc:346
+#: modules/taxonomy.views.inc:317
 msgid "Allow multiple terms per argument"
 msgstr ""
 
-#: modules/taxonomy.views.inc:347
+#: modules/taxonomy.views.inc:318
 msgid "If selected, users can enter multiple arguments in the form of 1+2+3. Due to the number of JOINs it would require, AND will be treated as OR with this argument."
 msgstr ""
 
-#: modules/taxonomy.views.inc:353;978
+#: modules/taxonomy.views.inc:324;949
 msgid "Set the breadcrumb for the term parents"
 msgstr ""
 
-#: modules/taxonomy.views.inc:354;979
+#: modules/taxonomy.views.inc:325;950
 msgid "If selected, the breadcrumb trail will include all parent terms, each one linking to this view. Note that this only works if just one term was received."
 msgstr ""
 
-#: modules/taxonomy.views.inc:440;685
+#: modules/taxonomy.views.inc:411;652
 msgid "No name"
 msgstr ""
 
-#: modules/taxonomy.views.inc:551
+#: modules/taxonomy.views.inc:520
 msgid "Link this field to its term page"
 msgstr ""
 
-#: modules/taxonomy.views.inc:558
+#: modules/taxonomy.views.inc:527
 msgid "Limit terms by vocabulary"
 msgstr ""
 
-#: modules/taxonomy.views.inc:572;1034
+#: modules/taxonomy.views.inc:541;1005
 msgid "Vocabularies"
 msgstr ""
 
-#: modules/taxonomy.views.inc:645
+#: modules/taxonomy.views.inc:612
 msgid "Link this field to its taxonomy term page"
 msgstr ""
 
-#: modules/taxonomy.views.inc:721
+#: modules/taxonomy.views.inc:684
 msgid "No vocabulary"
 msgstr ""
 
-#: modules/taxonomy.views.inc:765
+#: modules/taxonomy.views.inc:726
 msgid "Select which vocabulary to show terms for in the regular options."
 msgstr ""
 
-#: modules/taxonomy.views.inc:775
+#: modules/taxonomy.views.inc:736
 msgid "Selection type"
 msgstr ""
 
-#: modules/taxonomy.views.inc:776
+#: modules/taxonomy.views.inc:737
 msgid "Dropdown"
 msgstr ""
 
-#: modules/taxonomy.views.inc:776
+#: modules/taxonomy.views.inc:737
 msgid "Autocomplete"
 msgstr ""
 
-#: modules/taxonomy.views.inc:782
+#: modules/taxonomy.views.inc:743
 msgid "Show hierarchy in dropdown"
 msgstr ""
 
-#: modules/taxonomy.views.inc:799
+#: modules/taxonomy.views.inc:760
 msgid "An invalid vocabulary is selected. Please change it in the options."
 msgstr ""
 
-#: modules/taxonomy.views.inc:817;851
+#: modules/taxonomy.views.inc:778;812
 msgid "Select terms from vocabulary @voc"
 msgstr ""
 
-#: modules/taxonomy.views.inc:1012
+#: modules/taxonomy.views.inc:983
 msgid "Taxonomy term"
 msgstr ""
 
-#: modules/taxonomy.views.inc:1037
+#: modules/taxonomy.views.inc:1008
 msgid "If you wish to validate for specific vocabularies, check them; if none are checked, all nodes will pass."
 msgstr ""
 
-#: modules/taxonomy.views.inc:1047
+#: modules/taxonomy.views.inc:1018
 msgid "Term IDs separated by , or +"
 msgstr ""
 
-#: modules/taxonomy.views.inc:1048
+#: modules/taxonomy.views.inc:1019
 msgid "Term name or synonym"
 msgstr ""
 
-#: modules/taxonomy.views.inc:1049
+#: modules/taxonomy.views.inc:1020
 msgid "Term name/synonym converted to Term ID"
 msgstr ""
 
-#: modules/taxonomy.views.inc:1052
+#: modules/taxonomy.views.inc:1023
 msgid "Select the form of this argument; if using term name, it is generally more efficient to convert it to a term ID and use Taxonomy: Term ID rather than Taxonomy: Term Name\" as an argument."
 msgstr ""
 
-#: modules/taxonomy.views.inc:937
+#: modules/taxonomy.views.inc:910
 msgid "Unable to find term: @terms"
 msgid_plural "Unable to find terms: @terms"
 msgstr[0] ""
 msgstr[1] ""
 
-#: modules/upload.views.inc:25
+#: modules/upload.views.inc:25;109
 msgid "Upload"
 msgstr ""
 
-#: modules/upload.views.inc:49
+#: modules/upload.views.inc:44
+msgid "The node the uploaded file is attached to"
+msgstr ""
+
+#: modules/upload.views.inc:46
+msgid "upload"
+msgstr ""
+
+#: modules/upload.views.inc:57
 msgid "The description of the uploaded file."
 msgstr ""
 
-#: modules/upload.views.inc:66
+#: modules/upload.views.inc:74
 msgid "Listed"
 msgstr ""
 
-#: modules/upload.views.inc:67
+#: modules/upload.views.inc:75
 msgid "Whether or not the file is marked to be listed."
 msgstr ""
 
-#: modules/upload.views.inc:83
+#: modules/upload.views.inc:91
 msgid "The weight, used for sorting."
 msgstr ""
 
-#: modules/upload.views.inc:101;113
+#: modules/upload.views.inc:110;122
 msgid "Attached files"
 msgstr ""
 
-#: modules/upload.views.inc:102
+#: modules/upload.views.inc:111
 msgid "All files attached to a node with upload.module."
 msgstr ""
 
-#: modules/upload.views.inc:109;274
+#: modules/upload.views.inc:118;277
 msgid "Has attached files"
 msgstr ""
 
-#: modules/upload.views.inc:110
+#: modules/upload.views.inc:119
 msgid "Only display items with attached files. This can cause duplicates if there are multiple attached files."
 msgstr ""
 
-#: modules/upload.views.inc:114
+#: modules/upload.views.inc:123
 msgid "Add a relationship to gain access to more file data for files uploaded by upload.module. Note that this relationship will cause duplicate nodes if there are multiple files attached to the node."
 msgstr ""
 
-#: modules/upload.views.inc:120
+#: modules/upload.views.inc:129
 msgid "Files"
 msgstr ""
 
-#: modules/upload.views.inc:151
+#: modules/upload.views.inc:158
 msgid "Only show \"listed\" file attachments"
 msgstr ""
 
@@ -3711,39 +3820,39 @@ msgstr ""
 msgid "Also look for a node and use the node author"
 msgstr ""
 
-#: modules/user.views.inc:387
+#: modules/user.views.inc:396
 msgid "Link this field to its user"
 msgstr ""
 
-#: modules/user.views.inc:520
+#: modules/user.views.inc:519
 msgid "Link this field"
 msgstr ""
 
-#: modules/user.views.inc:523
+#: modules/user.views.inc:522
 msgid "No link"
 msgstr ""
 
-#: modules/user.views.inc:524
+#: modules/user.views.inc:523
 msgid "To the user"
 msgstr ""
 
-#: modules/user.views.inc:525
+#: modules/user.views.inc:524
 msgid "With a mailto:"
 msgstr ""
 
-#: modules/user.views.inc:643
+#: modules/user.views.inc:634
 msgid "Usernames"
 msgstr ""
 
-#: modules/user.views.inc:644
+#: modules/user.views.inc:635
 msgid "Enter a comma separated list of user names."
 msgstr ""
 
-#: modules/user.views.inc:752
+#: modules/user.views.inc:754
 msgid "Is the logged in user"
 msgstr ""
 
-#: modules/user.views.inc:710
+#: modules/user.views.inc:714
 msgid "Unable to find user: @users"
 msgid_plural "Unable to find users: @users"
 msgstr[0] ""
@@ -3769,11 +3878,11 @@ msgstr ""
 msgid "Allow an argument to be ignored. The query will not be altered by this argument."
 msgstr ""
 
-#: modules/views.views.inc:88
+#: modules/views.views.inc:84
 msgid "Fail basic validation if any argument is given"
 msgstr ""
 
-#: modules/views.views.inc:90
+#: modules/views.views.inc:86
 msgid "By checking this field, you can use this to make sure views with more arguments than necessary fail validation."
 msgstr ""
 
@@ -3825,19 +3934,19 @@ msgstr ""
 msgid "Edit this view"
 msgstr ""
 
-#: theme/theme.inc:289
+#: theme/theme.inc:290
 msgid "sort by @s"
 msgstr ""
 
-#: theme/theme.inc:490
+#: theme/theme.inc:500
 msgid "‹‹"
 msgstr ""
 
-#: theme/theme.inc:491
+#: theme/theme.inc:501
 msgid "››"
 msgstr ""
 
-#: theme/theme.inc:501
+#: theme/theme.inc:511
 msgid "@current of @max"
 msgstr ""
 
