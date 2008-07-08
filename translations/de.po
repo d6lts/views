@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-07-06 13:10+0200\n"
-"PO-Revision-Date: 2008-07-06 23:40+0100\n"
+"PO-Revision-Date: 2008-07-09 00:29+0100\n"
 "Last-Translator: Alexander Hass\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -65,7 +65,7 @@ msgstr "Ansichten"
 
 #: views_ui.module:158
 msgid "The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match. You can import Views 1 views through the normal Import tab."
-msgstr "Der Konverter wird mit größter Mühe versuchen einen „View 1“ nach „View 2“ zu konvertieren. Diese Konvertierung ist nicht zuverlässig und es müssen sicherlich Anpassungen an der Ansicht vorgenommen werden, um den alten Stand wiederherzustellen. „View 1“-Ansichten können über den normalen Import-Tabulator importiert werden."
+msgstr "Der Konverter wird mit größter Mühe versuchen einen „View 1“ nach „View 2“ zu konvertieren. Diese Konvertierung ist nicht zuverlässig und es müssen sicherlich Anpassungen an der Ansicht vorgenommen werden, um den alten Stand wiederherzustellen. „View 1“-Ansichten können über den normalen Import-Reiter importiert werden."
 
 #: views_ui.module:25
 msgid "Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented."
@@ -641,7 +641,7 @@ msgstr " &nbsp; Design: !style"
 #: includes/admin.inc:1198
 #, fuzzy
 msgid "Invalid display id while regenerating tabs"
-msgstr "Ungültige Anzeige-ID bei der Neuerstellung von Tabulatoren gefunden"
+msgstr "Ungültige Anzeige-ID bei der Neuerstellung von Reitern gefunden"
 
 #: includes/admin.inc:1231
 msgid "Update"
@@ -711,7 +711,7 @@ msgstr "Entfernen"
 
 #: includes/admin.inc:2025;2025
 msgid "Remove this item"
-msgstr "Diesen Eintrag entfernen"
+msgstr "Dieses Element entfernen"
 
 #: includes/admin.inc:2031
 msgid "No fields available."
@@ -2147,7 +2147,7 @@ msgstr "Normal: @title"
 
 #: includes/plugins.inc:2116
 msgid "Tab: @title"
-msgstr "Karteireiter: @title"
+msgstr "Reiter: @title"
 
 #: includes/plugins.inc:2126
 msgid "Menu"
@@ -2167,35 +2167,35 @@ msgstr ""
 
 #: includes/plugins.inc:2155
 msgid "Menu item entry"
-msgstr "Menüeintrag"
+msgstr "Menüpunkt"
 
 #: includes/plugins.inc:2172
 msgid "No menu entry"
-msgstr "Kein Menüeintrag"
+msgstr "Kein Menüpunkt"
 
 #: includes/plugins.inc:2173
 msgid "Normal menu entry"
-msgstr "Normaler Menüeintrag"
+msgstr "Normaler Menüpunkt"
 
 #: includes/plugins.inc:2174;2221
 msgid "Menu tab"
-msgstr "Menü als Karteireiter"
+msgstr "Menü-Reiter"
 
 #: includes/plugins.inc:2175
 msgid "Default menu tab"
-msgstr "Standard-Menü als Karteireiter"
+msgstr "Standardmäßiger Reiter im Menü"
 
 #: includes/plugins.inc:2184
 msgid "If set to normal or tab, enter the text to use for the menu item."
-msgstr "Den zu verwendenden Text für den Menüeintrag eingeben, wenn dieser auf Normal oder Tabulator eingestellt wird."
+msgstr "Den zu verwendenden Text für den Menüpunkt eingeben, wenn dieser auf Normal oder Reiter eingestellt wird."
 
 #: includes/plugins.inc:2193
 msgid "If set to tab, enter the weight of the item. The lower the weight the higher/further left it will appear."
-msgstr "Die Reihenfolge des Eintrages eingeben, wenn dieser als Tabulator eingestellt wird."
+msgstr "Die Reihenfolge des Menüpunktes eingeben, wenn dieser als Reiter eingestellt wird."
 
 #: includes/plugins.inc:2199
 msgid "Default tab options"
-msgstr "Standardoptionen für Karteireiter"
+msgstr "Standardmäßige Reiteroptionen"
 
 #: includes/plugins.inc:2208
 msgid "When providing a menu item as a tab, Drupal needs to know what the parent menu item of that tab will be. Sometimes the parent will already exist, but other times you will need to have one created. The path of a parent item will always be the same path with the last part left off. i.e, if the path to this view is <em>foo/bar/baz</em>, the parent path would be <em>foo/bar</em>."
@@ -2203,7 +2203,7 @@ msgstr ""
 
 #: includes/plugins.inc:2219
 msgid "Parent menu item"
-msgstr "Übergeordneter Menüeintrag"
+msgstr "Übergeordneter Menüpunkt"
 
 #: includes/plugins.inc:2221
 msgid "Already exists"
@@ -2211,19 +2211,19 @@ msgstr "Schon vorhanden"
 
 #: includes/plugins.inc:2221
 msgid "Normal menu item"
-msgstr "Normaler Menüeintrag"
+msgstr "Normaler Menüpunkt"
 
 #: includes/plugins.inc:2229
 msgid "If creating a parent menu item, enter the title of the item."
-msgstr "Einen Titel für den Eintrag eingeben, wenn ein übergeordneter Menüeintrag erstellt wird."
+msgstr "Einen Titel für den Menüpunkt eingeben, wenn ein übergeordneter Menüpunkt erstellt wird."
 
 #: includes/plugins.inc:2235
 msgid "Tab weight"
-msgstr "Karteireitergewichtung"
+msgstr "Reiterreihenfolge"
 
 #: includes/plugins.inc:2239
 msgid "If the parent menu item is a tab, enter the weight of the tab. The lower the number, the more to the left it will be."
-msgstr "Die Reihenfolge des Tabulators eingeben, wenn der übergeordnete Menüeintrag ein Tabulator ist. Umso niedriger die Zahl ist, desto weiter links wird er angezeigt."
+msgstr "Die Reihenfolge des Reiters eingeben, wenn der übergeordnete Menüpunkt ein Reiter ist. Umso niedriger die Zahl ist, desto weiter links wird er angezeigt."
 
 #: includes/plugins.inc:2253
 msgid "\"$arg\" is no longer supported. Use % instead."
@@ -2231,11 +2231,11 @@ msgstr "„$arg“ wird nicht mehr unterstützt. Stattdessen kann % verwendet we
 
 #: includes/plugins.inc:2263
 msgid "Views cannot create normal menu items for paths with a % in them."
-msgstr "Ansichten können keine normalen Menüeinträge für Pfade mit einem % erstellen."
+msgstr "Ansichten können keine normalen Menüpunkt für Pfade mit einem % erstellen."
 
 #: includes/plugins.inc:2270
 msgid "A display whose path ends with a % cannot be a tab."
-msgstr "Eine Anzeige deren Pfad mit einem % abschließt kann kein Tabulator sein."
+msgstr "Eine Anzeige deren Pfad mit einem % abschließt kann kein Reiter sein."
 
 #: includes/plugins.inc:2275
 msgid "Title is required for this menu type."
@@ -2708,7 +2708,7 @@ msgstr ""
 
 #: modules/book.views.inc:110
 msgid "Parent"
-msgstr "Übergeordneter Eintrag"
+msgstr "Übergeordnet"
 
 #: modules/book.views.inc:111
 msgid "The parent book node."
