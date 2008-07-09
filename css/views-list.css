@@ -4,6 +4,7 @@ table.views-entry {
   margin: 2px 0;
   border: 1px solid #ccc;
   background-color: white;
+  color: #494949; /* matches garland */
   clear: left;
   width: 100%;
 }

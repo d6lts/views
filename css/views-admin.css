@@ -3,7 +3,10 @@
 /*
  * Summary pad
  */
+/* set up some defaults so weird themes don't override us too badly. */
 .views-tabset {
+  color: #494949;
+  background-color: white;
 }
 
 .views-tabset .views-tab fieldset {
