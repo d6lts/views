@@ -365,7 +365,7 @@ html.js #views-ajax-pad {
 
 #views-ajax-pad .views-radio-box {
   overflow: auto;
-  height: 180px;
+  height: 22em;
 }
 
 #views-ajax-pad fieldset {
