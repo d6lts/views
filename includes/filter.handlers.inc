@@ -1111,7 +1111,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
     }
     $output = '';
     foreach ($this->value as $value) {
-      if ($output) {
+      if ($output !== '') {
         $output .= ', ';
       }
       if (strlen($output) > 8) {
