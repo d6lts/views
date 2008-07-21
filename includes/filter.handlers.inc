@@ -1366,6 +1366,31 @@ class views_handler_filter_numeric extends views_handler_filter {
   }
 }
 
+/**
+ * Simple filter to handle greater than/less than filters.
+ * It based on views_handler_filter_numeric but deals with
+ * float numbers.
+ */
+class views_handler_filter_float extends views_handler_filter_numeric {
+  function op_between($field) {
+    if ($this->operator == 'between') {
+      $a = $this->value['min'];
+      $b = $this->value['max'];
+    }
+    else {
+      $a = $this->value['max'];
+      $b = $this->value['min'];
+    }
+
+    $this->query->add_where($this->options['group'], "$field >= %f", $a);
+    $this->query->add_where($this->options['group'], "$field <= %f", $b);
+  }
+
+  function op_simple($field) {
+    $this->query->add_where($this->options['group'], "$field $this->operator %f", $this->value['value']);
+  }
+}
+
 class views_handler_filter_date extends views_handler_filter_numeric {
   function option_definition() {
     $options = parent::option_definition();
