@@ -11,7 +11,7 @@
 function statistics_views_default_views() {
   $view = new view;
   $view->name = 'popular';
-  $view->description = 'Shows the most-viewed nodes on the site. This requires the statistics to be enabled at administer >> site configuration >> statistics.';
+  $view->description = 'Shows the most-viewed nodes on the site. This requires the statistics to be enabled at administer >> reports >> access log settings.';
   $view->tag = 'default';
   $view->view_php = '';
   $view->base_table = 'node';

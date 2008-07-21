@@ -1006,7 +1006,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
       '#title' => t('Vocabularies'),
       '#options' => $options,
       '#default_value' => isset($this->argument->options['validate_argument_vocabulary']) ? $this->argument->options['validate_argument_vocabulary'] : array(),
-      '#description' => t('If you wish to validate for specific vocabularies, check them; if none are checked, all nodes will pass.'),
+      '#description' => t('If you wish to validate for specific vocabularies, check them; if none are checked, all terms will pass.'),
       '#process' => array('expand_checkboxes', 'views_process_dependency'),
       '#dependency' => array('edit-options-validate-type' => array($this->id)),
     );
