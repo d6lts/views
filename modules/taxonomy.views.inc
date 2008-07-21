@@ -188,6 +188,7 @@ function taxonomy_views_data() {
       'numeric' => TRUE,
     ),
     'filter' => array(
+      'title' => t('Term'),
       'handler' => 'views_handler_filter_term_node_tid',
       'hierarchy table' => 'term_hierarchy',
       'numeric' => TRUE,

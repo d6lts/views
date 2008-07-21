@@ -2,7 +2,7 @@
 // $Id$
 /**
  * @file views-view-rss.tpl.php
- * Default simple view template to display a list of rows.
+ * Default template for feed displays that use the RSS style.
  *
  * @ingroup views_templates
  */
