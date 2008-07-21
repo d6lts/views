@@ -33,13 +33,15 @@ function _views_create_handler($definition) {
  */
 function _views_prepare_handler($definition, $data, $field) {
   foreach (array('group', 'title', 'help', 'real field') as $key) {
-    // First check the field level
-    if (!isset($definition[$key]) && !empty($data[$field][$key])) {
-      $definition[$key] = $data[$field][$key];
-    }
-    // Then if that doesn't work, check the table level
-    else if (!isset($definition['table'][$key]) && !empty($data['table'][$key])) {
-      $definition[$key] = $data['table'][$key];
+    if (!isset($definition[$key])) {
+      // First check the field level
+      if (!empty($data[$field][$key])) {
+        $definition[$key] = $data[$field][$key];
+      }
+      // Then if that doesn't work, check the table level
+      else if (!empty($data['table'][$key])) {
+        $definition[$key] = $data['table'][$key];
+      }
     }
   }
 
