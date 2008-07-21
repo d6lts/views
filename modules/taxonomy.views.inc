@@ -814,6 +814,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
         '#multiple' => TRUE,
         '#options' => $options,
         '#size' => min(9, count($options)),
+        '#default_value' => !empty($this->value) ? $this->value : array(),
       );
     }
 
