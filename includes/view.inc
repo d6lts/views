@@ -1410,7 +1410,7 @@ class views_db_object {
     }
 
     $schema = drupal_get_schema($this->db_table);
-    
+
     if (!$schema) {
       return;
     }
@@ -1577,7 +1577,7 @@ class views_db_object {
 
     $plugin = views_fetch_plugin_data('display', $type);
     if (empty($plugin)) {
-      return FALSE;
+      $plugin['title'] = t('Broken');
     }
 
     // 'default' is singular and is unique, so just go with 'default'
@@ -1623,6 +1623,12 @@ class views_db_object {
 
     // Create a handler
     $this->display[$id]->handler = views_get_plugin('display', $this->display[$id]->display_plugin);
+    if (empty($this->display[$id]->handler)) {
+      // provide a 'default' handler as an emergency. This won't work well but
+      // it will keep things from crashing.
+      $this->display[$id]->handler = views_get_plugin('display', 'default');
+    }
+
     if (!empty($this->display[$id]->handler)) {
       // Initialize the new display handler with data.
       $this->display[$id]->handler->init($this, $this->display[$id]);
