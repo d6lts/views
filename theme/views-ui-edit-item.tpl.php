@@ -14,7 +14,9 @@
 </div>
 
 <div class="views-category-content">
-  <?php if (empty($fields)): ?>
+  <?php if (!empty($no_fields)): ?>
+    <div><?php print t('The style selected does not utilize fields.'); ?></div>
+  <?php elseif (empty($fields)): ?>
     <div><?php print t('None defined'); ?></div>
   <?php else: ?>
     <?php foreach ($fields as $pid => $field): ?>

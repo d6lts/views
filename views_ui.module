@@ -183,7 +183,7 @@ function views_ui_theme() {
       'path' => "$path/theme",
     ),
     'views_ui_edit_item' => array(
-      'arguments' => array('type' => NULL, 'view' => NULL, 'display' => NULL),
+      'arguments' => array('type' => NULL, 'view' => NULL, 'display' => NULL, 'no_fields' => FALSE),
       'template' => 'views-ui-edit-item',
       'path' => "$path/theme",
     ),
