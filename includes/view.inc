@@ -1092,7 +1092,7 @@ class view extends views_db_object {
         $cache[$arg] = NULL;
       }
       else {
-        $view =& new view();
+        $view = new view();
         $view->load_row($data);
         $view->type = t('Normal');
         // Load all of our subtables.

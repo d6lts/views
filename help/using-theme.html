@@ -42,7 +42,7 @@ The important thing here is that Views does provide IDs. Views doesn't tell you 
 
 The most common template people will need to rewrite is the "simple" views-view-fields.tpl.php, which is the template used by the <i>Fields</i> row style and all it does is display a simple list of fields. However, it is not that simple to the user. Because the template can't inherently know what the fields are, it has to go through an array in a loop.
 
-This loop isn't very handy when you really want to have fine control over the template by placing your fields precisely where and how you want. Relax, though; if you know what your fields are, you can rewrite this; if you end up writing your own HTML, the only part that is really important is the content for each field. We know from above that you can get the ID for each field on the Theme: Information page from the view. In the header for the template, we can see that the fields are all in the $fields array, and each field is an object. That leads us to this:
+This loop isn't very handy when you really want to have fine control over the template by placing your fields precisely where and how you want. Relax, though; if you know what your fields are, you can rewrite this. If you end up writing your own HTML, the only part that is really important is the content for each field. We know from above that you can get the ID for each field on the Theme: Information page from the view. In the header for the template, we can see that the fields are all in the $fields array, and each field is an object. That leads us to this:
 
 <code>&lt;?php print $fields['some_id']-&gt;content; ?&gt;</code>
 

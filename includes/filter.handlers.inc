@@ -37,6 +37,13 @@ class views_handler_filter extends views_handler {
     if (!empty($options['exposed']) && !empty($options['expose']['operator']) && !isset($options['expose']['use_operator'])) {
       $this->options['expose']['use_operator'] = TRUE;
     }
+
+    // If there are relationships in the view, allow empty should be true
+    // so that we can do IS NULL checks on items. Not all filters respect
+    // allow empty, but string and numeric do and that covers enough.
+    if ($this->view->display_handler->get_option('relationships')) {
+      $this->definition['allow empty'] = TRUE;
+    }
   }
 
   function option_definition() {
@@ -566,7 +573,6 @@ class views_handler_filter extends views_handler {
     $this->ensure_my_table();
     $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . " '%s'", $this->value);
   }
-
 }
 
 /**
