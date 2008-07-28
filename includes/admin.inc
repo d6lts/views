@@ -1148,6 +1148,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     $vars['item_help_icon'] = theme('advanced_help_topic', 'views', $type);
     $vars['rearrange'] = NULL;
     $vars['add'] = NULL;
+    $vars['overridden'] = FALSE;
     return;
   }
 
