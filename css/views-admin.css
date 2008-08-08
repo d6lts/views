@@ -9,6 +9,12 @@
   background-color: white;
 }
 
+.views-tabset a:visited,
+.views-tabset a:hover,
+.views-tabset a {
+  color: #027AC6;
+}
+
 .views-tabset .views-tab fieldset {
   margin-top: 0;
 }
@@ -483,11 +489,24 @@ div.changed div.view-changed {
 }
 
 .views-display .tab-section .inside .overridden {
-  /* all this so we odn't mess up background-color */
-  background-image: url(/themes/garland/images/menu-leaf.gif);
+  /* all this so we don't mess up background-color */
+/*  background-image: url(../images/overridden.gif);
   background-repeat: no-repeat;
   background-position: left;
-  padding-left: 10px;
+  padding-left: 10px; */
+}
+
+.views-display .tab-section .views-category-content.overridden {
+  background-image: none;
+}
+
+.views-display .tab-section .inside .defaulted {
+  color: #aaa;
+  font-style: italic;
+}
+
+.views-display .tab-section .inside .defaulted a {
+  font-style: italic;
 }
 
 .hilited {

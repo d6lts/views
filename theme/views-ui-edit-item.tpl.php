@@ -8,12 +8,26 @@
 ?>
 <?php print $rearrange; ?>
 <?php print $add; ?>
-<div class="views-category-title<?php if ($overridden) { print ' overridden'; }?>">
+<div class="views-category-title<?php
+  if ($overridden) {
+    print ' overridden';
+  }
+  if ($defaulted) {
+    print ' defaulted';
+  }
+  ?>">
   <?php print $item_help_icon; ?>
   <?php print $title; ?>
 </div>
 
-<div class="views-category-content">
+<div class="views-category-content<?php
+  if ($overridden) {
+    print ' overridden';
+  }
+  if ($defaulted) {
+    print ' defaulted';
+  }
+  ?>">
   <?php if (!empty($no_fields)): ?>
     <div><?php print t('The style selected does not utilize fields.'); ?></div>
   <?php elseif (empty($fields)): ?>

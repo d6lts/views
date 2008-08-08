@@ -1067,6 +1067,8 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
     $data = &$categories[$option['category']]['data'][$id];
     $data['content'] = '';
     $data['links'] = '';
+    $data['overridden'] = FALSE;
+    $data['defaulted'] = FALSE;
 
     // If there are optional links, build them first so they float properly.
     if (!empty($option['links'])) {
@@ -1081,11 +1083,14 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
     $data['content'] .= $display->handler->option_link($option['value'], $id, '', empty($option['desc']) ? '' : $option['desc']);
     if (!empty($display->handler->options['defaults'][$id])) {
       $display_id = 'default';
+      $data['defaulted'] = TRUE;
     }
     else {
       $display_id = $display->id;
-      if ($display->handler->defaultable_sections($id) && !$display->handler->is_default_display()) {
-        $data['overridden'] = TRUE;
+      if (!$display->handler->is_default_display()) {
+        if ($display->handler->defaultable_sections($id)) {
+          $data['overridden'] = TRUE;
+        }
       }
     }
     $data['class'] = views_ui_item_css($display_id . '-' . $id);
@@ -1149,6 +1154,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     $vars['rearrange'] = NULL;
     $vars['add'] = NULL;
     $vars['overridden'] = FALSE;
+    $vars['defaulted'] = FALSE;
     return;
   }
 
@@ -1156,7 +1162,14 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   $vars['add'] = l('<span>' . t('Add') . '</span>', "admin/build/views/nojs/add-item/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-button-add views-ajax-link', 'title' => t('Add')), 'html' => true));
 
-  $vars['overridden'] = !$display->handler->is_default_display() && !$display->handler->is_defaulted($types[$type]['plural']);
+  if (!$display->handler->is_default_display()) {
+    if (!$display->handler->is_defaulted($types[$type]['plural'])) {
+      $vars['overridden'] = TRUE;
+    }
+    else {
+      $vars['defaulted'] = TRUE;
+    }
+  }
 
   $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
 //  $vars['title'] = l($types[$type]['title'], "admin/build/views/nojs/config-type/$view->name/$display->id/$type", array('attributes' => array('class' => 'views-ajax-link')));
