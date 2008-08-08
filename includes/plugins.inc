@@ -1838,8 +1838,17 @@ class views_plugin_display extends views_plugin {
   function validate() {
     $errors = array();
     // Make sure displays that use fields HAVE fields.
-    if ($this->uses_fields() && !$this->get_option('fields')) {
-      $errors[] = t('Display @display uses fields but there are none defined for it.', array('@display' => $this->display->display_title));
+    if ($this->uses_fields()) {
+      $fields = FALSE;
+      foreach ($this->get_handlers('field') as $field) {
+        if (empty($field->options['exclude'])) {
+          $fields = TRUE;
+        }
+      }
+
+      if (!$fields) {
+        $errors[] = t('Display @display uses fields but there are none defined for it or all are excluded.', array('@display' => $this->display->display_title));
+      }
     }
 
     if ($this->has_path() && !$this->get_option('path')) {

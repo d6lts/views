@@ -846,8 +846,6 @@ class views_query {
 
     // If it's not a count query, add our fields
     $fields_array = $this->fields;
-    $has_aggregate = FALSE;
-    $non_aggregates = array();
     foreach ($fields_array as $field) {
       if ($fields) {
         $fields .= ",\n   ";
@@ -857,18 +855,11 @@ class views_query {
         $string .= $field['table'] . '.';
       }
       $string .= $field['field'];
-      // store for use with non-aggregates below
-      $fieldname = (!empty($field['alias']) ? $field['alias'] : $string);
-      
       if (isset($field['distinct'])) {
         $string = "DISTINCT($string)";
       }
       if (isset($field['count'])) {
         $string = "COUNT($string)";
-        $has_aggregate = TRUE;
-      }
-      else {
-        $non_aggregates[] = $fieldname;
       }
       if ($field['alias']) {
         $string .= " AS $field[alias]";
@@ -876,8 +867,8 @@ class views_query {
       $fields .= $string;
     }
 
-    if ($has_aggregate || $this->groupby) {
-      $groupby = "GROUP BY " . implode(', ', array_merge($this->groupby, $non_aggregates)) . "\n";
+    if ($this->groupby) {
+      $groupby = "GROUP BY " . implode(', ', $this->groupby) . "\n";
       if ($this->having) {
         $having = $this->condition_sql('having');
       }
