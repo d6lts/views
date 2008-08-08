@@ -418,11 +418,24 @@ function template_preprocess_views_view_rss(&$vars) {
 
   // Figure out which display which has a path we're using for this feed. If there isn't
   // one, use the global $base_url
-  $link_display = $view->display_handler->get_link_display();
+  $link_display_id = $view->display_handler->get_link_display();
+  if ($link_display_id && !empty($view->display[$link_display_id])) {
+    $path = $view->display[$link_display_id]->handler->get_path();
+  }
 
-  // Compare the link to the default home page; if it's the default home page, just use $base_url.
-  if (empty($vars['link'])) {
-    $vars['link'] = $base_url;
+  if ($path) {
+    $path = $view->get_url(NULL, $path);
+    $url_options = array('absolute' => TRUE);
+    if (!empty($view->exposed_raw_input)) {
+      $url_options['query'] = $view->exposed_raw_input;
+    }
+
+    // Compare the link to the default home page; if it's the default home page, just use $base_url.
+    if ($path == variable_get('site_frontpage', 'node')) {
+      $path = '';
+    }
+
+    $vars['link'] = check_url(url($path, $url_options));
   }
 
   $vars['namespaces'] = drupal_attributes($style->namespaces);
