@@ -1148,13 +1148,14 @@ function template_preprocess_views_ui_edit_item(&$vars) {
 
   $types = views_object_types();
 
+  $vars['overridden'] = FALSE;
+  $vars['defaulted'] = FALSE;
+
   if ($vars['no_fields']) {
     $vars['title'] = $types[$type]['title'];
     $vars['item_help_icon'] = theme('advanced_help_topic', 'views', $type);
     $vars['rearrange'] = NULL;
     $vars['add'] = NULL;
-    $vars['overridden'] = FALSE;
-    $vars['defaulted'] = FALSE;
     return;
   }
 
