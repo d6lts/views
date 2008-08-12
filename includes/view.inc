@@ -1775,44 +1775,51 @@ class views_display extends views_db_object {
  * about them.
  */
 function views_object_types() {
-  return array(
-    'field' => array(
-      'title' => t('Fields'), // title
-      'ltitle' => t('fields'), // lowercase title for mid-sentence
-      'stitle' => t('Field'), // singular title
-      'lstitle' => t('field'), // singular lowercase title for mid sentence
-      'plural' => 'fields',
-    ),
-    'argument' => array(
-      'title' => t('Arguments'),
-      'ltitle' => t('arguments'),
-      'stitle' => t('Argument'),
-      'lstitle' => t('Argument'),
-      'plural' => 'arguments',
-    ),
-    'sort' => array(
-      'title' => t('Sort criteria'),
-      'ltitle' => t('sort criteria'),
-      'stitle' => t('Sort criterion'),
-      'lstitle' => t('sort criterion'),
-      'plural' => 'sorts',
-    ),
-    'filter' => array(
-      'title' => t('Filters'),
-      'ltitle' => t('filters'),
-      'stitle' => t('Filter'),
-      'lstitle' => t('filter'),
-      'plural' => 'filters',
-      'options' => 'views_ui_config_filters_form',
-    ),
-    'relationship' => array(
-      'title' => t('Relationships'),
-      'ltitle' => t('relationships'),
-      'stitle' => t('Relationship'),
-      'lstitle' => t('Relationship'),
-      'plural' => 'relationships',
-    ),
-  );
+  static $retval = NULL;
+
+  // statically cache this so t() doesn't run a bajillion times.
+  if (!isset($retval)) {
+    $retval = array(
+      'field' => array(
+        'title' => t('Fields'), // title
+        'ltitle' => t('fields'), // lowercase title for mid-sentence
+        'stitle' => t('Field'), // singular title
+        'lstitle' => t('field'), // singular lowercase title for mid sentence
+        'plural' => 'fields',
+      ),
+      'argument' => array(
+        'title' => t('Arguments'),
+        'ltitle' => t('arguments'),
+        'stitle' => t('Argument'),
+        'lstitle' => t('Argument'),
+        'plural' => 'arguments',
+      ),
+      'sort' => array(
+        'title' => t('Sort criteria'),
+        'ltitle' => t('sort criteria'),
+        'stitle' => t('Sort criterion'),
+        'lstitle' => t('sort criterion'),
+        'plural' => 'sorts',
+      ),
+      'filter' => array(
+        'title' => t('Filters'),
+        'ltitle' => t('filters'),
+        'stitle' => t('Filter'),
+        'lstitle' => t('filter'),
+        'plural' => 'filters',
+        'options' => 'views_ui_config_filters_form',
+      ),
+      'relationship' => array(
+        'title' => t('Relationships'),
+        'ltitle' => t('relationships'),
+        'stitle' => t('Relationship'),
+        'lstitle' => t('Relationship'),
+        'plural' => 'relationships',
+      ),
+    );
+  }
+
+  return $retval;
 }
 
 /**
