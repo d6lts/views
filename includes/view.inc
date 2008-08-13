@@ -55,6 +55,8 @@ class view extends views_db_object {
     foreach ($this->db_objects() as $object) {
       $this->$object = array();
     }
+
+    $this->query = new stdClass();
   }
 
   /**
@@ -352,7 +354,7 @@ class view extends views_db_object {
     // Load the requested items from the display onto the object.
     $this->$key = $this->display_handler->get_handlers($key);
 
-    // This reference deals with difficult PHP indirection.6/10/2008
+    // This reference deals with difficult PHP indirection.
     $handlers = &$this->$key;
 
     // Run through and test for accessibility.

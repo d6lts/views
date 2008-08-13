@@ -144,9 +144,7 @@ class views_handler extends views_object {
       }
     }
 
-    if (!empty($view->query)) {
-      $this->query = &$view->query;
-    }
+    $this->query = &$view->query;
   }
 
   /**

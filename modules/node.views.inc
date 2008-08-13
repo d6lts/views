@@ -1242,15 +1242,6 @@ function template_preprocess_views_view_row_node(&$vars) {
 }
 
 /**
- * Automatically allow view-based node templates if called from a view.
- */
-function views_preprocess_node(&$vars) {
-  if (!empty($vars['node']->view) && !empty($vars['node']->view->name)) {
-    $vars['template_files'][] = 'node-view-' . $vars['node']->view->name;
-  }
-}
-
-/**
  * Plugin which performs a node_view on the resulting object
  * and formats it as an RSS item.
  */
