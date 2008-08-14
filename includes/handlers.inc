@@ -341,7 +341,18 @@ class views_handler extends views_object {
    */
   function get_join() {
     // get the join from this table that links back to the base table.
-    return drupal_clone(views_get_table_join($this->table, $this->query->base_table));
+    // Determine the primary table to seek
+    if (empty($this->query->relationships[$this->relationship])) {
+      $base_table = $this->query->base_table;
+    }
+    else {
+      $base_table = $this->query->relationships[$this->relationship]['base'];
+    }
+
+    $join = views_get_table_join($this->table, $base_table);
+    if ($join) {
+      return drupal_clone($join);
+    }
   }
 
   /**
