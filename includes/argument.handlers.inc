@@ -1220,10 +1220,6 @@ class views_handler_argument_many_to_one extends views_handler_argument {
     return implode($this->operator == 'or' ? ' + ' : ', ', $this->title_query());
   }
 
-  function get_join() {
-    return drupal_clone(views_get_table_join($this->table, $this->query->base_table));
-  }
-
   function summary_query() {
     $field = $this->table . '.' . $this->field;
     $join = $this->get_join();

@@ -278,6 +278,10 @@ class views_query {
       return FALSE;
     }
 
+    if (!$alias && $join && $relationship && !empty($join->adjusted) && $table != $join->table) {
+      $alias = $table;
+    }
+
     $alias = $this->mark_table($table, $relationship, $alias);
 
     // If no alias is specified, give it the default.
@@ -287,7 +291,7 @@ class views_query {
 
     // If this is a relationship based table, add a marker with
     // the relationship as a primary table for the alias.
-    if ($table!= $alias) {
+    if ($table != $alias) {
       $this->mark_table($alias, $this->base_table, $alias);
     }
 
