@@ -390,7 +390,6 @@ class views_query {
     // table it links to is correct. Tables adjoined to a relationship
     // join to a link point, not the base table.
     $join = $this->adjust_join($join, $relationship);
-
     if ($this->ensure_path($table, $relationship, $join)) {
       // Attempt to eliminate redundant joins.  If this table's
       // relationship and join exactly matches an existing table's
@@ -418,7 +417,7 @@ class views_query {
         // if they are instances of the same class and have the same
         // attributes and values.
         if ($queued_table['relationship'] == $relationship && $queued_table['join'] == $join) {
-          return $queued_table['table'];
+          return $queued_table['alias'];
         }
       }
 
@@ -452,8 +451,8 @@ class views_query {
       ($join && $join->left_table == $this->relationships[$relationship]['table'])) {
 
       // Make sure that we're linking to the correct table for our relationship.
-      foreach (array_reverse($add) as $table => $join) {
-        $this->queue_table($table, $relationship, $this->adjust_join($join, $relationship));
+      foreach (array_reverse($add) as $table => $path_join) {
+        $this->queue_table($table, $relationship, $this->adjust_join($path_join, $relationship));
       }
       return TRUE;
     }
@@ -480,6 +479,10 @@ class views_query {
    * based upon what relationship items are joined in on.
    */
   function adjust_join($join, $relationship) {
+    if (!empty($join->adjusted)) {
+      return $join;
+    }
+
     if (empty($relationship) || empty($this->relationships[$relationship])) {
       return $join;
     }
@@ -505,6 +508,8 @@ class views_query {
         $join->left_table = $this->table_queue[$relationship]['alias'];
       }
     }
+
+    $join->adjusted = TRUE;
     return $join;
   }
 
