@@ -2491,9 +2491,11 @@ class views_plugin_display_block extends views_plugin_display {
   }
 
   /**
-   * Block views do not use exposed widgets.
+   * Block views use exposed widgets only if AJAX is set.
    */
-  function uses_exposed() { return FALSE; }
+  function uses_exposed() {
+    return $this->use_ajax();
+  }
 }
 
 /**
