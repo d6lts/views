@@ -3570,6 +3570,12 @@ class views_plugin_style_rss extends views_plugin_style {
       }
 
       $this->view->feed_icon .= theme('feed_icon', $url, $title);
+      drupal_add_link(array(
+        'rel' => 'alternate',
+        'type' => 'application/rss+xml',
+        'title' => $title,
+        'href' => $url
+      ));
     }
   }
 
