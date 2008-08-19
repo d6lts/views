@@ -132,11 +132,6 @@ function views_ui_menu() {
   );
 
   // autocompletes for handlers and such
-  // Path is not admin/build/views due to menu complications with the wildcards from
-  // the generic ajax callback.
-  $items['admin/views/ajax/autocomplete/user'] = $callback + array(
-    'page callback' => 'views_ui_autocomplete_user',
-  );
   $items['admin/views/ajax/autocomplete/tag'] = $callback + array(
     'page callback' => 'views_ui_autocomplete_tag',
   );

@@ -128,10 +128,18 @@ function views_menu() {
   $items['views/ajax'] = array(
     'title' => 'Views',
     'page callback' => 'views_ajax',
-    'file' => 'includes/ajax.inc',
     'access callback' => 'user_access',
     'access arguments' => array('access content'),
     'description' => 'Ajax callback for view loading.',
+    'type' => MENU_CALLBACK,
+  );
+  // Path is not admin/build/views due to menu complications with the wildcards from
+  // the generic ajax callback.
+  $items['admin/views/ajax/autocomplete/user'] = array(
+    'page callback' => 'views_ajax_autocomplete_user',
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'file' => 'includes/ajax.inc',
     'type' => MENU_CALLBACK,
   );
   return $items;

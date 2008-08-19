@@ -235,7 +235,7 @@ Drupal.Views.updatePreviewLink = function() {
   $.ajax({
     url: url,
     data: '',
-    type: 'GET',
+    type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
     error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at ") + url); },
     dataType: 'json'
@@ -260,7 +260,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
     
     $(this).addClass('views-throbbing');
     $.ajax({
-      type: "GET",
+      type: "POST",
       url: url,
       data: '',
       success: Drupal.Views.Ajax.ajaxResponse,
