@@ -316,6 +316,15 @@ function node_views_data() {
     ),
   );
 
+  $data['node']['created_day'] = array(
+    'title' => t('Created day'),
+    'help' => t('In the form of DD (01 - 31).'),
+    'argument' => array(
+      'field' => 'created',
+      'handler' => 'views_handler_argument_node_created_day',
+    ),
+  );
+
   $data['node']['created_week'] = array(
     'title' => t('Created week'),
     'help' => t('In the form of WW (01 - 53).'),
@@ -998,6 +1007,41 @@ class views_handler_argument_node_created_month extends views_handler_argument_d
   function title() {
     $month = str_pad($this->argument, 2, '0', STR_PAD_LEFT);
     return format_date(strtotime("2005" . $month . "15"), 'custom', $this->format, 0);
+  }
+
+  function summary_argument($data) {
+    // Make sure the argument contains leading zeroes.
+    return str_pad($data->{$this->base_alias}, 2, '0', STR_PAD_LEFT);
+  }
+}
+
+/**
+ * Argument handler for a day (DD)
+ */
+class views_handler_argument_node_created_day extends views_handler_argument_date {
+  /**
+   * Constructor implementation
+   */
+  function construct() {
+    $this->formula = views_date_sql_extract('DAY', "***table***.$this->real_field");
+    $this->format = 'j';
+    $this->arg_format = 'd';
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function summary_name($data) {
+    $day = str_pad($data->{$this->name_alias}, 2, '0', STR_PAD_LEFT);
+    return format_date(strtotime("2005" . "05" . $day), 'custom', $this->format);
+  }
+
+  /**
+   * Provide a link to the next level of the view
+   */
+  function title() {
+    $day = str_pad($this->argument+1, 2, '0', STR_PAD_LEFT);
+    return format_date(strtotime("2005" . "05" . $day), 'custom', $this->format, 0);
   }
 
   function summary_argument($data) {
