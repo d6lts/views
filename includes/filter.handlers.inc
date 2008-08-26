@@ -1065,7 +1065,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
         continue;
       }
       else if (is_object($option)) {
-        $keys = array_keys($option->choice);
+        $keys = array_keys($option->option);
         $key = array_shift($keys);
         if (isset($this->value[$key])) {
           $options[$id] = $option;
