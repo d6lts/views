@@ -1293,19 +1293,25 @@ class views_handler_filter_numeric extends views_handler_filter {
       }
     }
 
-    if ($which == 'all' || $which == 'value') {
+    if ($which == 'all') {
       $form['value']['value'] = array(
         '#type' => 'textfield',
         '#title' => empty($form_state['exposed']) ? t('Value') : '',
         '#size' => 30,
         '#default_value' => $this->value['value'],
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array($source => $this->operator_values(1)),
       );
-      if ($which == 'all') {
-        $form['value']['value'] += array(
-          '#process' => array('views_process_dependency'),
-          '#dependency' => array($source => $this->operator_values(1)),
-        );
-      }
+    }
+    else if ($which == 'value') {
+      // When exposed we drop the value-value and just do value if
+      // the operator is locked.
+      $form['value'] = array(
+        '#type' => 'textfield',
+        '#title' => empty($form_state['exposed']) ? t('Value') : '',
+        '#size' => 30,
+        '#default_value' => $this->value['value'],
+      );
     }
 
     if ($which == 'all' || $which == 'minmax') {
@@ -1381,6 +1387,26 @@ class views_handler_filter_numeric extends views_handler_filter {
     }
     return $output;
   }
+
+  /**
+   * Do some minor translation of the exposed input
+   */
+  function accept_exposed_input($input) {
+    if (empty($this->options['exposed'])) {
+      return TRUE;
+    }
+
+    // rewrite the input value so that it's in the correct format so that
+    // the parent gets the right data.
+    if (!empty($this->options['expose']['identifier'])) {
+      $value = &$input[$this->options['expose']['identifier']];
+      $value = array(
+        'value' => $value,
+      );
+    }
+
+    return parent::accept_exposed_input($input);
+  }
 }
 
 /**
@@ -1408,6 +1434,9 @@ class views_handler_filter_float extends views_handler_filter_numeric {
   }
 }
 
+/**
+ * Filter to handle dates stored as a timestamp.
+ */
 class views_handler_filter_date extends views_handler_filter_numeric {
   function option_definition() {
     $options = parent::option_definition();
@@ -1430,7 +1459,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
           'date' => t('A date in any machine readable format. CCYY-MM-DD HH:MM:SS is preferred.'),
           'offset' => t('An offset from the current time such as "+1 day" or "-2 hours and 30 minutes"'),
         ),
-        '#default_value' => $this->value['type'],
+        '#default_value' => !empty($this->value['type']) ? $this->value['type'] : 'date',
       );
     }
     parent::value_form($form, $form_state);
@@ -1498,10 +1527,9 @@ class views_handler_filter_date extends views_handler_filter_numeric {
       return TRUE;
     }
 
-    if (!empty($this->options['expose']['identifier'])) {
-      $value = &$input[$this->options['expose']['identifier']];
-      $value['type'] = $this->value['type'];
-    }
+    // Store this because it will get overwritten.
+    $type = $this->value['type'];
+    $rc = parent::accept_exposed_input($input);
 
     // Don't filter if value(s) are empty.
     $operators = $this->operators();
@@ -1513,17 +1541,19 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
 
     if ($operators[$operator]['values'] == 1) {
-      if ($value['value'] == '') {
+      if ($this->value['value'] == '') {
         return FALSE;
       }
     }
     else {
-      if ($value['min'] == '' || $value['max'] == '') {
+      if ($this->value['min'] == '' || $this->value['max'] == '') {
         return FALSE;
       }
     }
 
-    return parent::accept_exposed_input($input);
+    // restore what got overwritten by the parent.
+    $this->value['type'] = $type;
+    return $rc;
   }
 
   function op_between($field) {
@@ -1548,7 +1578,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
 
   function op_simple($field) {
     $value = intval(strtotime($this->value['value'], 0));
-    if ($this->value['type'] == 'offset') {
+    if (!empty($this->value['type']) && $this->value['type'] == 'offset') {
       $value = '***CURRENT_TIME***' . sprintf('%+d', $value); // keep sign
     }
     $this->query->add_where($this->options['group'], "$field $this->operator %s", $value);
