@@ -1048,6 +1048,7 @@ class views_handler_filter_node_type extends views_handler_filter_in_operator {
  * Filter for new content
  */
 class views_handler_filter_history_user_timestamp extends views_handler_filter {
+  function can_expose() { return FALSE; }
   function query() {
     global $user;
     // This can only work if we're logged in.

@@ -71,18 +71,27 @@ class views_handler_filter extends views_handler {
   }
 
   /**
+   * Determine if a filter can be exposed.
+   */
+  function can_expose() { return TRUE; }
+
+  /**
    * Provide the basic form which calls through to subforms.
    * If overridden, it is best to call through to the parent,
    * or to at least make sure all of the functions in this form
    * are called.
    */
   function options_form(&$form, &$form_state) {
-    $this->show_expose_button($form, $form_state);
+    if ($this->can_expose()) {
+      $this->show_expose_button($form, $form_state);
+    }
     $form['op_val_start'] = array('#value' => '<div class="clear-block">');
     $this->show_operator_form($form, $form_state);
     $this->show_value_form($form, $form_state);
     $form['op_val_end'] = array('#value' => '</div>');
-    $this->show_expose_form($form, $form_state);
+    if ($this->can_expose()) {
+      $this->show_expose_form($form, $form_state);
+    }
   }
 
   /**
@@ -126,12 +135,14 @@ class views_handler_filter extends views_handler {
    */
   function operator_form(&$form, &$form_state) {
     $options = $this->operator_options();
-    $form['operator'] = array(
-      '#type' => count($options) < 10 ? 'radios' : 'select',
-      '#title' => t('Operator'),
-      '#default_value' => $this->operator,
-      '#options' => $options,
-    );
+    if (!empty($options)) {
+      $form['operator'] = array(
+        '#type' => count($options) < 10 ? 'radios' : 'select',
+        '#title' => t('Operator'),
+        '#default_value' => $this->operator,
+        '#options' => $options,
+      );
+    }
   }
 
   /**
