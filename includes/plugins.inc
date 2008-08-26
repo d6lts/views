@@ -2262,6 +2262,10 @@ class views_plugin_display_page extends views_plugin_display {
           form_error($form['path'], t('"$arg" is no longer supported. Use % instead.'));
         }
 
+        if (strpos($form_state['values']['path'], '%') === 0) {
+          form_error($form['path'], t('"%" may not be used for the first segment of a path.'));
+        }
+
         // automatically remove '/' from path.
         $form_state['values']['path'] = trim($form_state['values']['path'], '/');
 
