@@ -81,8 +81,12 @@ class views_handler_argument extends views_handler {
     return !empty($info['breadcrumb']);
   }
 
-  function is_wildcard() {
-    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $this->argument;
+  function is_wildcard($arg = NULL) {
+    if (!isset($arg)) {
+      $arg = $this->argument;
+    }
+
+    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $arg;
   }
 
   function wildcard_title() {
@@ -629,6 +633,10 @@ class views_handler_argument extends views_handler {
       return $this->argument_validated;
     }
 
+    if ($this->is_wildcard($arg)) {
+      return $this->argument_validated = TRUE;
+    }
+
     if ($this->options['validate_type'] == 'none') {
       return $this->argument_validated = $this->validate_argument_basic($arg);
     }
@@ -694,10 +702,6 @@ class views_handler_argument extends views_handler {
    */
   function set_argument($arg) {
     $this->argument = $arg;
-    if ($this->is_wildcard()) {
-      return TRUE;
-    }
-
     return $this->validate_arg($arg);
   }
 }
