@@ -10,6 +10,13 @@
  */
 
 /**
+ * Advertise the current views api version
+ */
+function views_api_version() {
+  return 2.0;
+}
+
+/**
  * Implementation of hook_theme(). Register views theming functions.
  */
 function views_theme() {
@@ -47,8 +54,8 @@ function views_theme() {
       if (isset($def['theme'])) {
         $hooks[$def['theme']] = array(
           'pattern' => $def['theme'] . '__',
-          'file' => $def['file'],
-          'path' => $def['path'],
+          'file' => $def['theme file'],
+          'path' => $def['theme path'],
           'arguments' => $arguments[$type],
         );
         if (!function_exists('theme_' . $def['theme'])) {
@@ -64,8 +71,8 @@ function views_theme() {
 
           $hooks[$theme] = array(
             'pattern' => $theme . '__',
-            'file' => $def['file'],
-            'path' => $def['path'],
+            'file' => $def['theme file'],
+            'path' => $def['theme path'],
             'arguments' => $arguments[$theme_type],
           );
           if (!function_exists('theme_' . $theme)) {
@@ -445,18 +452,33 @@ function views_include($file) {
  */
 function views_module_include($file) {
   $views_path = drupal_get_path('module', 'views') . '/modules';
-  foreach (module_list() as $module) {
-    $module_path = drupal_get_path('module', $module);
-    if (file_exists("$module_path/$module.$file")) {
-      require_once "./$module_path/$module.$file";
-    }
-    else if (file_exists("$module_path/includes/$module.$file")) {
-      require_once "./$module_path/includes/$module.$file";
-    }
-    else if (file_exists("$views_path/$module.$file")) {
-      require_once "./$views_path/$module.$file";
+  foreach (views_get_module_apis() as $module => $info) {
+    if (file_exists("./$info[path]/$module.$file")) {
+      require_once "./$info[path]/$module.$file";
     }
   }
+}
+
+/**
+ * Get a list of modules that support the current views API.
+ */
+function views_get_module_apis() {
+  static $cache = NULL;
+  if (!isset($cache)) {
+    $cache = array();
+    foreach (module_implements('views_api') as $module) {
+      $function = $module . '_views_api';
+      $info = $function();
+      if (isset($info['api']) && $info['api'] == 2.000) {
+        if (!isset($info['path'])) {
+          $info['path'] = drupal_get_path('module', $module);
+        }
+        $cache[$module] = $info;
+      }
+    }
+  }
+
+  return $cache;
 }
 
 /**
@@ -494,12 +516,6 @@ function views_include_handlers() {
 
   views_include('base');
   views_include('handlers');
-  views_include('join.handlers');
-  views_include('relationship.handlers');
-  views_include('field.handlers');
-  views_include('sort.handlers');
-  views_include('filter.handlers');
-  views_include('argument.handlers');
   views_include('cache');
   views_include('plugins');
   _views_include_handlers();
@@ -552,8 +568,13 @@ function views_get_handler($table, $field, $key) {
   }
   // DEBUG -- identify missing handlers
   vpr("Missing handler: $table $field $key");
-  $name = 'views_handler_' . $key . '_broken';
-  return new $name;
+  $broken = array(
+    'title' => t('Broken handler @table.@field', array('@table' => $table, '@field' => $field)),
+    'handler' => 'views_handler_' . $key . '_broken',
+    'table' => $table,
+    'field' => $field,
+  );
+  return _views_create_handler($broken);
 }
 
 /**
@@ -581,7 +602,7 @@ function views_fetch_plugin_data($type = NULL, $plugin = NULL) {
 function views_get_plugin($type, $plugin) {
   $definition = views_fetch_plugin_data($type, $plugin);
   if (!empty($definition)) {
-    return _views_create_handler($definition);
+    return _views_create_handler($definition, $type);
   }
 }
 

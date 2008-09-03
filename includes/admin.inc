@@ -197,6 +197,30 @@ function views_ui_list_views_form(&$form_state) {
   $all = array('all' => t('<All>'));
   $none = array('none' => t('<None>'));
 
+  $form['type'] = array(
+    '#type' => 'select',
+    '#title' => t('Storage'),
+    '#options' => array(
+      'all' => t('<All>'),
+      t('Normal') => t('Normal'),
+      t('Default') => t('Default'),
+      t('Overridden') => t('Overridden'),
+    ),
+    '#default_value' => 'all',
+  );
+
+  $bases = array();
+  foreach (views_fetch_base_tables() as $table => $info) {
+    $bases[$table] = $info['title'];
+  }
+
+  $form['base'] = array(
+    '#type' => 'select',
+    '#title' => t('Type'),
+    '#options' => array_merge($all, $bases),
+    '#default_value' => 'all',
+  );
+
   $tags = array();
 
   $extras = array();
@@ -228,30 +252,6 @@ function views_ui_list_views_form(&$form_state) {
     '#type' => 'select',
     '#title' => t('Displays'),
     '#options' => array_merge($all, $displays),
-    '#default_value' => 'all',
-  );
-
-  $bases = array();
-  foreach (views_fetch_base_tables() as $table => $info) {
-    $bases[$table] = $info['title'];
-  }
-
-  $form['base'] = array(
-    '#type' => 'select',
-    '#title' => t('Type'),
-    '#options' => array_merge($all, $bases),
-    '#default_value' => 'all',
-  );
-
-  $form['type'] = array(
-    '#type' => 'select',
-    '#title' => t('Storage'),
-    '#options' => array(
-      'all' => t('<All>'),
-      t('Normal') => t('Normal'),
-      t('Default') => t('Default'),
-      t('Overridden') => t('Overridden'),
-    ),
     '#default_value' => 'all',
   );
 
@@ -1124,9 +1124,14 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
  * Generate the summary output for a single display to render in a tab.
  */
 function views_ui_display_tab($view, $display) {
-  $plugin = $display->handler->definition;
+  if (isset($display->handler)) {
+    $plugin = $display->handler->definition;
+  }
   if (empty($plugin)) {
-    return array(t('Invalid'), t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
+    $title = isset($display->display_title) ? $display->display_title : t('Invalid');
+    return array($title, t("Error: Display @display refers to a plugin named '@plugin', but that plugin doesn't exist!", array('@display' => $display->id, '@plugin' => $display->display_plugin)));
+
+    // @todo We can do a better 'plugin does not exist' tab.
   }
 
   // The display should always be initialized prior to this call.

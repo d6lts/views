@@ -8,24 +8,77 @@
 /**
  * Instantiate and construct a new handler
  */
-function _views_create_handler($definition) {
+function _views_create_handler($definition, $type = 'handler') {
 //  vpr('Instantiating handler ' . $definition['handler']);
-  if (empty($definition['handler']) || !class_exists($definition['handler'])) {
+  if (empty($definition['handler'])) {
+    return;
+  }
+
+  if (!class_exists($definition['handler']) && !views_include_handler($definition, $type)) {
     return;
   }
 
   $handler = new $definition['handler'];
   $handler->set_definition($definition);
   // let the handler have something like a constructor.
-  // @todo: deprecated. Remove.
-  if (isset($definition['arguments'])) {
-    call_user_func_array(array(&$handler, 'construct'), $definition['arguments']);
-  }
-  else {
-    $handler->construct();
-  }
+  $handler->construct();
 
   return $handler;
+}
+
+/**
+ * Attempt to find the include file for a given handler from its definition.
+ *
+ * This will also attempt to include all parents, though we're maxing the
+ * parent chain to 10 to prevent infinite loops.
+ */
+function views_include_handler($definition, $type, $count = 0) {
+  // Do not proceed if the class already exists.
+  if (isset($definition['handler']) && class_exists($definition['handler'])) {
+    return TRUE;
+  }
+
+  // simple infinite loop prevention.
+  if ($count > 10) {
+    vpr(t('Handler @handler include tried to loop infinitely!', array('@handler' => $definition['handler'])));
+    return FALSE;
+  }
+
+  if (!isset($definition['path'])) {
+    if ($type == 'handler') {
+      $definition += views_fetch_handler_data($definition['handler']);
+    }
+    else {
+      $definition += views_fetch_plugin_data($type, $definition['handler']);
+    }
+  }
+
+  if (!empty($definition['parent'])) {
+    if ($type == 'handler') {
+      $parent = views_fetch_handler_data($definition['parent']);
+    }
+    else {
+      $parent = views_fetch_plugin_data($type, $definition['parent']);
+    }
+
+    if ($parent) {
+      $rc = views_include_handler($parent, $type, $count + 1);
+      // If the parent chain cannot be included, don't try; this will
+      // help alleviate problems with modules with cross dependencies.
+      if (!$rc) {
+        return FALSE;
+      }
+    }
+  }
+
+  if (isset($definition['path']) && $definition['file']) {
+    $filename = './' . $definition['path'] . '/' . $definition['file'];
+    if (file_exists($filename)) {
+      require_once $filename;
+    }
+  }
+
+  return class_exists($definition['handler']);
 }
 
 /**
@@ -46,6 +99,68 @@ function _views_prepare_handler($definition, $data, $field) {
   }
 
   return _views_create_handler($definition);
+}
+
+/**
+ * Fetch the handler data from cache.
+ */
+function views_fetch_handler_data($handler = NULL) {
+  static $cache = NULL;
+  if (!isset($cache)) {
+    $start = microtime();
+
+    $cache = views_discover_handlers();
+
+    vpr('Views handlers build time: ' . (microtime() - $start) * 1000 . ' ms');
+  }
+
+  if (!$handler) {
+    return $cache;
+  }
+  else if (isset($cache[$handler])) {
+    return $cache[$handler];
+  }
+
+  // Return an empty array if there is no match.
+  return array();
+}
+
+/**
+ * Builds and return a list of all handlers available in the system.
+ *
+ * @return Nested array of handlers
+ */
+function views_discover_handlers() {
+  $cache = array();
+  // Get handlers from all modules.
+  foreach (module_implements('views_handlers') as $module) {
+    $function = $module . '_views_handlers';
+    $result = $function();
+    if (!is_array($result)) {
+      continue;
+    }
+
+    $module_dir = isset($result['info']['module']) ? $result['info']['module'] : $module;
+    $path = isset($result['info']['path']) ? $result['info']['path'] : drupal_get_path('module', $module_dir);
+
+    foreach ($result['handlers'] as $handler => $def) {
+      if (!isset($def['module'])) {
+        $def['module'] = $module_dir;
+      }
+      if (!isset($def['path'])) {
+        $def['path'] = $path;
+      }
+      if (!isset($def['file'])) {
+        $def['file'] = "$handler.inc";
+      }
+      if (!isset($def['handler'])) {
+        $def['handler'] = $handler;
+      }
+      // merge the new data in
+      $cache[$handler] = $def;
+    }
+  }
+  return $cache;
 }
 
 /**
@@ -858,5 +973,335 @@ function views_date_sql_extract($extract_type, $field, $field_type = 'int', $set
         return "EXTRACT(DOY FROM($field))";
     }
   }
-
 }
+
+/**
+ * Implementation of hook_views_handlers() to register all of the basic handlers
+ * views uses.
+ */
+function views_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'views') . '/handlers',
+    ),
+    'handlers' => array(
+      // argument handlers
+      'views_handler_argument' => array(
+        'parent' => 'views_handler',
+      ),
+      'views_handler_argument_numeric' => array(
+        'parent' => 'views_handler_argument',
+      ),
+      'views_handler_argument_formula' => array(
+        'parent' => 'views_handler_argument',
+      ),
+      'views_handler_argument_date' => array(
+        'parent' => 'views_handler_argument_formula',
+      ),
+      'views_handler_argument_string' => array(
+        'parent' => 'views_handler_argument',
+      ),
+      'views_handler_argument_many_to_one' => array(
+        'parent' => 'views_handler_argument',
+      ),
+      'views_handler_argument_null' => array(
+        'parent' => 'views_handler_argument',
+      ),
+
+      // field handlers
+      'views_handler_field' => array(
+        'parent' => 'views_handler',
+      ),
+      'views_handler_field_date' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_boolean' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_markup' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_xss' => array(
+        'parent' => 'views_handler_field',
+        'file' => 'views_handler_field.inc',
+      ),
+      'views_handler_field_url' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_file_size' => array(
+        'parent' => 'views_handler_field',
+        'file' => 'views_handler_field.inc',
+      ),
+      'views_handler_field_prerender_list' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_numeric' => array(
+        'parent' => 'views_handler_field',
+      ),
+
+      // filter handlers
+      'views_handler_filter' => array(
+        'parent' => 'views_handler',
+      ),
+      'views_handler_filter_equality' => array(
+        'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_string' => array(
+        'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_boolean_operator' => array(
+        'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_in_operator' => array(
+        'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_numeric' => array(
+        'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_date' => array(
+        'parent' => 'views_handler_filter_numeric',
+      ),
+      'views_handler_filter_many_to_one' => array(
+        'parent' => 'views_handler_filter_in_operator',
+      ),
+
+      // relationship handlers
+      'views_handler_relationship' => array(
+        'parent' => 'views_handler',
+      ),
+
+
+      // sort handlers
+      'views_handler_sort' => array(
+        'parent' => 'views_handler',
+      ),
+      'views_handler_sort_formula' => array(
+        'parent' => 'views_handler_sort',
+      ),
+      'views_handler_sort_date' => array(
+        'parent' => 'views_handler_sort',
+      ),
+      'views_handler_sort_menu_hierarchy' => array(
+        'parent' => 'views_handler_sort',
+      ),
+      'views_handler_sort_random' => array(
+        'parent' => 'views_handler_sort',
+      ),
+    ),
+  );
+}
+
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup views_join_handlers Views' join handlers
+ * @{
+ * Handlers to tell Views how to join tables together.
+
+ * Here is how you do complex joins:
+ *
+ * @code
+ * class views_join_complex extends views_join {
+ *   // PHP 4 doesn't call constructors of the base class automatically from a
+ *   // constructor of a derived class. It is your responsibility to propagate
+ *   // the call to constructors upstream where appropriate.
+ *   function construct($table, $left_table, $left_field, $field, $extra = array(), $type = 'LEFT') {
+ *     parent::construct($table, $left_table, $left_field, $field, $extra, $type);
+ *   }
+ *
+ *   function join($table, &$query) {
+ *     $output = parent::join($table, $query);
+ *   }
+ *   $output .= "AND foo.bar = baz.boing";
+ *   return $output;
+ * }
+ * @endcode
+ */
+/**
+ * A function class to represent a join and create the SQL necessary
+ * to implement the join.
+ *
+ * This is the Delegation pattern. If we had PHP5 exclusively, we would
+ * declare this an interface.
+ *
+ * Extensions of this class can be used to create more interesting joins.
+ *
+ * join definition
+ *   - table: table to join (right table)
+ *   - field: field to join on (right field)
+ *   - left_table: The table we join to
+ *   - left_field: The field we join to
+ *   - type: either LEFT (default) or INNER
+ *   - extra: Either a string that's directly added, or an array of items:
+ *   - - table: if not set, current table; if NULL, no table. This field can't
+ *       be set in the cached definition because it can't know aliases; this field
+ *       can only be used by realtime joins.
+ *   - - field: Field or formula
+ *   - - operator: defaults to =
+ *   - - value: Must be set. If an array, operator will be defaulted to IN.
+ *   - - numeric: If true, the value will not be surrounded in quotes.
+ *   - extra type: How all the extras will be combined. Either AND or OR. Defaults to AND.
+ */
+class views_join {
+  /**
+   * Construct the views_join object.
+   */
+  function construct($table = NULL, $left_table = NULL, $left_field = NULL, $field = NULL, $extra = array(), $type = 'LEFT') {
+    $this->extra_type = 'AND';
+    if (!empty($table)) {
+      $this->table = $table;
+      $this->left_table = $left_table;
+      $this->left_field = $left_field;
+      $this->field = $field;
+      $this->extra = $extra;
+      $this->type = strtoupper($type);
+    }
+    else if (!empty($this->definition)) {
+      // if no arguments, construct from definition.
+      // These four must exist or it will throw notices.
+      $this->table = $this->definition['table'];
+      $this->left_table = $this->definition['left_table'];
+      $this->left_field = $this->definition['left_field'];
+      $this->field = $this->definition['field'];
+      if (!empty($this->definition['extra'])) {
+        $this->extra = $this->definition['extra'];
+      }
+      if (!empty($this->definition['extra type'])) {
+        $this->extra = strtoupper($this->definition['extra_type']);
+      }
+
+      $this->type = !empty($this->definition['type']) ? strtoupper($this->definition['type']) : 'LEFT';
+    }
+  }
+
+  /**
+   * Build the SQL for the join this object represents.
+   */
+  function join($table, &$query) {
+    $left = $query->get_table_info($this->left_table);
+    $output = " $this->type JOIN {" . $this->table . "} $table[alias] ON $left[alias].$this->left_field = $table[alias].$this->field";
+
+    // Tack on the extra.
+    if (isset($this->extra)) {
+      if (is_array($this->extra)) {
+        $extras = array();
+        foreach ($this->extra as $info) {
+          $extra = '';
+          // Figure out the table name. Remember, only use aliases provided
+          // if at all possible.
+          $join_table = '';
+          if (!array_key_exists('table', $info)) {
+            $join_table = $table['alias'] . '.';
+          }
+          elseif (isset($info['table'])) {
+            $join_table = $info['table'] . '.';
+          }
+
+          // And now deal with the value and the operator.  Set $q to
+          // a single-quote for non-numeric values and the
+          // empty-string for numeric values, then wrap all values in $q.
+          $raw_value = $this->db_safe($info['value']);
+          $q = (empty($info['numeric']) ? "'" : '');
+
+          if (is_array($raw_value)) {
+            $operator = !empty($info['operator']) ? $info['operator'] : 'IN';
+            // Transform from IN() notation to = notation if just one value.
+            if (count($raw_value) == 1) {
+              $value = $q . array_shift($raw_value) . $q;
+              $operator = $operator == 'NOT IN' ? '!=' : '=';
+            }
+            else {
+              $value = "($q" . implode("$q, $q", $raw_value) . "$q)";
+            }
+          }
+          else {
+            $operator = !empty($info['operator']) ? $info['operator'] : '=';
+            $value = "$q$raw_value$q";
+          }
+          $extras[] = "$join_table$info[field] $operator $value";
+        }
+
+        if ($extras) {
+          if (count($extras) == 1) {
+            $output .= ' AND ' . array_shift($extras);
+          }
+          else {
+            $output .= ' AND (' . implode(' ' . $this->extra_type . ' ', $extras) . ')';
+          }
+        }
+      }
+      else if ($this->extra && is_string($this->extra)) {
+        $output .= " AND ($this->extra)";
+      }
+    }
+    return $output;
+  }
+
+  /**
+   * Ensure that input is db safe. We only check strings and ints tho
+   * so something that needs floats in their joins needs to do their
+   * own type checking.
+   */
+  function db_safe($input) {
+    if (is_array($input)) {
+      $output = array();
+      foreach ($input as $value) {
+        if (empty($info['numeric'])) {
+          $output[] = db_escape_string($value);
+        }
+        else {
+          $output[] = intval($value);
+        }
+      }
+    }
+    else if (empty($info['numeric'])) {
+      $output = db_escape_string($input);
+    }
+    else {
+      $output = intval($input);
+    }
+
+    return $output;
+  }
+}
+
+/**
+ * @}
+ */
+
+// Declare API compatibility on behalf of core modules:
+
+/**
+ * Implementation of hook_views_api().
+ *
+ * This one is used as the base to reduce errors when updating.
+ */
+function views_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'views') . '/modules',
+  );
+}
+
+function comment_views_api() { return views_views_api(); }
+
+function node_views_api() { return views_views_api(); }
+
+function poll_views_api() { return views_views_api(); }
+
+function profile_views_api() { return views_views_api(); }
+
+function search_views_api() { return views_views_api(); }
+
+function statistics_views_api() { return views_views_api(); }
+
+function system_views_api() { return views_views_api(); }
+
+function taxonomy_views_api() { return views_views_api(); }
+
+function upload_views_api() { return views_views_api(); }
+
+function user_views_api() { return views_views_api(); }

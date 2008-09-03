@@ -174,54 +174,29 @@ function system_views_data() {
 }
 
 /**
- * Field handler to provide simple renderer that allows linking to a file.
+ * Implementation of hook_views_handlers() to register all of the basic handlers
+ * views uses.
  */
-class views_handler_field_file extends views_handler_field {
-  /**
-   * Constructor to provide additional field to add.
-   */
-  function init(&$view, &$options) {
-    parent::init($view, $options);
-    if (!empty($options['link_to_file'])) {
-      $this->additional_fields['filepath'] = 'filepath';
-    }
-  }
-
-  function option_definition() {
-    $options = parent::option_definition();
-    $options['link_to_file'] = array('default' => FALSE);
-    return $options;
-  }
-
-  /**
-   * Provide link to file option
-   */
-  function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
-    $form['link_to_file'] = array(
-      '#title' => t('Link this field to download the file'),
-      '#type' => 'checkbox',
-      '#default_value' => !empty($this->options['link_to_file']),
-    );
-  }
-
-  /**
-   * Render whatever the data is as a link to the file.
-   *
-   * Data should be made XSS safe prior to calling this function.
-   */
-  function render_link($data, $values) {
-    if (!empty($this->options['link_to_file'])) {
-      return l($data, file_create_url($values->{$this->aliases['filepath']}), array('html' => TRUE));
-    }
-    else {
-      return $data;
-    }
-  }
-
-  function render($values) {
-    return $this->render_link(check_plain($values->{$this->field_alias}), $values);
-  }
+function system_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'views') . '/modules/system',
+    ),
+    'handlers' => array(
+      'views_handler_field_file' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_file_status' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_filter_file_status' => array(
+        'parent' => 'views_handler_filter_in_operator',
+      ),
+      'views_handler_argument_file_fid' => array(
+        'parent' => 'views_handler_argument',
+      ),
+    ),
+  );
 }
 
 function _views_file_status($choice = NULL) {
@@ -237,42 +212,6 @@ function _views_file_status($choice = NULL) {
   return $status;
 }
 
-/**
- * Field handler to translate a node type into its readable form.
- */
-class views_handler_field_file_status extends views_handler_field {
-  function render($values) {
-    return _views_file_status($values->{$this->field_alias});
-  }
-}
-
-/**
- * Filter by file status
- */
-class views_handler_filter_file_status extends views_handler_filter_in_operator {
-  function get_value_options() {
-    if (!isset($this->value_options)) {
-      $this->value_options = _views_file_status();
-    }
-  }
-}
-
-/**
- * Argument handler to accept a file id.
- */
-class views_handler_argument_file_fid extends views_handler_argument {
-  /**
-   * Override the behavior of title(). Get the title of the file.
-   */
-  function title() {
-    $title = db_result(db_query(db_rewrite_sql("SELECT f.filename FROM {files} f WHERE f.fid = %d", $this->argument)));
-    if (empty($title)) {
-      return t('No title');
-    }
-
-    return check_plain($title);
-  }
-}
 
 /**
  * @}

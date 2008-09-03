@@ -104,6 +104,9 @@ function upload_views_data() {
   return $data;
 }
 
+/**
+ * Implementation of hook_views_data_alter()
+ */
 function upload_views_data_alter(&$data) {
   $data['node']['upload_fid'] = array(
     'group' => t('Upload'),
@@ -132,155 +135,26 @@ function upload_views_data_alter(&$data) {
 }
 
 /**
- * Field handler to provide a list of roles.
+ * Implementation of hook_views_handlers() to register all of the basic handlers
+ * views uses.
  */
-class views_handler_field_upload_fid extends views_handler_field_prerender_list {
-  function construct() {
-    parent::construct();
-  }
-
-  function option_definition() {
-    $options = parent::option_definition();
-    $options['link_to_file'] = array('default' => FALSE);
-    $options['only_listed'] = array('default' => FALSE);
-    return $options;
-  }
-
-  function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
-    $form['link_to_file'] = array(
-      '#title' => t('Link this field to download the file'),
-      '#type' => 'checkbox',
-      '#default_value' => !empty($this->options['link_to_file']),
-    );
-
-    $form['only_listed'] = array(
-      '#title' => t('Only show "listed" file attachments'),
-      '#type' => 'checkbox',
-      '#default_value' => !empty($this->options['only_listed']),
-    );
-  }
-
-  function pre_render($values) {
-    $vids = array();
-    $this->items = array();
-
-    $data = array();
-    foreach ($values as $result) {
-      $vids[] = $result->{$this->field_alias};
-    }
-
-    if ($vids) {
-      // Support "only listed files" option.
-      $where = '';
-      if (!empty($this->options['only_listed'])) {
-        $where = " AND u.list <> 0";
-      }
-      $result = db_query("SELECT u.vid, u.fid, f.filepath, u.description FROM {upload} u LEFT JOIN {files} f ON f.fid = u.fid WHERE u.vid IN (" . implode(', ', $vids) . ")$where ORDER BY u.weight, u.description");
-      while ($file = db_fetch_object($result)) {
-        $this->items[$file->vid][$file->fid] = $this->render_link(check_plain($file->description), $file);
-      }
-    }
-  }
-
-  /**
-   * Render whatever the data is as a link to the file.
-   *
-   * Data should be made XSS safe prior to calling this function.
-   */
-  function render_link($data, $values) {
-    if (!empty($this->options['link_to_file'])) {
-      return l($data, file_create_url($values->filepath), array('html' => TRUE));
-    }
-    else {
-      return $data;
-    }
-  }
-}
-
-/**
- * Field handler to provide a list of roles.
- */
-class views_handler_field_upload_description extends views_handler_field_prerender_list {
-  function init(&$view, &$options) {
-    parent::init($view, $options);
-    if (!empty($options['link_to_file'])) {
-      $this->additional_fields['fid'] = 'fid';
-    }
-  }
-
-  function option_definition() {
-    $options = parent::option_definition();
-    $options['link_to_file'] = array('default' => FALSE);
-    return $options;
-  }
-
-  function options_form(&$form, &$form_state) {
-    parent::options_form($form, $form_state);
-    $form['link_to_file'] = array(
-      '#title' => t('Link this field to download the file'),
-      '#type' => 'checkbox',
-      '#default_value' => !empty($this->options['link_to_file']),
-    );
-  }
-
-  function pre_render($values) {
-    if (empty($this->options['link_to_file'])) {
-      return;
-    }
-
-    $fids = array();
-    $this->items = array();
-
-    $data = array();
-    foreach ($values as $result) {
-      if ($result->{$this->aliases['fid']}) {
-        $fids[] = $result->{$this->aliases['fid']};
-      }
-    }
-
-    if ($fids) {
-      // Support "only listed files" option.
-      $result = db_query("SELECT f.fid, f.filepath FROM {files} f WHERE f.fid IN (" . implode(', ', $fids) . ")");
-      while ($file = db_fetch_object($result)) {
-        $this->items[$file->fid] = $file;
-      }
-    }
-  }
-
-  function render($values) {
-    return $this->render_link($values->{$this->field_alias}, $values);
-  }
-
-  /**
-   * Render whatever the data is as a link to the file.
-   *
-   * Data should be made XSS safe prior to calling this function.
-   */
-  function render_link($data, $value) {
-    if (!empty($this->options['link_to_file']) && $value->{$this->aliases['fid']}) {
-      $values = $this->items[$value->{$this->aliases['fid']}];
-      return l($data, file_create_url($values->filepath), array('html' => TRUE));
-    }
-    else {
-      return $data;
-    }
-  }
-}
-
-/**
- * Filter by whether or not a node has attached files from the upload module
- */
-class views_handler_filter_upload_fid extends views_handler_filter_boolean_operator {
-  function construct() {
-    parent::construct();
-    $this->value_value = t('Has attached files');
-  }
-
-  function query() {
-    $this->ensure_my_table();
-    $this->query->add_where($this->options['group'], "(SELECT COUNT(*) FROM {upload} u WHERE u.vid = $this->table_alias.$this->real_field) " . (empty($this->value) ? '=' : '<>') . " 0");
-  }
+function upload_views_handlers() {
+  return array(
+    'info' => array(
+      'path' => drupal_get_path('module', 'views') . '/modules/upload',
+    ),
+    'handlers' => array(
+      'views_handler_field_upload_fid' => array(
+        'parent' => 'views_handler_field_prerender_list',
+      ),
+      'views_handler_field_upload_description' => array(
+        'parent' => 'views_handler_field_prerender_list',
+      ),
+      'views_handler_filter_upload_fid' => array(
+        'parent' => 'views_handler_filter_boolean_operator',
+      ),
+    ),
+  );
 }
 
 /**

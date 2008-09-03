@@ -9,7 +9,9 @@
 /**
  * @mainpage Views 2 API Manual
  *
- * This is a stub for the main page.
+ * Much of this information is actually stored in the advanced help; please
+ * check the API topic. This help will primarily be aimed at documenting
+ * classes and function calls.
  *
  * Topics:
  * - @ref view_lifetime
@@ -57,7 +59,7 @@
  */
 
 /**
- * Stub hook documentation
+ * The full documentation for this hook is now in the advanced help.
  *
  * This hook should be placed in MODULENAME.views.inc and it will be auto-loaded.
  * This must either be in the same directory as the .module file or in a subdirectory
@@ -68,7 +70,7 @@ function hook_views_data() {
 }
 
 /**
- * Stub hook documentation
+ * The full documentation for this hook is now in the advanced help.
  *
  * This hook should be placed in MODULENAME.views.inc and it will be auto-loaded.
  * This must either be in the same directory as the .module file or in a subdirectory
@@ -80,6 +82,25 @@ function hook_views_data() {
  */
 function hook_views_plugins() {
   // example code here
+}
+
+/**
+ * Register handler, file and parent information so that handlers can be
+ * loaded only on request.
+ *
+ * The full documentation for this hook is in the advanced help.
+ */
+function hook_views_handlers() {
+  // example code here
+}
+
+/**
+ * Register View API information. This is required for your module to have
+ * its include files loaded.
+ *
+ * The full documentation for this hook is in the advanced help.
+ */
+function hook_views_api() {
 }
 
 /**
