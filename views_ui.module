@@ -210,7 +210,7 @@ function views_ui_theme() {
     // On behalf of a plugin
     'views_ui_style_plugin_table' => array(
       'arguments' => array('form' => NULL),
-      'file' => 'includes/plugins.inc',
+      'file' => 'includes/admin.inc',
     ),
   );
 }
