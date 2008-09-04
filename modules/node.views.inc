@@ -586,32 +586,32 @@ function node_views_handlers() {
       'views_handler_argument_node_created_fulldate' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
       'views_handler_argument_node_created_year' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
       'views_handler_argument_node_created_year_month' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
       'views_handler_argument_node_created_month' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
       'views_handler_argument_node_created_day' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
       'views_handler_argument_node_created_week' => array(
         // put several handlers in the same file
         'file' => 'views_handler_argument_dates_various.inc',
-        'parent' => 'views_handler_argument_argument_date',
+        'parent' => 'views_handler_argument_date',
       ),
 
       // filters
