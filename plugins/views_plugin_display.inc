@@ -6,6 +6,19 @@
  */
 
 /**
+ * @defgroup views_display_plugins Views' display plugins
+ * @{
+ * Display plugins control how Views interact with the rest of Drupal.
+ *
+ * They can handle creating Views from a Drupal page hook; they can
+ * handle creating Views from a Drupal block hook. They can also
+ * handle creating Views from an external module source, such as
+ * a Panels pane, or an insert view, or a CCK field type.
+ *
+ * @see hook_views_plugins
+ */
+
+/**
  * The default display plugin handler. Display plugins handle options and
  * basic mechanisms for different output methods.
  *
@@ -253,8 +266,6 @@ class views_plugin_display extends views_plugin {
       'access' => array(
         'contains' => array(
           'type' => array('default' => 'none'),
-          'role' => array('default' => array()),
-          'perm' => array('default' => ''),
          ),
       ),
       'title' => array(
@@ -449,6 +460,22 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
+   * Get the access plugin
+   */
+  function get_access_plugin($name = NULL) {
+    if (!$name) {
+      $access = $this->get_option('access');
+      $name = $access['type'];
+    }
+
+    $plugin = views_get_plugin('access', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display);
+      return $plugin;
+    }
+  }
+
+  /**
    * Get the handler object for a single handler.
    */
   function &get_handler($type, $id) {
@@ -549,7 +576,7 @@ class views_plugin_display extends views_plugin {
       'desc' => t('Change the name of this display.'),
     );
 
-    $title = $this->get_option('title');
+    $title = strip_tags($this->get_option('title'));
     if (!$title) {
       $title = t('None');
     }
@@ -635,38 +662,24 @@ class views_plugin_display extends views_plugin {
       'desc' => t('Display only distinct items, without duplicates.'),
     );
 
-    $access = $this->get_option('access');
-    // @todo -- this should be no longer necessary
-    if (!is_array($access)) {
-      $access = array('type' => 'none');
+    $access_plugin = $this->get_access_plugin();
+    if (!$access_plugin) {
+      // default to the no access control plugin.
+      $access_plugin = views_get_plugin('access', 'none');
     }
-    switch($access['type']) {
-      case 'none':
-      default:
-        $access_str = t('Unrestricted');
-        break;
-      case 'perm':
-        $access_str = $access['perm'];
-        break;
-      case 'role':
-        $roles = array_keys(array_filter($access['role']));
-        if (count($roles) > 1) {
-          $access_str = t('Multiple roles');
-        }
-        else {
-          $rids = views_ui_get_roles();
-          $rid = array_shift($roles);
-          $access_str = $rids[$rid];
-        }
-        break;
-    }
+
+    $access_str = $access_plugin->summary_title();
 
     $options['access'] = array(
       'category' => 'basic',
       'title' => t('Access'),
       'value' => $access_str,
-      'desc' => t('Specify access control settings for this display.'),
+      'desc' => t('Specify access control type for this display.'),
     );
+
+    if (!empty($access_plugin->definition['uses options'])) {
+      $options['access']['links']['access_options'] = t('Change settings for this access type.');
+    }
 
     if ($this->uses_link_display()) {
       // Only show the 'link display' if there is more than one option.
@@ -834,52 +847,38 @@ class views_plugin_display extends views_plugin {
         );
 
         $access = $this->get_option('access');
-        // @todo this should be no longer necessary
-        if (empty($access)) {
-          $access = array('type' => 'none', 'role' => array(), 'perm' => '');
-        }
-        $form['access']['type'] = array(
-          '#prefix' => '<div class="views-left-25">',
-          '#suffix' => '</div>',
-          '#title' => t('Type'),
+        $form['access']['type'] =  array(
           '#type' => 'radios',
-          '#options' => array('none' => t('Unrestricted'), 'role' => t('By role'), 'perm' => t('By permission')),
+          '#options' => views_fetch_plugin_names('access'),
           '#default_value' => $access['type'],
         );
-        $form['access']['role'] = array(
-          // Add an id to the surrounding div because checkboxes don't get ids
-          // as a whole group. =(
-          '#prefix' => '<div class="views-left-30"><div id="edit-access-role">',
-          '#suffix' => '</div></div>',
-          '#type' => 'checkboxes',
-          '#title' => t('Role'),
-          '#default_value' => $access['role'],
-          '#options' => views_ui_get_roles(),
-          '#description' => t('Only the checked roles will be able to access this display. Note that users with "access all views" can see any view, regardless of role.'),
-          '#process' => array('expand_checkboxes', 'views_process_dependency'),
-          '#dependency' => array('radio:access[type]' => array('role')),
-        );
 
-        $perms = array();
-        // Get list of permissions
-        foreach (module_list(FALSE, FALSE, TRUE) as $module) {
-          if ($permissions = module_invoke($module, 'perm')) {
-            $perms[$module] = drupal_map_assoc($permissions);
-          }
+        $access_plugin = views_fetch_plugin_data('access', $access['type']);
+        if (!empty($access_plugin['uses options'])) {
+          $form['markup'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#suffix' => '</div>',
+            '#value' => t('You may also adjust the !settings for the currently selected style by clicking on the icon.', array('!settings' => $this->option_link(t('settings'), 'access_options'))),
+          );
         }
-        $form['access']['perm'] = array(
-          '#prefix' => '<div class="views-left-30">',
-          '#suffix' => '</div>',
-          '#type' => 'select',
-          '#options' => $perms,
-          '#title' => t('Permission'),
-          '#default_value' => $access['perm'],
-          '#description' => t('Only users with the selected permission flag will be able to access this display. Note that users with "access all views" can see any view, regardless of other permissions.'),
-          '#process' => array('views_process_dependency'),
-          // Radios don't *get* ids in this system, so we use a special format
-          // for the id.
-          '#dependency' => array('radio:access[type]' => array('perm')),
-        );
+
+        break;
+      case 'access_options':
+        $access = $this->get_option('access');
+        $plugin = $this->get_access_plugin();
+        $form['#title'] .= t('Access options');
+        if ($plugin) {
+          $form['#help_topic'] = $plugin->definition['help topic'];
+
+          $form['access_options'] = array(
+            '#tree' => TRUE,
+          );
+          $form['access_options']['type'] = array(
+            '#type' => 'value',
+            '#value' => $access['type'],
+          );
+          $plugin->options_form($form['access_options'], $form_state);
+        }
         break;
       case 'header':
         $form['#title'] .= t('Header');
@@ -953,7 +952,7 @@ class views_plugin_display extends views_plugin {
       case 'row_options':
         if (!isset($name)) {
           $name = $this->get_option('row_plugin');
-      }
+        }
         $form['#help_topic'] = 'style-' . $name;
         // if row, $style will be empty.
         if (empty($style)) {
@@ -1235,11 +1234,12 @@ class views_plugin_display extends views_plugin {
           $plugin->options_validate($form[$form_state['section']], $form_state);
         }
         break;
-      case 'access':
-        $access = $form_state['values']['access'];
-        if ($access['type'] == 'role' && !array_filter($access['role'])) {
-          form_error($form, t('You must select at least one role if type is "by role"'));
+      case 'access_options':
+        $plugin = $this->get_access_plugin();
+        if ($plugin) {
+          $plugin->options_validate($form['access_options'], $form_state);
         }
+        break;
     }
   }
 
@@ -1254,8 +1254,26 @@ class views_plugin_display extends views_plugin {
         $this->display->display_title = $form_state['values']['display_title'];
         break;
       case 'access':
-        $form_state['values'][$section]['role'] = array_filter($form_state['values'][$section]['role']);
-        $this->set_option($section, $form_state['values'][$section]);
+        $access = $this->get_option('access');
+        if ($access['type'] != $form_state['values']['access']['type']) {
+          $plugin = views_get_plugin('access', $form_state['values']['access']['type']);
+          if ($plugin) {
+            $access = array('type' => $form_state['values']['access']['type']);
+            $plugin->option_defaults($access);
+            $this->set_option('access', $access);
+            if (!empty($plugin->definition['uses options'])) {
+              views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('access_options'));
+            }
+          }
+        }
+
+        break;
+      case 'access_options':
+        $plugin = views_get_plugin('access', $form_state['values'][$section]['type']);
+        if ($plugin) {
+          $plugin->options_submit($form['access_options'], $form_state);
+          $this->set_option('access', $form_state['values'][$section]);
+        }
         break;
       case 'title':
       case 'link_display':
@@ -1497,24 +1515,24 @@ class views_plugin_display extends views_plugin {
   /**
    * Determine if the user has access to this display of the view.
    */
-  function access($account) {
+  function access($account = NULL) {
+    if (!isset($account)) {
+      global $user;
+      $account = $user;
+    }
+
     // Full override.
     if (user_access('access all views', $account)) {
       return TRUE;
     }
 
-    $access = $this->get_option('access');
-    switch ($access['type']) {
-      case 'role':
-        $roles = array_keys($account->roles);
-        $roles[] = $account->uid ? DRUPAL_AUTHENTICATED_RID : DRUPAL_ANONYMOUS_RID;
-        return array_intersect(array_filter($access['role']), $roles);
-      case 'perm':
-        return user_access($access['perm'], $account);
-      case 'none':
-      default:
-        return TRUE;
+    $plugin = $this->get_access_plugin();
+    if ($plugin) {
+      return $plugin->access($account);
     }
+
+    // fallback to all access if no plugin.
+    return TRUE;
   }
 
   /**
@@ -1584,3 +1602,9 @@ class views_plugin_display extends views_plugin {
     return $errors;
   }
 }
+
+
+/**
+ * @}
+ */
+

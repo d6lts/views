@@ -197,8 +197,9 @@ function views_menu_alter(&$callbacks) {
           // of possible display IDs instead of a single ID.
           $callbacks[$path]['page arguments'][1] = (array)$callbacks[$path]['page arguments'][1];
           $callbacks[$path]['page arguments'][1][] = $display_id;
-          $callbacks[$path]['access arguments'][0][1] = (array)$callbacks[$path]['access arguments'][0][1];
-          $callbacks[$path]['access arguments'][0][1][] = $display_id;
+//          $callbacks[$path]['access arguments'][0][1] = (array)$callbacks[$path]['access arguments'][0][1];
+//          $callbacks[$path]['access arguments'][0][1][] = $display_id;
+          $callbacks[$path]['access arguments'][] = $item['access arguments'][0];
           $callbacks[$path]['load arguments'][1] = (array)$callbacks[$path]['load arguments'][1];
           $callbacks[$path]['load arguments'][1][] = $display_id;
         }
@@ -351,40 +352,51 @@ function views_invalidate_cache() {
 }
 
 /**
- * Determine if the given user has access to the view + display.
+ * Determine if the logged in user has access to a view.
  *
- * @param $view
- *   May be a view object, or an array with the view name and the display ID,
- *   or a string to use as the view name.
- * @param $account
- *   An optional account to use; if left off, the current user will be used.
+ * This function should only be called from a menu hook or some other
+ * embedded source. Each argument is the result of a call to
+ * views_plugin_access::get_access_callback() which is then used
+ * to determine if that display is accessible. If *any* argument
+ * is accessible, then the view is accessible.
  */
-function views_access($view, $account = NULL) {
-  if (is_array($view)) {
-    list($name, $display_id) = $view;
-    $view = views_get_view($name);
-    if (!$view) {
-      return FALSE;
-    }
-  }
-  elseif (is_string($view)) {
-    $view = views_get_view($view);
-    if (!$view) {
-      return FALSE;
-    }
-    $display_id = 'default';
-  }
-  else {
-    // Clone the view to prevent problems.
-    $view = $view->clone_view();
-    $display_id = isset($view->current_display) ? $view->current_display : 'default';
+function views_access() {
+  if (user_access('access all views')) {
+    return TRUE;
   }
 
-  $access = $view->access($display_id, $account);
-  $view->destroy();
-  return $access;
+  $args = func_get_args();
+  foreach ($args as $arg) {
+    if ($arg === TRUE) {
+      return TRUE;
+    }
+
+    if (!is_array($arg)) {
+      continue;
+    }
+
+    list($callback, $arguments) = $arg;
+    if (function_exists($callback) && call_user_func_array($callback, $arguments)) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
 }
 
+/**
+ * Access callback to determine if the logged in user has any of the
+ * requested roles.
+ *
+ * This must be in views.module as it is called by menu access callback
+ * and can be called often.
+ */
+function views_check_roles($rids) {
+  global $user;
+  $roles = array_keys($user->roles);
+  $roles[] = $user->uid ? DRUPAL_AUTHENTICATED_RID : DRUPAL_ANONYMOUS_RID;
+  return array_intersect(array_filter($rids), $roles);
+}
 // ------------------------------------------------------------------
 // Functions to help identify views that are running or ran
 

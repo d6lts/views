@@ -61,6 +61,8 @@ class views_plugin_display_page extends views_plugin_display {
 
     $path = implode('/', $bits);
 
+    $access_plugin = $this->get_access_plugin();
+
     if ($path) {
       $items[$path] = array(
         // default views page entry
@@ -68,7 +70,7 @@ class views_plugin_display_page extends views_plugin_display {
         'page arguments' => $page_arguments,
         // Default access check (per display)
         'access callback' => 'views_access',
-        'access arguments' => array(array($this->view->name, $this->display->id)),
+        'access arguments' => array($access_plugin->get_access_callback()),
         // Identify URL embedded arguments and correlate them to a handler
         'load arguments'  => array($this->view->name, $this->display->id, '%index'),
       );
@@ -120,7 +122,7 @@ class views_plugin_display_page extends views_plugin_display {
               'page arguments' => $page_arguments,
               // Default access check (per display)
               'access callback' => 'views_access',
-              'access arguments' => array(array($this->view->name, $this->display->id)),
+              'access arguments' => array($access_plugin->get_access_callback()),
               // Identify URL embedded arguments and correlate them to a handler
               'load arguments'  => array($this->view->name, $this->display->id, '%index'),
               'title' => $tab_options['title'],

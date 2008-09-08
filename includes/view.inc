@@ -217,11 +217,15 @@ class view extends views_db_object {
     if (!is_array($displays)) {
       return $displays;
     }
+
+    $this->init_display();
+
     foreach ($displays as $display_id) {
-      if (views_access(array($this->name, $display_id))) {
+      if ($this->displays[$display_id]->handler->access()) {
         return $display_id;
       }
     }
+
     return 'default';
   }
 
@@ -232,8 +236,6 @@ class view extends views_db_object {
    *   The id of the display to mark as current.
    */
   function set_display($display_id = NULL) {
-    $display_id = $this->choose_display($display_id);
-
     // If we have not already initialized the display, do so. But be careful.
     if (empty($this->current_display)) {
       $this->init_display();
@@ -244,6 +246,8 @@ class view extends views_db_object {
         $display_id = 'default';
       }
     }
+
+    $display_id = $this->choose_display($display_id);
 
     // If no display id sent in and one wasn't chosen above, we're finished.
     if (empty($display_id)) {

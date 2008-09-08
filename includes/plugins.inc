@@ -202,6 +202,35 @@ function views_views_plugins() {
         'handler' => 'views_plugin_argument_validate_numeric',
       ),
     ),
+    'access' => array(
+      'parent' => array(
+        // this isn't really a display but is necessary so the file can
+        // be included.
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_access',
+        'parent' => '',
+      ),
+      'none' => array(
+        'title' => t('None'),
+        'help' => t('Will be available to all users.'),
+        'handler' => 'views_plugin_access_none',
+        'help topic' => 'access-none',
+      ),
+      'role' => array(
+        'title' => t('Role'),
+        'help' => t('Access will be granted to users with any of the specified roles.'),
+        'handler' => 'views_plugin_access_role',
+        'uses options' => TRUE,
+        'help topic' => 'access-role',
+      ),
+      'perm' => array(
+        'title' => t('Permission'),
+        'help' => t('Access will be granted to users with the specified permission string.'),
+        'handler' => 'views_plugin_access_perm',
+        'uses options' => TRUE,
+        'help topic' => 'access-perm',
+      ),
+    ),
   );
 }
 
@@ -324,22 +353,7 @@ class views_plugin extends views_object {
   function validate() { return array(); }
 }
 
-/**
- * @defgroup views_display_plugins Views' display plugins
- * @{
- * Display plugins control how Views interact with the rest of Drupal.
- *
- * They can handle creating Views from a Drupal page hook; they can
- * handle creating Views from a Drupal block hook. They can also
- * handle creating Views from an external module source, such as
- * a Panels pane, or an insert view, or a CCK field type.
- *
- * @see hook_views_plugins
- */
-
-/**
- * @}
- */
+// @todo move all these defgroups into their respective .inc files.
 
 /**
  * @defgroup views_style_plugins Views' style plugins
