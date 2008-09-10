@@ -142,7 +142,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
         }
         $form['displays'] = array(
           '#type' => 'checkboxes',
-          '#description' => t('Attach before or after the parent display?'),
+          '#description' => t('The feed icon will be available only to the selected displays.'),
           '#options' => $displays,
           '#default_value' => $this->get_option('displays'),
         );
