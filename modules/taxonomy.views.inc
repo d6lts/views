@@ -179,6 +179,7 @@ function taxonomy_views_data() {
       'title' => t('All terms'),
       'help' => t('Display all taxonomy terms associated with a node.'),
       'handler' => 'views_handler_field_term_node_tid',
+      'skip base' => 'term_data',
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_term_node_tid',
