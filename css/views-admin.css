@@ -400,6 +400,7 @@ a.views-button-remove {
   margin: 2px 0px 1px 0px;
   border-bottom: #C2C9CE 1px solid;
   border-right: #C2C9CE 1px solid;
+  padding: 0px;
 }
 
 a.views-button-remove {
