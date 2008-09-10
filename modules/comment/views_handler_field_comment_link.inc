@@ -28,7 +28,7 @@ class views_handler_field_comment_link extends views_handler_field {
   function query() {
     $this->ensure_my_table();
     $this->add_additional_fields();
- }
+  }
 
   function render($values) {
     $text = !empty($this->options['text']) ? $this->options['text'] : t('view');

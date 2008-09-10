@@ -187,10 +187,8 @@ function views_views_plugins() {
     ),
     'argument validator' => array(
       'parent' => array(
-        // this isn't really a display but is necessary so the file can
-        // be included.
         'no ui' => TRUE,
-        'handler' => 'views_plugin_argument_defaultxx',
+        'handler' => 'views_plugin_argument_validate',
         'parent' => '',
       ),
       'php' => array(
@@ -204,8 +202,6 @@ function views_views_plugins() {
     ),
     'access' => array(
       'parent' => array(
-        // this isn't really a display but is necessary so the file can
-        // be included.
         'no ui' => TRUE,
         'handler' => 'views_plugin_access',
         'parent' => '',

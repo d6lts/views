@@ -9,7 +9,7 @@ class views_handler_field_comment extends views_handler_field {
    */
   function init(&$view, &$options) {
     parent::init($view, $options);
-    if (!empty($options['link_to_comment'])) {
+    if (!empty($this->options['link_to_comment'])) {
       $this->additional_fields['cid'] = 'cid';
       $this->additional_fields['nid'] = 'nid';
     }

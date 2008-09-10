@@ -221,7 +221,7 @@ class view extends views_db_object {
     $this->init_display();
 
     foreach ($displays as $display_id) {
-      if ($this->displays[$display_id]->handler->access()) {
+      if ($this->display[$display_id]->handler->access()) {
         return $display_id;
       }
     }
@@ -1262,6 +1262,13 @@ class view extends views_db_object {
 
     foreach ($this->display as $id => $display) {
       $output .= $indent . '$handler = $view->new_display(' . views_var_export($display->display_plugin, $indent) . ', ' . views_var_export($display->display_title, $indent) . ', \'' . $id . "');\n";
+      if (empty($display->handler)) {
+        // @todo -- probably need a method of exporting broken displays as
+        // they may simply be broken because a module is not installed. That
+        // does not invalidate the display.
+        continue;
+      }
+
       foreach ($display->handler->option_definition() as $option => $definition) {
         // Special handling for some items
         switch ($option) {

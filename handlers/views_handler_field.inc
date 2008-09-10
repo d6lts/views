@@ -20,6 +20,7 @@
  */
 class views_handler_field extends views_handler {
   var $field_alias = 'unknown';
+  var $aliases = array();
 
   /**
    * Construct a new field handler.
