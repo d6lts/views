@@ -582,6 +582,7 @@ class view extends views_db_object {
     }
 
     $this->build_info['query'] = $this->query->query();
+    $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
     $this->build_time = microtime() - $start;
@@ -624,6 +625,7 @@ class view extends views_db_object {
     }
 
     $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field, array('view' => &$this));
+    $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field, array('view' => &$this));
 
     $args = $this->build_info['query_args'];
 
@@ -645,9 +647,6 @@ class view extends views_db_object {
         db_set_active($this->base_database);
         $external = TRUE;
       }
-
-      // make count from subselect now
-      $count_query = "SELECT COUNT(*) FROM ($query) AS count_alias";
 
       $start = microtime();
       if (!empty($this->pager['items_per_page'])) {

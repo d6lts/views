@@ -838,11 +838,32 @@ class views_query {
    *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   function query($get_count = FALSE) {
+    
     // Check query distinct value.
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
       if (!empty($this->fields[$this->base_field])) {
         $this->fields[$this->base_field]['distinct'] = TRUE;
       }
+    }
+    
+    /**
+     * An optimized count query includes just the base field instead of all the fields.
+     * Determine of this query qualifies by checking for a groupby or distinct.
+     */
+    $fields_array = $this->fields;
+    if ($get_count && !$this->groupby) {
+      foreach ($fields_array as $field) {
+        if (isset($field['distinct'])) {
+          $get_count_optimized = FALSE;
+          break;
+        }
+      }
+    }
+    else {
+      $get_count_optimized = FALSE;
+    }
+    if (!isset($get_count_optimized)) {
+      $get_count_optimized = TRUE;
     }
 
     $joins = $fields = $where = $having = $orderby = $groupby = '';
@@ -853,8 +874,7 @@ class views_query {
       }
     }
 
-    // If it's not a count query, add our fields
-    $fields_array = $this->fields;
+
     foreach ($fields_array as $field) {
       if ($fields) {
         $fields .= ",\n   ";
@@ -874,6 +894,11 @@ class views_query {
         $string .= " AS $field[alias]";
       }
       $fields .= $string;
+      
+      if ($get_count_optimized) {
+        // We only want the first field in this case.
+        break;
+      }
     }
 
     if ($this->groupby) {
@@ -883,7 +908,7 @@ class views_query {
       }
     }
 
-    if (!$get_count) {
+    if (!$get_count_optimized) {
       // we only add the groupby if we're not counting.
       if ($this->orderby) {
         $orderby = "ORDER BY " . implode(', ', $this->orderby) . "\n";

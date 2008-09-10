@@ -33,19 +33,25 @@ class views_handler_filter_search extends views_handler_filter {
    * Provide a simple textfield for equality
    */
   function exposed_form(&$form, &$form_state) {
-    $key = $this->options['expose']['identifier'];
-    $form[$key] = array(
-      '#type' => 'textfield',
-      '#size' => 15,
-      '#default_value' => $this->value,
-      '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
-    );
+    if (isset($this->options['expose']['identifier'])) {
+      $key = $this->options['expose']['identifier'];
+      $form[$key] = array(
+        '#type' => 'textfield',
+        '#size' => 15,
+        '#default_value' => $this->value,
+        '#attributes' => array('title' => t('Enter the terms you wish to search for.')),
+      );
+    }
   }
 
   /**
    * Validate the options form.
    */
   function exposed_validate($form, &$form_state) {
+    if (!isset($this->options['expose']['identifier'])) {
+      return;
+    }
+
     $key = $this->options['expose']['identifier'];
     if (!empty($form_state['values'][$key])) {
       $this->search_query = search_parse_query($form_state['values'][$key]);

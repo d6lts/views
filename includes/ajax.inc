@@ -17,7 +17,7 @@ function views_ajax() {
   if (isset($_REQUEST['view_name']) && isset($_REQUEST['view_display_id'])) {
     $name = $_REQUEST['view_name'];
     $display_id = $_REQUEST['view_display_id'];
-    $args = !empty($_REQUEST['view_args']) ? explode('/', $_REQUEST['view_args']) : array();
+    $args = isset($_REQUEST['view_args']) && $_REQUEST['views_args'] !== '' ? explode('/', $_REQUEST['view_args']) : array();
     $path = isset($_REQUEST['view_path']) ? $_REQUEST['view_path'] : NULL;
     views_include('ajax');
     $object = new stdClass();
