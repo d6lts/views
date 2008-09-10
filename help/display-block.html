@@ -4,7 +4,7 @@ Block displays will show up on your blocks administration page. Once a block dis
 Blocks <strong>do not</strong> accept arguments from any source; the only way to get arguments to a block is to provide defaults to it, possibly via the PHP Code default setting. A very common scenario is the following:
 
 <pre>
-if (arg(0) == 'node' && is_numeric(arg(1))) {
+if (arg(0) == 'node' &amp;&amp; is_numeric(arg(1))) {
   return arg(1);
 }
 </pre>

@@ -1,13 +1,13 @@
 <!-- $Id$ -->
 Tables are described to Views via hook_views_data(), which returns an array of table information, keyed by the name of the table. For example, if your module is describing three tables, 'foo', 'bar' and 'baz', your array will look like this:
 <pre>$data = array(
-  'foo' => array(
+  'foo' =&gt; array(
     // ...info here...
   ),
-  'bar' => array(
+  'bar' =&gt; array(
     // ...info here...
   ),
-  'baz' => array(
+  'baz' =&gt; array(
     // ...info here...
   ),
 );
@@ -18,13 +18,13 @@ The key should be the actual database name of the table (not including prefix), 
 Each item in the array should be a field in the table, with the exception of a special information section called 'table'. Example:
 
 <pre>$data['foo'] = array(
-  'table' => array(
+  'table' =&gt; array(
     // ... info about the table, described later ...
   ),
-  'bar' => array(
+  'bar' =&gt; array(
     // ... info about the field named 'bar', i.e, foo.bar,
   ),
-  'baz' => array(
+  'baz' =&gt; array(
     // ... info about the field named 'baz', i.e, foo.baz,
   ),
 );
@@ -57,10 +57,10 @@ For example:
 <pre>
   // Advertise this table as a possible base table
   $data['node']['table']['base'] = array(
-    'field' => 'nid',
-    'title' => t('Node'),
-    'help' => t("Nodes are a Drupal site's primary content."),
-    'weight' => -10,
+    'field' =&gt; 'nid',
+    'title' =&gt; t('Node'),
+    'help' =&gt; t("Nodes are a Drupal site's primary content."),
+    'weight' =&gt; -10,
   );
 </pre>
 
@@ -88,9 +88,9 @@ In the above example, to use these with 'node' as the base table, both 'term_dat
 
 <pre>
 $data['term_data']['table']['join']['node'] = array(
-  'left_table' => 'term_node',
-  'left_field' => 'tid',
-  'field' => 'tid',
+  'left_table' =&gt; 'term_node',
+  'left_field' =&gt; 'tid',
+  'field' =&gt; 'tid',
 );
 </pre>
 
@@ -98,8 +98,8 @@ The above can be read as "In order to join to the node table, the term_data tabl
 
 <pre>
 $data['term_node']['table']['join']['node'] = array(
-  'left_field' => 'nid',
-  'field' => 'nid',
+  'left_field' =&gt; 'nid',
+  'field' =&gt; 'nid',
 );
 </pre>
 
@@ -143,27 +143,27 @@ Each field is described in the view data with an array, keyed to the database na
 
 <pre>
 $data['node']['nid'] = array(
-  'title' => t('Nid'),
-  'help' => t('The node ID of the node.'), // The help that appears on the UI,
+  'title' =&gt; t('Nid'),
+  'help' =&gt; t('The node ID of the node.'), // The help that appears on the UI,
   // Information for displaying the nid
-  'field' => array(
-    'handler' => 'views_handler_field_node',
-    'click sortable' => TRUE,
+  'field' =&gt; array(
+    'handler' =&gt; 'views_handler_field_node',
+    'click sortable' =&gt; TRUE,
   ),
   // Information for accepting a nid as an argument
-  'argument' => array(
-    'handler' => 'views_handler_argument_node_nid',
-    'name field' => 'title', // the field to display in the summary.
-    'numeric' => TRUE,
-    'validate type' => 'nid',
+  'argument' =&gt; array(
+    'handler' =&gt; 'views_handler_argument_node_nid',
+    'name field' =&gt; 'title', // the field to display in the summary.
+    'numeric' =&gt; TRUE,
+    'validate type' =&gt; 'nid',
   ),
   // Information for accepting a nid as a filter
-  'filter' => array(
-    'handler' => 'views_handler_filter_numeric',
+  'filter' =&gt; array(
+    'handler' =&gt; 'views_handler_filter_numeric',
   ),
   // Information for sorting on a nid.
-  'sort' => array(
-    'handler' => 'views_handler_sort',
+  'sort' =&gt; array(
+    'handler' =&gt; 'views_handler_sort',
   ),
 );
 </pre>
@@ -172,10 +172,10 @@ The above example describes the 'nid' field on the 'node' table, providing 4 of 
 
 <pre>
 $data['node']['edit_node'] = array(
-  'field' => array(
-    'title' => t('Edit link'),
-    'help' => t('Provide a simple link to edit the node.'),
-    'handler' => 'views_handler_field_node_link_edit',
+  'field' =&gt; array(
+    'title' =&gt; t('Edit link'),
+    'help' =&gt; t('Provide a simple link to edit the node.'),
+    'handler' =&gt; 'views_handler_field_node_link_edit',
   ),
 );
 </pre>
@@ -184,11 +184,11 @@ The above handler definition an edit link to a node, but this isn't a field in a
 
 <pre>
 $data['users']['uid_current'] = array(
-  'real field' => 'uid',
-  'title' => t('Current'),
-  'help' => t('Filter the view to the currently logged in user.'),
-  'filter' => array(
-    'handler' => 'views_handler_filter_user_current',
+  'real field' =&gt; 'uid',
+  'title' =&gt; t('Current'),
+  'help' =&gt; t('Filter the view to the currently logged in user.'),
+  'filter' =&gt; array(
+    'handler' =&gt; 'views_handler_filter_user_current',
   ),
 );
 </pre>
