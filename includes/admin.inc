@@ -2758,6 +2758,8 @@ function views_ui_tools_clear_cache() {
  * a templates rescan).
  */
 function views_ui_config_item_form_rescan($form, &$form_state) {
+  // Clear *all* theme registry entries:
+  cache_clear_all('theme_registry:', 'cache', TRUE);
   drupal_rebuild_theme_registry();
 
   // The 'Theme: Information' page is about to be shown again. That page
