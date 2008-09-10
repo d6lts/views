@@ -2891,9 +2891,14 @@ function views_fetch_fields($base, $type) {
         }
         foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
           if (!empty($info[$key])) {
-            if (!empty($info['skip base'])) {
-              foreach ((array) $info['skip base'] as $base) {
-                $skip_bases[$field][$key] = $base;
+            if (!empty($info[$key]['skip base'])) {
+              foreach ((array) $info[$key]['skip base'] as $base_name) {
+                $skip_bases[$field][$key][$base_name] = TRUE;
+              }
+            }
+            elseif (!empty($info['skip base'])) {
+              foreach ((array) $info['skip base'] as $base_name) {
+                $skip_bases[$field][$key][$base_name] = TRUE;
               }
             }
             foreach (array('title', 'group', 'help', 'base') as $string) {
@@ -2921,7 +2926,7 @@ function views_fetch_fields($base, $type) {
       foreach ($bases as $base_name) {
         foreach ($strings as $field => $field_strings) {
           foreach ($field_strings as $type_name => $type_strings) {
-            if (empty($skip_bases[$field][$type_name])) {
+            if (empty($skip_bases[$field][$type_name][$base_name])) {
               $fields[$base_name][$type_name]["$table.$field"] = $type_strings;
             }
           }
