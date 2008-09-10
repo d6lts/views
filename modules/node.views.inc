@@ -406,7 +406,7 @@ function node_views_data() {
     'help' => t('The revision ID of the node revision.'), // The help that appears on the UI,
     // Information for displaying the nid
     'field' => array(
-      'handler' => 'views_handler_field',
+//      'handler' => 'views_handler_field',
       'click sortable' => TRUE,
     ),
     // Information for accepting a nid as an argument
