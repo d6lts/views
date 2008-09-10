@@ -13,7 +13,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
     $vocabularies = taxonomy_get_vocabularies();
     $options = array();
     foreach ($vocabularies as $voc) {
-      $options[$voc->vid] = $voc->name;
+      $options[$voc->vid] = check_plain($voc->name);
     }
 
     $form['validate_argument_vocabulary'] = array(
