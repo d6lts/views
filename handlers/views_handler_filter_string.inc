@@ -108,7 +108,7 @@ class views_handler_filter_string extends views_handler_filter {
 
   function admin_summary() {
     $options = $this->operator_options('short');
-    return (!empty($this->options['exposed']) ? t('exposed>') : '') . $options[$this->operator];
+    return (!empty($this->options['exposed']) ? t('exposed') : $options[$this->operator]);
   }
 
   function options_form(&$form, &$form_state) {
@@ -145,6 +145,8 @@ class views_handler_filter_string extends views_handler_filter {
       $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
     }
     if (!empty($form_state['exposed'])) {
+      $identifier = $this->options['expose']['identifier'];
+
       if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator'])) {
         // exposed and locked.
         $which = in_array($this->operator, $this->operator_values(1)) ? 'value' : 'none';
@@ -161,6 +163,10 @@ class views_handler_filter_string extends views_handler_filter {
         '#size' => 30,
         '#default_value' => $this->value,
       );
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier])) {
+        $form_state['input'][$identifier] = $this->value;
+      }
+
       if ($which == 'all') {
         $form['value'] += array(
           '#process' => array('views_process_dependency'),

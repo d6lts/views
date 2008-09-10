@@ -131,6 +131,8 @@ class views_handler_filter_numeric extends views_handler_filter {
     }
 
     if (!empty($form_state['exposed'])) {
+      $identifier = $this->options['expose']['identifier'];
+
       if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator'])) {
         // exposed and locked.
         $which = in_array($this->operator, $this->operator_values(2)) ? 'minmax' : 'value';
@@ -149,6 +151,9 @@ class views_handler_filter_numeric extends views_handler_filter {
         '#process' => array('views_process_dependency'),
         '#dependency' => array($source => $this->operator_values(1)),
       );
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['value'])) {
+        $form_state['input'][$identifier]['value'] = $this->value['value'];
+      }
     }
     else if ($which == 'value') {
       // When exposed we drop the value-value and just do value if
@@ -159,6 +164,9 @@ class views_handler_filter_numeric extends views_handler_filter {
         '#size' => 30,
         '#default_value' => $this->value['value'],
       );
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier])) {
+        $form_state['input'][$identifier] = $this->value['value'];
+      }
     }
 
     if ($which == 'all' || $which == 'minmax') {
@@ -181,6 +189,12 @@ class views_handler_filter_numeric extends views_handler_filter {
         );
         $form['value']['min'] += $dependency;
         $form['value']['max'] += $dependency;
+      }
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['min'])) {
+        $form_state['input'][$identifier]['min'] = $this->value['min'];
+      }
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['max'])) {
+        $form_state['input'][$identifier]['max'] = $this->value['max'];
       }
     }
   }
