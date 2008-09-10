@@ -1086,13 +1086,13 @@ class views_plugin_display extends views_plugin {
         }
         else {
           $output .= '<p>' . t('This is the default theme template used for this display.') . '</p>';
-          $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['path'] . '/' . strtr($this->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['theme path'] . '/' . strtr($this->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
 
         if (!empty($this->definition['additional themes'])) {
           foreach ($this->definition['additional themes'] as $theme) {
             $output .= '<p>' . t('This is an alternative template for this display.') . '</p>';
-            $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $this->definition['theme path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
           }
         }
 
@@ -1115,13 +1115,13 @@ class views_plugin_display extends views_plugin {
         }
         else {
           $output .= '<p>' . t('This is the default theme template used for this style.') . '</p>';
-          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['theme path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
 
         if (!empty($plugin->definition['additional themes'])) {
           foreach ($plugin->definition['additional themes'] as $theme) {
             $output .= '<p>' . t('This is an alternative template for this style.') . '</p>';
-            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['theme path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
           }
         }
 
@@ -1144,13 +1144,13 @@ class views_plugin_display extends views_plugin {
         }
         else {
           $output .= '<p>' . t('This is the default theme template used for this row style.') . '</p>';
-          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
+          $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['theme path'] . '/' . strtr($plugin->definition['theme'], '_', '-') . '.tpl.php')) . '</pre>';
         }
 
         if (!empty($plugin->definition['additional themes'])) {
           foreach ($plugin->definition['additional themes'] as $theme) {
             $output .= '<p>' . t('This is an alternative template for this row style.') . '</p>';
-            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
+            $output .= '<pre>' . check_plain(file_get_contents('./' . $plugin->definition['theme path'] . '/' . strtr($theme, '_', '-') . '.tpl.php')) . '</pre>';
           }
         }
 
