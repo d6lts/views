@@ -200,6 +200,10 @@ class views_handler_argument extends views_handler {
     $validate_types = array('none' => t('<Basic validation>'));
     $plugins = views_fetch_plugin_data('argument validator');
     foreach ($plugins as $id => $info) {
+      if (!empty($info['no ui'])) {
+        continue;
+      }
+
       $valid = TRUE;
       if (!empty($info['type'])) {
         $valid = FALSE;

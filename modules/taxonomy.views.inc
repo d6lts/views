@@ -349,6 +349,8 @@ function taxonomy_views_plugins() {
       'taxonomy_term' => array(
         'title' => t('Taxonomy term'),
         'handler' => 'views_plugin_argument_validate_taxonomy_term',
+        'parent' => 'views_plugin_argument_validator',
+        'path' => drupal_get_path('module', 'views') . '/modules/taxonomy',
       ),
     ),
   );
