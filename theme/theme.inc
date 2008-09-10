@@ -558,17 +558,17 @@ function theme_views_mini_pager($tags = array(), $limit = 10, $element = 0, $par
  *
  * View, named foobar. Style: unformatted. Row style: Fields. Display: Page.
  *
- * - views-view--page--foobar.tpl.php
+ * - views-view--foobar--page.tpl.php
  * - views-view--page.tpl.php
  * - views-view--foobar.tpl.php
  * - views-view.tpl.php
  *
- * - views-view-unformatted--page--foobar.tpl.php
+ * - views-view-unformatted--foobar--page.tpl.php
  * - views-view-unformatted--page.tpl.php
  * - views-view-unformatted--foobar.tpl.php
  * - views-view-unformatted.tpl.php
  *
- * - views-view-fields--page--foobar.tpl.php
+ * - views-view-fields--foobar--page.tpl.php
  * - views-view-fields--page.tpl.php
  * - views-view-fields--foobar.tpl.php
  * - views-view-fields.tpl.php
