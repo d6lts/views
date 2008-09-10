@@ -79,7 +79,8 @@ function template_preprocess_views_view(&$vars) {
   $exposed_input = isset($view->exposed_data_raw) ? $view->exposed_data_raw : NULL;
   if (!empty($view->pager['use_pager'])) {
     $pager_type = ($view->pager['use_pager'] === 'mini' ? 'views_mini_pager' : 'pager');
-    $vars['pager']    = theme($pager_type, $exposed_input, $view->pager['items_per_page'], $view->pager['element']);
+    $pager_theme = views_theme_functions($pager_type, $view, $view->display_handler->display);
+    $vars['pager']    = theme($pager_theme, $exposed_input, $view->pager['items_per_page'], $view->pager['element']);
   }
 
   // if administrator, add some links. These used to be tabs, but this is better.
