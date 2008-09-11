@@ -635,7 +635,7 @@ class view extends views_db_object {
     if ($query) {
       $replacements = module_invoke_all('views_query_substitutions', $this);
       $query = str_replace(array_keys($replacements), $replacements, $query);
-      $count_query = str_replace(array_keys($replacements), $replacements, $count_query);
+      $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
 
       if (is_array($args)) {
         foreach ($args as $id => $arg) {

@@ -920,10 +920,6 @@ class views_query {
 
     $query = "SELECT $fields\n FROM {" . $this->base_table . "} $this->base_table \n$joins $where $groupby $having $orderby";
 
-    if ($get_count) {
-      $query = "SELECT COUNT(*) FROM ($query) count_alias";
-    }
-
     $replace = array('&gt;' => '>', '&lt;' => '<');
     $query = strtr($query, $replace);
 
