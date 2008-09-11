@@ -721,7 +721,7 @@ class views_plugin_display extends views_plugin {
           $field = $format->name;
         }
         else {
-          $field = t('Unknown/missing filter');
+          $field = t('Unknown/missing format');
         }
       }
 
