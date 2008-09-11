@@ -394,6 +394,7 @@ class views_query {
     // table it links to is correct. Tables adjoined to a relationship
     // join to a link point, not the base table.
     $join = $this->adjust_join($join, $relationship);
+
     if ($this->ensure_path($table, $relationship, $join)) {
       // Attempt to eliminate redundant joins.  If this table's
       // relationship and join exactly matches an existing table's
@@ -583,7 +584,7 @@ class views_query {
       $alias = $this->base_field;
     }
 
-    if ($table) {
+    if ($table && empty($this->table_queue[$table])) {
       $this->ensure_table($table);
     }
 
@@ -838,14 +839,14 @@ class views_query {
    *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   function query($get_count = FALSE) {
-    
+
     // Check query distinct value.
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
       if (!empty($this->fields[$this->base_field])) {
         $this->fields[$this->base_field]['distinct'] = TRUE;
       }
     }
-    
+
     /**
      * An optimized count query includes just the base field instead of all the fields.
      * Determine of this query qualifies by checking for a groupby or distinct.
@@ -894,7 +895,7 @@ class views_query {
         $string .= " AS $field[alias]";
       }
       $fields .= $string;
-      
+
       if ($get_count_optimized) {
         // We only want the first field in this case.
         break;
