@@ -98,6 +98,7 @@ function views_views_plugins() {
         'uses options' => TRUE,
         'uses grouping' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-unformatted',
       ),
       'list' => array(
         'title' => t('List'),
@@ -107,6 +108,7 @@ function views_views_plugins() {
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-list',
       ),
       'grid' => array(
         'title' => t('Grid'),
@@ -116,6 +118,7 @@ function views_views_plugins() {
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-grid',
       ),
       'table' => array(
         'title' => t('Table'),
@@ -126,6 +129,7 @@ function views_views_plugins() {
         'uses fields' => TRUE,
         'uses options' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-table',
       ),
       'default_summary' => array(
         'title' => t('List'),
@@ -134,6 +138,7 @@ function views_views_plugins() {
         'theme' => 'views_view_summary',
         'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
+        'help topic' => 'style-summary',
       ),
       'unformatted_summary' => array(
         'title' => t('Unformatted'),
@@ -143,6 +148,7 @@ function views_views_plugins() {
         'theme' => 'views_view_summary_unformatted',
         'type' => 'summary', // only shows up as a summary style
         'uses options' => TRUE,
+        'help topic' => 'style-summary-unformatted',
       ),
       'rss' => array(
         'title' => t('RSS Feed'),
@@ -152,6 +158,7 @@ function views_views_plugins() {
         'uses row plugin' => TRUE,
         'uses options' => TRUE,
         'type' => 'feed',
+        'help topic' => 'style-rss',
       ),
     ),
     'row' => array(
@@ -170,6 +177,7 @@ function views_views_plugins() {
         'uses fields' => TRUE,
         'uses options' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-row-fields',
       ),
     ),
     'argument default' => array(

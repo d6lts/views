@@ -953,7 +953,6 @@ class views_plugin_display extends views_plugin {
         if (!isset($name)) {
           $name = $this->get_option('row_plugin');
         }
-        $form['#help_topic'] = 'style-' . $name;
         // if row, $style will be empty.
         if (empty($style)) {
           $form['#title'] .= t('Row style options');
@@ -961,6 +960,9 @@ class views_plugin_display extends views_plugin {
         }
         $plugin = $this->get_plugin(empty($style) ? 'row' : 'style');
         if ($plugin) {
+          if (isset($plugin->definition['help topic'])) {
+            $form['#help_topic'] = $plugin->definition['help topic'];
+          }
           $form[$form_state['section']] = array(
             '#tree' => TRUE,
           );
@@ -1464,7 +1466,7 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
-   * Render a text area, using hte proper format.
+   * Render a text area, using the proper format.
    */
   function render_textarea($area) {
     $value = $this->get_option($area);

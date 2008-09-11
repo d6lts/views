@@ -648,6 +648,7 @@ function node_views_plugins() {
         'base' => array('node'), // only works with 'node' as base.
         'uses options' => TRUE,
         'type' => 'normal',
+        'help topic' => 'style-node',
       ),
       'node_rss' => array(
         'title' => t('Node'),
@@ -657,6 +658,7 @@ function node_views_plugins() {
         'base' => array('node'), // only works with 'node' as base.
         'uses options' => TRUE,
         'type' => 'feed',
+        'help topic' => 'style-node-rss',
       ),
     ),
     'argument validator' => array(
