@@ -164,6 +164,7 @@ function search_views_plugins() {
         'path' => drupal_get_path('module', 'views') . '/modules/search', // not necessary for most modules
         'theme' => 'views_view_row_search',
         'base' => array('node'), // only works with 'node' as base.
+        'type' => 'normal',
       ),
     ),
   );
