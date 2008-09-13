@@ -1286,6 +1286,8 @@ function views_views_api() {
   );
 }
 
+function book_views_api() { return views_views_api(); }
+
 function comment_views_api() { return views_views_api(); }
 
 function node_views_api() { return views_views_api(); }
