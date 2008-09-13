@@ -1,5 +1,10 @@
 CHANGELOG for Views for Drupal 5
 
+Views 5.x-1.x
+
+  Changes:
+    o #286767 by FrederikVO: Updated Dutch translation.
+
 Views 5.x-1.6
   Bugs fixed:
     o #154272: (adrianr) Uncacheable queries did not get substitutions properly run on them.

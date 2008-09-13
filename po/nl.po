@@ -1,1101 +1,1043 @@
-# $Id$
-#
-# LANGUAGE translation of Drupal (general)
-# Copyright YEAR NAME <EMAIL@ADDRESS>
-# Generated from files:
-#  views.module,v 1.166.2.6 2007/01/21 21:03:37 merlinofchaos
-#  views_ui.module,v 1.44.2.6 2007/01/21 21:03:37 merlinofchaos
-#  views_comment.inc,v 1.4.4.5 2007/01/21 20:57:48 merlinofchaos
-#  views_node.inc,v 1.30.2.6 2007/01/21 23:17:39 merlinofchaos
-#  views_search.inc,v 1.2.2.5 2007/01/19 00:22:46 merlinofchaos
-#  views_user.inc,v 1.14.2.4 2007/01/19 00:22:46 merlinofchaos
-#  views_upload.inc,v 1.4.4.4 2007/01/19 00:22:46 merlinofchaos
-#  views_rss.module,v 1.12.2.3 2007/01/19 00:22:46 merlinofchaos
-#  views.install,v 1.21.4.4 2007/01/19 00:25:11 merlinofchaos
-#  views.info,v 1.2.2.3 2007/01/19 00:22:45 merlinofchaos
-#  views_rss.info,v 1.3.2.3 2007/01/19 00:22:46 merlinofchaos
-#  views_theme_wizard.info,v 1.3.2.3 2007/01/19 00:22:46 merlinofchaos
-#  views_ui.info,v 1.4.2.3 2007/01/19 00:22:46 merlinofchaos
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Drupal Views module\n"
-"POT-Creation-Date: 2007-04-08 21:05+0200\n"
-"PO-Revision-Date: 2007-11-05 20:45-0000\n"
-"Last-Translator: Erik Stielstra <sutharsan - at - drupal dot org>\n"
-"Language-Team: Dutch <EMAIL@ADDRESS>\n"
+"Project-Id-Version: views\n"
+"POT-Creation-Date: 2007-04-18 19:33+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Poedit-Language: Dutch\n"
-"X-Poedit-Country: NETHERLANDS\n"
 
-#: views.module:1211
-#: views_ui.module:322
-#, fuzzy
+#: views.module:1280
+#: views_ui.module:392
 msgid "Submit"
 msgstr "Indienen"
 
-#: views.module:1521
+#: views.module:1634
 #: modules/views_comment.inc:25;116
 #: modules/views_node.inc:16
-#, fuzzy
 msgid "Normal"
 msgstr "Normaal"
 
-#: views.module:1659
-#: views_ui.module:1222
-#, fuzzy
+#: views.module:1772
+#: views_ui.module:1294
 msgid "Yes"
 msgstr "Ja"
 
-#: views.module:1659
-#: views_ui.module:1222
-#, fuzzy
+#: views.module:1772
+#: views_ui.module:1294
 msgid "No"
-msgstr "Nee"
+msgstr "Neen"
 
-#: views.module:1715
+#: views.module:1879
 #: modules/views_search.inc:19
-#, fuzzy
 msgid "Contains"
 msgstr "Bevat"
 
-#: views_ui.module:186
-#: modules/views_node.inc:854
-#, fuzzy
+#: views.module:1986
+#: views_ui.module:752;1126;1687;1799
+msgid "Save"
+msgstr "Opslaan"
+
+#: views.module:1986
+#: views_ui.module:1130;1687;1807
+msgid "Save and edit"
+msgstr "Opslaan en bewerken"
+
+#: views_ui.module:158;165;237
+#: modules/views_node.inc:842
+msgid "View"
+msgstr "Bekijken"
+
+#: views_ui.module:172;228
+#: modules/views_node.inc:854;867
 msgid "Edit"
 msgstr "Bewerken"
 
-#: views_ui.module:188;422;450;1065;1462
-#: modules/views_node.inc:867
-#, fuzzy
+#: views_ui.module:230;492;520;1135;1534
+#: modules/views_node.inc:880
 msgid "Delete"
 msgstr "Verwijderen"
 
-#: views_ui.module:195
-#: modules/views_node.inc:842
-#, fuzzy
-msgid "View"
-msgstr "View"
-
-#: views_ui.module:195;258;776;929;1508
-#: modules/views_user.inc:125
-#, fuzzy
+#: views_ui.module:237;308;846;999;1580
+#: modules/views_statistics.inc:117;206
+#: modules/views_user.inc:157
 msgid "Title"
 msgstr "Titel"
 
 #: modules/views_comment.inc:26
 #: modules/views_node.inc:17
 msgid "With updated mark"
-msgstr ""
+msgstr "Gemarkeerd als geactualiseerd"
 
 #: modules/views_comment.inc:62
-#: modules/views_user.inc:28
+#: modules/views_user.inc:29
 msgid "This will display the author of the node."
-msgstr ""
+msgstr "Dit zal de auteur van de node weergeven"
 
 #: modules/views_comment.inc:68
-#: modules/views_node.inc:135;142;149;156
+#: modules/views_node.inc:143;150;157;164
 #: modules/views_upload.inc:44
 msgid "Equals"
-msgstr ""
+msgstr "Is gelijk aan"
 
-#: modules/views_node.inc:214
+#: modules/views_node.inc:222
 #: modules/views_profile.inc:173
 msgid "This filter allows nodes to be filtered by their creation date."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van datum van aanmaak"
+
+#: modules/views_statistics.inc:111;200
+#: modules/views_user.inc:152
+msgid "Type"
+msgstr "Type"
+
+#: modules/views_statistics.inc:124;213
+#: modules/views_user.inc:163
+msgid "Author"
+msgstr "Auteur"
 
 #: views_rss.module:10
-#, fuzzy
 msgid "Views RSS: RSS feed"
 msgstr "Views RSS: RSS feed"
 
 #: views_rss.module:26
-#, fuzzy
 msgid "RSS: RSS Feed Selector"
-msgstr "RSS: RSS Feed Selecteren"
+msgstr "RSS: RSS Feed Selector"
 
-#: views_rss.module:28
-msgid "This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds."
-msgstr ""
+#: views_rss.module:29
+msgid "This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds. You may enter the title the feed will advertise in the title field here, and the description of the feed in the option field here."
+msgstr "Dit argument specifieert een specifieke RSS feed selector; het zal alleen RSS feeds selecteren. Je kan hier de titel opgeven die de feed in het titel-veld zal gebruiken, en de beschrijving van de feed in het optie-veld."
 
-#: views_rss.module:148
-#, fuzzy
+#: views_rss.module:169
 msgid "read more"
 msgstr "lees verder"
 
-#: views.install:234
-#, fuzzy
+#: views.install:252
 msgid "Views module installed tables successfully."
-msgstr "De tabellen van de Views Module zijn correct geïnstalleerd."
+msgstr "De tabs werden succesvol geïnstalleerd door de Views module."
 
-#: views.install:237
-#, fuzzy
+#: views.install:255
 msgid "The installation of views module was unsuccessful."
-msgstr "Er is een fout opgetreden bij de installatie van de Views Module."
+msgstr "De installatie van de Views module is niet gelukt."
 
 #: views.info:0
 msgid "The views module creates customized views of node lists."
-msgstr ""
+msgstr "De Views module maakt lijsten van nodes op maat."
 
 #: views_rss.info:0
-#, fuzzy
 msgid "Views RSS"
-msgstr "views_rss"
+msgstr "Views RSS"
 
 #: views_rss.info:0
 msgid "RSS plugin for the views feed selector argument."
-msgstr ""
+msgstr "RSS plugin voor het views feed selector argument."
 
 #: views_theme_wizard.info:0
-#, fuzzy
 msgid "Views Theme Wizard"
-msgstr "views_theme_wizard"
+msgstr "Views Theme Wizard"
 
 #: views_theme_wizard.info:0
 msgid "The views theme wizard helps create stub theming for views."
-msgstr ""
+msgstr "De views theme wizard helpt bij het aanmaken van themes voor views."
 
 #: views_ui.info:0
-#, fuzzy
 msgid "Views UI"
-msgstr "views_ui"
+msgstr "Views UI"
 
 #: views_ui.info:0
 msgid "The Views UI module allows you to create and edit views."
-msgstr ""
+msgstr "De views UI modules laat toe om views te maken en te bewerken."
 
 #: modules/views_search.inc:18
 msgid "Search: Index"
-msgstr ""
+msgstr "Zoek: Index"
 
 #: views.module:14
-#, fuzzy
 msgid "The views module creates customized views of node lists. You may need to activate the Views UI module to get to the user administration pages."
-msgstr "De Views module maakt aangepaste weergaves van nodelijsten. Schakel de Views UI module in om de Views beheerpagina's beschikbaar te maken."
+msgstr "De views module maakt lijsten van nodes op maat. Je moet de views UI module ook activeren om toegang te hebben tot de behaarpagina's van de views."
 
-#: views.module:1195
-#, fuzzy
+#: views.module:1341
 msgid "<All>"
-msgstr "<Alles>"
+msgstr "<Allemaal>"
 
-#: views.module:1405
-#, fuzzy
+#: views.module:1537
 msgid "more"
 msgstr "meer"
 
-#: views.module:1497
-#, fuzzy
+#: views.module:1610
 msgid "%time ago"
 msgstr "%time geleden"
 
-#: views.module:1501
-#, fuzzy
+#: views.module:1614
 msgid "never"
 msgstr "nooit"
 
-#: views.module:1509
-#, fuzzy
+#: views.module:1622
 msgid "As Short Date"
 msgstr "Als korte datum"
 
-#: views.module:1510
-#, fuzzy
+#: views.module:1623
 msgid "As Medium Date"
-msgstr "Als middellange datum"
+msgstr "Als middenlange datum"
 
-#: views.module:1511
-#, fuzzy
+#: views.module:1624
 msgid "As Long Date"
 msgstr "Als lange datum"
 
-#: views.module:1512
-#, fuzzy
+#: views.module:1625
 msgid "As Custom Date"
-msgstr "Als aangepaste datum"
+msgstr "Als datum op maat"
 
-#: views.module:1513
-#, fuzzy
+#: views.module:1626
 msgid "As Time Ago"
-msgstr "Als verstreken tijd"
+msgstr "Als tijd geleden"
 
-#: views.module:1522
-#, fuzzy
+#: views.module:1635
 msgid "Granularity: minute"
-msgstr "Nauwkeurigheid: minuut"
+msgstr "Detail: minuut"
 
-#: views.module:1523
-#, fuzzy
+#: views.module:1636
 msgid "Granularity: hour"
-msgstr "Nauwkeurigheid: uur"
+msgstr "Detail: uur"
 
-#: views.module:1524
-#, fuzzy
+#: views.module:1637
 msgid "Granularity: day"
-msgstr "Nauwkeurigheid: dag"
+msgstr "Detail: dag"
 
-#: views.module:1525
-#, fuzzy
+#: views.module:1638
 msgid "Granularity: month"
-msgstr "Nauwkeurigheid: maand"
+msgstr "Detail: maand"
 
-#: views.module:1526
-#, fuzzy
+#: views.module:1639
 msgid "Granularity: year"
-msgstr "Nauwkeurigheid: jaar"
+msgstr "Detail: jaar"
 
-#: views.module:1631
-#, fuzzy
+#: views.module:1744
 msgid "Is All Of"
-msgstr "Is elk van"
+msgstr "Is allemaal van"
 
-#: views.module:1631;1638
-#, fuzzy
+#: views.module:1744;1751
 msgid "Is One Of"
-msgstr "Is één van"
+msgstr "Is een van"
 
-#: views.module:1631;1638
-#, fuzzy
+#: views.module:1744;1751
 msgid "Is None Of"
 msgstr "Is geen van"
 
-#: views.module:1645;1652;1715
-#, fuzzy
+#: views.module:1758;1765;1879
 msgid "Is Equal To"
 msgstr "Is gelijk aan"
 
-#: views.module:1645;1652
-#, fuzzy
+#: views.module:1758;1765
 msgid "Is Not Equal To"
 msgstr "Is niet gelijk aan"
 
-#: views.module:1652
-#, fuzzy
+#: views.module:1765
 msgid "Is Greater Than"
 msgstr "Is groter dan"
 
-#: views.module:1652
-#, fuzzy
+#: views.module:1765
 msgid "Is Greater Than Or Equals"
-msgstr "Is groter dan of gelijk aan"
+msgstr "Is groter of gelijk aan"
 
-#: views.module:1652
-#, fuzzy
+#: views.module:1765
 msgid "Is Less Than Or Equals"
-msgstr "Is kleiner dan of gelijk aan"
+msgstr "Is kleiner of gelijk aan"
 
-#: views.module:1652
-#, fuzzy
+#: views.module:1765
 msgid "Is Less Than"
-msgstr "Is minder dan"
+msgstr "Is kleiner dan"
 
-#: views.module:1684
-#, fuzzy
+#: views.module:1797
 msgid "List View"
-msgstr "Lijstweergave"
+msgstr "Lijst view"
 
-#: views.module:1691
-#, fuzzy
+#: views.module:1804
 msgid "Table View"
-msgstr "Tabelweergave"
+msgstr "Tabel view"
 
-#: views.module:1699
-#, fuzzy
+#: views.module:1812
 msgid "Teaser List"
-msgstr "Voorproefje weergave"
+msgstr "Teaser view"
 
-#: views.module:1704
-#, fuzzy
+#: views.module:1817
 msgid "Full Nodes"
 msgstr "Volledige nodes"
 
-#: views.module:1715
-#, fuzzy
+#: views.module:1879
 msgid "Contains Any Word"
-msgstr "Bevat minstens één van de woorden"
+msgstr "Bevat gelijk welk woord"
 
-#: views.module:1715
-#, fuzzy
+#: views.module:1879
 msgid "Contains All Words"
 msgstr "Bevat alle woorden"
 
-#: views.module:1715
-#, fuzzy
+#: views.module:1879
 msgid "Starts With"
-msgstr "Begint met"
+msgstr "Start met"
 
-#: views.module:1715
-#, fuzzy
+#: views.module:1879
 msgid "Ends With"
-msgstr "Eindigt op"
+msgstr "Eindigt met"
 
-#: views.module:1715
-#, fuzzy
+#: views.module:1879
 msgid "Does Not Contain"
-msgstr "Bevat geen"
+msgstr "Bevat niet"
 
-#: views.module:1871
-#, fuzzy
+#: views.module:1990
+msgid "@filter must have a value!"
+msgstr "@filter moet een waarde hebben."
+
+#: views.module:2053
 msgid "The \"Value\" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word \"now\" to use the current time. You may enter a positive or negative number in the \"Option\" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with \"now\". If you have the jscalendar module from jstools installed, you can use a popup date picker here."
-msgstr "Waarde kan ofwel een datum in het formaat CCYY-MM-DD HH:MM:SS bevatten, ofwel het woord \"now\" om het huidige tijdstip te gebruiken. U kunt een positief of negatief getal ingeven in het veld \"Optie\". Dit getal geeft het aantal seconden aan dat bij het tijdstip opgeteld zal worden of ervan zal worden afgetrokken; dit heeft het meeste nut in combinatie met \"now\". Als u de module 'jscalendar' van jstools geïnstalleerd hebt, kunt u hier de popup datumkiezer gebruiken."
+msgstr "De \"Waard\" kan ofwel een datum zijn in het formaat: CCYY-MM-DD HH:MM:SS of het woord \"new\" om de huidige tijd te gebruiken. Je kan een positief of negatief nummer ingeven in het \"Optie\" veld dat de seconden weergeeft die worden toegevoegd of afgetrokken van de tijd; dit is nuttig om te combineren met \"now\". Als je de jscalendar module van jstools installeert, kan je hier de pop-up date picker gebruiken."
+
+#: views.module:258
+msgid "access all views"
+msgstr "toegang tot alle views"
 
 #: views.module:0
 #: views.info:0
 #: views_rss.info:0
 #: views_theme_wizard.info:0
 #: views_ui.info:0
-#, fuzzy
 msgid "views"
 msgstr "views"
 
 #: modules/views_book.inc:23
 msgid "Book: Parent Node"
-msgstr ""
+msgstr "Boek: bovenliggende node"
 
 #: modules/views_book.inc:26
 msgid "This allows you to filter books based on parent node."
-msgstr ""
+msgstr "Dit laat toe om boeken te filteren op basis van bovenliggende node."
 
 #: modules/views_book.inc:31
 msgid "Book: Weight"
-msgstr ""
+msgstr "Boek: gewicht"
 
 #: modules/views_book.inc:33
 msgid "This will sort the view by book weight, if that is applicable."
-msgstr ""
+msgstr "Dit zal de view sorteren op basis van gewicht van het boek, indien van toepassing."
 
 #: modules/views_book.inc:51;62
 msgid "Book: Parent Title"
-msgstr ""
+msgstr "Boek: titel bovenliggende node"
 
 #: modules/views_book.inc:53
 msgid "As Link"
-msgstr ""
+msgstr "Als link"
 
 #: modules/views_book.inc:54
 msgid "Without Link"
-msgstr ""
+msgstr "Zonder link"
 
 #: modules/views_book.inc:57
 msgid "Display the title of the parent node"
-msgstr ""
+msgstr "Toon de titel van de bovenliggende node"
 
 #: modules/views_book.inc:63
 msgid "Sort by the title of the parent node"
-msgstr ""
+msgstr "Sorteer op titel van de bovenliggende node"
 
 #: modules/views_book.inc:74
 msgid "Book: Parent Node ID"
-msgstr ""
+msgstr "Boek: ID van bovenliggende node"
 
 #: modules/views_comment.inc:23
 msgid "Comment: Subject"
-msgstr ""
+msgstr "Commentaar: onderwerp"
 
 #: modules/views_comment.inc:39
 msgid "Comment: Comment"
-msgstr ""
+msgstr "Commentaar: commentaar"
 
 #: modules/views_comment.inc:42
 msgid "Display the content of a comment."
-msgstr ""
+msgstr "Toon de inhoud van een commentaar."
 
 #: modules/views_comment.inc:45
 msgid "Comment: Comment ID"
-msgstr ""
+msgstr "Commentaar: ID van de commentaar"
 
 #: modules/views_comment.inc:47
 msgid "Display the CID of a comment."
-msgstr ""
+msgstr "Toon de CID van een commentaar"
 
 #: modules/views_comment.inc:50;75
 msgid "Comment: Created Time"
-msgstr ""
+msgstr "Commentaar: datum van aanmaak"
 
 #: modules/views_comment.inc:54
 msgid "Display the post time of the comment."
-msgstr ""
+msgstr "Toon de datum van aanmaak van een commentaar."
 
 #: modules/views_comment.inc:57
 msgid "Comment: Author Name"
-msgstr ""
+msgstr "Commentaar: naam van de auteur"
 
 #: modules/views_comment.inc:67
 msgid "Comment: Pending approval"
-msgstr ""
+msgstr "Commentaar: wachten op goekeuring"
 
 #: modules/views_comment.inc:78
 msgid "Sort by the created time of comments."
-msgstr ""
+msgstr "Sorteer op datum van creatie van de commentaar."
 
 #: modules/views_comment.inc:97;139
 msgid "Comment: Last Comment Time"
-msgstr ""
+msgstr "Commentaar: datum van laatste commentaar"
 
 #: modules/views_comment.inc:101
 msgid "This will display the last comment time."
-msgstr ""
+msgstr "Dit toont de tijd van de laatste commentaar."
 
 #: modules/views_comment.inc:104
 msgid "Comment: Last Comment Author"
-msgstr ""
+msgstr "Commentaar: auteur laatste commentaar"
 
 #: modules/views_comment.inc:110
 msgid "This will display the name of the last user to comment on the post."
-msgstr ""
+msgstr "Dit toont de naam van de auteur van de laatste commentaar."
 
 #: modules/views_comment.inc:113
 msgid "Comment: Count"
-msgstr ""
+msgstr "Commentaar: aantal"
 
 #: modules/views_comment.inc:117
 msgid "With New Count"
-msgstr ""
+msgstr "Met nieuw aantal"
 
 #: modules/views_comment.inc:119
 msgid "This will display the comment count."
-msgstr ""
+msgstr "Dit toont het aantal commentaren."
 
 #: modules/views_comment.inc:122;148
 msgid "Comment: Last Changed Time"
-msgstr ""
+msgstr "Commentaar: datum laatste aanpassing"
 
 #: modules/views_comment.inc:128
 msgid "This will display the time of the last comment or node edit."
-msgstr ""
+msgstr "Dit toont het uur van de laatste aanpassing aan de commentaar of node."
 
 #: modules/views_comment.inc:133;166
 msgid "Comment: Comment Count"
-msgstr ""
+msgstr "Commentaar: aantal commentaren"
 
 #: modules/views_comment.inc:136
 msgid "This filter allows you to filter by the amount of comments."
-msgstr ""
+msgstr "Dit filter laat toe te filteren op het aantal commentaren."
 
 #: modules/views_comment.inc:144;153
 msgid "This filter allows nodes to be filtered by the timestamp for the last comment or node edit."
-msgstr ""
+msgstr "Deze filter laat toe nodes te filteren op basis van de tijd van de laatste aanpassing aan een commentaar of node."
 
 #: modules/views_comment.inc:160
 msgid "Comment: Last Comment Date"
-msgstr ""
+msgstr "Commentaar: datum van de laatste commentaar"
 
 #: modules/views_comment.inc:163
 msgid "This will allow you to sort by the date of the most recent comment on a node."
-msgstr ""
+msgstr "Dit laat toe om te sorteren op de datum van de meest recente commentaar op een node."
 
 #: modules/views_comment.inc:167
 msgid "This filter allows you to sort by the number of comments."
-msgstr ""
+msgstr "Deze filter laat toe om te sorteren op basis van het aantal commentaren."
 
 #: modules/views_comment.inc:170
 msgid "Comment: Last Changed"
-msgstr ""
+msgstr "Commentaar: laatste aanpassing"
 
 #: modules/views_comment.inc:173
 msgid "Sort based on the most recent comment or edit for the node."
-msgstr ""
+msgstr "Sorteer op basis van de meest recente commentaar of aanpassing aan de node."
 
 #: modules/views_comment.inc:242
 msgid "@num new"
-msgstr ""
+msgstr "@num nieuw"
 
 #: modules/views_comment.inc:279
 msgid "Display recent comments block"
-msgstr ""
+msgstr "Toon een blok met de laatste commentaren"
 
 #: modules/views_comment.inc:284
 msgid "Recent comments"
-msgstr ""
+msgstr "Recente commentaren"
 
-#: modules/views_node.inc:14;119;203;274
+#: modules/views_node.inc:14;127;211;282
 msgid "Node: Title"
-msgstr ""
+msgstr "Node: titel"
 
 #: modules/views_node.inc:28
 msgid "Display the title of the node."
-msgstr ""
+msgstr "Toon de titel van de node."
 
-#: modules/views_node.inc:31;99;305
+#: modules/views_node.inc:31;106;313
 msgid "Node: ID"
-msgstr ""
+msgstr "Node: ID"
 
-#: modules/views_node.inc:33
+#: modules/views_node.inc:35
 msgid "Display the NID of a node."
-msgstr ""
+msgstr "Toon de NID van de node."
 
-#: modules/views_node.inc:36;103;209
+#: modules/views_node.inc:38;111;217
 msgid "Node: Created Time"
-msgstr ""
+msgstr "Node: tijd van creatie"
 
-#: modules/views_node.inc:40
+#: modules/views_node.inc:42
 msgid "Display the post time of the node."
-msgstr ""
+msgstr "Toon tijd van creatie van de node."
 
-#: modules/views_node.inc:43;109;218
+#: modules/views_node.inc:43;51
+msgid "The option field may be used to specify the custom date format as it's required by the date() function or if \"as time ago\" has been chosen to customize the granularity of the time interval."
+msgstr "Het optie veld mag gebruikt worden om een specifiek datum-formaat op te geven dat vereist is door de date() functie of als \"as time ago\" gekozen werd voor de granulariteit van het tijdsinterval."
+
+#: modules/views_node.inc:46;117;226
 msgid "Node: Updated Time"
-msgstr ""
+msgstr "Node: tijd van update"
 
-#: modules/views_node.inc:47
+#: modules/views_node.inc:50
 msgid "Display the last time the node was updated."
-msgstr ""
+msgstr "Toon de laatste tijd waarop de node werd geactualiseerd."
 
-#: modules/views_node.inc:50;123;162;269
+#: modules/views_node.inc:54;131;170;277
 msgid "Node: Type"
-msgstr ""
+msgstr "Node: type"
 
-#: modules/views_node.inc:53
+#: modules/views_node.inc:57
 msgid "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)"
-msgstr ""
+msgstr "Het node type vedl toont het soort node (bijvoorbeeld 'blog', 'forum post', 'verhaal\", ...)"
 
-#: modules/views_node.inc:56
+#: modules/views_node.inc:60
 msgid "Node: Link to node"
-msgstr ""
+msgstr "Node: link naar de node"
 
-#: modules/views_node.inc:61
+#: modules/views_node.inc:65
 msgid "This will create a link to the node; fill the option field with the text for the link. If you want titles that link to the node, use Node: Title instead."
-msgstr ""
+msgstr "Dit zal een link naar de node aanmaken; vul de tekst voor de link in in het optie-veld. Als je titels wil die naar de node linken, gebruik dan Node: titel."
 
-#: modules/views_node.inc:64;227
+#: modules/views_node.inc:68;235
 msgid "Node: Body"
-msgstr ""
+msgstr "Node: inhoud"
 
-#: modules/views_node.inc:66
+#: modules/views_node.inc:70
 msgid "Full Text"
-msgstr ""
-
-#: modules/views_node.inc:67
-msgid "Teaser"
-msgstr ""
+msgstr "Volledige tekst"
 
 #: modules/views_node.inc:71
-msgid "Display the Main Content."
-msgstr ""
+msgid "Teaser"
+msgstr "Teaser"
 
-#: modules/views_node.inc:74
-msgid "Node: View link"
-msgstr ""
+#: modules/views_node.inc:75
+msgid "Display the Main Content."
+msgstr "Toon de hoofd-content."
 
 #: modules/views_node.inc:78
+msgid "Node: View link"
+msgstr "Node: bekijk link"
+
+#: modules/views_node.inc:82
 msgid "Display a link to view the node. Enter the text of this link into the option field; if blank the default \"View\" will be used."
-msgstr ""
+msgstr "Toon een link om de node te bekijken. Vul de tekst van de link in in het optie veld; indien leeg zal standaard \"Bekijk\" worden gebruikt."
 
-#: modules/views_node.inc:81
+#: modules/views_node.inc:85
 msgid "Node: Edit link"
-msgstr ""
+msgstr "Node: bewerk link"
 
-#: modules/views_node.inc:86
+#: modules/views_node.inc:87
+msgid "Return To View"
+msgstr "Ga terug naar de view"
+
+#: modules/views_node.inc:88
+msgid "Return to Node"
+msgstr "Ga terug naar de node"
+
+#: modules/views_node.inc:93
 msgid "Display a link to edit the node. Enter the text of this link into the option field; if blank the default \"Edit\" will be used."
-msgstr ""
+msgstr "Toon een link om de node te bewerken. Vul de tekst van de link in in het optie veld; indien leeg zal standaard \"Bewerken\" gebruikt worden."
 
-#: modules/views_node.inc:89
+#: modules/views_node.inc:96
 msgid "Node: Delete link"
-msgstr ""
+msgstr "Node: verwijderen link"
 
-#: modules/views_node.inc:94
+#: modules/views_node.inc:101
 msgid "Display a link to delete the node. Enter the text of this link into the option field; if blank the default \"Delete\" will be used."
-msgstr ""
+msgstr "Toon een link om de node te verwijderen. Vul de tekst van deze link in in het optie veld; indien leeg, zal standaard \"Verwijderen\" gebruikt worden."
 
-#: modules/views_node.inc:100
+#: modules/views_node.inc:107
 msgid "Sort by the database ID of the node."
-msgstr ""
+msgstr "Sorteer op basis van het ID van de node in de databank."
 
-#: modules/views_node.inc:106
+#: modules/views_node.inc:114
 msgid "Sort by the submission date of the node."
-msgstr ""
-
-#: modules/views_node.inc:112
-msgid "Sort by the last update date of the node."
-msgstr ""
-
-#: modules/views_node.inc:115;148
-msgid "Node: Sticky"
-msgstr ""
-
-#: modules/views_node.inc:116
-msgid "Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top."
-msgstr ""
+msgstr "Sorteer op basis van de datum waarop de node werd ingestuurd."
 
 #: modules/views_node.inc:120
-msgid "Sort by the node title, alphabetically"
-msgstr ""
+msgid "Sort by the last update date of the node."
+msgstr "Sorteer op basis van de datum waarop de node het laatste werd aangepast."
+
+#: modules/views_node.inc:123;156
+msgid "Node: Sticky"
+msgstr "Node: vastgeplakt bovenaan de lijst"
 
 #: modules/views_node.inc:124
+msgid "Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top."
+msgstr "Sorteer op basis van het al dan niet vastgeplakt zijn van de node bovenaan een lijst. Kies aflopend om de vastgeplakte node bovenaan te laten verschijnen."
+
+#: modules/views_node.inc:128
+msgid "Sort by the node title, alphabetically"
+msgstr "Sorteer op basis van titel van de node, alfabetisch."
+
+#: modules/views_node.inc:132
 msgid "Sort by the node type, alphabetically"
-msgstr ""
+msgstr "Sorteer op basis van soort node, alfabetisch"
 
-#: modules/views_node.inc:127
+#: modules/views_node.inc:135
 msgid "Random"
-msgstr ""
+msgstr "Willekeurig"
 
-#: modules/views_node.inc:129
+#: modules/views_node.inc:137
 msgid "By choosing random, nodes will be ordered completely randomly. This is a good way to choose X random nodes from a group of nodes."
-msgstr ""
+msgstr "Door willekeuring te kiezen, zullen de nodes volledig willekeuring worden gesorteerd. Dit is een goede optie om een X aantal willekeurige nodes uit een groep te tonen."
 
-#: modules/views_node.inc:134
+#: modules/views_node.inc:142
 msgid "Node: Published"
-msgstr ""
+msgstr "Node: gepubliceerd"
 
-#: modules/views_node.inc:138
+#: modules/views_node.inc:146
 msgid "Filter by whether or not the node is published. This is recommended for most Views!"
-msgstr ""
+msgstr "Filter op basis van het al dan niet gepubliceerd zijn van een node. Dit is aangeraden voor de meeste views."
 
-#: modules/views_node.inc:141
+#: modules/views_node.inc:149
 msgid "Node: Front Page"
-msgstr ""
+msgstr "Node: voorpagina"
 
-#: modules/views_node.inc:145
+#: modules/views_node.inc:153
 msgid "Filter by whether or not the node has been promoted to Front Page."
-msgstr ""
+msgstr "Filter op basis van het al dan niet weergeven van de node op de voorpagina van de site."
 
-#: modules/views_node.inc:152
+#: modules/views_node.inc:160
 msgid "Filter by whether or not the node is set sticky."
-msgstr ""
+msgstr "Filter op basis van het al dan niet vastgeplakt zijn van de node bovenaan lijsten."
 
-#: modules/views_node.inc:155
+#: modules/views_node.inc:163
 msgid "Node: Moderated"
-msgstr ""
-
-#: modules/views_node.inc:159
-msgid "Filter by whether or not the node is moderated."
-msgstr ""
+msgstr "Node: in moderatie"
 
 #: modules/views_node.inc:167
-msgid "Include or exclude nodes of the selected types."
-msgstr ""
-
-#: modules/views_node.inc:171
-msgid "Node: Author is Anonymous"
-msgstr ""
+msgid "Filter by whether or not the node is moderated."
+msgstr "Filter op basis van het al dan niet in moderatie zijn van de node."
 
 #: modules/views_node.inc:175
-msgid "This allows you to filter by whether or not the node author is anonymous."
-msgstr ""
+msgid "Include or exclude nodes of the selected types."
+msgstr "Sluit nodes van bepaalde types in of uit."
 
 #: modules/views_node.inc:179
-msgid "Node: Author is Current User"
-msgstr ""
+msgid "Node: Author is Anonymous"
+msgstr "Node: auteur is anoniem"
 
 #: modules/views_node.inc:183
-msgid "This allows you to filter by whether or not the node was authored by the logged in user of the view."
-msgstr ""
+msgid "This allows you to filter by whether or not the node author is anonymous."
+msgstr "Dit laat toe om te filteren of de auteur van de node al dan niet anoniem is."
 
 #: modules/views_node.inc:187
-msgid "Node: Current User Authored or Commented"
-msgstr ""
+msgid "Node: Author is Current User"
+msgstr "Node: auteur is de huidige gebruiker"
 
-#: modules/views_node.inc:192
-msgid "This allows you to filter by whether or not the logged in user authored or commented on the node."
-msgstr ""
+#: modules/views_node.inc:191
+msgid "This allows you to filter by whether or not the node was authored by the logged in user of the view."
+msgstr "Dit laat toe om te filteren of de auteur van de node al dan niet de ingelogde gebruiker is die de view bekijkt."
 
 #: modules/views_node.inc:195
-msgid "Node: Distinct"
-msgstr ""
+msgid "Node: Current User Authored or Commented"
+msgstr "Node: huidige gebruiker heeft de node aangemaakt of commentaar gegeven"
 
 #: modules/views_node.inc:200
+msgid "This allows you to filter by whether or not the logged in user authored or commented on the node."
+msgstr "Dit laat toe om te filteren of de huidige ingelogde gebruiker de node gemaakt heeft of er commentaar op heeft gegeven."
+
+#: modules/views_node.inc:203
+msgid "Node: Distinct"
+msgstr "Node: apart"
+
+#: modules/views_node.inc:208
 msgid "This filter ensures that each node may only be listed once, even if it matches multiple criteria. Use this if multiple taxonomy matches return duplicated nodes."
-msgstr ""
+msgstr "Deze filter zorgt ervoor dat een node maar één keer voor komt is de lijst ook al beantwoordt hij aan verschillende criteria."
 
-#: modules/views_node.inc:206
+#: modules/views_node.inc:214
 msgid "This filter allows nodes to be filtered by their title."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van hun titel."
 
-#: modules/views_node.inc:223
+#: modules/views_node.inc:231
 msgid "This filter allows nodes to be filtered by the time they were updated."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van de tijd waarop ze werden geactualiseerd."
 
-#: modules/views_node.inc:230
+#: modules/views_node.inc:238
 msgid "This filter allows nodes to be filtered by their body."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van hun inhoud."
 
-#: modules/views_node.inc:253
+#: modules/views_node.inc:261
 msgid "Node: Has New Content"
-msgstr ""
+msgstr "Node: heef nieuwe inhoud"
 
-#: modules/views_node.inc:258
+#: modules/views_node.inc:266
 msgid "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes."
-msgstr ""
+msgstr "Deze filter toont alleen node die sinds het laatste bezoek van de gebruiker nieuwe inhoud bevatten of nieuw werden aangemaakt."
 
-#: modules/views_node.inc:271
+#: modules/views_node.inc:279
 msgid "The node type argument allows users to filter a view by specifying the type of node."
-msgstr ""
-
-#: modules/views_node.inc:277
-msgid "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
-msgstr ""
-
-#: modules/views_node.inc:280
-msgid "Node: Posted Year"
-msgstr ""
-
-#: modules/views_node.inc:282
-msgid "This argument allows users to filter by what year the node was posted, in the form of CCYY."
-msgstr ""
+msgstr "Het node type argument laat gebruikers toe om de view te filteren op basis van het soort node."
 
 #: modules/views_node.inc:285
-msgid "Node: Posted Month"
-msgstr ""
+msgid "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
+msgstr "Dit argument zal filteren op basis van de node titel. Zet de optie voor het aantal tekens, voor deze term, gebruik 0 voor de volledige term, gebruik 1 voor een A/B/C stijl van woordenlijst."
 
-#: modules/views_node.inc:287
-msgid "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument."
-msgstr ""
+#: modules/views_node.inc:288
+msgid "Node: Posted Year"
+msgstr "Node: jaar van publicatie"
 
 #: modules/views_node.inc:290
-msgid "Node: Posted Week"
-msgstr ""
+msgid "This argument allows users to filter by what year the node was posted, in the form of CCYY."
+msgstr "Dit argument laat gebruikers toe te filteren op basis van het jaar waarin de node werd gepubliceerd."
 
-#: modules/views_node.inc:292
-msgid "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'Year' argument."
-msgstr ""
+#: modules/views_node.inc:293
+msgid "Node: Posted Month"
+msgstr "Node: maand van publicatie"
 
 #: modules/views_node.inc:295
-msgid "Node: Posted Month + Year"
-msgstr ""
+msgid "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument."
+msgstr "Maanden worden gespecifieerd door nummers 1 tot 12. Omdat dit argument geen jaar bevat, is het aangeraden dat het volgt op een 'Jaar' argument."
 
-#: modules/views_node.inc:297
-msgid "This argument combines Month and Year into a single argument, specified in the form CCYYMM."
-msgstr ""
+#: modules/views_node.inc:298
+msgid "Node: Posted Week"
+msgstr "Node: week van publicatie"
 
 #: modules/views_node.inc:300
+msgid "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'Year' argument."
+msgstr "Dit laat gebruikers toe om de view te filteren op basis van week-nummer van 1 tot 51. Het is aangeraden om dit argument te laten volgen door een argument 'Jaar'."
+
+#: modules/views_node.inc:303
+msgid "Node: Posted Month + Year"
+msgstr "Node: maand en jaar van publicatie"
+
+#: modules/views_node.inc:305
+msgid "This argument combines Month and Year into a single argument, specified in the form CCYYMM."
+msgstr "Dit argument combineert jaar en maand in een argument."
+
+#: modules/views_node.inc:308
 msgid "Node: Posted Full Date"
-msgstr ""
+msgstr "Node: volledig datum van publicatie"
 
-#: modules/views_node.inc:302
+#: modules/views_node.inc:310
 msgid "This argument is a complete date in the form of CCYYMMDD."
-msgstr ""
+msgstr "Dit argument bevat de volledige datum."
 
-#: modules/views_node.inc:311
+#: modules/views_node.inc:319
 msgid "This argument is a single Node ID."
-msgstr ""
+msgstr "Dit argument is een node ID."
 
-#: modules/views_node.inc:316
+#: modules/views_node.inc:324
 msgid "Node: Feed Selector"
-msgstr ""
+msgstr "Node: feed selector"
 
-#: modules/views_node.inc:318
-msgid "This argument allows pluggable \"feed\" selectors. If using views_rss module, \"feed\" will turn the view into an RSS feed. Other modules may provide their own feeds."
-msgstr ""
+#: modules/views_node.inc:327
+msgid "This argument allows pluggable \"feed\" selectors. If using views_rss module, \"feed\" will turn the view into an RSS feed. Other modules may provide their own feeds. You may enter the title the feed will advertise in the title field here. If the feed type offers a description, enter the description of the feed in the option field here."
+msgstr "Dit argument laat inplugbare 'feed' selector toe. Als de views_rss module wordt gebruik, zal 'feed' de view weergeven als een RSS feed. Andere modules kunnen hun eigen feeds voorzien. Je kan de titel opgeven in het titel veld. Als dit soort feed een beschrijving bevat, kan die worden ingegeven in het optie veld hier."
 
-#: modules/views_node.inc:329
+#: modules/views_node.inc:338
 msgid "The basic front page view."
-msgstr ""
+msgstr "Eenvoudige voorpagina view."
 
-#: modules/views_node.inc:657
+#: modules/views_node.inc:665
 msgid "Untitled"
-msgstr ""
+msgstr "Zonder titel"
 
 #: modules/views_profile.inc:66;115;149
 msgid "Profile: @field-name"
-msgstr ""
+msgstr "Profiel: @field-naam"
 
 #: modules/views_profile.inc:70;77
 msgid "This will display all options of the profile field %field-name. "
-msgstr ""
+msgstr "Dit zal alle opties tonen van het profiel-veld %field."
 
 #: modules/views_profile.inc:84
 msgid "Display the date of the %field-name field."
-msgstr ""
+msgstr "Toon de datum van het veld %field."
 
 #: modules/views_profile.inc:91;185
 msgid "Checkbox based profile field help"
-msgstr ""
+msgstr "Help voor een profiel-veld op basis van een checkbox"
 
 #: modules/views_profile.inc:98;194
 msgid "Other types based profile field help"
-msgstr ""
+msgstr "Help voor andere soorten profiel-velden"
 
 #: modules/views_profile.inc:121
 msgid "This allows you to sort by vocabulary terms"
-msgstr ""
+msgstr "Diit laat toe om te sorteren op basis van termen in woordenschatten."
 
 #: modules/views_profile.inc:124
 msgid "This allows you to sort by selection options"
-msgstr ""
+msgstr "Dit laat toe om te sorteren op basis van selectie opties"
 
 #: modules/views_profile.inc:130
 msgid "This allows you to sort by date"
-msgstr ""
+msgstr "Dit laat toe om te sorteren op basis van datum"
 
 #: modules/views_profile.inc:133
 msgid "This allows you to sort yes/no"
-msgstr ""
+msgstr "Dit laat toe om te sorteren op basis van ja/neen"
 
 #: modules/views_profile.inc:153
 msgid "Taxonomy based profile field help"
-msgstr ""
+msgstr "Help voor proefiel-velden op basis van taxonomie"
 
 #: modules/views_profile.inc:164
 msgid "Selection based profile field help"
-msgstr ""
+msgstr "Help voor profiel-velden op basis van een selectie"
 
 #: modules/views_statistics.inc:23;42
 msgid "Node: Total Hits"
-msgstr ""
+msgstr "Node: totaal aantal hits"
 
 #: modules/views_statistics.inc:25
 msgid "This will display the number of times a node has been read."
-msgstr ""
+msgstr "Dit toont het aantal keer dat een node werd bekeken."
 
 #: modules/views_statistics.inc:28;46
 msgid "Node: Recent Hits"
-msgstr ""
+msgstr "Node: rcentes hits"
 
 #: modules/views_statistics.inc:30
 msgid "This will display the number of times a node has been read recently."
-msgstr ""
+msgstr "Dit toont het aantal keer dat een node recent werd gelezen."
 
 #: modules/views_statistics.inc:33;50
 msgid "Node: Last Hit Time"
-msgstr ""
+msgstr "Node: datum laatste gelezen"
 
 #: modules/views_statistics.inc:37
 msgid "Display the time the node was last read."
-msgstr ""
+msgstr "Toont de tijd dat de node het laatste werd gelezen."
 
 #: modules/views_statistics.inc:43
 msgid "This allows you to sort by the number of times a node has been read."
-msgstr ""
+msgstr "Dit laat toe om te sorteren op basis van het aantal keer dat de node werd gelezen."
 
 #: modules/views_statistics.inc:47
 msgid "This allows you to sort by the number of times a node has been read recently."
-msgstr ""
+msgstr "Dit laat toe om te sorteren op basis van het aantal keer dat de node recent werd gelezen."
 
 #: modules/views_statistics.inc:53
 msgid "This allows you to sort by the time a node was last read."
-msgstr ""
+msgstr "Dit laat toe om te sorteren op de tijd dat de node het laatste werd gelezen."
 
 #: modules/views_statistics.inc:68
 msgid "Nodes sorted by recent page-views"
-msgstr ""
+msgstr "Nodes gesorteerd op basis van recente page-views"
 
 #: modules/views_statistics.inc:73;90
 msgid "Recent popular content"
-msgstr ""
+msgstr "Recente populaire inhoud"
+
+#: modules/views_statistics.inc:130;219
+msgid "Created"
+msgstr "Aangemaakt"
+
+#: modules/views_statistics.inc:137
+msgid "Recent hits"
+msgstr "Recente hits"
 
 #: modules/views_statistics.inc:157
 msgid "Nodes sorted by total page-views"
-msgstr ""
+msgstr "Nodes gesorteerd op basis van het totaal aantal page-views"
 
 #: modules/views_statistics.inc:162;179
 msgid "All-time popular content"
-msgstr ""
-
-#: modules/views_statistics.inc:200
-msgid "type"
-msgstr ""
-
-#: modules/views_statistics.inc:206
-#, fuzzy
-msgid "title"
-msgstr "Titel"
-
-#: modules/views_statistics.inc:213
-msgid "author"
-msgstr ""
-
-#: modules/views_statistics.inc:219
-msgid "created"
-msgstr ""
+msgstr "Meest populaire inhoud"
 
 #: modules/views_statistics.inc:226
-msgid "reads"
-msgstr ""
+msgid "Reads"
+msgstr "Aantal keer gelezen"
 
 #: modules/views_taxonomy.inc:50;67
 msgid "Taxonomy: Terms for @voc-name"
-msgstr ""
+msgstr "Taxonomie: termen voor @voc-naam"
 
 #: modules/views_taxonomy.inc:52
 msgid "This will display all taxonomy terms associated with the node that are members of %voc-name. Note that this causes one extra query per row displayed, and might have a minor performance impact."
-msgstr ""
+msgstr "Dit zal alle taxonomie-termen tonen die gelinkt zijn met de node en onderdeel zijn van de woordenlijst %voc-name. Opgelet, hiervoor wordt per rij een extra query gemaakt wat een negatieve invloed kan hebben op de snelheid van de website."
 
-#: modules/views_taxonomy.inc:74
+#: modules/views_taxonomy.inc:76
 msgid "Only terms associated with %voc-name will appear in the select box for this filter. When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information."
-msgstr ""
+msgstr "Alleen termen uit de woordenlijst %voc-name zullen verschijnen in de select box voor deze filter. Wanneer er op taxonomie term wordt gefilterd kan optioneel de 'diepte' worden meegegeven. Meer informatie daarover is te vinden in de taxonomie help informatie."
 
-#: modules/views_taxonomy.inc:109
+#: modules/views_taxonomy.inc:111
 msgid "Taxonomy: Term"
-msgstr ""
+msgstr "Taxonomie: term"
 
-#: modules/views_taxonomy.inc:113
+#: modules/views_taxonomy.inc:115
 msgid "This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter."
-msgstr ""
-
-#: modules/views_taxonomy.inc:116
-msgid "Taxonomy: Term Description"
-msgstr ""
+msgstr "Dit zal een van de taxonomie termen die aan de node gelinkt zijn tonen; als taxonomie termen werden gebruikt om te filteren of te sorteren, als het die term zijn die verschijnt."
 
 #: modules/views_taxonomy.inc:118
+msgid "Taxonomy: Term Description"
+msgstr "Taxonomie: beschrijving van term"
+
+#: modules/views_taxonomy.inc:120
 msgid "This will display the description associated with a taxonomy term."
-msgstr ""
+msgstr "Dit toont de beschrijving van de gerelateerde taxonomie."
 
-#: modules/views_taxonomy.inc:123;155
+#: modules/views_taxonomy.inc:125;157
 msgid "Taxonomy: Term Name"
-msgstr ""
+msgstr "Taxonomie: naam van de term"
 
-#: modules/views_taxonomy.inc:125
+#: modules/views_taxonomy.inc:127
 msgid "This will sort nodes by taxonomy weight and name, as defined in the category administration."
-msgstr ""
+msgstr "Dit zal de nodes sorteren op taxonomie gewicht en naam, zoals ingesteld in het beheer van de categorieën."
 
-#: modules/views_taxonomy.inc:130
+#: modules/views_taxonomy.inc:132
 msgid "Taxonomy: Vocabulary Name"
-msgstr ""
+msgstr "Taxonomie: naam woordenlijst"
 
-#: modules/views_taxonomy.inc:135
+#: modules/views_taxonomy.inc:137
 msgid "This will filter a view to only nodes that contain a term in the associated vocabulary."
-msgstr ""
+msgstr "Dit zal de view filteren op nodes die een term bevatten in de gerelateerde woordenlijst."
 
-#: modules/views_taxonomy.inc:149
+#: modules/views_taxonomy.inc:151
 msgid "Taxonomy: Term ID"
-msgstr ""
+msgstr "Taxonomie: term ID"
 
-#: modules/views_taxonomy.inc:152
+#: modules/views_taxonomy.inc:154
 msgid "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information."
-msgstr ""
+msgstr "Het argument zal filteren op basis van taxonomy term ID. Zet voor dit argument de optie op de diepte van de zoekopdracht. Zie taxonomie voor meer informatie."
 
-#: modules/views_taxonomy.inc:158
+#: modules/views_taxonomy.inc:160
 msgid "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
-msgstr ""
-
-#: modules/views_taxonomy.inc:161
-msgid "Taxonomy: Vocabulary ID"
-msgstr ""
+msgstr "Het argument zal filteren op basis van een taxonomie term naam. Zet voor dit argument de optie op het aantal karakters, gebruik 0 voor de volledige term; gebruik 1 voor een A/B/C stijl woordenlijst."
 
 #: modules/views_taxonomy.inc:163
+msgid "Taxonomy: Vocabulary ID"
+msgstr "Taxonomie: woordenschat ID"
+
+#: modules/views_taxonomy.inc:165
 msgid "The argument will filter to nodes with terms in a vocabulary."
-msgstr ""
+msgstr "Dit argument filtert nodes met termen in een woordenschat."
 
-#: modules/views_taxonomy.inc:173
+#: modules/views_taxonomy.inc:175
 msgid "The taxonomy view with a depth of 0."
-msgstr ""
+msgstr "De taxonomie view met een diepte van 0."
 
-#: modules/views_taxonomy.inc:177
+#: modules/views_taxonomy.inc:179
 msgid "Taxonomy"
-msgstr ""
+msgstr "Taxonomie"
 
-#: modules/views_taxonomy.inc:303;307;311
+#: modules/views_taxonomy.inc:237
+msgid "A comma-separated list of terms describing this content. Example: funny, bungee jumping, \"Company, Inc.\"."
+msgstr "Een met comma's gescheiden lijst van termen die de inhoud beschrijven. Voorbeeld: grappif, bungee jumping, bedijf."
+
+#: modules/views_taxonomy.inc:345;349;353
 msgid "Uncategorized"
-msgstr ""
+msgstr "Zonder categorie"
+
+#: modules/views_taxonomy.inc:387
+msgid "Uncatgorized"
+msgstr "Zonder categorie"
 
 #: views_theme_wizard.module:9
-#, fuzzy
 msgid "Theme wizard"
-msgstr "Template-assistent"
+msgstr "Theme Wizard"
 
 #: views_theme_wizard.module:48
-#, fuzzy
 msgid "<p>The views theming wizard generates code that you can use in your phptemplate theme to help you customize the output of a view. Simply select a theme and it will generate code for your template.php as well as template files for the individual views.</p><p>At this time this code assumes your view is a <b>list type view</b>! It may not generate effective code for other types of views. Future versions of this program will be smarter, and give more options, but this wizard is still a huge start.</p>"
-msgstr "<p>De views template-assistent produceert code die u in uw phptemplate-template kunt gebruiken om de uitvoer van een view aan te passen. Selecteer eenvoudig een template en de template-assistent zal de code voor uw template.php en template-bestanden voor de individuele views produceren.</p><p>Op dit moment gaat de code er van uit dat uw view een <b>lijsttype view</b> is! Mogelijk levert dit niet de meest effectieve code op voor andere soorten views. Toekomstige versies van dit programma zullen slimmer zijn en zullen meer opties aanbieden, maar deze assistent is toch al een goed begin.</p>"
+msgstr "<p>De views theming wizard genereert code die je kan gebruiken in je phptemplate theme voor het helpen aanpassen van de output van een view. Selecteer eenvoudigweg het theme en het zal de code genereren voor je template.php bestand en voor de template files van de individuele views.</p><p>Op dit moment gaat de code ervan uit dat je view van het soort<b>lijst view</b>is! Het genereert mogelijk geen goede code voor andere soorten views. Toekomstige versie zullen mogelijk meer functies bevatten.</p>"
 
 #: views_theme_wizard.module:63
-#, fuzzy
 msgid "Select a view"
-msgstr "Selecteer een view"
+msgstr "Kies een view"
 
 #: views_theme_wizard.module:68;74;103
-#, fuzzy
 msgid "Select Theme Type"
-msgstr "Selecteer templatetype"
+msgstr "Kies een soort theme"
 
 #: views_theme_wizard.module:79;89
-#, fuzzy
 msgid "List Theme Fields"
-msgstr "Geef templatevelden weer"
+msgstr "Bekijk velden van het theme"
 
 #: views_theme_wizard.module:93
-#, fuzzy
 msgid "This is a list of all the theme functions you can use to override individual field displays"
-msgstr "Dit is een lijst van alle templatefuncties die u kunt gebruiken om de weergave van individuele velden te overschrijven."
+msgstr "Dit is een lijst van alle theme functies die gebruikt kunnen worden om de weergav van individuele velden aan te passen"
 
 #: views_theme_wizard.module:98
-#, fuzzy
 msgid "This is a basic theme function"
-msgstr "Dit is een basis templatefunctie"
+msgstr "Bekijk de eenvoudige theme functies"
 
 #: views_theme_wizard.module:124
-#, fuzzy
 msgid "Generate Theme"
-msgstr "Genereer template"
+msgstr "Maak theme aan"
 
 #: views_theme_wizard.module:139
-#, fuzzy
 msgid "This code goes in your template.php file"
-msgstr "Deze code gaat in uw template.php bestand"
+msgstr "Deze code moet in de template.php file geplaatst worden."
 
 #: views_theme_wizard.module:144
-#, fuzzy
 msgid "This code goes in a file named views-list-@s.tpl.php"
-msgstr "Deze code gaat in een bestand genaamd views-list-@s.tpl.php"
+msgstr "Deze code moet in een file met de naam views-list-@s.tpl.php geplaatst worden."
 
 #: views_theme_wizard.module:149
-#, fuzzy
 msgid "This code goes in a file named views-list-@s.css"
-msgstr "Deze code gaat in een bestand genaamd views-list-@s.css"
+msgstr "Deze code moet in een file met de naam views-list-@s.css geplaatst worden"
 
 #: views_theme_wizard.module:176
-#, fuzzy
 msgid "Simple List"
-msgstr "Enkelvoudige lijst"
+msgstr "Eenvoudige lijst"
 
 #: views_theme_wizard.module:177
-#, fuzzy
 msgid "Grouped List"
 msgstr "Gegroepeerde lijst"
 
 #: views_theme_wizard.module:178
-#, fuzzy
 msgid "Nested Tree"
-msgstr "Geneste structuur"
+msgstr "Geneste boom"
 
 #: views_theme_wizard.module:192
-#, fuzzy
 msgid "Select the field on which to group"
-msgstr "Selecteer het veld waarop u wilt groeperen"
+msgstr "Kies het veld waarop gegroepeerd moet worden"
 
 #: views_theme_wizard.module:205
-#, fuzzy
 msgid "Select the field to use as the ID for each row (usually nid)"
-msgstr "Selecteer het veld dat u wilt gebruiken als ID voor elke rij (gewoonlijk nid)"
+msgstr "Kies het veld dat gebruikt moet worden als ID voor elke rij (gewoonlijk nid)."
 
 #: views_theme_wizard.module:210
-#, fuzzy
 msgid "Select the field that refers to the parent node by the ID field"
-msgstr "Selecteer het veld dat naar de bovenliggende node verwijst via het ID-veld"
+msgstr "Kies het veld dat verwijst naar de bovenliggende node op basis van het ID van het veld"
 
 #: views_ui.module:15
-#, fuzzy
 msgid "You may import a view by cut-and-pasting the results of an export view. If the import is successful you will be taken to the Add View page with all of the settings of the imported view.."
-msgstr "U kunt een View importeren door het resultaat van een geëxporteerde View te knippen en te plakken. Als het importeren gelukt is, wordt u doorgestuurd naar de pagina 'View toevoegen' met alle instellingen voor de geïmporteerde view."
+msgstr "Je kan een view importeren door de code van een export hier te plakken. Als de import gelukt is, beland je op de Views Toevoegen pagina met alle opties van het geïmporteerd view reeds ingevuld."
 
 #: views_ui.module:17
-#, fuzzy
 msgid "This screen shows all of the views that are currently defined in your system. The default views are provided by Views and other modules and are automatically available. If a customized view of the same name exists, it will be used in place of a default view."
-msgstr "Op deze pagina vindt u alle Views die in het systeem gedefiniëerd zijn. Standaard Views worden met de Views module meegeleverd of zijn onderdeel van andere modules en zijn automatisch beschikbaar. Als er een aangepaste View met dezelfde naam bestaat dan wordt deze gebruikt in plaats van de standaard view."
+msgstr "Dit scherm toont alle views die reeds in je website werden aangemaakt. De standaard views werden voorzien door de Views module en andere modules en zijn automatisch beschikbaar. Als er een maatwerk view bestaat met dezelfde naam zal dat eerder worden gebruikt."
 
 #: views_ui.module:23
-#, fuzzy
 msgid "Please see !s or the views documentation on drupal.org for help here."
-msgstr "Lees !s of de Views-handleiding op drupal.org voor hulp."
+msgstr "Ga naar !s of de views documentatie op de drupal.org site voor meer informatie hierover."
 
 #: views_ui.module:23
-#, fuzzy
 msgid "the views help page"
-msgstr "de Views helppagina"
+msgstr "de help pagina over views"
 
 #: views_ui.module:25
-#, fuzzy
 msgid "You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location."
-msgstr "U kunt deze View knippen en plakken naar een importfunctie op een ander systeem. De View zal alleen werken als alle modules die de View nodig heeft op het andere systeem geïnstalleerd zijn."
+msgstr "Je mag deze code knippen en plakken in de import functie van een andere site. Deze view zal alleen werken als alle modules die ervoor vereist zijn ook geïnstalleerd zijn op de andere site."
 
 #: views_ui.module:34
-#, fuzzy
 msgid "<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>"
-msgstr "<p>Een View haalt een aantal nodes uit de database en kan deze op verschillende manieren weergeven.</p>"
+msgstr "<p>Een view haalt een aantal nodes op uit de databank en toont die in een varierende reeks formaten.</p>"
 
 #: views_ui.module:35
-#, fuzzy
 msgid ""
 "<h3>View Types</h3>\n"
 "    <dl>\n"
@@ -1107,1071 +1049,917 @@ msgid ""
 "      <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>\n"
 "    </dl>"
 msgstr ""
-"<h3>Type Views</h3>\n"
+"<h3>Soorten views</h3>\n"
 "    <dl>\n"
-"      <dt><em>Lijst View</em></dt><dd>Een Lijst View geeft de gegevens van elke node weer als een lijst. Elk item uit de sectie Velden wordt weergegeven waarbij de titel als label wordt gebruikt. De volgorde van de items in de sectie Velden bepaalt de volgorde in de lijst. Laat u de titel leeg dan wordt het veld zonder label weergegeven (wat handig is bij lijsten die bijvoorbeeld alleen titels weergeven).</dd>\n"
-"      <dt><em>Tabel View</em></dt><dd>Een Tabel View geeft de gegevens van elke node als een rij in een tabel weer. De velden worden weergegeven in de volgorde waarin ze in de lijst staan. De titelkolom wordt in de kop van de tabel weergegeven. Als een veld is ingesteld als 'sorteerbaar', kan de kolom door een klik op de titel gesorteerd worden. Pas hiermee op, want klik-sorteren wordt uitgevoerd na het ingebouwde sorteren, en de ingebouwde sorteercriteria kunnen het klik-sorteren gemakkelijk ongeldig maken. Bij het gebruiken van klik-sorteren kiest u één veld waarop standaard gesorteerd wordt, anders wordt op het eerste veld gesorteerd.</dd>\n"
-"      <dt><em>Lijst van voorproefjes</em></dt><dd>Deze optie laat een lijst van voorproefjes zien van de geselecteerde nodes.</dd>\n"
-"      <dt><em>Volledige nodes</em></dt><dd>Deze optie laat de volledige inhoud van een node zien.</dd>\n"
-"      <dt><em>Willekeurig voorproefje</em></dt><dd>Deze optie laat een willekeurige voorproefje zien.</dd>\n"
-"      <dt><em>Willekeurige node</em></dt><dd>Deze optie laat een willekeurige node volledig zien.</dd>\n"
+"      <dt><em>Lijst View</em></dt><dd>Een lijst view geeft de opgehaalde data per node weer als een ongenummerde lijst.</dd>\n"
+"      <dt><em>Tabel View</em></dt><dd>Een tabel view geeft op opgehaalde data per node weer als rijen in een tabel.</dd>\n"
+"      <dt><em>Teaser Lijst</em></dt><dd>Een teaser lijst zal de teaser van elke opgehaalde node weergeven.</dd>\n"
+"      <dt><em>Volledige Nodes</em></dt><dd>Dit zal de volledige content van elke opgehaalde node tonen.</dd>\n"
+"      <dt><em>Willekeurige Teaser</em></dt><dd>Dit zal een willekeurige teaser tonen.</dd>\n"
+"      <dt><em>Willekeurige Node</em></dt><dd>Dit zal de volledige inhoud van een willekeurige node tonen.</dd>\n"
 "    </dl>"
 
 #: views_ui.module:46
-#, fuzzy
 msgid "<h3>Fields</h3>\n"
 msgstr "<h3>Velden</h3>\n"
 
 #: views_ui.module:47
-#, fuzzy
 msgid "<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n"
-msgstr "<p>Bij een Lijst of Tabel View moeten velden worden gekozen om weer te geven.</p><dl>\n"
+msgstr "<p>Bij het gebruiken van een lijst of tabel view is het noodzakelijk om te kiezen welke velden aan de bezoeker zullen worden getoond</p><dl>\n"
 
 #: views_ui.module:54
-#, fuzzy
 msgid "<h3>Arguments</h3>\n"
-msgstr "<h3>Parameters</h3>\n"
+msgstr "<h3>Argumenten</h3>\n"
 
 #: views_ui.module:55
-#, fuzzy
 msgid "<p>Arguments can be passed to the View through the URL, in order to create views that are configurable by the user. This is very useful to create views for taxonomy, or to sort by user. When using arguments, substitution is performed on the title. %1 will represent argument 1, %2 will represent argument 2. Each argument has a title field; this title is used if providing a summary view (which can matter because the argument is missing which could result in confusing phrases such as 'view for')</p><dl>\n"
-msgstr "<p>Parameters kunnen via de URL aan de View worden doorgegeven, waarmee Views kunnen worden gemaakt die door de gebruiker kunnen worden ingesteld. Dit is erg handig om een View te maken voor taxonomie of een View die de gebruiker zelf kan sorteren. Wanneer parameters worden gebruikt worden deze in de titel ingevuld. %1 vertegenwoordigt parameter 1, %2 vertegenwoordigt parameter 2. Iedere parameter heeft een titelveld; de titel wordt gebruikt in een Samenvattingsview (dit kan belangrijk zijn als de parameter ontbreekt wat tot verwarrende teksten kan leiden als 'Lijst van')</p><dl>\n"
+msgstr "<p>De argumenten kunnen via de URL aan de view worden doorgegeven om zo views te maken die door de bezoeker kunnen worden geconfigureerd. Dit is bijvoorbeeld nuttig om views per taxonomy term te maken of om te sorteren per gebruiker. bij het gebruiken van argumenten is ook vervanging van de titel voorzien. %1 zal argument 1 representeren, %2 argument 2. Elk argument heeft een titel veld; deze titel wordt gebruikt als samenvatting van de view.</p><dl>\n"
 
 #: views_ui.module:62
-#, fuzzy
 msgid "<h3>Filters</h3>\n"
 msgstr "<h3>Filters</h3>\n"
 
 #: views_ui.module:63
-#, fuzzy
 msgid "<p>Views may be filtered to restrict the view on a number of criteria.</p><dl>\n"
-msgstr "<p>Views kunnen op een aantal voorwaarden gefilterd worden om de weergave te beperken.</p><dl>\n"
+msgstr "<p>Views kunnen gefilterd worden door de view te beperken op basis van enkele criteria</p><dl>\n"
 
 #: views_ui.module:70
-#, fuzzy
 msgid "<h3>Sorting Critera</h3>\n"
-msgstr "<h3>Sorteercriteria</h3>\n"
+msgstr "<h3>Sortering</h3>\n"
 
 #: views_ui.module:71
-#, fuzzy
 msgid "<p>The result set may be sorted on any of the following criteria.</p><dl>\n"
-msgstr "<p>Het resultaat kan gesorteerd worden volgens elk van de volgende criteria</p><dl>\n"
+msgstr "<p>De resulterende lijst kan gesorteerd worden op basis van een van volgende criteria</p><dl>\n"
 
 #: views_ui.module:96
 #: views.info:0;0
 #: views_rss.info:0
 #: views_theme_wizard.info:0
 #: views_ui.info:0
-#, fuzzy
 msgid "Views"
 msgstr "Views"
 
 #: views_ui.module:99
-#, fuzzy
 msgid "Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented."
-msgstr "Views zijn aangepaste lijsten met gegevens uit het systeem. U kunt Views naar eigen inzicht samenstellen en zo de inhoud van de lijsten zelf bepalen."
+msgstr "Views zijn op maat gemaakte lijsten van content op je website; ze zijn sterk configureerbaar en geven je control over hoe de lijst van content wordt weergegeven."
 
 #: views_ui.module:102
-#, fuzzy
 msgid "List"
 msgstr "Lijst"
 
-#: views_ui.module:108;246
-#, fuzzy
+#: views_ui.module:108;288
 msgid "Add"
 msgstr "Toevoegen"
 
-#: views_ui.module:113;189
-#, fuzzy
-msgid "Clone"
-msgstr "Klonen"
-
-#: views_ui.module:118;134
-#, fuzzy
-msgid "Edit view"
-msgstr "View wijzigen"
-
-#: views_ui.module:123
-#, fuzzy
+#: views_ui.module:113
 msgid "Import"
 msgstr "Importeren"
 
-#: views_ui.module:128
-msgid "Export view"
-msgstr ""
+#: views_ui.module:118
+msgid "Tools"
+msgstr "Tools"
 
-#: views_ui.module:163;85
-#, fuzzy
-msgid "administer views"
-msgstr "Views beheren"
+#: views_ui.module:124
+msgid "Edit view"
+msgstr "Bewerk view"
 
-#: views_ui.module:168;214
-#, fuzzy
-msgid "No Page View"
-msgstr "Geen Pagina-view"
-
-#: views_ui.module:187
-#, fuzzy
+#: views_ui.module:179;229
 msgid "Export"
-msgstr "Exporteren"
+msgstr "Exporteer"
 
-#: views_ui.module:195;258;733
-#, fuzzy
+#: views_ui.module:185;231
+msgid "Clone"
+msgstr "Dupliceren"
+
+#: views_ui.module:204
+msgid "Administer views"
+msgstr "Beheer views"
+
+#: views_ui.module:209;256
+msgid "No Page View"
+msgstr "Geen pagina view"
+
+#: views_ui.module:237;308;803
 msgid "Description"
 msgstr "Beschrijving"
 
-#: views_ui.module:195;258
-#, fuzzy
+#: views_ui.module:237;308
 msgid "Provides"
-msgstr "Weergave"
+msgstr "Voorziet"
 
-#: views_ui.module:195;258;759
-#, fuzzy
+#: views_ui.module:237;308;829
 msgid "URL"
 msgstr "URL"
 
-#: views_ui.module:195;258
-#, fuzzy
+#: views_ui.module:237;308
 msgid "Actions"
 msgstr "Acties"
 
-#: views_ui.module:195
-#, fuzzy
+#: views_ui.module:237
 msgid "Existing Views"
-msgstr "Bestaande Views"
+msgstr "Bestaande views"
 
-#: views_ui.module:199;261
-#, fuzzy
+#: views_ui.module:241;311
 msgid "<p>No views have currently been defined.</p>"
-msgstr "<p>Er zijn nog geen Views gedefiniëerd.</p>"
+msgstr "<p>Er zijn momenteel geen views aangemaakt.</p>"
 
-#: views_ui.module:207
-#, fuzzy
+#: views_ui.module:249
 msgid "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>"
-msgstr "<p>Hieronder vindt u de standaard Views. Wanneer u een van deze Views aanpast, wordt een nieuwe View aangemaakt die door het systeem in plaats van de standaard View zal worden gebruikt."
+msgstr "<p>Hieronder staan de standaard views van het systeem; als deze worden aangepast, wordt er een nieuwe view gemaakt die prioriteit zal krijgen over het gebruik van de systeem view.</p>"
 
-#: views_ui.module:217
-#, fuzzy
+#: views_ui.module:259
 msgid "Overridden"
-msgstr "Vervangen"
+msgstr "Overschreven"
 
-#: views_ui.module:221;231;247
-#, fuzzy
+#: views_ui.module:263;273;289
 msgid "Enabled"
-msgstr "Ingeschakeld"
+msgstr "Geactiveerd"
 
-#: views_ui.module:224;228;250
-#, fuzzy
+#: views_ui.module:266;270;292
 msgid "Disabled"
-msgstr "Uitgeschakeld"
+msgstr "Gedeactiveerd"
 
-#: views_ui.module:236;746
-#, fuzzy
+#: views_ui.module:278;816
 msgid "Page"
 msgstr "Pagina"
 
-#: views_ui.module:239;908
-#, fuzzy
+#: views_ui.module:281;978
 msgid "Block"
 msgstr "Blok"
 
-#: views_ui.module:242;858
-#, fuzzy
+#: views_ui.module:284;928
 msgid "Menu"
 msgstr "Menu"
 
-#: views_ui.module:248
-#, fuzzy
+#: views_ui.module:290
 msgid "Disable"
-msgstr "Uitschakelen"
+msgstr "Deactiveerd"
 
-#: views_ui.module:251
-#, fuzzy
+#: views_ui.module:293
 msgid "Enable"
-msgstr "Inschakelen"
+msgstr "Activeer"
 
-#: views_ui.module:258
-#, fuzzy
+#: views_ui.module:308
 msgid "Default view"
-msgstr "Standaard View"
+msgstr "Standaard view"
 
-#: views_ui.module:258
-#, fuzzy
+#: views_ui.module:308
 msgid "Status"
 msgstr "Status"
 
-#: views_ui.module:258
-#, fuzzy
+#: views_ui.module:308
 msgid "Default Views"
-msgstr "Standaard Views"
+msgstr "Standaard views"
 
-#: views_ui.module:314
-#, fuzzy
+#: views_ui.module:319
+msgid "<p>Occasionally, something or other can cause the Views cache to contain stale data; this is particularly true after module updates and sometimes true after taxonomy and profile updates. If you are having problems with Views creating malformed queries, the first thing you should always do is clear the Views cache to see if that is the problem.</p>"
+msgstr "<p>Soms kan de cache van de Views module fouten geven; dit is vaak het geval na updates van de module of aanpassingen aan de taxonomieën of profielen. Als er zich problemen voordoen met de selectie van nodes voor de views, probeer dan steeds eerst deze cache leeg te maken om te zien of dat het probleem oplost.</p>"
+
+#: views_ui.module:324;331
+msgid "Clear views cache"
+msgstr "Wis cache van views"
+
+#: views_ui.module:384
 msgid "Import View Code"
-msgstr "View-code importeren"
+msgstr "Importeerd code van een view"
 
-#: views_ui.module:317
-#, fuzzy
+#: views_ui.module:387
 msgid "Cut and paste the results of an Export View here."
-msgstr "Knip en plak hier de uitvoer van een geëxporteerde View."
+msgstr "Knip en plak de resultaten van een view export hier."
 
-#: views_ui.module:341;384;406
-#, fuzzy
+#: views_ui.module:411;454;476
 msgid "Add a View"
-msgstr "View toevoegen"
+msgstr "Voeg een view toe"
 
-#: views_ui.module:347
-#, fuzzy
+#: views_ui.module:417
 msgid "You don't seem to have the following requirements: "
-msgstr "U voldoet niet aan de volgende voorwaarden:"
+msgstr "Je lijkt niet te beschikken over deze vereisten:"
 
-#: views_ui.module:351
-#, fuzzy
+#: views_ui.module:421
 msgid "Unable to get a view out of that."
-msgstr "Hier kan geen View van worden gemaakt."
+msgstr "Op basis hiervan kan geen view gemaakt worden."
 
-#: views_ui.module:378;396;418;450;1070
-#, fuzzy
+#: views_ui.module:448;466;488;520;1140
 msgid "Cancel"
-msgstr "Annuleren"
-
-#: views_ui.module:430
-#, fuzzy
-msgid "Edit view %n"
-msgstr "Wijzig View %n"
-
-#: views_ui.module:447
-#, fuzzy
-msgid "Are you sure you want to delete %title?"
-msgstr "Weet u zeker dat u %title wilt verwijderen?"
-
-#: views_ui.module:449
-#, fuzzy
-msgid "This action cannot be undone."
-msgstr "Deze actie kan niet ongedaan worden gemaakt."
+msgstr "Annulleer"
 
 #: views_ui.module:500
-#, fuzzy
+msgid "Edit view %n"
+msgstr "Bewerk view %n"
+
+#: views_ui.module:517
+msgid "Are you sure you want to delete %title?"
+msgstr "Ben je zeker om %titel te verwijderen?"
+
+#: views_ui.module:519
+msgid "This action cannot be undone."
+msgstr "Deze actie kan niet meer ongedaan worden gemaakt."
+
+#: views_ui.module:570
 msgid "Return Page Not Found"
-msgstr "\"Pagina niet gevonden\" weergeven"
+msgstr "Geef 'Pagina niet gevonden' weer"
 
-#: views_ui.module:501
-#, fuzzy
+#: views_ui.module:571
 msgid "Display All Values"
-msgstr "Alle waardes weergeven"
+msgstr "Toon alle waarden"
 
-#: views_ui.module:502
-#, fuzzy
+#: views_ui.module:572
 msgid "Summary, unsorted"
-msgstr "Samenvatting, ongesorteerd"
+msgstr "Samenvatting, niet gesorteerd"
 
-#: views_ui.module:503
-#, fuzzy
+#: views_ui.module:573
 msgid "Summary, sorted ascending"
 msgstr "Samenvatting, oplopend gesorteerd"
 
-#: views_ui.module:504
-#, fuzzy
+#: views_ui.module:574
 msgid "Summary, sorted descending"
 msgstr "Samenvatting, aflopend gesorteerd"
 
-#: views_ui.module:505
-#, fuzzy
+#: views_ui.module:575
 msgid "Summary, sorted as view"
-msgstr "Samenvatting, gesorteerd als view"
+msgstr "Samenvatting, gesorteerd zoals de view"
 
-#: views_ui.module:506
-#, fuzzy
+#: views_ui.module:576
 msgid "Use Empty Text"
-msgstr "Gebruik \'Geen resultaat\' tekst"
+msgstr "Gebruik lege tekst"
 
-#: views_ui.module:515;1227
-#, fuzzy
+#: views_ui.module:585;1299
 msgid "Ascending"
 msgstr "Oplopend"
 
-#: views_ui.module:516;1227
-#, fuzzy
+#: views_ui.module:586;1299
 msgid "Descending"
 msgstr "Aflopend"
 
-#: views_ui.module:608;678;1522
-#, fuzzy
+#: views_ui.module:678;748;1594
 msgid "Add Filter"
-msgstr "Filter toevoegen"
+msgstr "Voeg filter toe"
 
-#: views_ui.module:612;679
-#, fuzzy
+#: views_ui.module:682;749
 msgid "Add Criteria"
-msgstr "Criteria toevoegen"
+msgstr "Voeg criterium toe"
 
-#: views_ui.module:616;677;1510
-#, fuzzy
+#: views_ui.module:686;747;1582
 msgid "Add Argument"
-msgstr "Parameter toevoegen"
+msgstr "Voeg argument toe"
 
-#: views_ui.module:620;676;1499
-#, fuzzy
+#: views_ui.module:690;746;1571
 msgid "Add Field"
-msgstr "Veld toevoegen"
+msgstr "Voeg veld toe"
 
-#: views_ui.module:628
-#, fuzzy
+#: views_ui.module:698
 msgid "Expose Filter"
-msgstr "Filter tonen"
+msgstr "Maak filter toegankelijk voor gebruikers"
 
-#: views_ui.module:682;1056;1611;1719
-#, fuzzy
-msgid "Save"
-msgstr "Opslaan"
-
-#: views_ui.module:683
-#, fuzzy
+#: views_ui.module:753
 msgid "You have modified this view; changes will not be recorded until you Save the form."
-msgstr "De View is gewijzigd. De wijzigingen worden pas toegepast nadat het formulier is opgeslagen."
+msgstr "Deze view werd aangepast; de aanpassing worden niet doorgevoerd zolang er niet op 'Opslaan' werd geklikt."
 
-#: views_ui.module:710
-#, fuzzy
+#: views_ui.module:780
 msgid "Basic Information"
-msgstr "Basisinformatie"
+msgstr "Basis informatie"
 
-#: views_ui.module:715;1498
-#, fuzzy
+#: views_ui.module:785;1570
 msgid "Name"
 msgstr "Naam"
 
-#: views_ui.module:719
-#, fuzzy
+#: views_ui.module:789
 msgid "The unique identifier of the view; it is only important for overridden views and views that modules or themes will need to use. Only alphanumeric and _ allowed here"
-msgstr "De unieke identificatie van de View. Dit is alleen belangrijk voor Views die als vervanging dienen van andere Views en Views die door modules of templates gebruikt worden. Alleen letters, cijfers en _ zijn hier toegestaan."
+msgstr "De unieke identificatie van een view; dit is alleen belangrijk voor het vervangen van standaard views, en views die door modules of themes gebruikt worden. Alleen cijfers, letters en underscores zijn toegelaten."
 
-#: views_ui.module:725
-#, fuzzy
+#: views_ui.module:795
 msgid "Access"
 msgstr "Toegang"
 
-#: views_ui.module:728
-#, fuzzy
+#: views_ui.module:798
 msgid "Only the checked roles will be able to see this view in any form; if no roles are checked, access will not be restricted."
-msgstr "Alleen de aangevinkte rollen kunnen deze View zien. Wanneer geen enkele rol is aangevinkt kan iedereen deze View zien."
+msgstr "Alleen de aangevinkte rollen zullen de view volledig kunnen zien; als er geen rollen aangevinkt zijn, wordt de toegang tot de view niet beperkt."
 
-#: views_ui.module:737
-#, fuzzy
+#: views_ui.module:807
 msgid "A description of the view for the admin list."
-msgstr "Een beschrijving van de View voor de Views-beheer lijst."
+msgstr "Een beschrijving van de view voor in de administrator lijst."
 
-#: views_ui.module:751
-#, fuzzy
+#: views_ui.module:821
 msgid "Provide Page View"
-msgstr "Maak een Pagina-view"
+msgstr "Voorzie een pagina weergave van de view"
 
-#: views_ui.module:754
-#, fuzzy
+#: views_ui.module:824
 msgid "If checked this view will be provided as a page. If not checked, the fields in this group will be ignored."
-msgstr "Bij aanvinken wordt de View als pagina weergegeven. Indien niet aangevinkt worden de velden in deze groep genegeerd."
+msgstr "Indien angevinkt zal deze view als een pagina worden weergegeven. Indien niet aangevinkt, worden de velden in deze group genegeerd."
 
-#: views_ui.module:763
-#, fuzzy
+#: views_ui.module:833
 msgid "Enter the URL to use for this view in the form of 'dir/dir'. Do not begin or end the URL with a /. Example: 'view/tracker'. This is required if providing a page view. You can also add $arg as a placeholder for arguments passed in the URL, for example 'user/$arg/tracker' or 'view/taxonomy/$arg'. Note that any arguments listed here will be required, even if they are listed as optional below.  You do not need to list arguments at the end of the path."
-msgstr "Geef een URL voor deze View in de vorm van 'map/map'. Een URL mag niet beginnen of eindigen met een /. Voorbeeld: 'view/tracker'. Deze optie is verplicht bij een Pagina-view. $arg kan gebruikt worden als plaatsvervanger voor parameters in de URL, bijvoorbeeld 'user/$arg/tracker' of 'view/taxonomy/$arg'. Let op dat elk argument dat hier gedefiniëerd wordt verplicht is, ook als ze hieronder optioneel zijn. Parameters aan het einde van de URL zijn niet verplicht."
+msgstr "Geef de URL voor deze view op in het formaat 'dir/dir'. Begin of eindig de URL niet met een /. Voorbeeld: 'view/tracker'. Dit is verplicht voor een pagina view. Je kan ook $arg toevoegen als placeholder voor argumenten die via de URL kunnen worden meegegeven. Let erop dat alle hier opgegeven argumenten verplicht zullen zijn, zelfs als ze lager als optioneel worden aangegeven. Het is niet nodig om argumenten toe te voegen aan het einde van een pad."
 
-#: views_ui.module:768;921
-#, fuzzy
+#: views_ui.module:838;991
 msgid "View Type"
-msgstr "View-type"
+msgstr "Soort view"
 
-#: views_ui.module:771;924
-#, fuzzy
+#: views_ui.module:841;994
 msgid "How the nodes should be displayed to the user."
-msgstr "De vorm waarin de nodes aan de gebruiker worden weergegeven."
+msgstr "Hoe nodes worden weergegeven aan de gebruiker."
 
-#: views_ui.module:780
-#, fuzzy
+#: views_ui.module:850
 msgid "The title that be shown at the top of the view. May be blank. This title ignores arguments; if you want your title to take arguments into account, use the \"title\" field in the arguments section."
-msgstr "De titel die boven de view weergegeven wordt. Deze mag leeg gelaten worden. Parameters in de titel worden genegeerd. Om parameters voor de titel toe te passen, gebruikt u het \"titelveld\" in de parameters sectie."
+msgstr "De titel die bovenaan de view zal worden weergegeven. Kan leeg gelaten worden. Deze titel negeert argumenten; als je wil dat je titel argumenten mee neemt, gebruik dan het 'titel' veld in het onderdeel 'argumenten'."
 
-#: views_ui.module:785
-#, fuzzy
+#: views_ui.module:855
 msgid "Use Pager"
-msgstr "Paginering gebruiken"
+msgstr "Gebruik pager"
 
-#: views_ui.module:788
-#, fuzzy
+#: views_ui.module:858
 msgid "If checked this query may be multiple pages. If not checked this query will be one page."
-msgstr "Bij aanvinken wordt de View indien nodig over meerdere pagina's verdeeld. Anders slechts één pagina."
+msgstr "Indie aangevinkt zal de view uit meerdere pagina's kunnen bestaan."
 
-#: views_ui.module:792
-#, fuzzy
+#: views_ui.module:862
 msgid "Breadcrumb trail should not include \"Home\""
-msgstr "Het broodkruimelpad mag geen \"Home\" bevatten"
+msgstr "Broodkruimel mag niet \"Home\" bevatten"
 
-#: views_ui.module:795
-#, fuzzy
+#: views_ui.module:865
 msgid "If checked the breadcrumb trail for this page will discard \"Home\". Usually you will not set this, but this is used for the Front Page View, where it IS Home and should not leave a trail to itself."
-msgstr "Bij aanvinken wordt geen \"Home\" in het broodkruimelpad weergegeven. Dit wordt meestal alleen gebruikt voor de voorpagina, waar geen link naar de voorpagina mag staan."
+msgstr "Indien aangevinkt zal de broodkruimel van deze pagina de \"Home\" weglaten. Gewoonlijk zal je dit niet instellen, maar het wordt gebruikt voor de Front Page View, waar je op de homepage bent en er dus geen broodkruimel noodzakelijk is."
 
-#: views_ui.module:799
-#, fuzzy
+#: views_ui.module:869
 msgid "Nodes per Page"
-msgstr "Nodes per pagina"
+msgstr "Aantal nodes per pagina"
 
-#: views_ui.module:803
-#, fuzzy
+#: views_ui.module:873
 msgid "The number of nodes to display per page. If 0, all nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list."
-msgstr "Het aantal nodes per pagina. Als dit 0 is wordt alles weergegeven. Als er geen paginering wordt gebruikt is dit het maximum aantal nodes in de lijst."
+msgstr "Het aantal weer te geven nodes per pagina. Indien 0, zullen alle nodes worden weergegeven. Indien er geen pager wordt gebruikt, is dit het maximaal aantal nodes in de lijst."
 
-#: views_ui.module:810;958;970
-#, fuzzy
+#: views_ui.module:880;1028;1040
 msgid "Header"
-msgstr "Kop"
+msgstr "Hoofding"
 
-#: views_ui.module:817;974
-#, fuzzy
+#: views_ui.module:887;1044
 msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
-msgstr "De tekst die boven de View weergegeven wordt (optioneel). Kan uitleg, links of nog andere info bevatten."
+msgstr "De tekst die bovenaan de view wordt weergegeven. Optioneel."
 
-#: views_ui.module:826;983;995
-#, fuzzy
+#: views_ui.module:896;1053;1065
 msgid "Footer"
 msgstr "Voet"
 
-#: views_ui.module:833;999
-#, fuzzy
+#: views_ui.module:903;1069
 msgid "Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional."
-msgstr "De tekst die onder de View weergegeven wordt (optioneel). Kan uitleg, links of nog andere info bevatten."
+msgstr "De tekst die onderaan de view moet worden weergegeven. Optioneel."
 
-#: views_ui.module:842
-#, fuzzy
+#: views_ui.module:912
 msgid "Empty Text"
-msgstr "\'Geen resultaat\' tekst"
+msgstr "Lege tekst"
 
-#: views_ui.module:849
-#, fuzzy
+#: views_ui.module:919
 msgid "Text to display if a view returns no nodes. Optional."
-msgstr "Deze tekst wordt getoond als de View geen nodes bevat (optioneel)."
-
-#: views_ui.module:863
-#, fuzzy
-msgid "Provide Menu"
-msgstr "Menu aanbieden"
-
-#: views_ui.module:866
-#, fuzzy
-msgid "If checked this view be given a menu entry in the Drupal menu system. If not checked the data in this group will be ignored."
-msgstr "Als u dit selecteert zal in het menu van Drupal een verwijzing naar de View worden toegevoegd. Als u dit niet selecteert zullen de gegevens in deze groep worden genegeerd."
-
-#: views_ui.module:871
-#, fuzzy
-msgid "Provide Menu as Tab"
-msgstr "Menu als tabblad aanbieden"
-
-#: views_ui.module:874
-#, fuzzy
-msgid "If checked this view's menu entry will be provided as a tab rather than in the main menu system."
-msgstr "Als u dit selecteert zal het menu-onderdeel als tab worden getoond in plaats van als onderdeel van het hoofdmenu."
-
-#: views_ui.module:879
-#, fuzzy
-msgid "Make Default Menu Tab"
-msgstr "Maak dit het standaard menu-tabblad."
-
-#: views_ui.module:882
-msgid "If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. For tabs to work properly, one tab in the group must be set as the default."
-msgstr ""
-
-#: views_ui.module:887
-#, fuzzy
-msgid "Tab Weight"
-msgstr "Gewicht tabblad"
-
-#: views_ui.module:890
-#, fuzzy
-msgid "If this is a menu tab, select the weight; lower numbers will be further to the left."
-msgstr "Als dit een menu-tabblad is, selecteer dan het gewicht; een lager getal plaatst het tabblad meer naar links."
-
-#: views_ui.module:895
-#, fuzzy
-msgid "Menu Title"
-msgstr "Menutitel"
-
-#: views_ui.module:899
-#, fuzzy
-msgid "Enter the title to use for the menu entry or tab. If blank, the page title will be used."
-msgstr "Geef de titel op voor het menu-onderdeel of het menu-tabblad. Als u dit veld leeg laat zal de paginatitel gebruikt worden."
-
-#: views_ui.module:913
-#, fuzzy
-msgid "Provide Block"
-msgstr "Blok aanmaken"
-
-#: views_ui.module:916
-#, fuzzy
-msgid "If checked this view will be provided as a block. If checked title may not be blank."
-msgstr "Als u dit selecteert, zal een blok aangemaakt worden voor deze View. De titel mag niet leeg zijn als u dit selecteert."
+msgstr "De tekst die wordt weergegeven als de view geen nodes bevat. Optioneel."
 
 #: views_ui.module:933
-#, fuzzy
-msgid "The title that will be shown at the top of the block. May be blank."
-msgstr "De titel die boven het blok wordt weergegeven (optioneel)."
+msgid "Provide Menu"
+msgstr "Voorzie menu"
 
-#: views_ui.module:938
-#, fuzzy
-msgid "Nodes per Block"
-msgstr "Nodes per blok"
+#: views_ui.module:936
+msgid "If checked this view be given a menu entry in the Drupal menu system. If not checked the data in this group will be ignored."
+msgstr "Indien aangevinkt zal deze view worden toegevoegd als menu-item. Indien niet aangevinkt, worden de gegevens uit deze groep genegeerd."
 
-#: views_ui.module:942
-#, fuzzy
-msgid "If using a block, the maximum number of items to display in the block. Pagers are not used in blocks."
-msgstr "Het maximum aantal nodes om weer te geven in een blok. Paginering wordt in blokken niet gebruikt."
+#: views_ui.module:941
+msgid "Provide Menu as Tab"
+msgstr "Voorzie menu als tab"
 
-#: views_ui.module:948
-#, fuzzy
-msgid "[More] Link?"
-msgstr "[Meer] link"
+#: views_ui.module:944
+msgid "If checked this view's menu entry will be provided as a tab rather than in the main menu system."
+msgstr "Indien aangevinkt wordt het menu-item van deze view weergegeven als een tab i.p.v. in het hoofdmenu."
 
-#: views_ui.module:951
-#, fuzzy
-msgid "If using a view as both a page and a block, display a more link in the block that links to the view URL?"
-msgstr "Als u voor deze View zowel een pagina als een blok gebruikt, kunt u dit selecteren om in het blok een \"meer\" link weer te geven die linkt naar de pagina."
+#: views_ui.module:949
+msgid "Make Default Menu Tab"
+msgstr "Maak de standaard menu tab"
 
-#: views_ui.module:962
-#, fuzzy
-msgid "Use Page Header"
-msgstr "Gebruik paginakop"
+#: views_ui.module:952
+msgid "If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. For tabs to work properly, one tab in the group must be set as the default."
+msgstr "Indien aangevinkt zal het menu-item van deze view worden weergegeven als een tab, en zal dit de default tab zijn voor de URL."
+
+#: views_ui.module:957
+msgid "Tab Weight"
+msgstr "Gewicht van de tab"
+
+#: views_ui.module:960
+msgid "If this is a menu tab, select the weight; lower numbers will be further to the left."
+msgstr "Indien het een menu-tab betreft, geef het gewicht op; hoe lager het cijfer, hoe meer link het menu-item zal staan."
 
 #: views_ui.module:965
-#, fuzzy
+msgid "Menu Title"
+msgstr "Menu titel"
+
+#: views_ui.module:969
+msgid "Enter the title to use for the menu entry or tab. If blank, the page title will be used."
+msgstr "Geef de titel op die voor het menu-item of de tab moet worden gebruikt. Indien leeg, zal de titel van de pagina worden gebruikt."
+
+#: views_ui.module:983
+msgid "Provide Block"
+msgstr "Voorzie blok"
+
+#: views_ui.module:986
+msgid "If checked this view will be provided as a block. If checked title may not be blank."
+msgstr "Indien aangevinkt zal de view als een blok beschikbaar zijn. In dat geval mag de titel niet leeg zijn."
+
+#: views_ui.module:1003
+msgid "The title that will be shown at the top of the block. May be blank."
+msgstr "De titel die wordt weergegeven bovenaan het blok. Mag leeg zijn."
+
+#: views_ui.module:1008
+msgid "Nodes per Block"
+msgstr "Aantal nodes per blok"
+
+#: views_ui.module:1012
+msgid "If using a block, the maximum number of items to display in the block. Pagers are not used in blocks."
+msgstr "Indien er een block wordt gemaakt, is dit het maximaal aantal item in het blok. pagers worden niet gebruikt in blokken."
+
+#: views_ui.module:1018
+msgid "[More] Link?"
+msgstr "[Meer] link?"
+
+#: views_ui.module:1021
+msgid "If using a view as both a page and a block, display a more link in the block that links to the view URL?"
+msgstr "Indien er zowel een pagina als een blok van de view worden gemaakt, moet er dan onderaan het blok een 'lees meer' link verschijnen die linkt naar de pagina view?"
+
+#: views_ui.module:1032
+msgid "Use Page Header"
+msgstr "Gebruik hoofding van de pagina"
+
+#: views_ui.module:1035
 msgid "If checked, use the Page Header for block view instead. If so, you should leave the Block Header blank."
-msgstr "Als u dit selecteert, wordt de paginakop gebruikt voor de blokview. Laat in dat geval de blokkop leeg."
+msgstr "Indien aangevinkt, gebruik dan de pagina hoofding voor het blok. Laat in dat geval de blok hoofding leeg."
 
-#: views_ui.module:987
-#, fuzzy
+#: views_ui.module:1057
 msgid "Use Page Footer"
-msgstr "Gebruik voettekst van de pagina"
+msgstr "Gebruik voet van de pagina"
 
-#: views_ui.module:990
-#, fuzzy
+#: views_ui.module:1060
 msgid "If checked, use the page footer for block view instead. If so, you should leave the block footer blank."
-msgstr "Als u dit selecteert wordt de voettekst van de pagina gebruikt voor de blokview. Laat in dat geval de voettekst van het blok leeg."
+msgstr "Indien aangevinkt, gebruik dan de footer van de pagina voor het block. Laat in dat geval de blok footer leeg."
 
-#: views_ui.module:1008;1020
-#, fuzzy
+#: views_ui.module:1078;1090
 msgid "Empty text"
 msgstr "Lege tekst"
 
-#: views_ui.module:1012
-#, fuzzy
+#: views_ui.module:1082
 msgid "Use Page empty"
-msgstr "Gebruik 'lege tekst' van de pagina"
+msgstr "Gebruik lege tekst van de pagina"
 
-#: views_ui.module:1015
-#, fuzzy
+#: views_ui.module:1085
 msgid "If checked, use the Page Empty Text for block view instead. If so, you should leave the block empty text blank."
-msgstr "Als u dit selecteert wordt de 'lege tekst' van de pagina voor de blokview gebruikt. Laat in dat geval het veld 'lege tekst' van de blokview leeg."
+msgstr "Indien aangevinkt, gebruik dan de tekst voor een lege pagina ook voor het blok. Laat in dat geval de lege blok tekst leeg."
 
-#: views_ui.module:1024
-#, fuzzy
+#: views_ui.module:1094
 msgid "Text to display if a view results in no nodes. Optional."
-msgstr "Tekst die weergegeven wordt wanneer er geen nodes zijn die aan de View voldoen (optioneel)."
+msgstr "De tekst die moet worden weergegeven als de view geen nodes bevat. Optioneel."
 
-#: views_ui.module:1035
-#, fuzzy
+#: views_ui.module:1105
 msgid "Argument Handling Code"
-msgstr "Code voor argumentverwerking"
+msgstr "Code voor het behandelen van argumenten"
 
-#: views_ui.module:1040
-#, fuzzy
+#: views_ui.module:1110
 msgid "Argument Code"
-msgstr "Argumentcode"
+msgstr "Code voor argumenten"
 
-#: views_ui.module:1044
-#, fuzzy
+#: views_ui.module:1114
 msgid "Advanced Usage Only: PHP code that returns a custom array of arguments for the view. Should not include &lt;?php ?&gt; delimiters."
-msgstr "Alleen voor gevorderde gebruikers: PHP-code die een aangepaste lijst van argumenten voor de View teruggeeft. Hoeft geen &lt;?php ?&gt; scheidingstekens te bevatten."
+msgstr "Alleen voor gevorderde gebruikers: PHP code die een eigen array van argumenten voor de view weergeeft. Mag niet de &lt;?php ?&gt;  tags bevatten."
 
-#: views_ui.module:1045
-#, fuzzy
+#: views_ui.module:1115
 msgid "For more information, please see the <a href=\"!arg\">Argument Handling Code documentation</a> in the Drupal handbook."
-msgstr "Zie de documentatie over <a href\"!arg\">Argument Handling Code</a> in het Drupal-handboek voor meer informatie."
+msgstr "Meer informatie is te vinden in de <a href=\"!arg\">Argument Handling Code documentation</a> in het Drupal handboek."
 
-#: views_ui.module:1060;1611
-#, fuzzy
-msgid "Save and edit"
-msgstr "Opslaan en bewerken"
-
-#: views_ui.module:1227
-#, fuzzy
+#: views_ui.module:1299
 msgid "None"
 msgstr "Geen"
 
-#: views_ui.module:1369
-#, fuzzy
+#: views_ui.module:1441
 msgid "Expose"
-msgstr "Openbaar maken"
+msgstr "Geef weer voor bezoekers"
 
-#: views_ui.module:1462
-#, fuzzy
+#: views_ui.module:1534
 msgid "Delete this item."
-msgstr "Verwijder dit item"
+msgstr "Verwijder dit item."
 
-#: views_ui.module:1463
-#, fuzzy
+#: views_ui.module:1535
 msgid "Up"
 msgstr "Omhoog"
 
-#: views_ui.module:1463
-#, fuzzy
+#: views_ui.module:1535
 msgid "Move this item up."
-msgstr "Verplaats dit item omhoog."
+msgstr "Verhuis dit onderdeel naar omhoog."
 
-#: views_ui.module:1464
-#, fuzzy
+#: views_ui.module:1536
 msgid "Down"
-msgstr "Naar beneden"
+msgstr "Omlaag"
 
-#: views_ui.module:1464
-#, fuzzy
+#: views_ui.module:1536
 msgid "Move this item down."
-msgstr "Verplaats dit item naar beneden."
+msgstr "Verhuis dit item omlaag."
 
-#: views_ui.module:1465
-#, fuzzy
+#: views_ui.module:1537
 msgid "Top"
 msgstr "Bovenaan"
 
-#: views_ui.module:1465
-#, fuzzy
+#: views_ui.module:1537
 msgid "Move this item to the top."
-msgstr "Verplaats dit item naar de bovenkant."
+msgstr "Verhuis dit item naar helemaal bovenaan."
 
-#: views_ui.module:1466
-#, fuzzy
+#: views_ui.module:1538
 msgid "Bottom"
 msgstr "Onderaan"
 
-#: views_ui.module:1466
-#, fuzzy
+#: views_ui.module:1538
 msgid "Move this item to the bottom."
-msgstr "Verplaats dit item naar de onderkant."
+msgstr "Verhuis dit item naar helemaal onderaan."
 
-#: views_ui.module:1498;1531
-#, fuzzy
+#: views_ui.module:1570;1603
 msgid "Label"
 msgstr "Label"
 
-#: views_ui.module:1498
-#, fuzzy
+#: views_ui.module:1570
 msgid "Handler"
-msgstr "Verwerker"
+msgstr "Handler"
 
-#: views_ui.module:1498;1508;1520;1543
-#, fuzzy
+#: views_ui.module:1570;1580;1592;1615
 msgid "Option"
 msgstr "Optie"
 
-#: views_ui.module:1498
-#, fuzzy
+#: views_ui.module:1570
 msgid "Sortable"
 msgstr "Sorteerbaar"
 
-#: views_ui.module:1498
-#, fuzzy
+#: views_ui.module:1570
 msgid "Default Sort"
 msgstr "Standaard sortering"
 
-#: views_ui.module:1501
-#, fuzzy
+#: views_ui.module:1573
 msgid "Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order."
-msgstr "Velden zijn alleen nuttig als u een lijst- of tabelview gebruikt. U kunt hiermee kiezen welke velden worden weergegeven en in welke volgorde."
+msgstr "Velden zijn alleen relevant voor lijst en tabel views; ze laten je toe te kiezen welke velden moeten worden weergegeven en in welke volgorde."
 
-#: views_ui.module:1502
-#, fuzzy
+#: views_ui.module:1574
 msgid "Fields"
 msgstr "Velden"
 
-#: views_ui.module:1508
-#, fuzzy
+#: views_ui.module:1580
 msgid "Argument Type"
-msgstr "Argumenttype"
+msgstr "Soort argument"
 
-#: views_ui.module:1508
-#, fuzzy
+#: views_ui.module:1580
 msgid "Default"
 msgstr "Standaard"
 
-#: views_ui.module:1508
-#, fuzzy
+#: views_ui.module:1580
 msgid "Wildcard"
-msgstr "Jokerteken"
+msgstr "Wildcard"
 
-#: views_ui.module:1508
-#, fuzzy
+#: views_ui.module:1580
 msgid "Wildcard Sub"
-msgstr "Vervanger van jokerteken "
+msgstr "Wildcard Sub"
 
-#: views_ui.module:1514
-#, fuzzy
+#: views_ui.module:1586
 msgid "Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility."
-msgstr "Argumenten worden direct vanuit de URL doorgegeven. Ze zijn niet noodzakelijk voor een View maar kunnen flexibiliteit bieden."
+msgstr "Argumenten worden rechtstreeks vanuit de URL geïnterpreteerd. Ze zijn niet noodzakelijk voor een view, maar geven flexibiliteit."
 
-#: views_ui.module:1515
-#, fuzzy
+#: views_ui.module:1587
 msgid "Arguments"
 msgstr "Argumenten"
 
-#: views_ui.module:1520;1531;1543
-#, fuzzy
+#: views_ui.module:1592;1603;1615
 msgid "Field"
 msgstr "Veld"
 
-#: views_ui.module:1520
-#, fuzzy
+#: views_ui.module:1592
 msgid "Operator"
-msgstr "Functie"
+msgstr "Operator"
 
-#: views_ui.module:1520
-#, fuzzy
+#: views_ui.module:1592
 msgid "Value"
 msgstr "Waarde"
 
-#: views_ui.module:1524
-#, fuzzy
+#: views_ui.module:1596
 msgid "Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together."
-msgstr "Met filters kunt u een subset van alle nodes weergeven. Filters worden gecombineerd met een EN-functie."
+msgstr "Filters laten toe om slechts een sub-set van nodes weer te geven. Alle filters worden samengevoegd met AND."
 
-#: views_ui.module:1525
-#, fuzzy
+#: views_ui.module:1597
 msgid "Filters"
 msgstr "Filters"
 
-#: views_ui.module:1531
-#, fuzzy
+#: views_ui.module:1603
 msgid "Optional"
 msgstr "Optioneel"
 
-#: views_ui.module:1531
-#, fuzzy
+#: views_ui.module:1603
 msgid "Filter settings Default"
-msgstr "Standaard filterinstellingen"
+msgstr "Standaard filter instellingen"
 
-#: views_ui.module:1531
-#, fuzzy
+#: views_ui.module:1603
 msgid "Force Single"
-msgstr "Selectielijst van één regel"
+msgstr "Verplicht enkel"
 
-#: views_ui.module:1531
-#, fuzzy
+#: views_ui.module:1603
 msgid "Lock Operator"
-msgstr "Gebruik standaardfunctie"
+msgstr "Versleutel operator"
 
-#: views_ui.module:1536
-#, fuzzy
+#: views_ui.module:1608
 msgid "Exposed filters will be presented to the viewer. If not set required, then filters will include a \"&lt;None&gt;\" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user."
-msgstr "Openbare filters worden aan de gebruiker weergegeven. Als een filter niet verplicht is, wordt indien mogelijk een waarde  \"&lt;Geen&gt;\" toegevoegd. Als een filter het standaardfilter is wordt de hier opgegeven waarde gebruikt. Anders wordt de filterwaarde genegeerd. Als 'Functie vastzetten' is geselecteerd wordt er geen functie aan de gebruiker getoond."
+msgstr "Deze filters zullen aan de bezoekers die de view bekijkt weergegeven worden. Indien ze niet als verplicht worden gemarkeerd, zullen deze filters indien mogelijk een \"&lt;None&gt;\"  waarde bevatten. Indie ze worden aangegeven als default, zullen ze de standaard waarden die hier opgegeven zijn overnemen. Als Lock Operator geactiveerd is, zal de bezoeker zelf geen operator kunnen instellen."
 
-#: views_ui.module:1537
-#, fuzzy
+#: views_ui.module:1609
 msgid "Exposed Filters"
-msgstr "Openbare filters"
+msgstr "Maak filter beschikbaar voor bezoekers"
 
-#: views_ui.module:1543
-#, fuzzy
+#: views_ui.module:1615
 msgid "Order"
 msgstr "Volgorde"
 
-#: views_ui.module:1545
-#, fuzzy
+#: views_ui.module:1617
 msgid "Add criteria"
-msgstr "Criteria voor toevoegen"
-
-#: views_ui.module:1546
-#, fuzzy
-msgid "Sort Criteria"
-msgstr "Criteria voor sorteren"
-
-#: views_ui.module:1584
-#, fuzzy
-msgid "This view currently has no %s defined."
-msgstr "Deze View heeft momenteel geen gedefinieerde %s."
-
-#: views_ui.module:1588
-#, fuzzy
-msgid "Ops"
-msgstr "Handelingen"
+msgstr "Toe criterium toe"
 
 #: views_ui.module:1618
-#, fuzzy
+msgid "Sort Criteria"
+msgstr "Sorteercriterium"
+
+#: views_ui.module:1660
+msgid "This view currently has no %s defined."
+msgstr "Deze view heeft momenteel geen %s ingesteld."
+
+#: views_ui.module:1664
+msgid "Ops"
+msgstr "Ops"
+
+#: views_ui.module:1694
 msgid "Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!"
-msgstr "Opslaan is niet mogelijk, een andere gebruiker heeft deze View bijgewerkt. U krijgt deze foutmelding mogelijk omdat u de knop \"Terug\" heeft gebruikt om een View te bewerken nadat u deze heeft opgeslagen. Als u dit heeft gedaan, herlaad dan de pagina voordat u wijzigingen maakt!"
+msgstr "Een andere gebruiker heeft deze view al aangepast, onmogelijk om op te slaan. Je kan deze foutmelding ook krijgen door de Back-knop van de webbrowser te gebruiken bij het opnieuw aanpassen van een view. Zorg je zeker voor eerst te Vernieuwen voor verdere aanpassingen te maken."
 
-#: views_ui.module:1624
-#, fuzzy
+#: views_ui.module:1700
 msgid "View name is required."
-msgstr "View-naam is verplicht."
+msgstr "Een naam voor de view is verplicht."
 
-#: views_ui.module:1629
-#, fuzzy
+#: views_ui.module:1705
 msgid "View name must be alphanumeric or underscores only."
-msgstr "View-naam mag alleen letters, cijfers en onderstrepingstekens bevatten."
+msgstr "De naam van de view mag alleen letters of underscores bevatten."
 
-#: views_ui.module:1635
-#, fuzzy
+#: views_ui.module:1711
 msgid "View name already in use."
-msgstr "Deze View-naam is al in gebruik."
-
-#: views_ui.module:1640
-#, fuzzy
-msgid "Nodes per page cannot be 0 if using the pager."
-msgstr "Nodes per pagina mag geen 0 zijn, als u paginering gebruikt."
-
-#: views_ui.module:1645
-#, fuzzy
-msgid "If being used as a block, Nodes Per Block must be positive."
-msgstr "Als u een blok gebruikt moet het aantal nodes per blok een positief getal zijn."
-
-#: views_ui.module:1713
-#, fuzzy
-msgid "View successfully saved."
-msgstr "View opgeslagen."
+msgstr "Er bestaat al een view met deze naam."
 
 #: views_ui.module:1716
-#, fuzzy
+msgid "Nodes per page cannot be 0 if using the pager."
+msgstr "Het aantal nodes per pagina kan niet 0 zijn als een pager wordt gebruikt."
+
+#: views_ui.module:1721
+msgid "If being used as a block, Nodes Per Block must be positive."
+msgstr "Als de view als blok wordt weergegeven, moet het aantal nodes per blok meer dan 0 zijn."
+
+#: views_ui.module:1793
+msgid "View successfully saved."
+msgstr "De view werd met succes opgeslagen."
+
+#: views_ui.module:1796
 msgid "View successfully added."
-msgstr "View toegevoegd."
+msgstr "De view werd met succes toegevoegd."
 
-#: views_ui.module:1734
-#, fuzzy
+#: views_ui.module:1821
 msgid "List and Table types require at least one field."
-msgstr "Voor lijst- en tabeltypes is minstens één veld verplicht."
+msgstr "Lijst en tabel types vereisen minstens één veld."
 
-#: views_ui.module:1742
-#, fuzzy
+#: views_ui.module:1829
 msgid "You can only set on Default Sort on one field."
-msgstr "Standaardsortering kan maar voor één veld worden ingesteld."
+msgstr "Slechts één veld kan standaard sortering bevatten."
 
-#: views_ui.module:1774
-#, fuzzy
+#: views_ui.module:1861
 msgid "View '%vid' not found."
-msgstr "View '%vid' niet gevonden."
+msgstr "View '%vid' werd niet gevonden."
+
+#: views_ui.module:85
+msgid "administer views"
+msgstr "beheer views"
 
 #: views_ui.module:0
-#, fuzzy
 msgid "views_ui"
 msgstr "views_ui"
 
 #: modules/views_upload.inc:23
 msgid "File: Id"
-msgstr ""
+msgstr "Bestand: ID"
 
 #: modules/views_upload.inc:25
 msgid "File Id which represents the file."
-msgstr ""
+msgstr "De ID van het bestand."
 
 #: modules/views_upload.inc:30
 msgid "Sort by File Id"
-msgstr ""
+msgstr "Sorteer op bestand ID"
 
 #: modules/views_upload.inc:35
 msgid "File: Has file downloads"
-msgstr ""
+msgstr "Bestand: heeft downloads"
 
 #: modules/views_upload.inc:36
 msgid "Exists"
-msgstr ""
+msgstr "Bestaat"
 
 #: modules/views_upload.inc:40
 msgid "Filter whether the node has files for download"
-msgstr ""
+msgstr "Filter of de node al dan niet bestanden ter download heeft"
 
 #: modules/views_upload.inc:43
 msgid "File: Listed in file downloads"
-msgstr ""
+msgstr "Bestand: weergegeven in lijst van downloads"
 
 #: modules/views_upload.inc:47
 msgid "Filter whether the file is listed in downloads"
-msgstr ""
+msgstr "Filter of het bestand al dan niet in de lijst van download wordt weergegeven"
 
 #: modules/views_upload.inc:64
 msgid "File: All files"
-msgstr ""
+msgstr "Bestand: alle bestanden"
 
 #: modules/views_upload.inc:68
 msgid "All files"
-msgstr ""
+msgstr "Alle bestanden"
 
 #: modules/views_upload.inc:69
 msgid "Listed files"
-msgstr ""
-
-#: modules/views_upload.inc:73
-msgid "With links"
-msgstr ""
+msgstr "Bestanden in lijst"
 
 #: modules/views_upload.inc:74
-msgid "Without links"
-msgstr ""
+msgid "File names with links"
+msgstr "Bestandsnamen met links"
+
+#: modules/views_upload.inc:75
+msgid "File names without links"
+msgstr "Bestandsnamen zonder links"
+
+#: modules/views_upload.inc:76
+msgid "File descriptions with links"
+msgstr "Beschrijving van bestanden met links"
 
 #: modules/views_upload.inc:77
-msgid "Display all attached files in one field."
-msgstr ""
+msgid "File descriptions without links"
+msgstr "Beschrijving van bestanden zonder links"
 
 #: modules/views_upload.inc:80
-msgid "File: Name"
-msgstr ""
-
-#: modules/views_upload.inc:82
-msgid "Plain"
-msgstr ""
+msgid "Display all attached files in one field."
+msgstr "Toon all bestanden in bijlage in één veld."
 
 #: modules/views_upload.inc:83
-msgid "With download link"
-msgstr ""
+msgid "File: Name"
+msgstr "Bestand: naam"
 
-#: modules/views_upload.inc:88
-msgid "Display file name"
-msgstr ""
+#: modules/views_upload.inc:85
+msgid "Plain"
+msgstr "Eenvoudig"
+
+#: modules/views_upload.inc:86
+msgid "With download link"
+msgstr "Met download link"
 
 #: modules/views_upload.inc:91
+msgid "Display file name"
+msgstr "Toon bestandsnaam"
+
+#: modules/views_upload.inc:94
 msgid "File: Path"
-msgstr ""
+msgstr "Bestand: pad"
 
-#: modules/views_upload.inc:93
+#: modules/views_upload.inc:96
 msgid "Display Path to File."
-msgstr ""
+msgstr "Toon het pad naar het bestand."
 
-#: modules/views_upload.inc:96;115
+#: modules/views_upload.inc:99;118
 msgid "File: Size"
-msgstr ""
+msgstr "Bestand: grootte"
 
-#: modules/views_upload.inc:99
+#: modules/views_upload.inc:102
 msgid "Display the size of the associated file."
-msgstr ""
+msgstr "Toon de grootte van het bestand."
 
-#: modules/views_upload.inc:102;120;136
+#: modules/views_upload.inc:105;123;139
 msgid "File: Mime type"
-msgstr ""
+msgstr "Bestand: Mime type"
 
-#: modules/views_upload.inc:104;123
+#: modules/views_upload.inc:107;126
 msgid "This filter allows nodes to be filtered by mime type."
-msgstr ""
-
-#: modules/views_upload.inc:109
-msgid "File: Filename"
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van mime type."
 
 #: modules/views_upload.inc:112
+msgid "File: Filename"
+msgstr "Bestand: bestandsnaam"
+
+#: modules/views_upload.inc:115
 msgid "This filter allows nodes to be filtered by the name of attached files."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van de naam van de bestanden in bijlage."
 
-#: modules/views_upload.inc:117
+#: modules/views_upload.inc:120
 msgid "This filter allows nodes to be filtered by file size."
-msgstr ""
+msgstr "Deze filter laat toe om nodes te filteren op basis van de grootte van de bestanden in bijlage."
 
-#: modules/views_upload.inc:128
+#: modules/views_upload.inc:131
 msgid "File: Sort by Filename"
-msgstr ""
-
-#: modules/views_upload.inc:129
-msgid "Sort by file name"
-msgstr ""
+msgstr "Bestand: sorteer op bestandsnaam"
 
 #: modules/views_upload.inc:132
+msgid "Sort by file name"
+msgstr "Sorteer op bestandsnaam"
+
+#: modules/views_upload.inc:135
 msgid "File: File size"
-msgstr ""
+msgstr "Bestand: bestandsgrootte"
 
-#: modules/views_upload.inc:133
+#: modules/views_upload.inc:136
 msgid "Sort by file size."
-msgstr ""
+msgstr "Sorteer op bestandsgrootte"
 
-#: modules/views_upload.inc:137
+#: modules/views_upload.inc:140
 msgid "Sort by mime type."
-msgstr ""
+msgstr "Sorteer op mime type"
 
-#: modules/views_user.inc:23;39;45
+#: modules/views_user.inc:24;40;46
 msgid "Node: Author Name"
-msgstr ""
+msgstr "Node: naam auteur"
 
-#: modules/views_user.inc:31
+#: modules/views_user.inc:32
 msgid "User: Author Picture"
-msgstr ""
+msgstr "Gebruiker: Foto auteur"
 
-#: modules/views_user.inc:34
+#: modules/views_user.inc:35
 msgid "Display the user picture of the author."
-msgstr ""
+msgstr "Toon de gebruikersfoto van de auteur."
 
-#: modules/views_user.inc:40
+#: modules/views_user.inc:41
 msgid "This allows you to sort alphabetically by author."
-msgstr ""
+msgstr "Dit laat toe om alfabetisch op auteur te sorteren"
 
-#: modules/views_user.inc:49
+#: modules/views_user.inc:50
 msgid "This allows you to filter by a particular user. You might not find this useful if you have a lot of users."
-msgstr ""
+msgstr "Dit laat toe om te filteren op een specifieke gebruiker. "
 
-#: modules/views_user.inc:68
+#: modules/views_user.inc:74
+msgid "Node: Authors in role %role-name"
+msgstr "Node: auteurs met de rol %role-name"
+
+#: modules/views_user.inc:79
+msgid "Only users in role %role-name will appear in the select box for this filter."
+msgstr "Alleen gebruikers met de rol %role-name zullen in deze selectbox verschijnen."
+
+#: modules/views_user.inc:99
 msgid "Role: Author Role"
-msgstr ""
+msgstr "Rol: rol van de auteur"
 
-#: modules/views_user.inc:72
+#: modules/views_user.inc:104
 msgid "Include the node only if the author is a member of the selected role."
-msgstr ""
+msgstr "Kies de node alleen als de auteur lid is van de gekozen rol."
 
-#: modules/views_user.inc:82
+#: modules/views_user.inc:114
 msgid "User: UID is Author"
-msgstr ""
+msgstr "Gebruiker: UID is auteur"
 
-#: modules/views_user.inc:84
+#: modules/views_user.inc:116
 msgid "The User ID argument allows users to filter to nodes authored by the specified user ID."
-msgstr ""
+msgstr "Het gebruikers ID argument laat gebruikers toe nodes te filteren die ook een bepaalde gebruiker ID werden aangemaakt."
 
-#: modules/views_user.inc:87
+#: modules/views_user.inc:119
 msgid "User: UID Authored or Commented"
-msgstr ""
+msgstr "Gebruiker: UID is auteur of heeft commentaar gegeven"
 
-#: modules/views_user.inc:89
+#: modules/views_user.inc:121
 msgid "The User ID argument allows users to filter a to nodes authored or commented on the specified user ID."
-msgstr ""
+msgstr "Het gebruiker ID argument laat gebruikers toe om te filteren op nodes die gemaakt of becommertariëerd werden door een specifieke gebruiker ID."
 
-#: modules/views_user.inc:92
+#: modules/views_user.inc:124
 msgid "User: Username is Author"
-msgstr ""
+msgstr "Gebruiker: gebruikersnaam is auteur"
 
-#: modules/views_user.inc:93
+#: modules/views_user.inc:125
 msgid "views_handler_arg_username"
-msgstr ""
+msgstr "views_handler_arg_username"
 
-#: modules/views_user.inc:94
+#: modules/views_user.inc:126
 msgid "The Username argument allows users to file to a nodes authored by the specified username."
-msgstr ""
+msgstr "Het gebruikersnaam argument geeft bezoekers toegang tot de nodes die door een bepaalde gebuiker werden aangemaakt."
 
-#: modules/views_user.inc:105
+#: modules/views_user.inc:137
 msgid "Shows all new activity on system."
-msgstr ""
+msgstr "Toont alle nieuwe activiteit op het systeem."
 
-#: modules/views_user.inc:108;114
+#: modules/views_user.inc:140;146
 msgid "Recent posts"
-msgstr ""
+msgstr "Recente posts"
 
-#: modules/views_user.inc:120
-msgid "Type"
-msgstr ""
-
-#: modules/views_user.inc:131
-msgid "Author"
-msgstr ""
-
-#: modules/views_user.inc:136
+#: modules/views_user.inc:168
 msgid "Replies"
-msgstr ""
+msgstr "Antwoorden"
 
-#: modules/views_user.inc:142
+#: modules/views_user.inc:174
 msgid "Last Post"
-msgstr ""
+msgstr "Laatste post"
 
-#: modules/views_user.inc:157
+#: modules/views_user.inc:189
 msgid "recent posts for %1"
-msgstr ""
+msgstr "recente posts voor %1"
 
-#: modules/views_user.inc:330
+#: modules/views_user.inc:367
 msgid "Currently Logged In User"
-msgstr ""
+msgstr "Momenteel ingelogde gebruiker"
 
