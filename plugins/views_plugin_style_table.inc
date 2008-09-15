@@ -235,17 +235,4 @@ class views_plugin_style_table extends views_plugin_style {
       '#value' => t('Place fields into columns; you may combine multiple fields into the same column. If you do, the separator in the column specified will be used to separate the fields. Check the sortable box to make that column click sortable, and check the default sort radio to determine which column will be sorted by default, if any. You may control column order and field labels in the fields section.'),
     );
   }
-
-  /**
-   * Render the table style.
-   */
-  function render() {
-    $sets = $this->render_grouping($this->view->result, $this->options['grouping']);
-
-    $output = '';
-    foreach ($sets as $title => $records) {
-      $output .= theme($this->theme_functions(), $this->view, $this->options, $records, $title);
-    }
-    return $output;
-  }
 }
