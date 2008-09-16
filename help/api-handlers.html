@@ -55,7 +55,7 @@ Handlers are stored in their own files; for these files to be loaded by Views on
 To register handlers, you must implement <strong>hook_views_handlers()</strong>. This hook returns an array with two keys; the first key is <em>info</em> which contains the modulename (which is only necessary if you're registering handlers on behalf of another module, such as what Views does) and <em>path</em>, which is the search path to find the files. This path is only necessary if your files will not be stored in the same directory as the .module file.
 
 The other key is <em>handlers</em> which contains a full array of handlers and the information for each handler. The key to each handler array is the name of the handler class. It can contain:
-<dd>
+<dl>
 <dt><strong>parent</strong></dt>
 <dd>The class that this handler extends. This is important to make sure that the parent class is included before your handler class. Without this, you may cause people's sites to crash in a difficult to recover state. Be sure you get this right!</dd>
 <dt><strong>file</strong></dt>
