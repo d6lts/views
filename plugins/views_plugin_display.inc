@@ -1472,12 +1472,9 @@ class views_plugin_display extends views_plugin {
     $value = $this->get_option($area);
     // Check to make sure the filter format exists; if not, we don't
     // display anything.
-    $format = $this->get_option($area . '_format');
-    if (empty($format)) {
-      $format = FILTER_FORMAT_DEFAULT;
-    }
-    $format_val = filter_resolve_format($format);
-    if (!filter_formats($format_val)) {
+    $format = filter_resolve_format($this->get_option($area . '_format'));
+
+    if (!filter_list_format($format)) {
       return;
     }
 
