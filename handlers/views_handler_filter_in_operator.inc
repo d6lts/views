@@ -73,8 +73,9 @@ class views_handler_filter_in_operator extends views_handler_filter {
       '#default_value' => (array) $this->value,
       // These are only valid for 'select' type, but do no harm to checkboxes.
       '#multiple' => TRUE,
-      '#size' => count($this->value_options) > 8 ? 8 : $this->value_options,
+      '#size' => count($options) > 8 ? 8 : count($options),
     );
+
   }
 
   /**
@@ -180,6 +181,9 @@ class views_handler_filter_in_operator extends views_handler_filter {
 
     $replace = array_fill(0, sizeof($this->value), $placeholder);
     $in = ' (' . implode(", ", $replace) . ')';
-    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . $in, $this->value);
+
+    // We use array_values() because the checkboxes keep keys and that can cause
+    // array addition problems.
+    $this->query->add_where($this->options['group'], "$this->table_alias.$this->real_field " . $this->operator . $in, array_values($this->value));
   }
 }
