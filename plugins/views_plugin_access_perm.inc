@@ -10,7 +10,7 @@ class views_plugin_access_perm extends views_plugin_access {
   }
 
   function get_access_callback() {
-    return array('user_access', array($this->options['role']));
+    return array('user_access', array($this->options['perm']));
   }
 
   function summary_title() {
