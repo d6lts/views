@@ -471,6 +471,9 @@ function comment_views_handlers() {
       'views_handler_filter_node_comment' => array(
         'parent' => 'views_handler_argument',
       ),
+      'views_handler_argument_comment_user_uid' => array(
+        'parent' => 'views_handler_argument',
+      ),
     ),
   );
 }
