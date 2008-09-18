@@ -515,6 +515,9 @@ class views_handler_filter extends views_handler {
 
       if (isset($value)) {
         $this->value = $value;
+        if (!empty($this->options['expose']['single'])) {
+          $this->value = array($value);
+        }
       }
       else {
         return FALSE;
