@@ -3,6 +3,7 @@ CHANGELOG for Views for Drupal 5
 Views 5.x-1.x
 
   Changes:
+    o #153714 by majsan: Added Swedish translation.
     o #286767 by FrederikVO: Updated Dutch translation.
 
 Views 5.x-1.6

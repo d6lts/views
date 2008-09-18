@@ -1,0 +1,1972 @@
+# $Id$
+#
+# Swedish translation of Drupal (general)
+# Copyright 2007 Maria Tingvall <drupal@9manader.nu>
+# Generated from files:
+#  views.module,v 1.166.2.40 2007/05/05 02:40:18 merlinofchaos
+#  views_ui.module,v 1.44.2.21 2007/05/05 02:40:18 merlinofchaos
+#  views_comment.inc,v 1.4.4.8 2007/05/05 01:00:41 merlinofchaos
+#  views_node.inc,v 1.30.2.17 2007/05/05 00:54:53 merlinofchaos
+#  views_search.inc,v 1.2.2.6 2007/03/03 22:59:33 merlinofchaos
+#  views_rss.module,v 1.12.2.5 2007/03/06 21:44:32 merlinofchaos
+#  views_theme_wizard.module,v 1.11.2.3 2007/01/19 00:22:46 merlinofchaos
+#  views_statistics.inc,v 1.9.2.6 2007/03/06 21:23:27 merlinofchaos
+#  views_user.inc,v 1.14.2.7 2007/03/03 22:31:27 merlinofchaos
+#  views.install,v 1.21.4.15 2007/05/05 01:13:42 merlinofchaos
+#  views_book.inc,v 1.6.4.4 2007/03/04 06:30:22 merlinofchaos
+#  views_upload.inc,v 1.4.4.5 2007/03/03 22:40:31 merlinofchaos
+#  views_taxonomy.inc,v 1.27.2.10 2007/05/05 00:52:29 merlinofchaos
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Swedish translation 1.0\n"
+"POT-Creation-Date: 2007-05-21 21:14+0200\n"
+"PO-Revision-Date: YYYY-mm-DD HH:MM+ZZZZ\n"
+"Last-Translator: Maria Tingvall <drupal@9manader.nu>\n"
+"Language-Team: Swedish <drupal@9manader.nu>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: views.module:13
+msgid "The views module creates customized views of node lists. You may need to activate the Views UI module to get to the user administration pages."
+msgstr "Views-modulen (vy-modulen) skapar användaranpassade vyer över nodlistor. Du behöver kanske akrivera modulen Views UI för att komma åt administrationssidorna."
+
+#: views.module:1315 views_ui.module:403
+msgid "Submit"
+msgstr "Skicka"
+
+#: views.module:1376
+msgid "<All>"
+msgstr "<Alla>"
+
+#: views.module:1572
+msgid "more"
+msgstr "fler"
+
+#: views.module:1645
+msgid "%time ago"
+msgstr "%time sedan"
+
+#: views.module:1649
+msgid "never"
+msgstr "aldrig"
+
+#: views.module:1657
+msgid "As Short Date"
+msgstr "Som kort datum"
+
+#: views.module:1658
+msgid "As Medium Date"
+msgstr "Som mellanlångt datum"
+
+#: views.module:1659
+msgid "As Long Date"
+msgstr "Som långt datum"
+
+#: views.module:1660
+msgid "As Custom Date"
+msgstr "Eget datumformat"
+
+#: views.module:1661
+msgid "As Time Ago"
+msgstr "Som tid sedan"
+
+#: views.module:1669 modules/views_comment.inc:25;123 modules/views_node.inc:16
+msgid "Normal"
+msgstr "Normal"
+
+#: views.module:1670
+msgid "Granularity: minute"
+msgstr "minut"
+
+#: views.module:1671
+msgid "Granularity: hour"
+msgstr "timma"
+
+#: views.module:1672
+msgid "Granularity: day"
+msgstr "dag"
+
+#: views.module:1673
+msgid "Granularity: month"
+msgstr "månad"
+
+#: views.module:1674
+msgid "Granularity: year"
+msgstr "år"
+
+#: views.module:1779
+msgid "Is All Of"
+msgstr "Innehåller alla"
+
+#: views.module:1779;1786
+msgid "Is One Of"
+msgstr "Innehåller endera"
+
+#: views.module:1779;1786
+msgid "Is None Of"
+msgstr "Innehåller ingen"
+
+#: views.module:1793;1800;1914
+msgid "Is Equal To"
+msgstr "Är lika med"
+
+#: views.module:1793;1800
+msgid "Is Not Equal To"
+msgstr "Är inte lika med"
+
+#: views.module:1800
+msgid "Is Greater Than"
+msgstr "Är större än"
+
+#: views.module:1800
+msgid "Is Greater Than Or Equals"
+msgstr "Är större än eller lika med"
+
+#: views.module:1800
+msgid "Is Less Than Or Equals"
+msgstr "Är mindre än eller lika med"
+
+#: views.module:1800
+msgid "Is Less Than"
+msgstr "Är mindre än"
+
+#: views.module:1807 views_ui.module:1342
+msgid "Yes"
+msgstr "Ja"
+
+#: views.module:1807 views_ui.module:1342
+msgid "No"
+msgstr "Nej"
+
+#: views.module:1832
+msgid "List View"
+msgstr "Listvy"
+
+#: views.module:1839
+msgid "Table View"
+msgstr "Tabellvy"
+
+#: views.module:1847
+msgid "Teaser List"
+msgstr "Smakprov"
+
+#: views.module:1852
+msgid "Full Nodes"
+msgstr "Kompletta noder"
+
+#: views.module:1914 modules/views_search.inc:19
+msgid "Contains"
+msgstr "Innehåller"
+
+#: views.module:1914
+msgid "Contains Any Word"
+msgstr "Innehåller något av orden"
+
+#: views.module:1914
+msgid "Contains All Words"
+msgstr "Innehåller alla ord"
+
+#: views.module:1914
+msgid "Starts With"
+msgstr "Börjar med"
+
+#: views.module:1914
+msgid "Ends With"
+msgstr "Slutar med"
+
+#: views.module:1914
+msgid "Does Not Contain"
+msgstr "Innehåller inte"
+
+#: views.module:2021 views_ui.module:764;1174;1735;1847
+msgid "Save"
+msgstr "Spara"
+
+#: views.module:2021 views_ui.module:1178;1735;1855
+msgid "Save and edit"
+msgstr "Spara och ändra"
+
+#: views.module:2025
+msgid "@filter must have a value!"
+msgstr "@filter måste ha ett värde"
+
+#: views.module:2088
+msgid "The \"Value\" can either be a date in the format: CCYY-MM-DD HH:MM:SS or the word \"now\" to use the current time. You may enter a positive or negative number in the \"Option\" field that will represent the amount of seconds that will be added or substracted to the time; this is most useful when combined with \"now\". If you have the jscalendar module from jstools installed, you can use a popup date picker here."
+msgstr "Värdet \"Value\" kan antingen vara ett datum med formatet: CCYY-MM-DD HH:MM:SS eller ordet \"now\" för att använda aktuell tid. Du kan ange ett positivt eller negativt tal i \"Option\"-fältet för att justera tiden fram eller tillbaka i sekunder; detta kan vara användbart tillsammans med \"now\". Om du har jscalendar-modulen från jstools installerad kan du använda en popup för att välja datum här."
+
+#: views.module:286
+msgid "access all views"
+msgstr "tillgång till alla vyer (views)"
+
+#: views.module:0
+msgid "views"
+msgstr "vyer"
+
+#: views_rss.module:10
+msgid "Views RSS: RSS feed"
+msgstr "Views RSS: RSS feed"
+
+#: views_rss.module:26
+msgid "RSS: RSS Feed Selector"
+msgstr "RSS: RSS väljare"
+
+#: views_rss.module:29
+msgid "This argument specifies a specific RSS feed selector; it will only select RSS feeds, unlike the built-in selector which can select pluggable feeds. You may enter the title the feed will advertise in the title field here, and the description of the feed in the option field here."
+msgstr "Detta argument specifierar en särskild RSS-matare, den kommer bara att välja RSS-matningar till skillnad från den inbyggda RSS-väljaren som kan välja pluggade matningar. Du kan ange titel i titelfältet här och beskrivning i option/tillvalsfältet här."
+
+#: views_rss.module:169
+msgid "read more"
+msgstr "läs mer"
+
+#: views_rss.module:0
+msgid "views_rss"
+msgstr "views_rss"
+
+#: views_theme_wizard.module:9
+msgid "Theme wizard"
+msgstr "Tema-hjälp"
+
+#: views_theme_wizard.module:48
+msgid "<p>The views theming wizard generates code that you can use in your phptemplate theme to help you customize the output of a view. Simply select a theme and it will generate code for your template.php as well as template files for the individual views.</p><p>At this time this code assumes your view is a <b>list type view</b>! It may not generate effective code for other types of views. Future versions of this program will be smarter, and give more options, but this wizard is still a huge start.</p>"
+msgstr "<p>Tema-hjälpen för Views skapar en kod som kan användas i temat för phpmallen för att enklare anpassa hur resultatet i Views ska se ut. Välj ett tema och koden skapas, den kan användas till både template.php och andra mallfiler där vyerna visas.</p><p>För tillfället antar koden att vyn är av <b>listvy</b>! Det skapar kanske inte någon effektiv kod för andra typer av vyer. Framtida versioner av detta program kommer att vara smartare ochha fler valmöjligheter, men denna hjälp är ändå ett stort steg i rätt riktning."
+
+#: views_theme_wizard.module:63
+msgid "Select a view"
+msgstr "Välj en vy"
+
+#: views_theme_wizard.module:68;74;103
+msgid "Select Theme Type"
+msgstr "Välj tematyp"
+
+#: views_theme_wizard.module:79;89
+msgid "List Theme Fields"
+msgstr "Lista temafält"
+
+#: views_theme_wizard.module:93
+msgid "This is a list of all the theme functions you can use to override individual field displays"
+msgstr "Detta är en lista över alla temafunktioner som du kan använda istället för individuella fältvisningar."
+
+#: views_theme_wizard.module:98
+msgid "This is a basic theme function"
+msgstr "Detta är en grundläggande temafunktion."
+
+#: views_theme_wizard.module:124
+msgid "Generate Theme"
+msgstr "Skapa tema"
+
+#: views_theme_wizard.module:139
+msgid "This code goes in your template.php file"
+msgstr "Denna kod ska in i din template.php fil"
+
+#: views_theme_wizard.module:144
+msgid "This code goes in a file named views-list-@s.tpl.php"
+msgstr "Denna kod ska in i en fil som heter views-list-@s.tpl.php"
+
+#: views_theme_wizard.module:149
+msgid "This code goes in a file named views-list-@s.css"
+msgstr "Denna kod ska in i en fil som heter views-list-@s.css"
+
+#: views_theme_wizard.module:176
+msgid "Simple List"
+msgstr "Enkel lista"
+
+#: views_theme_wizard.module:177
+msgid "Grouped List"
+msgstr "Grupperad lista"
+
+#: views_theme_wizard.module:178
+msgid "Nested Tree"
+msgstr "Nästlat träd"
+
+#: views_theme_wizard.module:192
+msgid "Select the field on which to group"
+msgstr "Välj vilket fält som ska ingå i gruppen"
+
+#: views_theme_wizard.module:205
+msgid "Select the field to use as the ID for each row (usually nid)"
+msgstr "Välj vilket fölt som ska användas som ID för varje rad (vanligtvis nid)"
+
+#: views_theme_wizard.module:210
+msgid "Select the field that refers to the parent node by the ID field"
+msgstr "Välj vilket fält som refererar till föräldranoden genom ID-fältet"
+
+#: views_theme_wizard.module:0
+msgid "views_theme_wizard"
+msgstr "views_theme_wizard"
+
+#: views_ui.module:15
+msgid "You may import a view by cut-and-pasting the results of an export view. If the import is successful you will be taken to the Add View page with all of the settings of the imported view.."
+msgstr "Du kan importera en vy genom att klippa och klistra resultat från en exportvy. Om det går bra att mportera kommer du att tas till sidan Lägg till vy med alla inställningar från den importerade vyn."
+
+#: views_ui.module:17
+msgid "This screen shows all of the views that are currently defined in your system. The default views are provided by Views and other modules and are automatically available. If a customized view of the same name exists, it will be used in place of a default view."
+msgstr "Här visas alla vyer som definieras i ditt system för närvarande. Standardvyerna tillhandahålls av Vy-modulen och andra moduler är tillgängliga automatiskt. "
+
+#: views_ui.module:23
+msgid "Please see !s or the views documentation on drupal.org for help here."
+msgstr "Gå till !s eller dokumentationen för vyer/views på drupal.org för att få hjälp."
+
+#: views_ui.module:23
+msgid "the views help page"
+msgstr "hjälpsida för vyer"
+
+#: views_ui.module:25
+msgid "You may cut & paste this view into an import function on another system. The view will only work if all modules required by the view are installed on the target location."
+msgstr "Du kan klippa och klistra denna vy "
+
+#: views_ui.module:34
+msgid "<p>A view retrieves some number of nodes from the database and displays them in a variety of formats.</p>"
+msgstr "<p>En vy/view hämtar ett antal noder från en databas och visar dem i ett antal olika format.</p>"
+
+#: views_ui.module:35
+msgid "<h3>View Types</h3>\n    <dl>\n      <dt><em>List View</em></dt><dd>A List View provides the data for each node retrieved in the form of an unordered list. Each item in the Fields section will be displayed; the Title will be displayed as a label. The order the items appear in the Fields list is the order the items will appear in the output. Leaving the title blank will cause the field to appear with no label (which is desirable in lists that just display titles, for example).</dd>\n      <dt><em>Table View</em></dt><dd>A Table View provides the data for each node as one row of a table. The Fields selected in the Fields list will be displayed in the order they are listed. The title column will be shown in the header. If you set the field to 'sortable' then the header will be click-sortable; be careful here as click-sorts will be processed after built-in sort criteria, and built-in sort criteria can easily make click-sorts invalid. If using click-sorts, choose a field to be the default sort; otherwise the first field presented will be the default sort.</dd>\n      <dt><em>Teaser List</em></dt><dd>A Teaser List will simply present the teaser of each node retrieved.</dd>\n      <dt><em>Full Nodes</em></dt><dd>This will show the full content of each node retrieved.</dd>\n      <dt><em>Random Teaser</em></dt><dd>This will show a single random teaser.</dd>\n      <dt><em>Random Node</em></dt><dd>This will show a single random node's full view.</dd>\n    </dl>"
+msgstr "<h3>Vy-typer</h3>\n    <dl>\n      <dt><em>Listvy</em></dt><dd>En Listvy visar nodens innehåll i form av en oordnad lista. Varje innehållsfält i Fältsektionen visas; Titel visas som etikett. Den ordning delarna visas är den ordning de kommer att visas på sidan till slut. Om du lämnar titeln tom kommer inte fältet att ha någon etikett (vilket är önskvärt i listor som bara visar titeln till exempel).</dd>\n      <dt><em>Tabellvy</em></dt><dd>Tabellvyn visar nodens innehåll som en rad i en tabell. Fälten i fältlistan visas i den ordning de är listade. Titelkolumnen visas i tabellrubriken. Om fältet är satt att sortera blir rubriken för tabellraden klickbar och innehållet kan sorteras därefter; observera att inbyggda sorteringskriterier går före klickbara sorteringsval vilket gör att klickbara sorteringsalternativ kan vara meningslösa. Vid klickbara sorteringsalternativ väljs en som standard om inte första fältet ska vara standard förstås.</dd>\n      <dt><em>Smakprovslista</em></dt><dd>Smakpovslistan visar ett smakprov av varje nod.</dd>\n      <dt><em>Full nod</em></dt><dd>Visar hela innehållet i noderna.</dd>\n      <dt><em>Slumpmässigt smakprov</em></dt><dd>Visar slumpmässigt enstaka smakprov.</dd>\n      <dt><em>Slumpmässig nod</em></dt><dd>Visar hela innehållet i en slumpvis vald nod.</dd>\n    </dl>"
+
+#: views_ui.module:46
+msgid "<h3>Fields</h3>\n"
+msgstr "<h3>Fält</h3>\n"
+
+#: views_ui.module:47
+msgid "<p>When using List or Table view, it is necessary to choose which fields will be displayed to the user.</p><dl>\n"
+msgstr "<p>När list- eller tabellvy används måste man välja vilka fält som ska visas för användaren.</p><dl>\n"
+
+#: views_ui.module:54
+msgid "<h3>Arguments</h3>\n"
+msgstr "<h3>Argument</h3>\n"
+
+#: views_ui.module:55
+msgid "<p>Arguments can be passed to the View through the URL, in order to create views that are configurable by the user. This is very useful to create views for taxonomy, or to sort by user. When using arguments, substitution is performed on the title. %1 will represent argument 1, %2 will represent argument 2. Each argument has a title field; this title is used if providing a summary view (which can matter because the argument is missing which could result in confusing phrases such as 'view for')</p><dl>\n"
+msgstr "<p>Argument kan skickas till Vyer genom URL om du vill skapa vyer som är konfigurerbara för användaren. Detta är väldigt användbart när vyer för taxonomi skapas eller om du vill kunna sortera på användare. När argument används ersättaren på titeln. %1 representerar argument 1, %2 representerar argument 2. Varje argument har ett titelfält som används till översiktsvyn (detta kan ha betydelse eftersom argumentet saknas vilket kan resultera i förvirrande fraser som 'vy för')</p><dl>\n"
+
+#: views_ui.module:62
+msgid "<h3>Filters</h3>\n"
+msgstr "<h3>Filter</h3>\n"
+
+#: views_ui.module:63
+msgid "<p>Views may be filtered to restrict the view on a number of criteria.</p><dl>\n"
+msgstr "<p>Vyer kan filtreras för att begränsa vyn utifrån ett antal kriterier.</p><dl>\n"
+
+#: views_ui.module:70
+msgid "<h3>Sorting Critera</h3>\n"
+msgstr "<h3>Sorteringskriterium</h3>\n"
+
+#: views_ui.module:71
+msgid "<p>The result set may be sorted on any of the following criteria.</p><dl>\n"
+msgstr "<p>Resultatet kan sorteras utifrån något av följande kriterier.</p><dl>\n"
+
+#: views_ui.module:96
+msgid "Views"
+msgstr "Vyer"
+
+#: views_ui.module:99
+msgid "Views are customized lists of content on your system; they are highly configurable and give you control over how lists of content are presented."
+msgstr "Vyer är listor över innehåll som man kan skapa själv på sitt system, de kan anpassas efter sidan och egna önskemål och ger dig kontroll över hur innehållslistor presenteras."
+
+#: views_ui.module:102
+msgid "List"
+msgstr "Lista"
+
+#: views_ui.module:108;299
+msgid "Add"
+msgstr "Lägg till"
+
+#: views_ui.module:113
+msgid "Import"
+msgstr "Importera"
+
+#: views_ui.module:118
+msgid "Tools"
+msgstr "Verktyg"
+
+#: views_ui.module:124
+msgid "Edit view"
+msgstr "Ändra vy"
+
+#: views_ui.module:158;165;248 modules/views_node.inc:850
+msgid "View"
+msgstr "Vy"
+
+#: views_ui.module:173
+msgid "Override"
+msgstr "Åsidosätt"
+
+#: views_ui.module:182;239 modules/views_node.inc:862;875
+msgid "Edit"
+msgstr "Ändra"
+
+#: views_ui.module:190;240
+msgid "Export"
+msgstr "Exportera"
+
+#: views_ui.module:196;242
+msgid "Clone"
+msgstr "Klona"
+
+#: views_ui.module:215
+msgid "Administer views"
+msgstr "Administrera vyer"
+
+#: views_ui.module:220;267
+msgid "No Page View"
+msgstr "Ingen sidovy"
+
+#: views_ui.module:241;504;532;1183;1582 modules/views_node.inc:888;901
+msgid "Delete"
+msgstr "Ta bort"
+
+#: views_ui.module:248;319;858;1047;1628 modules/views_statistics.inc:117;206 modules/views_user.inc:157
+msgid "Title"
+msgstr "Titel"
+
+#: views_ui.module:248;319;815
+msgid "Description"
+msgstr "Beskrivning"
+
+#: views_ui.module:248;319
+msgid "Provides"
+msgstr "Tillhandahåller"
+
+#: views_ui.module:248;319;841
+msgid "URL"
+msgstr "URL"
+
+#: views_ui.module:248;319
+msgid "Actions"
+msgstr "Händelser"
+
+#: views_ui.module:248
+msgid "Existing Views"
+msgstr "Befintliga vyer"
+
+#: views_ui.module:252;322
+msgid "<p>No views have currently been defined.</p>"
+msgstr "<p>Inga vyer definierade.</p>"
+
+#: views_ui.module:260
+msgid "<p>Below are system default views; if you edit one of these, a view will be created that will override any system use of the view.</p>"
+msgstr "<p>Du hittar systemvyerna nedan; om du ändrar någon av dessa kommer en ny skapas som överskuggar systemvyerna.</p>"
+
+#: views_ui.module:270
+msgid "Overridden"
+msgstr "Åsidosatt"
+
+#: views_ui.module:274;284;300
+msgid "Enabled"
+msgstr "Tillgänglig"
+
+#: views_ui.module:277;281;303
+msgid "Disabled"
+msgstr "Avstängd"
+
+#: views_ui.module:289;828
+msgid "Page"
+msgstr "Sida"
+
+#: views_ui.module:292;1026
+msgid "Block"
+msgstr "Block"
+
+#: views_ui.module:295;940
+msgid "Menu"
+msgstr "Meny"
+
+#: views_ui.module:301
+msgid "Disable"
+msgstr "Stäng av"
+
+#: views_ui.module:304
+msgid "Enable"
+msgstr "Slå igång"
+
+#: views_ui.module:319
+msgid "Default view"
+msgstr "Standardvy"
+
+#: views_ui.module:319
+msgid "Status"
+msgstr "Status"
+
+#: views_ui.module:319
+msgid "Default Views"
+msgstr "Standardvyer"
+
+#: views_ui.module:330
+msgid "<p>Occasionally, something or other can cause the Views cache to contain stale data; this is particularly true after module updates and sometimes true after taxonomy and profile updates. If you are having problems with Views creating malformed queries, the first thing you should always do is clear the Views cache to see if that is the problem.</p>"
+msgstr "<p>Ibland kan kan ett eller annat göra att cachen för Vyer innehåller unken data, särskilt efter uppdateringar av moduler men också efter uppdateringar av taxonomi eller profiler. Om du har problem med att Vyer skapar felaktiga frågor är det första du ska göra alltid att rensa cachen för Vyer för att se om det är där problemet ligger.</p>"
+
+#: views_ui.module:335;342
+msgid "Clear views cache"
+msgstr "Rensa cachen för vyer"
+
+#: views_ui.module:395
+msgid "Import View Code"
+msgstr "Importera kod"
+
+#: views_ui.module:398
+msgid "Cut and paste the results of an Export View here."
+msgstr "Klipp och klistra reultatet från Exportera vy här"
+
+#: views_ui.module:423;466;488
+msgid "Add a View"
+msgstr "Lägg till en vy"
+
+#: views_ui.module:429
+msgid "You don't seem to have the following requirements: "
+msgstr "Du verkar inte uppfylla följande krav: "
+
+#: views_ui.module:433
+msgid "Unable to get a view out of that."
+msgstr "Klarar inte av att skapa en Vy utifrån detta."
+
+#: views_ui.module:460;478;500;532;1188
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: views_ui.module:512
+msgid "Edit view %n"
+msgstr "Ändra vy %n"
+
+#: views_ui.module:529
+msgid "Are you sure you want to delete %title?"
+msgstr "Är du säker på att du vill radera %title?"
+
+#: views_ui.module:531
+msgid "This action cannot be undone."
+msgstr "Denna handling kan inte ångras"
+
+#: views_ui.module:582
+msgid "Return Page Not Found"
+msgstr "Retursida kan inte hittas"
+
+#: views_ui.module:583
+msgid "Display All Values"
+msgstr "Visa alla värden"
+
+#: views_ui.module:584
+msgid "Summary, unsorted"
+msgstr "Sammanfattning, osorterad"
+
+#: views_ui.module:585
+msgid "Summary, sorted ascending"
+msgstr "Sammanfattning, ökande"
+
+#: views_ui.module:586
+msgid "Summary, sorted descending"
+msgstr "Sammanfattning, minskande"
+
+#: views_ui.module:587
+msgid "Summary, sorted as view"
+msgstr "Sammanfattning, sorterad som vy"
+
+#: views_ui.module:588
+msgid "Use Empty Text"
+msgstr "Använd tom text"
+
+#: views_ui.module:597;1347
+msgid "Ascending"
+msgstr "Ökande"
+
+#: views_ui.module:598;1347
+msgid "Descending"
+msgstr "Minskande"
+
+#: views_ui.module:690;760;1642
+msgid "Add Filter"
+msgstr "Lägg till filter"
+
+#: views_ui.module:694;761
+msgid "Add Criteria"
+msgstr "Lägg till kriterium"
+
+#: views_ui.module:698;759;1630
+msgid "Add Argument"
+msgstr "Lägg till argument"
+
+#: views_ui.module:702;758;1619
+msgid "Add Field"
+msgstr "Lägg till fält"
+
+#: views_ui.module:710
+msgid "Expose Filter"
+msgstr "Visa filter"
+
+#: views_ui.module:765
+msgid "You have modified this view; changes will not be recorded until you Save the form."
+msgstr "Du har modifierat denna vy, ändringar sparas inte förrän du sparar formuläret."
+
+#: views_ui.module:792
+msgid "Basic Information"
+msgstr "Grundläggande information"
+
+#: views_ui.module:797;1618
+msgid "Name"
+msgstr "Namn"
+
+#: views_ui.module:801
+msgid "The unique identifier of the view; it is only important for overridden views and views that modules or themes will need to use. Only alphanumeric and _ allowed here"
+msgstr "Unik identifikation för vyn, det är bara viktigt för överskuggade vyer och vyer som moduler eller teman behöver använda. Endast alfanumeriska tecken och _ är tillåtet här"
+
+#: views_ui.module:807
+msgid "Access"
+msgstr "Tillgång"
+
+#: views_ui.module:810
+msgid "Only the checked roles will be able to see this view in any form; if no roles are checked, access will not be restricted."
+msgstr "Bara markerade roller kommer att kunna se denna vy i någon form, om inga roller markeras kommer vyn inte ha några begränsningar för vilka som kan se den."
+
+#: views_ui.module:819
+msgid "A description of the view for the admin list."
+msgstr "Beskrivning av vyn för adminlistan."
+
+#: views_ui.module:833
+msgid "Provide Page View"
+msgstr "Visa som sidvy"
+
+#: views_ui.module:836
+msgid "If checked this view will be provided as a page. If not checked, the fields in this group will be ignored."
+msgstr "Om detta är valt kommer vyn att visas som sida, annars kommer fälten i denna grupp att ignoreras."
+
+#: views_ui.module:845
+msgid "Enter the URL to use for this view in the form of 'dir/dir'. Do not begin or end the URL with a /. Example: 'view/tracker'. This is required if providing a page view. You can also add $arg as a placeholder for arguments passed in the URL, for example 'user/$arg/tracker' or 'view/taxonomy/$arg'. Note that any arguments listed here will be required, even if they are listed as optional below.  You do not need to list arguments at the end of the path."
+msgstr "Skriv URL för denna vy i formen 'dir/dir'. Börja eller avsluta inte din URL med /. Exempel: 'view/tracker'. Detta krävs för sidvyer (page view). Du kan också lägga till $arg som platshållare för argument i URLen, t.ex. 'user/$arg/tracker' eller 'view/taxonomy/$arg'. Obs att argument som listas här är sådana som krävs även om de listas som valfria nedan. Du behöver inte lista argument i slutet av sökvägen."
+
+#: views_ui.module:850;1039
+msgid "View Type"
+msgstr "Typ av vy"
+
+#: views_ui.module:853;1042
+msgid "How the nodes should be displayed to the user."
+msgstr "Hur noderna ska visas för användaren."
+
+#: views_ui.module:862
+msgid "The title that be shown at the top of the view. May be blank. This title ignores arguments; if you want your title to take arguments into account, use the \"title\" field in the arguments section."
+msgstr "Titeln som visas överst i vyn, kan vara tom. Titeln struntar i argument, om du vill använda argument i titeln använder du \"title\"-fältet i argumentsektionen."
+
+#: views_ui.module:867
+msgid "Use Pager"
+msgstr "Använd sidindelning"
+
+#: views_ui.module:870
+msgid "If checked this query may be multiple pages. If not checked this query will be one page."
+msgstr "Denna fråga kan visas på flera sidor om iklickad, annars visas den bara på en sida."
+
+#: views_ui.module:874
+msgid "Breadcrumb trail should not include \"Home\""
+msgstr "Sökvägsspårning ska inte inkludera \"Home\""
+
+#: views_ui.module:877
+msgid "If checked the breadcrumb trail for this page will discard \"Home\". Usually you will not set this, but this is used for the Front Page View, where it IS Home and should not leave a trail to itself."
+msgstr "Sökvägsspårning för denna sida hoppar över \"Home\" om rutan klickas i. I vanliga fall behöver detta inte ställas in men kan användas för framsidevyn som är HOME eller HEM och inte behöver spåras tillbaka till sig själv."
+
+#: views_ui.module:881
+msgid "Nodes per Page"
+msgstr "Noder per sida"
+
+#: views_ui.module:885
+msgid "The number of nodes to display per page. If 0, all nodes will be displayed. If not using a pager, this will be the maximum number of nodes in the list."
+msgstr "Antal noder som ska visas per sida. Om 0 kommer alla noder visas. Om sidindelningen inte används kommer detta att vara maximalt antal noder i listan."
+
+#: views_ui.module:892;1076;1088
+msgid "Header"
+msgstr "Sidhuvud"
+
+#: views_ui.module:899;1092
+msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
+msgstr "Text som visas överst i vyn, kan innehålla en förklaring eller vad du nu vill. Valfritt."
+
+#: views_ui.module:908;1101;1113
+msgid "Footer"
+msgstr "Sidfot"
+
+#: views_ui.module:915;1117
+msgid "Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional."
+msgstr "Text som visas nederst i vyn, kan innehålla en förklaring eller vad du nu vill. Valfritt."
+
+#: views_ui.module:924
+msgid "Empty Text"
+msgstr "Tom text"
+
+#: views_ui.module:931
+msgid "Text to display if a view returns no nodes. Optional."
+msgstr "Text som visas om en vy inte innehåller några noder. Valfritt."
+
+#: views_ui.module:945
+msgid "Provide Menu"
+msgstr "Lägg till meny"
+
+#: views_ui.module:948
+msgid "If checked this view be given a menu entry in the Drupal menu system. If not checked the data in this group will be ignored."
+msgstr "Om valt kommer vyn att få ett menyval i Drupals menysystem, annars kommer data i denna grupp att ignoreras."
+
+#: views_ui.module:953
+msgid "Provide Menu as Tab"
+msgstr "Lägg till meny som tabb"
+
+#: views_ui.module:956
+msgid "If checked this view's menu entry will be provided as a tab rather than in the main menu system."
+msgstr "Om valt kommer denna vys menyinställning att visas som en tabb istället för det vanliga menysystemet."
+
+#: views_ui.module:961;1005
+msgid "Tab Weight"
+msgstr "Tabb-viktning"
+
+#: views_ui.module:964
+msgid "If this is a menu tab, select the weight; lower numbers will be further to the left."
+msgstr "Om detta är en menytabb kan du välja vikt, lägre siffror kommer att visas längre till vänster."
+
+#: views_ui.module:969
+msgid "Menu Title"
+msgstr "Menytitel"
+
+#: views_ui.module:973
+msgid "Enter the title to use for the menu entry or tab. If blank, the page title will be used."
+msgstr "Skriv titel för menyn eller tabben. Om tom kommer sidtiteln användas."
+
+#: views_ui.module:980
+msgid "Default Menu Tab"
+msgstr "Standardmenytabb"
+
+#: views_ui.module:985
+msgid "Make Default Menu Tab"
+msgstr "Skapa standardmeny tabb"
+
+#: views_ui.module:988
+msgid "If checked this view's menu entry will be provided as a tab, and will be the default tab for that URL path. For example, if the URL is 'tracker/all' and it is set as the default menu tab, it will be put into the menu as 'tracker' and 'tracker/all' will be the default tab. The following settings allow you to customize the parent item, for example 'tracker'. For tabs to work properly, one tab in the group must be set as the default."
+msgstr "Om valt kommer denna vys menyinställning att visas som tabb och kommer att vara standardtabb för den sökvägen. Om sökvägen t.ex. är 'tracker/all' kommer den att visas i menyn som 'tracker' och 'tracker/all' kommer att vara standardtabben. Följande inställningar tillåter dig att anpassa föräldraämnet, t.ex. 'tracker'. För att tabbar ska fungera ordentligt måste en tabb i gruppen sättas som standard/default."
+
+#: views_ui.module:993;1017
+msgid "Parent Menu Item Type"
+msgstr "Förälder för menypost-typ"
+
+#: views_ui.module:996;1017
+msgid "Tab"
+msgstr "Tabb"
+
+#: views_ui.module:997;1017
+msgid "Normal menu item"
+msgstr "Normalt"
+
+#: views_ui.module:998
+msgid "Already exists (don't create)"
+msgstr "Finns redan (skapa inte)"
+
+#: views_ui.module:1000
+msgid "Select type of parent item to use for this default menu tab. You can either specify the parent should be a tab (the default), a normal menu item, or to use the menu item that already exists at the specified URL. For example, if the URL for the default tab is 'tracker/all', then 'tracker' would already have to be a valid menu item to use this final choice."
+msgstr "Välj typ av förälder-post att använda för denna standardmenytabb. Du kan antingen ange föräldern (bör vara en tabb och standard), en normal menypost eller använda en menypost som redan finns på angiven URL. Till exempel: Om URLen för standardtabben är 'tracker/all' måste 'tracker' redan finnas som en godkänd menypost för att detta slutliga val ska kunna göras."
+
+#: views_ui.module:1008
+msgid "If the parent menu item is a tab, select the weight; lower numbers will be further to the left."
+msgstr "Om föräldramenyposten är en tabb väljer du vikt, ju lägre desto längre åt vänster."
+
+#: views_ui.module:1013
+msgid "Parent Menu Item Title"
+msgstr "Titel för föräldramenypost"
+
+#: views_ui.module:1017
+msgid "If the Parent Menu Item is being defined by this view (if you set the %type_field to either %tab or %menu), you can specify its title here.  If blank, the menu title will be used if that is defined, or the page title if not."
+msgstr "Om föräldramenyposten är definierad av denna vy (om du sätter %type_field till antingen %tab eller %menu) kan du specifiera titeln här. Om tom kommer menytiteln att användas om den är definierad eller sidtiteln i sista hand."
+
+#: views_ui.module:1031
+msgid "Provide Block"
+msgstr "Skapa block"
+
+#: views_ui.module:1034
+msgid "If checked this view will be provided as a block. If checked title may not be blank."
+msgstr "Om markerad kommer vyn även att skapa ett block. I så fall kan inte titeln lämnas tom."
+
+#: views_ui.module:1051
+msgid "The title that will be shown at the top of the block. May be blank."
+msgstr "Den titel som ska visas överst i blocket, kan lämnas tom."
+
+#: views_ui.module:1056
+msgid "Nodes per Block"
+msgstr "Noder per block"
+
+#: views_ui.module:1060
+msgid "If using a block, the maximum number of items to display in the block. Pagers are not used in blocks."
+msgstr "Om du använder ett block anges max antal poster som ska visas i blocket. Sidindelningar används inte av block."
+
+#: views_ui.module:1066
+msgid "[More] Link?"
+msgstr "[Mer] länk?"
+
+#: views_ui.module:1069
+msgid "If using a view as both a page and a block, display a more link in the block that links to the view URL?"
+msgstr "Om du använder en vy både som sida och block kanske du vill visa en mer-länk i blocket som länkar till vyns URL?"
+
+#: views_ui.module:1080
+msgid "Use Page Header"
+msgstr "Använd sidrubrik"
+
+#: views_ui.module:1083
+msgid "If checked, use the Page Header for block view instead. If so, you should leave the Block Header blank."
+msgstr "Om valt används sidrubriken för blockvyn istället. I så fall lämnas blockrubriken tom."
+
+#: views_ui.module:1105
+msgid "Use Page Footer"
+msgstr "Använd sidfot"
+
+#: views_ui.module:1108
+msgid "If checked, use the page footer for block view instead. If so, you should leave the block footer blank."
+msgstr "Om valt används sidfot för blockvyn istället. Då lämnas blocksidfoten tom."
+
+#: views_ui.module:1126;1138
+msgid "Empty text"
+msgstr "Tom text"
+
+#: views_ui.module:1130
+msgid "Use Page empty"
+msgstr "Använs sida tom"
+
+#: views_ui.module:1133
+msgid "If checked, use the Page Empty Text for block view instead. If so, you should leave the block empty text blank."
+msgstr "Om valt används text för sidan tom för blockvyn istället. Då lämnas detta fält tomt i blocket."
+
+#: views_ui.module:1142
+msgid "Text to display if a view results in no nodes. Optional."
+msgstr "Text som visas om en vy inte innehåller några noder. Valfritt."
+
+#: views_ui.module:1153
+msgid "Argument Handling Code"
+msgstr "Kod för hantering av argument"
+
+#: views_ui.module:1158
+msgid "Argument Code"
+msgstr "Argumentkod"
+
+#: views_ui.module:1162
+msgid "Advanced Usage Only: PHP code that returns a custom array of arguments for the view. Should not include &lt;?php ?&gt; delimiters."
+msgstr "Endast avancerade användare: PHP-kod som returnerar en valfri lista med argument för vyn. Får inte innehålla &lt;?php ?&gt;."
+
+#: views_ui.module:1163
+msgid "For more information, please see the <a href=\"!arg\">Argument Handling Code documentation</a> in the Drupal handbook."
+msgstr "För mer information kan du gå till <a href=\"!arg\">Dokumentation över argumentkodning</a> i Drupal handbook."
+
+#: views_ui.module:1347
+msgid "None"
+msgstr "Ingen"
+
+#: views_ui.module:1489
+msgid "Expose"
+msgstr "Visa"
+
+#: views_ui.module:1582
+msgid "Delete this item."
+msgstr "Radera denna"
+
+#: views_ui.module:1583
+msgid "Up"
+msgstr "Upp"
+
+#: views_ui.module:1583
+msgid "Move this item up."
+msgstr "Flytta upp"
+
+#: views_ui.module:1584
+msgid "Down"
+msgstr "Ner"
+
+#: views_ui.module:1584
+msgid "Move this item down."
+msgstr "Flytta ner"
+
+#: views_ui.module:1585
+msgid "Top"
+msgstr "Topp"
+
+#: views_ui.module:1585
+msgid "Move this item to the top."
+msgstr "Flytta överst"
+
+#: views_ui.module:1586
+msgid "Bottom"
+msgstr "Botten"
+
+#: views_ui.module:1586
+msgid "Move this item to the bottom."
+msgstr "Flytta underst"
+
+#: views_ui.module:1618;1651
+msgid "Label"
+msgstr "Etikett"
+
+#: views_ui.module:1618
+msgid "Handler"
+msgstr ""
+
+#: views_ui.module:1618;1628;1640;1663
+msgid "Option"
+msgstr "Val"
+
+#: views_ui.module:1618
+msgid "Sortable"
+msgstr "Sorterbar"
+
+#: views_ui.module:1618
+msgid "Default Sort"
+msgstr "Standardsortering"
+
+#: views_ui.module:1621
+msgid "Fields are only meaningful with List view and Table View; they allow you to choose which fields are presented and in what order."
+msgstr "Fält är bara meningsfulla tillsammans med listvy och tabellvy, de tillåter dig att välja vilka fält som presenteras och i vilken ordning."
+
+#: views_ui.module:1622
+msgid "Fields"
+msgstr "Fält"
+
+#: views_ui.module:1628
+msgid "Argument Type"
+msgstr "Argumenttyp"
+
+#: views_ui.module:1628
+msgid "Default"
+msgstr "Standard"
+
+#: views_ui.module:1628
+msgid "Wildcard"
+msgstr "Jokertecken"
+
+#: views_ui.module:1628
+msgid "Wildcard Sub"
+msgstr "Jokertecken sub"
+
+#: views_ui.module:1634
+msgid "Arguments are parsed directly from the URL. They are not necessary to any given view, but allow flexibility."
+msgstr "Argument skickas direkt från URLen. De krävs inte för någon vy men bidrar till flexibiliteten."
+
+#: views_ui.module:1635
+msgid "Arguments"
+msgstr "Argument"
+
+#: views_ui.module:1640;1651;1663
+msgid "Field"
+msgstr "Fält"
+
+#: views_ui.module:1640
+msgid "Operator"
+msgstr "Operatör"
+
+#: views_ui.module:1640
+msgid "Value"
+msgstr "Värde"
+
+#: views_ui.module:1644
+msgid "Filters allow you to select a subset of all the nodes to display. All Filters are ANDed together."
+msgstr "Filter gör det möjligt att välja en undergrupp bland noderna som ska visas. Alla filter binds samman med AND."
+
+#: views_ui.module:1645
+msgid "Filters"
+msgstr "Filter"
+
+#: views_ui.module:1651
+msgid "Optional"
+msgstr "Valfritt"
+
+#: views_ui.module:1651
+msgid "Filter settings Default"
+msgstr "Standardinställningar för filter."
+
+#: views_ui.module:1651
+msgid "Force Single"
+msgstr "Tvinga enstaka"
+
+#: views_ui.module:1651
+msgid "Lock Operator"
+msgstr "Lås operatör"
+
+#: views_ui.module:1656
+msgid "Exposed filters will be presented to the viewer. If not set required, then filters will include a \"&lt;None&gt;\" Value if possible. If set default, filters will default as set here, otherwise filter settings will be ignored. If Lock Operator is set, no operator will be made available to the user."
+msgstr "Exponerade filter visas för läsaren. Om inte satt som obligatorisk kommer filter att innehålla ett \"&lt;None&gt;\" värde om möjligt. Om satt som standard innebär inställningarna här standardinställningar för filter, annars ignoreras filterinställningarna. Om Lås operatör är inställt kommer ingen operatör att vara tillgänglig för användaren."
+
+#: views_ui.module:1657
+msgid "Exposed Filters"
+msgstr "Exponerade filter"
+
+#: views_ui.module:1663
+msgid "Order"
+msgstr "Ordning"
+
+#: views_ui.module:1665
+msgid "Add criteria"
+msgstr "Lägg till kriterium"
+
+#: views_ui.module:1666
+msgid "Sort Criteria"
+msgstr "Sortera kriterium"
+
+#: views_ui.module:1708
+msgid "This view currently has no %s defined."
+msgstr "Denna vy har inga %s definierade."
+
+#: views_ui.module:1712
+msgid "Ops"
+msgstr "Alt"
+
+#: views_ui.module:1742
+msgid "Another user has modified this view, unable to save. You can get this error by using the Back button to re-edit a view after saving one; if you do this, be sure to Reload before making any changes!"
+msgstr "En annan användare har modifierat denna vy, kan inte sparas. Du kan få detta fel om du använder Tillbaka-knappen för att redigera en vy när dy nyss sparat den. Om du gjort detta kan du ladda om sidan innan du gör nya ändringar."
+
+#: views_ui.module:1748
+msgid "View name is required."
+msgstr "Du måste ge vyn ett namn."
+
+#: views_ui.module:1753
+msgid "View name must be alphanumeric or underscores only."
+msgstr "Du kan bara använda alfanumeriska värden eller understreck när du namnger vyer."
+
+#: views_ui.module:1759
+msgid "View name already in use."
+msgstr "Namnet används redan."
+
+#: views_ui.module:1764
+msgid "Nodes per page cannot be 0 if using the pager."
+msgstr "Om du använder sidindelning måste du välja ett annat värde än 0."
+
+#: views_ui.module:1769
+msgid "If being used as a block, Nodes Per Block must be positive."
+msgstr "Antal noder per block måste vara positivt om du använder vyn som block."
+
+#: views_ui.module:1841
+msgid "View successfully saved."
+msgstr "Det gick bra att spara vyn!"
+
+#: views_ui.module:1844
+msgid "View successfully added."
+msgstr "Det gick bra att lägga till vyn!"
+
+#: views_ui.module:1869
+msgid "List and Table types require at least one field."
+msgstr "List- och tabelltyper kräver minst ett fält."
+
+#: views_ui.module:1877
+msgid "You can only set on Default Sort on one field."
+msgstr "Du kan bara sätta standardsortering på ett fält."
+
+#: views_ui.module:1909
+msgid "View '%vid' not found."
+msgstr "Vyn '%vid' kunde inte hittas."
+
+#: views_ui.module:85
+msgid "administer views"
+msgstr "administrera vyer"
+
+#: views_ui.module:0
+msgid "views_ui"
+msgstr "views_ui"
+
+#: views.install:258
+msgid "Views module installed tables successfully."
+msgstr "Vy(Views)-modulen lyckades installera tabeller utan problem!"
+
+#: views.install:261
+msgid "The installation of views module was unsuccessful."
+msgstr "Installationen av Vy(Views)-modulen lyckades inte."
+
+#: modules/views_book.inc:23
+msgid "Book: Parent Node"
+msgstr "Bok: föräldranod"
+
+#: modules/views_book.inc:26
+msgid "This allows you to filter books based on parent node."
+msgstr "Tillåter dig att filtrera böcker baserat på föräldranoder."
+
+#: modules/views_book.inc:31
+msgid "Book: Weight"
+msgstr "Bok: vikt"
+
+#: modules/views_book.inc:33
+msgid "This will sort the view by book weight, if that is applicable."
+msgstr "Sorterar vyn på bokvikt om möjligt."
+
+#: modules/views_book.inc:51;62
+msgid "Book: Parent Title"
+msgstr "Bok: föräldratitel"
+
+#: modules/views_book.inc:53
+msgid "As Link"
+msgstr "Som länk"
+
+#: modules/views_book.inc:54
+msgid "Without Link"
+msgstr "Utan länk"
+
+#: modules/views_book.inc:57
+msgid "Display the title of the parent node"
+msgstr "Visa titeln på föräldranoden."
+
+#: modules/views_book.inc:63
+msgid "Sort by the title of the parent node"
+msgstr "sortera på titeln på föräldranoden."
+
+#: modules/views_book.inc:74
+msgid "Book: Parent Node ID"
+msgstr "Bok: föräldranodID"
+
+#: modules/views_comment.inc:23
+msgid "Comment: Subject"
+msgstr "Kommentar: ämne"
+
+#: modules/views_comment.inc:26 modules/views_node.inc:17
+msgid "With updated mark"
+msgstr "Med markering för uppdaterade"
+
+#: modules/views_comment.inc:39
+msgid "Comment: Comment"
+msgstr "Kommentar: kommentar"
+
+#: modules/views_comment.inc:42
+msgid "Display the content of a comment."
+msgstr "Visa innehållet i en kommentar."
+
+#: modules/views_comment.inc:45
+msgid "Comment: Comment ID"
+msgstr "Kommentar: kommentarID"
+
+#: modules/views_comment.inc:47
+msgid "Display the CID of a comment."
+msgstr "Visa CID för kommentar."
+
+#: modules/views_comment.inc:50;82
+msgid "Comment: Created Time"
+msgstr "Kommentar: skapad tid"
+
+#: modules/views_comment.inc:54
+msgid "Display the post time of the comment."
+msgstr "Visa när kommentaren postades."
+
+#: modules/views_comment.inc:57
+msgid "Comment: Author Name"
+msgstr "Kommentar: författare"
+
+#: modules/views_comment.inc:62 modules/views_user.inc:29
+msgid "This will display the author of the node."
+msgstr "Visa nodens författare"
+
+#: modules/views_comment.inc:65
+msgid "Comment: Add link"
+msgstr "Kommentar: lägg till länk"
+
+#: modules/views_comment.inc:69
+msgid "Display a link to add a comment to the node. Enter the text of this link into the option field; if blank the default \"Comment\" will be used."
+msgstr "Visa en länk för att lägga till en kommentar till noden. Skriv texten till länken i alternativ-fältet; om det lämnas tomt kommer standard \"Kommentar\" användas."
+
+#: modules/views_comment.inc:74
+msgid "Comment: Pending approval"
+msgstr "Kommentar: väntar godkännande"
+
+#: modules/views_comment.inc:75 modules/views_node.inc:147;154;161;168 modules/views_upload.inc:44
+msgid "Equals"
+msgstr "Är lika med"
+
+#: modules/views_comment.inc:85
+msgid "Sort by the created time of comments."
+msgstr "Sortera på skapad tid."
+
+#: modules/views_comment.inc:104;146
+msgid "Comment: Last Comment Time"
+msgstr "Kommentar: senaste kommentar tid"
+
+#: modules/views_comment.inc:108
+msgid "This will display the last comment time."
+msgstr "Visar tiden för nyaste kommentar."
+
+#: modules/views_comment.inc:111
+msgid "Comment: Last Comment Author"
+msgstr "Kommentar: senaste författare"
+
+#: modules/views_comment.inc:117
+msgid "This will display the name of the last user to comment on the post."
+msgstr "Visar namnet på författaren till senaste kommentaren."
+
+#: modules/views_comment.inc:120
+msgid "Comment: Count"
+msgstr "Kommentar: antal"
+
+#: modules/views_comment.inc:124
+msgid "With New Count"
+msgstr "Med antal nya"
+
+#: modules/views_comment.inc:126
+msgid "This will display the comment count."
+msgstr "Visar antal kommentarer."
+
+#: modules/views_comment.inc:129;155
+msgid "Comment: Last Changed Time"
+msgstr "Kommentar: senast ändrad tid"
+
+#: modules/views_comment.inc:135
+msgid "This will display the time of the last comment or node edit."
+msgstr "Visar tiden för senaste kommentar eller nodändring."
+
+#: modules/views_comment.inc:140;173
+msgid "Comment: Comment Count"
+msgstr "Kommentar: antal kommentarer"
+
+#: modules/views_comment.inc:143
+msgid "This filter allows you to filter by the amount of comments."
+msgstr "Filtrerar på antal kommentarer."
+
+#: modules/views_comment.inc:151;160
+msgid "This filter allows nodes to be filtered by the timestamp for the last comment or node edit."
+msgstr "Filtret tillåter att noder filtreras på timestamp för senaste kommentar eller nodändring."
+
+#: modules/views_comment.inc:167
+msgid "Comment: Last Comment Date"
+msgstr "Kommentar: datum för nyaste kommentar"
+
+#: modules/views_comment.inc:170
+msgid "This will allow you to sort by the date of the most recent comment on a node."
+msgstr "Tillåter dig att sortera på datum för senaste kommentar på en nod."
+
+#: modules/views_comment.inc:174
+msgid "This filter allows you to sort by the number of comments."
+msgstr "Filtret tillåter dig att sortera på antal kommentarer."
+
+#: modules/views_comment.inc:177
+msgid "Comment: Last Changed"
+msgstr "Kommentar: senast ändrad"
+
+#: modules/views_comment.inc:180
+msgid "Sort based on the most recent comment or edit for the node."
+msgstr "Sortera på nyaste kommentar eller ändring för noden."
+
+#: modules/views_comment.inc:250
+msgid "@num new"
+msgstr "@num nya"
+
+#: modules/views_comment.inc:287
+msgid "Display recent comments block"
+msgstr "Visa nya kommentar-block"
+
+#: modules/views_comment.inc:292
+msgid "Recent comments"
+msgstr "Nya kommentarer"
+
+#: modules/views_comment.inc:364
+msgid "Comment"
+msgstr "Kommentar"
+
+#: modules/views_node.inc:14;131;215;286
+msgid "Node: Title"
+msgstr "Nod: titel"
+
+#: modules/views_node.inc:28
+msgid "Display the title of the node."
+msgstr "Visa nodens titel."
+
+#: modules/views_node.inc:31;110;317
+msgid "Node: ID"
+msgstr "Nod: ID"
+
+#: modules/views_node.inc:36
+msgid "Display the NID of a node."
+msgstr "Visa nodens NID."
+
+#: modules/views_node.inc:39;115;221
+msgid "Node: Created Time"
+msgstr "Nod: skapad tid"
+
+#: modules/views_node.inc:43
+msgid "Display the post time of the node."
+msgstr "Visa när noden skapades."
+
+#: modules/views_node.inc:44;52
+msgid "The option field may be used to specify the custom date format as it's required by the date() function or if \"as time ago\" has been chosen to customize the granularity of the time interval."
+msgstr "Alternativfältet kan användas för att specifiera datumformat när det krävs av date() funktionen eller om \"som tid sedan\" valts för att ställa in finkornigheten i tidsintervall."
+
+#: modules/views_node.inc:47;121;230
+msgid "Node: Updated Time"
+msgstr "Nod: uppdaterad tid"
+
+#: modules/views_node.inc:51
+msgid "Display the last time the node was updated."
+msgstr "Visa när noden uppdaterades senast."
+
+#: modules/views_node.inc:55;135;174;281
+msgid "Node: Type"
+msgstr "Nod: typ"
+
+#: modules/views_node.inc:58
+msgid "The Node Type field will display the type of a node (for example, 'blog entry', 'forum post', 'story', etc)"
+msgstr "Visar nodtypen (t.ex. 'blogg', 'foruminlägg' o.s.v.)."
+
+#: modules/views_node.inc:61
+msgid "Node: Link to node"
+msgstr "Nod: läk till nod"
+
+#: modules/views_node.inc:66
+msgid "This will create a link to the node; fill the option field with the text for the link. If you want titles that link to the node, use Node: Title instead."
+msgstr "Skapar en länk till noden, fyll i alternativfältet med texten till länken. Vill du att titlar ska länka till noden använder du Nod:titel istället."
+
+#: modules/views_node.inc:69;239
+msgid "Node: Body"
+msgstr "Nod: brödtext"
+
+#: modules/views_node.inc:71
+msgid "Full Text"
+msgstr "Fulltext"
+
+#: modules/views_node.inc:72
+msgid "Teaser"
+msgstr "Smakprov"
+
+#: modules/views_node.inc:76
+msgid "Display the Main Content."
+msgstr "Visa huvudinnehållet"
+
+#: modules/views_node.inc:79
+msgid "Node: View link"
+msgstr "Nod: visa länk"
+
+#: modules/views_node.inc:83
+msgid "Display a link to view the node. Enter the text of this link into the option field; if blank the default \"View\" will be used."
+msgstr "Visa länk till noden. Skriv länktext i alternativfältet, om tomt kommer \"Visa\" att användas."
+
+#: modules/views_node.inc:86
+msgid "Node: Edit link"
+msgstr "Nod: redigera länk"
+
+#: modules/views_node.inc:88;99
+msgid "Return To View"
+msgstr "Åter till vy"
+
+#: modules/views_node.inc:89
+msgid "Return to Node"
+msgstr "Åter till nod"
+
+#: modules/views_node.inc:94
+msgid "Display a link to edit the node. Enter the text of this link into the option field; if blank the default \"Edit\" will be used."
+msgstr "Visa en länk för att redigera nod. Skriv länktexten i alternativfältet, om tomt kommer \"Redigera\" att användas."
+
+#: modules/views_node.inc:97
+msgid "Node: Delete link"
+msgstr "Nod: radera länk"
+
+#: modules/views_node.inc:100
+msgid "Return To The Frontpage"
+msgstr "Åter till förstasidan"
+
+#: modules/views_node.inc:105
+msgid "Display a link to delete the node. Enter the text of this link into the option field; if blank the default \"Delete\" will be used."
+msgstr "Visar en länk för att radera en nod. Skriv länktexten i alternativfältet, om tomt kommer \"Radera\" att användas."
+
+#: modules/views_node.inc:111
+msgid "Sort by the database ID of the node."
+msgstr "Sortera på nodens ID."
+
+#: modules/views_node.inc:118
+msgid "Sort by the submission date of the node."
+msgstr "Sortera på datum när noden skapades."
+
+#: modules/views_node.inc:124
+msgid "Sort by the last update date of the node."
+msgstr "Sortera på datum för senaste uppdatering av noden."
+
+#: modules/views_node.inc:127;160
+msgid "Node: Sticky"
+msgstr "Nod: sticky"
+
+#: modules/views_node.inc:128
+msgid "Sort by whether or not the node is sticky. Choose descending to put sticky nodes at the top."
+msgstr "Avgör om noden är sticky eller ej. Välj minskande för att sätta sticky-noder överst."
+
+#: modules/views_node.inc:132
+msgid "Sort by the node title, alphabetically"
+msgstr "Sortera nodtitel alfabetiskt"
+
+#: modules/views_node.inc:136
+msgid "Sort by the node type, alphabetically"
+msgstr "Sortera nodtyp alfabetiskt"
+
+#: modules/views_node.inc:139
+msgid "Random"
+msgstr "Slumpvis"
+
+#: modules/views_node.inc:141
+msgid "By choosing random, nodes will be ordered completely randomly. This is a good way to choose X random nodes from a group of nodes."
+msgstr "Genom att välja slumppvis kommer noder att sorteras slumpvis. Detta kan användas för att välja ett antal slumpvisa noder ur en grupp noder."
+
+#: modules/views_node.inc:146
+msgid "Node: Published"
+msgstr "Nod: publicerad"
+
+#: modules/views_node.inc:150
+msgid "Filter by whether or not the node is published. This is recommended for most Views!"
+msgstr "Visar om noden är publicerad. Rekommenderas för de flesta vyer!"
+
+#: modules/views_node.inc:153
+msgid "Node: Front Page"
+msgstr "Nod: förstasida"
+
+#: modules/views_node.inc:157
+msgid "Filter by whether or not the node has been promoted to Front Page."
+msgstr "Visar om noden lagts på förstasidan."
+
+#: modules/views_node.inc:164
+msgid "Filter by whether or not the node is set sticky."
+msgstr "Visar om noden är 'sticky'"
+
+#: modules/views_node.inc:167
+msgid "Node: Moderated"
+msgstr "Nod: modererad"
+
+#: modules/views_node.inc:171
+msgid "Filter by whether or not the node is moderated."
+msgstr "Visar om noden är modererad."
+
+#: modules/views_node.inc:179
+msgid "Include or exclude nodes of the selected types."
+msgstr "Inkludera eller exkludera noder av valda typer."
+
+#: modules/views_node.inc:183
+msgid "Node: Author is Anonymous"
+msgstr "Nod: anonym författare"
+
+#: modules/views_node.inc:187
+msgid "This allows you to filter by whether or not the node author is anonymous."
+msgstr "Filtrerar om författaren är anonym."
+
+#: modules/views_node.inc:191
+msgid "Node: Author is Current User"
+msgstr "Nod: författare än aktuell användare"
+
+#: modules/views_node.inc:195
+msgid "This allows you to filter by whether or not the node was authored by the logged in user of the view."
+msgstr "Visar om noden författats av inloggade användaren av vyn."
+
+#: modules/views_node.inc:199
+msgid "Node: Current User Authored or Commented"
+msgstr "Nod: aktuell användare författare eller kommenterat"
+
+#: modules/views_node.inc:204
+msgid "This allows you to filter by whether or not the logged in user authored or commented on the node."
+msgstr "Visar om inloggad användare skrivit eller kommenterat noden."
+
+#: modules/views_node.inc:207
+msgid "Node: Distinct"
+msgstr "Nod: rensning"
+
+#: modules/views_node.inc:212
+msgid "This filter ensures that each node may only be listed once, even if it matches multiple criteria. Use this if multiple taxonomy matches return duplicated nodes."
+msgstr "Filtret garanterar att varje nod bara listas en gång även om det passar flera kriterier. Används till exempel om taxonomi returnerar noder flera gånger."
+
+#: modules/views_node.inc:218
+msgid "This filter allows nodes to be filtered by their title."
+msgstr "Filtrerar noder på titel."
+
+#: modules/views_node.inc:226 modules/views_profile.inc:180
+msgid "This filter allows nodes to be filtered by their creation date."
+msgstr "Filtrerar noder på datum."
+
+#: modules/views_node.inc:235
+msgid "This filter allows nodes to be filtered by the time they were updated."
+msgstr "Filtrerar noder på när de uppdaterades."
+
+#: modules/views_node.inc:242
+msgid "This filter allows nodes to be filtered by their body."
+msgstr "Filtrerar på brödtext."
+
+#: modules/views_node.inc:265
+msgid "Node: Has New Content"
+msgstr "Nod: har nytt innehåll"
+
+#: modules/views_node.inc:270
+msgid "Including this filter will reduce the node set to nodes that have been updated or have new content since the user last read the node, as well as unread nodes."
+msgstr "Filter som bara visar noder som uppdaterats eller är nya för användaren."
+
+#: modules/views_node.inc:283
+msgid "The node type argument allows users to filter a view by specifying the type of node."
+msgstr "Argumentet för nodtyp gör att man kan filtrera vyn genom att ange nodens typ."
+
+#: modules/views_node.inc:289
+msgid "The argument will filter by the node title. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
+msgstr "Argumentet filtrerar på nodtitel. Ange antal tecken, använd 0 för full term, använd 1 för A/B/C-stil"
+
+#: modules/views_node.inc:292
+msgid "Node: Posted Year"
+msgstr "Nod: skickad år"
+
+#: modules/views_node.inc:294
+msgid "This argument allows users to filter by what year the node was posted, in the form of CCYY."
+msgstr "Filtrerar på årtal."
+
+#: modules/views_node.inc:297
+msgid "Node: Posted Month"
+msgstr "Nod: skickad månad"
+
+#: modules/views_node.inc:299
+msgid "Months are specified by the numbers 1-12. Since this argument does not specify a year, it is recommended that it usually follow a 'Year' argument."
+msgstr "Filtrerar på månad 1-12, bör följas av ett år-argument."
+
+#: modules/views_node.inc:302
+msgid "Node: Posted Week"
+msgstr "Nod: skickad vecka"
+
+#: modules/views_node.inc:304
+msgid "This allows the user to filter a view by the week number from 1-52. It is recommended this argument follow a 'Year' argument."
+msgstr "Filtrerar på vecka 1-52, bör följas av ett år-argument."
+
+#: modules/views_node.inc:307
+msgid "Node: Posted Month + Year"
+msgstr "Nod: skickad månad + år"
+
+#: modules/views_node.inc:309
+msgid "This argument combines Month and Year into a single argument, specified in the form CCYYMM."
+msgstr "Kombinerar månad och år i ett argument i formen ÅÅÅÅMM"
+
+#: modules/views_node.inc:312
+msgid "Node: Posted Full Date"
+msgstr "Nod: skickad fullt datum"
+
+#: modules/views_node.inc:314
+msgid "This argument is a complete date in the form of CCYYMMDD."
+msgstr "Argumentet skickar komplett datum i formen ÅÅÅÅMMDD"
+
+#: modules/views_node.inc:323
+msgid "This argument is a single Node ID."
+msgstr "Argumentet är ett enstaka nodID."
+
+#: modules/views_node.inc:328
+msgid "Node: Feed Selector"
+msgstr "Nod: välja nyhetsflöde"
+
+#: modules/views_node.inc:331
+msgid "This argument allows pluggable \"feed\" selectors. If using views_rss module, \"feed\" will turn the view into an RSS feed. Other modules may provide their own feeds. You may enter the title the feed will advertise in the title field here. If the feed type offers a description, enter the description of the feed in the option field here."
+msgstr "Tillåter pluggbara \"feed\"/flödes val."
+
+#: modules/views_node.inc:342
+msgid "The basic front page view."
+msgstr "Standardframsida."
+
+#: modules/views_node.inc:669
+msgid "Untitled"
+msgstr "Titellös"
+
+#: modules/views_profile.inc:66;122;156
+msgid "Profile: @field-name"
+msgstr "Profil: @field-name"
+
+#: modules/views_profile.inc:70;77
+msgid "This will display all options of the profile field %field-name. "
+msgstr "Visar alla alternativ för profilfältet %field-name."
+
+#: modules/views_profile.inc:84
+msgid "Display the date of the %field-name field."
+msgstr "Visa datum för %field-name fältet"
+
+#: modules/views_profile.inc:91;192
+msgid "Checkbox based profile field help"
+msgstr "Hjälp att skapa profilfält baserat på klickrutor."
+
+#: modules/views_profile.inc:98;105;201
+msgid "Other types based profile field help"
+msgstr "Hjälp att skapa profilfält baserat på andra typer."
+
+#: modules/views_profile.inc:128
+msgid "This allows you to sort by vocabulary terms"
+msgstr "Tillåter dig att sortera på vokabulärtermer."
+
+#: modules/views_profile.inc:131
+msgid "This allows you to sort by selection options"
+msgstr "Tillåter dig att sortera på valda alternativ"
+
+#: modules/views_profile.inc:137
+msgid "This allows you to sort by date"
+msgstr "Tillåter dig att sortera på datum"
+
+#: modules/views_profile.inc:140
+msgid "This allows you to sort yes/no"
+msgstr "Tillåter dig att sortera på ja/nej"
+
+#: modules/views_profile.inc:160
+msgid "Taxonomy based profile field help"
+msgstr "Hjälp för taxonomibaserat profilfält"
+
+#: modules/views_profile.inc:171
+msgid "Selection based profile field help"
+msgstr "Hjälp för alternativbaserat profilfält"
+
+#: modules/views_search.inc:18
+msgid "Search: Index"
+msgstr "Sök: index"
+
+#: modules/views_statistics.inc:23;42
+msgid "Node: Total Hits"
+msgstr "Nod: Totalt antal visningar"
+
+#: modules/views_statistics.inc:25
+msgid "This will display the number of times a node has been read."
+msgstr "Visar hur många gånger noden visats."
+
+#: modules/views_statistics.inc:28;46
+msgid "Node: Recent Hits"
+msgstr "Nod: senaste visningar"
+
+#: modules/views_statistics.inc:30
+msgid "This will display the number of times a node has been read recently."
+msgstr "Visar hur många gånger noden nyligen visats."
+
+#: modules/views_statistics.inc:33;50
+msgid "Node: Last Hit Time"
+msgstr "Nod: tid för senaste visning"
+
+#: modules/views_statistics.inc:37
+msgid "Display the time the node was last read."
+msgstr "Visar när noden senast visats."
+
+#: modules/views_statistics.inc:43
+msgid "This allows you to sort by the number of times a node has been read."
+msgstr "Sortera på antal gånger noden lästs."
+
+#: modules/views_statistics.inc:47
+msgid "This allows you to sort by the number of times a node has been read recently."
+msgstr "Sortera på antal gånger noden nyligen lästs."
+
+#: modules/views_statistics.inc:53
+msgid "This allows you to sort by the time a node was last read."
+msgstr "Sortera på när noden lästs."
+
+#: modules/views_statistics.inc:68
+msgid "Nodes sorted by recent page-views"
+msgstr "Noder sorterade på senaste sid-vyerna"
+
+#: modules/views_statistics.inc:73;90
+msgid "Recent popular content"
+msgstr "Populärt innehåll just nu"
+
+#: modules/views_statistics.inc:111;200 modules/views_user.inc:152
+msgid "Type"
+msgstr "Typ"
+
+#: modules/views_statistics.inc:124;213 modules/views_user.inc:163
+msgid "Author"
+msgstr "Författare"
+
+#: modules/views_statistics.inc:130;219
+msgid "Created"
+msgstr "Skapad"
+
+#: modules/views_statistics.inc:137
+msgid "Recent hits"
+msgstr "Senaste träffarna"
+
+#: modules/views_statistics.inc:157
+msgid "Nodes sorted by total page-views"
+msgstr "Noder sorterade på totalt antal sidvisningar"
+
+#: modules/views_statistics.inc:162;179
+msgid "All-time popular content"
+msgstr "Populärast genom tiderna"
+
+#: modules/views_statistics.inc:226
+msgid "Reads"
+msgstr "Visningar"
+
+#: modules/views_taxonomy.inc:50;67
+msgid "Taxonomy: Terms for @voc-name"
+msgstr "Taxonomi: Termer för @voc-name"
+
+#: modules/views_taxonomy.inc:52
+msgid "This will display all taxonomy terms associated with the node that are members of %voc-name. Note that this causes one extra query per row displayed, and might have a minor performance impact."
+msgstr "Visar alla taxonomitermer associerade med nod som är medlem av @voc-name. OBS: detta gör att en extra fråga per rad visas vilket kan påverka sitens prestanda."
+
+#: modules/views_taxonomy.inc:76
+msgid "Only terms associated with %voc-name will appear in the select box for this filter. When filtering by taxonomy term you may specify the 'depth' as an option. Please see the taxonomy help for more information."
+msgstr "Bara termer associerade med @voc-name visas i alternativrutan för filtret. Du kan bara välja 'djup' när du filtrerar på taxonomiterm. Läs hjälpen för mer info."
+
+#: modules/views_taxonomy.inc:111
+msgid "Taxonomy: Term"
+msgstr "Taxonomi: term"
+
+#: modules/views_taxonomy.inc:115
+msgid "This will display one of the taxonomy terms associated with the node; if taxonomy terms were used to filter or sort, it will be the one that triggered the sort or filter."
+msgstr "Visar en taxonomiterm för noden, vid flera termer visas den som triggade igång sorteringen eller filtret."
+
+#: modules/views_taxonomy.inc:118
+msgid "Taxonomy: Term Description"
+msgstr "Taxonomi: termbeskrivning"
+
+#: modules/views_taxonomy.inc:120
+msgid "This will display the description associated with a taxonomy term."
+msgstr "Visar beskrivningen för taxonomitermen."
+
+#: modules/views_taxonomy.inc:125;157
+msgid "Taxonomy: Term Name"
+msgstr "Taxonomi: termnamn"
+
+#: modules/views_taxonomy.inc:127
+msgid "This will sort nodes by taxonomy weight and name, as defined in the category administration."
+msgstr "Sorterar på taxonomivikt och -namn utifrån definitionen på kategori-administrationssidan."
+
+#: modules/views_taxonomy.inc:132
+msgid "Taxonomy: Vocabulary Name"
+msgstr "Taxonomi: vokabulärnamn"
+
+#: modules/views_taxonomy.inc:137
+msgid "This will filter a view to only nodes that contain a term in the associated vocabulary."
+msgstr "Filterar vyn så att bara noder som innerhåller en term i vokabulären visas."
+
+#: modules/views_taxonomy.inc:151
+msgid "Taxonomy: Term ID"
+msgstr "Taxonomi: termID"
+
+#: modules/views_taxonomy.inc:154
+msgid "The argument will filter by a taxonomy term ID. For this argument, set the option to the depth to search. See taxonomy for more information."
+msgstr "Filtrerar på termID, sätt alternativ för vilket djup sökningen ska ske. Se taxonomi för mer info."
+
+#: modules/views_taxonomy.inc:160
+msgid "The argument will filter by a taxonomy term name. For this argument, set the option to the number of characters, using 0 for full term; use 1 for an A/B/C style glossary."
+msgstr "Filtrera på namn på taxonomiterm, ange antal tecken. Använd 0 för full term och 1 för A/B/C-stil."
+
+#: modules/views_taxonomy.inc:163
+msgid "Taxonomy: Vocabulary ID"
+msgstr "Taxonomi: vokabulärID"
+
+#: modules/views_taxonomy.inc:165
+msgid "The argument will filter to nodes with terms in a vocabulary."
+msgstr "Filtrera på noder med termer i en vokabulär."
+
+#: modules/views_taxonomy.inc:175
+msgid "The taxonomy view with a depth of 0."
+msgstr "Taxonomivyn med ett djup på 0."
+
+#: modules/views_taxonomy.inc:179
+msgid "Taxonomy"
+msgstr "Taxonomi"
+
+#: modules/views_taxonomy.inc:330;334;338
+msgid "Uncategorized"
+msgstr "Okategoriserad"
+
+#: modules/views_taxonomy.inc:372
+msgid "Uncatgorized"
+msgstr "Okategoriserad"
+
+#: modules/views_upload.inc:23
+msgid "File: Id"
+msgstr "Fil: id"
+
+#: modules/views_upload.inc:25
+msgid "File Id which represents the file."
+msgstr "FilID som representerar filen."
+
+#: modules/views_upload.inc:30
+msgid "Sort by File Id"
+msgstr "Sortera på fältid"
+
+#: modules/views_upload.inc:35
+msgid "File: Has file downloads"
+msgstr "Fil: har filnedladdningar"
+
+#: modules/views_upload.inc:36
+msgid "Exists"
+msgstr "Finns"
+
+#: modules/views_upload.inc:40
+msgid "Filter whether the node has files for download"
+msgstr "Filtrerar om noden har filer för nedladdning."
+
+#: modules/views_upload.inc:43
+msgid "File: Listed in file downloads"
+msgstr "Fil: listad i filnedladdningar"
+
+#: modules/views_upload.inc:47
+msgid "Filter whether the file is listed in downloads"
+msgstr "Filtrerar om filen är listad bland nedladdningar."
+
+#: modules/views_upload.inc:64
+msgid "File: All files"
+msgstr "Fil: alla filer"
+
+#: modules/views_upload.inc:68
+msgid "All files"
+msgstr "Alla filer"
+
+#: modules/views_upload.inc:69
+msgid "Listed files"
+msgstr "Listade filer"
+
+#: modules/views_upload.inc:74
+msgid "File names with links"
+msgstr "Filnamn med länkar"
+
+#: modules/views_upload.inc:75
+msgid "File names without links"
+msgstr "Filnamn utan länkar"
+
+#: modules/views_upload.inc:76
+msgid "File descriptions with links"
+msgstr "Filbeskrivningar med länkar"
+
+#: modules/views_upload.inc:77
+msgid "File descriptions without links"
+msgstr "Filbeskrivning utan länkar"
+
+#: modules/views_upload.inc:80
+msgid "Display all attached files in one field."
+msgstr "Visa alla bifogade filer i ett fält."
+
+#: modules/views_upload.inc:83
+msgid "File: Name"
+msgstr "Fil: namn"
+
+#: modules/views_upload.inc:85
+msgid "Plain"
+msgstr "Enkel"
+
+#: modules/views_upload.inc:86
+msgid "With download link"
+msgstr "Med nerladdningslänk"
+
+#: modules/views_upload.inc:91
+msgid "Display file name"
+msgstr "Visa filnamn"
+
+#: modules/views_upload.inc:94
+msgid "File: Path"
+msgstr "Fil: sökväg"
+
+#: modules/views_upload.inc:96
+msgid "Display Path to File."
+msgstr "Visa sökväg till fil"
+
+#: modules/views_upload.inc:99;118
+msgid "File: Size"
+msgstr "Fil: storlek"
+
+#: modules/views_upload.inc:102
+msgid "Display the size of the associated file."
+msgstr "Visa filens storlek."
+
+#: modules/views_upload.inc:105;123;139
+msgid "File: Mime type"
+msgstr "Fil: mime-typ"
+
+#: modules/views_upload.inc:107;126
+msgid "This filter allows nodes to be filtered by mime type."
+msgstr "Filtrerar noder på mime-typ."
+
+#: modules/views_upload.inc:112
+msgid "File: Filename"
+msgstr "Fil: filnamn"
+
+#: modules/views_upload.inc:115
+msgid "This filter allows nodes to be filtered by the name of attached files."
+msgstr "Filtrerar noder på namnet på bifogade filer."
+
+#: modules/views_upload.inc:120
+msgid "This filter allows nodes to be filtered by file size."
+msgstr "Filtrerar noder på filstorlek."
+
+#: modules/views_upload.inc:131
+msgid "File: Sort by Filename"
+msgstr "Fil: sortera på filnamn"
+
+#: modules/views_upload.inc:132
+msgid "Sort by file name"
+msgstr "Soretra på filnamn"
+
+#: modules/views_upload.inc:135
+msgid "File: File size"
+msgstr "Fil: filstorlek"
+
+#: modules/views_upload.inc:136
+msgid "Sort by file size."
+msgstr "Sortera på filstorlek"
+
+#: modules/views_upload.inc:140
+msgid "Sort by mime type."
+msgstr "Sortera på mimetyp"
+
+#: modules/views_user.inc:24;40;46
+msgid "Node: Author Name"
+msgstr "Nod: författarnamn"
+
+#: modules/views_user.inc:32
+msgid "User: Author Picture"
+msgstr "Användare: författarbild"
+
+#: modules/views_user.inc:35
+msgid "Display the user picture of the author."
+msgstr "Visa användarbilden för författaren."
+
+#: modules/views_user.inc:41
+msgid "This allows you to sort alphabetically by author."
+msgstr "Sortera författare alfabetiskt."
+
+#: modules/views_user.inc:50
+msgid "This allows you to filter by a particular user. You might not find this useful if you have a lot of users."
+msgstr "Filtrera på speciell användare. Inte särskilt användbart om du har många användare."
+
+#: modules/views_user.inc:74
+msgid "Node: Authors in role %role-name"
+msgstr "Nod: författare med rollen %role-name"
+
+#: modules/views_user.inc:79
+msgid "Only users in role %role-name will appear in the select box for this filter."
+msgstr "Bara användare med rollen %role-name visas i alternativrutan för detta filter."
+
+#: modules/views_user.inc:99
+msgid "Role: Author Role"
+msgstr "Roll: författarroll"
+
+#: modules/views_user.inc:104
+msgid "Include the node only if the author is a member of the selected role."
+msgstr "Lägger bara till noden om författaren har vald roll."
+
+#: modules/views_user.inc:114
+msgid "User: UID is Author"
+msgstr "Användare: UID är författare"
+
+#: modules/views_user.inc:116
+msgid "The User ID argument allows users to filter to nodes authored by the specified user ID."
+msgstr "Sortera på speciella användar ID."
+
+#: modules/views_user.inc:119
+msgid "User: UID Authored or Commented"
+msgstr "Användare: UID skrivit eller kommenterat"
+
+#: modules/views_user.inc:121
+msgid "The User ID argument allows users to filter a to nodes authored or commented on the specified user ID."
+msgstr "UID-argumentet gör det möjligt att filtrera på noder författade eller kommenterade av speciella medlemmar."
+
+#: modules/views_user.inc:124
+msgid "User: Username is Author"
+msgstr "Användare: användarnamn är författare"
+
+#: modules/views_user.inc:125
+msgid "views_handler_arg_username"
+msgstr "vyer_handler_arg_användarnamn"
+
+#: modules/views_user.inc:126
+msgid "The Username argument allows users to file to a nodes authored by the specified username."
+msgstr ""
+
+#: modules/views_user.inc:137
+msgid "Shows all new activity on system."
+msgstr "Visa all ny aktivitet i systemet."
+
+#: modules/views_user.inc:140;146
+msgid "Recent posts"
+msgstr "Nya inlägg"
+
+#: modules/views_user.inc:168
+msgid "Replies"
+msgstr "Svar"
+
+#: modules/views_user.inc:174
+msgid "Last Post"
+msgstr "Nyaste inlägg"
+
+#: modules/views_user.inc:189
+msgid "recent posts for %1"
+msgstr "nya inlägg från %1"
+
+#: modules/views_user.inc:367
+msgid "Currently Logged In User"
+msgstr "Inloggad för tillfället"
+
