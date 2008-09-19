@@ -103,8 +103,8 @@
 .views-tabset .views-display {
   border: #D6DBDE 1px solid;
   margin-left: 118px; /* 118 -1 causes borders to overlap */
-//  min-height: 302px;
-//  _height: 300px;  /*stupid IE hack */
+  min-height: 302px;
+  _height: 300px; /*stupid IE hack */
 }
 
 * html .views-tabset .views-display {
