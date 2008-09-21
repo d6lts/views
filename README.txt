@@ -13,24 +13,13 @@ functionality from these modes.
 
 INSTALLING VIEWS
 
-In 4.7, Views can be installed simply by activating the module, thanks to the
-new module installation features.
+Enable Views and Views UI modules.  You can disable Views UI module after you
+have finished your site's setup.
 
-Please note that this is now TWO modules -- views.module and views_ui.module
 DOCUMENTATION
 
 Documentation is now available at http://drupal.org/handbook/modules/views.
-The documentation files in the views package have been removed since they
-are even more out of date.
 
-As of 3/16/2006, the user documentation is UP TO DATE. The API documentation
-is somewhat out of date, and the theming documentation is very out of date.
-I hope to correct this in the very near future.
-
-DOCUMENTATION
-
-The best documentation will be here:
-http://drupal.org/handbook/modules/views
 
 -------------- IMPORTANT --------------------------------------------------
 -------------- IMPORTANT --------------------------------------------------
