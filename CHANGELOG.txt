@@ -2,6 +2,9 @@ CHANGELOG for Views for Drupal 5
 
 Views 5.x-1.x
 
+  Bugs fixed:
+    o #191420 by sun: Fixed missing t() for view import page title.
+
   Changes:
     o #153714 by majsan: Added Swedish translation.
     o #286767 by FrederikVO: Updated Dutch translation.
