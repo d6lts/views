@@ -1,13 +1,25 @@
 CHANGELOG for Views for Drupal 5
 
 Views 5.x-1.x
-
   Bugs fixed:
     o #191420 by sun: Fixed missing t() for view import page title.
+    o #166608: missing ->status setting caused access control on various node
+      links to fail.
+    o #257004: Ensure cache is loaded for exposed filters so that external stuff
+      can use cached forms for AJAX calls
+    o #211944: Wildcard substitution for arguments ignored in RSS feeds.
+    o #171505: Fixed missing closing apostrophe in date sorting.
+    o #167978: Fixed sort granularity.
+    o #165611: Cached queries could have their args replaced twice, causing
+      percent signs to get messed up.
+
+  New features:
+    o #201537 by mcvecka, darrenoh: add FALSE filter to search.
 
   Changes:
     o #153714 by majsan: Added Swedish translation.
     o #286767 by FrederikVO: Updated Dutch translation.
+    o by gaele, xeniox, ngommers, Lapino, Xano, sutharsan: Added Dutch translation.
 
 Views 5.x-1.6
   Bugs fixed:
