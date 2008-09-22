@@ -5,6 +5,8 @@
  * Filter handler for usernames
  */
 class views_handler_filter_user_name extends views_handler_filter_in_operator {
+  var $no_single = TRUE;
+
   function value_form(&$form, &$form_state) {
     $values = array();
     if ($this->value) {
@@ -20,13 +22,18 @@ class views_handler_filter_user_name extends views_handler_filter_in_operator {
     }
 
     sort($values);
+    $default_value = implode(', ', $values);
     $form['value'] = array(
       '#type' => 'textfield',
       '#title' => t('Usernames'),
       '#description' => t('Enter a comma separated list of user names.'),
-      '#default_value' => implode(', ', $values),
+      '#default_value' => $default_value,
       '#autocomplete_path' => 'admin/views/ajax/autocomplete/user',
     );
+
+    if (!empty($form_state['exposed']) && !isset($form_state['input'][$this->options['expose']['identifier']])) {
+      $form_state['input'][$this->options['expose']['identifier']] = $default_value;
+    }
   }
 
   function value_validate(&$form, &$form_state) {

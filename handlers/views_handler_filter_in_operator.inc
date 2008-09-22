@@ -62,19 +62,47 @@ class views_handler_filter_in_operator extends views_handler_filter {
   function value_form(&$form, &$form_state) {
     $this->get_value_options();
     $options = $this->value_options;
-    if (!empty($form_state['exposed']) && !empty($this->options['expose']['reduce'])) {
-      $options = $this->reduce_value_options();
+    $default_value = (array) $this->value;
+
+    if (!empty($form_state['exposed'])) {
+      $identifier = $this->options['expose']['identifier'];
+
+      if (!empty($this->options['expose']['reduce'])) {
+        $options = $this->reduce_value_options();
+
+        if (empty($this->options['expose']['single']) && !empty($this->options['expose']['optional'])) {
+          $default_value = array();
+        }
+      }
+
+      if (!empty($this->options['expose']['single'])) {
+        if (!empty($this->options['expose']['optional']) && (empty($default_value) || !empty($this->options['expose']['reduce']))) {
+          $default_value = 'All';
+        }
+        else if (empty($default_value)) {
+          $keys = array_keys($options);
+          $default_value = array_shift($keys);
+        }
+        else {
+          $copy = $default_value;
+          $default_value = array_shift($copy);
+        }
+      }
     }
 
     $form['value'] = array(
       '#type' => $this->value_form_type,
       '#title' => $this->value_title,
       '#options' => $options,
-      '#default_value' => (array) $this->value,
+      '#default_value' => $default_value,
       // These are only valid for 'select' type, but do no harm to checkboxes.
       '#multiple' => TRUE,
       '#size' => count($options) > 8 ? 8 : count($options),
     );
+
+    if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier])) {
+      $form_state['input'][$identifier] = $default_value;
+    }
 
   }
 
