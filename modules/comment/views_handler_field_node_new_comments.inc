@@ -79,7 +79,7 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
   }
 
   function render($values) {
-    if ($values->{$this->field_alias} || empty($this->options['no_empty'])) {
+    if (!empty($values->{$this->field_alias}) || empty($this->options['no_empty'])) {
       return $this->render_link(parent::render($values), $values);
     }
   }
