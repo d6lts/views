@@ -21,7 +21,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
   function extra_options_form(&$form, &$form_state) {
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {
-      $options[$voc->vid] = $voc->name;
+      $options[$voc->vid] = check_plain($voc->name);
     }
 
     // We only do this when the form is displayed so this query doesn't run

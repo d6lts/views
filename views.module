@@ -513,6 +513,7 @@ function views_add_js($file) {
   static $base = TRUE;
   if ($base) {
     drupal_add_js(drupal_get_path('module', 'views') . "/js/base.js");
+    $base = FALSE;
   }
   drupal_add_js(drupal_get_path('module', 'views') . "/js/$file.js");
 }

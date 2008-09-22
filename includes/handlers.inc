@@ -1170,7 +1170,7 @@ class views_join {
         $this->extra = $this->definition['extra'];
       }
       if (!empty($this->definition['extra type'])) {
-        $this->extra = strtoupper($this->definition['extra_type']);
+        $this->extra_type = strtoupper($this->definition['extra type']);
       }
 
       $this->type = !empty($this->definition['type']) ? strtoupper($this->definition['type']) : 'LEFT';

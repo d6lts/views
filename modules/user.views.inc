@@ -297,7 +297,7 @@ function user_views_plugins() {
       'user' => array(
         'title' => t('User ID from URL'),
         'handler' => 'views_plugin_argument_default_user',
-        'path' => drupal_get_path('module', 'views') . '/modules', // not necessary for most modules
+        'path' => drupal_get_path('module', 'views') . '/modules/user', // not necessary for most modules
         'parent' => 'fixed', // so that the parent class is included
       ),
     ),

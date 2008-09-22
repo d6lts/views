@@ -45,7 +45,7 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
     $options = array();
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {
-      $options[$voc->vid] = $voc->name;
+      $options[$voc->vid] = check_plain($voc->name);
     }
 
     $form['vids'] = array(

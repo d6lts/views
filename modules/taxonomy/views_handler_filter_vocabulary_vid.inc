@@ -13,7 +13,7 @@ class views_handler_filter_vocabulary_vid extends views_handler_filter_in_operat
     $this->value_options = array();
     $vocabularies = taxonomy_get_vocabularies();
     foreach ($vocabularies as $voc) {
-      $this->value_options[$voc->vid] = $voc->name;
+      $this->value_options[$voc->vid] = check_plain($voc->name);
     }
   }
 }
