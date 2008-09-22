@@ -47,12 +47,17 @@ Drupal.behaviors.ViewsAjaxView = function() {
   }
   if (Drupal.settings && Drupal.settings.views && Drupal.settings.views.ajaxViews) {
     $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
-      var target;
-      $('.view-id-'+ settings.view_name +'.view-display-id-'+ settings.view_display_id +':not(.views-processed)')
+      var $view = $('.view-dom-id-' + settings.view_dom_id);
+      if (!$view.size()) {
+        // Backward compatibility: if 'views-view.tpl.php' is old and doesn't
+        // contain the 'view-dom-id-#' class, we fall back to the old way of
+        // locating the view:
+        $view = $('.view-id-' + settings.view_name + '.view-display-id-' + settings.view_display_id);
+      }
+      $view.filter(':not(.views-processed)').each(function() {
+        var target = this;
+        $(this)
         .addClass('views-processed')
-        .each(function () {
-          target = $(this).get(0);
-        })
         // Process exposed filter forms.
         .find('form#views-exposed-form')
         .each(function () {

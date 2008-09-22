@@ -19,6 +19,8 @@ function views_ajax() {
     $display_id = $_REQUEST['view_display_id'];
     $args = isset($_REQUEST['view_args']) && $_REQUEST['view_args'] !== '' ? explode('/', $_REQUEST['view_args']) : array();
     $path = isset($_REQUEST['view_path']) ? $_REQUEST['view_path'] : NULL;
+    $dom_id = isset($_REQUEST['view_dom_id']) ? $_REQUEST['view_dom_id'] : NULL;
+    $pager_element = isset($_REQUEST['pager_element']) ? $_REQUEST['pager_element'] : NULL;
     views_include('ajax');
     $object = new stdClass();
 
@@ -33,6 +35,13 @@ function views_ajax() {
         if (!empty($path)) {
           $_GET['q'] = $path;
         }
+
+        // Override the display's pager_element with the one actually used.
+        if (isset($pager_element)) {
+          $view->display[$display_id]->handler->set_option('pager_element', $pager_element);
+        }
+        // Reuse the same DOM id so it matches that in Drupal.settings.
+        $view->dom_id = $dom_id;
 
         $errors = $view->validate();
         if ($errors === TRUE) {
