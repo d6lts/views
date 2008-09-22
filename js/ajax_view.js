@@ -20,10 +20,19 @@ Drupal.Views.Ajax.ajaxViewResponse = function(target, response) {
     alert(response.debug);
   }
 
+  var $view = $(target);
+
   // Check the 'display' for data.
   if (response.status && response.display) {
-    var view = $(target).replaceWith(response.display).get(0);
-    Drupal.attachBehaviors(view);
+    var $newView = $(response.display);
+    $view.replaceWith($newView);
+    $view = $newView;
+    Drupal.attachBehaviors($view.parent());
+  }
+ 
+  if (response.messages) {
+    // Show any messages (but first remove old ones, if there are any).
+    $view.find('.views-messages').remove().end().prepend(response.messages);
   }
 };
 
