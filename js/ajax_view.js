@@ -154,7 +154,8 @@ Drupal.behaviors.ViewsAjaxView = function() {
 
               return false;
             });
-        });
-    });
-  }
+        }); // .each 'th.views-field a'
+      }); // $view.filter().each
+    }); // .each Drupal.settings.views.ajaxViews
+  } // if
 };
