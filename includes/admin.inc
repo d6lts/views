@@ -2182,7 +2182,7 @@ function views_ui_add_item_form(&$form_state) {
     );
 
     foreach ($options as $key => $option) {
-      $group = strtr(strtolower($option['group']), '_ ', '--');
+      $group = preg_replace('/[^a-z0-9]/', '-', strtolower($option['group']));
       $groups[$group] = $option['group'];
       $form['name'][$key] = array(
         '#prefix' => '<div class="views-dependent-all views-dependent-' . $group . '">',
