@@ -179,7 +179,9 @@ function template_preprocess_views_view_fields(&$vars) {
 
       $inline = $object->inline;
 
-      $object->handler = $view->field[$id];
+      $object->handler = &$view->field[$id];
+      $object->element_type = $object->handler->element_type();
+
       $object->class = views_css_safe($id);
       $object->label = check_plain($view->field[$id]->label());
       $vars['fields'][$id] = $object;

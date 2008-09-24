@@ -31,4 +31,12 @@ class views_handler_field_markup extends views_handler_field {
     $format = is_numeric($this->format) ? $this->format : $values->{$this->aliases['format']};
     return check_markup($value, $format, FALSE);
   }
+
+  function element_type() {
+    if (isset($this->definition['element type'])) {
+      return $this->definition['element type'];
+    }
+
+    return 'div';
+  }
 }

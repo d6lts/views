@@ -117,6 +117,17 @@ class views_handler_field extends views_handler {
     return $this->options['label'];
   }
 
+  /**
+   * Return DIV or SPAN based upon the field's element type.
+   */
+  function element_type() {
+    if (isset($this->definition['element type'])) {
+      return $this->definition['element type'];
+    }
+
+    return 'span';
+  }
+
   function option_definition() {
     $options = parent::option_definition();
 
