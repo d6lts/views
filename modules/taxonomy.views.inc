@@ -230,7 +230,7 @@ function taxonomy_views_data() {
 
   $data['term_hierarchy']['parent'] = array(
     'title' => t('Parent term'),
-    'help' => t('The parent term of the term. This can produce records entries if you are using a vocabulary that allows multiple parents.'),
+    'help' => t('The parent term of the term. This can produce duplicate entries if you are using a vocabulary that allows multiple parents.'),
     'relationship' => array(
       'base' => 'term_data',
       'field' => 'parent',
