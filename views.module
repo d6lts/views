@@ -1082,3 +1082,10 @@ function views_views_exportables($op = 'list', $views = NULL, $name = 'foo') {
     return $code;
   }
 }
+
+/**
+ * For use in array_filter to only strip real FALSE values.
+ */
+function views_array_filter($var) {
+  return $var !== FALSE;
+}

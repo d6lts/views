@@ -157,7 +157,17 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   function value_submit($form, &$form_state) {
-    $form_state['values']['options']['value'] = array_filter($form_state['values']['options']['value']);
+    // Drupal's FAPI system automatically puts '0' in for any checkbox that
+    // was not set, and the key to the checkbox if it is set.
+    // Unfortunately, this means that if the key to that checkbox is 0,
+    // we are unable to tell if that checkbox was set or not.
+
+    // Luckily, the '#value' on the checkboxes form actually contains
+    // *only* a list of checkboxes that were set, and we can use that
+    // instead.
+
+    $form_state['values']['options']['value'] = $form['value']['#value'];
+//    $form_state['values']['options']['value'] = array_filter($form_state['values']['options']['value']);
   }
 
   function admin_summary() {
