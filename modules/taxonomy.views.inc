@@ -91,6 +91,26 @@ function taxonomy_views_data() {
     ),
   );
 
+  // tid field
+  $data['term_data']['tid'] = array(
+    'title' => t('Term ID'),
+    'help' => t('The taxonomy term ID'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'skip base' => array('node', 'node_revision'),
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
+      'skip base' => array('node', 'node_revision'),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_term_node_tid',
+      'hierarchy table' => 'term_hierarchy',
+      'numeric' => TRUE,
+      'skip base' => array('node', 'node_revision'),
+    ),
+  );
+
   // Term name field
   $data['term_data']['name'] = array(
     'title' => t('Term'),
@@ -104,7 +124,7 @@ function taxonomy_views_data() {
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_string',
-      'help' => t('Taxonomy term name'),
+      'help' => t('Taxonomy term name.'),
       'many to one' => TRUE,
       'empty name field' => t('Uncategorized'),
     ),
@@ -187,12 +207,14 @@ function taxonomy_views_data() {
       'name field' => 'name',
       'empty name field' => t('Uncategorized'),
       'numeric' => TRUE,
+      'skip base' => 'term_data',
     ),
     'filter' => array(
       'title' => t('Term'),
       'handler' => 'views_handler_filter_term_node_tid',
       'hierarchy table' => 'term_hierarchy',
       'numeric' => TRUE,
+      'skip base' => 'term_data',
     ),
   );
 
