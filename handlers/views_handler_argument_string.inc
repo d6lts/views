@@ -196,7 +196,12 @@ class views_handler_argument_string extends views_handler_argument {
   }
 
   function title() {
-    return check_plain($this->case_transform($this->argument, 'case'));
+    $title = $this->case_transform($this->argument, 'case');
+    if (!empty($this->options['transform_dash'])) {
+      $title = strtr($title, '-', ' ');
+    }
+
+    return check_plain($title);
   }
 
   function summary_name($data) {
