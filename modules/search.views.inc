@@ -154,6 +154,8 @@ function search_views_handlers() {
  * Implementation of hook_views_plugins
  */
 function search_views_plugins() {
+  return;
+  // DISABLED. This currently doesn't work.
   return array(
     'module' => 'views', // This just tells our themes are elsewhere.
     'row' => array(
