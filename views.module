@@ -280,12 +280,23 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
   switch ($op) {
     case 'list':
       $items = array();
-      $views = views_get_applicable_views('uses hook block');
-      foreach ($views as $data) {
-        list($view, $display_id) = $data;
-        $result = $view->execute_hook_block($display_id);
-        if (is_array($result)) {
-          $items = array_merge($items, $result);
+      $views = views_get_all_views();
+      foreach ($views as $view) {
+        $view->init_display();
+        foreach ($view->display as $display_id => $display) {
+          if (isset($display->handler) && !empty($display->handler->definition['uses hook block'])) {
+            $result = $display->handler->execute_hook_block();
+            if (is_array($result)) {
+              $items = array_merge($items, $result);
+            }
+          }
+
+          if (isset($display->handler) && $display->handler->get_option('exposed_block')) {
+            $result = $display->handler->get_special_blocks();
+            if (is_array($result)) {
+              $items = array_merge($items, $result);
+            }
+          }
         }
       }
 
@@ -308,8 +319,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
 
       variable_set('views_block_hashes', $hashes);
       // Save memory: Destroy those views.
-      foreach ($views as $data) {
-        list($view, $display_id) = $data;
+      foreach ($views as $view) {
         $view->destroy();
       }
 
@@ -321,6 +331,20 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
         $hashes = variable_get('views_block_hashes', array());
         if (!empty($hashes[$delta])) {
           $delta = $hashes[$delta];
+        }
+      }
+
+      // This indicates it's a special one.
+      if (substr($delta, 0, 1) == '$') {
+        list($type, $name, $display_id) = explode('-', $delta);
+        if ($view = views_get_view($name)) {
+          if ($view->access($display_id)) {
+            $view->set_display($display_id);
+            if (isset($view->display_handler)) {
+              $output = $view->display_handler->view_special_blocks($type);
+              return $output;
+            }
+          }
         }
       }
 
@@ -894,6 +918,8 @@ function views_exposed_form(&$form_state) {
 
   $form['#action'] = url($view->get_url());
   $form['#theme'] = views_theme_functions('views_exposed_form', $view, $display);
+  $form['#id'] = views_css_safe('views_exposed_form-' . check_plain($view->name) . '-' . check_plain($display->id));
+//  $form['#attributes']['class'] = array('views-exposed-form');
 
   // If using AJAX, we need the form plugin.
   if ($view->use_ajax) {

@@ -158,6 +158,7 @@ class views_plugin_display extends views_plugin {
       'use_more' => array('use_more'),
       'link_display' => array('link_display'),
       'distinct' => array('distinct'),
+      'exposed_block' => array('exposed_block'),
 
       // Force these to cascade properly.
       'style_plugin' => array('style_plugin', 'style_options', 'row_plugin', 'row_options'),
@@ -228,6 +229,7 @@ class views_plugin_display extends views_plugin {
           'pager_element'  => TRUE,
           'use_more' => TRUE,
           'distinct' => TRUE,
+          'exposed_block' => TRUE,
 
           'link_display' => TRUE,
 
@@ -335,6 +337,10 @@ class views_plugin_display extends views_plugin {
       ),
       'row_options' => array(
         'default' => array(),
+      ),
+
+      'exposed_block' => array(
+        'default' => FALSE,
       ),
     );
 
@@ -705,6 +711,13 @@ class views_plugin_display extends views_plugin {
       }
     }
 
+    $options['exposed_block'] = array(
+      'category' => 'basic',
+      'title' => t('Exposed form in block'),
+      'value' => $this->get_option('exposed_block') ? t('Yes') : t('No'),
+      'desc' => t('Allow the exposed form to appear in a block instead of the view.'),
+    );
+
     foreach (array('header' => t('Header'), 'footer' => t('Footer'), 'empty' => t('Empty text')) as $type => $name) {
       if (!$this->get_option($type)) {
         $field = t('None');
@@ -788,7 +801,7 @@ class views_plugin_display extends views_plugin {
         $form['use_ajax'] = array(
           '#type' => 'radios',
           '#options' => array(1 => t('Yes'), 0 => t('No')),
-          '#default_value' => $this->get_option('use_ajax'),
+          '#default_value' => $this->get_option('use_ajax') ? 1 : 0,
         );
         break;
       case 'use_pager':
@@ -1181,6 +1194,20 @@ class views_plugin_display extends views_plugin {
         );
         $form_state['ok_button'] = TRUE;
         break;
+
+      case 'exposed_block':
+        $form['#title'] .= t('Put the exposed form in a block');
+        $form['description'] = array(
+          '#prefix' => '<div class="description form-item">',
+          '#suffix' => '</div>',
+          '#value' => t('If set, any exposed widgets will not appear with this view. Instead, a block will be made available to the Drupal block administration system, and the exposed form will appear there. Note that this block must be enabled manually, Views will not enable it for you.'),
+        );
+        $form['exposed_block'] = array(
+          '#type' => 'radios',
+          '#options' => array(1 => t('Yes'), 0 => t('No')),
+          '#default_value' => $this->get_option('exposed_block') ? 1 : 0,
+        );
+        break;
     }
   }
 
@@ -1345,6 +1372,9 @@ class views_plugin_display extends views_plugin {
         if ($section != 'empty') {
           $this->set_option($section . '_empty', $form_state['values'][$section . '_empty']);
         }
+        break;
+      case 'exposed_block':
+        $this->set_option($section, (bool) $form_state['values'][$section]);
         break;
     }
   }
@@ -1614,6 +1644,37 @@ class views_plugin_display extends views_plugin {
     }
     return $errors;
   }
+
+  /**
+   * Provide the block system with any exposed widget blocks for this display.
+   */
+  function get_special_blocks() {
+    $delta = '$exp-' . $this->view->name . '-' . $this->display->id;
+    $desc = t('Exposed form: @view-@display_id', array('@view' => $this->view->name, '@display_id' => $this->display->id));
+
+    return array(
+      $delta => array(
+        'info' => $desc,
+      )
+    );
+  }
+
+  /**
+   * Render any special blocks provided for this display.
+   */
+  function view_special_blocks($type) {
+    if ($type == '$exp') {
+      // avoid interfering with the admin forms.
+      if (arg(0) == 'admin' && arg(1) == 'build' && arg(2) == 'views') {
+        return;
+      }
+      $this->view->init_handlers();
+      return array(
+        'content' => $this->view->render_exposed_form(TRUE),
+      );
+    }
+  }
+
 }
 
 
