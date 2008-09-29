@@ -2444,7 +2444,7 @@ function views_ui_config_item_extra_form(&$form_state) {
 
     }
 
-    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_extra_form', NULL, t('Remove'), 'remove');
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_extra_form');
   }
   return $form;
 }
