@@ -410,6 +410,7 @@ class views_handler extends views_object {
    */
   function ensure_my_table() {
     if (!isset($this->table_alias)) {
+      if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
       $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
     }
     return $this->table_alias;

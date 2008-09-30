@@ -198,8 +198,6 @@ function views_menu_alter(&$callbacks) {
           // of possible display IDs instead of a single ID.
           $callbacks[$path]['page arguments'][1] = (array)$callbacks[$path]['page arguments'][1];
           $callbacks[$path]['page arguments'][1][] = $display_id;
-//          $callbacks[$path]['access arguments'][0][1] = (array)$callbacks[$path]['access arguments'][0][1];
-//          $callbacks[$path]['access arguments'][0][1][] = $display_id;
           $callbacks[$path]['access arguments'][] = $item['access arguments'][0];
           $callbacks[$path]['load arguments'][1] = (array)$callbacks[$path]['load arguments'][1];
           $callbacks[$path]['load arguments'][1][] = $display_id;
@@ -237,7 +235,8 @@ function views_arg_load($value, $name, $display_id, $index) {
     $ids = array_keys($view->argument);
 
     $indexes = array();
-    $path = explode('/', $view->get_url());
+    $path = explode('/', $view->get_path());
+
     foreach ($path as $id => $piece) {
       if ($piece == '%' && !empty($ids)) {
         $indexes[$id] = array_shift($ids);

@@ -506,6 +506,20 @@ class view extends views_db_object {
   }
 
   /**
+   * Do some common building initialization.
+   */
+  function init_query() {
+    // Create and initialize the query object.
+    $views_data = views_fetch_data($this->base_table);
+    $this->base_field = $views_data['table']['base']['field'];
+    if (!empty($views_data['table']['base']['database'])) {
+      $this->base_database = $views_data['table']['base']['database'];
+    }
+    views_include('query');
+    $this->query = new views_query($this->base_table, $this->base_field);
+  }
+
+  /**
    * Build the query for the view.
    */
   function build($display_id = NULL) {
@@ -526,14 +540,7 @@ class view extends views_db_object {
     // If that fails, let's build!
     $this->build_info = array();
 
-    // Create and initialize the query object.
-    $views_data = views_fetch_data($this->base_table);
-    $this->base_field = $views_data['table']['base']['field'];
-    if (!empty($views_data['table']['base']['database'])) {
-      $this->base_database = $views_data['table']['base']['database'];
-    }
-    views_include('query');
-    $this->query = new views_query($this->base_table, $this->base_field);
+    $this->init_query();
 
     // Call a module hook and see if it wants to present us with a
     // pre-built query or instruct us not to build the query for
@@ -935,6 +942,19 @@ class view extends views_db_object {
   }
 
   /**
+   * Force the view to build a title.
+   */
+  function build_title() {
+    $this->init_display();
+    if (empty($this->built)) {
+      $this->init_query();
+    }
+    $this->init_handlers();
+
+    $this->_build_arguments();
+  }
+
+  /**
    * Get the URL for the current view.
    *
    * This URL will be adjusted for arguments.
@@ -947,7 +967,7 @@ class view extends views_db_object {
       $args = $this->args;
     }
     // Don't bother working if there's nothing to do:
-    if (empty($args) || empty($path)) {
+    if (empty($path) || (empty($args) && strpos($path, '%') === FALSE)) {
       return $path;
     }
 

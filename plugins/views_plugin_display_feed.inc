@@ -22,7 +22,11 @@ class views_plugin_display_feed extends views_plugin_display_page {
    * Drupal believes that the page has already rendered itself...which it has.
    */
   function execute() {
-    print $this->view->render();
+    $output = $this->view->render();
+    if (empty($output)) {
+      return drupal_not_found();
+    }
+    print $output;
   }
 
   function preview() {
@@ -182,7 +186,10 @@ class views_plugin_display_feed extends views_plugin_display_page {
     // attach a feed icon.
     $plugin = $this->get_plugin();
     if ($plugin) {
-      $plugin->attach_to($display_id, $this->get_path(), $this->get_option('title'));
+      $clone = $this->view->clone_view();
+      $clone->set_display($this->display->id);
+      $clone->build_title();
+      $plugin->attach_to($display_id, $this->get_path(), $clone->get_title());
     }
   }
 }

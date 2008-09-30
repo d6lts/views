@@ -5,6 +5,9 @@
  * Provide structure for the administrative interface to Views.
  */
 
+/*
+ * Implementation of hook_menu()
+ */
 function views_ui_menu() {
   $items = array();
 
@@ -147,6 +150,9 @@ function views_ui_menu() {
   return $items;
 }
 
+/*
+ * Implementation of hook_help()
+ */
 function views_ui_help($path, $arg) {
   switch ($path) {
     case 'admin/build/views/tools/convert':
@@ -161,6 +167,9 @@ function views_perm() {
   return array('administer views');
 }
 
+/*
+ * Implementation of hook_theme()
+ */
 function views_ui_theme() {
   $path = drupal_get_path('module', 'views');
   require_once "./$path/includes/admin.inc";
