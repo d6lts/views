@@ -425,6 +425,13 @@ function template_preprocess_views_view_unformatted(&$vars) {
 }
 
 /**
+ * Display the view as an HTML list element
+ */
+function template_preprocess_views_view_list(&$vars) {
+  template_preprocess_views_view_unformatted($vars);
+}
+
+/**
  * Preprocess an RSS feed
  */
 function template_preprocess_views_view_rss(&$vars) {
