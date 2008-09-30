@@ -21,6 +21,5 @@ class views_plugin_style_default extends views_plugin_style {
 
   function options_form(&$form, &$form_state) {
     parent::options_form($form, $form_state);
-    // @todo -- separator option
   }
 }
