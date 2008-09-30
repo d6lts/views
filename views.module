@@ -996,6 +996,7 @@ function views_views_query_substitutions($view) {
   return array(
     '***CURRENT_TIME***' => time(),
     '***CURRENT_LANGUAGE***' => $language->language,
+    '***DEFAULT_LANGUAGE***' => language_default('language'),
     '***NO_LANGUAGE***' => '',
   );
 }
