@@ -36,7 +36,7 @@ function translation_views_data_alter(&$data) {
       'click sortable' => TRUE,
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_node_language_current',
+      'handler' => 'views_handler_filter_node_language',
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_node_language',
