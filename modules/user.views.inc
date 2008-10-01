@@ -300,6 +300,12 @@ function user_views_plugins() {
         'path' => drupal_get_path('module', 'views') . '/modules/user', // not necessary for most modules
         'parent' => 'fixed', // so that the parent class is included
       ),
+      'current_user' => array(
+        'title' => t('User ID from logged in user'),
+        'handler' => 'views_plugin_argument_default_current_user',
+        'path' => drupal_get_path('module', 'views') . '/modules/user', // not necessary for most modules
+        'parent' => 'fixed', // so that the parent class is included
+      ),
     ),
   );
 }
