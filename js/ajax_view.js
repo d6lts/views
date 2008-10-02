@@ -55,8 +55,9 @@ Drupal.behaviors.ViewsAjaxView = function() {
         view = '.view-id-' + settings.view_name + '.view-display-id-' + settings.view_display_id;
       }
 
+
       // Process exposed filter forms.
-      $('form#views-exposed-form-' + settings.view_name + '-' + settings.view_display_id)
+      $('form#views-exposed-form-' + settings.view_name.replace('_', '-') + '-' + settings.view_display_id.replace('_', '-'))
       .filter(':not(.views-processed)')
       .each(function () {
         // remove 'q' from the form; it's there for clean URLs
