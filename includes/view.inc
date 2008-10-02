@@ -533,6 +533,12 @@ class view extends views_db_object {
       }
     }
 
+    // Let modules modify the view just prior to executing it.
+    foreach (module_implements('views_pre_build') as $module) {
+      $function = $module . '_views_pre_build';
+      $function($this);
+    }
+
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
 
@@ -650,6 +656,12 @@ class view extends views_db_object {
       return TRUE;
     }
 
+    // Let modules modify the view just prior to executing it.
+    foreach (module_implements('views_pre_execute') as $module) {
+      $function = $module . '_views_pre_execute';
+      $function($this);
+    }
+
     $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field, array('view' => &$this));
     $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field, array('view' => &$this));
 
@@ -750,6 +762,12 @@ class view extends views_db_object {
     $this->init_style();
 
     $this->style_plugin->pre_render($this->result);
+
+    // Let modules modify the view just prior to executing it.
+    foreach (module_implements('views_pre_render') as $module) {
+      $function = $module . '_views_pre_view';
+      $function($this);
+    }
 
     // Give field handlers the opportunity to perform additional queries
     // using the entire resultset prior to rendering.

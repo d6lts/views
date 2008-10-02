@@ -379,16 +379,47 @@ function hook_views_query_substitutions() {
 }
 
 /**
- * Stub hook documentation
- *
- * This hook should be placed in MODULENAME.views.inc and it will be auto-loaded.
- * This must either be in the same directory as the .module file or in a subdirectory
- * named 'includes'.
+ * This hook is called at the very beginning of views processing,
+ * before anything is done.
  *
  * Adding output to the view cam be accomplished by placing text on
  * $view->attachment_before and $view->attachment_after
  */
 function hook_views_pre_view(&$view, &$display_id, &$args) {
+  // example code here
+}
+
+/**
+ * This hook is called right before the build process, but after displays
+ * are attached and the display performs its pre_execute phase.
+ *
+ * Adding output to the view cam be accomplished by placing text on
+ * $view->attachment_before and $view->attachment_after
+ */
+function hook_views_pre_build(&$view) {
+  // example code here
+}
+
+/**
+ * This hook is called right before the execute process. The query is
+ * now fully built, but it has not yet been run through db_rewrite_sql.
+ *
+ * Adding output to the view cam be accomplished by placing text on
+ * $view->attachment_before and $view->attachment_after
+ */
+function hook_views_pre_execute(&$view) {
+  // example code here
+}
+
+/**
+ * This hook is called right before the render process. The query has
+ * been executed, and the pre_render() phase has already happened for
+ * handlers, so all data should be available.
+ *
+ * Adding output to the view cam be accomplished by placing text on
+ * $view->attachment_before and $view->attachment_after
+ */
+function hook_views_pre_render(&$view) {
   // example code here
 }
 
