@@ -847,7 +847,7 @@ function views_ui_edit_view_form(&$form_state, $view) {
 /**
  * Validate that a view is complete and whole.
  */
-function views_ui_edit_view_form_validate($form, $form_state) {
+function views_ui_edit_view_form_validate($form, &$form_state) {
   // Do not validate cancel or delete.
   if (empty($form_state['clicked_button']['#value']) || $form_state['clicked_button']['#value'] != t('Save')) {
     return;
