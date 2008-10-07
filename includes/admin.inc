@@ -31,7 +31,13 @@ function views_ui_check_advanced_help() {
   }
 
   if (!module_exists('advanced_help')) {
-    drupal_set_message(t('If you install the advanced help module from !href, Views will provide more and better help. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/advanced_help', 'http://drupal.org/project/advanced_help'), '@hide' => url('admin/build/views/tools'))));
+    $filename = db_result(db_query("SELECT filename FROM {system} WHERE type = 'module' AND name = 'advanced_help'"));
+    if ($filename && file_exists($filename)) {
+      drupal_set_message(t('If you <a href="@modules">enable the advanced help module</a>, Views will provide more and better help. <a href="@hide">Hide this message.</a>', array('@modules' => url('admin/build/modules'),'@hide' => url('admin/build/views/tools'))));
+    }
+    else {
+      drupal_set_message(t('If you install the advanced help module from !href, Views will provide more and better help. <a href="@hide">Hide this message.</a>', array('!href' => l('http://drupal.org/project/advanced_help', 'http://drupal.org/project/advanced_help'), '@hide' => url('admin/build/views/tools'))));
+    }
   }
 }
 
