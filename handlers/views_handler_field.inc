@@ -211,6 +211,7 @@ class views_handler_field extends views_handler {
       }
     }
     $themes[] = $hook . '__' . $this->view->name . '__' . $this->options['id'];
+    $themes[] = $hook . '__' . $this->view->name;
     $themes[] = $hook;
 
     return $themes;

@@ -300,7 +300,7 @@ function node_views_default_views() {
       'id' => 'created_year_month',
       'table' => 'node',
       'field' => 'created_year_month',
-      'default_action' => 'summary asc',
+      'default_action' => 'summary desc',
       'style_plugin' => 'default_summary',
       'style_options' => array(
         'count' => 1,
