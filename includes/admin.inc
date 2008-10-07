@@ -365,7 +365,7 @@ function views_ui_preview($js, $view) {
           if ($queries) {
             $queries .= "\n";
           }
-          $queries .= t('[@time ms] ', array('@time' => intval($query[1] * 100000) / 100)) . $query[0];
+          $queries .= t('[@time ms]', array('@time' => intval($query[1] * 100000) / 100)) . ' ' . $query[0];
         }
 
         $rows[] = array('<strong>' . t('Other queries') . '</strong>', '<pre>' . $queries . '</pre>');
@@ -668,7 +668,7 @@ function views_ui_break_lock_confirm(&$form_state, $view) {
 function views_ui_break_lock_confirm_submit(&$form, &$form_state) {
   db_query("DELETE FROM {views_object_cache} WHERE obj = 'view' AND name = '%s'", $form_state['view']->name);
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
-  drupal_set_message('The lock has been broken and you may now edit this view.');
+  drupal_set_message(t('The lock has been broken and you may now edit this view.'));
 }
 
 /**
@@ -1235,7 +1235,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
         $fields[$pid]['links'] = l('<span>' . t('Change settings for this style') . '</span>', "admin/build/views/nojs/config-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
       }
 
-      $fields[$pid]['title'] = t(' &nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));
+      $fields[$pid]['title'] = ' ' . t('&nbsp; Style: !style', array('!style' => l($style_title, "admin/build/views/nojs/change-style/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')))));
       $fields[$pid]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $pid);
       if (!empty($view->changed_sections[$display->id . '-' . $type . '-' . $pid])) {
         $fields[$pid]['changed'] = TRUE;

@@ -262,7 +262,7 @@ function views_ui_check_lock($view) {
  */
 function views_ui_cache_set(&$view) {
   if (!empty($view->locked)) {
-    drupal_set_message('Changes cannot be made to a locked view.', 'error');
+    drupal_set_message(t('Changes cannot be made to a locked view.'), 'error');
     return;
   }
   views_include('cache');
