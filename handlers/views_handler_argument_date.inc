@@ -27,7 +27,8 @@ class views_handler_argument_date extends views_handler_argument_formula {
   function default_argument_form(&$form, &$form_state) {
     parent::default_argument_form($form, $form_state);
     $form['default_argument_type']['#options'] += array('date' => t('Current date'));
-  }
+    $form['default_argument_type']['#options'] += array('node_created' => t("Current node's creation time"));
+    $form['default_argument_type']['#options'] += array('node_changed' => t("Current node's update time"));  }
 
   /**
    * Set the empty argument value to the current date,
@@ -36,6 +37,28 @@ class views_handler_argument_date extends views_handler_argument_formula {
   function get_default_argument($raw = FALSE) {
     if (!$raw && $this->options['default_argument_type'] == 'date') {
       return date($this->arg_format, time());
+    }
+    else if (!$raw) {
+      foreach (range(1, 3) as $i) {
+        $node = menu_get_object('node', $i);
+        if (!empty($node)) {
+          continue;
+        }
+      }
+  
+      if (arg(0) == 'node' && is_numeric(arg(1))) {
+        $node = node_load(arg(1));
+      }
+
+      if (empty($node)) {
+        parent::get_default_argument();
+      }
+      else if ($this->options['default_argument_type'] == 'node_created') {
+        return date($this->arg_format, $node->created);
+      }
+      else if ($this->options['default_argument_type'] == 'node_changed') {
+        return date($this->arg_format, $node->changed);
+      }
     }
     else {
       return parent::get_default_argument($raw);
