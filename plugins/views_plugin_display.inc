@@ -1499,12 +1499,18 @@ class views_plugin_display extends views_plugin {
    * Render a text area, using the proper format.
    */
   function render_textarea($area) {
+    static $formats = array();
+
     $value = $this->get_option($area);
     // Check to make sure the filter format exists; if not, we don't
     // display anything.
     $format = filter_resolve_format($this->get_option($area . '_format'));
 
-    if (!filter_list_format($format)) {
+    if (!array_key_exists($format, $formats)) {
+      $formats[$format] = db_result(db_query("SELECT name FROM {filter_formats} WHERE format = %d", $format));
+    }
+
+    if (!$formats[$format]) {
       return;
     }
 
