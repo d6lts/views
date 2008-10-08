@@ -70,7 +70,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
           data: '',
           type: 'POST',
           success: Drupal.Views.Ajax.ajaxResponse,
-          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at ") + data.url); },
+          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': data.url})); },
           dataType: 'json'
         });
         return false;
@@ -178,7 +178,7 @@ Drupal.Views.Ajax.previewResponse = function(data) {
           data: '',
           type: 'POST',
           success: Drupal.Views.Ajax.previewResponse,
-          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at ") + url); },
+          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
           dataType: 'json'
         });
         return false;
@@ -199,7 +199,7 @@ Drupal.Views.updatePreviewForm = function() {
     data: '',
     type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at ") + url); },
+    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
     dataType: 'json'
   });
 
@@ -217,7 +217,7 @@ Drupal.Views.updatePreviewFilterForm = function() {
     data: '',
     type: 'GET',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at ") + url); },
+    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
     dataType: 'json'
   });
 
@@ -237,7 +237,7 @@ Drupal.Views.updatePreviewLink = function() {
     data: '',
     type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at ") + url); },
+    error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
     dataType: 'json'
   });
 
@@ -264,7 +264,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
       url: url,
       data: '',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at ") + url); },
+      error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
       dataType: 'json'
     });
     
@@ -283,7 +283,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
       data: '',
       type: 'POST',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at ") + url); },
+      error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
       dataType: 'json'
     });
 

@@ -507,7 +507,7 @@ function views_ui_clone_page($view) {
     'view' => $view->copy(),
   );
 
-  drupal_set_title(t('Clone view @view', array('@view' => $view->name)));
+  drupal_set_title(t('Clone view %view', array('%view' => $view->name)));
   return drupal_build_form('views_ui_add_form', $form_state);
 }
 
@@ -681,7 +681,7 @@ function views_ui_break_lock_confirm_submit(&$form, &$form_state) {
  * The main view edit page
  */
 function views_ui_edit_page($view) {
-  drupal_set_title(t('Edit view "%view"', array('%view' => $view->name)));
+  drupal_set_title(t('Edit view %view', array('%view' => $view->name)));
   $output = theme('views_ui_edit_view', $view);
   views_ui_check_advanced_help();
   return $output;
@@ -967,7 +967,7 @@ function template_preprocess_views_ui_edit_view(&$vars) {
     $account = user_load($view->locked->uid);
     $vars['locked'] = theme('username', $account);
     $vars['lock_age'] = format_interval(time() - $view->locked->updated);
-    $vars['break'] = l(t('break this lock'), 'admin/build/views/break-lock/' . $view->name);
+    $vars['break'] = url('admin/build/views/break-lock/' . $view->name);
   }
 
   $vars['quick_links_raw'] = array(
@@ -1272,7 +1272,7 @@ function views_ui_regenerate_tabs(&$view, $display_id = NULL, $object = NULL) {
   }
 
   if (!$view->set_display('default')) {
-    views_ajax_render(t('Invalid display id while regenerating tabs'));
+    views_ajax_render(t('Invalid display id found while regenerating tabs'));
   }
 
   if (!is_object($object)) {
@@ -2327,7 +2327,7 @@ function views_ui_config_item_form(&$form_state) {
       }
 
       $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-      $form['#title'] .= t('Configure @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
+      $form['#title'] .= t('Configure @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
       $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
@@ -2440,7 +2440,7 @@ function views_ui_config_item_extra_form(&$form_state) {
       $types = views_object_types();
 
       $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-      $form['#title'] .= t('Configure extra settings for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
+      $form['#title'] .= t('Configure extra settings for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
       $form['#section'] = $display_id . '-' . $type . '-' . $id;
 
@@ -2505,7 +2505,7 @@ function views_ui_change_style_form(&$form_state) {
     }
     $handler->init($view, $item);
     $types = views_object_types();
-    $form['#title'] = t('Change summary style for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
+    $form['#title'] = t('Change summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-' . $id . '-style-plugin';
 
@@ -2592,7 +2592,7 @@ function views_ui_config_style_form(&$form_state) {
     $types = views_object_types();
 
     $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-    $form['#title'] .= t('Configure summary style for @type "@item"', array('@type' => $types[$type]['lstitle'], '@item' => $handler->ui_name()));
+    $form['#title'] .= t('Configure summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
     $form['#section'] = $display_id . '-' . $type . '-style-options';
 

@@ -118,7 +118,7 @@ class views_handler_argument extends views_handler {
       '#type' => 'textfield',
       '#title' => t('Title'),
       '#default_value' => $this->options['title'],
-      '#description' => t('The title to use when this argument is present; it will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use "%1" for the first argument, "%2" for the second, etc.'),
+      '#description' => t('The title to use when this argument is present. It will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use "%1" for the first argument, "%2" for the second, etc.'),
     );
 
     $form['clear_start'] = array(

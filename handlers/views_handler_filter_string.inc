@@ -117,7 +117,7 @@ class views_handler_filter_string extends views_handler_filter {
       '#type' => 'checkbox',
       '#title' => t('Case sensitive'),
       '#default_value' => $this->options['case'],
-      '#description' => t('Case sensitive filters may be faster; MySQL might ignore case sensitivity.'),
+      '#description' => t('Case sensitive filters may be faster. MySQL might ignore case sensitivity.'),
     );
   }
 

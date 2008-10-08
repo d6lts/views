@@ -133,7 +133,7 @@ function views_views_plugins() {
       ),
       'default_summary' => array(
         'title' => t('List'),
-        'help' => t('Displays the default summary summary as a list.'),
+        'help' => t('Displays the default summary as a list.'),
         'handler' => 'views_plugin_style_summary',
         'theme' => 'views_view_summary',
         'type' => 'summary', // only shows up as a summary style

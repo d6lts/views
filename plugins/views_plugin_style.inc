@@ -91,7 +91,7 @@ class views_plugin_style extends views_plugin {
           '#title' => t('Grouping field'),
           '#options' => $options,
           '#default_value' => $this->options['grouping'],
-          '#description' => t('You may optionally specify a field by which to group the records.  Leave blank to not group.'),
+          '#description' => t('You may optionally specify a field by which to group the records. Leave blank to not group.'),
         );
       }
     }

@@ -258,7 +258,7 @@ class view extends views_db_object {
     if (empty($this->display[$display_id])) {
       $display_id = 'default';
       if (empty($this->display[$display_id])) {
-        vpr(t('set_display called with invalid display id @display', array('@display' => $display_id)));
+        vpr(t('set_display() called with invalid display id @display.', array('@display' => $display_id)));
         return FALSE;
       }
     }

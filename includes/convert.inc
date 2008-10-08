@@ -102,8 +102,7 @@ function views_ui_delete1_confirm(&$form_state, $vid) {
     $cancel = $_REQUEST['cancel'];
   }
   return confirm_form($form,
-                  t('Are you sure you want to delete the view %name?',
-                  array('%name' => $view->name)),
+                  t('Are you sure you want to delete the view %name?', array('%name' => $view->name)),
                   $cancel,
                   t('This action cannot be undone.'),
                   t('Delete'),
