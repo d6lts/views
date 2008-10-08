@@ -26,6 +26,7 @@ class views_plugin_display_page extends views_plugin_display {
         'type' => array('default' => 'none'),
         'title' => array('default' => '', 'transleateable' => TRUE),
         'weight' => array('default' => 0),
+        'name' => array('default' => 'navigation'),
        ),
     );
     $options['tab_options'] = array(
@@ -94,6 +95,8 @@ class views_plugin_display_page extends views_plugin_display {
           break;
         case 'normal':
           $items[$path]['type'] = MENU_NORMAL_ITEM;
+          // Insert item into the proper menu
+          $items[$path]['menu_name'] = $menu['name'];
           break;
         case 'tab':
           $items[$path]['type'] = MENU_LOCAL_TASK;
@@ -286,14 +289,32 @@ class views_plugin_display_page extends views_plugin_display {
           '#process' => array('views_process_dependency'),
           '#dependency' => array('radio:menu[type]' => array('normal', 'tab', 'default tab')),
         );
+        $form['menu']['name-warning'] = array(
+          '#type' => 'markup',
+          '#prefix' => '<div class="warning">',
+          '#value' => t("Warning: Changing this item's menu will not work reliably in Drupal 6.4 or earlier. Please upgrade your copy of Drupal at !url.", array('!url' => l('drupal.org', 'http://drupal.org/project/Drupal+project'))),
+          '#suffix' => '</div>',
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:menu[type]' => array('normal')),
+          '#access' => (VERSION < 6.5),
+        );
+        $form['menu']['name'] = array(
+          '#title' => t('Menu'),
+          '#type' => 'select',
+          '#options' => menu_get_menus(),
+          '#default_value' => $menu['name'],
+          '#description' => t('Insert item into an available menu.'), //
+          '#process' => array('views_process_dependency'),
+          '#dependency' => array('radio:menu[type]' => array('normal')),
+        );
         $form['menu']['weight'] = array(
           '#suffix' => '</div>',
           '#title' => t('Weight'),
           '#type' => 'textfield',
           '#default_value' => isset($menu['weight']) ? $menu['weight'] : 0,
-          '#description' => t('If set to tab, enter the weight of the item. The lower the weight the higher/further left it will appear.'),
+          '#description' => t('The lower the weight the higher/further left it will appear.'),
           '#process' => array('views_process_dependency'),
-          '#dependency' => array('radio:menu[type]' => array('tab', 'default tab')),
+          '#dependency' => array('radio:menu[type]' => array('normal', 'tab', 'default tab')),
         );
         break;
       case 'tab_options':
