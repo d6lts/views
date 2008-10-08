@@ -1412,6 +1412,7 @@ class view extends views_db_object {
     foreach (array_keys($this->display) as $display_id) {
       if (isset($this->display[$display_id]->handler)) {
         $this->display[$display_id]->handler->destroy();
+        unset($this->display[$display_id]->handler);
       }
 
       foreach (views_object_types() as $type => $info) {

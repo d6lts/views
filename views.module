@@ -283,6 +283,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       foreach ($views as $view) {
         $view->init_display();
         foreach ($view->display as $display_id => $display) {
+
           if (isset($display->handler) && !empty($display->handler->definition['uses hook block'])) {
             $result = $display->handler->execute_hook_block();
             if (is_array($result)) {
@@ -341,9 +342,11 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
             $view->set_display($display_id);
             if (isset($view->display_handler)) {
               $output = $view->display_handler->view_special_blocks($type);
+              $view->destroy();
               return $output;
             }
           }
+          $view->destroy();
         }
       }
 
@@ -356,6 +359,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
           $view->destroy();
           return $output;
         }
+        $view->destroy();
       }
       break;
   }
