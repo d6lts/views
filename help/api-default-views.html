@@ -73,7 +73,7 @@ Be sure to use the right arguments line or the theme system will not properly tr
 </li>
 <li>The 'template' line should never include the extension, so drop the .tpl.php from it.</li>
 
-4) You need to make sure that the Views preprocess functions get registered. The 'original hook' line in the definition does that, but it can only do it if it comes after the Views registration, which actually happens very late in theme building. 99% of the time, your module will come before Views. You have two choices to deal with this:
+<li>You need to make sure that the Views preprocess functions get registered. The 'original hook' line in the definition does that, but it can only do it if it comes after the Views registration, which actually happens very late in theme building. 99% of the time, your module will come before Views. You have two choices to deal with this:
 <ol>
   <li>Set your module's weight to 11 or higher in the database. Views' weight is 10. You can make this happen automatically when the module is first installed by creating a mymodule.install file and using this code:
   <pre>function mymodule_install() {
