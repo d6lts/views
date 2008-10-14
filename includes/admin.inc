@@ -1371,7 +1371,9 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
   $form['#no_cache'] = TRUE;
 
   // If this isn't an ajaxy form, then we want to set the title.
-  drupal_set_title($form['#title']);
+  if (!empty($form['#title'])) {
+    drupal_set_title($form['#title']);
+  }
   views_add_css('views-admin');
 }
 

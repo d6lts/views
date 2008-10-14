@@ -167,7 +167,7 @@ class views_plugin_style_table extends views_plugin_style {
 
     if (isset($this->options['default'])) {
       $default = $this->options['default'];
-      if (!isset($fields[$default])) {
+      if (!isset($columns[$default])) {
         $default = -1;
       }
     }
