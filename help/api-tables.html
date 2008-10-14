@@ -73,7 +73,24 @@ The following tags are available in the
 <dt>help</dt>
 <dd>A short piece of text to describe what object this table contains.</dd>
 <dt>database</dt>
-<dd>If this table is held in a different database from your Drupal database, specify it as a string in the exact same format as the settings.php file. This is a special purpose variable that will probably be only used in site specific code, and <b>it must be the same database type as your Drupal database</b>. Also, don't try to join it to any table that isn't in the same database. That'll just create all kinds of silly errors.</dd>
+<dd>If this table is held in a different database from your Drupal database, specify it as a string in the exact same format as the settings.php file. This is a special purpose variable that will probably be only used in site specific code, and <b>it must be the same database type as your Drupal database</b>. Also, don't try to join it to any table that isn't in the same database. That'll just create all kinds of silly errors. For example:
+<pre>
+  // In settings.php for your site
+  // Your drupal (site) database needs to be called 'default'
+  $db_url['default'] = 'mysqli://user:pass@host/drupal_db';
+  $db_url['budget'] = 'mysqli://user:pass@host/other_db';
+</pre>
+Then when you are describing the external database in your base table you would write something like this:
+<pre>
+  $data[$table]['table']['base'] = array(
+    'field' => 'Primary key',
+    'title' => t('Field name'),
+    'help' => t('Field description'),
+    'database' => 'budget',
+    'weight' => -10,
+    );
+</pre>
+</dd>
 </dl>
 
 <h3>Linking your table to existing base tables</h3>
