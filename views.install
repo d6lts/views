@@ -193,3 +193,14 @@ function views_update_6000() {
   }
   return $ret;
 }
+
+function views_update_6001() {
+  $ret = array();
+  $result = db_query("SELECT * FROM {blocks} WHERE module = 'views' AND delta LIKE '\$exp%'");
+  while ($block = db_fetch_object($result)) {
+    $new = strtr($block->delta, '$', '-');
+    $ret[] = update_sql("UPDATE {blocks} SET delta = '" . db_escape_string($new) . "' WHERE module = 'views' AND delta = '" . db_escape_string($block->delta) . "'");
+  }
+
+  return $ret;
+}
