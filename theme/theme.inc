@@ -31,7 +31,6 @@ function _views_theme_functions($hook, $view, $display = NULL) {
   }
   $themes[] = $hook . '__' . $view->name;
   $themes[] = $hook;
-
   return $themes;
 }
 

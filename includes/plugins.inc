@@ -340,7 +340,7 @@ class views_plugin extends views_object {
   function additional_theme_functions() {
     $funcs = array();
     if (!empty($this->definition['additional themes'])) {
-      foreach ($this->definition['additional themes'] as $theme) {
+      foreach ($this->definition['additional themes'] as $theme => $type) {
         $funcs[] = views_theme_functions($theme, $this->view, $this->display);
       }
     }
