@@ -67,13 +67,13 @@ For example:
 The following tags are available in the 
 <dl>
 <dt>field</dt>
-<dd>The primary key field for this table. For Views to treat any table as a base table, it <b>must</b> have a primary field. For node this is the 'nid', for users this is the 'uid', etc. Without a primary key field, Views will not be able to utilize the table as a base table.</dd>
+<dd>The primary key field for this table. For Views to treat any table as a base table, it <b>must</b> have a primary field. For node this is the 'nid', for users this is the 'uid', etc. <strong>Without a single primary key field, Views will not be able to utilize the table as a base table.</strong> If your table does not have a primary key field, it is not too difficult to just add a serial field to it, usually.</dd>
 <dt>title</dt>
 <dd>The title of this table in the UI. It should be singular and describe the object that this table contains from the perspective of the user.</dd>
 <dt>help</dt>
 <dd>A short piece of text to describe what object this table contains.</dd>
 <dt>database</dt>
-<dd>If this table is held in a different database from your Drupal database, specify it as a string in the exact same format as the settings.php file. This is a special purpose variable that will probably be only used in site specific code, and <b>it must be teh same database type as your Drupal database</b>. Also, don't try to join it to any table that isn't in the same database. That'll just create all kinds of silly errors.</dd>
+<dd>If this table is held in a different database from your Drupal database, specify it as a string in the exact same format as the settings.php file. This is a special purpose variable that will probably be only used in site specific code, and <b>it must be the same database type as your Drupal database</b>. Also, don't try to join it to any table that isn't in the same database. That'll just create all kinds of silly errors.</dd>
 </dl>
 
 <h3>Linking your table to existing base tables</h3>
