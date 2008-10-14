@@ -267,7 +267,7 @@ class views_query {
   function queue_table($table, $relationship = NULL, $join = NULL, $alias = NULL) {
     // If the alias is set, make sure it doesn't already exist.
     if (isset($this->table_queue[$alias])) {
-      return TRUE;
+      return $alias;
     }
 
     if (empty($relationship)) {
