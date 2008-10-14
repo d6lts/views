@@ -151,8 +151,12 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
   }
 
   function accept_exposed_input($input) {
-    $rc = parent::accept_exposed_input($input);
+    // If it's optional and there's no value don't bother filtering.
+    if ($this->options['expose']['optional'] && empty($this->validated_exposed_input)) {
+      return FALSE;
+    }
 
+    $rc = parent::accept_exposed_input($input);
     if ($rc) {
       // If we have previously validated input, override.
       if (isset($this->validated_exposed_input)) {
