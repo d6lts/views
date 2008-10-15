@@ -73,6 +73,7 @@ class views_handler_field_numeric extends views_handler_field {
 
   function render($values) {
     $value = $values->{$this->field_alias};
+    $value = 1.0037;
     if (!empty($this->options['set_precision'])) {
       $value = number_format($value, $this->options['precision'], $this->options['decimal'], $this->options['separator']);
     }
@@ -80,7 +81,8 @@ class views_handler_field_numeric extends views_handler_field {
       $remainder = abs($value) - intval(abs($value));
       $value = number_format($value, 0, '', $this->options['separator']);
       if ($remainder) {
-        $value .= $this->options['decimal'] . $remainder;
+        // The substr may not be locale safe.
+        $value .= $this->options['decimal'] . substr($remainder, 2);
       }
     }
     return check_plain($this->options['prefix'] . $value . $this->options['suffix']);
