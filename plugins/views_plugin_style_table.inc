@@ -64,7 +64,9 @@ class views_plugin_style_table extends views_plugin_style {
 
   /**
    * Normalize a list of columns based upon the fields that are
-   * available.
+   * available. This compares the fields stored in the style handler
+   * to the list of fields actually in the view, removing fields that
+   * have been removed and adding new fields in their own column.
    *
    * - Each field must be in a column.
    * - Each column must be based upon a field, and that field
