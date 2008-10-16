@@ -304,14 +304,16 @@ function template_preprocess_views_view_table(&$vars) {
           $initial = 'desc';
         }
 
-        $image = theme('tablesort_indicator', $initial);
         $title = t('sort by @s', array('@s' => $label));
+        if ($active == $field) {
+          $label .= theme('tablesort_indicator', $initial);
+        }
         $link_options = array(
           'html' => true,
           'attributes' => array('title' => $title),
           'query' => 'order=' . urlencode($field) . '&sort=' . $initial . $query,
         );
-        $vars['header'][$field] = l($label . $image, $_GET['q'], $link_options);
+        $vars['header'][$field] = l($label, $_GET['q'], $link_options);
       }
     }
 
