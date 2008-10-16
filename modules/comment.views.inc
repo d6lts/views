@@ -487,6 +487,8 @@ function template_preprocess_views_view_row_comment(&$vars) {
   $plugin = &$view->style_plugin->row_plugin;
   $comment = $plugin->comments[$vars['row']->cid];
   $node = node_load($comment->nid);
+  // Put the view on the node so we can retrieve it in the preprocess.
+  $node->view = &$view;
 
   $links = '';
   if (!empty($options['links'])) {
