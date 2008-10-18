@@ -73,7 +73,6 @@ class views_handler_field_numeric extends views_handler_field {
 
   function render($values) {
     $value = $values->{$this->field_alias};
-    $value = 1.0037;
     if (!empty($this->options['set_precision'])) {
       $value = number_format($value, $this->options['precision'], $this->options['decimal'], $this->options['separator']);
     }
