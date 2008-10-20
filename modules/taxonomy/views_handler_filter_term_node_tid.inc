@@ -115,20 +115,47 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
         }
       }
 
-      // Since we're overriding, allow the list of options to be reduced.
-      if (!empty($form_state['exposed']) && !empty($this->options['expose']['reduce'])) {
-        $options = $this->reduce_value_options($options);
-      }
+      $default_value = (array) $this->value;
 
+      if (!empty($form_state['exposed'])) {
+        $identifier = $this->options['expose']['identifier'];
+
+        if (!empty($this->options['expose']['reduce'])) {
+          $options = $this->reduce_value_options($options);
+
+          if (empty($this->options['expose']['single']) && !empty($this->options['expose']['optional'])) {
+            $default_value = array();
+          }
+        }
+
+        if (!empty($this->options['expose']['single'])) {
+          if (!empty($this->options['expose']['optional']) && (empty($default_value) || !empty($this->options['expose']['reduce']))) {
+            $default_value = 'All';
+          }
+          else if (empty($default_value)) {
+            $keys = array_keys($options);
+            $default_value = array_shift($keys);
+          }
+          else {
+            $copy = $default_value;
+            $default_value = array_shift($copy);
+          }
+        }
+      }
       $form['value'] = array(
         '#type' => 'select',
         '#title' => t('Select terms from vocabulary @voc', array('@voc' => $vocabulary->name)),
         '#multiple' => TRUE,
         '#options' => $options,
         '#size' => min(9, count($options)),
-        '#default_value' => !empty($this->value) ? $this->value : array(),
+        '#default_value' => $default_value,
       );
+
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier])) {
+        $form_state['input'][$identifier] = $default_value;
+      }
     }
+
 
     if (empty($form_state['exposed'])) {
       // Retain the helper option
