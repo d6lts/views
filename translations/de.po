@@ -15,8 +15,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-07-06 13:10+0200\n"
-"PO-Revision-Date: 2008-07-09 00:29+0100\n"
-"Last-Translator: Alexander Hass\n"
+"PO-Revision-Date: 2008-10-21 00:06+0100\n"
+"Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -1194,7 +1194,7 @@ msgstr "Aus"
 #: includes/field.handlers.inc:404
 #: modules/statistics.views.inc:274
 msgid "Display as link"
-msgstr "Als Verweis anzeigen"
+msgstr "Als Link anzeigen"
 
 #: includes/field.handlers.inc:446
 #: modules/node.views.inc:1259
@@ -1757,11 +1757,11 @@ msgstr "Die Anzahl der anzuzeigenden Beiträge ändern."
 
 #: includes/plugins.inc:909
 msgid "More link"
-msgstr "‚Weiter‘-Verweis"
+msgstr "‚Weiter‘-Link"
 
 #: includes/plugins.inc:911
 msgid "Specify whether this display will provide a \"more\" link."
-msgstr "Festlegen, ob diese Anzeige einen „mehr“-Verweis bereitstellt."
+msgstr "Festlegen, ob diese Anzeige einen „Weiter“-Link bereitstellt."
 
 #: includes/plugins.inc:917;1107
 msgid "Distinct"
@@ -1787,11 +1787,9 @@ msgstr "Zugriff"
 msgid "Specify access control settings for this display."
 msgstr "Die Zugriffsberechtigungen für diese Anzeige festlegen."
 
-# not literally
 #: includes/plugins.inc:972
-#, fuzzy
 msgid "Link display"
-msgstr "Auf Anzeige verweisen"
+msgstr "Anzeige verlinken"
 
 #: includes/plugins.inc:974
 msgid "Specify which display this display will link to."
@@ -1893,7 +1891,7 @@ msgstr ""
 
 #: includes/plugins.inc:1098
 msgid "Create more link"
-msgstr "‚Weiter‘-Verweis erstellen"
+msgstr "‚Weiter‘-Link erstellen"
 
 #: includes/plugins.inc:1099
 msgid "This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."
@@ -1937,11 +1935,11 @@ msgstr "Auch anzeigen, wenn die Ansicht keine Ergebnisse zurückliefert"
 
 #: includes/plugins.inc:1179
 msgid "Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional."
-msgstr "Am Anfang der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Verweise oder beliebige andere Inhalte enthalten. (Optional)"
+msgstr "Am Anfang der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Links oder beliebige andere Inhalte enthalten. (Optional)"
 
 #: includes/plugins.inc:1195
 msgid "Text to display beneath the view. May contain an explanation or links or whatever you like. Optional."
-msgstr "Unterhalb der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Verweise oder beliebige andere Inhalte enthalten. (Optional)"
+msgstr "Unterhalb der Ansicht anzuzeigender Text. Dieser kann eine Erklärung, Links oder beliebige andere Inhalte enthalten. (Optional)"
 
 #: includes/plugins.inc:1206
 msgid "Text to display if the view has no results. Optional."
@@ -2791,35 +2789,35 @@ msgstr ""
 
 #: modules/comment.views.inc:168
 msgid "Provide a simple link to view the comment."
-msgstr "Stellt einen einfachen Verweis zur Ansicht des Kommentars bereit."
+msgstr "Stellt einen einfachen Link zur Ansicht des Kommentars bereit."
 
 #: modules/comment.views.inc:176
 #: modules/node.views.inc:249
 #: modules/user.views.inc:204
 msgid "Edit link"
-msgstr "‚Bearbeiten‘-Verweis"
+msgstr "‚Bearbeiten‘-Link"
 
 #: modules/comment.views.inc:177
 msgid "Provide a simple link to edit the comment."
-msgstr "Stellt einen einfachen Verweis zum Bearbeiten des Kommentars bereit."
+msgstr "Stellt einen einfachen Link zum Bearbeiten des Kommentars bereit."
 
 #: modules/comment.views.inc:185
 #: modules/node.views.inc:257;479
 #: modules/user.views.inc:212
 msgid "Delete link"
-msgstr "‚Löschen‘-Verweis"
+msgstr "‚Löschen‘-Link"
 
 #: modules/comment.views.inc:186
 msgid "Provide a simple link to delete the comment."
-msgstr "Stellt einen einfachen Verweis zum Löschen des Kommentars bereit."
+msgstr "Stellt einen einfachen Link zum Löschen des Kommentars bereit."
 
 #: modules/comment.views.inc:194
 msgid "Reply-to link"
-msgstr "Antworten-Verweis"
+msgstr "‚Antworten‘-Link"
 
 #: modules/comment.views.inc:195
 msgid "Provide a simple link to reply to the comment."
-msgstr "Stellt einen einfachen Verweis zum Antworten auf den Kommentars bereit."
+msgstr "Stellt einen einfachen Link zum Antworten auf den Kommentars bereit."
 
 #: modules/comment.views.inc:203
 msgid "Display the depth of the comment if it is threaded."
@@ -2939,11 +2937,11 @@ msgstr "Zeigt den Kommentar als RSS-Newsfeed an."
 
 #: modules/comment.views.inc:462
 msgid "Link this field to its comment"
-msgstr "Dieses Feld auf seinen Kommentar verweisen"
+msgstr "Dieses Feld auf seinen Kommentar verlinken"
 
 #: modules/comment.views.inc:504
 msgid "Link this field to its user or an author's homepage"
-msgstr "Mit diesem Feld auf den Benutzer oder die Startseite des Autors verweisen"
+msgstr "Mit diesem Feld auf den Benutzer oder die Startseite des Autors verlinken"
 
 #: modules/comment.views.inc:549
 #: modules/node.views.inc:611
@@ -3006,7 +3004,7 @@ msgstr "Kommentare lesen und schreiben"
 #: modules/comment.views.inc:887
 #: modules/node.views.inc:1207
 msgid "Display links"
-msgstr "Verweise anzeigen"
+msgstr "Links anzeigen"
 
 #: modules/node.views.inc:30
 msgid "Nodes are a Drupal site's primary content."
@@ -3082,19 +3080,19 @@ msgstr "Ob ein Beitrag am Anfang von Listen angezeigt wird oder nicht."
 
 #: modules/node.views.inc:241
 msgid "Link"
-msgstr "Verweis"
+msgstr "Link"
 
 #: modules/node.views.inc:242
 msgid "Provide a simple link to the node."
-msgstr "Stellt einen einfachen Verweis zu dem Beitrag bereit."
+msgstr "Stellt einen einfachen Link zu dem Beitrag bereit."
 
 #: modules/node.views.inc:250
 msgid "Provide a simple link to edit the node."
-msgstr "Stellt einen einfachen Verweis zum Bearbeiten des Beitrages bereit."
+msgstr "Stellt einen einfachen Link zum Bearbeiten des Beitrags bereit."
 
 #: modules/node.views.inc:258
 msgid "Provide a simple link to delete the node."
-msgstr "Stellt einen einfachen Verweis zum Löschen des Beitrages bereit."
+msgstr "Stellt einen einfachen Link zum Löschen des Beitrags bereit."
 
 #: modules/node.views.inc:266;1093
 msgid "Language"
@@ -3195,15 +3193,15 @@ msgstr "Der Zeitpunkt zu dem die Beitragsversion erstellt wurde."
 
 #: modules/node.views.inc:471
 msgid "Revert link"
-msgstr "Zurück-Verweis"
+msgstr "‚Zurück‘-Link"
 
 #: modules/node.views.inc:472
 msgid "Provide a simple link to revert to the revision."
-msgstr "Stellt einen einfachen Verweis bereit, um zu der Version zurückzukehren."
+msgstr "Stellt einen einfachen Link bereit, um zu der Version zurückzukehren."
 
 #: modules/node.views.inc:480
 msgid "Provide a simple link to delete the node revision."
-msgstr "Stellt einen einfachen Verweis zum Löschen der Beitragsversion bereit."
+msgstr "Stellt einen einfachen Link zum Löschen der Beitragsversion bereit."
 
 #: modules/node.views.inc:507
 msgid "Has new content"
@@ -3219,7 +3217,7 @@ msgstr "Nur Beiträge mit neuem Inhalt anzeigen."
 
 #: modules/node.views.inc:544
 msgid "Link this field to its node"
-msgstr "Dieses Feld auf seinen Beitrag verweisen"
+msgstr "Dieses Feld auf seinen Beitrag verlinken"
 
 #: modules/node.views.inc:717
 msgid "revert"
@@ -3379,19 +3377,19 @@ msgstr "Die Punktzahl der Sucheintrages."
 
 #: modules/search.views.inc:95
 msgid "Links from"
-msgstr "Verweise von"
+msgstr "Links von"
 
 #: modules/search.views.inc:96
 msgid "Nodes that link from the node."
-msgstr "Beiträge die von dem Beitrag verweisen."
+msgstr "Beiträge die von dem Beitrag verlinken."
 
 #: modules/search.views.inc:113
 msgid "Links to"
-msgstr "Verweis zu"
+msgstr "Links zu"
 
 #: modules/search.views.inc:114
 msgid "Nodes that link to the node."
-msgstr "Beiträge die auf den Beitrag verweisen."
+msgstr "Beiträge die auf den Beitrag verlinken."
 
 #: modules/search.views.inc:125
 msgid "Search Terms"
@@ -3495,7 +3493,7 @@ msgstr "Referrer"
 
 #: modules/statistics.views.inc:167
 msgid "Referrer URI."
-msgstr "Verweiser-URI."
+msgstr "Referrer-URI."
 
 #: modules/statistics.views.inc:182
 msgid "Hostname"
@@ -3927,11 +3925,11 @@ msgstr "Die Signatur des Benutzers."
 
 #: modules/user.views.inc:205
 msgid "Provide a simple link to edit the user."
-msgstr "Stellt einen einfachen Verweis zum Bearbeiten des Benutzers bereit."
+msgstr "Stellt einen einfachen Link zum Bearbeiten des Benutzers bereit."
 
 #: modules/user.views.inc:213
 msgid "Provide a simple link to delete the user."
-msgstr "Stellt einen einfachen Verweis zum Löschen des Benutzers bereit."
+msgstr "Stellt einen einfachen Link zum Löschen des Benutzers bereit."
 
 #: modules/user.views.inc:242
 msgid "Roles"
@@ -3955,19 +3953,19 @@ msgstr ""
 
 #: modules/user.views.inc:396
 msgid "Link this field to its user"
-msgstr "Dieses Feld zu dessen Benutzer verweisen"
+msgstr "Dieses Feld mit dessen Benutzer verlinken"
 
 #: modules/user.views.inc:519
 msgid "Link this field"
-msgstr "Dieses Feld verknüpfen"
+msgstr "Dieses Feld verlinken"
 
 #: modules/user.views.inc:522
 msgid "No link"
-msgstr "Keine Verknüpfung"
+msgstr "Keine Verlinkung"
 
 #: modules/user.views.inc:523
 msgid "To the user"
-msgstr "Mit dem Benutzer"
+msgstr "Zu dem Benutzer"
 
 #: modules/user.views.inc:524
 msgid "With a mailto:"
@@ -4041,7 +4039,7 @@ msgstr "Neue Ansicht"
 
 #: theme/views-ui-edit-view.tpl.php:18
 msgid "Changed view"
-msgstr "Ansicht geändert"
+msgstr "Ansicht wurde geändert"
 
 #: theme/views-ui-edit-view.tpl.php:23
 msgid "View %name, displaying items of type <strong>@base</strong>."
@@ -4087,6 +4085,7 @@ msgstr "@current von @max"
 msgid "There are no views to be exported at this time."
 msgstr "Derzeit gibt es keine zu exportierenden Ansichten."
 
+# "Tags" als "Tags" belassen?
 #: views_export/views_export.module:108
 msgid "Show only these tags"
 msgstr "Nur diese Kennzeichnungen anzeigen"
