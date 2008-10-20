@@ -3,3 +3,7 @@ CHANGELOG for Views 2 for Drupal 6
 Views 2.0
  o First 2.0 official release
 
+Views 2.1
+ Bugs fixed:
+   o #322862: 1.0037 debug code left in.
+   o #322908: README.txt update.
