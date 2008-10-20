@@ -174,6 +174,14 @@ class views_handler_filter_string extends views_handler_filter {
         );
       }
     }
+
+    if (!isset($form['value'])) {
+      // Ensure there is something in the 'value'.
+      $form['value'] = array(
+        '#type' => 'value',
+        '#value' => NULL
+      );
+    }
   }
 
   function case_transform() {

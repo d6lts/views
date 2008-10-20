@@ -196,6 +196,14 @@ class views_handler_filter_numeric extends views_handler_filter {
       if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['max'])) {
         $form_state['input'][$identifier]['max'] = $this->value['max'];
       }
+
+      if (!isset($form['value'])) {
+        // Ensure there is something in the 'value'.
+        $form['value'] = array(
+          '#type' => 'value',
+          '#value' => NULL
+        );
+      }
     }
   }
 
