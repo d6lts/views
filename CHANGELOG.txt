@@ -7,3 +7,4 @@ Views 2.1
  Bugs fixed:
    o #322862: 1.0037 debug code left in.
    o #322908: README.txt update.
+   o #323014 by yched: Typo in exposed filter text.

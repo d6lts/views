@@ -215,7 +215,7 @@ class views_handler_filter extends views_handler {
       );
       $form['expose_button']['markup'] = array(
         '#prefix' => '<div class="description">',
-        '#value' => t('This item is currently exposed. If you <strong>hide</strong> it, users will not able to change the filter as they view it.'),
+        '#value' => t('This item is currently exposed. If you <strong>hide</strong> it, users will not be able to change the filter as they view it.'),
         '#suffix' => '</div>',
       );
     }
