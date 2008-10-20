@@ -8,3 +8,4 @@ Views 2.1
    o #322862: 1.0037 debug code left in.
    o #322908: README.txt update.
    o #323014 by yched: Typo in exposed filter text.
+   o #323033: Using empty/is not empty in string/numeric filters caused notices.
