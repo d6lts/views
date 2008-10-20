@@ -9,3 +9,4 @@ Views 2.1
    o #322908: README.txt update.
    o #323014 by yched: Typo in exposed filter text.
    o #323033: Using empty/is not empty in string/numeric filters caused notices.
+   o #322874 by yched: Errors in summary for some filters.
