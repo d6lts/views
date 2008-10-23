@@ -1276,7 +1276,7 @@ class views_plugin_display extends views_plugin {
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
-  function options_submit($form, &$form_state) {
+  function options_submit(&$form, &$form_state) {
     $section = $form_state['section'];
     switch ($section) {
       case 'display_title':
