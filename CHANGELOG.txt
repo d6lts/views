@@ -17,3 +17,4 @@ Views 2.2
   Bugs fixed:
    o #305756: Number formatting caused illogical rounding.
    o #324272 by neochief: hook_pre_render never called.
+   o #324058: Broken queries created by string values in multiple fields.
