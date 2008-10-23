@@ -1879,7 +1879,7 @@ function views_ui_edit_details_form(&$form_state) {
     '#title' => t('View tag'),
     '#description' => t('Enter an optional tag for this view; it is used only to help sort views on the administrative page.'),
     '#default_value' => $view->tag,
-    // TODO: This should be an autocomplete field.
+    '#autocomplete_path' => 'admin/views/ajax/autocomplete/tag',
   );
 
   views_ui_standard_form_buttons($form, $form_state, 'views_ui_edit_details_form');
