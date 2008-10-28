@@ -74,6 +74,9 @@ function statistics_views_data() {
       'handler' => 'views_handler_field_date',
       'click sortable' => TRUE,
     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),

@@ -27,3 +27,4 @@ Views 2.2
    o #326129 by mindgame: Not between operator did not function.
    o #326198: != mistakenly typod as = (display only)
    o #326379: Provide a default title for the archive view.
+   o #327151: Add filter for node_counter.timestamp.
