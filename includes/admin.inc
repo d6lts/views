@@ -1759,26 +1759,6 @@ function views_ui_analyze_view_button(&$form_state, $view) {
 }
 
 /**
- * Format an analysis message.
- */
-function views_ui_analysis($message, $type = 'error') {
-  return array('message' => $message, 'type' => $type);
-}
-
-/**
- * Implementation of hook_views_analyze().
- */
-function views_ui_views_analyze($view) {
-  $ret = array();
-  // Check for something other than the default display:
-  if (count($view->display) < 2) {
-    $ret[] = views_ui_analysis(t('This view has only a default display and therefore will not be placed anywhere on your site; perhaps you want to add a page or a block display.'), 'warning');
-  }
-
-  return $ret;
-}
-
-/**
  * Form constructor callback to display analysis information on a view
  */
 function views_ui_analyze_view_form(&$form_state) {
@@ -1787,42 +1767,13 @@ function views_ui_analyze_view_form(&$form_state) {
   $form['#title'] = t('View analysis');
   $form['#section'] = 'analyze';
 
-  $messages = array();
-
-  $view->init_display();
-  $messages = module_invoke_all('views_analyze', $view);
-
-  if (empty($messages)) {
-    $messages = array(views_ui_analysis(t('View analysis can find nothing to report.'), 'ok'));
-  }
-
-  $types = array('ok' => array(), 'warning' => array(), 'error' => array());
-  foreach ($messages as $message) {
-    if (empty($types[$message['type']])) {
-      $types[$message['type']] = array();
-    }
-    $types[$message['type']][] = $message['message'];
-  }
-
-  $output = '';
-  foreach ($types as $type => $messages) {
-    $message = '';
-    if (count($messages) > 1) {
-      $message = theme('item_list', $messages);
-    }
-    else if ($messages) {
-      $message = array_shift($messages);
-    }
-
-    if ($message) {
-      $output .= "<div class=\"$type\">$message</div>";
-    }
-  }
+  views_include('analyze');
+  $messages = views_analyze_view($view);
 
   $form['analysis'] = array(
     '#prefix' => '<div class="form-item">',
     '#suffix' => '</div>',
-    '#value' => $output,
+    '#value' => views_analyze_format_result($view, $messages),
   );
 
   // Inform the standard button function that we want an OK button.
