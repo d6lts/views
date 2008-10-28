@@ -285,6 +285,7 @@ function node_views_default_views() {
   $view->api_version = 2;
   $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
+  $handler->override_option('title', 'Monthly archive');
   $handler->override_option('sorts', array(
     'created' => array(
       'id' => 'created',

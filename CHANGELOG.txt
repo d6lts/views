@@ -26,3 +26,4 @@ Views 2.2
    o #324513: If a relationship table was added more than 1 hop away from the base, SQL errors resulted.
    o #326129 by mindgame: Not between operator did not function.
    o #326198: != mistakenly typod as = (display only)
+   o #326379: Provide a default title for the archive view.
