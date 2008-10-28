@@ -32,7 +32,7 @@ class views_handler_filter_string extends views_handler_filter {
       ),
       '!=' => array(
         'title' => t('Is not equal to'),
-        'short' => t('='),
+        'short' => t('!='),
         'method' => 'op_equal',
         'values' => 1,
       ),

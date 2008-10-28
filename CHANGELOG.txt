@@ -24,4 +24,5 @@ Views 2.2
    o #324378: Minor usability improvements to the list page.
    o #326934: Need another check to make sure already added aliases do not get blown away.
    o #324513: If a relationship table was added more than 1 hop away from the base, SQL errors resulted.
-   o #326129: Not between operator did not function.
+   o #326129 by mindgame: Not between operator did not function.
+   o #326198: != mistakenly typod as = (display only)
