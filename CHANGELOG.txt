@@ -21,3 +21,4 @@ Views 2.2
    o #324726: "tag" fields should be autocomplete in View edit.
    o #324058 by yched: Make aliases safer for many to one tables.
    o #325765: Prevent key merge errors on query::add_where and query::add_having.
+   o #324378: Minor usability improvements to the list page.

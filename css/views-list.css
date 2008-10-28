@@ -52,3 +52,7 @@ body form#views-ui-list-views-form {
   top: 2px;
   padding-right: 3px;
 }
+
+table.view-disabled {
+  color: #aaa;
+}

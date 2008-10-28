@@ -138,32 +138,35 @@ function template_preprocess_views_ui_list_views(&$vars) {
       $item->displays = implode(', ', array_keys($item->displays));
     }
 
-
     $item->description = check_plain($view->description);
-
+    $item->classes = empty($view->disabled) ? 'view-enabled' : 'view-disabled';
     $items[] = $item;
+
+    $sort = intval(empty($view->disabled) xor $form_state['values']['sort'] == 'asc');
 
     switch ($form_state['values']['order']) {
       case 'name':
       default:
-        $sorts[] = strtolower($view->name);
+        $sort .= strtolower($view->name);
         break;
       case 'title':
-        $sorts[] = strtolower($title);
+        $sort .= strtolower($title);
         break;
       case 'path':
-        $sorts[] = strtolower($raw_path); // $path;
+        $sort .= strtolower($raw_path); // $path;
         break;
       case 'type':
-        $sorts[] = $view->type . $view->name;
+        $sort .= $view->type . $view->name;
         break;
       case 'tag':
-        $sorts[] = strtolower($view->tag);
+        $sort .= strtolower($view->tag);
         break;
       case 'desc':
-        $sorts[] = strtolower($view->description);
+        $sort .= strtolower($view->description);
         break;
     }
+
+    $sorts[] = $sort;
   }
 
   if ($form_state['values']['sort'] == 'desc') {
