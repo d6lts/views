@@ -506,6 +506,13 @@ class views_query {
       // Safety! Don't modify an original here.
       $join = drupal_clone($join);
 
+      // Do we need to try to ensure a path?
+      if ($join->left_table != $this->relationships[$relationship]['table'] &&
+          $join->left_table != $this->relationships[$relationship]['base'] &&
+          !isset($this->tables[$relationship][$join->left_table]['alias'])) {
+        $this->ensure_table($join->left_table, $relationship);
+      }
+
       // First, if this is our link point/anchor table, just use the relationship
       if ($join->left_table == $this->relationships[$relationship]['table']) {
         $join->left_table = $relationship;
