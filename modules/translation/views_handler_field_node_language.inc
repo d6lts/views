@@ -7,7 +7,7 @@
 class views_handler_field_node_language extends views_handler_field_node {
   function render($values) {
     $languages = locale_language_list();
-    $value = $languages[$values->{$this->field_alias}];
+    $value = isset($languages[$values->{$this->field_alias}]) ? $languages[$values->{$this->field_alias}] : '';
     return $this->render_link($value, $values);
   }
 }

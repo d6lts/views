@@ -293,7 +293,7 @@ function template_preprocess_views_view_table(&$vars) {
     // render the header labels
     if ($field == $column && empty($fields[$field]->options['exclude'])) {
       $label = check_plain(!empty($fields[$field]) ? $fields[$field]->label() : '');
-      if (empty($options['info'][$field]['sortable'])) {
+      if (empty($options['info'][$field]['sortable']) || !$fields[$field]->click_sortable()) {
         $vars['header'][$field] = $label;
       }
       else {

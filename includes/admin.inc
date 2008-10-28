@@ -1221,7 +1221,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
       $field_name = '(' . $relationships[$field['relationship']] . ') ' . $field_name;
     }
 
-    $fields[$id]['title'] = l($field_name, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link')));
+    $fields[$id]['title'] = l($field_name, "admin/build/views/nojs/config-item/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-ajax-link'), 'html' => TRUE));
     $fields[$id]['class'] = views_ui_item_css($display->id . '-' . $type . '-' . $id);
     if (!empty($view->changed_sections[$display->id . '-' . $type . '-' . $id])) {
       $fields[$id]['changed'] = TRUE;
