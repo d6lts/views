@@ -101,7 +101,7 @@ function views_views_plugins() {
         'help topic' => 'style-unformatted',
       ),
       'list' => array(
-        'title' => t('List'),
+        'title' => t('HTML List'),
         'help' => t('Displays rows as an HTML list.'),
         'handler' => 'views_plugin_style_list',
         'theme' => 'views_view_list',

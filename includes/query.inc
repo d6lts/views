@@ -282,6 +282,12 @@ class views_query {
       $alias = $table;
     }
 
+    // Check this again to make sure we don't blow up existing aliases for already
+    // adjusted joins.
+    if (isset($this->table_queue[$alias])) {
+      return $alias;
+    }
+
     $alias = $this->mark_table($table, $relationship, $alias);
 
     // If no alias is specified, give it the default.
