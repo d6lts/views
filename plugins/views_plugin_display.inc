@@ -1630,17 +1630,17 @@ class views_plugin_display extends views_plugin {
       }
 
       if (!$fields) {
-        $errors[] = t('Display @display uses fields but there are none defined for it or all are excluded.', array('@display' => $this->display->display_title));
+        $errors[] = t('Display "@display" uses fields but there are none defined for it or all are excluded.', array('@display' => $this->display->display_title));
       }
     }
 
     if ($this->has_path() && !$this->get_option('path')) {
-      $errors[] = t('Display @display uses path but path is undefined.', array('@display' => $this->display->display_title));
+      $errors[] = t('Display "@display" uses a path but the path is undefined.', array('@display' => $this->display->display_title));
     }
 
     $style = $this->get_plugin();
     if (empty($style)) {
-      $errors[] = t('Display @display has an invalid style plugin.', array('@display' => $this->display->display_title));
+      $errors[] = t('Display "@display" has an invalid style plugin.', array('@display' => $this->display->display_title));
     }
     else {
       $result = $style->validate();

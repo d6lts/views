@@ -28,3 +28,4 @@ Views 2.2
    o #326198: != mistakenly typod as = (display only)
    o #326379: Provide a default title for the archive view.
    o #327151: Add filter for node_counter.timestamp.
+   o #327113: Clean up error text when display will not validate.
