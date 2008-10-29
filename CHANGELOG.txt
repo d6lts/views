@@ -29,3 +29,7 @@ Views 2.2
    o #326379: Provide a default title for the archive view.
    o #327151: Add filter for node_counter.timestamp.
    o #327113: Clean up error text when display will not validate.
+
+ Other changes:
+   o Reorganize the analysis code into analyze.inc to make it easier for
+     people to find the code and use it externally.
