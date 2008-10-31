@@ -2,6 +2,8 @@ CHANGELOG for Views for Drupal 5
 
 Views 5.x-1.x
   Bugs fixed:
+    o #247420 and #217015 by smk-ka, webchick: Fixed SQL error when using empty
+      text as argument default.
     o #191420 by sun: Fixed missing t() for view import page title.
     o #166608: missing ->status setting caused access control on various node
       links to fail.
