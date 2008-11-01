@@ -1716,6 +1716,7 @@ function views_ui_render_section(&$form, $items, $header, $section, &$collapsed)
  * Render the add buttons for one of the dynamic sections on our form.
  */
 function views_ui_render_section_add(&$form, $items,  $label) {
+  asort($form['id']['#options']);
   foreach ($items as $item) {
     $row[] = drupal_render($form[$item], false);
   }
