@@ -1960,9 +1960,9 @@ function views_create_view_code($vid) {
     $output .= "  \$view->block_use_page_empty = " . views_tf($view->block_use_page_empty) . ";\n";
   }
 
-  $output .= "  \$view->sort = array (\n";
+  $output .= "  \$view->sort = array(\n";
   foreach ($view->sort as $sort) {
-    $output .= "    array (\n";
+    $output .= "    array(\n";
     $fieldbits = explode('.', $sort['field']);
     $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
     $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
@@ -1973,9 +1973,9 @@ function views_create_view_code($vid) {
   }
   $output .= "  );\n";
 
-  $output .= "  \$view->argument = array (\n";
+  $output .= "  \$view->argument = array(\n";
   foreach ($view->argument as $argument) {
-    $output .= "    array (\n";
+    $output .= "    array(\n";
     $output .= "      'type' => " . var_export($argument['type'], true) . ",\n";
     $output .= "      'argdefault' => " . var_export($argument['argdefault'], true) . ",\n";
     $output .= "      'title' => " . var_export($argument['title'], true) . ",\n";
@@ -1986,9 +1986,9 @@ function views_create_view_code($vid) {
   }
   $output .= "  );\n";
 
-  $output .= "  \$view->field = array (\n";
+  $output .= "  \$view->field = array(\n";
   foreach ($view->field as $field) {
-    $output .= "    array (\n";
+    $output .= "    array(\n";
     $output .= "      'tablename' => " . var_export($field['tablename'], true) . ",\n";
     $output .= "      'field' => " . var_export($field['field'], true) . ",\n";
     $output .= "      'label' => " . var_export($field['label'], true) . ",\n";
@@ -2009,9 +2009,9 @@ function views_create_view_code($vid) {
   }
   $output .= "  );\n";
 
-  $output .= "  \$view->filter = array (\n";
+  $output .= "  \$view->filter = array(\n";
   foreach ($view->filter as $filter) {
-    $output .= "    array (\n";
+    $output .= "    array(\n";
     $fieldbits = explode('.', $filter['field']);
     $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
     $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";
@@ -2023,9 +2023,9 @@ function views_create_view_code($vid) {
   }
   $output .= "  );\n";
 
-  $output .= "  \$view->exposed_filter = array (\n";
+  $output .= "  \$view->exposed_filter = array(\n";
   foreach ($view->exposed_filter as $filter) {
-    $output .= "    array (\n";
+    $output .= "    array(\n";
     $fieldbits = explode('.', $filter['field']);
     $output .= "      'tablename' => " . var_export($fieldbits[0], true) . ",\n";
     $output .= "      'field' => " . var_export($fieldbits[1], true) . ",\n";

@@ -2,6 +2,7 @@ CHANGELOG for Views for Drupal 5
 
 Views 5.x-1.x
   Bugs fixed:
+    o #174044 by douggreen: Fixed coding-style in exported views.
     o #193888 by mvc: Fixed select lists options in Views UI are not sorted.
     o #247420 and #217015 by smk-ka, webchick: Fixed SQL error when using empty
       text as argument default.
