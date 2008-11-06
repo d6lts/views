@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-11-06 21:18+0100\n"
-"PO-Revision-Date: 2008-11-06 23:34+0100\n"
+"PO-Revision-Date: 2008-11-07 00:02+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -416,15 +416,15 @@ msgstr ""
 
 #: handlers/views_handler_argument_numeric.inc:31
 msgid "If selected, users can enter multiple arguments in the form of 1+2+3 or 1,2,3."
-msgstr "Sobald ausgewählt, können Benutzer mehrere Argumente in Form von 1+2+3 oder 1,2,3 angeben."
+msgstr "If selected, users can enter multiple arguments in the form of 1+2+3 or 1,2,3."
 
 #: handlers/views_handler_argument_numeric.inc:37
 msgid "Exclude the argument"
-msgstr "Argument ausnehmen"
+msgstr "Argument ausschließen"
 
 #: handlers/views_handler_argument_numeric.inc:38
 msgid "If selected, the numbers entered in the argument will be excluded rather than limiting the view."
-msgstr "Sobald ausgewählt, werden die im Argument angegebenen Zahlen ausgenommen und nicht zur Begrenzung der Ansicht verwendet."
+msgstr "Sobald ausgewählt, werden die im Argument angegebenen Zahlen ausgeschlossen und nicht zur Begrenzung der Ansicht verwendet."
 
 #: handlers/views_handler_argument_string.inc:44
 msgid "Glossary mode"
@@ -496,7 +496,7 @@ msgstr ""
 
 #: handlers/views_handler_field.inc:152
 msgid "Exclude from display"
-msgstr "Von der Anzeige ausnehmen"
+msgstr "Von der Anzeige ausschließen"
 
 #: handlers/views_handler_field.inc:154
 msgid "Check this box to not display this field, but still load it in the view.  Use this option to not show a grouping field in each record, or when doing advanced theming."
@@ -3363,7 +3363,7 @@ msgstr "Nur „aufgelistete“ Dateianhänge anzeigen"
 
 #: modules/user/views_handler_field_user.inc:30
 msgid "Link this field to its user"
-msgstr "Dieses Feld mit dessen Benutzer verlinken"
+msgstr "Dieses Feld mit seinem Benutzer verlinken"
 
 #: modules/user/views_handler_field_user_mail.inc:16
 msgid "Link this field"
@@ -3657,12 +3657,13 @@ msgstr "Offset"
 
 #: plugins/views_plugin_display.inc:832
 msgid "The number of items to skip. For example, if this field is 3, the first 3 items will be skipped and not displayed. Offset can not be used if items to display is 0; instead use a very large number there."
-msgstr "Die Anzahl der zu überspringenden Einträge. Sollte das Feld den Wert 3 enthalten, werden beispielsweise die ersten 3 Einträge übersprungen und nicht angezeigt. Der Offset kann nicht verwendet, wenn die anzuzeigenden Einträge 0 sind. Stattdessen muss eine sehr großen Zahl verwendet werden."
+msgstr "Die Anzahl der zu überspringenden Einträge. Sollte das Feld beispielsweise den Wert 3 enthalten, werden die ersten 3 Einträge übersprungen und nicht angezeigt. Der Offset kann nicht verwendet, wenn die anzuzeigenden Einträge 0 betragen. Stattdessen muss eine sehr großen Zahl verwendet werden."
 
 #: plugins/views_plugin_display.inc:837
 msgid "Add a more link to the bottom of the display."
-msgstr "Am unteres Rand der Anzeige einen ‚mehr‘-Link einfügen."
+msgstr "Am unteren Rand der Anzeige einen ‚mehr‘-Link einfügen."
 
+# TODO: Add more link
 #: plugins/views_plugin_display.inc:840
 msgid "Create more link"
 msgstr "‚Weiter‘-Link erstellen"
@@ -3679,6 +3680,7 @@ msgstr ""
 msgid "Access restrictions"
 msgstr "Zugriffsberechtigungen"
 
+# TODO: not context sensitive
 #: plugins/views_plugin_display.inc:874;954
 msgid "You may also adjust the !settings for the currently selected style by clicking on the icon."
 msgstr ""
@@ -3847,7 +3849,7 @@ msgstr "Das hervorgehobene Formular in einen Block legen"
 # not literally
 #: plugins/views_plugin_display.inc:1203
 msgid "If set, any exposed widgets will not appear with this view. Instead, a block will be made available to the Drupal block administration system, and the exposed form will appear there. Note that this block must be enabled manually, Views will not enable it for you."
-msgstr "Sobald aktiviert, wird jedes hervorgehobenes Steuerelement nicht in der Ansicht erscheinen. Stattdessen wird dem Drupal-Blockverwaltungssystem ein Block zu Verfügung gestellt, der das hervorgehobene Formular enthält. Hierbei ist zu beachten, dass dieser Block manuell aktiviert werden muss und nicht durch Ansichten-Modul aktiviert wird."
+msgstr "Sobald aktiviert, wird jedes hervorgehobenes Steuerelement nicht mit der Ansicht erscheinen. Stattdessen wird dem Drupal-Blockverwaltungssystem ein Block zu Verfügung gestellt, der das hervorgehobene Formular enthält. Hierbei ist zu beachten, dass dieser Block manuell aktiviert werden muss und nicht durch das Ansichten-Modul aktiviert wird."
 
 #: plugins/views_plugin_display.inc:1238
 msgid "File found in folder @template-path"
@@ -3879,7 +3881,7 @@ msgstr "Status: Übersteuerte Werte werden verwendet."
 
 #: plugins/views_plugin_display.inc:1633
 msgid "Display \"@display\" uses fields but there are none defined for it or all are excluded."
-msgstr "Die Anzeige „@display“ verwendet Felder, aber es sind keine dafür angegeben oder alle ausgenommen."
+msgstr "Die Anzeige „@display“ verwendet Felder, aber es sind keine dafür angegeben oder alle ausgeschlossen."
 
 #: plugins/views_plugin_display.inc:1638
 msgid "Display \"@display\" uses a path but the path is undefined."
