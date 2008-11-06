@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-11-06 21:18+0100\n"
-"PO-Revision-Date: 2008-11-07 00:12+0100\n"
+"PO-Revision-Date: 2008-11-07 00:15+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -1621,7 +1621,7 @@ msgstr ""
 
 #: includes/admin.inc:2670
 msgid "Show query above live preview"
-msgstr "Abfrage über der Live-Vorschau anzeigen"
+msgstr "Abfrage oberhalb der Live-Vorschau anzeigen"
 
 #: includes/admin.inc:2671
 msgid "The live preview feature will show you the output of the view you're creating, as well as the view. Check here to show the query and other information above the view; leave this unchecked to show that information below the view."
