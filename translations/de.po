@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-11-06 21:18+0100\n"
-"PO-Revision-Date: 2008-11-07 00:15+0100\n"
+"PO-Revision-Date: 2008-11-07 20:23+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -1748,7 +1748,7 @@ msgstr "Bei der Gültigkeitsüberprüfung ist ein Fehler aufgetreten, bitte erne
 
 #: includes/handlers.inc:43
 msgid "Handler @handler include tried to loop infinitely!"
-msgstr ""
+msgstr "Die Behandlungsroutine @handler ist eine Endlosschleife!"
 
 #: includes/handlers.inc:269
 msgid "!group: !title"
