@@ -31,6 +31,7 @@ Views 2.2
    o #327113: Clean up error text when display will not validate.
    o #307287: (Panels related) view::preview() would override previously set arguments if no arguments were sent.
    o #321589: Comment template preprocessor misnamed so it would not fire.
+   o #329746: Comment rendering in the node row style was not working.
 
  Other changes:
    o Reorganize the analysis code into analyze.inc to make it easier for

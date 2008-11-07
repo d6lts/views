@@ -673,7 +673,7 @@ function template_preprocess_views_view_row_node(&$vars) {
   $vars['node'] = node_view($node, $options['teaser'], FALSE, $options['links']);
   $vars['comments'] = NULL;
   if (!empty($options['comments']) && function_exists('comment_render')) {
-    $vars['comments'] = comment_render($vars['node']);
+    $vars['comments'] = comment_render($node);
   }
 }
 
