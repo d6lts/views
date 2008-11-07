@@ -153,7 +153,7 @@ function views_ui_menu() {
 /*
  * Implementation of hook_help()
  */
-function views_ui_help($path, $arg) {
+function views_ui_help($path, $arg = '') {
   switch ($path) {
     case 'admin/build/views/tools/convert':
       return '<p>' . t('The converter will make a best-effort attempt to convert a Views 1 view to Views 2. This conversion is not reliable; you will very likely have to make adjustments to your view to get it to match. You can import Views 1 views through the normal Import tab.') . '</p>';

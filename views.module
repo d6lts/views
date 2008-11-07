@@ -121,7 +121,7 @@ function views_preprocess_node(&$vars) {
  * A theme preprocess function to automatically allow view-based node
  * templates if called from a view.
  */
-function views_preprocess_comment_view(&$vars) {
+function views_preprocess_comment(&$vars) {
   // The 'view' attribute of the node is added in template_preprocess_views_view_row_comment()
   if (!empty($vars['node']->view) && !empty($vars['node']->view->name)) {
     $vars['view'] = &$vars['node']->view;
