@@ -112,7 +112,7 @@ function views_preprocess_node(&$vars) {
     $vars['view'] = &$vars['node']->view;
     $vars['template_files'][] = 'node-view-' . $vars['node']->view->name;
     if(!empty($vars['node']->view->current_display)) {
-      $vars['template_files'][] = 'node-view-' . $vars['node']->view->name . '-'. $vars['node']->view->current_display;
+      $vars['template_files'][] = 'node-view-' . $vars['node']->view->name . '-' . $vars['node']->view->current_display;
     }
   }
 }
@@ -127,7 +127,7 @@ function views_preprocess_comment(&$vars) {
     $vars['view'] = &$vars['node']->view;
     $vars['template_files'][] = 'comment-view-' . $vars['node']->view->name;
     if(!empty($vars['node']->view->current_display)) {
-      $vars['template_files'][] = 'comment-view-' . $vars['node']->view->name . '-'. $vars['node']->view->current_display;
+      $vars['template_files'][] = 'comment-view-' . $vars['node']->view->name . '-' . $vars['node']->view->current_display;
     }
   }
 }
