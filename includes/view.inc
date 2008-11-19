@@ -839,6 +839,12 @@ class view extends views_db_object {
     $old_view = views_get_current_view();
     views_set_current_view($this);
 
+    // Let modules modify the view just prior to executing it.
+    foreach (module_implements('views_pre_view') as $module) {
+      $function = $module . '_views_pre_view';
+      $function($this, $display_id, $args);
+    }
+
     // Prepare the view with the information we have, but only if we were
     // passed arguments, as they may have been set previously.
     if ($args) {
