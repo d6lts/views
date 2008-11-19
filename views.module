@@ -339,7 +339,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
 
       return $items;
     case 'view':
-      $start = microtime();
+      $start = views_microtime();
       // if this is 32, this should be an md5 hash.
       if (strlen($delta) == 32) {
         $hashes = variable_get('views_block_hashes', array());
@@ -371,7 +371,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       if ($view = views_get_view($name)) {
         if ($view->access($display_id)) {
           $output = $view->execute_display($display_id);
-          vpr("Block $view->name execute time: " . (microtime() - $start) * 1000 . "ms");
+          vpr("Block $view->name execute time: " . (views_microtime() - $start) * 1000 . "ms");
           $view->destroy();
           return $output;
         }
@@ -1127,4 +1127,12 @@ function views_views_exportables($op = 'list', $views = NULL, $name = 'foo') {
 
     return $code;
   }
+}
+
+/**
+ * Microtime helper function to return a float time value (php4 & php5 safe).
+ */
+function views_microtime() {
+  list($usec, $sec) = explode(' ', microtime());
+  return (float)$sec + (float)$usec;
 }

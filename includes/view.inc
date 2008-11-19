@@ -542,7 +542,7 @@ class view extends views_db_object {
     // Attempt to load from cache.
     // @todo Load a build_info from cache.
 
-    $start = microtime();
+    $start = views_microtime();
     // If that fails, let's build!
     $this->build_info = array();
 
@@ -573,7 +573,7 @@ class view extends views_db_object {
 
     // Arguments can, in fact, cause this whole thing to abort.
     if (!$this->_build_arguments()) {
-      $this->build_time = microtime() - $start;
+      $this->build_time = views_microtime() - $start;
       return $this->built;
     }
 
@@ -617,7 +617,7 @@ class view extends views_db_object {
     $this->build_info['count_query'] = $this->query->query(TRUE);
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
-    $this->build_time = microtime() - $start;
+    $this->build_time = views_microtime() - $start;
     return TRUE;
   }
 
@@ -687,7 +687,7 @@ class view extends views_db_object {
         $external = TRUE;
       }
 
-      $start = microtime();
+      $start = views_microtime();
       if (!empty($this->pager['items_per_page'])) {
         // We no longer use pager_query() here because pager_query() does not
         // support an offset. This is fine as we don't actually need pager
@@ -735,7 +735,7 @@ class view extends views_db_object {
         db_set_active();
       }
     }
-    $this->execute_time = microtime() - $start;
+    $this->execute_time = views_microtime() - $start;
     $this->executed = TRUE;
   }
 
@@ -753,7 +753,7 @@ class view extends views_db_object {
       return;
     }
 
-    $start = microtime();
+    $start = views_microtime();
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->start_query_capture();
     }
@@ -783,7 +783,7 @@ class view extends views_db_object {
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->end_query_capture();
     }
-    $this->render_time = microtime() - $start;
+    $this->render_time = views_microtime() - $start;
     return $output;
   }
 

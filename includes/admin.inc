@@ -2830,7 +2830,7 @@ function views_fetch_fields($base, $type) {
   static $fields = array();
   if (empty($fields)) {
     $data = views_fetch_data();
-    $start = microtime();
+    $start = views_microtime();
     // This constructs this ginormous multi dimensional array to
     // collect the important data about fields. In the end,
     // the structure looks a bit like this (using nid as an example)
@@ -2900,7 +2900,7 @@ function views_fetch_fields($base, $type) {
         }
       }
     }
-//    vsm('Views UI data build time: ' . (microtime() - $start) * 1000 . ' ms');
+//    vsm('Views UI data build time: ' . (views_microtime() - $start) * 1000 . ' ms');
   }
 
   // If we have an array of base tables available, go through them
