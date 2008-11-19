@@ -33,7 +33,8 @@ Views 2.2
    o #321589: Comment template preprocessor misnamed so it would not fire.
    o #329746: Comment rendering in the node row style was not working.
    o #321109: view::destroy() needs to unset current_display or future init_displays won't work.
-   o #325115: If the block description is not set, show the display title as well as the view name.
+   o #325115: If the block description is not set, show the display title as well as the view name in block administration.
+   o #327604 (by henrrrik): should use multibyte string functions.
 
  Other changes:
    o Reorganize the analysis code into analyze.inc to make it easier for

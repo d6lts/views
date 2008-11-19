@@ -183,15 +183,13 @@ class views_handler_argument_string extends views_handler_argument {
       default:
         return $string;
       case 'upper':
-        return strtoupper($string);
+        return mb_strtoupper($string);
       case 'lower':
-        return strtolower($string);
-      case 'upper':
-        return strtoupper($string);
+        return mb_strtolower($string);
       case 'ucfirst':
-        return ucfirst($string);
+        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_substr($string, 1);
       case 'ucwords':
-        return ucwords($string);
+        return mb_convert_case($string, MB_CASE_TITLE);
     }
   }
 
