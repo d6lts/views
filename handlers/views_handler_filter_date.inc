@@ -101,7 +101,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     // Don't filter if value(s) are empty.
     $operators = $this->operators();
     if (!empty($this->options['expose']['use_operator']) && !empty($this->options['expose']['operator'])) {
-      $operator = $form_state['values'][$this->options['expose']['operator']];
+      $operator = $input[$this->options['expose']['operator']];
     }
     else {
       $operator = $this->operator;
