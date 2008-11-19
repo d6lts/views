@@ -1433,8 +1433,13 @@ class view extends views_db_object {
         unset($this->style_plugin);
       }
 
+      // Clear these to make sure the view can be processed/used again.
       if (isset($this->display_handler)) {
         unset($this->display_handler);
+      }
+
+      if (isset($this->current_display)) {
+        unset($this->current_display);
       }
 
       if (isset($this->query)) {
