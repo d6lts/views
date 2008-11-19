@@ -34,7 +34,7 @@ class views_handler_field_comment extends views_handler_field {
   }
 
   function render_link($data, $values) {
-    if (!empty($this->options['link_to_comment'])) {
+    if (!empty($this->options['link_to_comment']) && $data !== NULL && $data !== '') {
       return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "comment-" . $values->{$this->aliases['cid']}));
     }
     else {

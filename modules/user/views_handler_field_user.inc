@@ -34,7 +34,7 @@ class views_handler_field_user extends views_handler_field {
   }
 
   function render_link($data, $values) {
-    if (!empty($this->options['link_to_user']) && user_access('access user profiles') && $values->{$this->aliases['uid']}) {
+    if (!empty($this->options['link_to_user']) && user_access('access user profiles') && $values->{$this->aliases['uid']} && $data !== NULL && $data !== '') {
       return l($data, "user/" . $values->{$this->aliases['uid']}, array('html' => TRUE));
     }
     else {

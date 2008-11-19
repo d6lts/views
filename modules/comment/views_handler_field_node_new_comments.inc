@@ -70,7 +70,7 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
   }
 
   function render_link($data, $values) {
-    if (!empty($this->options['link_to_comment'])) {
+    if (!empty($this->options['link_to_comment']) && $data !== NULL && $data !== '') {
       return l($data, "node/" . $values->{$this->aliases['nid']}, array('html' => TRUE, 'fragment' => "new"));
     }
     else {

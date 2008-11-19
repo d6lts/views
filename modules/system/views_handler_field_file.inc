@@ -38,7 +38,7 @@ class views_handler_field_file extends views_handler_field {
    * Data should be made XSS safe prior to calling this function.
    */
   function render_link($data, $values) {
-    if (!empty($this->options['link_to_file'])) {
+    if (!empty($this->options['link_to_file']) && $data !== NULL && $data !== '') {
       return l($data, file_create_url($values->{$this->aliases['filepath']}), array('html' => TRUE));
     }
     else {
