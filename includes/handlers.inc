@@ -1062,6 +1062,9 @@ function views_views_handlers() {
       'views_handler_filter_boolean_operator' => array(
         'parent' => 'views_handler_filter',
       ),
+      'views_handler_filter_boolean_operator_string' => array(
+        'parent' => 'views_handler_filter_boolean_operator',
+      ),
       'views_handler_filter_in_operator' => array(
         'parent' => 'views_handler_filter',
       ),

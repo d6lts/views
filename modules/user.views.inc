@@ -116,6 +116,10 @@ function user_views_data() {
       'handler' => 'views_handler_field_user_picture',
       'click sortable' => TRUE,
     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator_string',
+      'label' => t('Has Avatar'),
+    ),
   );
 
     // created field
