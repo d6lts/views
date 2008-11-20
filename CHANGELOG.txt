@@ -39,6 +39,7 @@ Views 2.2
    o #332568 by Moonshine: Correct views performance timers.
    o #332679 by yched: render_link() does not check for empty data.
    o #333593: Incorrect reference to non-existent views_handler_join in help/api-tables.html.
+   o #334337 by miro_dietiker: Documentation clarification for arguments, blocks and PHP Code plugins.
 
  Other changes:
    o Reorganize the analysis code into analyze.inc to make it easier for
