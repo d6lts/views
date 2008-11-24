@@ -41,11 +41,12 @@ function poll_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
-     ),
-     'filter' => array(
-       'handler' => 'views_handler_filter_boolean_operator',
-       'label' => t('Active'),
-       ),
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Active'),
+      'type' => 'yes-no',
+    ),
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),

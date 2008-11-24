@@ -700,7 +700,8 @@ function views_ui_export_page(&$form_state, $view) {
     '#type' => 'textarea',
     '#title' => $view->name,
     '#default_value' => $code,
-    '#rows' => $lines);
+    '#rows' => $lines,
+  );
   return $form;
 }
 

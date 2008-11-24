@@ -71,6 +71,7 @@ function user_views_data() {
     'help' => t('Filter the view to the currently logged in user.'),
     'filter' => array(
       'handler' => 'views_handler_filter_user_current',
+      'type' => 'yes-no',
     ),
   );
 
@@ -119,6 +120,7 @@ function user_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator_string',
       'label' => t('Has Avatar'),
+      'type' => 'yes-no',
     ),
   );
 
@@ -182,6 +184,7 @@ function user_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator',
       'label' => t('Active'),
+      'type' => 'yes-no',
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
