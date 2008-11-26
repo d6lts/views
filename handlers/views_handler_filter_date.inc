@@ -77,7 +77,7 @@ class views_handler_filter_date extends views_handler_filter_numeric {
         form_error($form['value'], t('Invalid date format.'));
       }
     }
-    else {
+    elseif ($operators[$operator]['values'] == 2) {
       $min = strtotime($value['min']);
       if ($min == -1 || $min === FALSE) {
         form_error($form['min'], t('Invalid date format.'));
