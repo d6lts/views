@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-11-06 21:18+0100\n"
-"PO-Revision-Date: 2008-11-30 15:43+0100\n"
+"PO-Revision-Date: 2008-12-01 00:56+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -4135,7 +4135,7 @@ msgstr "„$arg“ wird nicht mehr unterstützt. Stattdessen kann % verwendet we
 
 #: plugins/views_plugin_display_page.inc:379
 msgid "\"%\" may not be used for the first segment of a path."
-msgstr ""
+msgstr "„%“ darf nicht als erstes Segment eines Pfades verwendet werden."
 
 #: plugins/views_plugin_display_page.inc:389
 msgid "Views cannot create normal menu items for paths with a % in them."
@@ -4220,20 +4220,22 @@ msgid "This will appear in the RSS feed itself."
 msgstr "Dies wird in dem RSS-Newsfeed erscheinen."
 
 #: plugins/views_plugin_style_summary.inc:34
+#, fuzzy
 msgid "Display record count with link"
-msgstr ""
+msgstr "Anzahl der Ergebnisse mit dem Link anzeigen"
 
 #: plugins/views_plugin_style_summary.inc:39
 msgid "Override number of items to display"
 msgstr "Die Anzahl der anzuzeigenden Einträge übersteuern"
 
 #: plugins/views_plugin_style_summary_unformatted.inc:26
+#, fuzzy
 msgid "Display items inline"
-msgstr ""
+msgstr "Einträge inline anzeigen"
 
 #: plugins/views_plugin_style_table.inc:126
 msgid "You need at least one field before you can configure your table settings"
-msgstr ""
+msgstr "Mindestens ein Feld ist erforderlich, bevor die Tabelleneinstellungen konfiguriert werden können"
 
 #: plugins/views_plugin_style_table.inc:135
 msgid "Override normal sorting if click sorting is used"
