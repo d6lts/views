@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: German translation for views module\n"
 "POT-Creation-Date: 2008-11-06 21:18+0100\n"
-"PO-Revision-Date: 2008-12-01 00:56+0100\n"
+"PO-Revision-Date: 2008-12-01 01:16+0100\n"
 "Last-Translator: Alexander Haß\n"
 "Language-Team: Alexander Hass\n"
 "MIME-Version: 1.0\n"
@@ -693,7 +693,7 @@ msgstr "Ausblenden"
 #: handlers/views_handler_filter.inc:218
 #, fuzzy
 msgid "This item is currently exposed. If you <strong>hide</strong> it, users will not be able to change the filter as they view it."
-msgstr "Dieser Eintrag ist derzeit hervorgehoben. Sollte dieser <strong>versteckt</strong> werden, können Benutzer den Filter nicht ändern."
+msgstr "Dieser Eintrag ist derzeit hervorgehoben. Sollte dieser <strong>ausgeblendet</strong> werden, können Benutzer den Filter nicht ändern."
 
 #: handlers/views_handler_filter.inc:289
 msgid "Unlock operator"
@@ -717,7 +717,7 @@ msgstr "Bezeichner für Filter"
 
 #: handlers/views_handler_filter.inc:317
 msgid "This will appear in the URL after the ? to identify this filter. Cannot be blank."
-msgstr "Dies wird in der URL nach dem ? erscheinen, um den Filter zu identifizieren. Darf nicht unausgefüllt bleiben."
+msgstr "Dieser wird in der URL nach dem ? erscheinen, um den Filter zu identifizieren. Darf nicht unausgefüllt bleiben."
 
 #: handlers/views_handler_filter.inc:333
 msgid "Optional"
