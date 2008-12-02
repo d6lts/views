@@ -157,7 +157,7 @@ function node_views_data() {
   // published status
   $data['node']['status'] = array(
     'title' => t('Published'),
-    'help' => t('The published status of the node.'),
+    'help' => t('Whether or not the node is published.'),
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,
@@ -179,14 +179,14 @@ function node_views_data() {
     'filter' => array(
       'field' => 'status',
       'handler' => 'views_handler_filter_node_status',
-      'label' => t('Published'),
+      'label' => t('Published or admin'),
     ),
   );
 
   // promote status
   $data['node']['promote'] = array(
     'title' => t('Promoted to front page'),
-    'help' => t('The front page of the node.'),
+    'help' => t('Whether or not the node is promoted to the front page.'),
     'field' => array(
       'handler' => 'views_handler_field_boolean',
       'click sortable' => TRUE,

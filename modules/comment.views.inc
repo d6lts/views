@@ -93,7 +93,7 @@ function comment_views_data() {
   // name (of comment author)
   $data['comments']['name'] = array(
     'title' => t('Author'),
-    'help' => t('The name of the poster.'),
+    'help' => t("The name of the comment's author. Can be rendered as a link to the author's homepage."),
     'field' => array(
       'handler' => 'views_handler_field_comment_username',
       'click sortable' => TRUE,
@@ -112,7 +112,7 @@ function comment_views_data() {
   // homepage
   $data['comments']['homepage'] = array(
     'title' => t("Author's website"),
-    'help' => t("The website address of the comment's author. Can be a link. The homepage can also be linked with the Name field. Will be empty if posted by a registered user."),
+    'help' => t("The website address of the comment's author. Can be rendered as a link. Will be empty if the author is a registered user."),
     'field' => array(
       'handler' => 'views_handler_field_url',
       'click sortable' => TRUE,
@@ -224,7 +224,7 @@ function comment_views_data() {
 
   $data['comments']['uid'] = array(
     'title' => t('User'),
-    'help' => t('The user who wrote the comment.'),
+    'help' => t("The User ID of the comment's author."),
     'relationship' => array(
       'base' => 'users',
       'field' => 'uid',

@@ -93,7 +93,7 @@ function search_views_data() {
   );
   $data['search_node_links_from']['sid'] = array(
     'title' => t('Links from'),
-    'help' => t('Nodes that link from the node.'),
+    'help' => t('Other nodes that are linked from the node.'),
     'argument' => array(
       'handler' => 'views_handler_argument_node_nid',
     ),
@@ -111,7 +111,7 @@ function search_views_data() {
   );
   $data['search_node_links_to']['nid'] = array(
     'title' => t('Links to'),
-    'help' => t('Nodes that link to the node.'),
+    'help' => t('Other nodes that link to the node.'),
     'argument' => array(
       'handler' => 'views_handler_argument_node_nid',
     ),

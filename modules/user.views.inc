@@ -95,7 +95,7 @@ function user_views_data() {
   // Note that this field implements field level access control.
   $data['users']['mail'] = array(
     'title' => t('E-mail'), // The item it appears as on the UI,
-    'help' => t('Email address for a given user. This field is not normally shown to users, so be cautious when using it.'), // The help that appears on the UI,
+    'help' => t('Email address for a given user. This field is normally not shown to users, so be cautious when using it.'), // The help that appears on the UI,
     'field' => array(
       'handler' => 'views_handler_field_user_mail',
       'click sortable' => TRUE,
