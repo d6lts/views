@@ -5,6 +5,7 @@
  * Main view template
  *
  * Variables available:
+ * - $css_name: A css-safe version of the view name.
  * - $header: The view header
  * - $footer: The view footer
  * - $rows: The results of the view query, if any

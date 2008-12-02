@@ -102,9 +102,11 @@ Drupal.behaviors.ViewsAjaxView = function() {
         .find('ul.pager > li > a')
         .each(function () {
           var viewData = Drupal.Views.parseQueryString($(this).attr('href'));
-          $.each(settings, function (key, setting) {
-            viewData[key] = setting;
-          });
+          if (!viewData['view_name']) {
+            $.each(settings, function (key, setting) {
+              viewData[key] = setting;
+            });
+          }
 
           $(this)
             .click(function () {
