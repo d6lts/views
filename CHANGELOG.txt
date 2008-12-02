@@ -41,6 +41,7 @@ Views 2.2
    o #333593: Incorrect reference to non-existent views_handler_join in help/api-tables.html.
    o #334337 by miro_dietiker: Documentation clarification for arguments, blocks and PHP Code plugins.
    o #336456 by dww: Date filter had trouble with NULL operators.
+   o #336125 by nedjo: Missing filter for node translation.
 
  Other changes:
    o Reorganize the analysis code into analyze.inc to make it easier for people to find the code and use it externally.

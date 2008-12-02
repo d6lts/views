@@ -53,7 +53,7 @@ function translation_views_data_alter(&$data) {
       'click sortable' => TRUE,
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_node_tnid',
+      'handler' => 'views_handler_filter_numeric',
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_node_tnid',
@@ -89,6 +89,16 @@ function translation_views_data_alter(&$data) {
       'relationship field' => 'nid',
       'handler' => 'views_handler_relationship_translation',
       'label' => t('Translations'),
+    ),
+  );
+
+  // The source translation.
+  $data['node']['source_translation'] = array(
+    'group' => t('Node translation'),
+    'title' => t('Source translation'),
+    'help' => t('Nodes that are either untranslated or are the original versions of a translation set.'),
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_tnid',
     ),
   );
 
@@ -140,12 +150,13 @@ function translation_views_handlers() {
       'views_handler_argument_node_tnid' => array(
         'parent' => 'views_handler_argument',
       ),
-
       // filters
       'views_handler_filter_node_language' => array(
         'parent' => 'views_handler_filter_in_operator',
       ),
-
+      'views_handler_filter_node_tnid' => array(
+        'parent' => 'views_handler_filter',
+      ),
       // relationships
       'views_handler_relationship_translation' => array(
         'parent' => 'views_handler_relationship',
