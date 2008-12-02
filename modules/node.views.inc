@@ -632,6 +632,7 @@ function node_views_plugins() {
         'help' => t('Display the node with standard node view.'),
         'handler' => 'views_plugin_row_node_rss',
         'path' => drupal_get_path('module', 'views') . '/modules/node', // not necessary for most modules
+        'theme' => 'views_view_row_rss',
         'base' => array('node'), // only works with 'node' as base.
         'uses options' => TRUE,
         'type' => 'feed',

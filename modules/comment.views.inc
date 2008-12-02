@@ -397,6 +397,7 @@ function comment_views_plugins() {
         'help' => t('Display the comment as RSS.'),
         'handler' => 'views_plugin_row_comment_rss',
         'path' => drupal_get_path('module', 'views') . '/modules/comment', // not necessary for most modules
+        'theme' => 'views_view_row_rss',
         'base' => array('comments'), // only works with 'comment' as base.
         'type' => 'feed',
         'help topic' => 'style-comment-rss',

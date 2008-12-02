@@ -58,3 +58,4 @@ Views 2.2
    o #326034 by yched: Allow short names in admin summaries via new "title short" definition.
    o #335613 by swentel: Add hook_views_api() setting to bulk export.
    o #339707 by nedjo: Add filter to show child translations.
+   o #284768 by drewish: Proper templates for RSS feeds rather than format_rss_item().

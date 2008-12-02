@@ -498,6 +498,20 @@ function template_preprocess_views_view_rss(&$vars) {
 }
 
 /**
+ * Default theme function for all RSS rows.
+ */
+function template_preprocess_views_view_row_rss(&$vars) {
+  $view     = &$vars['view'];
+  $options  = &$vars['options'];
+  $item     = &$vars['row'];
+
+  $vars['title'] = check_plain($item->title);
+  $vars['link'] = check_url($item->link);
+  $vars['description'] = check_plain($item->description);
+  $vars['item_elements'] = empty($item->elements) ? '' : format_xml_elements($item->elements);
+}
+
+/**
  * Default theme function for all filter forms.
  */
 function template_preprocess_views_exposed_form(&$vars) {
