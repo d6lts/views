@@ -1220,7 +1220,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
     $handler->init($view, $field);
 
-    $field_name = $handler->ui_name();
+    $field_name = $handler->ui_name(TRUE);
     if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
       $field_name = '(' . $relationships[$field['relationship']] . ') ' . $field_name;
     }

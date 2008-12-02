@@ -85,7 +85,7 @@ function views_include_handler($definition, $type, $count = 0) {
  * Prepare a handler's data by checking defaults and such.
  */
 function _views_prepare_handler($definition, $data, $field) {
-  foreach (array('group', 'title', 'help', 'real field') as $key) {
+  foreach (array('group', 'title', 'title short', 'help', 'real field') as $key) {
     if (!isset($definition[$key])) {
       // First check the field level
       if (!empty($data[$field][$key])) {
@@ -265,8 +265,9 @@ class views_handler extends views_object {
   /**
    * Return a string representing this handler's name in the UI.
    */
-  function ui_name() {
-    return t('!group: !title', array('!group' => $this->definition['group'], '!title' => $this->definition['title']));
+  function ui_name($short = FALSE) {
+    $title = ($short && isset($this->definition['title short'])) ? $this->definition['title short'] : $this->definition['title'];
+    return t('!group: !title', array('!group' => $this->definition['group'], '!title' => $title));
   }
 
   /**
