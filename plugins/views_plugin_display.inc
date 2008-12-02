@@ -402,7 +402,7 @@ class views_plugin_display extends views_plugin {
     }
 
     $display_id = $this->get_link_display();
-    if ($display_id && !empty($this->view->display[$display_id])) {
+    if ($display_id && !empty($this->view->display[$display_id]) && is_object($this->view->display[$display_id]->handler)) {
       return $this->view->display[$display_id]->handler->get_path();
     }
   }
