@@ -70,7 +70,7 @@ function translation_views_data_alter(&$data) {
       'help' => t('The source that this content was translated from.'),
       'base' => 'node',
       'base field' => 'nid',
-      'handler' => 'views_handler_relationship_translation',
+      'handler' => 'views_handler_relationship',
       'label' => t('Source translation'),
     ),
   );
