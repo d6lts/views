@@ -102,6 +102,16 @@ function translation_views_data_alter(&$data) {
     ),
   );
 
+  // The source translation.
+  $data['node']['child_translation'] = array(
+    'group' => t('Node translation'),
+    'title' => t('Child translation'),
+    'help' => t('Nodes that are translations of a source translation.'),
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_tnid_child',
+    ),
+  );
+
   // Translation status
   $data['node']['translate'] = array(
     'group' => t('Node translation'),
@@ -160,6 +170,9 @@ function translation_views_handlers() {
       // relationships
       'views_handler_relationship_translation' => array(
         'parent' => 'views_handler_relationship',
+      ),
+      'views_handler_filter_node_tnid_child' => array(
+        'parent' => 'views_handler_filter',
       ),
 
     ),

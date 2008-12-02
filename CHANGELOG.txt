@@ -53,3 +53,4 @@ Views 2.2
    o #338632 by drewish: Remove use of format_rss_channel and use proper templating instead.
    o #326034 by yched: Allow short names in admin summaries via new "title short" definition.
    o #335613 by swentel: Add hook_views_api() setting to bulk export.
+   o #339707 by nedjo: Add filter to show child translations.
