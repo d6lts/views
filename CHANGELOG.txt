@@ -44,5 +44,6 @@ Views 2.2
 
  Other changes:
    o Reorganize the analysis code into analyze.inc to make it easier for people to find the code and use it externally.
-   o #298884 (by neclimdul): Requested missing filter to filter for whether a user has a picture or not.
-   o #336531 (by dww): Set boolean filter to not use a checkbox which is lesser UI.
+   o #298884 by neclimdul: Requested missing filter to filter for whether a user has a picture or not.
+   o #336531 by dww: Set boolean filter to not use a checkbox which is lesser UI.
+   o #338632 by drewish: Remove use of format_rss_channel and use proper templating instead.
