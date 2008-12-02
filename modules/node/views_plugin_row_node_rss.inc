@@ -41,10 +41,6 @@ class views_plugin_row_node_rss extends views_plugin_row {
       $item_length = variable_get('feed_item_length', 'teaser');
     }
 
-    if (empty($this->view->style_plugin->namespaces)) {
-      $this->view->style_plugin->namespaces['xmlns:dc'] = 'http://purl.org/dc/elements/1.1/';
-    }
-
     // Load the specified node:
     $item = node_load($row->nid);
     $item->build_mode = NODE_BUILD_RSS;
@@ -70,7 +66,11 @@ class views_plugin_row_node_rss extends views_plugin_row {
     $extra = array_merge($extra,
       array(
         array('key' => 'pubDate', 'value' => gmdate('r', $item->created)),
-        array('key' => 'dc:creator', 'value' => $item->name),
+        array(
+          'key' => 'dc:creator',
+          'value' => $item->name,
+          'namespace' => array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/'),
+        ),
         array(
           'key' => 'guid',
           'value' => $item->nid . ' at ' . $base_url,
@@ -78,6 +78,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
         ),
       )
     );
+
     foreach ($extra as $element) {
       if (isset($element['namespace'])) {
         $this->view->style_plugin->namespaces = array_merge($this->view->style_plugin->namespaces, $element['namespace']);
