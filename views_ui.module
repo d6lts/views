@@ -161,13 +161,6 @@ function views_ui_help($path, $arg = '') {
 }
 
 /*
- * Implementation of hook_perm()
- */
-function views_perm() {
-  return array('administer views');
-}
-
-/*
  * Implementation of hook_theme()
  */
 function views_ui_theme() {
