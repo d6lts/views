@@ -8,7 +8,7 @@
  */
 
 /**
- * @defgroup views_translation_module taxonomy.module handlers
+ * @defgroup views_translation_module translation.module handlers
  *
  * @{
  */
@@ -146,12 +146,6 @@ function translation_views_handlers() {
       // field handlers
       'views_handler_field_node_language' => array(
         'parent' => 'views_handler_field_node',
-      ),
-      'views_handler_field_node_tnid' => array(
-        'parent' => 'views_handler_field_node',
-      ),
-      'views_handler_field_node_translation_link' => array(
-        'parent' => 'views_handler_field',
       ),
       // argument handlers
       'views_handler_argument_node_language' => array(
