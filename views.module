@@ -136,7 +136,7 @@ function views_preprocess_comment(&$vars) {
  * Implementation of hook_perm()
  */
 function views_perm() {
-  return array('access all views');
+  return array('access all views', 'administer views');
 }
 
 /**

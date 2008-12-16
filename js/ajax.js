@@ -255,7 +255,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
     // Turn on the hilite to indicate this is in use.
     $(this).addClass('hilite');
 
-    //Disable the save button.
+    // Disable the save button.
     $('#edit-save').attr('disabled', 'true');
     
     $(this).addClass('views-throbbing');
