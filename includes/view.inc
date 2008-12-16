@@ -824,6 +824,7 @@ class view extends views_db_object {
       }
     }
 
+    $this->preview = TRUE;
     $this->pre_execute($args);
     // Preview the view.
     $output = $this->display_handler->preview();
