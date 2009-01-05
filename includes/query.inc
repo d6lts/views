@@ -607,6 +607,7 @@ class views_query {
 
     $name = $alias ? $alias : $field;
 
+    // @todo FIXME -- $alias, then $name is inconsistent
     if (empty($this->fields[$alias])) {
       $this->fields[$name] = array(
         'field' => $field,
@@ -854,7 +855,6 @@ class views_query {
    *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   function query($get_count = FALSE) {
-
     // Check query distinct value.
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
       if (!empty($this->fields[$this->base_field])) {

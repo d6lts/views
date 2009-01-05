@@ -182,6 +182,7 @@ class views_plugin_display_attachment extends views_plugin_display {
     $view->original_args = $view->args;
 
     $args = $this->get_option('inherit_arguments') ? $this->view->args : array();
+    $view->set_arguments($args);
 
     // because of this, it is very very important that displays that can accept
     // attachments not also be attachments, or this could explode messily.
