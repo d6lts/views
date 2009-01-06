@@ -620,6 +620,9 @@ class view extends views_db_object {
     $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
     $this->build_time = views_microtime() - $start;
+
+    // Attach displays
+    $this->attach_displays();
     return TRUE;
   }
 
@@ -853,7 +856,7 @@ class view extends views_db_object {
       $this->set_arguments($args);
     }
 
-    $this->attach_displays();
+//    $this->attach_displays();
 
     // Allow the display handler to set up for execution
     $this->display_handler->pre_execute();
@@ -872,20 +875,27 @@ class view extends views_db_object {
 
     views_set_current_view(isset($old_view) ? $old_view : FALSE);
   }
+
   /**
    * Run attachment displays for the view.
    */
   function attach_displays() {
+    if (!empty($this->is_attachment)) {
+      return;
+    }
+
     if (!$this->display_handler->accept_attachments()) {
       return;
     }
 
+    $this->is_attachment = TRUE;
     // Give other displays an opportunity to attach to the view.
     foreach ($this->display as $id => $display) {
       if (!empty($this->display[$id]->handler)) {
         $this->display[$id]->handler->attach_to($this->current_display);
       }
     }
+    $this->is_attachment = FALSE;
   }
 
   /**
@@ -1393,7 +1403,7 @@ class view extends views_db_object {
   function clone_view() {
     $clone = version_compare(phpversion(), '5.0') < 0 ? $this : clone($this);
 
-    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after');
+    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'result', 'inited', 'style_plugin');
     foreach ($keys as $key) {
       if (isset($clone->$key)) {
         unset($clone->$key);

@@ -172,6 +172,7 @@ class views_plugin_display_attachment extends views_plugin_display {
    */
   function attach_to($display_id) {
     $displays = $this->get_option('displays');
+
     if (empty($displays[$display_id])) {
       return;
     }
