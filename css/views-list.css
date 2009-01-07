@@ -42,7 +42,8 @@ body form#views-ui-list-views-form {
   clear: left;
 }
 
-#edit-views-apply {
+#edit-views-apply,
+#edit-views-reset {
   margin-top: 1.65em;
   float: left;
 }
