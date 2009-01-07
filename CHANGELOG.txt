@@ -67,3 +67,6 @@ Views 2.3
     o #349739: Fix arguments not getting transmitted to attachment displays properly.
     o #354707: Display attachment happened too early preventing default arguments from passing to the attachment.
     o #277321 by nedjo: Use AJAX properly supports summaries in attachments.
+
+  Other changes:
+    o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
