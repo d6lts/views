@@ -2,7 +2,7 @@
 // $Id$
 
 /**
- * Access plugin that provides no access control at all.
+ * Access plugin that provides permission-based access control.
  */
 class views_plugin_access_perm extends views_plugin_access {
   function access($account) {

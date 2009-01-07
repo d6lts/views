@@ -241,10 +241,10 @@ function views_views_plugins() {
 /**
  * Builds and return a list of all plugins available in the system.
  *
- * @return Nested array of plugins, grouped by type and
+ * @return Nested array of plugins, grouped by type.
  */
 function views_discover_plugins() {
-  $cache = array('display' => array(), 'style' => array(), 'row' => array());
+  $cache = array('display' => array(), 'style' => array(), 'row' => array(), 'argument default' => array(), 'argument validator' => array(), 'access' => array());
   // Get plugins from all mdoules.
   foreach (module_implements('views_plugins') as $module) {
     $function = $module . '_views_plugins';

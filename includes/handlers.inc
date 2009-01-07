@@ -473,6 +473,19 @@ class views_handler extends views_object {
   }
 
   /**
+   * Validates the handler against the complete View.
+   *
+   * This is called when the complete View is being validated. For validating
+   * the handler options form use options_validate().
+   *
+   * @see views_handler::options_validate()
+   *
+   * @return
+   *   Empty array if the handler is valid; an array of error strings if it is not.
+   */
+  function validate() { return array(); }
+
+  /**
    * Determine if the handler is considered 'broken', meaning it's a
    * a placeholder used when a handler can't be found.
    */
