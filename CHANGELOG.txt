@@ -72,6 +72,7 @@ Views 2.3
     o #295246 by webchick: Wrong table type on views object cache caused truncation of cached data and mysterious errors on large views.
     o #315007 by Garrett Albright, Paul Kishimoto and catch: Take into account page count when using comment new link.
     o #317562 by ingaro: Wrong date format for PGSQL.
+    o #327604 by mr.baileys: Fix improper use of multibyte library when mb library unavailable.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!

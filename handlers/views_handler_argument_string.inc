@@ -179,17 +179,23 @@ class views_handler_argument_string extends views_handler_argument {
   }
 
   function case_transform($string, $option) {
+		global $multibyte;
+		
     switch ($this->options[$option]) {
       default:
         return $string;
       case 'upper':
-        return mb_strtoupper($string);
+        return drupal_strtoupper($string);
       case 'lower':
-        return mb_strtolower($string);
+        return drupal_strtolower($string);
       case 'ucfirst':
-        return mb_strtoupper(mb_substr($string, 0, 1)) . mb_substr($string, 1);
+        return drupal_strtoupper(drupal_substr($string, 0, 1)) . drupal_substr($string, 1);
       case 'ucwords':
-        return mb_convert_case($string, MB_CASE_TITLE);
+        if ($multibyte == UNICODE_MULTIBYTE) {
+          return mb_convert_case($string, MB_CASE_TITLE);
+        } else {
+          return ucwords($string);
+        }
     }
   }
 
