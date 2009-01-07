@@ -77,6 +77,7 @@ Views 2.3
     o #341263 by cdale: Prevent exposed filter forms from processing during batch operations.
     o #342322 by drewish: Correct label for translation status.
     o #343223 by alienbrain: Ensure path before join.
+    o #343284 by andypost: Fix odd/even reversed in table style compared to Drupal core.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
