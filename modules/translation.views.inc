@@ -123,7 +123,7 @@ function translation_views_data_alter(&$data) {
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator',
-      'label' => t('Published'),
+      'label' => t('Outdated'),
       'type' => 'yes-no',
     ),
     'sort' => array(
