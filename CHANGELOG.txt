@@ -66,3 +66,4 @@ Views 2.3
   Bugs fixed:
     o #349739: Fix arguments not getting transmitted to attachment displays properly.
     o #354707: Display attachment happened too early preventing default arguments from passing to the attachment.
+    o #277321 by nedjo: Use AJAX properly supports summaries in attachments.

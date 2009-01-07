@@ -8,7 +8,7 @@
  */
 ?>
 <div class="item-list">
-  <ul>
+  <ul class="views-summary">
   <?php foreach ($rows as $row): ?>
     <li><a href="<?php print $row->url; ?>"><?php print $row->link; ?></a>
       <?php if (!empty($options['count'])): ?>
