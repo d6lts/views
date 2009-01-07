@@ -70,6 +70,7 @@ Views 2.3
     o #291292 by sammys (reroll by jaydub): Proper use of DISTINCT on summary views on pgsql.
     o #291079 by sammys (reroll by jaydub): Fix use of GROUP BY on pgsql.
     o #295246 by webchick: Wrong table type on views object cache caused truncation of cached data and mysterious errors on large views.
+    o #315007 by Garrett Albright, Paul Kishimoto and catch: Take into account page count when using comment new link.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
