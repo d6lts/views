@@ -69,6 +69,7 @@ Views 2.3
     o #277321 by nedjo: Use AJAX properly supports summaries in attachments.
     o #291292 by sammys (reroll by jaydub): Proper use of DISTINCT on summary views on pgsql.
     o #291079 by sammys (reroll by jaydub): Fix use of GROUP BY on pgsql.
+    o #295246 by webchick: Wrong table type on views object cache caused truncation of cached data and mysterious errors on large views.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
