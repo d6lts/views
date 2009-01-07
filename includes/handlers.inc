@@ -907,7 +907,7 @@ function views_date_sql_format($format, $field, $field_type = 'int', $set_offset
       return "DATE_FORMAT($field, '$format')";
     case 'pgsql':
       $replace = array(
-        'Y' => 'YY',
+        'Y' => 'YYYY',
         'm' => 'MM',
         'd' => 'DD',
         'H' => 'HH24',
