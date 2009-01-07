@@ -452,8 +452,14 @@ class views_query {
       return FALSE;
     }
 
+    // If we do not have join info, fetch it.
     if (!isset($join)) {
       $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
+    }
+    
+    // If it can't be fetched, this won't work.
+    if (empty($join)) {
+      return FALSE;
     }
 
     // Does a table along this path exist?

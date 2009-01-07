@@ -76,6 +76,7 @@ Views 2.3
     o #335926 by sapark and drewish: "January, 2009" should be "January 2009".
     o #341263 by cdale: Prevent exposed filter forms from processing during batch operations.
     o #342322 by drewish: Correct label for translation status.
+    o #343223 by alienbrain: Ensure path before join.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
