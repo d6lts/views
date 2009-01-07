@@ -73,6 +73,7 @@ Views 2.3
     o #315007 by Garrett Albright, Paul Kishimoto and catch: Take into account page count when using comment new link.
     o #317562 by ingaro: Wrong date format for PGSQL.
     o #327604 by mr.baileys: Fix improper use of multibyte library when mb library unavailable.
+    o #335926 by sapark and drewish: "January, 2009" should be "January 2009".
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!

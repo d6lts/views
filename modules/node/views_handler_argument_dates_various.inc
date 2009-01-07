@@ -53,7 +53,7 @@ class views_handler_argument_node_created_year_month extends views_handler_argum
    */
   function construct() {
     parent::construct();
-    $this->format = 'F, Y';
+    $this->format = 'F Y';
     $this->arg_format = 'Ym';
     $this->formula = views_date_sql_format($this->arg_format, "***table***.$this->real_field");
   }
