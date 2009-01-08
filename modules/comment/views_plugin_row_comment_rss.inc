@@ -25,7 +25,7 @@ class views_plugin_row_comment_rss extends views_plugin_row {
       array('key' => 'dc:creator', 'value' => $comment->name),
       array(
         'key' => 'guid',
-        'value' => 'comment ' .  $item->cid . ' at ' . $base_url,
+        'value' => 'comment ' .  $row->cid . ' at ' . $base_url,
         'attributes' => array('isPermaLink' => 'false'),
         'namespace' => array('xmlns:dc' => 'http://purl.org/dc/elements/1.1/'),
       ),

@@ -81,6 +81,7 @@ Views 2.3
     o #345545 by mfb: Correct occasional Drupal.settings related javascript error.
     o #345546: Fix Node: Created day argument off by 1 error.
     o #345707 by aries: Do not display breadcrumb link if no link text.
+    o #355939 by yhager: Fix missing comment GUID in comment RSS style.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
