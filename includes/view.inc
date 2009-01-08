@@ -1090,7 +1090,9 @@ class view extends views_db_object {
           $base = FALSE;
           $title = t('Home');
         }
-        $breadcrumb[] = l($title, $path, array('html' => true));
+        if ($title) {
+          $breadcrumb[] = l($title, $path, array('html' => true));
+        }
       }
 
       if ($set) {

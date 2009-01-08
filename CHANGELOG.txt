@@ -80,6 +80,7 @@ Views 2.3
     o #343284 by andypost: Fix odd/even reversed in table style compared to Drupal core.
     o #345545 by mfb: Correct occasional Drupal.settings related javascript error.
     o #345546: Fix Node: Created day argument off by 1 error.
+    o #345707 by aries: Do not display breadcrumb link if no link text.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
