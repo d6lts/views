@@ -40,12 +40,12 @@ Drupal.Views.Ajax.ajaxViewResponse = function(target, response) {
  * Ajax behavior for views. 
  */
 Drupal.behaviors.ViewsAjaxView = function() {
-  var ajax_path = Drupal.settings.views.ajax_path;
-  // If there are multiple views this might've ended up showing up multiple times.
-  if (ajax_path.constructor.toString().indexOf("Array") != -1) {
-    ajax_path = ajax_path[0];
-  }
   if (Drupal.settings && Drupal.settings.views && Drupal.settings.views.ajaxViews) {
+    var ajax_path = Drupal.settings.views.ajax_path;
+    // If there are multiple views this might've ended up showing up multiple times.
+    if (ajax_path.constructor.toString().indexOf("Array") != -1) {
+      ajax_path = ajax_path[0];
+    }
     $.each(Drupal.settings.views.ajaxViews, function(i, settings) {
       var view = '.view-dom-id-' + settings.view_dom_id;
       if (!$(view).size()) {

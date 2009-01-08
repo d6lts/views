@@ -78,6 +78,7 @@ Views 2.3
     o #342322 by drewish: Correct label for translation status.
     o #343223 by alienbrain: Ensure path before join.
     o #343284 by andypost: Fix odd/even reversed in table style compared to Drupal core.
+    o #345545 by mfb: Correct occasional Drupal.settings related javascript error.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
