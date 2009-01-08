@@ -86,3 +86,4 @@ Views 2.3
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
     o #335647 by markus_petrux: Add memory and a reset button to the Views list page.
     o #343047 by alienbrain: Allow all handlers to participate in view validation.
+    o #339223 by greggles: Allow taxonomy term tid to be sortable.
