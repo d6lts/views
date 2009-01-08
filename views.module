@@ -23,7 +23,7 @@ function views_theme() {
   $path = drupal_get_path('module', 'views');
   require_once "./$path/theme/theme.inc";
 
-    // Some quasi clever array merging here.
+  // Some quasi clever array merging here.
   $base = array(
     'file' => 'theme.inc',
     'path' => "$path/theme",

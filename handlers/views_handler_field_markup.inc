@@ -22,7 +22,7 @@ class views_handler_field_markup extends views_handler_field {
 
     $this->additional_fields = array();
     if (!is_numeric($this->format)) {
-      $this->additional_fields['format'] = $this->format;
+      $this->additional_fields['format'] = array('field' => $this->format);
     }
   }
 
