@@ -60,6 +60,21 @@ class views_plugin_row_node_rss extends views_plugin_row {
       node_invoke_nodeapi($node, 'view', $teaser, FALSE);
     }
 
+    // Set the proper node part, then unset unused $node part so that a bad
+    // theme can not open a security hole.
+    $content = drupal_render($node->content);
+    if ($teaser) {
+      $node->teaser = $content;
+      unset($node->body);
+    }
+    else {
+      $node->body = $content;
+      unset($node->teaser);
+    }
+  
+    // Allow modules to modify the fully-built node.
+    node_invoke_nodeapi($node, 'alter', $teaser, FALSE);
+
     $item = new stdClass();
     $item->title = $node->title;
     $item->link = url("node/$row->nid", array('absolute' => TRUE));
