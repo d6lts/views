@@ -19,6 +19,7 @@ Views 5.x-1.x
       percent signs to get messed up.
 
   New features:
+    o #359558 by remi: Added Wysiwyg API support.
     o #201537 by mcvecka, darrenoh: add FALSE filter to search.
 
   Changes:

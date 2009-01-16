@@ -898,7 +898,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['page-info']['page_header_fieldset']['page_header_format'] = filter_form($view->page_header_format, 1, array('page_header_format'));
+  $form['page-info']['page_header_fieldset']['format'] = filter_form($view->page_header_format, 1, array('page_header_format'));
 
   $form['page-info']['page_footer_fieldset'] = array(
     '#type' => 'fieldset',
@@ -914,7 +914,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['page-info']['page_footer_fieldset']['page_footer_format'] = filter_form($view->page_footer_format, 1, array('page_footer_format'));
+  $form['page-info']['page_footer_fieldset']['format'] = filter_form($view->page_footer_format, 1, array('page_footer_format'));
 
   $form['page-info']['page_empty_fieldset'] = array(
     '#type' => 'fieldset',
@@ -930,7 +930,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display if a view returns no nodes. Optional.'),
   );
 
-  $form['page-info']['page_empty_fieldset']['page_empty_format'] = filter_form($view->page_empty_format, 1, array('page_empty_format'));
+  $form['page-info']['page_empty_fieldset']['format'] = filter_form($view->page_empty_format, 1, array('page_empty_format'));
 
   $form['page-info']['menu-info'] = array(
     '#type' => 'fieldset',
@@ -1091,7 +1091,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display at the top of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['block-info']['block_header_fieldset']['block_header_format'] = filter_form($view->block_header_format, 1, array( 'block_header_format'));
+  $form['block-info']['block_header_fieldset']['format'] = filter_form($view->block_header_format, 1, array('block_header_format'));
 
   $form['block-info']['block_footer_fieldset'] = array(
     '#type' => 'fieldset',
@@ -1116,7 +1116,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display at the bottom of the view. May contain an explanation or links or whatever you like. Optional.'),
   );
 
-  $form['block-info']['block_footer_fieldset']['block_footer_format'] = filter_form($view->block_footer_format, 1, array( 'block_footer_format'));
+  $form['block-info']['block_footer_fieldset']['format'] = filter_form($view->block_footer_format, 1, array('block_footer_format'));
 
   $form['block-info']['block_empty_fieldset'] = array(
     '#type' => 'fieldset',
@@ -1141,7 +1141,7 @@ function views_edit_view($view, $op = '') {
     '#description' => t('Text to display if a view results in no nodes. Optional.'),
   );
 
-  $form['block-info']['block_empty_fieldset']['block_empty_format'] = filter_form($view->block_empty_format, 1, array( 'block_empty_format'));
+  $form['block-info']['block_empty_fieldset']['format'] = filter_form($view->block_empty_format, 1, array('block_empty_format'));
 
   $access = user_access('use PHP for block visibility');
   if ($access) {
