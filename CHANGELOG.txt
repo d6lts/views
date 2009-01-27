@@ -91,6 +91,7 @@ Views 2.3
     o #353002: tracker view had wrong argument and was not picking up comments by the selected user.
     o Case sensitivity on string filter checkmark was backward.
     o #355919: views_theme() needed to include plugin theme files to detect functions.
+    o #353515: Many characters could get incorrectly translated in exposed filters combined with ajax tablesorting.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
