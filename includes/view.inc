@@ -1412,7 +1412,7 @@ class view extends views_db_object {
   function clone_view() {
     $clone = version_compare(phpversion(), '5.0') < 0 ? $this : clone($this);
 
-    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'result', 'inited', 'style_plugin');
+    $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'result', 'inited', 'style_plugin', 'plugin_name');
     foreach ($keys as $key) {
       if (isset($clone->$key)) {
         unset($clone->$key);

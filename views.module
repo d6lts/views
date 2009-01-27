@@ -507,7 +507,6 @@ function views_include($file) {
  * Load views files on behalf of modules.
  */
 function views_module_include($file) {
-  $views_path = drupal_get_path('module', 'views') . '/modules';
   foreach (views_get_module_apis() as $module => $info) {
     if (file_exists("./$info[path]/$module.$file")) {
       require_once "./$info[path]/$module.$file";
