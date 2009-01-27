@@ -193,7 +193,7 @@ class views_handler_filter_string extends views_handler_filter {
   }
 
   function case_transform() {
-    return empty($this->options['case']) ? '' : 'UPPER';
+    return !empty($this->options['case']) ? '' : 'UPPER';
   }
 
   /**
