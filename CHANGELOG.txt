@@ -88,6 +88,7 @@ Views 2.3
     o #293832 by drewish: Allow menu items to have administrative description.
     o #345528: Mini-pager generated invalid HTML with empty li tags.
     o #351745: Exposed taxonomy term autocomplete filter failed if term existed in multiple vocabularies.
+    o #353002: tracker view had wrong argument and was not picking up comments by the selected user.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!

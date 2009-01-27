@@ -231,10 +231,10 @@ function comment_views_default_views() {
     ),
   ));
   $handler->override_option('arguments', array(
-    'uid' => array(
-      'id' => 'uid',
-      'table' => 'users',
-      'field' => 'uid',
+    'uid_touch' => array(
+      'id' => 'uid_touch',
+      'table' => 'node',
+      'field' => 'uid_touch',
       'default_action' => 'ignore',
       'style_plugin' => 'default_summary',
       'style_options' => array(
