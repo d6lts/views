@@ -97,3 +97,4 @@ Views 2.3
     o #343047 by alienbrain: Allow all handlers to participate in view validation.
     o #339223 by greggles: Allow taxonomy term tid to be sortable.
     o #324378 by eigentor: CSS improvements to the view list page.
+    o #354736 by Shai: Clarification on exposed filter text.

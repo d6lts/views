@@ -35,7 +35,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
     $form['expose']['reduce'] = array(
       '#type' => 'checkbox',
       '#title' => t('Limit list to selected items'),
-      '#description' => t('If checked, the selected items presented to the user will be the only ones selected here.'),
+      '#description' => t('If checked, the only items presented to the user will be the ones selected here.'),
       '#default_value' => !empty($this->options['expose']['reduce']), // safety
     );
   }
