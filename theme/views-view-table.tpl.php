@@ -8,8 +8,10 @@
  * - $header: An array of header labels keyed by field id.
  * - $fields: An array of CSS IDs to use for each field id.
  * - $class: A class or classes to apply to the table, based on settings.
- * - $rows: An array of row items. Each row is an array of content
- *   keyed by field ID.
+ * - $row_classes: An array of classes to apply to each row, indexed by row
+ *   number. This matches the index in $rows.
+ * - $rows: An array of row items. Each row is an array of content.
+ *   $rows are keyed by row number, fields within rows are keyed by field ID.
  * @ingroup views_templates
  */
 ?>
@@ -28,7 +30,7 @@
   </thead>
   <tbody>
     <?php foreach ($rows as $count => $row): ?>
-      <tr class="<?php print ($count % 2 == 0) ? 'odd' : 'even';?>">
+      <tr class="<?php print implode(' ', $row_classes[$count]); ?>">
         <?php foreach ($row as $field => $content): ?>
           <td class="views-field views-field-<?php print $fields[$field]; ?>">
             <?php print $content; ?>

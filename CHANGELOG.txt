@@ -100,3 +100,4 @@ Views 2.3
     o #339223 by greggles: Allow taxonomy term tid to be sortable.
     o #324378 by eigentor: CSS improvements to the view list page.
     o #354736 by Shai: Clarification on exposed filter text.
+    o #364637 by moshe and dww: Allow preprocessors to add row classes to table style.
