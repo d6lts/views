@@ -186,7 +186,7 @@ function views_ui_theme() {
     ),
     'views_ui_rearrange_form' => array(
       'arguments' => array('form' => NULL),
-      'file' => '/includes/admin.inc',
+      'file' => 'includes/admin.inc',
     ),
 
     // list views
@@ -195,18 +195,18 @@ function views_ui_theme() {
       'path' => "$path/theme",
     ),
     'views_ui_list_views_form' => array(
-      'file' => '/includes/admin.inc',
+      'file' => 'includes/admin.inc',
       'arguments' => array('form' => NULL),
     ),
 
     // tab themes
     'views_tabset' => array(
       'arguments' => array('tabs' => NULL),
-      'file' => '/includes/tabs.inc',
+      'file' => 'includes/tabs.inc',
     ),
     'views_tab' => array(
       'arguments' => array('body' => NULL),
-      'file' => '/includes/tabs.inc',
+      'file' => 'includes/tabs.inc',
     ),
 
     // On behalf of a plugin

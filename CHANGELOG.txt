@@ -93,6 +93,8 @@ Views 2.3
     o #355919: views_theme() needed to include plugin theme files to detect functions.
     o #353515: Many characters could get incorrectly translated in exposed filters combined with ajax tablesorting.
     o #359818: Delete button should say Revert when reverting a view to default.
+    o #359132 by grugnog: CSS files should be marked conditional so they don't impact the CSS cache.
+    o #360637: Extra slash in theme includes could cause some systems to fail.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!

@@ -547,7 +547,11 @@ function views_get_module_apis() {
  * Include views .css files.
  */
 function views_add_css($file) {
-  drupal_add_css(drupal_get_path('module', 'views') . "/css/$file.css");
+  // We set preprocess to FALSE because we are adding the files conditionally,
+  // and we don't want to generate duplicate cache files.
+  // TODO: at some point investigate adding some files unconditionally and
+  // allowing preprocess. 
+  drupal_add_css(drupal_get_path('module', 'views') . "/css/$file.css", 'module', 'all', FALSE);
 }
 
 /**
