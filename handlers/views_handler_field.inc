@@ -594,7 +594,12 @@ class views_handler_field_broken extends views_handler_field {
  */
 class views_handler_field_file_size extends views_handler_field {
   function render($values) {
-    return format_size($values->{$this->field_alias});
+    if ($values->{$this->field_alias}) {
+      return format_size($values->{$this->field_alias});
+    }
+    else {
+      return '';
+    }
   }
 }
 
