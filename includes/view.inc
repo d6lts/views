@@ -504,6 +504,9 @@ class view extends views_db_object {
       $this->build_info['title'] = str_replace(array_keys($substitutions), $substitutions, $title);
     }
 
+    // Store the arguments for later use.
+    $this->build_info['substitutions'] = $substitutions;
+
     return $status;
   }
 
@@ -790,6 +793,15 @@ class view extends views_db_object {
     }
     $this->render_time = views_microtime() - $start;
     return $output;
+  }
+
+  /**
+   * Render a specific field via the field ID and the row #.
+   */
+  function render_field($field, $row) {
+    if (isset($this->field[$field]) && isset($this->result[$row])) {
+      return $this->field[$field]->advanced_render($this->result[$row]);
+    }
   }
 
   /**

@@ -201,7 +201,7 @@ function template_preprocess_views_view_fields(&$vars) {
  * this: @code { $row->{$field->field_alias} @endcode
  */
 function theme_views_view_field($view, $field, $row) {
-  return $field->render($row);
+  return $field->advanced_render($row);
 }
 
 /**
@@ -209,10 +209,10 @@ function theme_views_view_field($view, $field, $row) {
  *
  * This preprocess function isn't normally run, as a function is used by
  * default, for performance. However, by creating a template, this
- * preprocess should get pickedup.
+ * preprocess should get picked up.
  */
 function template_preprocess_views_view_field(&$vars) {
-  $vars['output'] = $vars['field']->render($vars['row']);
+  $vars['output'] = $vars['field']->advanced_render($vars['row']);
 }
 
 /**

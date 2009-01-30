@@ -27,6 +27,7 @@ class views_handler_field_file extends views_handler_field {
     parent::options_form($form, $form_state);
     $form['link_to_file'] = array(
       '#title' => t('Link this field to download the file'),
+      '#description' => t('This will override any other link you have set.'),
       '#type' => 'checkbox',
       '#default_value' => !empty($this->options['link_to_file']),
     );
@@ -39,11 +40,11 @@ class views_handler_field_file extends views_handler_field {
    */
   function render_link($data, $values) {
     if (!empty($this->options['link_to_file']) && $data !== NULL && $data !== '') {
-      return l($data, file_create_url($values->{$this->aliases['filepath']}), array('html' => TRUE));
+      $this->options['alter']['make_link'] = TRUE;
+      $this->options['alter']['path'] = file_create_url($values->{$this->aliases['filepath']});
     }
-    else {
-      return $data;
-    }
+
+    return $data;
   }
 
   function render($values) {

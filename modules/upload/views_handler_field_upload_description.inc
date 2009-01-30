@@ -63,10 +63,9 @@ class views_handler_field_upload_description extends views_handler_field_prerend
   function render_link($data, $value) {
     if (!empty($this->options['link_to_file']) && $value->{$this->aliases['fid']} && $data !== NULL && $data !== '') {
       $values = $this->items[$value->{$this->aliases['fid']}];
-      return l($data, file_create_url($values->filepath), array('html' => TRUE));
+      $this->options['alter']['make_link'] = TRUE;
+      $this->options['alter']['path'] = file_create_url($values->filepath);
     }
-    else {
-      return $data;
-    }
+    return $data;
   }
 }

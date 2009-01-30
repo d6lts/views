@@ -19,6 +19,7 @@ function views_views_data() {
   $data['views']['table']['join'] = array(
     '#global' => array(),
   );
+
   $data['views']['random'] = array(
     'title' => t('Random'),
     'help' => t('Randomize the display order.'),
@@ -34,6 +35,15 @@ function views_views_data() {
       'handler' => 'views_handler_argument_null',
     ),
   );
+
+  $data['views']['nothing'] = array(
+    'title' => t('Custom text'),
+    'help' => t('Provide custom text or link.'),
+    'field' => array(
+      'handler' => 'views_handler_field_custom',
+    ),
+  );
+
   return $data;
 }
 

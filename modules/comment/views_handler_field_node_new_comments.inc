@@ -23,6 +23,7 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
     parent::options_form($form, $form_state);
     $form['link_to_comment'] = array(
       '#title' => t('Link this field to new comments'),
+      '#description' => t('This will override any other link you have set.'),
       '#type' => 'checkbox',
       '#default_value' => $this->options['link_to_comment'],
     );
@@ -74,11 +75,13 @@ class views_handler_field_node_new_comments extends views_handler_field_numeric 
       $node = new stdClass();
       $node->nid = $values->{$this->aliases['nid']};
       $node->type = $values->{$this->aliases['type']};
-      return l($data, 'node/'. $node->nid, array('html' => TRUE, 'query' => comment_new_page_count($values->node_comment_statistics_comment_count, $values->node_new_comments, $node), 'fragment' => 'new'));
+      $this->options['alter']['make_link'] = TRUE;
+      $this->options['alter']['path'] = 'node/' . $node->nid;
+      $this->options['alter']['query'] = comment_new_page_count($values->node_comment_statistics_comment_count, $values->node_new_comments, $node);
+      $this->options['alter']['fragment'] = 'new';
     }
-    else {
-      return $data;
-    }
+
+    return $data;
   }
 
   function render($values) {
