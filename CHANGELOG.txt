@@ -95,6 +95,7 @@ Views 2.3
     o #359818: Delete button should say Revert when reverting a view to default.
     o #359132 by grugnog: CSS files should be marked conditional so they don't impact the CSS cache.
     o #360637: Extra slash in theme includes could cause some systems to fail.
+    o #363081: Disabled views could still provide blocks.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
