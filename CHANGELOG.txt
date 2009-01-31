@@ -98,6 +98,7 @@ Views 2.3
     o #363081: Disabled views could still provide blocks.
     o #366666 by Deadmonk also yched: File size field should not try to print a size on NULL values.
     o #367203: Improper caching of default views caused incomplete handlers that could WSOD.
+    o #365283: views_handler_filter_ncs_last_updated improperly registered causing fatal errors trying to use it.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!

@@ -465,14 +465,11 @@ function comment_views_handlers() {
       'views_handler_filter_ncs_last_updated' => array(
         'parent' => 'views_handler_filter_date',
       ),
-      'views_handler_filter_ncs_last_updated' => array(
+      'views_handler_filter_node_comment' => array(
         'parent' => 'views_handler_filter_in_operator',
       ),
 
       // argument handlers
-      'views_handler_filter_node_comment' => array(
-        'parent' => 'views_handler_filter_in_operator',
-      ),
       'views_handler_argument_comment_user_uid' => array(
         'parent' => 'views_handler_argument',
       ),
