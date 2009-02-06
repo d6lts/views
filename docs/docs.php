@@ -62,14 +62,134 @@
  */
 
 /**
- * The full documentation for this hook is now in the advanced help.
+ * Describe table structure to Views.
  *
  * This hook should be placed in MODULENAME.views.inc and it will be auto-loaded.
  * This must either be in the same directory as the .module file or in a subdirectory
  * named 'includes'.
+ *
+ * The full documentation for this hook is in the advanced help.
+ * @link http://views-help.doc.logrus.com/help/views/api-tables @endlink
  */
 function hook_views_data() {
-  // example code here
+  // This example describes how to write hook_views_data() for the following
+  // table:
+  //
+  // CREATE TABLE example_table (
+  //   nid INT(11) NOT NULL         COMMENT 'Primary key; refers to {node}.nid.',
+  //   plain_text_field VARCHAR(32) COMMENT 'Just a plain text field.',
+  //   numeric_field INT(11)        COMMENT 'Just a numeric field.',
+  //   boolean_field INT(1)         COMMENT 'Just an on/off field.',
+  //   timestamp_field INT(8)       COMMENT 'Just a timestamp field.',
+  //   PRIMARY KEY(nid)
+  // );
+
+  // The 'group' index will be used as a prefix in the UI for any of this
+  // table's fields, sort criteria, etc. so it's easy to tell where they came
+  // from.
+  $data['example_table']['table']['group'] = t('Example table');
+
+  // This table references the {node} table. Explain to Views how that happens
+  // so that a relationship can be defined later.
+  $data['example_table']['table']['join'] = array(
+    // Index this array by the table name to which this table refers.
+    // 'left_field' is the primary key in the referenced table.
+    // 'field' is the foreign key in this table.
+    'node' => array(
+      'left_field' => 'nid',
+      'field' => 'nid',
+    ),
+  );
+
+  // Next, describe each of the individual fields in this table to Views. For
+  // each field, you may define what field, sort, argument, and/or filter
+  // handlers it supports. This will determine where in the Views interface you
+  // may use the field.
+
+  // Node ID field.
+  $data['example_table']['nid'] = array(
+    'title' => t('Example content'),
+    'help' => t('Some example content that references a node.'),
+    // Because this is a foreign key to the {node} table, define a relationship
+    // so that this table's data can be pulled into a "Node" view type.
+    'relationship' => array(
+      'base' => 'node',
+      'field' => 'nid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('Example node'),
+    ),
+  );
+
+  // Example plain text field.
+  $data['example_table']['plain_text_field'] = array(
+    'title' => t('Plain text field'),
+    'help' => t('Just a plain text field.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  // Example numeric text field.
+  $data['example_table']['numeric_field'] = array(
+    'title' => t('Numeric field'),
+    'help' => t('Just a numeric field.'),
+    'field' => array(
+      'handler' => 'views_handler_field_numeric',
+      'click sortable' => TRUE,
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_numeric',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // Example boolean field.
+  $data['example_table']['boolean_field'] = array(
+    'title' => t('Boolean field'),
+    'help' => t('Just an on/off field.'),
+    'field' => array(
+      'handler' => 'views_handler_field_boolean',
+      'click sortable' => TRUE,
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_boolean_operator',
+      'label' => t('Published'),
+      'type' => 'yes-no',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+  );
+
+  // Example timestamp field.
+  $data['example_table']['timestamp_field'] = array(
+    'title' => t('Timestamp field'),
+    'help' => t('Just a timestamp field.'),
+    'field' => array(
+      'handler' => 'views_handler_field_date',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort_date',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_date',
+    ),
+  );
+
+  return $data;
 }
 
 /**
