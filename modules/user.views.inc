@@ -312,6 +312,13 @@ function user_views_plugins() {
         'parent' => 'fixed', // so that the parent class is included
       ),
     ),
+    'argument validator' => array(
+      'user' => array(
+        'title' => t('User'),
+        'handler' => 'views_plugin_argument_validate_user',
+        'path' => drupal_get_path('module', 'views') . '/modules/user', // not necessary for most modules
+      ),
+    ),
   );
 }
 

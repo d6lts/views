@@ -112,3 +112,4 @@ Views 2.3
     o #364637 by moshe and dww: Allow preprocessors to add row classes to table style.
     o #349178 by agentrickard: Add generic link handling plus a custom text field. Also automatic trimming.
     o #368234 by dww and neclimdul: Allow the "Anonymous" user to have a different (or no) name in User: name field.
+    o #368754 by dww: User ID validator, with role testing.
