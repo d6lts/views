@@ -113,3 +113,4 @@ Views 2.3
     o #349178 by agentrickard: Add generic link handling plus a custom text field. Also automatic trimming.
     o #368234 by dww and neclimdul: Allow the "Anonymous" user to have a different (or no) name in User: name field.
     o #368754 by dww: User ID validator, with role testing.
+    o #369505 by dww: Add helper function to get the value of a view argument.

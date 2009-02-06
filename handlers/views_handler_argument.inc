@@ -695,6 +695,43 @@ class views_handler_argument extends views_handler {
     $this->argument = $arg;
     return $this->validate_arg($arg);
   }
+
+  /**
+   * Get the value of this argument.
+   */
+  function get_value() {
+    // If we already processed this argument, we're done.
+    if (isset($this->argument)) {
+      return $this->argument;
+    }
+    
+    // Otherwise, we have to pretend to process ourself to find the value.
+    $value = NULL;
+    // Find the position of this argument within the view.
+    $position = 0;
+    foreach ($this->view->argument as $id => $argument) {
+      if ($id == $this->options['id']) {
+        break;
+      }
+      $position++;
+    }
+
+    $arg = isset($this->view->args[$position]) ? $this->view->args[$position] : NULL;
+    $this->position = $position;
+
+    // Clone ourselves so that we don't break things when we're really
+    // processing the arguments.
+    $argument = drupal_clone($this);
+    if (!isset($arg) && $argument->has_default_argument()) {
+      $arg = $argument->get_default_argument();
+    }
+    // Set the argument, which will also validate that the argument can be set.
+    if ($argument->set_argument($arg)) {
+      $value = $argument->argument;
+    }
+    unset($argument);
+    return $value;
+  }
 }
 
 /**
