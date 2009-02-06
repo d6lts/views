@@ -115,3 +115,8 @@ Views 2.3
     o #368754 by dww: User ID validator, with role testing.
     o #369505 by dww: Add helper function to get the value of a view argument.
     o #353002 by neclimdul: Provide a filter for user posted or commented on to complement the argument with the same functionality.
+
+  2.3 API Notes:
+    A minor change in the API now requires that styles that render fields MUST 
+    render them in order, first by row and then by field ID. Not doing so will
+    cause the token expansion to fail.

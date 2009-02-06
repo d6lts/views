@@ -13,6 +13,9 @@
  * check the API topic. This help will primarily be aimed at documenting
  * classes and function calls.
  *
+ * An online version of the advanced help API documentation is available from:
+ * @link http://views-help.doc.logrus.com/help/views/api @endlink
+ *
  * Topics:
  * - @ref view_lifetime
  * - @ref views_hooks
