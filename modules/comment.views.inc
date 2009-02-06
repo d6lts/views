@@ -363,12 +363,18 @@ function comment_views_data_alter(&$data) {
 
   $data['node']['uid_touch'] = array(
     'title' => t('User posted or commented'),
-    'help' => t('Display comments only if a user posted the node or commented on the node.'),
+    'help' => t('Display nodes only if a user posted the node or commented on the node.'),
     'argument' => array(
       'field' => 'uid',
       'name table' => 'users',
       'name field' => 'name',
       'handler' => 'views_handler_argument_comment_user_uid',
+    ),
+    'filter' => array(
+      'field' => 'uid',
+      'name table' => 'users',
+      'name field' => 'name',
+      'handler' => 'views_handler_filter_comment_user_uid'
     ),
   );
 
@@ -467,6 +473,9 @@ function comment_views_handlers() {
       ),
       'views_handler_filter_node_comment' => array(
         'parent' => 'views_handler_filter_in_operator',
+      ),
+      'views_handler_filter_comment_user_uid' => array(
+        'parent' => 'views_handler_filter_user_name',
       ),
 
       // argument handlers
