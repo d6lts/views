@@ -89,8 +89,19 @@ function hook_views_data() {
   // from.
   $data['example_table']['table']['group'] = t('Example table');
 
-  // This table references the {node} table. Explain to Views how that happens
-  // so that a relationship can be defined later.
+  // Define this as a base table. In reality this is not very useful for
+  // this table, as it isn't really a distinct object of its own, but
+  // it makes a good example.
+  $data['example_table']['table']['base'] = array(
+    'field' => 'nid',
+    'title' => t('Example table'),
+    'help' => t("Example table contains example content and can be related to nodes."),
+    'weight' => -10,
+  );
+
+  // This table references the {node} table.
+  // This creates an 'implicit' relationship to the node table, so that when 'Node'
+  // is the base table, the fields are automatically available.
   $data['example_table']['table']['join'] = array(
     // Index this array by the table name to which this table refers.
     // 'left_field' is the primary key in the referenced table.
@@ -110,8 +121,9 @@ function hook_views_data() {
   $data['example_table']['nid'] = array(
     'title' => t('Example content'),
     'help' => t('Some example content that references a node.'),
-    // Because this is a foreign key to the {node} table, define a relationship
-    // so that this table's data can be pulled into a "Node" view type.
+    // Because this is a foreign key to the {node} table. This allows us to
+    // have, when the view is configured with this relationship, all the fields
+    // for the related node available.
     'relationship' => array(
       'base' => 'node',
       'field' => 'nid',
