@@ -456,7 +456,7 @@ class views_query {
     if (!isset($join)) {
       $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
     }
-    
+
     // If it can't be fetched, this won't work.
     if (empty($join)) {
       return FALSE;
@@ -621,7 +621,7 @@ class views_query {
         'alias' => $alias,
       );
     }
-    
+
     foreach ((array)$params as $key => $value) {
       $this->fields[$name][$key] = $value;
     }
@@ -916,10 +916,10 @@ class views_query {
       // store for use with non-aggregates below
       $fieldname = (!empty($field['alias']) ? $field['alias'] : $string);
 
-      if (isset($field['distinct'])) {
+      if (!empty($field['distinct'])) {
         $string = "DISTINCT($string)";
       }
-      if (isset($field['count'])) {
+      if (!empty($field['count'])) {
         $string = "COUNT($string)";
         $has_aggregate = TRUE;
       }

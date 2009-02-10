@@ -124,3 +124,4 @@ Views 2.3
 Views 2.4
   Bugs fixed:
     o #371466 by dereine: Fix incorrect link to comments.
+    o #371923 by noahb: Summaries could be distinct even when they should not be.
