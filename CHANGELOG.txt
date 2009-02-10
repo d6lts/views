@@ -120,3 +120,7 @@ Views 2.3
     A minor change in the API now requires that styles that render fields MUST 
     render them in order, first by row and then by field ID. Not doing so will
     cause the token expansion to fail.
+
+Views 2.4
+  Bugs fixed:
+    o #371466 by dereine: Fix incorrect link to comments.
