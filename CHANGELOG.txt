@@ -126,4 +126,4 @@ Views 2.4
     o #371466 by dereine: Fix incorrect link to comments.
     o #371923 by noahb: Summaries could be distinct even when they should not be.
     o #368764: Fix User ID validator to actually have proper dependencies.
-
+    o #375342 by dww: node_comment_statistics should be INNER joined because there is always 1:1 reference.
