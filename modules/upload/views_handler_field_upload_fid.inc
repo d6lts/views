@@ -34,7 +34,6 @@ class views_handler_field_upload_fid extends views_handler_field_prerender_list 
     $vids = array();
     $this->items = array();
 
-    $data = array();
     foreach ($values as $result) {
       $vids[] = $result->{$this->field_alias};
     }
