@@ -552,6 +552,7 @@ function views_ui_add_form(&$form_state) {
     '#required' => TRUE,
     '#maxlength' => 32,
     '#default_value' => $view ? $view->name : '',
+    '#attributes' => array('dir'=>'ltr'),
   );
 
   $form['description'] = array(

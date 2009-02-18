@@ -129,3 +129,4 @@ Views 2.4
     o #375342 by dww: node_comment_statistics should be INNER joined because there is always 1:1 reference.
     o #372959: Archive view should not use AJAX by default.
     o #373155: Not clearing "many to one" data breaks some attachment displays.
+    o #375000: View name should always be LTR.
