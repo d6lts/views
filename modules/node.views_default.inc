@@ -71,7 +71,6 @@ function node_views_default_views() {
   $handler->override_option('header_format', '1');
   $handler->override_option('footer_format', '1');
   $handler->override_option('empty_format', '1');
-  $handler->override_option('use_ajax', '1');
   $handler->override_option('use_pager', '1');
   $handler->override_option('row_plugin', 'node');
   $handler->override_option('row_options', array(
@@ -378,7 +377,6 @@ function node_views_default_views() {
       'default_argument_type' => 'fixed',
     ),
   ));
-  $handler->override_option('use_ajax', '1');
   $handler->override_option('block_description', 'Archive list');
   $views[$view->name] = $view;
 
