@@ -259,6 +259,7 @@ function comment_views_data() {
   $data['node_comment_statistics']['table']['join'] = array(
     //...to the node table
     'node' => array(
+      'type' => 'INNER',      
       'left_field' => 'nid',
       'field' => 'nid',
      ),
