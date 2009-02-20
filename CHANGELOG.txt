@@ -130,3 +130,4 @@ Views 2.4
     o #372959: Archive view should not use AJAX by default.
     o #373155: Not clearing "many to one" data breaks some attachment displays.
     o #375000: View name should always be LTR.
+    o #378534: Validators do not fire if argument === 0 due to PHP loose type conversions.

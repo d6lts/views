@@ -74,7 +74,7 @@ class views_handler_argument extends views_handler {
       $arg = $this->argument;
     }
 
-    return !empty($this->options['wildcard']) && $this->options['wildcard'] == $arg;
+    return !empty($this->options['wildcard']) && $this->options['wildcard'] === $arg;
   }
 
   function wildcard_title() {
