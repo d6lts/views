@@ -132,6 +132,7 @@ Views 2.4
     o #375000 by elcuco: View name should always be LTR.
     o #378534 by dww: Validators do not fire if argument === 0 due to PHP loose type conversions.
     o #378164 by yched: Unexposed taxonomy filter could accidentally stop working.
+    o #371923 by David_Rothstein: Another DISTINCT fix related to summaries.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().

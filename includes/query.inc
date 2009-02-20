@@ -880,7 +880,7 @@ class views_query {
     $fields_array = $this->fields;
     if ($get_count && !$this->groupby) {
       foreach ($fields_array as $field) {
-        if (isset($field['distinct'])) {
+        if (!empty($field['distinct'])) {
           $get_count_optimized = FALSE;
           break;
         }
