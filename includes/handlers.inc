@@ -1322,6 +1322,8 @@ function book_views_api() { return views_views_api(); }
 
 function comment_views_api() { return views_views_api(); }
 
+function locale_views_api() { return views_views_api(); }
+
 function node_views_api() { return views_views_api(); }
 
 function poll_views_api() { return views_views_api(); }

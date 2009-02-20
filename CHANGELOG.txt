@@ -138,3 +138,4 @@ Views 2.4
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().
+    o #356276 by nedjo: Locale support.
