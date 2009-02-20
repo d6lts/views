@@ -88,7 +88,7 @@ class views_handler_filter_search extends views_handler_filter {
       $join->construct('search_total', 'search_index', 'word', 'word');
       $this->query->add_relationship(NULL, $join, 'search_index');
 //      $this->query->add_table('search_total', 'search_index', $join);
-      $this->query->add_field('', "SUM(search_index.score * search_total.count)", 'score');
+      $this->query->add_field('', "SUM(search_index.score * search_total.count)", 'score', array('aggregate' => TRUE));
       $this->query->add_where($this->options['group'], $this->search_query[2], $this->search_query[3]);
       $this->query->add_where($this->options['group'], "search_index.type = '%s'", $this->view->base_table);
       if (!$this->search_query[5]) {

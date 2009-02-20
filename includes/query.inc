@@ -913,6 +913,7 @@ class views_query {
         $string .= $field['table'] . '.';
       }
       $string .= $field['field'];
+
       // store for use with non-aggregates below
       $fieldname = (!empty($field['alias']) ? $field['alias'] : $string);
 
@@ -921,6 +922,9 @@ class views_query {
       }
       if (!empty($field['count'])) {
         $string = "COUNT($string)";
+        $has_aggregate = TRUE;
+      }
+      else if (!empty($field['aggregate'])) {
         $has_aggregate = TRUE;
       }
       else {

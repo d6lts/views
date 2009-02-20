@@ -129,8 +129,9 @@ Views 2.4
     o #375342 by dww: node_comment_statistics should be INNER joined because there is always 1:1 reference.
     o #372959: Archive view should not use AJAX by default.
     o #373155: Not clearing "many to one" data breaks some attachment displays.
-    o #375000: View name should always be LTR.
-    o #378534: Validators do not fire if argument === 0 due to PHP loose type conversions.
+    o #375000 by elcuco: View name should always be LTR.
+    o #378534 by dww: Validators do not fire if argument === 0 due to PHP loose type conversions.
+    o #378164 by yched: Unexposed taxonomy filter could accidentally stop working.
 
   Other changes:
-    o #375182: Allow a reset parameter to views_get_all_views().
+    o #375182 by vaish: Allow a reset parameter to views_get_all_views().
