@@ -786,11 +786,16 @@ function views_get_applicable_views($type) {
 
 /**
  * Return an array of all views as fully loaded $view objects.
+ *
+ * @param $reset
+ *   If TRUE, reset the static cache forcing views to be reloaded.
  */
-function views_get_all_views() {
+function views_get_all_views($reset = FALSE) {
   static $views = array();
 
-  if (empty($views)) {
+  if (empty($views) || $reset) {
+    $views = array();
+
     // First, get all applicable views.
     views_include('view');
     $views = view::load_views();
