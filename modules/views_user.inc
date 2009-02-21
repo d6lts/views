@@ -34,6 +34,11 @@ function user_views_tables() {
         'sortable' => false,
         'help' => t('Display the user picture of the author.'),
       ),
+      'mail' => array(
+        'name' => t('User: E-mail'),
+        'sortable' => TRUE,
+        'help' => t("Display the user's email address. Beware that this should only be shown to administrators in a normal Drupal installation. Further, no attempt is made to obfuscate the email address."),
+      ),
     ),
     'sorts' => array(
       'name' => array(
