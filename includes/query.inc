@@ -773,9 +773,7 @@ class views_query {
   }
 
   /**
-   * Add multiple an orderby's. Right now I'm not sure why this function
-   * is separate from add_orderby above; I don't think it needs to
-   * be.
+   * Add an ORDER BY clause to the query.
    *
    * @param $table
    *   The table this field is part of. If a formula, enter NULL.
@@ -814,6 +812,7 @@ class views_query {
     // group by clause. Check $table to ensure that this is not a
     // formula.
     if ($this->groupby && $table) {
+      vsm_trace();
       $this->add_groupby($as);
     }
   }
@@ -824,7 +823,7 @@ class views_query {
    * added.
    */
   function add_groupby($clause) {
-    // Only add it if it's already in there.
+    // Only add it if it's not already in there.
     if (!in_array($clause, $this->groupby)) {
       $this->groupby[] = $clause;
     }

@@ -75,12 +75,12 @@ function search_views_data() {
     'field' => array(
       'field' => 'score', // the real field
       'group' => t('Search'), // The group it appears in on the UI,
-      'handler' => 'views_handler_field',
+      'handler' => 'views_handler_field_search_score',
       'click sortable' => TRUE,
     ),
     // Information for sorting on a search score.
     'sort' => array(
-      'handler' => 'views_handler_sort',
+      'handler' => 'views_handler_sort_search_score',
     ),
   );
 
@@ -143,6 +143,12 @@ function search_views_handlers() {
       'path' => drupal_get_path('module', 'views') . '/modules/search',
     ),
     'handlers' => array(
+      'views_handler_field_search_score' => array(
+        'parent' => 'views_handler_field_numeric',
+      ),
+      'views_handler_sort_search_score' => array(
+        'parent' => 'views_handler_sort',
+      ),
       'views_handler_filter_search' => array(
         'parent' => 'views_handler_filter',
       ),
