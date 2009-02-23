@@ -69,14 +69,12 @@ function search_views_data() {
 
   // score
   $data['search_index']['score'] = array(
-    'title' => t('Score'), // The item it appears as on the UI,
-    'help' => t('The score of the search item.'), // The help that appears on the UI,
-     // Information for displaying a title as a field
+    'title' => t('Score'),
+    'help' => t('The score of the search item. This will not be used if the search filter is not also present.'),
     'field' => array(
-      'field' => 'score', // the real field
-      'group' => t('Search'), // The group it appears in on the UI,
       'handler' => 'views_handler_field_search_score',
       'click sortable' => TRUE,
+      'float' => TRUE,
     ),
     // Information for sorting on a search score.
     'sort' => array(
