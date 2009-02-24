@@ -812,7 +812,6 @@ class views_query {
     // group by clause. Check $table to ensure that this is not a
     // formula.
     if ($this->groupby && $table) {
-      vsm_trace();
       $this->add_groupby($as);
     }
   }
