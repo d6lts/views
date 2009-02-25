@@ -2737,6 +2737,13 @@ function views_ui_admin_tools() {
     '#options' => $regions,
   );
 
+  $form['views_exposed_filter_any_label'] = array(
+    '#type' => 'select',
+    '#title' => t('Label for "Any" value on optional single-select exposed filters'),
+    '#options' => array('old_any' => t('<Any>'), 'new_any' => t('- Any -')),
+    '#default_value' => variable_get('views_exposed_filter_any_label', 'old_any'),
+  );
+
   return system_settings_form($form);
 }
 
