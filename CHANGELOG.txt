@@ -144,3 +144,4 @@ Views 2.4
     o #356276 by nedjo: Locale support.
     o #316556 by Darren Oh: Better Views 1.x upgrades.
     o #383242 by dww: Allow - Any - instead of <Any> as an option in the Views tools menu.
+    o #303800 by KarenS: Additional dashes to spaces option in taxonomy argument validator.
