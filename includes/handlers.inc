@@ -693,10 +693,10 @@ class views_many_to_one_helper {
           // The table alias needs to be unique to this value across the
           // multiple times the filter or argument is called by the view.
           if (!isset($this->handler->view->many_to_one_aliases[$field][$value])) {
-            if (!isset($this->handler->view->many_to_one_count[$field])) {
-              $this->handler->view->many_to_one_count[$field] = 0;
+            if (!isset($this->handler->view->many_to_one_count[$this->handler->table])) {
+              $this->handler->view->many_to_one_count[$this->handler->table] = 0;
             }
-            $this->handler->view->many_to_one_aliases[$field][$value] = $this->handler->table . '_value_' . ($this->handler->view->many_to_one_count[$field]++);
+            $this->handler->view->many_to_one_aliases[$field][$value] = $this->handler->table . '_value_' . ($this->handler->view->many_to_one_count[$this->handler->table]++);
           }
           $alias = $this->handler->table_aliases[$value] = $this->add_table($join, $this->handler->view->many_to_one_aliases[$field][$value]);
 
