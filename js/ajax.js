@@ -193,7 +193,7 @@ Drupal.Views.updatePreviewForm = function() {
   var url = $(this).attr('action');
   url = url.replace('nojs', 'ajax');
 
-  $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
+  $('input[type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
   $(this).ajaxSubmit({
     url: url,
     data: '',
@@ -210,8 +210,8 @@ Drupal.Views.updatePreviewFilterForm = function() {
   var url = $(this).attr('action');
   url = url.replace('nojs', 'ajax');
 
-  $('input[@type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
-  $('input[@name=q]', this).remove(); // remove 'q' for live preview.
+  $('input[type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
+  $('input[name=q]', this).remove(); // remove 'q' for live preview.
   $(this).ajaxSubmit({
     url: url,
     data: '',
