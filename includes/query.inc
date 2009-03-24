@@ -189,14 +189,28 @@ class views_query {
       $alias = $alias_base . '_' . $count++;
     }
 
+    // Add the table directly to the queue to avoid accidentally marking
+    // it.
+    $this->table_queue[$alias] = array(
+      'table' => $join->table,
+      'num' => 1,
+      'alias' => $alias,
+      'join' => $join,
+      'relationship' => $link_point,
+    );
+
+    $this->relationships[$alias] = array(
+      'link' => $link_point,
+      'table' => $join->table,
+      'base' => $base,
+    );
+    return $alias;
+
+    return $alias;
+/*
     if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
-      $this->relationships[$alias] = array(
-        'link' => $link_point,
-        'table' => $join->table,
-        'base' => $base,
-      );
-      return $alias;
     }
+*/
   }
 
   /**
