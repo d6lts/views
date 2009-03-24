@@ -662,8 +662,12 @@ function node_views_plugins() {
  */
 function template_preprocess_views_view_row_node(&$vars) {
   $options = $vars['options'];
-  $vars['node'] = ''; // make sure var is defined.
-  $nid = $vars['row']->nid;
+
+  // Make sure the variables are defined.
+  $vars['node'] = '';
+  $vars['comments'] = '';
+
+  $nid = $vars['row']->{$vars['field_alias']};
   if (!is_numeric($nid)) {
     return;
   }
@@ -676,7 +680,6 @@ function template_preprocess_views_view_row_node(&$vars) {
   }
 
   $vars['node'] = node_view($node, $options['teaser'], FALSE, $options['links']);
-  $vars['comments'] = NULL;
   if (!empty($options['comments']) && function_exists('comment_render')) {
     $vars['comments'] = comment_render($node);
   }

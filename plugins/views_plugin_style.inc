@@ -193,5 +193,12 @@ class views_plugin_style extends views_plugin {
     }
     return $errors;
   }
+
+  function query() {
+    parent::query();
+    if (isset($this->row_plugin)) {
+      $this->row_plugin->query();
+    }
+  }
 }
 
