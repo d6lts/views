@@ -75,7 +75,7 @@ function views_schema_1() {
       ),
     ),
     'primary key' => array('vid'),
-    'unique key' => array('name' => array('name')),
+    'unique keys' => array('name' => array('name')),
   );
 
   $schema['views_display'] = array(
@@ -221,6 +221,17 @@ function views_update_6002() {
   );
 
   db_change_field($ret, 'views_object_cache', 'data', 'data', $new_field);
+
+  return $ret;
+}
+
+/**
+ * Add missing unique key.
+ */
+function views_update_6003() {
+  $ret = array();
+
+  db_add_unique_key($ret, 'views_view', 'name', array('name'));
 
   return $ret;
 }
