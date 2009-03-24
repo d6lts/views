@@ -51,7 +51,7 @@ class views_handler_argument_date extends views_handler_argument_formula {
       }
 
       if (empty($node)) {
-        parent::get_default_argument();
+        return parent::get_default_argument();
       }
       else if ($this->options['default_argument_type'] == 'node_created') {
         return date($this->arg_format, $node->created);
