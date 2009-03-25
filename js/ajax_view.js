@@ -132,7 +132,10 @@ Drupal.behaviors.ViewsAjaxView = function() {
                     // to browse newly loaded content after e.g. clicking a pager
                     // link.
                     var offset = $(target).offset();
-                    window.scrollTo(0, offset.top - 10);
+                    // Only scroll upward
+                    if (offset.top - 10 < $(window).scrollTop()) {
+                      $('html,body').animate({scrollTop: (offset.top - 10)}, 500);
+                    }
                     // Call all callbacks.
                     if (response.__callbacks) {
                       $.each(response.__callbacks, function(i, callback) {
