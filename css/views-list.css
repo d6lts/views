@@ -5,7 +5,7 @@ table.views-entry {
   border: 1px solid #ddd;
   background-color: white;
   color: #494949; /* matches garland */
-  clear: left;
+  clear: left; /* LTR */
   width: 100%;
 }
 
@@ -15,7 +15,7 @@ table.views-entry tbody {
 
 table.views-entry td.view-ops {
   width: 45%;
-  text-align: right;
+  text-align: right; /* LTR */
   background-color: #eee;
 }
 
@@ -32,26 +32,26 @@ body form#views-ui-list-views-form {
 }
 
 #views-ui-list-views-form .form-item {
-  padding-right: 1em;
-  float: left;
+  padding-right: 1em; /* LTR */
+  float: left; /* LTR */
   margin-top: 0;
   margin-bottom: 0;
 }
 
 #edit-order-wrapper {
-  clear: left;
+  clear: left; /* LTR */
 }
 
 #edit-views-apply,
 #edit-views-reset {
   margin-top: 1.65em;
-  float: left;
+  float: left; /* LTR */
 }
 
 .views-entry .advanced-help-link {
   position: relative;
   top: 2px;
-  padding-right: 3px;
+  padding-right: 3px; /* LTR */
 }
 
 table.view-disabled {
