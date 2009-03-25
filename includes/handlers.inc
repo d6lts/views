@@ -1088,6 +1088,9 @@ function views_views_handlers() {
       'views_handler_filter_numeric' => array(
         'parent' => 'views_handler_filter',
       ),
+      'views_handler_filter_float' => array(
+        'parent' => 'views_handler_filter_numeric',
+      ),
       'views_handler_filter_date' => array(
         'parent' => 'views_handler_filter_numeric',
       ),

@@ -144,6 +144,7 @@ Views 2.4
     o #386986: 2 or more relationships could block a normal table from being added.
     o #371219 by aclight: Incorrect logic in views_many_to_one_helper::ensure_my_table() 
     o #376570 by yhahn: Better AJAX scrolling.
+    o #412576 by yhahn: Restore missing views_handler_filter_float class.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().
