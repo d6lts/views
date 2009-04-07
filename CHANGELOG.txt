@@ -33,6 +33,7 @@ Views 2.4
     o #406680 by Büke Beyond: Missing clear-block caused problems in IE for Views UI.
     o #373771 by dropcube: Fix missing aggregator feed trying to use non-existing handlers.
     o #341960 by sun: Clean up dependent.js javascript declarations which potentially caused .js errors.
+    o #372227: On Debian etch, tables would lose fields due to PHP bug.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().
