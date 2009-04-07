@@ -31,6 +31,7 @@ Views 2.4
     o #415672 by yhahn: Views inadvertently rounds negative numbers down instead of up when truncating.
     o #408414 by rb7: Prevent empty links with the "has new comments" field.
     o #406680 by Büke Beyond: Missing clear-block caused problems in IE for Views UI.
+    o #373771 by dropcube: Fix missing aggregator feed trying to use non-existing handlers.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().
