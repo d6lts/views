@@ -98,7 +98,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
     $extra = node_invoke_nodeapi($node, 'rss item');
     $item->elements = array_merge($extra,
       array(
-        array('key' => 'pubDate', 'value' => gmdate('r', $node->created)),
+        array('key' => 'pubDate', 'value' => format_date($node->created, 'custom', 'r', variable_get('date_default_timezone', 0))),
         array(
           'key' => 'dc:creator',
           'value' => $node->name,

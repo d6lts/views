@@ -71,7 +71,9 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
     $this->field_alias = $this->aliases['vid'];
     $vids = array();
     foreach ($values as $result) {
-      $vids[] = $result->{$this->aliases['vid']};
+      if (!empty($result->{$this->aliases['vid']})) {
+        $vids[] = $result->{$this->aliases['vid']};
+      }
     }
 
     if ($vids) {
