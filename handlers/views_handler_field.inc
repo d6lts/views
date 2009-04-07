@@ -384,26 +384,28 @@ class views_handler_field extends views_handler {
     $this->last_render = $value = $this->render($values);
     $this->original_value = $value;
 
-    $tokens = NULL;
-    if (!empty($this->options['alter']['alter_text']) && !empty($this->options['alter']['text'])) {
-      $tokens = $this->get_render_tokens();
-      $value = $this->render_altered($tokens);
-    }
-
-    if (!empty($this->options['alter']['trim']) && !empty($this->options['alter']['max_length'])) {
-      $value = $this->render_trim_text($value);
-    }
-
-    if (!empty($this->options['alter']['make_link']) && !empty($this->options['alter']['path'])) {
-      if (!isset($tokens)) {
-       $tokens = $this->get_render_tokens();
+    if ($this->allow_advanced_render()) {
+      $tokens = NULL;
+      if (!empty($this->options['alter']['alter_text']) && !empty($this->options['alter']['text'])) {
+        $tokens = $this->get_render_tokens();
+        $value = $this->render_altered($tokens);
       }
-      $value = $this->render_as_link($value, $tokens);
-    }
 
-    // This happens here so that render_as_link can get the unaltered value of
-    // this field as a token rather than the altered value.
-    $this->last_render = $value;
+      if (!empty($this->options['alter']['trim']) && !empty($this->options['alter']['max_length'])) {
+        $value = $this->render_trim_text($value);
+      }
+
+      if (!empty($this->options['alter']['make_link']) && !empty($this->options['alter']['path'])) {
+        if (!isset($tokens)) {
+         $tokens = $this->get_render_tokens();
+        }
+        $value = $this->render_as_link($value, $tokens);
+      }
+
+      // This happens here so that render_as_link can get the unaltered value of
+      // this field as a token rather than the altered value.
+      $this->last_render = $value;
+    }
 
     return $this->last_render;
   }
