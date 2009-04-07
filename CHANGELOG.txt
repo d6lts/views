@@ -30,6 +30,7 @@ Views 2.4
     o #378724: Displaying uploaded files as a link accidentally made the entire field a link rather than each one.
     o #415672 by yhahn: Views inadvertently rounds negative numbers down instead of up when truncating.
     o #408414 by rb7: Prevent empty links with the "has new comments" field.
+    o #406680 by Büke Beyond: Missing clear-block caused problems in IE for Views UI.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().

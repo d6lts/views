@@ -230,7 +230,7 @@ class views_handler_filter extends views_handler {
     }
 
     $form['expose'] = array(
-      '#prefix' => '<div class="views-expose-options clear">',
+      '#prefix' => '<div class="views-expose-options clear-block">',
       '#suffix' => '</div>',
     );
     $this->expose_form($form, $form_state);
