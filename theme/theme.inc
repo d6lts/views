@@ -298,8 +298,9 @@ function template_preprocess_views_view_table(&$vars) {
   // Fields must be rendered in order as of Views 2.3, so we will pre-render
   // everything.
   $renders = array();
+  $keys = array_keys($view->field);
   foreach ($result as $count => $row) {
-    foreach ($view->field as $id => $field) {
+    foreach ($keys as $id) {
       $renders[$count][$id] = $view->field[$id]->theme($row);
     }
   }

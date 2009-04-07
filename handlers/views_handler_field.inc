@@ -191,7 +191,7 @@ class views_handler_field extends views_handler {
 
       $form['alter']['text'] = array(
         '#title' => t('Text'),
-        '#type' => 'textfield',
+        '#type' => 'textarea',
         '#default_value' => $this->options['alter']['text'],
         '#description' => t('The text to display for this field. You may include HTML. You may enter data from this view as per the "Replacement patterns" below.'),
         '#process' => array('views_process_dependency'),
