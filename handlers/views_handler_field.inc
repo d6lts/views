@@ -457,7 +457,9 @@ class views_handler_field extends views_handler {
     // $path will be run through check_url() by l() so we do not need to
     // sanitize it ourselves.
     $path = $this->options['alter']['path'];
-    $path = strtr($path, $tokens);
+
+    // Use strip tags as there should never be HTML in the path.
+    $path = strip_tags(strtr($path, $tokens));
 
     $alt = $this->options['alter']['alt'];
     $alt = strtr($alt, $tokens);
