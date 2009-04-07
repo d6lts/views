@@ -21,11 +21,9 @@
  *   override it.
  */
 
-Drupal.Views.dependent = {};
+Drupal.Views = Drupal.Views || {};
 
-Drupal.Views.dependent.bindings = {};
-Drupal.Views.dependent.activeBindings = {};
-Drupal.Views.dependent.activeTriggers = [];
+Drupal.Views.dependent = { bindings: {}, activeBindings: {}, activeTriggers: [] };
 
 Drupal.Views.dependent.inArray = function(array, search_term) {
   var i = array.length;
