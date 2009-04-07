@@ -432,7 +432,7 @@ class views_handler_field extends views_handler {
     if (!empty($this->options['alter']['word_boundary'])) {
       if (preg_match ("/(.*)\b.+/u", $value, $matches)) {
         // Remove scraps of HTML entities from the end of a strings
-        $value = preg_replace('/(?:<(?!.+>)|&(?!.+;)).{1,10}$/us', '', $matches[1]);
+        $value = preg_replace('/(?:<(?!.+>)|&(?!.+;))/us', '', $matches[1]);
         // Strip spare space at the end.
         $value = rtrim($value);
       }
