@@ -26,6 +26,7 @@ Views 2.4
     o #378710: Add strip_tags() to path when displaying a field as a link as a path can never have HTML in it.
     o #380560: UI could suddenly cause errors with get_handlers() in certain situations with relationships.
     o #342215: Occasional "holes" could appear in taxonomy term field causing query errors when relationship is used but not present.
+    o #414074 by dereine: Prevent fields becoming not editable by having just spaces in them in the Views UI.
 
   Other changes:
     o #375182 by vaish: Allow a reset parameter to views_get_all_views().
