@@ -554,7 +554,7 @@ class views_plugin_display extends views_plugin {
       $text = '<span>' . $text . '</span>';
     }
 
-    if (empty(trim($text))) {
+    if (!trim($text)) {
       $text = t('Broken field');
     }
 
