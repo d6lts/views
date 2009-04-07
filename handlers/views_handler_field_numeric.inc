@@ -78,7 +78,8 @@ class views_handler_field_numeric extends views_handler_field {
     }
     else {
       $remainder = abs($value) - intval(abs($value));
-      $value = number_format(floor($value), 0, '', $this->options['separator']);
+      $value = $value > 0 ? floor($value) : ceil($value);
+      $value = number_format($value, 0, '', $this->options['separator']);
       if ($remainder) {
         // The substr may not be locale safe.
         $value .= $this->options['decimal'] . substr($remainder, 2);
