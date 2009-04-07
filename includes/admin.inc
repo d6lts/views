@@ -2293,7 +2293,8 @@ function views_ui_config_item_form(&$form_state) {
           // We want this relationship option to get saved even if the user
           // skips submitting the form.
           $view->set_item_option($display_id, $type, $id, 'relationship', $rel);
-          views_ui_cache_set($view);
+          $temp_view = $view->clone_view();
+          views_ui_cache_set($temp_view);
         }
 
         $form['options']['relationship'] = array(
