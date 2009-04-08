@@ -198,6 +198,14 @@ function comment_views_data() {
     ),
   );
 
+  $data['comments']['node_link'] = array(
+    'field' => array(
+      'title' => t('Node link'),
+      'help' => t('Display the standard comment link used on regular nodes.'),
+      'handler' => 'views_handler_field_comment_node_link',
+    ),
+  );  
+
   $data['comments']['thread'] = array(
     'field' => array(
       'title' => t('Depth'),
@@ -443,6 +451,9 @@ function comment_views_handlers() {
       ),
       'views_handler_field_comment_link_reply' => array(
         'parent' => 'views_handler_field_comment_link',
+      ),
+      'views_handler_field_comment_node_link' => array(
+       'parent' => 'views_handler_field',
       ),
       'views_handler_field_ncs_last_comment_name' => array(
         'parent' => 'views_handler_field',
