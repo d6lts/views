@@ -1,7 +1,10 @@
 CHANGELOG for Views 2 for Drupal 6
 Views 2.5
+  Bugs fixed:
+    o #363817 by thePanz: Empty fields in table could still trigger separators.
   Other changes:
     o #379382 by neochief: Add option to strip tags during advanced rendering.
+
 Views 2.4
   Bugs fixed:
     o #371466 by dereine: Fix incorrect link to comments.

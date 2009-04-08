@@ -346,12 +346,12 @@ function template_preprocess_views_view_table(&$vars) {
         $field_output = $renders[$num][$field];
 
         // Don't bother with separators and stuff if the field does not show up.
-        if (!isset($field_output) && isset($vars['rows'][$num][$column])) {
+        if (empty($field_output) && !empty($vars['rows'][$num][$column])) {
           continue;
         }
 
         // Place the field into the column, along with an optional separator.
-        if (isset($vars['rows'][$num][$column])) {
+        if (!empty($vars['rows'][$num][$column])) {
           if (!empty($options['info'][$column]['separator'])) {
             $vars['rows'][$num][$column] .= filter_xss_admin($options['info'][$column]['separator']);
           }
