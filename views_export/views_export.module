@@ -57,6 +57,7 @@ function views_export_export() {
   foreach (module_implements('views_exportables') as $module) {
     $function = $module . '_views_exportables';
     $exportables[$module] = $function('list', $tags);
+    asort($exportables[$module]);
   }
 
   if ($exportables) {

@@ -8,6 +8,7 @@ Views 2.5
   Other changes:
     o #379382 by neochief: Add option to strip tags during advanced rendering.
     o #400914 by joachim: Add a link field to get to comments for a node that works just like the normal links.
+    o #402650 by drewish: Bulk export views alphabetically by view name.
 
 Views 2.4
   Bugs fixed:

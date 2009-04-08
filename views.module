@@ -1149,6 +1149,9 @@ function views_views_exportables($op = 'list', $views = NULL, $name = 'foo') {
     $code .= " */\n";
     $code .= "function " . $name . "_views_default_views() {\n";
     foreach ($views as $view => $truth) {
+      $code .= "  /*\n";
+      $code .= "   * View ". var_export($all_views[$view]->name, TRUE) ."\n";
+      $code .= "   */\n";
       $code .= $all_views[$view]->export('  ');
       $code .= '  $views[$view->name] = $view;' . "\n\n";
     }
