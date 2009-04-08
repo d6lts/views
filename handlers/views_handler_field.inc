@@ -155,6 +155,7 @@ class views_handler_field extends views_handler {
         'max_length' => array('default' => ''),
         'word_boundary' => array('default' => TRUE),
         'ellipsis' => array('default' => TRUE),
+        'strip_tags' => array('default' => FALSE),
         'html' => array('default' => FALSE),
       ),
     );
@@ -332,6 +333,17 @@ class views_handler_field extends views_handler {
         ),
       );
 
+      $form['alter']['strip_tags'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Strip HTML tags'),
+        '#description' => t('If checked, all HTML tags will be stripped.'),
+        '#default_value' => $this->options['alter']['strip_tags'],
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array(
+          'edit-options-alter-trim' => array(1)
+        ),
+      );
+
       $form['alter']['html'] = array(
         '#type' => 'checkbox',
         '#title' => t('Field can contain HTML'),
@@ -425,6 +437,14 @@ class views_handler_field extends views_handler {
    * Trim the field down to the specified length.
    */
   function render_trim_text($value) {
+    if (!empty($this->options['alter']['strip_tags'])) {
+      $value = strip_tags($value);
+      // NOTE: It's possible that some external fields might override the
+      // element type so if someone from, say, CCK runs into a bug here,
+      // this may be why =)
+      $this->definition['element type'] = 'span';
+    }
+
     if (drupal_strlen($value) <= $this->options['alter']['max_length']) {
       return $value;
     }
