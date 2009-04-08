@@ -673,13 +673,15 @@ function template_preprocess_views_view_row_node(&$vars) {
   }
 
   $node = node_load($nid);
-  $node->view = $vars['view'];
 
   if (empty($node)) {
     return;
   }
 
-  $vars['node'] = node_view($node, $options['teaser'], FALSE, $options['links']);
+  $node->view = $vars['view'];
+  $node->build_mode = ($options['build_mode'] == 'teaser' || $options['build_mode'] == 'full') ? NODE_BUILD_NORMAL : $options['build_mode'];
+  $vars['node'] = node_view($node, $options['build_mode'] == 'teaser', FALSE, $options['links']);
+
   if (!empty($options['comments']) && function_exists('comment_render')) {
     $vars['comments'] = comment_render($node);
   }
