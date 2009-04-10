@@ -575,7 +575,7 @@ class views_many_to_one_helper {
 
     // If we found that there are tables in between, add the relationship.
     if ($r_join->table != $join->table) {
-      $relationship = $this->handler->query->add_relationship(NULL, $r_join, $r_join->table, $this->handler->relationship);
+      $relationship = $this->handler->query->add_relationship($this->handler->table, $r_join, $r_join->table, $this->handler->relationship);
     }
 
     // And now add our table, using the new relationship if one was used.

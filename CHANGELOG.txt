@@ -5,6 +5,7 @@ Views 2.5
     o #388952 by nikita@protsenko.com: Ensure taxonomy term validator sets the validated title when available.
     o #392176: Trim on word boundary would stop at newlines.
     o #415706 by dww: Fix broken relationship in search that caused SQL error.
+    o #428742 by fralenuvol: Fix broken relationship causing sql error with multiple taxonomy term arguments.
 
   Other changes:
     o #379382 by neochief: Add option to strip tags during advanced rendering.
