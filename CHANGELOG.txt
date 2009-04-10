@@ -4,6 +4,7 @@ Views 2.5
     o #363817 by thePanz: Empty fields in table could still trigger separators.
     o #388952 by nikita@protsenko.com: Ensure taxonomy term validator sets the validated title when available.
     o #392176: Trim on word boundary would stop at newlines.
+    o #415706 by dww: Fix broken relationship in search that caused SQL error.
 
   Other changes:
     o #379382 by neochief: Add option to strip tags during advanced rendering.

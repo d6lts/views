@@ -87,7 +87,7 @@ class views_handler_filter_search extends views_handler_filter {
       // Create a new join to relate the 'serach_total' table to our current 'search_index' table.
       $join = new views_join;
       $join->construct('search_total', $search_index, 'word', 'word');
-      $search_total = $this->query->add_relationship(NULL, $join, $search_index);
+      $search_total = $this->query->add_relationship('search_total', $join, $search_index);
 
       $this->search_score = $this->query->add_field('', "SUM($search_index.score * $search_total.count)", 'score', array('aggregate' => TRUE));
 
