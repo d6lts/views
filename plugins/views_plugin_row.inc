@@ -33,6 +33,8 @@ class views_plugin_row extends views_plugin {
     if (isset($this->base_table)) {
       $options['relationship'] = array('default' => 'none');
     }
+
+    return $options;
   }
 
   /**
