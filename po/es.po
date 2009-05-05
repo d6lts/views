@@ -1077,7 +1077,7 @@ msgstr "es mayor que O iguales"
 
 #: views.module:1687
 msgid "Is Less Than Or Equals"
-msgstr "es menor que "
+msgstr "es menor que O iguales"
 
 #: views.module:1687
 msgid "Is Less Than"
