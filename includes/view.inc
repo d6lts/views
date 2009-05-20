@@ -29,6 +29,9 @@ class view extends views_db_object {
 
   var $use_ajax = FALSE;
 
+  // Where the results of a query will go.
+  var $result = array();
+
   // pager variables
   var $pager = array(
     'use_pager' => FALSE,
@@ -549,7 +552,11 @@ class view extends views_db_object {
 
     $start = views_microtime();
     // If that fails, let's build!
-    $this->build_info = array();
+    $this->build_info = array(
+      'query' => '',
+      'count_query' => '',
+      'query_args' => array(),
+    );
 
     $this->init_query();
 
@@ -566,6 +573,10 @@ class view extends views_db_object {
 
     if ($this->display_handler->uses_exposed()) {
       $this->exposed_widgets = $this->render_exposed_form();
+      if (form_set_error() || !empty($this->build_info['abort'])) {
+        $this->built = TRUE;
+        return empty($this->build_info['fail']);
+      }
     }
 
     // Build all the relationships first thing.
@@ -742,8 +753,9 @@ class view extends views_db_object {
       if (!empty($external)) {
         db_set_active();
       }
+      $this->execute_time = views_microtime() - $start;
     }
-    $this->execute_time = views_microtime() - $start;
+
     $this->executed = TRUE;
   }
 
@@ -757,7 +769,7 @@ class view extends views_db_object {
     $this->execute($display_id);
 
     // Check to see if the build failed.
-    if (!isset($this->result)) {
+    if (!empty($this->build_info['fail'])) {
       return;
     }
 

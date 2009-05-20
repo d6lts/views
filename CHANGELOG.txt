@@ -1,4 +1,7 @@
-CHANGELOG for Views 2 for Drupal 6
+CHANGELOG for Views 3 for Drupal 6
+
+Views 3.x-dev
+
 Views 2.5
   Bugs fixed:
     o #363817 by thePanz: Empty fields in table could still trigger separators.
