@@ -235,6 +235,18 @@ function views_views_plugins() {
         'help topic' => 'access-perm',
       ),
     ),
+    'query' => array(
+      'parent' => array(
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_query',
+        'parent' => '',
+      ),
+      'views_query' => array(
+        'title' => t('SQL Query'),
+        'help' => t('Query will be generated and run using the Drupal database API.'),
+        'handler' => 'views_plugin_query_default'
+      ),
+    ),
   );
 }
 

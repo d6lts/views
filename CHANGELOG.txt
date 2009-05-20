@@ -2,6 +2,9 @@ CHANGELOG for Views 3 for Drupal 6
 
 Views 3.x-dev
 
+  New Features
+    o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
+
 Views 2.5
   Bugs fixed:
     o #363817 by thePanz: Empty fields in table could still trigger separators.

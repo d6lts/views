@@ -1,14 +1,15 @@
 <?php
 // $Id$
 /**
- * @file query.inc
- * Defines the query object which is the underlying layer in a View.
+ * @file views_plugin_query_default.inc
+ * Defines the default query object which builds SQL to execute using the
+ * Drupal database API.
  */
 
 /**
  * Object used to create a SELECT query.
  */
-class views_query {
+class views_plugin_query_default extends views_plugin_query{
 
   /**
    * A list of tables in the order they should be added, keyed by alias.
@@ -68,7 +69,7 @@ class views_query {
   /**
    * Constructor; Create the basic query object and fill with default values.
    */
-  function views_query($base_table = 'node', $base_field = 'nid') {
+  function init($base_table = 'node', $base_field = 'nid') {
     $this->base_table = $base_table;  // Predefine these above, for clarity.
     $this->base_field = $base_field;
     $this->relationships[$base_table] = array(
@@ -205,12 +206,6 @@ class views_query {
       'base' => $base,
     );
     return $alias;
-
-    return $alias;
-/*
-    if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
-    }
-*/
   }
 
   /**
@@ -925,7 +920,6 @@ class views_query {
         $string .= $field['table'] . '.';
       }
       $string .= $field['field'];
-
       // store for use with non-aggregates below
       $fieldname = (!empty($field['alias']) ? $field['alias'] : $string);
 
@@ -934,9 +928,6 @@ class views_query {
       }
       if (!empty($field['count'])) {
         $string = "COUNT($string)";
-        $has_aggregate = TRUE;
-      }
-      else if (!empty($field['aggregate'])) {
         $has_aggregate = TRUE;
       }
       else {
@@ -990,5 +981,107 @@ class views_query {
     }
     return $args;
   }
-}
 
+  /**
+   * Let modules modify the query just prior to finalizing it.
+   */
+  function alter(&$view) {
+    foreach (module_implements('views_query_alter') as $module) {
+      $function = $module . '_views_query_alter';
+      $function($view, $this);
+    }
+  }
+  
+  /**
+   * Builds the necessary info to execute the query.
+   */
+  function build(&$view) {
+    $view->build_info['query'] = $this->query();
+    $view->build_info['count_query'] = $this->query(TRUE);
+    $view->build_info['query_args'] = $this->get_where_args();
+  }
+
+  /**
+   * Executes the query and fills the associated view object with according
+   * values.
+   * 
+   * Values to set: $view->result, $view->total_rows, $view->execute_time,
+   * $view->pager['current_page'].
+   */
+  function execute(&$view) {
+    $external = FALSE; // Whether this query will run against an external database.
+    $query = db_rewrite_sql($view->build_info['query'], $view->base_table, $view->base_field, array('view' => &$view));
+    $count_query = db_rewrite_sql($view->build_info['count_query'], $view->base_table, $view->base_field, array('view' => &$view));
+    $args = $view->build_info['query_args'];
+
+    vpr($query);
+
+    $items = array();
+    if ($query) {
+      $replacements = module_invoke_all('views_query_substitutions', $view);
+      $query = str_replace(array_keys($replacements), $replacements, $query);
+      $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
+
+      if (is_array($args)) {
+        foreach ($args as $id => $arg) {
+          $args[$id] = str_replace(array_keys($replacements), $replacements, $arg);
+        }
+      }
+
+      // Detect an external database.
+      if (isset($view->base_database)) {
+        db_set_active($view->base_database);
+        $external = TRUE;
+      }
+
+      $start = views_microtime();
+      if (!empty($view->pager['items_per_page'])) {
+        // We no longer use pager_query() here because pager_query() does not
+        // support an offset. This is fine as we don't actually need pager
+        // query; we've already been doing most of what it does, and we
+        // just need to do a little more playing with globals.
+        if (!empty($view->pager['use_pager']) || !empty($view->get_total_rows)) {
+          $view->total_rows = db_result(db_query($count_query, $args)) - $view->pager['offset'];
+        }
+
+        if (!empty($view->pager['use_pager'])) {
+          // Dump information about what we already know into the globals.
+          global $pager_page_array, $pager_total, $pager_total_items;
+          // Set the item count for the pager.
+          $pager_total_items[$view->pager['element']] = $view->total_rows;
+          // Calculate and set the count of available pages.
+          $pager_total[$view->pager['element']] = ceil($pager_total_items[$view->pager['element']] / $view->pager['items_per_page']);
+
+          // What page was requested:
+          $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
+
+          // If the requested page was within range. $view->pager['current_page']
+          // defaults to 0 so we don't need to set it in an out-of-range condition.
+          if (!empty($pager_page_array[$view->pager['element']])) {
+            $page = intval($pager_page_array[$view->pager['element']]);
+            if ($page > 0 && $page < $pager_total[$view->pager['element']]) {
+              $view->pager['current_page'] = $page;
+            }
+          }
+          $pager_page_array[$view->pager['element']] = $view->pager['current_page'];
+        }
+
+        $offset = $view->pager['current_page'] * $view->pager['items_per_page'] + $view->pager['offset'];
+        $result = db_query_range($query, $args, $offset, $view->pager['items_per_page']);
+      }
+      else {
+        $result = db_query($query, $args);
+      }
+
+      $view->result = array();
+      while ($item = db_fetch_object($result)) {
+        $view->result[] = $item;
+      }
+
+      if ($external) {
+        db_set_active();
+      }
+    }
+    $view->execute_time = views_microtime() - $start;
+  }
+}
