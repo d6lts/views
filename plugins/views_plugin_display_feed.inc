@@ -100,7 +100,7 @@ class views_plugin_display_feed extends views_plugin_display_page {
     else if (count($displays) == 1) {
       $display = array_shift($displays);
       if (!empty($this->view->display[$display])) {
-        $attach_to = $this->view->display[$display]->display_title;
+        $attach_to = check_plain($this->view->display[$display]->display_title);
       }
     }
 

@@ -68,7 +68,7 @@ class views_plugin_display_block extends views_plugin_display {
       'title' => t('Block settings'),
     );
 
-    $block_description = $this->get_option('block_description');
+    $block_description = strip_tags($this->get_option('block_description'));
     if (empty($block_description)) {
       $block_description = t('None');
     }
