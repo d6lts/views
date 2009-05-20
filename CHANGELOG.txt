@@ -4,6 +4,7 @@ Views 3.x-dev
 
   New Features
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
+    o #458140: Allow any handler to expose widgets.
 
 Views 2.5
   Bugs fixed:
