@@ -934,6 +934,11 @@ function views_exposed_form(&$form_state) {
   $view = &$form_state['view'];
   $display = &$form_state['display'];
 
+  // Check if the form was already created
+  if ($cache = views_exposed_form_cache($view->name, $view->current_display)) {
+    return $cache;
+  }
+
   $form_state['input'] = $view->get_exposed_input();
 
   // Let form plugins know this is for exposed widgets.
@@ -974,6 +979,10 @@ function views_exposed_form(&$form_state) {
     drupal_add_js('misc/jquery.form.js');
   }
   views_add_js('dependent');
+
+  // Save the form
+  views_exposed_form_cache($view->name, $view->current_display, $form);
+
   return $form;
 }
 
@@ -1007,6 +1016,31 @@ function views_exposed_form_submit(&$form, &$form_state) {
       $form_state['view']->exposed_raw_input[$key] = $value;
     }
   }
+}
+
+/**
+ * Save the Views exposed form for later use.
+ *
+ * @param $views_name
+ *   String. The views name.
+ * @param $display_name
+ *   String. The current view display name.
+ * @param $form_output
+ *   Array (optional). The form structure. Only needed when inserting the value.
+ * @return
+ *   Array. The form structure, if any. Otherwise, return FALSE.
+ */
+function views_exposed_form_cache($views_name, $display_name, $form_output = NULL) {
+  static $views_exposed;
+
+  // Save the form output
+  if (!empty($form_output)) {
+    $views_exposed[$views_name][$display_name] = $form_output;
+    return;
+  }
+
+  // Return the form output, if any
+  return empty($views_exposed[$views_name][$display_name]) ? FALSE : $views_exposed[$views_name][$display_name];
 }
 
 // ------------------------------------------------------------------
