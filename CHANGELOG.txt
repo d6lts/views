@@ -6,6 +6,10 @@ Views 3.x-dev
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
     o #458140: Allow any handler to expose widgets.
 
+Views 2.x
+  Other Changes
+    o #298616: Add argument for node updated time similar to node created time.
+
 Views 2.5
   Bugs fixed:
     o #363817 by thePanz: Empty fields in table could still trigger separators.
