@@ -6,6 +6,16 @@
  */
 
 /**
+ * @defgroup views_argument_default_plugins Views' argument default plugins
+ * @{
+ *
+ * Allow specialized methods of filling in arguments when they aren't
+ * provided.
+ *
+ * @see hook_views_plugins
+ */
+
+/**
  * The fixed argument default handler; also used as the base.
  */
 class views_plugin_argument_default extends views_plugin {
@@ -62,3 +72,8 @@ class views_plugin_argument_default extends views_plugin {
     return isset($this->argument->options[$this->option_name]) ? $this->argument->options[$this->option_name] : '';
   }
 }
+
+/**
+ * @}
+ */
+
