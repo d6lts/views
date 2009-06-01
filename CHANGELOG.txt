@@ -4,6 +4,7 @@ Views 2.x
   Bugs fixed:
     o #419226 by kelvincool: Respect admin theme during views ajax operations.
     o #419270 by voxpelli: set_where_group() could fail if no previous groups.
+    o #422054 by yhahn: Protect exports from impropertly indenting multiline strings.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
