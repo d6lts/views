@@ -9,6 +9,7 @@ Views 2.x
     o #347892 by dww: Allow <any> option in Boolean filters.
     o #358314 by brmassa: Catch the exposed filter form so it doesn't process twice on a single view.
     o #154865 by Zack Rosen, josh_k and KarenS: Allow user contact form as a field.
+    o #411880 by fgm: Add "options callback" to items using in_operator handler.
 
 Views 2.5
   Bugs fixed:
