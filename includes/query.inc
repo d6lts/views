@@ -664,7 +664,7 @@ class views_query {
     $groups = &$this->$where;
 
     if (!isset($group)) {
-      $group = max(array_keys($groups)) + 1;
+      $group = empty($groups) ? 1 : max(array_keys($groups)) + 1;
     }
 
     // Create an empty group
