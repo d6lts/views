@@ -1,22 +1,20 @@
 CHANGELOG for Views 3 for Drupal 6
 
 Views 3.x-dev
+  Bugs fixed
+    o #419226 by kelvincool: Respect admin theme during views ajax operations.
 
-  New Features
+  New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
     o #458140: Allow any handler to expose widgets.
     o #325607 by bangpound: Automatically sort exports from bulk export.
+    o #298616: Add argument for node updated time similar to node created time.
     o #323049 by yched: Allow Empty/Not Empty on select many to one.
     o #340701 by swentel: Restore allowing Views to set block caching mode.
     o #347892 by dww: Allow <any> option in Boolean filters.
     o #358314 by brmassa: Catch the exposed filter form so it doesn't process twice on a single view.
     o #154865 by Zack Rosen, josh_k and KarenS: Allow user contact form as a field.
     o #411880 by fgm: Add "options callback" to items using in_operator handler.
-
-Views 2.x
-  Other Changes
-    o #298616: Add argument for node updated time similar to node created time.
-    o #325607 by bangpound: Automatically sort exports from bulk export.
 
 Views 2.5
   Bugs fixed:
