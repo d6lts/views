@@ -506,6 +506,17 @@ function hook_views_default_views() {
 }
 
 /**
+ * This hook is called right before all default views are cached to the
+ * database. It takes a keyed array of views by reference.
+ */
+function hook_views_default_views_alter(&$views) {
+  if (isset($views['taxonomy_term'])) {
+    $views['taxonomy_term']->set_display('default');
+    $views['taxonomy_term']->display_handler->set_option('title', 'Categories');
+  }
+}
+
+/**
  * Stub hook documentation
  *
  * This hook should be placed in MODULENAME.views_convert.inc and it will be auto-loaded.
