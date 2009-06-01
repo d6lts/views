@@ -118,6 +118,10 @@ function _views_discover_default_views() {
           $cache[$name] = $view;
         }
       }
+
+      // Allow modules to modify default views before they are cached.
+      drupal_alter('views_default_views', $cache);
+
       views_cache_set('views_default_views', $cache, TRUE);
     }
   }
