@@ -179,6 +179,7 @@ function views_export_export_form_submit(&$form, &$form_state) {
 
   foreach ($form_state['values']['modules'] as $module => $views) {
     $views = array_filter($views);
+    asort($views);
     if ($views) {
       $code .= module_invoke($module, 'views_exportables', 'export', $views, $form_state['values']['name']) . "\n\n";
     }
