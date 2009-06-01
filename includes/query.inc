@@ -205,12 +205,6 @@ class views_query {
       'base' => $base,
     );
     return $alias;
-
-    return $alias;
-/*
-    if ($alias = $this->add_table($join->table, $link_point, $join, $alias)) {
-    }
-*/
   }
 
   /**
