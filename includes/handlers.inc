@@ -1453,3 +1453,5 @@ function translation_views_api() { return views_views_api(); }
 function upload_views_api() { return views_views_api(); }
 
 function user_views_api() { return views_views_api(); }
+
+function contact_views_api() { return views_views_api(); }
