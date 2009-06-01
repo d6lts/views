@@ -1125,7 +1125,7 @@ function views_embed_view($name, $display_id = 'default') {
 /**
  * Export a field.
  */
-function views_var_export($var, $prefix = '') {
+function views_var_export($var, $prefix = '', $init = TRUE) {
   if (is_array($var)) {
     if (empty($var)) {
       $output = 'array()';
@@ -1133,7 +1133,7 @@ function views_var_export($var, $prefix = '') {
     else {
       $output = "array(\n";
       foreach ($var as $key => $value) {
-        $output .= "  '$key' => " . views_var_export($value, '  ') . ",\n";
+        $output .= "  '$key' => " . views_var_export($value, '  ', FALSE) . ",\n";
       }
       $output .= ')';
     }
@@ -1141,12 +1141,23 @@ function views_var_export($var, $prefix = '') {
   else if (is_bool($var)) {
     $output = $var ? 'TRUE' : 'FALSE';
   }
+  else if (is_string($var) && strpos($var, "\n") !== FALSE) {
+    // Replace line breaks in strings with a token for replacement
+    // at the very end. This protects multi-line strings from
+    // unintentional indentation.
+    $var = str_replace("\n", "***BREAK***", $var);
+    $output = var_export($var, TRUE);
+  }
   else {
     $output = var_export($var, TRUE);
   }
 
   if ($prefix) {
     $output = str_replace("\n", "\n$prefix", $output);
+  }
+
+  if ($init) {
+    $output = str_replace("***BREAK***", "\n", $output);
   }
 
   return $output;
