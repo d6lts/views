@@ -2,6 +2,7 @@ CHANGELOG for Views 2 for Drupal 6
 Views 2.x
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
+    o #325607 by bangpound: Automatically sort exports from bulk export.
 
 Views 2.5
   Bugs fixed:
