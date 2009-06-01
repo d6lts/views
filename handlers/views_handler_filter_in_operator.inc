@@ -17,12 +17,24 @@ class views_handler_filter_in_operator extends views_handler_filter {
   }
 
   /**
-   * Child classes should override this function to set the 'value options'.
+   * Child classes should be used to override this function and set the
+   * 'value options', unless 'options callback' is defined as a valid function
+   * or static public method to generate these values.
+   *
    * This can use a guard to be used to reduce database hits as much as
    * possible.
    */
   function get_value_options() {
-    $this->value_options = array(t('Yes'), t('No'));
+    if (isset($this->value_options)) {
+      return;
+    }
+
+    if (isset($this->definition['options callback']) && is_callable($this->definition['options callback'])) {
+      $this->value_options = call_user_func($this->definition['options callback']);
+    }
+    else {
+      $this->value_options = array(t('Yes'), t('No'));
+    }
   }
 
   function expose_options() {
