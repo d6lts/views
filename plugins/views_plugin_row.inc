@@ -6,6 +6,17 @@
  */
 
 /**
+ * @defgroup views_row_plugins Views' row plugins
+ * @{
+ *
+ * Row plugins control how Views outputs an individual record. They are
+ * tightly coupled to style plugins, in that a style plugin is what calls
+ * the row plugin.
+ *
+ * @see hook_views_plugins
+ */
+
+/**
  * Default plugin to view a single row of a table. This is really just a wrapper around
  * a theme function.
  *
@@ -122,3 +133,8 @@ class views_plugin_row extends views_plugin {
     return theme($this->theme_functions(), $this->view, $this->options, $row, $this->field_alias);
   }
 }
+
+/**
+ * @}
+ */
+
