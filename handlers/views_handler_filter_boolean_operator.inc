@@ -89,6 +89,14 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
       if (!isset($form_state['input'][$identifier])) {
         $form_state['input'][$identifier] = $this->value;
       }
+      // If we're configuring an exposed filter, add an <Any> option.
+      $form['value']['#options'] += array('All' => check_plain(t('<Any>')));
+    }
+  }
+
+  function value_validate(&$form, &$form_state) {
+    if ($form_state['values']['options']['value'] == 'All' && empty($form_state['values']['options']['expose']['optional'])) {
+      form_set_error('value', t('You must select a value unless this is an optional exposed filter.'));
     }
   }
 
