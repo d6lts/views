@@ -231,11 +231,21 @@ function hook_views_handlers() {
 
 /**
  * Register View API information. This is required for your module to have
- * its include files loaded.
+ * its include files loaded; for example, when implementing
+ * hook_views_default_views().
  *
- * The full documentation for this hook is in the advanced help.
+ * @return
+ *   An array with the following possible keys:
+ *   - api:  (required) The version of the Views API the module implements.
+ *   - path: (optional) If includes are stored somewhere other than within
+ *       the root module directory or a subdirectory called includes, specify
+ *       its path here.
  */
 function hook_views_api() {
+  return array(
+    'api' => 2,
+    'path' => drupal_get_path('module', 'example') . '/includes/views', 
+  );
 }
 
 /**
