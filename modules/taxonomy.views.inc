@@ -219,6 +219,7 @@ function taxonomy_views_data() {
       'hierarchy table' => 'term_hierarchy',
       'numeric' => TRUE,
       'skip base' => 'term_data',
+      'allow empty' => TRUE,
     ),
   );
 

@@ -1,8 +1,10 @@
 CHANGELOG for Views 2 for Drupal 6
+
 Views 2.x
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
     o #325607 by bangpound: Automatically sort exports from bulk export.
+    o #323049 by yched: Allow Empty/Not Empty on select many to one.
 
 Views 2.5
   Bugs fixed:
