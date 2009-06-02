@@ -14,6 +14,7 @@ Views 3.x-dev
     o #463634 by alienbrain: "Empty field name" incorrectly specified.
     o #463580 by ximo: AJAX summary links broken in some displays.
     o #469456 by dereine: Automatically give .info file during views bulk export.
+    o #422868 by mattman: Breadcrumbs not properly substuting % replacements.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
