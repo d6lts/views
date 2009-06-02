@@ -28,11 +28,11 @@ Drupal.Views.dependent = { bindings: {}, activeBindings: {}, activeTriggers: [] 
 Drupal.Views.dependent.inArray = function(array, search_term) {
   var i = array.length;
   if (i > 0) {
-	 do {
-		if (array[i] == search_term) {
-		   return true;
-		}
-	 } while (i--);
+   do {
+    if (array[i] == search_term) {
+       return true;
+    }
+   } while (i--);
   }
   return false;
 }
@@ -105,7 +105,7 @@ Drupal.Views.dependent.autoAttach = function() {
 
           for (i in Drupal.Views.dependent.bindings[bind_id]) {
             var id = Drupal.Views.dependent.bindings[bind_id][i];
-            
+
             // Fix numerous errors
             if (typeof id != 'string') {
               continue;
