@@ -10,6 +10,7 @@ Views 2.x
     o #441520 by jonathan1055: Allow the "time ago" date format to work on future dates as well.
     o #445398 by casey: reduce_value_options() using wrong value array.
     o #451370 by skwashd: base.js had some DOS line endings.
+    o #454754 by dww: Fix PGSQL related errors with comment author filtering.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
