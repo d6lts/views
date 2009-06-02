@@ -17,6 +17,7 @@ Views 3.x-dev
     o #422868 by mattman: Breadcrumbs not properly substuting % replacements.
     o #440676 by dereine and Razorraser: View import form crashed on empty view input.
     o #461842 by dereine: Use gmtime() instead of format_date() to prevent localization of dates in RSS feeds.
+    o #316556 by darrenoh and JirkaRybka: More 1.x upgrade fixes.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
@@ -47,6 +48,7 @@ Views 3.x-dev
     o #468824 by eaton: Pluggable caching mechanism which can cache both the query result and rendered result.
     o #399534 by clemens.tolboom and drewish: Add fragment and query string as options when making fields into links. 
     o #315915 by dixon_: Add another base row class to rows.
+    o #271833 by grugnog, agentrickard and others: Taxonomy depth in filter.
 
 Views 2.5
   Bugs fixed:
