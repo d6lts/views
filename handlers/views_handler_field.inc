@@ -149,6 +149,7 @@ class views_handler_field extends views_handler {
         'make_link' => array('default' => FALSE),
         'path' => array('default' => '', 'translatable' => TRUE),
         'alt' => array('default' => '', 'translatable' => TRUE),
+        'link_class' => array('default' => ''),
         'prefix' => array('default' => '', 'translatable' => TRUE),
         'suffix' => array('default' => '', 'translatable' => TRUE),
         'trim' => array('default' => FALSE),
@@ -212,6 +213,16 @@ class views_handler_field extends views_handler {
         '#type' => 'textfield',
         '#default_value' => $this->options['alter']['path'],
         '#description' => t('The Drupal path or absolute URL for this link. You may enter data from this view as per the "Replacement patterns" below.'),
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array(
+          'edit-options-alter-make-link' => array(1)
+        ),
+      );
+      $form['alter']['link_class'] = array(
+        '#title' => t('Link class'),
+        '#type' => 'textfield',
+        '#default_value' => $this->options['alter']['link_class'],
+        '#description' => t('The CSS class to apply to the link.'),
         '#process' => array('views_process_dependency'),
         '#dependency' => array(
           'edit-options-alter-make-link' => array(1)
@@ -476,16 +487,6 @@ class views_handler_field extends views_handler {
    * the user.
    */
   function render_as_link($text, $tokens) {
-    // $path will be run through check_url() by l() so we do not need to
-    // sanitize it ourselves.
-    $path = $this->options['alter']['path'];
-
-    // Use strip tags as there should never be HTML in the path.
-    $path = strip_tags(strtr($path, $tokens));
-
-    $alt = $this->options['alter']['alt'];
-    $alt = strtr($alt, $tokens);
-
     $value = '';
 
     if (!empty($this->options['alter']['prefix'])) {
@@ -496,12 +497,38 @@ class views_handler_field extends views_handler {
       'html' => 'true',
     );
 
+    // $path will be run through check_url() by l() so we do not need to
+    // sanitize it ourselves.
+    $path = $this->options['alter']['path'];
+
+    // Use strip tags as there should never be HTML in the path.
+    $path = strip_tags(strtr($path, $tokens));
+
+    // Parse the URL and move any query and fragment parameters out of the path.
+    $url = parse_url($path);
+    if (isset($url['query'])) {
+      $path = strtr($path, array('?' . $url['query'] => ''));
+      $options['query'] = $url['query'];
+    }
+    if (isset($url['fragment'])) {
+      $path = strtr($path, array('#' . $url['fragment'] => ''));
+      $options['fragment'] = $url['fragment'];
+    }
+
+    $alt = $this->options['alter']['alt'];
+    $alt = strtr($alt, $tokens);
     if ($alt) {
       $options['attributes']['title'] = $alt;
       $options['attributes']['alt'] = $alt;
     }
 
-    // These can only be set internally at this time.
+    $class = $this->options['alter']['link_class'];
+    if ($class) {
+      $options['attributes']['class'] = $class;
+    }
+
+    // If the query and fragment were programatically assigned overwrite any
+    // parsed values.
     if (isset($this->options['alter']['query'])) {
       $options['query'] = $this->options['alter']['query'];
     }
