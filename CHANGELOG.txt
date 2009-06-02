@@ -42,6 +42,7 @@ Views 2.x
     o #424648 by quicksketch and dereine: Allow format selection on filesize field.
     o #478312 by yhahn: Provide specific node access filter.
     o #479878 by dereine: User language field.
+    o #468824 by eaton: Pluggable caching mechanism which can cache both the query result and rendered result.
 
 Views 2.5
   Bugs fixed:

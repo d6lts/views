@@ -235,6 +235,26 @@ function views_views_plugins() {
         'help topic' => 'access-perm',
       ),
     ),
+    'cache' => array(
+      'parent' => array(
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_cache',
+        'parent' => '',
+      ),
+      'none' => array(
+        'title' => t('None'),
+        'help' => t('No caching of Views data.'),
+        'handler' => 'views_plugin_cache_none',
+        'help topic' => 'cache-none',
+      ),
+      'time' => array(
+        'title' => t('Time-based'),
+        'help' => t('Simple time-based caching of data.'),
+        'handler' => 'views_plugin_cache_time',
+        'uses options' => TRUE,
+        'help topic' => 'cache-time',
+      ),
+    ),
   );
 }
 
@@ -244,7 +264,7 @@ function views_views_plugins() {
  * @return Nested array of plugins, grouped by type.
  */
 function views_discover_plugins() {
-  $cache = array('display' => array(), 'style' => array(), 'row' => array(), 'argument default' => array(), 'argument validator' => array(), 'access' => array());
+  $cache = array('display' => array(), 'style' => array(), 'row' => array(), 'argument default' => array(), 'argument validator' => array(), 'access' => array(), 'cache' => array());
   // Get plugins from all mdoules.
   foreach (module_implements('views_plugins') as $module) {
     $function = $module . '_views_plugins';
