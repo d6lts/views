@@ -43,6 +43,7 @@ Views 3.x-dev
     o #424648 by quicksketch and dereine: Allow format selection on filesize field.
     o #468336 by psynaptic: Fix broken hook_views_admin_links_alter.
     o #478312 by yhahn: Provide specific node access filter.
+    o #479878 by dereine: User language field.
 
 Views 2.5
   Bugs fixed:
