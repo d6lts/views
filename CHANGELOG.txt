@@ -12,6 +12,7 @@ Views 2.x
     o #451370 by skwashd: base.js had some DOS line endings.
     o #454754 by dww: Fix PGSQL related errors with comment author filtering.
     o #384286 by dww: Make it possible to expose the filter for "Node: Has new content"
+    o #463634 by alienbrain: "Empty field name" incorrectly specified.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
