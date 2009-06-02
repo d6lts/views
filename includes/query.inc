@@ -287,7 +287,12 @@ class views_query {
     }
 
     if (!$alias && $join && $relationship && !empty($join->adjusted) && $table != $join->table) {
-      $alias = $table;
+      if ($relationship == $this->base_table) {
+        $alias = $table;
+      }
+      else {
+        $alias = $relationship . '_' . $table;
+      }
     }
 
     // Check this again to make sure we don't blow up existing aliases for already
