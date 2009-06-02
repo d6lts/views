@@ -17,6 +17,8 @@ Views 2.x
     o #411880 by fgm: Add "options callback" to items using in_operator handler.
     o #360657 by yhahn: new hook_views_default_views_alter().
     o #430068 by dereine: New global counter field for displaying row number.
+    o #420340 by derine: Translate node type filter.
+    o #325796 by yang_yi_cn: Translate node type argument.
 
 Views 2.5
   Bugs fixed:
