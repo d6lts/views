@@ -618,9 +618,35 @@ class views_handler_field_broken extends views_handler_field {
  * Render a numeric value as a size.
  */
 class views_handler_field_file_size extends views_handler_field {
+  function option_definition() {
+    $options = parent::option_definition();
+
+    $options['file_size_display'] = array('default' => 'formatted');
+
+    return $options;
+  }
+
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['file_size_display'] = array(
+      '#title' => t('File size display'),
+      '#type' => 'select',
+      '#options' => array(
+        'formatted' => t('Formatted (in KB or MB)'),
+        'bytes' => t('Raw bytes'),
+      ),
+    );
+  }
+
   function render($values) {
     if ($values->{$this->field_alias}) {
-      return format_size($values->{$this->field_alias});
+      switch ($this->options['file_size_display']) {
+        case 'bytes':
+          return $values->{$this->field_alias};
+        case 'formatted':
+        default:
+          return format_size($values->{$this->field_alias});
+      }
     }
     else {
       return '';
