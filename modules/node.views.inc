@@ -534,6 +534,31 @@ function node_views_data() {
   );
 
   // ----------------------------------------------------------------------
+  // Node access table
+
+  // Define the base group of this table. Fields that don't
+  // have a group defined will go into this field by default.
+  $data['node_access']['table']['group']  = t('Node access');
+
+  // For other base tables, explain how we join
+  $data['node_access']['table']['join'] = array(
+    // Directly links to node table.
+    'node' => array(
+      'left_field' => 'nid',
+      'field' => 'nid',
+    ),
+  );
+  // nid field
+  $data['node_access']['nid'] = array(
+    'title' => t('Access'),
+    'help' => t('Filter by access.'),
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_access',
+      'help' => t('Filter for nodes by view access. <strong>Not necessary if you are using node as your base table.</strong>'),
+    ),
+  );
+
+  // ----------------------------------------------------------------------
   // History table
 
   // We're actually defining a specific instance of the table, so let's
@@ -658,7 +683,9 @@ function node_views_handlers() {
       'views_handler_filter_node_status' => array(
         'parent' => 'views_handler_filter',
       ),
-
+      'views_handler_filter_node_access' => array(
+        'parent' => 'views_handler_filter',
+      ),
     ),
   );
 }
