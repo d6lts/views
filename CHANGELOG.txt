@@ -35,6 +35,7 @@ Views 3.x-dev
     o #437760 by leeneman: Remove duplicate terms from taxonomy term argument title.
     o #354270 by dereine: Allow "tag" to be added to the theme template suggestions.
     o #408180 by joachim: Allow taxonomy term parent argument.
+    o #424460 by thePanz: Customizable breadcrumb title for arguments.
 
 Views 2.5
   Bugs fixed:
