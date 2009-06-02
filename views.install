@@ -62,7 +62,7 @@ function views_schema_1() {
       ),
       'base_table' => array(
         'type' => 'varchar',
-        'length' => '32',
+        'length' => '64',
         'default' => '',
         'not null' => TRUE,
         'description' => 'What table this view is based on, such as node, user, comment, or term.',
@@ -237,5 +237,22 @@ function views_update_6004() {
   db_drop_field($ret, 'views_object_cache', 'data');
   db_add_field($ret, 'views_object_cache', 'data', $new_field);
 
+  return $ret;
+}
+
+/**
+ * Enlarge the base_table column
+ */
+function views_update_6005() {
+  $ret = array();
+  
+  $new_field = array(
+    'type' => 'varchar',
+    'length' => '64',
+    'default' => '',
+    'not null' => TRUE,
+    'description' => 'What table this view is based on, such as node, user, comment, or term.',
+  );
+  db_change_field($ret, 'views_view', 'base_table', 'base_table', $new_field);
   return $ret;
 }
