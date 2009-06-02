@@ -7,6 +7,7 @@ Views 3.x-dev
     o #422054 by yhahn: Protect exports from impropertly indenting multiline strings.
     o #437070 by mikeryan: Base table formerly limited to 32 characters.
     o #317271 by quicksketch: ensure_my_table() limited to one relationship per table.
+    o #445398 by casey: reduce_value_options() using wrong value array.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
