@@ -745,6 +745,7 @@ function views_ui_import_page(&$form_state) {
   $form['view'] = array(
     '#type' => 'textarea',
     '#title' => t('Paste view code here'),
+    '#required' => TRUE,
   );
 
   $form['submit'] = array(
@@ -760,13 +761,14 @@ function views_ui_import_page(&$form_state) {
  * Validate handler to import a view
  */
 function views_ui_import_validate($form, &$form_state) {
+  $view = '';
   views_include('view');
   ob_start();
   eval($form_state['values']['view']);
   ob_end_clean();
 
   if (!is_object($view)) {
-    form_error($form['view'], t('Unable to interpret view code.'));
+    return form_error($form['view'], t('Unable to interpret view code.'));
   }
 
   if (empty($view->api_version) || $view->api_version < 2) {

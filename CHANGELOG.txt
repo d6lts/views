@@ -15,6 +15,7 @@ Views 3.x-dev
     o #463580 by ximo: AJAX summary links broken in some displays.
     o #469456 by dereine: Automatically give .info file during views bulk export.
     o #422868 by mattman: Breadcrumbs not properly substuting % replacements.
+    o #440676 by dereine and Razorraser: View import form crashed on empty view input.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
