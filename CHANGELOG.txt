@@ -25,6 +25,7 @@ Views 2.x
     o #325796 by yang_yi_cn: Translate node type argument.
     o #446726 by yhahn: Improved performance for js dependencies.
     o #437760 by leeneman: Remove duplicate terms from taxonomy term argument title.
+    o #354270 by dereine: Allow "tag" to be added to the theme template suggestions.
 
 Views 2.5
   Bugs fixed:
