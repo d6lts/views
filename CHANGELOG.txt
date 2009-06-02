@@ -27,6 +27,7 @@ Views 3.x-dev
     o #441520 by jonathan1055: Allow the "time ago" date format to work on future dates as well.
     o #446726 by yhahn: Improved performance for js dependencies.
     o #437760 by leeneman: Remove duplicate terms from taxonomy term argument title.
+    o #354270 by dereine: Allow "tag" to be added to the theme template suggestions.
 
 Views 2.5
   Bugs fixed:
