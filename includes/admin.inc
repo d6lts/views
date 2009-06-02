@@ -2742,6 +2742,7 @@ function views_ui_admin_tools() {
   );
 
   $regions = system_region_list(variable_get('theme_default', 'garland'));
+  $regions['watchdog'] = t('Watchdog');
 
   $form['views_devel_region'] = array(
     '#type' => 'select',
