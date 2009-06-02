@@ -130,6 +130,16 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
+   * Does the display have custom link text?
+   */
+  function use_more_text() {
+    if (!empty($this->definition['use more'])) {
+      return $this->get_option('use_more_text');
+    }
+    return FALSE;
+  }
+
+  /**
    * Can this display accept attachments?
    */
   function accept_attachments() {
@@ -156,7 +166,7 @@ class views_plugin_display extends views_plugin {
       'use_ajax' => array('use_ajax'),
       'items_per_page' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
       'use_pager' => array('items_per_page', 'offset', 'use_pager', 'pager_element'),
-      'use_more' => array('use_more'),
+      'use_more' => array('use_more', 'use_more_text'),
       'link_display' => array('link_display'),
       'distinct' => array('distinct'),
       'exposed_block' => array('exposed_block'),
@@ -230,6 +240,7 @@ class views_plugin_display extends views_plugin {
           'use_pager' => TRUE,
           'pager_element'  => TRUE,
           'use_more' => TRUE,
+          'use_more_text' => TRUE,
           'distinct' => TRUE,
           'exposed_block' => TRUE,
 
@@ -325,6 +336,10 @@ class views_plugin_display extends views_plugin {
       ),
       'use_more' => array(
         'default' => FALSE,
+      ),
+      'use_more_text' => array(
+        'default' => 'more',
+        'translatable' => TRUE,
       ),
       'link_display' => array(
         'default' => '',
@@ -883,6 +898,13 @@ class views_plugin_display extends views_plugin {
           '#description' => t("This will add a more link to the bottom of this view, which will link to the page view. If you have more than one page view, the link will point to the display specified in 'Link display' above."),
           '#default_value' => $this->get_option('use_more'),
         );
+        $form['#title'] .= t('Text to use for the more link.');
+        $form['use_more_text'] = array(
+          '#type' => 'textfield',
+          '#title' => t('More link text'),
+          '#description' => t("The text to display for the more link."),
+          '#default_value' => $this->get_option('use_more_text'),
+        );
         break;
       case 'distinct':
         $form['#title'] .= t('Display only distinct items, without duplicates.');
@@ -1437,6 +1459,8 @@ class views_plugin_display extends views_plugin {
         $this->set_option('offset', intval($form_state['values']['offset']));
         break;
       case 'use_more':
+        $this->set_option($section, intval($form_state['values'][$section]));
+        $this->set_option('use_more_text', $form_state['values']['use_more_text']);
       case 'distinct':
         $this->set_option($section, $form_state['values'][$section]);
         break;
@@ -1604,10 +1628,9 @@ class views_plugin_display extends views_plugin {
         if (!empty($this->view->exposed_raw_input)) {
           $url_options['query'] = $this->view->exposed_raw_input;
         }
-
         $theme = views_theme_functions('views_more', $this->view, $this->display);
         $path = check_url(url($path, $url_options));
-        return theme($theme, $path);
+        return theme($theme, $path, $this->use_more_text());
       }
     }
   }
