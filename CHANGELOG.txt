@@ -7,6 +7,7 @@ Views 2.x
     o #422054 by yhahn: Protect exports from impropertly indenting multiline strings.
     o #437070 by mikeryan: Base table formerly limited to 32 characters.
     o #317271 by quicksketch: ensure_my_table() limited to one relationship per table.
+    o #441520 by jonathan1055: Allow the "time ago" date format to work on future dates as well.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
