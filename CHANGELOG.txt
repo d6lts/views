@@ -43,6 +43,7 @@ Views 2.x
     o #478312 by yhahn: Provide specific node access filter.
     o #479878 by dereine: User language field.
     o #468824 by eaton: Pluggable caching mechanism which can cache both the query result and rendered result.
+    o #399534 by clemens.tolboom and drewish: Add fragment and query string as options when making fields into links.
 
 Views 2.5
   Bugs fixed:
