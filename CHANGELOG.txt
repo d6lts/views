@@ -17,6 +17,7 @@ Views 2.x
     o #468336 by psynaptic: Fix broken hook_views_admin_links_alter
     o #422868 by mattman: Breadcrumbs not properly substuting % replacements.
     o #440676 by dereine and Razorraser: View import form crashed on empty view input.
+    o #461842 by dereine: Use gmtime() instead of format_date() to prevent localization of dates in RSS feeds.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
