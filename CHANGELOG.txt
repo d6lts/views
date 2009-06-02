@@ -16,6 +16,7 @@ Views 2.x
     o #154865 by Zack Rosen, josh_k and KarenS: Allow user contact form as a field.
     o #411880 by fgm: Add "options callback" to items using in_operator handler.
     o #360657 by yhahn: new hook_views_default_views_alter().
+    o #430068 by dereine: New global counter field for displaying row number.
 
 Views 2.5
   Bugs fixed:
