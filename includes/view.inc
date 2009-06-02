@@ -470,6 +470,9 @@ class view extends views_db_object {
           $argument->query();
         }
 
+        // Add this argument's substitution
+        $substitutions['%' . ($position + 1)] = $arg_title;
+
         // Since we're really generating the breadcrumb for the item above us,
         // check the default action of this argument.
         if ($this->display_handler->uses_breadcrumb() && $argument->uses_breadcrumb()) {
@@ -487,9 +490,6 @@ class view extends views_db_object {
         if (!empty($argument->options['title'])) {
           $title = $argument->options['title'];
         }
-
-        // Add this argument's substitution
-        $substitutions['%' . ($position + 1)] = $arg_title;
 
         $breadcrumb_args[] = $arg;
       }

@@ -15,6 +15,7 @@ Views 2.x
     o #463634 by alienbrain: "Empty field name" incorrectly specified.
     o #463580 by ximo: AJAX summary links broken in some displays.
     o #468336 by psynaptic: Fix broken hook_views_admin_links_alter
+    o #422868 by mattman: Breadcrumbs not properly substuting % replacements.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
