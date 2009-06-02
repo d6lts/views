@@ -438,7 +438,8 @@ function template_preprocess_views_view_unformatted(&$vars) {
   $vars['classes'] = array();
   // Set up striping values.
   foreach ($rows as $id => $row) {
-    $vars['classes'][$id] = 'views-row-' . ($id + 1);
+    $vars['classes'][$id] = 'views-row';
+    $vars['classes'][$id] .= ' views-row-' . ($id + 1);
     $vars['classes'][$id] .= ' views-row-' . ($id % 2 ? 'even' : 'odd');
     if ($id == 0) {
       $vars['classes'][$id] .= ' views-row-first';
