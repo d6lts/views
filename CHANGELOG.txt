@@ -51,6 +51,7 @@ Views 3.x-dev
     o #315915 by dixon_: Add another base row class to rows.
     o #271833 by grugnog, agentrickard and others: Taxonomy depth in filter.
     o #353403 by agentrickard: Field to provide "more" text.
+    o #377896 by dereine: When ticked "link to node" show node title as a href title attribute.
 
 Views 2.5
   Bugs fixed:
