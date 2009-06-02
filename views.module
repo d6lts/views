@@ -397,7 +397,7 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
  * Implementation of hook_flush_caches().
  */
 function views_flush_caches() {
-  return array('cache_views');
+  return array('cache_views', 'cache_views_data');
 }
 
 /**

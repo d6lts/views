@@ -44,6 +44,7 @@ Views 3.x-dev
     o #468336 by psynaptic: Fix broken hook_views_admin_links_alter.
     o #478312 by yhahn: Provide specific node access filter.
     o #479878 by dereine: User language field.
+    o #468824 by eaton: Pluggable caching mechanism which can cache both the query result and rendered result.
 
 Views 2.5
   Bugs fixed:

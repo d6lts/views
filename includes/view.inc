@@ -686,7 +686,23 @@ class view extends views_db_object {
       $function($this);
     }
 
-    $this->query->execute($this);
+    // Check for already-cached results.
+    if ($this->preview) {
+      $cache = FALSE;
+    }
+    else {
+      $cache = $this->display_handler->get_cache_plugin();
+    }
+    if ($cache && $cache->cache_get('results')) {
+      vpr('Used cached results');
+    }
+    else {
+      $this->query->execute($this);
+      if ($cache) {
+        $cache->cache_set('results');
+      }
+    }
+    
     $this->executed = TRUE;
   }
 
@@ -694,9 +710,6 @@ class view extends views_db_object {
    * Render this view for display.
    */
   function render($display_id = NULL) {
-    // Check for cached output.
-    // @todo: Implement this
-
     $this->execute($display_id);
 
     // Check to see if the build failed.
@@ -708,34 +721,50 @@ class view extends views_db_object {
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->start_query_capture();
     }
-
-    // Initialize the style plugin.
-    $this->init_style();
-
-    $this->style_plugin->pre_render($this->result);
-
-    // Let modules modify the view just prior to executing it.
-    foreach (module_implements('views_pre_render') as $module) {
-      $function = $module . '_views_pre_render';
-      $function($this);
+  
+    // Check for already-cached output.
+    if ($this->preview) {
+      $cache = FALSE;
     }
-
-    // Give field handlers the opportunity to perform additional queries
-    // using the entire resultset prior to rendering.
-    if ($this->style_plugin->uses_fields()) {
-      foreach ($this->field as $id => $handler) {
-        if (!empty($this->field[$id])) {
-          $this->field[$id]->pre_render($this->result);
+    else {
+      $cache = $this->display_handler->get_cache_plugin();
+    }
+    if ($cache && $cache->cache_get('output')) {
+      vpr('Used cached output');
+    }
+    else {
+      // Initialize the style plugin.
+      $this->init_style();
+  
+      $this->style_plugin->pre_render($this->result);
+  
+      // Let modules modify the view just prior to executing it.
+      foreach (module_implements('views_pre_render') as $module) {
+        $function = $module . '_views_pre_render';
+        $function($this);
+      }
+  
+      // Give field handlers the opportunity to perform additional queries
+      // using the entire resultset prior to rendering.
+      if ($this->style_plugin->uses_fields()) {
+        foreach ($this->field as $id => $handler) {
+          if (!empty($this->field[$id])) {
+            $this->field[$id]->pre_render($this->result);
+          }
         }
+      }
+      $this->display_handler->output = $this->display_handler->render();
+      if ($cache) {
+        $cache->cache_set('output');
       }
     }
 
-    $output = $this->display_handler->render();
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->end_query_capture();
     }
     $this->render_time = views_microtime() - $start;
-    return $output;
+
+    return $this->display_handler->output;
   }
 
   /**

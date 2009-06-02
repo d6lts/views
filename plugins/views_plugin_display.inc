@@ -148,6 +148,7 @@ class views_plugin_display extends views_plugin {
   function defaultable_sections($section = NULL) {
     $sections = array(
       'access' => array('access'),
+      'cache' => array('cache'),
       'title' => array('title'),
       'header' => array('header', 'header_format', 'header_empty'),
       'footer' => array('footer', 'footer_format', 'footer_empty'),
@@ -212,6 +213,7 @@ class views_plugin_display extends views_plugin {
       'defaults' => array(
         'default' => array(
           'access' => TRUE,
+          'cache' => TRUE,
           'title' => TRUE,
           'header' => TRUE,
           'header_format' => TRUE,
@@ -266,6 +268,11 @@ class views_plugin_display extends views_plugin {
         'export' => 'export_item',
       ),
       'access' => array(
+        'contains' => array(
+          'type' => array('default' => 'none'),
+         ),
+      ),
+      'cache' => array(
         'contains' => array(
           'type' => array('default' => 'none'),
          ),
@@ -482,6 +489,22 @@ class views_plugin_display extends views_plugin {
   }
 
   /**
+   * Get the cache plugin
+   */
+  function get_cache_plugin($name = NULL) {
+    if (!$name) {
+      $cache = $this->get_option('cache');
+      $name = $cache['type'];
+    }
+
+    $plugin = views_get_plugin('cache', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display);
+      return $plugin;
+    }
+  }
+
+  /**
    * Get the handler object for a single handler.
    */
   function &get_handler($type, $id) {
@@ -685,6 +708,25 @@ class views_plugin_display extends views_plugin {
 
     if (!empty($access_plugin->definition['uses options'])) {
       $options['access']['links']['access_options'] = t('Change settings for this access type.');
+    }
+
+    $cache_plugin = $this->get_cache_plugin();
+    if (!$cache_plugin) {
+      // default to the no cache control plugin.
+      $cache_plugin = views_get_plugin('cache', 'none');
+    }
+
+    $cache_str = $cache_plugin->summary_title();
+
+    $options['cache'] = array(
+      'category' => 'basic',
+      'title' => t('Caching'),
+      'value' => $cache_str,
+      'desc' => t('Specify caching type for this display.'),
+    );
+
+    if (!empty($cache_plugin->definition['uses options'])) {
+      $options['cache']['links']['cache_options'] = t('Change settings for this caching type.');
     }
 
     if ($this->uses_link_display()) {
@@ -891,6 +933,47 @@ class views_plugin_display extends views_plugin {
             '#value' => $access['type'],
           );
           $plugin->options_form($form['access_options'], $form_state);
+        }
+        break;
+      case 'cache':
+        $form['#title'] .= t('Caching');
+        $form['cache'] = array(
+          '#prefix' => '<div class="clear-block">',
+          '#suffix' => '</div>',
+          '#tree' => TRUE,
+        );
+
+        $cache = $this->get_option('cache');
+        $form['cache']['type'] =  array(
+          '#type' => 'radios',
+          '#options' => views_fetch_plugin_names('cache'),
+          '#default_value' => $cache['type'],
+        );
+
+        $cache_plugin = views_fetch_plugin_data('cache', $cache['type']);
+        if (!empty($cache_plugin['uses options'])) {
+          $form['markup'] = array(
+            '#prefix' => '<div class="form-item description">',
+            '#suffix' => '</div>',
+            '#value' => t('You may also adjust the !settings for the currently selected style by clicking on the icon.', array('!settings' => $this->option_link(t('settings'), 'cache_options'))),
+          );
+        }
+        break;
+      case 'cache_options':
+        $cache = $this->get_option('cache');
+        $plugin = $this->get_cache_plugin();
+        $form['#title'] .= t('Caching options');
+        if ($plugin) {
+          $form['#help_topic'] = $plugin->definition['help topic'];
+
+          $form['cache_options'] = array(
+            '#tree' => TRUE,
+          );
+          $form['cache_options']['type'] = array(
+            '#type' => 'value',
+            '#value' => $cache['type'],
+          );
+          $plugin->options_form($form['cache_options'], $form_state);
         }
         break;
       case 'header':
@@ -1269,6 +1352,12 @@ class views_plugin_display extends views_plugin {
           $plugin->options_validate($form['access_options'], $form_state);
         }
         break;
+      case 'cache_options':
+        $plugin = $this->get_cache_plugin();
+        if ($plugin) {
+          $plugin->options_validate($form['cache_options'], $form_state);
+        }
+        break;
     }
   }
 
@@ -1277,6 +1366,12 @@ class views_plugin_display extends views_plugin {
    * There is no need for this function to actually store the data.
    */
   function options_submit(&$form, &$form_state) {
+    // Not sure I like this being here, but it seems (?) like a logical place.
+    $cache_plugin = $this->get_cache_plugin();
+    if ($cache_plugin) {
+      $cache_plugin->cache_flush();
+    }
+    
     $section = $form_state['section'];
     switch ($section) {
       case 'display_title':
@@ -1302,6 +1397,28 @@ class views_plugin_display extends views_plugin {
         if ($plugin) {
           $plugin->options_submit($form['access_options'], $form_state);
           $this->set_option('access', $form_state['values'][$section]);
+        }
+        break;
+      case 'cache':
+        $cache = $this->get_option('cache');
+        if ($cache['type'] != $form_state['values']['cache']['type']) {
+          $plugin = views_get_plugin('cache', $form_state['values']['cache']['type']);
+          if ($plugin) {
+            $cache = array('type' => $form_state['values']['cache']['type']);
+            $plugin->option_defaults($cache);
+            $this->set_option('cache', $cache);
+            if (!empty($plugin->definition['uses options'])) {
+              views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('cache_options'));
+            }
+          }
+        }
+
+        break;
+      case 'cache_options':
+        $plugin = views_get_plugin('cache', $form_state['values'][$section]['type']);
+        if ($plugin) {
+          $plugin->options_submit($form['cache_options'], $form_state);
+          $this->set_option('cache', $form_state['values'][$section]);
         }
         break;
       case 'title':
