@@ -687,7 +687,7 @@ class view extends views_db_object {
     }
 
     // Check for already-cached results.
-    if ($this->preview) {
+    if (!empty($this->preview)) {
       $cache = FALSE;
     }
     else {
@@ -702,7 +702,7 @@ class view extends views_db_object {
         $cache->cache_set('results');
       }
     }
-    
+
     $this->executed = TRUE;
   }
 
@@ -721,9 +721,9 @@ class view extends views_db_object {
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->start_query_capture();
     }
-  
+
     // Check for already-cached output.
-    if ($this->preview) {
+    if (!empty($this->preview)) {
       $cache = FALSE;
     }
     else {
@@ -735,15 +735,15 @@ class view extends views_db_object {
     else {
       // Initialize the style plugin.
       $this->init_style();
-  
+
       $this->style_plugin->pre_render($this->result);
-  
+
       // Let modules modify the view just prior to executing it.
       foreach (module_implements('views_pre_render') as $module) {
         $function = $module . '_views_pre_render';
         $function($this);
       }
-  
+
       // Give field handlers the opportunity to perform additional queries
       // using the entire resultset prior to rendering.
       if ($this->style_plugin->uses_fields()) {
