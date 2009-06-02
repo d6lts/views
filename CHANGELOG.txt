@@ -9,6 +9,7 @@ Views 3.x-dev
     o #317271 by quicksketch: ensure_my_table() limited to one relationship per table.
     o #445398 by casey: reduce_value_options() using wrong value array.
     o #451370 by skwashd: base.js had some DOS line endings.
+    o #454754 by dww: Fix PGSQL related errors with comment author filtering.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
