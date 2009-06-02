@@ -23,6 +23,7 @@ Views 2.x
     o #430068 by dereine: New global counter field for displaying row number.
     o #420340 by derine: Translate node type filter.
     o #325796 by yang_yi_cn: Translate node type argument.
+    o #446726 by yhahn: Improved performance for js dependencies.
 
 Views 2.5
   Bugs fixed:
