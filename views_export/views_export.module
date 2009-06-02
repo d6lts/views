@@ -189,7 +189,28 @@ function views_export_export_form_submit(&$form, &$form_state) {
 
   $types = system_elements();
 
-  $api = "/**\n";
+  $info  = '; $Id$'."\n";
+  $info .= "\n";
+  $info .= t("name = @module Export Module\n", array('@module' => $form_state['values']['name']));
+  $info .= t("description = Exports some views of @module\n", array('@module' => $form_state['values']['name']));
+  $info .= "dependencies[] = views\n";
+  $info .= "core = 6.x\n";
+
+
+  $element_info = array(
+    '#title' => t('Put this in @module.info in your modules/@module directory',  array('@module' => $form_state['values']['name'])),
+    '#type' => 'textarea',
+    '#id' => 'export-info-textarea',
+    '#name' => 'export-info-textarea',
+    '#attributes' => array(),
+    '#rows' => 9,
+    '#cols' => 60,
+    '#value' => $info,
+    '#parents' => array('dummy'),
+    '#required' => FALSE,
+  ) + $types['textarea'];
+
+  $api  = "/**\n";
   $api .= " * Implementation of hook_views_api().\n";
   $api .= " */\n";
   $api .= "function @module_views_api() {\n";
@@ -228,7 +249,8 @@ function views_export_export_form_submit(&$form, &$form_state) {
   ) + $types['textarea'];
 
 
-  $form_state['output'] = theme('textarea', $element_api);
+  $form_state['output'] = theme('textarea', $element_info);
+  $form_state['output'] .= theme('textarea', $element_api);
   $form_state['output'] .= theme('textarea', $element_hook);
 }
 
