@@ -29,6 +29,7 @@ Views 2.x
     o #446726 by yhahn: Improved performance for js dependencies.
     o #437760 by leeneman: Remove duplicate terms from taxonomy term argument title.
     o #354270 by dereine: Allow "tag" to be added to the theme template suggestions.
+    o #408180 by joachim: Allow taxonomy term parent argument.
 
 Views 2.5
   Bugs fixed:
