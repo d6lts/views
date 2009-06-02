@@ -92,6 +92,9 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
           unset($test[$term->tid]);
         }
 
+        // Remove duplicate titles
+        $titles = array_unique($titles);
+
         $this->argument->validated_title = implode($tids->operator == 'or' ? ' + ' : ', ', $titles);
         // If this is not empty, we did not find a tid.
         return empty($test);
