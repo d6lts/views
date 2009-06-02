@@ -36,6 +36,7 @@ Views 3.x-dev
     o #354270 by dereine: Allow "tag" to be added to the theme template suggestions.
     o #408180 by joachim: Allow taxonomy term parent argument.
     o #424460 by thePanz: Customizable breadcrumb title for arguments.
+    o #436398 by Pasqualle: Support for aggregator category table.
 
 Views 2.5
   Bugs fixed:
