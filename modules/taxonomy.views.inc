@@ -263,6 +263,10 @@ function taxonomy_views_data() {
       'field' => 'parent',
       'label' => t('Parent'),
     ),
+    'argument' => array(
+      'help' => t('The parent term of the term.'),
+      'handler' => 'views_handler_argument_numeric',
+    ),    
   );
 
   // ----------------------------------------------------------------------
