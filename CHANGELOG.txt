@@ -25,6 +25,7 @@ Views 3.x-dev
     o #420340 by derine: Translate node type filter.
     o #325796 by yang_yi_cn: Translate node type argument.
     o #441520 by jonathan1055: Allow the "time ago" date format to work on future dates as well.
+    o #446726 by yhahn: Improved performance for js dependencies.
 
 Views 2.5
   Bugs fixed:

@@ -2171,18 +2171,28 @@ function views_ui_add_item_form(&$form_state) {
       '#default_value' => 'all',
     );
 
+    // Group options first to simplify the DOM objects that Views
+    // dependent JS will act upon.
+    $grouped_options = array();
     foreach ($options as $key => $option) {
       $group = preg_replace('/[^a-z0-9]/', '-', strtolower($option['group']));
       $groups[$group] = $option['group'];
-      $form['name'][$key] = array(
-        '#prefix' => '<div class="views-dependent-all views-dependent-' . $group . '">',
-        '#suffix' => '</div>',
-        '#type' => 'checkbox',
-        '#title' => t('!group: !field', array('!group' => $option['group'], '!field' => $option['title'])),
-        '#description' => $option['help'],
-        '#return_value' => $key,
-      );
+      $grouped_options[$group][$key] = $option;
     }
+
+    foreach ($grouped_options as $group => $group_options) {
+      $form['name'][$group . '_start'] = array('#type' => 'markup', '#value' => '<div class="views-dependent-all views-dependent-' . $group . '">');
+      foreach ($group_options as $key => $option) {
+        $form['name'][$key] = array(
+          '#type' => 'checkbox',
+          '#title' => t('!group: !field', array('!group' => $option['group'], '!field' => $option['title'])),
+          '#description' => $option['help'],
+          '#return_value' => $key,
+        );
+      }
+      $form['name'][$group . '_end'] = array('#type' => 'markup', '#value' => '</div>');
+    }
+
     $form['group']['#options'] = $groups;
   }
   else {
