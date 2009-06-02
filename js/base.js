@@ -121,5 +121,3 @@ Drupal.Views.getPath = function (href) {
   }
   return href;
 };
-
-
