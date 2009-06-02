@@ -14,6 +14,7 @@ Views 2.x
     o #384286 by dww: Make it possible to expose the filter for "Node: Has new content"
     o #463634 by alienbrain: "Empty field name" incorrectly specified.
     o #463580 by ximo: AJAX summary links broken in some displays.
+    o #468336 by psynaptic: Fix broken hook_views_admin_links_alter
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
