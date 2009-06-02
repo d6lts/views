@@ -34,6 +34,7 @@ Views 2.x
     o #408180 by joachim: Allow taxonomy term parent argument.
     o #469456 by dereine: Automatically give .info file during views bulk export.
     o #424460 by thePanz: Customizable breadcrumb title for arguments.
+    o #436398 by Pasqualle: Support for aggregator category table.
 
 Views 2.5
   Bugs fixed:
