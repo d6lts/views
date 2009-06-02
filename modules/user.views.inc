@@ -108,6 +108,22 @@ function user_views_data() {
     ),
   );
 
+  // language
+  $data['users']['language'] = array(
+    'title' => t('Language'), // The item it appears as on the UI,
+    'help' => t('Language of the user'),
+    'field' => array(
+      'handler' => 'views_handler_field_user_language',
+      'click sortable' => TRUE,
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+  );
+
   // picture
   $data['users']['picture'] = array(
     'title' => t('Picture'),
@@ -351,6 +367,9 @@ function user_views_handlers() {
         'parent' => 'views_handler_field_user_link',
       ),
       'views_handler_field_user_mail' => array(
+        'parent' => 'views_handler_field_user',
+      ),
+      'views_handler_field_user_language' => array(
         'parent' => 'views_handler_field_user',
       ),
       'views_handler_field_user_picture' => array(
