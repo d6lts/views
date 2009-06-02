@@ -222,11 +222,11 @@ class views_handler_filter_in_operator extends views_handler_filter {
       else if (is_object($option)) {
         $keys = array_keys($option->option);
         $key = array_shift($keys);
-        if (isset($this->value[$key])) {
+        if (isset($this->options['value'][$key])) {
           $options[$id] = $option;
         }
       }
-      else if (isset($this->value[$id])) {
+      else if (isset($this->options['value'][$id])) {
         $options[$id] = $option;
       }
     }
