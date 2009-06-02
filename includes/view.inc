@@ -691,7 +691,7 @@ class view extends views_db_object {
 
 
     // Check for already-cached results.
-    if ($this->preview) {
+    if (!empty($this->preview)) {
       $cache = FALSE;
     }
     else {
@@ -706,19 +706,19 @@ class view extends views_db_object {
         $replacements = module_invoke_all('views_query_substitutions', $this);
         $query = str_replace(array_keys($replacements), $replacements, $query);
         $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
-  
+
         if (is_array($args)) {
           foreach ($args as $id => $arg) {
             $args[$id] = str_replace(array_keys($replacements), $replacements, $arg);
           }
         }
-  
+
         // Allow for a view to query an external database.
         if (isset($this->base_database)) {
           db_set_active($this->base_database);
           $external = TRUE;
         }
-  
+
         $start = views_microtime();
         if (!empty($this->pager['items_per_page'])) {
           // We no longer use pager_query() here because pager_query() does not
@@ -728,7 +728,7 @@ class view extends views_db_object {
           if (!empty($this->pager['use_pager']) || !empty($this->get_total_rows)) {
             $this->total_rows = db_result(db_query($count_query, $args)) - $this->pager['offset'];
           }
-  
+
           if (!empty($this->pager['use_pager'])) {
             // dump information about what we already know into the globals
             global $pager_page_array, $pager_total, $pager_total_items;
@@ -736,10 +736,10 @@ class view extends views_db_object {
             $pager_total_items[$this->pager['element']] = $this->total_rows;
             // total pages
             $pager_total[$this->pager['element']] = ceil($pager_total_items[$this->pager['element']] / $this->pager['items_per_page']);
-  
+
             // What page was requested:
             $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
-  
+
             // If the requested page was within range. $this->pager['current_page']
             // defaults to 0 so we don't need to set it in an out-of-range condition.
             if (!empty($pager_page_array[$this->pager['element']])) {
@@ -750,15 +750,15 @@ class view extends views_db_object {
             }
             $pager_page_array[$this->pager['element']] = $this->pager['current_page'];
           }
-  
+
           $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
           $result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
-  
+
         }
         else {
           $result = db_query($query, $args);
         }
-  
+
         $this->result = array();
         while ($item = db_fetch_object($result)) {
           $this->result[] = $item;
@@ -791,9 +791,9 @@ class view extends views_db_object {
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->start_query_capture();
     }
-  
+
     // Check for already-cached output.
-    if ($this->preview) {
+    if (!empty($this->preview)) {
       $cache = FALSE;
     }
     else {
@@ -805,15 +805,15 @@ class view extends views_db_object {
     else {
       // Initialize the style plugin.
       $this->init_style();
-  
+
       $this->style_plugin->pre_render($this->result);
-  
+
       // Let modules modify the view just prior to executing it.
       foreach (module_implements('views_pre_render') as $module) {
         $function = $module . '_views_pre_render';
         $function($this);
       }
-  
+
       // Give field handlers the opportunity to perform additional queries
       // using the entire resultset prior to rendering.
       if ($this->style_plugin->uses_fields()) {
