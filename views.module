@@ -939,15 +939,14 @@ function views_exposed_form(&$form_state) {
   $view = &$form_state['view'];
   $display = &$form_state['display'];
 
-  // Check if the form was already created
-  if ($cache = views_exposed_form_cache($view->name, $view->current_display)) {
-    return $cache;
-  }
-
   $form_state['input'] = $view->get_exposed_input();
 
   // Let form plugins know this is for exposed widgets.
   $form_state['exposed'] = TRUE;
+  // Check if the form was already created
+  if ($cache = views_exposed_form_cache($view->name, $view->current_display)) {
+    return $cache;
+  }
 
   $form['#info'] = array();
 
