@@ -20,6 +20,7 @@ Views 2.x
     o #461842 by dereine: Use gmtime() instead of format_date() to prevent localization of dates in RSS feeds.
     o #316556 by darrenoh and JirkaRybka: More 1.x upgrade fixes.
     o #382398 by elcuco: Force LTR in the views admin.
+    o #461144: Fix trimming to correctly remove tags when they are trimmed in half.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
