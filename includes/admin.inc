@@ -1316,7 +1316,7 @@ function views_ui_regenerate_tabs(&$view, $display_id = NULL, $object = NULL) {
   foreach ($displays as $id) {
     list($title, $body) = views_ui_display_tab($view, $view->display[$id]);
     $object->replace['#views-tab-' . $id] = $body;
-    $object->replace['#views-tab-title-' . $id] = $title;
+    $object->replace['#views-tab-title-' . $id] = check_plain($title);
   }
 
   if (!empty($view->changed)) {
