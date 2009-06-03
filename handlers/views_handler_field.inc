@@ -473,7 +473,6 @@ class views_handler_field extends views_handler {
     if (!empty($this->options['alter']['ellipsis'])) {
       $value .= '...';
     }
-    dsm($value);
 
     if (!empty($this->options['alter']['html'])) {
       $value = _filter_htmlcorrector($value);
