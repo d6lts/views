@@ -803,6 +803,10 @@ class view extends views_db_object {
       vpr('Used cached output');
     }
     else {
+      if ($cache) {
+        $cache->cache_start();
+      }
+
       // Initialize the style plugin.
       $this->init_style();
 
