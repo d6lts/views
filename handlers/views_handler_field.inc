@@ -463,17 +463,17 @@ class views_handler_field extends views_handler {
     $value = drupal_substr($value, 0, $this->options['alter']['max_length']);
 
     if (!empty($this->options['alter']['word_boundary'])) {
-      if (preg_match ("/(.*)\b.+/us", $value, $matches)) {
-        // Remove scraps of HTML entities from the end of a strings
-        $value = preg_replace('/(?:<(?!.+>)|&(?!.+;)).$/us', '', $matches[1]);
-        // Strip spare space at the end.
-        $value = rtrim($value);
+      if (preg_match("/(.*)\b.+/us", $value, $matches)) {
+        $value = $matches[1];
       }
     }
+    // Remove scraps of HTML entities from the end of a strings
+    $value = rtrim(preg_replace('/(?:<(?!.+>)|&(?!.+;)).*$/us', '', $value));
 
     if (!empty($this->options['alter']['ellipsis'])) {
       $value .= '...';
     }
+    dsm($value);
 
     if (!empty($this->options['alter']['html'])) {
       $value = _filter_htmlcorrector($value);
