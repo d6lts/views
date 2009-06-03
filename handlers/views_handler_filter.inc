@@ -476,6 +476,7 @@ class views_handler_filter extends views_handler {
       }
 
       $session[$this->options['expose']['identifier']] = $input[$this->options['expose']['identifier']];
+      vsm_trace();
     }
   }
 
