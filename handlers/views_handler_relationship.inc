@@ -101,9 +101,11 @@ class views_handler_relationship extends views_handler {
     $def = $this->definition;
     $def['table'] = $this->definition['base'];
     $def['field'] = $base_field;
-    $def['left_table'] = ''
-    $def['left_field'] = "COALESCE($this->table.$this->field, $this->relationship.$this->field)";
-    $def['type'] = 'INNER';
+    $def['left_table'] = $this->table_alias;
+    $def['left_field'] = $this->field;
+    if (!empty($this->options['required'])) {
+      $def['type'] = 'INNER';
+    }
 
     if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
       $join = new $def['join_handler'];
