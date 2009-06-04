@@ -1217,7 +1217,7 @@ class views_join {
    * Build the SQL for the join this object represents.
    */
   function join($table, &$query) {
-    if ($this->left_table)) {
+    if ($this->left_table) {
       $left = $query->get_table_info($this->left_table);
       $output = " $this->type JOIN {" . $this->table . "} $table[alias] ON $left[alias].$this->left_field = $table[alias].$this->field";
     }
