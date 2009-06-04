@@ -271,7 +271,7 @@ function views_update_6005() {
 /**
  * Add the cache_views_data table to support standard caching.
  */
-function views_update_6005() {
+function views_update_6006() {
   $ret = array();
   
   $table = drupal_get_schema_unprocessed('system', 'cache');
@@ -287,7 +287,7 @@ function views_update_6005() {
  * Add aggregate function to PostgreSQL so GROUP BY can be used to force only
  * one result to be returned for each item.
  */
-function views_update_6006() {
+function views_update_6007() {
   $ret = array();
   if ($GLOBALS['db_type'] == 'pgsql') {
     $ret[] = update_sql('CREATE OR REPLACE FUNCTION first(anyelement, anyelement) RETURNS anyelement AS \'SELECT COALESCE($1, $2);\' LANGUAGE \'sql\';');
