@@ -691,7 +691,7 @@ class view extends views_db_object {
 
 
     // Check for already-cached results.
-    if (!empty($this->preview)) {
+    if (!empty($this->live_preview)) {
       $cache = FALSE;
     }
     else {
@@ -793,7 +793,7 @@ class view extends views_db_object {
     }
 
     // Check for already-cached output.
-    if (!empty($this->preview)) {
+    if (!empty($this->live_preview)) {
       $cache = FALSE;
     }
     else {
