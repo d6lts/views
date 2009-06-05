@@ -52,6 +52,7 @@ Views 2.x
     o #377896 by dereine: When ticked "link to node" show node title as a href title attribute.
     o #386098 by dereine: Add "watchdog" as a debug logging options.
     o #409428 by gpk: Missing field: node input format.
+    o #271833 by grugnog, agentrickard and others: Taxonomy depth in filter.
 
 Views 2.5
   Bugs fixed:

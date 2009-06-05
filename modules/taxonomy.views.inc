@@ -317,6 +317,9 @@ function taxonomy_views_data_alter(&$data) {
       'handler' => 'views_handler_argument_term_node_tid_depth',
       'accept depth modifier' => TRUE,
     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_term_node_tid_depth',
+    ),
   );
 
   $data['node']['term_node_tid_depth_modifier'] = array(
@@ -365,6 +368,9 @@ function taxonomy_views_handlers() {
       ),
       'views_handler_filter_term_node_tid' => array(
         'parent' => 'views_handler_filter_many_to_one',
+      ),
+      'views_handler_filter_term_node_tid_depth' => array(
+        'parent' => 'views_handler_filter_term_node_tid',
       ),
     ),
   );
