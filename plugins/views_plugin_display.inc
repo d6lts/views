@@ -1123,8 +1123,19 @@ class views_plugin_display extends views_plugin {
       case 'analyze-theme':
         $form['#title'] .= t('Theming information');
         $form['#help_topic'] = 'analyze-theme';
-        $funcs = array();
 
+        if (isset($_POST['theme'])) {
+          $this->view->theme = $_POST['theme'];
+        }
+        else if (empty($this->view->theme)) {
+          $this->view->theme = variable_get('theme_default', 'garland');
+        }
+
+        global $custom_theme;
+        $custom_theme = $this->view->theme;
+        init_theme();
+
+        $funcs = array();
         // Get theme functions for the display. Note that some displays may
         // not have themes. The 'feed' display, for example, completely
         // delegates to the style.
@@ -1172,6 +1183,26 @@ class views_plugin_display extends views_plugin {
           '#prefix' => '<div class="form-item description">',
           '#suffix' => '</div>',
           '#value' => '<p>' . t('This section lists all possible templates for the display plugin and for the style plugins, ordered roughly from the least specific to the most specific. The active template for each plugin -- which is the most specific template found on the system -- is highlighted in bold.') . '</p>',
+        );
+
+        foreach (list_themes() as $key => $theme) {
+          $options[$key] = $theme->info['name'];
+        }
+
+        $form['box'] = array(
+          '#prefix' => '<div class="container-inline">',
+          '#suffix' => '</div>',
+        );
+        $form['box']['theme'] = array(
+          '#type' => 'select',
+          '#options' => $options,
+          '#default_value' => $this->view->theme,
+        );
+
+        $form['box']['change'] = array(
+          '#type' => 'submit',
+          '#value' => t('Change theme'),
+          '#submit' => array('views_ui_edit_display_form_change_theme'),
         );
 
         $form['analysis'] = array(
@@ -1320,7 +1351,6 @@ class views_plugin_display extends views_plugin {
    * Format a list of theme templates for output by the theme info helper.
    */
   function format_themes($themes) {
-    init_theme();
     $registry = theme_get_registry();
 
     // Run through the theme engine variables, if necessary
@@ -1393,7 +1423,7 @@ class views_plugin_display extends views_plugin {
     if ($cache_plugin) {
       $cache_plugin->cache_flush();
     }
-    
+
     $section = $form_state['section'];
     switch ($section) {
       case 'display_title':
