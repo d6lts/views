@@ -22,6 +22,7 @@ Views 2.x
     o #382398 by elcuco: Force LTR in the views admin.
     o #461144: Fix trimming to correctly remove tags when they are trimmed in half.
     o #330956: Theme: Information only scanned information from the default theme.
+    o SA-CONTRIB-2009-037: Filter checkboxes could be displayed unfiltered allowing XSS attacks.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
