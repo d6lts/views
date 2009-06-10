@@ -21,6 +21,7 @@ Views 3.x-dev
     o #382398 by elcuco: Force LTR in the views admin.
     o #461144: Fix trimming to correctly remove tags when they are trimmed in half.
     o #330956: Theme: Information only scanned information from the default theme.
+    o SA-CONTRIB-2009-037: Filter checkboxes could be displayed unfiltered allowing XSS attacks.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.

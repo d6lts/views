@@ -14,7 +14,7 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
   function validate_form(&$form, &$form_state) {
     $types = node_get_types();
     foreach ($types as $type => $info) {
-      $options[$type] = $info->name;
+      $options[$type] = check_plain(t($info->name));
     }
 
     $arg = $this->get_argument();
