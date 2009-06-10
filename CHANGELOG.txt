@@ -21,6 +21,7 @@ Views 2.x
     o #316556 by darrenoh and JirkaRybka: More 1.x upgrade fixes.
     o #382398 by elcuco: Force LTR in the views admin.
     o #461144: Fix trimming to correctly remove tags when they are trimmed in half.
+    o #330956: Theme: Information only scanned information from the default theme.
 
   Other changes:
     o #298616: Add argument for node updated time similar to node created time.
