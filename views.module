@@ -973,6 +973,7 @@ function views_exposed_form(&$form_state) {
     '#name' => '', // prevent from showing up in $_GET.
     '#type' => 'submit',
     '#value' => t('Apply'),
+    '#id' => form_clean_id('edit-submit-' . $view->name),
   );
 
   $form['#action'] = url($view->get_url());
