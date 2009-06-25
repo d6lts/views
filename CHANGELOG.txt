@@ -70,6 +70,7 @@ Views 3.x-dev
 	o #406652 by George2: Add string length operators to most string filters.
 	o #313418 by alex_b: Allow explicit node::user relationship and user::node relationship.
 	o #430068 by overall and aclight: Improvements to the global "counter" field.
+	o #492002 by iterato: Allow "target" specification in field linking.
 
 Views 2.5
   Bugs fixed:

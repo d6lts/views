@@ -152,6 +152,7 @@ class views_handler_field extends views_handler {
         'link_class' => array('default' => ''),
         'prefix' => array('default' => '', 'translatable' => TRUE),
         'suffix' => array('default' => '', 'translatable' => TRUE),
+        'target' => array('default' => '', 'translatable' => TRUE),
         'trim' => array('default' => FALSE),
         'max_length' => array('default' => ''),
         'word_boundary' => array('default' => TRUE),
@@ -258,6 +259,17 @@ class views_handler_field extends views_handler {
           'edit-options-alter-make-link' => array(1)
         ),
       );
+      $form['alter']['target'] = array(
+        '#title' => t('Target'),
+        '#type' => 'textfield',
+        '#default_value' => $this->options['alter']['target'],
+        '#description' => t('Target of the link, such as _blank, _parent or an iframe's name. This field is rarely used.'),
+        '#process' => array('views_process_dependency'),
+        '#dependency' => array(
+          'edit-options-alter-make-link' => array(1)
+        ),
+      );
+      
 
       // Get a list of the available fields and arguments for token replacement.
       $options = array();
@@ -523,6 +535,11 @@ class views_handler_field extends views_handler {
     $class = $this->options['alter']['link_class'];
     if ($class) {
       $options['attributes']['class'] = $class;
+    }
+
+    $target = check_plain(trim($this->options['alter']['target']));
+    if (!empty($target)) {
+      $options['attributes']['target'] = $target;
     }
 
     // If the query and fragment were programatically assigned overwrite any
