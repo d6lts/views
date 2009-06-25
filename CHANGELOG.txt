@@ -62,6 +62,7 @@ Views 3.x-dev
     o Implement a post_render hook (for themes too) and cache method.
 	o #501552 by neclimdul: Work around a core bug with DISTINCT on nodes.
 	o #406652 by George2: Add string length operators to most string filters.
+	o #313418 by alex_b: Allow explicit node::user relationship and user::node relationship.
 
 Views 2.5
   Bugs fixed:

@@ -62,6 +62,14 @@ function user_views_data() {
     'sort' => array(
       'handler' => 'views_handler_sort',
     ),
+    'relationship' => array(
+      'title' => t('Nodes authored'),
+      'help' => t('Relate nodes to the user who created it. This relationship will create one record for every node created by the user.'),
+      'handler' => 'views_handler_relationship',
+      'base' => 'node',
+      'field' => 'uid',
+      'label' => t('nodes'),
+    ),
   );
 
   // uid

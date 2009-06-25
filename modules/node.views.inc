@@ -375,6 +375,18 @@ function node_views_data() {
     ),
   );
 
+  // uid field
+  $data['node']['uid'] = array(
+    'title' => t('Author'),
+    'help' => t('Relate a node to the user who created it.'),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship',
+      'base' => 'users',
+      'field' => 'uid',
+      'label' => t('user'),
+    ),
+  );
+  
   // ----------------------------------------------------------------------
   // Node revisions table
 
@@ -398,7 +410,7 @@ function node_views_data() {
     ),
   );
 
-  // uid field
+  // uid field for node revisions
   $data['node_revisions']['uid'] = array(
     'title' => t('User'),
     'help' => t('Relate a node revision to the user who created the revision.'),
@@ -406,7 +418,7 @@ function node_views_data() {
       'handler' => 'views_handler_relationship',
       'base' => 'users',
       'field' => 'uid',
-      'label' => t('user'),
+      'label' => t('revision user'),
     ),
   );
 
