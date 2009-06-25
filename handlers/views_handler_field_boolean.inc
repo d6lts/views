@@ -2,7 +2,7 @@
 // $Id$
 
 /**
- * A handler to provide proper displays for dates.
+ * A handler to provide proper displays for booleans.
  *
  * Allows for display of true/false, yes/no, on/off.
  *
