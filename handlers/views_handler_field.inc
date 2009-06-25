@@ -263,7 +263,7 @@ class views_handler_field extends views_handler {
         '#title' => t('Target'),
         '#type' => 'textfield',
         '#default_value' => $this->options['alter']['target'],
-        '#description' => t('Target of the link, such as _blank, _parent or an iframe's name. This field is rarely used.'),
+        '#description' => t("Target of the link, such as _blank, _parent or an iframe's name. This field is rarely used."),
         '#process' => array('views_process_dependency'),
         '#dependency' => array(
           'edit-options-alter-make-link' => array(1)

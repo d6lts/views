@@ -128,7 +128,7 @@ function user_views_data() {
       'handler' => 'views_handler_sort',
     ),
     'filter' => array(
-      'handler' => 'views_handler_filter_string',
+      'handler' => 'views_handler_filter_node_language',
     ),
   );
 
