@@ -28,6 +28,7 @@ Views 3.x-dev
 	o #385904 by JirkaRybka: Prevent duplication of id edit-submit on views exposed form.
 	o #489888 by TheRec: Remove erroneous "alt" attribute from <a> when using link rewriting.
 	o #499078 by Darren Oh: Make sure theme is initialized for pre_render hook.
+	o #490516 by v_20q: Some fields not properly being marked as translatable due to option unpacking bug.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
