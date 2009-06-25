@@ -789,6 +789,8 @@ class view extends views_db_object {
       return;
     }
 
+    init_theme();
+
     $start = views_microtime();
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {
       $this->start_query_capture();
