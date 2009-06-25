@@ -518,7 +518,6 @@ class views_handler_field extends views_handler {
     $alt = strtr($alt, $tokens);
     if ($alt) {
       $options['attributes']['title'] = $alt;
-      $options['attributes']['alt'] = $alt;
     }
 
     $class = $this->options['alter']['link_class'];
