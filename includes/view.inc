@@ -518,22 +518,14 @@ class view extends views_db_object {
    * Do some common building initialization.
    */
   function init_query() {
-    // Set the base database and field.
+    // Create and initialize the query object.
     $views_data = views_fetch_data($this->base_table);
     $this->base_field = $views_data['table']['base']['field'];
     if (!empty($views_data['table']['base']['database'])) {
       $this->base_database = $views_data['table']['base']['database'];
     }
-
-    // Create and initialize the query object.
-    if (!empty($views_data['table']['base']['query class'])) {
-      $this->query = views_get_plugin('query', $views_data['table']['base']['query class']);
-    }
-    else {
-      $this->query = views_get_plugin('query', 'views_query');
-    }
-
-    $this->query->init($this->base_table, $this->base_field);
+    views_include('query');
+    $this->query = new views_query($this->base_table, $this->base_field);
   }
 
   /**
@@ -579,6 +571,7 @@ class view extends views_db_object {
 
     // Let the handlers interact with each other if they really want.
     $this->_pre_query();
+
     if ($this->display_handler->uses_exposed()) {
       $this->exposed_widgets = $this->render_exposed_form();
       if (form_set_error() || !empty($this->build_info['abort'])) {
@@ -619,6 +612,8 @@ class view extends views_db_object {
       if ($this->style_plugin->build_sort()) {
         $this->_build('sort');
       }
+      // allow the plugin to build second sorts as well.
+      $this->style_plugin->build_sort_post();
     }
 
     // Allow display handler to affect the query:
@@ -627,16 +622,19 @@ class view extends views_db_object {
     // Allow style handler to affect the query:
     $this->style_plugin->query();
 
-    if (variable_get('views_sql_signature', FALSE) && $query_class == 'views_query') {
+    if (variable_get('views_sql_signature', FALSE)) {
       $this->query->add_field(NULL, "'" . $this->name . ':' . $this->current_display . "'", 'view_name');
     }
 
     // Let modules modify the query just prior to finalizing it.
-    $this->query->alter($this);
+    foreach (module_implements('views_query_alter') as $module) {
+      $function = $module . '_views_query_alter';
+      $function($this, $this->query);
+    }
 
-    // Build the necessary info to execute the query.
-    $this->query->build($this);
-
+    $this->build_info['query'] = $this->query->query();
+    $this->build_info['count_query'] = $this->query->query(TRUE);
+    $this->build_info['query_args'] = $this->query->get_where_args();
     $this->built = TRUE;
     $this->build_time = views_microtime() - $start;
 
@@ -686,8 +684,16 @@ class view extends views_db_object {
       $function($this);
     }
 
+    $query = db_rewrite_sql($this->build_info['query'], $this->base_table, $this->base_field, array('view' => &$this));
+    $count_query = db_rewrite_sql($this->build_info['count_query'], $this->base_table, $this->base_field, array('view' => &$this));
+
+    $args = $this->build_info['query_args'];
+
+    vpr($query);
+
+
     // Check for already-cached results.
-    if (!empty($this->preview)) {
+    if (!empty($this->live_preview)) {
       $cache = FALSE;
     }
     else {
@@ -697,7 +703,73 @@ class view extends views_db_object {
       vpr('Used cached results');
     }
     else {
-      $this->query->execute($this);
+      $items = array();
+      if ($query) {
+        $replacements = module_invoke_all('views_query_substitutions', $this);
+        $query = str_replace(array_keys($replacements), $replacements, $query);
+        $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
+
+        if (is_array($args)) {
+          foreach ($args as $id => $arg) {
+            $args[$id] = str_replace(array_keys($replacements), $replacements, $arg);
+          }
+        }
+
+        // Allow for a view to query an external database.
+        if (isset($this->base_database)) {
+          db_set_active($this->base_database);
+          $external = TRUE;
+        }
+
+        $start = views_microtime();
+        if (!empty($this->pager['items_per_page'])) {
+          // We no longer use pager_query() here because pager_query() does not
+          // support an offset. This is fine as we don't actually need pager
+          // query; we've already been doing most of what it does, and we
+          // just need to do a little more playing with globals.
+          if (!empty($this->pager['use_pager']) || !empty($this->get_total_rows)) {
+            $this->total_rows = db_result(db_query($count_query, $args)) - $this->pager['offset'];
+          }
+
+          if (!empty($this->pager['use_pager'])) {
+            // dump information about what we already know into the globals
+            global $pager_page_array, $pager_total, $pager_total_items;
+            // total rows in query
+            $pager_total_items[$this->pager['element']] = $this->total_rows;
+            // total pages
+            $pager_total[$this->pager['element']] = ceil($pager_total_items[$this->pager['element']] / $this->pager['items_per_page']);
+
+            // What page was requested:
+            $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
+
+            // If the requested page was within range. $this->pager['current_page']
+            // defaults to 0 so we don't need to set it in an out-of-range condition.
+            if (!empty($pager_page_array[$this->pager['element']])) {
+              $page = intval($pager_page_array[$this->pager['element']]);
+              if ($page > 0 && $page < $pager_total[$this->pager['element']]) {
+                $this->pager['current_page'] = $page;
+              }
+            }
+            $pager_page_array[$this->pager['element']] = $this->pager['current_page'];
+          }
+
+          $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
+          $result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
+
+        }
+        else {
+          $result = db_query($query, $args);
+        }
+
+        $this->result = array();
+        while ($item = db_fetch_object($result)) {
+          $this->result[] = $item;
+        }
+        if (!empty($external)) {
+          db_set_active();
+        }
+        $this->execute_time = views_microtime() - $start;
+      }
       if ($cache) {
         $cache->cache_set('results');
       }
@@ -723,7 +795,7 @@ class view extends views_db_object {
     }
 
     // Check for already-cached output.
-    if (!empty($this->preview)) {
+    if (!empty($this->live_preview)) {
       $cache = FALSE;
     }
     else {
@@ -748,6 +820,12 @@ class view extends views_db_object {
         $function($this);
       }
 
+      // Let the theme play too, because pre render is a very themey thing.
+      $function = $GLOBALS['theme'] . '_views_pre_render';
+      if (function_exists($function)) {
+        $function($this, $this->display_handler->output, $cache);
+      }
+
       // Give field handlers the opportunity to perform additional queries
       // using the entire resultset prior to rendering.
       if ($this->style_plugin->uses_fields()) {
@@ -761,6 +839,22 @@ class view extends views_db_object {
       if ($cache) {
         $cache->cache_set('output');
       }
+    }
+
+    if ($cache) {
+      $cache->post_render($this->display_handler->output);
+    }
+
+    // Let modules modify the view output after it is rendered.
+    foreach (module_implements('views_post_render') as $module) {
+      $function = $module . '_views_post_render';
+      $function($this, $this->display_handler->output, $cache);
+    }
+
+    // Let the theme play too, because post render is a very themey thing.
+    $function = $GLOBALS['theme'] . '_views_post_render';
+    if (function_exists($function)) {
+      $function($this, $this->display_handler->output, $cache);
     }
 
     if (!empty($this->live_preview) && variable_get('views_show_additional_queries', FALSE)) {

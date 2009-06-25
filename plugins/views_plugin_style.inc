@@ -120,6 +120,12 @@ class views_plugin_style extends views_plugin {
   function build_sort() { return TRUE; }
 
   /**
+   * Called by the view builder to let the style build a second set of
+   * sorts that will come after any other sorts in the view.
+   */
+  function build_sort_post() { }
+
+  /**
    * Allow the style to do stuff before each row is rendered.
    *
    * @param $result

@@ -22,6 +22,8 @@ Views 3.x-dev
     o #461144: Fix trimming to correctly remove tags when they are trimmed in half.
     o #330956: Theme: Information only scanned information from the default theme.
     o SA-CONTRIB-2009-037: Filter checkboxes could be displayed unfiltered allowing XSS attacks.
+    o Table style when not overriding sorts put sorts in wrong order.
+    o #488908 by sl27257: "Node: Has new content" only worked when exposed.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
@@ -57,6 +59,8 @@ Views 3.x-dev
     o #377896 by dereine: When ticked "link to node" show node title as a href title attribute.
     o #386098 by dereine: Add "watchdog" as a debug logging options.
     o #409428 by gpk: Missing field: node input format.
+    o Implement a post_render hook (for themes too) and cache method.
+	o #501552 by neclimdul: Work around a core bug with DISTINCT on nodes.
 
 Views 2.5
   Bugs fixed:
