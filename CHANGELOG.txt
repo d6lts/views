@@ -61,6 +61,7 @@ Views 3.x-dev
     o #409428 by gpk: Missing field: node input format.
     o Implement a post_render hook (for themes too) and cache method.
 	o #501552 by neclimdul: Work around a core bug with DISTINCT on nodes.
+	o #406652 by George2: Add string length operators to most string filters.
 
 Views 2.5
   Bugs fixed:
