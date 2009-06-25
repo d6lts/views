@@ -177,6 +177,10 @@ class views_plugin_display_attachment extends views_plugin_display {
       return;
     }
 
+    if (!$this->access()) {
+      return;
+    }
+
     // Get a fresh view because our current one has a lot of stuff on it because it's
     // already been executed.
     $view = $this->view->clone_view();
