@@ -497,7 +497,7 @@ class views_handler_filter extends views_handler {
  * A special handler to take the place of missing or broken handlers.
  */
 class views_handler_filter_broken extends views_handler_filter {
-  function ui_name() {
+  function ui_name($short = FALSE) {
     return t('Broken/missing handler');
   }
 

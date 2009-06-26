@@ -403,7 +403,7 @@ class views_plugin_display_page extends views_plugin_display {
     }
   }
 
-  function options_validate($form, &$form_state) {
+  function options_validate(&$form, &$form_state) {
     // It is very important to call the parent function here:
     parent::options_validate($form, $form_state);
     switch ($form_state['section']) {
@@ -441,7 +441,7 @@ class views_plugin_display_page extends views_plugin_display {
     }
   }
 
-  function options_submit($form, &$form_state) {
+  function options_submit(&$form, &$form_state) {
     // It is very important to call the parent function here:
     parent::options_submit($form, $form_state);
     switch ($form_state['section']) {

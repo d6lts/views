@@ -62,7 +62,7 @@ class views_handler_sort extends views_handler {
  * A special handler to take the place of missing or broken handlers.
  */
 class views_handler_sort_broken extends views_handler_sort {
-  function ui_name() {
+  function ui_name($short = FALSE) {
     return t('Broken/missing handler');
   }
 
