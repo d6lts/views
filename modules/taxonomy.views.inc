@@ -98,7 +98,6 @@ function taxonomy_views_data() {
     'field' => array(
       'handler' => 'views_handler_field_numeric',
       'click sortable' => TRUE,
-      'skip base' => array('node', 'node_revision'),
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',

@@ -33,6 +33,7 @@ Views 3.x-dev
 	o #466454 by neclimdul: PHP strict fixes.
 	o #501552 by neclimdul: Work around a core bug with DISTINCT on nodes.
 	o #503098 by Davide Goode: Feed displays should have link displays since they link to a page display.
+	o #381346 by ayalon: Allow Taxonomy: Tid as a field, which is now needed for rewrites which may need tids.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
