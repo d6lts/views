@@ -31,6 +31,7 @@ Views 3.x-dev
 	o #490516 by v_20q: Some fields not properly being marked as translatable due to option unpacking bug.
 	o #484222 by dereine: Attachment displays were ignoring access settings.
 	o #466454 by neclimdul: PHP strict fixes.
+	o #501552 by neclimdul: Work around a core bug with DISTINCT on nodes.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
