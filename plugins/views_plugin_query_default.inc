@@ -894,6 +894,7 @@ class views_plugin_query_default extends views_plugin_query{
     if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
       if (!empty($this->fields[$this->base_field])) {
         $this->fields[$this->base_field]['distinct'] = TRUE;
+        $this->add_groupby($this->base_field);
       }
     }
 
@@ -946,6 +947,9 @@ class views_plugin_query_default extends views_plugin_query{
       if (!empty($field['count'])) {
         $string = "COUNT($string)";
         $has_aggregate = TRUE;
+      }
+      elseif ($this->distinct && !in_array($fieldname, $this->groupby)) {
+        $string = $GLOBALS['db_type'] == 'pgsql' ? "FIRST($string)" : $string;
       }
       else {
         $non_aggregates[] = $fieldname;
