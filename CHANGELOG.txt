@@ -37,6 +37,7 @@ Views 3.x-dev
 	o #485296 by overall and deekayen: Remove unnecessary t() call.
 	o #460838 by Darren Oh: Make DISTINCT more distinct.
 	o #503774 by dereine: Cache time failed to return the proper cutoff time.
+    o #506098: Table sorting with no default was overriding sorts even tho it was not supposed to.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
