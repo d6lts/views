@@ -303,7 +303,8 @@ function views1_import($imported) {
     }
   }
   foreach ($imported->filter as $field) {
-    $id = $view->add_item('default', 'filter', $field['tablename'], $field['field']);
+    $options = $field['value'] == '' ? array() : array('value' => $field['value']);
+    $id = $view->add_item('default', 'filter', $field['tablename'], $field['field'], $options);
     foreach (module_implements('views_convert') as $module) {
       module_invoke($module, 'views_convert', 'default', 'filter', $view, $field, $id);
     }

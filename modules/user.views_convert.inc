@@ -28,7 +28,6 @@ function user_views_convert($display, $type, &$view, $field, $id = NULL) {
           case 'uid':
             $operators = array('OR' => 'in', 'NOR' => 'not in');
             $view->set_item_option($display, 'filter', $id, 'operator', $operators[$field['operator']]);
-            $view->set_item_option($display, 'filter', $id, 'value', $field['value']);
             if ($rid = (integer) substr($field['tablename'], 11)) {
               $view->add_item($display, 'filter', 'users_roles', 'rid', array('value' => $rid));
             }
@@ -40,7 +39,6 @@ function user_views_convert($display, $type, &$view, $field, $id = NULL) {
           case 'rid':
             $operators = array('AND' => 'and', 'OR' => 'or', 'NOR' => 'not');
             $view->set_item_option($display, 'filter', $id, 'operator', $operators[$field['operator']]);
-            $view->set_item_option($display, 'filter', $id, 'value', $field['value']);
             break;
         }
       }

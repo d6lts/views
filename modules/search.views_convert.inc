@@ -13,11 +13,8 @@ function search_views_convert($display, $type, &$view, $field, $id = NULL) {
         case 'temp_search_results':
           switch ($field['field']) {
             case 'word':
-              $item = $view->get_item($display, 'filter', $id);
-              $item['table'] = 'search_index';
-              $item['field'] = 'keys';
-              $item['value'] = $field['value'];
-              $view->set_item($display, 'filter', $id, $item);
+              $view->set_item_option($display, 'filter', $id, 'table', 'search_index');
+              $view->set_item_option($display, 'filter', $id, 'field', 'keys');
               break;
           }
           break;
