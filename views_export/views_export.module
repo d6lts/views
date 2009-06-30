@@ -191,8 +191,8 @@ function views_export_export_form_submit(&$form, &$form_state) {
 
   $info  = '; $Id$'."\n";
   $info .= "\n";
-  $info .= t("name = @module Export Module\n", array('@module' => $form_state['values']['name']));
-  $info .= t("description = Exports some views of @module\n", array('@module' => $form_state['values']['name']));
+  $info .= strtr("name = @module Export Module\n", array('@module' => $form_state['values']['name']));
+  $info .= strtr("description = Exports some views of @module\n", array('@module' => $form_state['values']['name']));
   $info .= "dependencies[] = views\n";
   $info .= "core = 6.x\n";
 
