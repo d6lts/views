@@ -38,6 +38,7 @@ class views_plugin_cache_time extends views_plugin_cache {
   function cache_expire($type) {
     if ($lifespan = $this->options[$type . '_lifespan']) {
       $cutoff = time() - $lifespan;
+      return $cutoff;
     }
     else {
       return FALSE;
