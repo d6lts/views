@@ -293,11 +293,10 @@ class views_handler_field extends views_handler {
         foreach (array_keys($options) as $type) {
           if (!empty($options[$type])) {
             $items = array();
-            $title = t(ucwords($type));
             foreach ($options[$type] as $key => $value) {
-              $items[] = $key .' == '. $value;
+              $items[] = $key . ' == ' . $value;
             }
-            $output .= theme('item_list', $items, $title);
+            $output .= theme('item_list', $items, $type);
           }
         }
       }
@@ -581,7 +580,6 @@ class views_handler_field extends views_handler {
     }
 
     // Now add replacements for our fields.
-    $options = array();
     foreach ($this->view->display_handler->get_handlers('field') as $field => $handler) {
       if (isset($handler->last_render)) {
         $tokens["[$field]"] = $handler->last_render;
