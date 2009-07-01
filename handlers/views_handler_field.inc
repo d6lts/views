@@ -286,6 +286,8 @@ class views_handler_field extends views_handler {
         $options[t('Arguments')]['!' . $count] = t('@argument input', array('@argument' => $handler->ui_name()));
       }
 
+      $this->document_self_tokens($options[t('Fields')]);
+
       // Default text.
       $output = t('<p>You must add some additional fields to this display before using this field. These fields may be marked as <em>Exclude from display</em> if you prefer. Note that due to rendering order, you cannot use fields that come after this field; if you need a field not listed here, rearrange your fields.</p>');
       // We have some options, so make a list.
@@ -416,25 +418,30 @@ class views_handler_field extends views_handler {
    * text-replacement rendering is necessary.
    */
   function advanced_render($values) {
-    $this->last_render = $value = $this->render($values);
-    $this->original_value = $value;
+    if ($this->allow_advanced_render() && method_exists($this, 'render_item')) {
+      $raw_items = $this->get_items($values);
+    }
+    else {
+      $this->last_render = $value = $this->render($values);
+      $this->original_value = $value;
+    }
 
     if ($this->allow_advanced_render()) {
       $tokens = NULL;
-      if (!empty($this->options['alter']['alter_text']) && !empty($this->options['alter']['text'])) {
-        $tokens = $this->get_render_tokens();
-        $value = $this->render_altered($tokens);
-      }
+      if (method_exists($this, 'render_item')) {
+        $items = array();
+        foreach ($raw_items as $count => $item) {
+          $this->last_render = $this->render_item($count, $item);
+          $this->original_value = $this->last_render;
 
-      if (!empty($this->options['alter']['trim']) && !empty($this->options['alter']['max_length'])) {
-        $value = $this->render_trim_text($value);
-      }
-
-      if (!empty($this->options['alter']['make_link']) && !empty($this->options['alter']['path'])) {
-        if (!isset($tokens)) {
-         $tokens = $this->get_render_tokens();
+          $alter = $item + $this->options['alter'];
+          $items[] = $this->render_text($alter);       
         }
-        $value = $this->render_as_link($value, $tokens);
+
+        $value = $this->render_items($items);
+      }
+      else {
+        $value = $this->render_text($this->options['alter']);
       }
 
       // This happens here so that render_as_link can get the unaltered value of
@@ -446,11 +453,38 @@ class views_handler_field extends views_handler {
   }
 
   /**
+   * Perform an advanced text render for the item.
+   *
+   * This is separated out as some fields may render lists, and this allows
+   * each item to be handled individually.
+   */
+  function render_text($alter) {
+    $value = $this->last_render;
+    if (!empty($alter['alter_text']) && !empty($alter['text'])) {
+      $tokens = $this->get_render_tokens($alter);
+      $value = $this->render_altered($alter, $tokens);
+    }
+
+    if (!empty($alter['trim']) && !empty($alter['max_length'])) {
+      $value = $this->render_trim_text($alter, $value);
+    }
+
+    if (!empty($alter['make_link']) && !empty($alter['path'])) {
+      if (!isset($tokens)) {
+       $tokens = $this->get_render_tokens($alter);
+      }
+      $value = $this->render_as_link($alter, $value, $tokens);
+    }
+
+    return $value;
+  }
+  
+  /**
    * Render this field as altered text, from a fieldset set by the user.
    */
-  function render_altered($tokens) {
+  function render_altered($alter, $tokens) {
     // Filter this right away as our substitutions are already sanitized.
-    $value = filter_xss_admin($this->options['alter']['text']);
+    $value = filter_xss_admin($alter['text']);
     $value = strtr($value, $tokens);
 
     return $value;
@@ -459,8 +493,8 @@ class views_handler_field extends views_handler {
   /**
    * Trim the field down to the specified length.
    */
-  function render_trim_text($value) {
-    if (!empty($this->options['alter']['strip_tags'])) {
+  function render_trim_text($alter, $value) {
+    if (!empty($alter['strip_tags'])) {
       $value = strip_tags($value);
       // NOTE: It's possible that some external fields might override the
       // element type so if someone from, say, CCK runs into a bug here,
@@ -468,13 +502,13 @@ class views_handler_field extends views_handler {
       $this->definition['element type'] = 'span';
     }
 
-    if (drupal_strlen($value) <= $this->options['alter']['max_length']) {
+    if (drupal_strlen($value) <= $alter['max_length']) {
       return $value;
     }
 
-    $value = drupal_substr($value, 0, $this->options['alter']['max_length']);
+    $value = drupal_substr($value, 0, $alter['max_length']);
 
-    if (!empty($this->options['alter']['word_boundary'])) {
+    if (!empty($alter['word_boundary'])) {
       if (preg_match("/(.*)\b.+/us", $value, $matches)) {
         $value = $matches[1];
       }
@@ -482,11 +516,11 @@ class views_handler_field extends views_handler {
     // Remove scraps of HTML entities from the end of a strings
     $value = rtrim(preg_replace('/(?:<(?!.+>)|&(?!.+;)).*$/us', '', $value));
 
-    if (!empty($this->options['alter']['ellipsis'])) {
+    if (!empty($alter['ellipsis'])) {
       $value .= '...';
     }
 
-    if (!empty($this->options['alter']['html'])) {
+    if (!empty($alter['html'])) {
       $value = _filter_htmlcorrector($value);
     }
 
@@ -497,11 +531,11 @@ class views_handler_field extends views_handler {
    * Render this field as a link, with the info from a fieldset set by
    * the user.
    */
-  function render_as_link($text, $tokens) {
+  function render_as_link($alter, $text, $tokens) {
     $value = '';
 
-    if (!empty($this->options['alter']['prefix'])) {
-      $value .= filter_xss_admin($this->options['alter']['prefix']);
+    if (!empty($alter['prefix'])) {
+      $value .= filter_xss_admin(strtr($alter['prefix'], $tokens));
     }
 
     $options = array(
@@ -510,7 +544,7 @@ class views_handler_field extends views_handler {
 
     // $path will be run through check_url() by l() so we do not need to
     // sanitize it ourselves.
-    $path = $this->options['alter']['path'];
+    $path = $alter['path'];
 
     // Use strip tags as there should never be HTML in the path.
     // However, we need to preserve special characters like " that
@@ -528,35 +562,34 @@ class views_handler_field extends views_handler {
       $options['fragment'] = $url['fragment'];
     }
 
-    $alt = $this->options['alter']['alt'];
-    $alt = strtr($alt, $tokens);
+    $alt = strtr($alter['alt'], $tokens);
     if ($alt) {
       $options['attributes']['title'] = $alt;
     }
 
-    $class = $this->options['alter']['link_class'];
+    $class = strtr($alter['link_class'], $tokens);
     if ($class) {
       $options['attributes']['class'] = $class;
     }
 
-    $target = check_plain(trim($this->options['alter']['target']));
+    $target = check_plain(trim($alter['target']));
     if (!empty($target)) {
       $options['attributes']['target'] = $target;
     }
 
     // If the query and fragment were programatically assigned overwrite any
     // parsed values.
-    if (isset($this->options['alter']['query'])) {
-      $options['query'] = $this->options['alter']['query'];
+    if (isset($alter['query'])) {
+      $options['query'] = strtr($alter['query'], $tokens);
     }
-    if (isset($this->options['alter']['fragment'])) {
-      $options['fragment'] = $this->options['alter']['fragment'];
+    if (isset($alter['fragment'])) {
+      $options['fragment'] = strtr($alter['fragment'], $tokens);
     }
 
     $value .= l($text, $path, $options);
 
-    if (!empty($this->options['alter']['suffix'])) {
-      $value .= filter_xss_admin($this->options['alter']['suffix']);
+    if (!empty($alter['suffix'])) {
+      $value .= filter_xss_admin(strtr($alter['suffix'], $tokens));
     }
 
     return $value;
@@ -569,7 +602,7 @@ class views_handler_field extends views_handler {
    * are available and gets their values. This will then be
    * used in one giant str_replace().
    */
-  function get_render_tokens() {
+  function get_render_tokens($item) {
     $tokens = array();
     if (!empty($this->view->build_info['substitutions'])) {
       $tokens = $this->view->build_info['substitutions'];
@@ -596,10 +629,32 @@ class views_handler_field extends views_handler {
       if ($field == $this->options['id']) {
         break;
       }
+
+      $this->add_self_tokens($tokens, $item);
     }
 
     return $tokens;
   }
+
+  /**
+   * Add any special tokens this field might use for itself.
+   *
+   * This method is intended to be overridden by items that generate
+   * fields as a list. For example, the field that displays all terms
+   * on a node might have tokens for the tid and the term.
+   *
+   * By convention, tokens should follow the format of [token-subtoken]
+   * where token is the field ID and subtoken is the field. If the
+   * field ID is terms, then the tokens might be [terms-tid] and [terms-name].
+   */
+  function add_self_tokens(&$tokens, $item) { }
+
+  /**
+   * Document any special tokens this field might use for itself.
+   *
+   * @see add_self_tokens() for details.
+   */
+  function document_self_tokens(&$tokens) { }
 
   /**
    * Call out to the theme() function, which probably just calls render() but

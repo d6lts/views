@@ -150,7 +150,7 @@ function upload_views_handlers() {
         'parent' => 'views_handler_field_prerender_list',
       ),
       'views_handler_field_upload_description' => array(
-        'parent' => 'views_handler_field_prerender_list',
+        'parent' => 'views_handler_field',
       ),
       'views_handler_filter_upload_fid' => array(
         'parent' => 'views_handler_filter_boolean_operator',
