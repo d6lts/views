@@ -10,7 +10,7 @@ class views_handler_field_profile_list extends views_handler_field_prerender_lis
   function render($value) {
     $field = $value->{$this->field_alias};
     $this->items[$field] = array();
-    foreach (split("[,\n\r]", $field) as $item) {
+    foreach (split("[\n\r]", $field) as $item) {
       if ($item != '' && $item !== NULL) {
         $this->items[$field][] = $item;
       }

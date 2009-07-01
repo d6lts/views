@@ -39,6 +39,7 @@ Views 3.x-dev
 	o #503774 by dereine: Cache time failed to return the proper cutoff time.
     o #506098: Table sorting with no default was overriding sorts even tho it was not supposed to.
 	o #407538: Ensure views_break_phrase() will stop providing warnings on empty strings.
+	o #420850 by dereine: Commas should not be used to separate items in a profile list field.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
