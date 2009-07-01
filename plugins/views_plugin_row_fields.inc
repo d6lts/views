@@ -19,6 +19,7 @@ class views_plugin_row_fields extends views_plugin_row {
 
     $options['inline'] = array('default' => array());
     $options['separator'] = array('default' => '');
+    $options['hide_empty'] = array('default' => FALSE);
     return $options;
   }
 
@@ -50,6 +51,14 @@ class views_plugin_row_fields extends views_plugin_row {
       '#default_value' => isset($this->options['separator']) ? $this->options['separator'] : '',
       '#description' => t('The separator may be placed between inline fields to keep them from squishing up next to each other. You can use HTML in this field.'),
     );
+
+    $form['hide_empty'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide empty fields'),
+      '#default_value' => $this->options['hide_empty'],
+      '#description' => t('Do not display fields, labels or markup for fields that are empty.'),
+    );
+
   }
 
   /**

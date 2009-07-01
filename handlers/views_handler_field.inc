@@ -513,7 +513,9 @@ class views_handler_field extends views_handler {
     $path = $this->options['alter']['path'];
 
     // Use strip tags as there should never be HTML in the path.
-    $path = strip_tags(strtr($path, $tokens));
+    // However, we need to preserve special characters like " that
+    // were removed by check_plain().
+    $path = strip_tags(html_entity_decode(strtr($path, $tokens)));
 
     // Parse the URL and move any query and fragment parameters out of the path.
     $url = parse_url($path);

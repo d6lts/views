@@ -205,6 +205,7 @@ class views_handler_filter_in_operator extends views_handler_filter {
         );
       }
     }
+    dsm($form_state['input']);
   }
 
   /**
@@ -268,7 +269,6 @@ class views_handler_filter_in_operator extends views_handler_filter {
     // instead.
 
     $form_state['values']['options']['value'] = $form['value']['#value'];
-//    $form_state['values']['options']['value'] = array_filter($form_state['values']['options']['value']);
   }
 
   function admin_summary() {
