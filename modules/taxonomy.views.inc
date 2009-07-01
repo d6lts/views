@@ -307,6 +307,17 @@ function taxonomy_views_data() {
  * Implementation of hook_views_data_alter().
  */
 function taxonomy_views_data_alter(&$data) {
+  $data['node']['term_node_tid'] = array(
+    'group' => t('Taxonomy'),
+    'title' => t('Related terms'),
+    'help' => t('Relate nodes to taxonomy terms, specifiying which vocabulary or vocabularies to use. This relationship will cause duplicated records if there are multiple terms.'),
+    'relationship' => array(
+      'handler' => 'views_handler_relationship_node_term_data',
+      'label' => t('term'),
+      'base' => 'term_data',
+    ),
+  );
+
   $data['node']['term_node_tid_depth'] = array(
     'group' => t('Taxonomy'),
     'title' => t('Term ID (with depth)'),
@@ -370,6 +381,9 @@ function taxonomy_views_handlers() {
       ),
       'views_handler_filter_term_node_tid_depth' => array(
         'parent' => 'views_handler_filter_term_node_tid',
+      ),
+      'views_handler_relationship_node_term_data' => array(
+        'parent' => 'views_handler_relationship',
       ),
     ),
   );
