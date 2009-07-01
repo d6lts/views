@@ -91,7 +91,10 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
       }
       // If we're configuring an exposed filter, add an <Any> option.
       $any_label = variable_get('views_exposed_filter_any_label', 'old_any') == 'old_any' ? t('<Any>') : t('- Any -');
-      $form['value']['#options'] = array('All' => $any_label + $form['value']['#options'];
+      if ($form['value']['#type'] != 'select') {
+        $any_label = check_plain($any_label);
+      }
+      $form['value']['#options'] = array('All' => $any_label) + $form['value']['#options'];
     }
   }
 
