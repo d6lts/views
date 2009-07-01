@@ -282,7 +282,8 @@ class views_handler_field extends views_handler {
       }
       $count = 0; // This lets us prepare the key as we want it printed.
       foreach ($this->view->display_handler->get_handlers('argument') as $arg => $handler) {
-        $options[t('Arguments')]['%' . ++$count] = $handler->ui_name();
+        $options[t('Arguments')]['%' . ++$count] = t('@argument title', array('@argument' => $handler->ui_name()));
+        $options[t('Arguments')]['!' . $count] = t('@argument input', array('@argument' => $handler->ui_name()));
       }
 
       // Default text.
@@ -577,6 +578,8 @@ class views_handler_field extends views_handler {
       if (!isset($tokens[$token])) {
         $tokens[$token] = '';
       }
+
+      $tokens['!' . $count] = isset($this->view->args[$count - 1]) ? check_plain($this->view->args[$count - 1]) : '';
     }
 
     // Now add replacements for our fields.

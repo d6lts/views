@@ -81,6 +81,7 @@ Views 3.x-dev
 	o #313418 by alex_b: Allow explicit node::user relationship and user::node relationship.
 	o #430068 by overall and aclight: Improvements to the global "counter" field.
 	o #492002 by iterato: Allow "target" specification in field linking.
+	o #472194: !1 can now be used with field rewriting to get the raw argument.
 
 Views 2.5
   Bugs fixed:
