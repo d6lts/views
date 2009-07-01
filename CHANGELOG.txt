@@ -83,6 +83,7 @@ Views 3.x-dev
 	o #430068 by overall and aclight: Improvements to the global "counter" field.
 	o #492002 by iterato: Allow "target" specification in field linking.
 	o #472194: !1 can now be used with field rewriting to get the raw argument.
+	o #480162: Fields row style now contains option to hide empty fields.
 
 Views 2.5
   Bugs fixed:
