@@ -42,4 +42,12 @@ class views_plugin_query extends views_plugin {
    * $view->pager['current_page'].
    */
   function execute(&$view) {  }
+
+  /**
+   * Add a signature to the query, if such a thing is feasible.
+   *
+   * This signature is something that can be used when perusing query logs to
+   * discern where particular queries might be coming from.
+   */
+  function add_signature(&$view) { }
 }

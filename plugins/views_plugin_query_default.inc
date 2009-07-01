@@ -1105,4 +1105,9 @@ class views_plugin_query_default extends views_plugin_query{
     }
     $view->execute_time = views_microtime() - $start;
   }
+
+  function add_signature(&$view) {
+    $view->query->add_field(NULL, "'" . $view->name . ':' . $view->current_display . "'", 'view_name');
+  }
+
 }
