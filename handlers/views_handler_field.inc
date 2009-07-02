@@ -161,6 +161,9 @@ class views_handler_field extends views_handler {
         'html' => array('default' => FALSE),
       ),
     );
+    $options['empty'] = array('default' => '', 'translatable' => TRUE);
+    $options['hide_empty'] = array('default' => FALSE);
+    $options['empty_zero'] = array('default' => FALSE);
 
     return $options;
   }
@@ -380,6 +383,26 @@ class views_handler_field extends views_handler {
         ),
       );
     }
+    $form['empty'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Empty text'),
+      '#default_value' => $this->options['empty'],
+      '#description' => t('If the field is empty, display this text instead.'),
+    );
+
+    $form['empty_zero'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Count the number 0 as empty'),
+      '#default_value' => $this->options['empty_zero'],
+      '#description' => t('If the field contains the number zero, display the empty text instead'),
+    );
+
+    $form['hide_empty'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Hide if empty'),
+      '#default_value' => $this->options['hide_empty'],
+      '#description' => t('Do not display anything for this field if it is empty. Note that the field label may still be displayed. Check style or row style settings to hide labels for empty fields.'),
+    );
   }
 
   /**
@@ -449,6 +472,12 @@ class views_handler_field extends views_handler {
       $this->last_render = $value;
     }
 
+    if (empty($this->last_render) && !empty($this->options['empty'])) {
+      if ($this->last_render !== 0 || empty($this->options['empty_zero'])) {
+        $this->last_render = $this->options['empty'];
+      }
+    }
+
     return $this->last_render;
   }
 
@@ -460,6 +489,10 @@ class views_handler_field extends views_handler {
    */
   function render_text($alter) {
     $value = $this->last_render;
+    if ($this->options['hide_empty'] && empty($value) && ($value !== 0 || $this->options['empty_zero'])) {
+      return '';
+    }
+
     if (!empty($alter['alter_text']) && !empty($alter['text'])) {
       $tokens = $this->get_render_tokens($alter);
       $value = $this->render_altered($alter, $tokens);

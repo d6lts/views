@@ -85,6 +85,12 @@ class views_handler_field_numeric extends views_handler_field {
         $value .= $this->options['decimal'] . substr($remainder, 2);
       }
     }
+
+    // Check to see if hiding should happen before adding prefix and suffix.
+    if ($this->options['hide_empty'] && empty($value) && ($value !== 0 || $this->options['empty_zero'])) {
+      return '';
+    }
+
     return check_plain($this->options['prefix'] . $value . $this->options['suffix']);
   }
 }
