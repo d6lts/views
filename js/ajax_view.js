@@ -73,7 +73,7 @@ Drupal.behaviors.ViewsAjaxView = function() {
       })
       .addClass('views-processed')
       .submit(function () {
-        $('input[type=submit]', this).after('<span class="views-throbbing">&nbsp</span>');
+        $('input[type=submit], button', this).after('<span class="views-throbbing">&nbsp</span>');
         var object = this;
         $(this).ajaxSubmit({
           url: ajax_path,
