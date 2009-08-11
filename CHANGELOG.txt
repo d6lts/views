@@ -43,6 +43,7 @@ Views 3.x-dev
     o #482162 by agentrickard: link path needed further sanitization to properly encode special characters.
     o Tables would not accept 0 as having data so columns with zeroes would lose data when merging with other columns.
     o #529164: Fatal typo in profile list field.
+    o #537870 by dww: Fixed a bug in the [uplodate_fid-size] token where format_size() was called on it twice.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
