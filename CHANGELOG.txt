@@ -44,6 +44,7 @@ Views 3.x-dev
     o Tables would not accept 0 as having data so columns with zeroes would lose data when merging with other columns.
     o #529164: Fatal typo in profile list field.
     o #537870 by dww: Fixed a bug in the [uplodate_fid-size] token where format_size() was called on it twice.
+    o #546586 by dww: Fixed bugs that prevented '0' being a valid rewrite text or empty text for a view field. Also fixes a logic bug regarding the handling of the 'Count the number 0 as empty' setting.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.

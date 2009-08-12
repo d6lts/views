@@ -472,8 +472,8 @@ class views_handler_field extends views_handler {
       $this->last_render = $value;
     }
 
-    if (empty($this->last_render) && !empty($this->options['empty'])) {
-      if ($this->last_render !== 0 || empty($this->options['empty_zero'])) {
+    if (empty($this->last_render)) {
+      if ($this->last_render !== 0 || !empty($this->options['empty_zero'])) {
         $this->last_render = $this->options['empty'];
       }
     }
@@ -493,7 +493,7 @@ class views_handler_field extends views_handler {
       return '';
     }
 
-    if (!empty($alter['alter_text']) && !empty($alter['text'])) {
+    if ($alter['alter_text'] !== '' && $alter['text'] !== '') {
       $tokens = $this->get_render_tokens($alter);
       $value = $this->render_altered($alter, $tokens);
     }
