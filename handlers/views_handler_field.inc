@@ -596,7 +596,8 @@ class views_handler_field extends views_handler {
     }
 
     $alt = strtr($alter['alt'], $tokens);
-    if ($alt) {
+    // Set the title attribute of the link only if it improves accessibility
+    if ($alt && $alt != $text) {
       $options['attributes']['title'] = $alt;
     }
 

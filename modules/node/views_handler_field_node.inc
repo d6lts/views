@@ -45,7 +45,6 @@ class views_handler_field_node extends views_handler_field {
     if (!empty($this->options['link_to_node']) && $data !== NULL && $data !== '') {
       $this->options['alter']['make_link'] = TRUE;
       $this->options['alter']['path'] = "node/" . $values->{$this->aliases['nid']};
-      $this->options['alter']['alt'] = check_plain($data);
     }
     return $data;
   }
