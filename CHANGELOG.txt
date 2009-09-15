@@ -51,7 +51,7 @@ Views 3.x-dev
     o #508124 by voxpelli: Optionally allow boolean to treat NULL as FALSE.
     o #487528 by dereine: Fix typo in 'Maximum length' field instructions.
 
-  New Features:
+  New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
     o #458140: Allow any handler to expose widgets.
     o #325607 by bangpound: Automatically sort exports from bulk export.
@@ -96,6 +96,7 @@ Views 3.x-dev
     o #433318: Special handling for empty fields, allowing them to avoid rewriting and not be displayed.
     o #354457 by ausvalue: Example integrating node_example.module with Views API.
     o #479728 by enboig: Allow "Does not start with" and "Does not end with" as string operators.
+    o #511468 by dereine: State which view was saved after saving a view.
 
 Views 2.5
   Bugs fixed:
