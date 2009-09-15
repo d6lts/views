@@ -99,6 +99,7 @@ Views 3.x-dev
     o #511468 by dereine: State which view was saved after saving a view.
     o #520632 by DamZ: Add comment hostname and mail to available comment fields.
     o #303800 by Justin W Freeman: Improve dashes to spaces transformation.
+    o #523580 by JirkaRybka: More documentation on Reduce Duplicates option.
 
 Views 2.5
   Bugs fixed:
