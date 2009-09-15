@@ -312,23 +312,23 @@ class views_handler extends views_object {
    * There is no need for this function to actually store the data.
    */
   function extra_options_submit($form, &$form_state) { }
-  
+
   /**
    * Determine if a handler can be exposed.
    */
   function can_expose() { return FALSE; }
-  
+
   /**
    * Set new exposed option defaults when exposed setting is flipped
    * on.
    */
   function expose_options() { }
-  
+
   /**
    * Get information about the exposed form for the form renderer.
    */
   function exposed_info() { }
-  
+
   /**
    * Render our chunk of the exposed handler form when selecting
    */
@@ -376,7 +376,7 @@ class views_handler extends views_object {
   }
 
   function expose_form_left(&$form, &$form_state) { }
-  
+
   function expose_form_right(&$form, &$form_state){ }
 
   /**
@@ -389,7 +389,7 @@ class views_handler extends views_object {
    * There is no need for this function to actually store the data.
    */
   function expose_submit($form, &$form_state) { }
- 
+
     /**
    * Shortcut to display the expose/hide button.
    */
@@ -423,7 +423,7 @@ class views_handler extends views_object {
       );
     }
   }
-    
+
   /**
    * Shortcut to display the exposed options form.
    */
@@ -450,7 +450,7 @@ class views_handler extends views_object {
       }
     }
   }
-  
+
  /**
   * Check whether current user has access to this handler.
   *
@@ -679,10 +679,9 @@ class views_many_to_one_helper {
     while ($r_join->left_table != $base_table) {
       $r_join = views_get_table_join($r_join->left_table, $base_table);
     }
-
     // If we found that there are tables in between, add the relationship.
     if ($r_join->table != $join->table) {
-      $relationship = $this->handler->query->add_relationship($this->handler->table, $r_join, $r_join->table, $this->handler->relationship);
+      $relationship = $this->handler->query->add_relationship($this->handler->table . '_' . $r_join->table, $r_join, $r_join->table, $this->handler->relationship);
     }
 
     // And now add our table, using the new relationship if one was used.
@@ -962,7 +961,7 @@ function views_get_timezone() {
 
       $already_set = true;
     }
-  }  
+  }
 
   return $timezone;
 }

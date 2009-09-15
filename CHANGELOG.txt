@@ -52,6 +52,7 @@ Views 3.x-dev
     o #487528 by dereine: Fix typo in 'Maximum length' field instructions.
     o #538530 by elcuco: Views export textareas should be LTR.
     o #538204 by dereine: User picture should be sortable.
+    o #512650 by sdboyer: Multiple many to one arguments on the same relationship were not relationship safe.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.

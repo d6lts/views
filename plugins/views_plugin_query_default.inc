@@ -202,6 +202,11 @@ class views_plugin_query_default extends views_plugin_query{
       $alias = $alias_base . '_' . $count++;
     }
 
+    // Make sure this join is adjusted for our relationship.
+    if ($link_point && isset($this->relationships[$link_point])) {
+      $join = $this->adjust_join($join, $link_point);
+    }
+
     // Add the table directly to the queue to avoid accidentally marking
     // it.
     $this->table_queue[$alias] = array(
