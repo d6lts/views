@@ -106,7 +106,7 @@ function profile_views_fetch_field($field) {
       $data += array(
         'help' => t('Profile textfield'),
         'field' => array(
-          'handler' => 'views_handler_field',
+          'handler' => 'views_handler_field_user',
           'click sortable' => TRUE,
         ),
         'sort' => array(
