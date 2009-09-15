@@ -602,6 +602,7 @@ class view extends views_db_object {
     // Arguments can, in fact, cause this whole thing to abort.
     if (!$this->_build_arguments()) {
       $this->build_time = views_microtime() - $start;
+      $this->attach_displays();
       return $this->built;
     }
 
