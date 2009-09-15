@@ -1828,15 +1828,10 @@ class views_plugin_display extends views_plugin {
 
     // Validate handlers
     foreach (views_object_types() as $type => $info) {
-      $plural = $info['plural'];
-      // Skip handlers which are defaulted as there is no point in
-      // validating them again.
-      if (!$this->is_defaulted($plural)) {
-        foreach ($this->get_handlers($type) as $handler) {
-          $result = $handler->validate();
-          if (!empty($result) && is_array($result)) {
-            $errors = array_merge($errors, $result);
-          }
+      foreach ($this->get_handlers($type) as $handler) {
+        $result = $handler->validate();
+        if (!empty($result) && is_array($result)) {
+          $errors = array_merge($errors, $result);
         }
       }
     }
