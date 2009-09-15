@@ -47,6 +47,7 @@ Views 3.x-dev
     o #546586 by dww: Fixed bugs that prevented '0' being a valid rewrite text or empty text for a view field. Also fixes a logic bug regarding the handling of the 'Count the number 0 as empty' setting.
     o #507884 by TheRec: Removed matching title (alt) attribute on node links.
     o #333439 by killes: Fix query for multiply inherited taxonomy terms with taxonomy filter.
+    o #468370 by emackn: Proper timezone support on postgres.
 
   New Features:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
