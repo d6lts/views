@@ -50,6 +50,7 @@ Views 3.x-dev
     o #468370 by emackn: Proper timezone support on postgres.
     o #508124 by voxpelli: Optionally allow boolean to treat NULL as FALSE.
     o #487528 by dereine: Fix typo in 'Maximum length' field instructions.
+    o #538530 by elcuco: Views export textareas should be LTR.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
