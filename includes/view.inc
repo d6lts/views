@@ -102,6 +102,13 @@ class view extends views_db_object {
   }
 
   /**
+   * Change/Set the current page for the pager.
+   */
+  function set_current_page($page) {
+    $this->pager['current_page'] = $page;
+  }
+
+  /**
    * Whether or not the pager should be used.
    */
   function set_use_pager($use_pager) {
