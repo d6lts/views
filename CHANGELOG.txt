@@ -90,6 +90,7 @@ Views 3.x-dev
     o #472194: !1 can now be used with field rewriting to get the raw argument.
     o #480162: Fields row style now contains option to hide empty fields.
     o #433318: Special handling for empty fields, allowing them to avoid rewriting and not be displayed.
+    o #354457 by ausvalue: Example integrating node_example.module with Views API.
 
 Views 2.5
   Bugs fixed:
