@@ -109,12 +109,12 @@ function template_preprocess_views_view(&$vars) {
 
     drupal_alter('views_admin_links', $vars['admin_links_raw'], $view);
     $vars['admin_links'] = theme('links', $vars['admin_links_raw']);
-    views_add_css('views');
   }
   else {
     $vars['admin_links'] = '';
     $vars['admin_links_raw'] = array();
   }
+  views_add_css('views');
 
   // Our JavaScript needs to have some means to find the HTML belonging to this
   // view.

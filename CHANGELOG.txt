@@ -54,6 +54,7 @@ Views 3.x-dev
     o #538204 by dereine: User picture should be sortable.
     o #512650 by sdboyer: Multiple many to one arguments on the same relationship were not relationship safe.
     o #544098 by joachim: Fix validation quirks with defaulted handlers.
+    o #485872 by dereine: Make sure views.css is always loaded for all users.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
