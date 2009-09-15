@@ -57,6 +57,7 @@ Views 3.x-dev
     o #485872 by dereine: Make sure views.css is always loaded for all users.
     o #442982 by killes: Make destroy() method more robust so that views are more readily reused.
     o #520558 by bdurbin: node access filter not properly checking 'view'.
+    o #535424 by Hugo Wetterberg: Download file link could provide empty a tag if no file is available.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.

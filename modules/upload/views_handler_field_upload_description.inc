@@ -65,6 +65,9 @@ class views_handler_field_upload_description extends views_handler_field {
       $this->options['alter']['make_link'] = TRUE;
       $this->options['alter']['path'] = file_create_url($values->filepath);
     }
+    else {
+      $this->options['alter']['make_link'] = FALSE;
+    }
     return $data;
   }
 }
