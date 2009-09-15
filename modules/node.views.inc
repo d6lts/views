@@ -817,7 +817,6 @@ function template_preprocess_views_view_row_node(&$vars) {
  * Implementation of hook_views_query_substitutions().
  */
 function node_views_query_substitutions() {
-  global $language;
   return array(
     '***ADMINISTER_NODES***' => intval(user_access('administer nodes')),
   );
