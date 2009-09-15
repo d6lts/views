@@ -128,6 +128,44 @@ function comment_views_data() {
     ),
   );
 
+  // hostname
+  $data['comments']['hostname'] = array(
+    'title' => t('Hostname'),
+    'help' => t('Hostname of user that posted the comment.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
+  // mail
+  $data['comments']['mail'] = array(
+    'title' => t('Mail'),
+    'help' => t('Email of user that posted the comment. Will be empty if the author is a registered user.'),
+    'field' => array(
+      'handler' => 'views_handler_field',
+      'click sortable' => TRUE,
+     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_string',
+    ),
+  );
+
   // timestamp (when comment was posted)
   $data['comments']['timestamp'] = array(
     'title' => t('Post date'),
