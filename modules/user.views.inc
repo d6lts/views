@@ -141,6 +141,9 @@ function user_views_data() {
       'handler' => 'views_handler_field_user_picture',
       'click sortable' => TRUE,
     ),
+    'sort' => array(
+      'handler' => 'views_handler_sort',
+    ),
     'filter' => array(
       'handler' => 'views_handler_filter_boolean_operator_string',
       'label' => t('Has Avatar'),

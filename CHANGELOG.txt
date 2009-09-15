@@ -51,6 +51,7 @@ Views 3.x-dev
     o #508124 by voxpelli: Optionally allow boolean to treat NULL as FALSE.
     o #487528 by dereine: Fix typo in 'Maximum length' field instructions.
     o #538530 by elcuco: Views export textareas should be LTR.
+    o #538204 by dereine: User picture should be sortable.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
