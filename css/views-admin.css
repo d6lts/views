@@ -386,6 +386,22 @@ html.js #views-ajax-pad {
   margin: 0;
 }
 
+#views-ajax-pad label.hidden-options {
+  background: transparent url(../images/arrow-active.png) no-repeat right;
+  height: 12px;
+  padding-right: 12px;
+}
+
+#views-ajax-pad label.expanded-options {
+  background: transparent url(../images/expanded-options.png) no-repeat right;
+  height: 12px;
+  padding-right: 16px;
+}
+
+#views-ajax-pad .dependent-options {
+  padding-left: 30px;
+}
+
 /*
  * Add, Rearrange and Configure buttons using sprites
  */

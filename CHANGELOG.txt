@@ -104,6 +104,7 @@ Views 3.x-dev
     o #523580 by JirkaRybka: More documentation on Reduce Duplicates option.
     o #510920 by apanag: Add set_current_page() method to view class.
     o #337741 by joachim: Allow profile fields to have "link to user" option.
+    o #534680 by dagmar: Visual indicator if checkbox will expand options.
 
 Views 2.5
   Bugs fixed:
