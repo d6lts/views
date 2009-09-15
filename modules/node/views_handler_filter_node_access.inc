@@ -17,7 +17,7 @@ class views_handler_filter_node_access extends views_handler_filter {
     if (!user_access('administer nodes')) {
       $table = $this->ensure_my_table();
       $grants = array();
-      foreach (node_access_grants($op, $account) as $realm => $gids) {
+      foreach (node_access_grants('view') as $realm => $gids) {
         foreach ($gids as $gid) {
           $grants[] = "($table.gid = $gid AND $table.realm = '$realm')";
         }
