@@ -94,6 +94,7 @@ Views 3.x-dev
     o #480162: Fields row style now contains option to hide empty fields.
     o #433318: Special handling for empty fields, allowing them to avoid rewriting and not be displayed.
     o #354457 by ausvalue: Example integrating node_example.module with Views API.
+    o #479728 by enboig: Allow "Does not start with" and "Does not end with" as string operators.
 
 Views 2.5
   Bugs fixed:
