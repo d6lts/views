@@ -61,6 +61,7 @@ Views 3.x-dev
     o #554000 by killes: Preview checking wrong flag for preview state causes feeds to display incorrectly when embedded.
     o #554016 by webchick: views_embed_view() should check view access.
     o #523222 by gpk: Contact link should not be allowed for the anonymous user.
+    o #563540 by dereine: Fix description of cache plugin settings.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
