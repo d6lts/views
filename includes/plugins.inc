@@ -95,7 +95,6 @@ function views_views_plugins() {
         'handler' => 'views_plugin_style_default',
         'theme' => 'views_view_unformatted',
         'uses row plugin' => TRUE,
-        'uses options' => TRUE,
         'uses grouping' => TRUE,
         'type' => 'normal',
         'help topic' => 'style-unformatted',
