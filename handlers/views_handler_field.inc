@@ -619,6 +619,9 @@ class views_handler_field extends views_handler {
     if (isset($alter['fragment'])) {
       $options['fragment'] = strtr($alter['fragment'], $tokens);
     }
+    if (isset($this->options['alter']['language'])) {
+      $options['language'] = $this->options['alter']['language'];
+    }
 
     $value .= l($text, $path, $options);
 
