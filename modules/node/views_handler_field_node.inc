@@ -50,7 +50,9 @@ class views_handler_field_node extends views_handler_field {
       $this->options['alter']['path'] = "node/" . $values->{$this->aliases['nid']};
       if (isset($this->aliases['language'])) {
         $languages = language_list();
-        $this->options['alter']['language'] = $languages[$values->{$this->aliases['language']}]; 
+        if (isset($languages[$values->{$this->aliases['language']}])) {
+          $this->options['alter']['language'] = $languages[$values->{$this->aliases['language']}];
+        }
       }
     }
     return $data;
