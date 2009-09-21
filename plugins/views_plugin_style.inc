@@ -152,11 +152,13 @@ class views_plugin_style extends views_plugin {
     // Render each group separately and concatenate.  Plugins may override this
     // method if they wish some other way of handling grouping.
     $output = '';
+    $this->view->row_index = 0;
     foreach ($sets as $title => $records) {
       if ($this->uses_row_plugin()) {
         $rows = array();
         foreach ($records as $label => $row) {
           $rows[] = $this->row_plugin->render($row);
+          $this->view->row_index++;
         }
       }
       else {
@@ -165,6 +167,7 @@ class views_plugin_style extends views_plugin {
 
       $output .= theme($this->theme_functions(), $this->view, $this->options, $rows, $title);
     }
+    unset($this->view->row_index);
     return $output;
   }
 
@@ -182,6 +185,7 @@ class views_plugin_style extends views_plugin {
   function render_grouping($records, $grouping_field = '') {
     $sets = array();
     if ($grouping_field) {
+      $this->view->row_index = 0;
       foreach ($records as $row) {
         $grouping = '';
         // Group on the rendered version of the field, not the raw.  That way,
@@ -189,12 +193,14 @@ class views_plugin_style extends views_plugin {
         // the admin or theme layer or anywhere else we'd like.
         if (isset($this->view->field[$grouping_field])) {
           $grouping = $this->view->field[$grouping_field]->theme($row);
+          $this->view->row_index++;
           if ($this->view->field[$grouping_field]->options['label']) {
             $grouping = $this->view->field[$grouping_field]->options['label'] . ': ' . $grouping;
           }
         }
         $sets[$grouping][] = $row;
       }
+      unset($this->view->row_index);
     }
     else {
       // Create a single group with an empty grouping field.

@@ -35,7 +35,7 @@ class views_handler_field_counter extends views_handler_field {
       $count += ($pager['items_per_page'] * $pager['current_page']) + $pager['offset'];
     }
     // Add the counter for the current site.
-    $count += array_search($values, $this->view->result) + 1;
+    $count += $this->view->row_index + 1;
 
     return $count;
   }
