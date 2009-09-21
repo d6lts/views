@@ -115,6 +115,7 @@ Views 3.x-dev
     o #337741 by joachim: Allow profile fields to have "link to user" option.
     o #534680 by dagmar: Visual indicator if checkbox will expand options.
     o #540122 by stella: Attachment displays should attach even if arguments caused the primary display to abort.
+    o #536994 by dboulet: Store result in variables for use in unformatted style.
 
 Views 2.5
   Bugs fixed:
