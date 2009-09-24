@@ -157,8 +157,7 @@ function views_menu() {
   $items['views/ajax'] = array(
     'title' => 'Views',
     'page callback' => 'views_ajax',
-    'access callback' => 'user_access',
-    'access arguments' => array('access content'),
+    'access callback' => TRUE,
     'description' => 'Ajax callback for view loading.',
     'file' => 'includes/ajax.inc',
     'type' => MENU_CALLBACK,
