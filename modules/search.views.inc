@@ -28,10 +28,6 @@ function search_views_data() {
       'left_field' => 'nid',
       'field' => 'sid',
     ),
-    'users' => array(
-      'left_field' => 'uid',
-      'field' => 'sid',
-    ),
   );
 
   $data['search_total']['table']['join'] = array(

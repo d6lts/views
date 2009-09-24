@@ -66,6 +66,7 @@ Views 3.x-dev
     o #451208 by dereine and superbaloo: Fix grid style to not leave missing tds in bottom row.
     o #561892 by dereine: Unchecking "rewrite this field" but leaving a value caused field to be rewritten anyway.
     o #408894 by dereine: Views AJAX incorrectly used "access content" permission.
+    o #574150 by dereine: Remove user search because user.module does not store user keywords.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
