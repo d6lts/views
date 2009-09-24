@@ -62,10 +62,10 @@ Views 3.x-dev
     o #554016 by webchick: views_embed_view() should check view access.
     o #523222 by gpk: Contact link should not be allowed for the anonymous user.
     o #563540 by dereine: Fix description of cache plugin settings.
-    o #563564 by dereine: Unformatted style does not use options, so the options icon should not appear.
     o #564536 by dereine: Node links should allow language setting from node data.
     o #551752 by dereine: Clean up row counter code.
     o #451208 by dereine and superbaloo: Fix grid style to not leave missing tds in bottom row.
+    o #561892 by dereine: Unchecking "rewrite this field" but leaving a value caused field to be rewritten anyway.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
