@@ -124,6 +124,7 @@ Views 3.x-dev
     o #536994 by dboulet: Store result in variables for use in unformatted style.
     o #458194 by voxpelli: Add first and last row classes to table style.
     o #511908 by dww: Too many check plains in selects because of problems with checkboxes.
+    o #254895: Add form to clean up Views 1 tables.
 
 Views 2.5
   Bugs fixed:
