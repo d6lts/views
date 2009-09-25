@@ -204,7 +204,6 @@ class views_handler_filter_in_operator extends views_handler_filter {
         }
         $process[] = 'views_process_dependency';
         $form['value']['#dependency'] = array($source => $this->operator_values(1));
-        );
       }
       if (!empty($process)) {
         $form['value']['#process'] = $process;
