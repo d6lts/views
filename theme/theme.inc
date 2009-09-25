@@ -376,6 +376,9 @@ function template_preprocess_views_view_table(&$vars) {
     $vars['row_classes'][$num][] = ($num % 2 == 0) ? 'odd' : 'even';
   }
 
+  $vars['row_classes'][0][] = 'views-row-first';
+  $vars['row_classes'][count($vars['row_classes']) - 1][] = 'views-row-last';
+
   $vars['class'] = 'views-table';
   if (!empty($options['sticky'])) {
     drupal_add_js('misc/tableheader.js');
