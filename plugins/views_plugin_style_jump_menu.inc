@@ -88,6 +88,7 @@ class views_plugin_style_jump_menu extends views_plugin_style {
           if ($this->view->field[$this->options['grouping']]->options['label']) {
             $grouping = $this->view->field[$this->options['grouping']]->options['label'] . ': ' . $grouping;
           }
+          $grouping = url($grouping);
         }
         $sets[$grouping][] = $row;
       }
