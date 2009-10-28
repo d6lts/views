@@ -63,7 +63,7 @@ class views_plugin_style_summary_jump_menu extends views_plugin_style {
       $args[$argument->position] = $argument->summary_argument($row);
       $path = url($this->view->get_url($args), $url_options);
 
-      $options[$path] = $argument->summary_name($row);
+      $options[$path] = strip_tags($argument->summary_name($row));
       if (!empty($this->options['count'])) {
         $options[$path] .= ' (' . intval($row->{$argument->count_alias}) . ')';
       }
