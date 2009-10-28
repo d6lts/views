@@ -72,6 +72,7 @@ Views 2.x-dev
     o #536994 by dboulet: Store result in variables for use in unformatted style.
     o #458194 by voxpelli: Add first and last row classes to table style.
     o #254895: Add form to clean up Views 1 tables.
+    o If you have CTools 1.3 enabled, you can use a "Jump Menu" style for both summaries and normal Views.
 
 Views 2.6
   Bugs fixed:

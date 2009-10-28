@@ -1650,7 +1650,7 @@ class views_plugin_display extends views_plugin {
    * Render the 'more' link
    */
   function render_more_link() {
-    if ($this->use_more() && $this->view->total_rows > $this->view->pager['items_per_page']) {
+    if ($this->use_more() && (!isset($this->view->total_rows) || $this->view->total_rows > $this->view->pager['items_per_page'])) {
       $path = $this->get_path();
       if ($path) {
         $path = $this->view->get_url(NULL, $path);
