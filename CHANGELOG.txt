@@ -68,6 +68,7 @@ Views 3.x-dev
     o #408894 by dereine: Views AJAX incorrectly used "access content" permission.
     o #574150 by dereine: Remove user search because user.module does not store user keywords.
     o #619884: Grouping fields ignored indexes (as a result of #502348) and appeared to group incorrectly.
+    o #411566: Fix warning when 0 given as a taxonomy tid to the validator.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
