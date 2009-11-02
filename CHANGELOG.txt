@@ -228,6 +228,8 @@ Views 2.3
     o #365283: views_handler_filter_ncs_last_updated improperly registered causing fatal errors trying to use it.
     o #365712: select list exposed filters were trying to limit to list when selecting "All" even when "limit" was not selected.
     o #357196 by Grugnog: hook_views_pre_view not getting $display_id sent properly.
+    o #607952 by markus_petrux: Need check plain on "additional" queries.
+    o #593910: Off by 1 error on Views row counter.
 
   Other changes:
     o #288801 by drewish and eaton: Aggregator item support! Make views of feeds!
