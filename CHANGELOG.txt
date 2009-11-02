@@ -1,4 +1,7 @@
 CHANGELOG for Views 2 for Drupal 6
+Views 2.x-dev
+  Other changes:
+    o #580320 by chaps2: Allow "always use more link" setting.
 
 Views 2.7 (Nov 02, 2009)
   Bug fixes:
