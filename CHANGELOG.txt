@@ -1,6 +1,9 @@
-CHANGELOG for Views 3 for Drupal 6
+CHANGELOG for Views 3 for Drupal 7
 
-Views 3.x-dev
+Views 3.x-7.x-dev
+    o #580320 by chaps2: Allow "always use more link" setting.
+
+Views 3.x-6.x-dev
   Bugs fixed
     o #419226 by kelvincool: Respect admin theme during views ajax operations.
     o #419270 by voxpelli: set_where_group() could fail if no previous groups.
@@ -128,6 +131,7 @@ Views 3.x-dev
     o #511908 by dww: Too many check plains in selects because of problems with checkboxes.
     o #254895: Add form to clean up Views 1 tables.
     o #502348: Move advanced rendering up the chain a little bit to allow for non-standard uses of fields, such as grouping, to use advanced rendering features.
+    o #580320 by chaps2: Allow "always use more link" setting.
 
 Views 2.5
   Bugs fixed:
