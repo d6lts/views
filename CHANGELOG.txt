@@ -52,6 +52,7 @@ Views 2.x-dev
     o #619884: Grouping fields ignored indexes (as a result of #502348) and appeared to group incorrectly.
     o #411566: Fix warning when 0 given as a taxonomy tid to the validator.
     o #607952 by markus_petrux: Need check plain on "additional" queries.
+    o #593910: Off by 1 error on Views row counter.
 
   Other changes:
     o Implement a post_render hook (for themes too) and cache method.
