@@ -398,7 +398,7 @@ function views_ui_preview($js, $view) {
           if ($queries) {
             $queries .= "\n";
           }
-          $queries .= t('[@time ms]', array('@time' => intval($query[1] * 100000) / 100)) . ' ' . $query[0];
+          $queries .= t('[@time ms]', array('@time' => intval($query[1] * 100000) / 100)) . ' ' . check_plain($query[0]);
         }
 
         $rows[] = array('<strong>' . t('Other queries') . '</strong>', '<pre>' . $queries . '</pre>');
