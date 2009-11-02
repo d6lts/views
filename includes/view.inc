@@ -712,6 +712,9 @@ class view extends views_db_object {
     }
     else {
       $this->query->execute($this);
+      if ($cache) {
+        $cache->cache_set('results');
+      }
     }
 
     $this->executed = TRUE;
