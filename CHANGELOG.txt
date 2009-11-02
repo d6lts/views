@@ -50,6 +50,7 @@ Views 2.x-dev
     o #511908 by dww: Too many check plains in selects because of problems with checkboxes.
     o #502348: Move advanced rendering up the chain a little bit to allow for non-standard uses of fields, such as grouping, to use advanced rendering features.
     o #619884: Grouping fields ignored indexes (as a result of #502348) and appeared to group incorrectly.
+    o #411566: Fix warning when 0 given as a taxonomy tid to the validator.
 
   Other changes:
     o Implement a post_render hook (for themes too) and cache method.

@@ -788,7 +788,6 @@ function views_break_phrase($str, $filter = NULL) {
   }
 
   // Set up defaults:
-
   if (!isset($filter->value)) {
     $filter->value = array();
   }
@@ -797,7 +796,7 @@ function views_break_phrase($str, $filter = NULL) {
     $filter->operator = 'or';
   }
 
-  if (empty($str)) {
+  if ($str == '') {
     return $filter;
   }
 
