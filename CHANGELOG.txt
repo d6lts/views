@@ -5,6 +5,7 @@ Views 2.x-dev
     o #363516 by dagmar: Validate the uniqueness of exposed filter identifiers.
     o #584880 by drewish: Wrong base field declarations fixed.
     o #480162 by dereine: Count whitespace fields as empty for hiding labels.
+    o #623580 by dagmar: Move can_expose() method to base handler to deal with validation change made in previous commit.
 
 Views 2.7 (Nov 02, 2009)
   Bug fixes:

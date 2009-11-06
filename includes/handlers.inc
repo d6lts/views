@@ -344,6 +344,11 @@ class views_handler extends views_object {
    */
   function exposed_info() { }
 
+  /**
+   * Determine if a handler can be exposed.
+   */
+  function can_expose() { return FALSE; }
+
  /**
   * Check whether current user has access to this handler.
   *
