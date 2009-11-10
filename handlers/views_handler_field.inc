@@ -94,7 +94,12 @@ class views_handler_field extends views_handler {
           else {
             $table_alias = $this->table_alias;
           }
-          $this->aliases[$identifier] = $this->query->add_field($table_alias, $info['field']);
+          $params = array();
+          if (!empty($info['params'])) {
+            $params = $info['params'];
+          }
+
+          $this->aliases[$identifier] = $this->query->add_field($table_alias, $info['field'], NULL, $params);
         }
         else {
           $this->aliases[$info] = $this->query->add_field($this->table_alias, $info);
@@ -173,6 +178,8 @@ class views_handler_field extends views_handler {
    * should have.
    */
   function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => t('Label'),
@@ -272,7 +279,7 @@ class views_handler_field extends views_handler {
           'edit-options-alter-make-link' => array(1)
         ),
       );
-      
+
 
       // Get a list of the available fields and arguments for token replacement.
       $options = array();
@@ -458,7 +465,7 @@ class views_handler_field extends views_handler {
           $this->original_value = $this->last_render;
 
           $alter = $item + $this->options['alter'];
-          $items[] = $this->render_text($alter);       
+          $items[] = $this->render_text($alter);
         }
 
         $value = $this->render_items($items);
@@ -511,7 +518,7 @@ class views_handler_field extends views_handler {
 
     return $value;
   }
-  
+
   /**
    * Render this field as altered text, from a fieldset set by the user.
    */

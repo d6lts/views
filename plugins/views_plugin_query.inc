@@ -23,12 +23,12 @@ class views_plugin_query extends views_plugin {
    *   Provide a countquery if this is true, otherwise provide a normal query.
    */
   function query($get_count = FALSE) { }
-  
+
   /**
    * Let modules modify the query just prior to finalizing it.
    */
   function alter(&$view) {  }
-  
+
   /**
    * Builds the necessary info to execute the query.
    */
@@ -37,7 +37,7 @@ class views_plugin_query extends views_plugin {
   /**
    * Executes the query and fills the associated view object with according
    * values.
-   * 
+   *
    * Values to set: $view->result, $view->total_rows, $view->execute_time,
    * $view->pager['current_page'].
    */
@@ -50,4 +50,11 @@ class views_plugin_query extends views_plugin {
    * discern where particular queries might be coming from.
    */
   function add_signature(&$view) { }
+
+  /**
+   * Get aggregation info for group by queries.
+   *
+   * If NULL, aggregation is not allowed.
+   */
+  function get_aggregation_info() { }
 }

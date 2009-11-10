@@ -1226,28 +1226,21 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     // Get relationship labels
     $relationships = array();
     // @todo: get_handlers()
-    foreach ($display->handler->get_option('relationships') as $id => $relationship) {
-      $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
-      if (empty($handler)) {
-        continue;
-      }
-      $handler->init($view, $relationship);
+    foreach ($display->handler->get_handlers('relationship') as $id => $handler) {
       $relationships[$id] = $handler->label();
     }
   }
 
-  // @todo: get_handlers()
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $fields[$id] = array();
 
-    $handler = views_get_handler($field['table'], $field['field'], $type);
+    $handler = $display->handler->get_handler($type, $id);
     if (empty($handler)) {
       $fields[$id]['class'] = 'broken';
       $fields[$id]['title'] = t("Error: handler for @table > @field doesn't exist!", array('@table' => $field['table'], '@field' => $field['field']));
       $fields[$id]['info'] = '';
       continue;
     }
-    $handler->init($view, $field);
 
     $field_name = $handler->ui_name(TRUE);
     if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
@@ -1261,6 +1254,9 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
     $fields[$id]['info'] = $handler->admin_summary();
 
+    if ($display->handler->use_group_by()) {
+      $fields[$id]['links'] = l('<span>' . t('Group settings') . '</span>', "admin/build/views/nojs/config-item-group/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Group settings')), 'html' => true));
+    }
     if ($handler->has_extra_options()) {
       $fields[$id]['links'] = l('<span>' . t('Settings') . '</span>', "admin/build/views/nojs/config-item-extra/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Settings')), 'html' => true));
     }
@@ -1453,6 +1449,10 @@ function views_ui_ajax_forms($key = NULL) {
     ),
     'config-item' => array(
       'form_id' => 'views_ui_config_item_form',
+      'args' => array('type', 'id'),
+    ),
+    'config-item-group' => array(
+      'form_id' => 'views_ui_config_item_group_form',
       'args' => array('type', 'id'),
     ),
     'config-item-extra' => array(
@@ -2014,17 +2014,10 @@ function views_ui_rearrange_form(&$form_state) {
 
   // Get relationship labels
   $relationships = array();
-  // @todo: get_handlers()
-  foreach ($display->handler->get_option('relationships') as $id => $relationship) {
-    $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');
-    if (empty($handler)) {
-      continue;
-    }
-    $handler->init($view, $relationship);
+  foreach ($display->handler->get_handlers('relationship') as $id => $handler) {
     $relationships[$id] = $handler->label();
   }
 
-  // @todo: get_handlers()
   foreach ($display->handler->get_option($types[$type]['plural']) as $id => $field) {
     $form[$id] = array('#tree' => TRUE);
     $form[$id]['weight'] = array(
@@ -2032,9 +2025,8 @@ function views_ui_rearrange_form(&$form_state) {
       '#delta' => 25,
       '#default_value' => ++$count,
     );
-    $handler = views_get_handler($field['table'], $field['field'], $type);
+    $handler = $display->handler->get_handler($type, $id);
     if ($handler) {
-      $handler->init($view, $field);
       $name = $handler->ui_name() . ' ' . $handler->admin_summary();
       if (!empty($field['relationship']) && !empty($relationships[$field['relationship']])) {
         $name = '(' . $relationships[$field['relationship']] . ') ' . $name;
@@ -2155,7 +2147,7 @@ function views_ui_add_item_form(&$form_state) {
 
   // Figure out all the base tables allowed based upon what the relationships provide.
   $base_tables = $view->get_base_tables();
-  $options = views_fetch_fields(array_keys($base_tables), $type);
+  $options = views_fetch_fields(array_keys($base_tables), $type, $display->handler->use_group_by());
 
   if (!empty($options)) {
     $groups = array('all' => t('<All>'));
@@ -2220,6 +2212,11 @@ function views_ui_add_item_form_submit($form, &$form_state) {
       list($table, $field) = explode('.', $field, 2);
       $id = $form_state['view']->add_item($form_state['display_id'], $type, $table, $field);
 
+      // check to see if we have group by settings
+      if ($form_state['view']->display_handler->use_group_by()) {
+        views_ui_add_form_to_stack('config-item-group', $form_state['view'], $form_state['display_id'], array($type, $id));
+      }
+
       // check to see if this type has settings, if so add the settings form first
       $handler = views_get_handler($table, $field, $type);
       if ($handler && $handler->has_extra_options()) {
@@ -2251,12 +2248,11 @@ function views_ui_config_item_form(&$form_state) {
   $item = $view->get_item($display_id, $type, $id);
 
   if ($item) {
-    $handler = views_get_handler($item['table'], $item['field'], $type);
+    $handler = $view->display_handler->get_handler($type, $id);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
     }
     else {
-      $handler->init($view, $item);
       $types = views_object_types();
 
       if ($view->display_handler->defaultable_sections($types[$type]['plural'])) {
@@ -2284,7 +2280,7 @@ function views_ui_config_item_form(&$form_state) {
         // If this relationship is valid for this type, add it to the list.
         $data = views_fetch_data($relationship['table']);
         $base = $data[$relationship['field']]['relationship']['base'];
-        $base_fields = views_fetch_fields($base, $form_state['type']);
+        $base_fields = views_fetch_fields($base, $form_state['type'], $view->display_handler->use_group_by());
         if (isset($base_fields[$item['table'] . '.' . $item['field']])) {
           $relationship_handler->init($view, $relationship);
           $relationship_options[$relationship['id']] = $relationship_handler->label();
@@ -2294,7 +2290,7 @@ function views_ui_config_item_form(&$form_state) {
       if (!empty($relationship_options)) {
         // Make sure the existing relationship is even valid. If not, force
         // it to none.
-        $base_fields = views_fetch_fields($view->base_table, $form_state['type']);
+        $base_fields = views_fetch_fields($view->base_table, $form_state['type'], $view->display_handler->use_group_by());
         if (isset($base_fields[$item['table'] . '.' . $item['field']])) {
           $relationship_options = array_merge(array('none' => t('Do not use a relationship')), $relationship_options);
         }
@@ -2369,11 +2365,76 @@ function views_ui_config_item_form_submit($form, &$form_state) {
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
-  $handler = views_get_handler($item['table'], $item['field'], $form_state['type']);
-  $handler->init($form_state['view'], $item);
-  if ($handler && $handler->needs_style_plugin()) {
+  if ($form_state['handler'] && $form_state['handler']->needs_style_plugin()) {
     views_ui_add_form_to_stack('change-style', $form_state['view'], $form_state['display_id'], array($form_state['type'], $form_state['id']), TRUE);
   }
+
+  // Write to cache
+  views_ui_cache_set($form_state['view']);
+}
+
+/**
+ * Form to config_item items in the views UI.
+ */
+function views_ui_config_item_group_form(&$form_state) {
+  $view = &$form_state['view'];
+  $display_id = $form_state['display_id'];
+  $type = $form_state['type'];
+  $id = $form_state['id'];
+
+  $view->init_query();
+
+  $form = array('options' => array('#tree' => TRUE));
+  if (!$view->set_display($display_id)) {
+    views_ajax_render(t('Invalid display id @display', array('@display' => $display_id)));
+  }
+
+  $item = $view->get_item($display_id, $type, $id);
+
+  if ($item) {
+    $handler = $view->display_handler->get_handler($type, $id);
+    if (empty($handler)) {
+      $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
+    }
+    else {
+      $handler->init($view, $item);
+      $types = views_object_types();
+
+      $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+      $form['#title'] .= t('Configure group settings for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
+
+      $form['#section'] = $display_id . '-' . $type . '-' . $id;
+
+      $info = $view->query->get_aggregation_info();
+      foreach ($info as $id => $aggregate) {
+        $group_types[$id] = $aggregate['title'];
+      }
+
+      $form['group_type'] = array(
+        '#type' => 'select',
+        '#title' => t('Group type'),
+        '#default_value' => $handler->options['group_type'],
+        '#description' => t('Grouping is enabled for this display. You must select what function to use on this field.'),
+        '#options' => $group_types,
+      );
+      $form_state['handler'] = &$handler;
+    }
+
+    views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_group_form');
+  }
+  return $form;
+}
+
+/**
+ * Submit handler for configing group settings on a view.
+ */
+function views_ui_config_item_group_form_submit($form, &$form_state) {
+  $item = $form_state['handler']->options;
+
+  $item['group_type'] = $form_state['values']['group_type'];
+
+  // Store the item back on the view
+  $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $item);
 
   // Write to cache
   views_ui_cache_set($form_state['view']);
@@ -2443,8 +2504,7 @@ function views_ui_config_item_extra_form(&$form_state) {
 
       // Get form from the handler.
       $handler->extra_options_form($form['options'], $form_state);
-        $form_state['handler'] = &$handler;
-
+      $form_state['handler'] = &$handler;
     }
 
     views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_item_extra_form');
@@ -2885,7 +2945,7 @@ function _views_sort_types($a, $b) {
  * @return
  *   A keyed array of in the form of 'base_table' => 'Description'.
  */
-function views_fetch_fields($base, $type) {
+function views_fetch_fields($base, $type, $grouping = FALSE) {
   static $fields = array();
   if (empty($fields)) {
     $data = views_fetch_data();
@@ -2917,6 +2977,9 @@ function views_fetch_fields($base, $type) {
         }
         foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
           if (!empty($info[$key])) {
+            if ($grouping && !empty($info[$key]['no group by'])) {
+              continue;
+            }
             if (!empty($info[$key]['skip base'])) {
               foreach ((array) $info[$key]['skip base'] as $base_name) {
                 $skip_bases[$field][$key][$base_name] = TRUE;

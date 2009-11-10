@@ -121,7 +121,7 @@ class views_handler_argument extends views_handler {
       '#default_value' => $this->options['title'],
       '#description' => t('The title to use when this argument is present. It will override the title of the view and titles from previous arguments. You can use percent substitution here to replace with argument titles. Use "%1" for the first argument, "%2" for the second, etc.'),
     );
-    
+
     $form['breadcrumb'] = array(
       '#prefix' => '<div class="clear-block">',
       '#suffix' => '</div>',
@@ -714,7 +714,7 @@ class views_handler_argument extends views_handler {
     if (isset($this->argument)) {
       return $this->argument;
     }
-    
+
     // Otherwise, we have to pretend to process ourself to find the value.
     $value = NULL;
     // Find the position of this argument within the view.

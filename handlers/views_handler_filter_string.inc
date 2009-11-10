@@ -300,7 +300,7 @@ class views_handler_filter_string extends views_handler_filter {
   function op_not($field, $upper) {
     $this->query->add_where($this->options['group'], "$upper(%s) NOT LIKE $upper('%%%s%%')", $field, $this->value);
   }
-  
+
   function op_shorter($field, $upper) {
     $this->query->add_where($this->options['group'], "LENGTH($upper(%s)) < %d", $field, $this->value);
   }
