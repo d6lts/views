@@ -1,0 +1,24 @@
+<?php
+// $Id$
+
+/**
+ * @defgroup views_argument_handlers Handlers for arguments
+ * @{
+ */
+
+/**
+ * Simple handler for arguments using group by.
+ */
+class views_handler_argument extends views_handler {
+  function query($group_by = FALSE) {
+    $this->ensure_my_table();
+    $placeholder = empty($this->definition['numeric']) ? "'%s'" : '%d';
+    $field = $this->get_field();
+
+    $this->query->add_having(0, "$field = $placeholder", $this->argument);
+  }
+
+  function ui_name() {
+    return $this->get_field(parent::ui_name());
+  }
+}
