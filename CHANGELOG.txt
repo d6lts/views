@@ -70,6 +70,7 @@ Views 3.x-6.x-dev
     o #619884: Grouping fields ignored indexes (as a result of #502348) and appeared to group incorrectly.
     o #411566: Fix warning when 0 given as a taxonomy tid to the validator.
     o #622602: Missing ORDER BY in some views with tables due to incorrect test for default table sorting.
+    o #623498 by marcp: total_rows should be filled in if fetching all records.
 
   New Features and Other Changes:
     o #293841: Allow different back ends for Views to facilite things like flickr api, solr, rdf, etc.
