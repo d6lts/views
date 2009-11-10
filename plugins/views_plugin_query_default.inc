@@ -1005,7 +1005,7 @@ class views_plugin_query_default extends views_plugin_query{
       $function($view, $this);
     }
   }
-  
+
   /**
    * Builds the necessary info to execute the query.
    */
@@ -1018,7 +1018,7 @@ class views_plugin_query_default extends views_plugin_query{
   /**
    * Executes the query and fills the associated view object with according
    * values.
-   * 
+   *
    * Values to set: $view->result, $view->total_rows, $view->execute_time,
    * $view->pager['current_page'].
    */
@@ -1089,8 +1089,8 @@ class views_plugin_query_default extends views_plugin_query{
 
       // If we already know how many items we have even if we did not run the
       // count query, go ahead and set that value:
-      if (empty($this->pager['items_per_page'])) {
-        $this->total_rows = count($this->result);
+      if (empty($view->pager['items_per_page'])) {
+        $view->total_rows = count($result);
       }
 
       $view->result = array();
