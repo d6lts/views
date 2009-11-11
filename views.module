@@ -995,7 +995,7 @@ function views_exposed_form(&$form_state) {
   $form['submit'] = array(
     '#name' => '', // prevent from showing up in $_GET.
     '#type' => 'submit',
-    '#value' => t('Apply'),
+    '#value' => t($form_state['submit_button']),
     '#id' => form_clean_id('edit-submit-' . $view->name),
   );
 
@@ -1042,7 +1042,7 @@ function views_exposed_form_submit(&$form, &$form_state) {
   $form_state['view']->exposed_raw_input = array();
 
   foreach ($form_state['values'] as $key => $value) {
-    if (!in_array($key, array('q', 'submit', 'form_build_id', 'form_id', 'form_token', ''))) {
+    if (!in_array($key, array('q', 'submit', 'form_build_id', 'form_id', 'form_token', 'submit_button', ''))) {
       $form_state['view']->exposed_raw_input[$key] = $value;
     }
   }
