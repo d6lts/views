@@ -90,5 +90,4 @@ class views_plugin_exposed_form extends views_plugin {
 
   function pre_execute() { }
 
-  function post_execute() { }
 }

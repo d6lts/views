@@ -96,15 +96,15 @@ class views_handler_argument extends views_handler {
     $options = parent::option_definition();
 
     $options['default_action'] = array('default' => 'ignore');
-    $options['style_plugin'] = array('default' => 'default_summary');
-    $options['style_options'] = array('default' => array());
+    $options['style_plugin'] = array('default' => 'default_summary', 'export' => 'export_style');
+    $options['style_options'] = array('default' => array(), 'export' => FALSE);
     $options['wildcard'] = array('default' => 'all');
     $options['wildcard_substitution'] = array('default' => t('All'), 'translatable' => TRUE);
     $options['title'] = array('default' => '', 'translatable' => TRUE);
     $options['breadcrumb'] = array('default' => '', 'translatable' => TRUE);
-    $options['default_argument_type'] = array('default' => 'fixed');
+    $options['default_argument_type'] = array('default' => 'fixed', 'export' => 'export_plugin');
     $options['default_argument'] = array('default' => '');
-    $options['validate_type'] = array('default' => 'none');
+    $options['validate_type'] = array('default' => 'none', 'export' => 'export_plugin');
     $options['validate_fail'] = array('default' => 'not found');
 
     return $options;
@@ -742,6 +742,31 @@ class views_handler_argument extends views_handler {
     unset($argument);
     return $value;
   }
+
+  /**
+   * Special handling for the style export.
+   *
+   * Arguments can have styles for the summary view. This special export
+   * handler makes sure this works properly.
+   */
+  function export_style($indent, $prefix, $storage, $option, $definition, $parents) {
+    $output = '';
+    $name = $storage[$option];
+    $options = $storage['style_options'];
+
+    $plugin = views_get_plugin('style', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display, $options);
+      // Write which plugin to use.
+      $output .= $indent . $prefix . "['$option'] = '$name';\n";
+
+      // Pass off to the plugin to export itself.
+      $output .= $plugin->export_options($indent, $prefix . "['style_options']");
+    }
+
+    return $output;
+  }
+
 }
 
 /**

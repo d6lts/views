@@ -125,4 +125,63 @@ class views_object {
       unset($this->query);
     }
   }
+
+  function export_options($indent, $prefix) {
+    $output = '';
+    foreach ($this->option_definition() as $option => $definition) {
+      $output .= $this->export_option($indent, $prefix, $this->options, $option, $definition, array());
+    }
+
+    return $output;
+  }
+
+  function export_option($indent, $prefix, $storage, $option, $definition, $parents) {
+    // Do not export options for which we have no settings.
+    if (!isset($storage[$option])) {
+      return;
+    }
+
+    if (isset($definition['export'])) {
+      if ($definition['export'] === FALSE) {
+        return;
+      }
+
+      // Special handling for some items
+      if (method_exists($this, $definition['export'])) {
+        return $this->{$definition['export']}($indent, $prefix, $storage, $option, $definition, $parents);
+      }
+    }
+
+    // Add the current option to the parents tree.
+    $parents[] = $option;
+    $output = '';
+
+    // If it has child items, export those separately.
+    if (isset($definition['contains'])) {
+      foreach ($definition['contains'] as $sub_option => $sub_definition) {
+        $output .= $this->export_option($indent, $prefix, $storage[$option], $sub_option, $sub_definition, $parents);
+      }
+    }
+    // Otherwise export just this item.
+    else {
+      $default = isset($definition['default']) ? $definition['default'] : NULL;
+      $value = $storage[$option];
+      if (isset($definition['bool'])) {
+        $value = (bool) $value;
+      }
+
+      if ($value !== $default) {
+        $output .= $indent . $prefix . "['" . implode("']['", $parents) . "'] = ";
+        if (isset($definition['bool'])) {
+          $output .= empty($storage[$option]) ? 'FALSE' : 'TRUE';
+        }
+        else {
+          $output .= views_var_export($storage[$option], $indent);
+        }
+
+        $output .= ";\n";
+      }
+    }
+    return $output;
+  }
 }
