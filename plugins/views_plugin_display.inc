@@ -278,10 +278,7 @@ class views_plugin_display extends views_plugin {
           'arguments' => TRUE,
           'filters' => TRUE,
         ),
-        'export' => FALSE,
       ),
-
-      // These are the 5 handler types.
       'relationships' => array(
         'default' => array(),
         'export' => 'export_item',
@@ -302,7 +299,16 @@ class views_plugin_display extends views_plugin {
         'default' => array(),
         'export' => 'export_item',
       ),
-
+      'access' => array(
+        'contains' => array(
+          'type' => array('default' => 'none'),
+         ),
+      ),
+      'cache' => array(
+        'contains' => array(
+          'type' => array('default' => 'none'),
+         ),
+      ),
       'title' => array(
         'default' => '',
         'translatable' => TRUE,
@@ -336,7 +342,6 @@ class views_plugin_display extends views_plugin {
       ),
       'use_ajax' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
       'items_per_page' => array(
         'default' => 10,
@@ -346,18 +351,15 @@ class views_plugin_display extends views_plugin {
       ),
       'use_pager' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
       'pager_element' => array(
         'default' => 0,
       ),
       'use_more' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
       'use_more_always' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
       'use_more_text' => array(
         'default' => 'more',
@@ -368,60 +370,32 @@ class views_plugin_display extends views_plugin {
       ),
       'distinct' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
       'group_by' => array(
         'default' => FALSE,
-        'bool' => TRUE,
       ),
 
-      // These types are all plugins that can have individual settings
-      // and therefore need special handling.
-      'access' => array(
-        'contains' => array(
-          'type' => array('default' => 'none', 'export' => 'export_plugin'),
-         ),
-      ),
-      'cache' => array(
-        'contains' => array(
-          'type' => array('default' => 'none', 'export' => 'export_plugin'),
-         ),
-      ),
-      // Note that exposed_form plugin has options in a separate array,
-      // while access and cache do not. access and cache are legacy and
-      // that pattern should not be repeated, but it is left as is to
-      // reduce the need to modify older views. Let's consider the
-      // pattern used here to be the template from which future plugins
-      // should be copied.
-      'exposed_form' => array(
-        'contains' => array(
-          'type' => array('default' => 'basic', 'export' => 'export_plugin'),
-          'options' => array('default' => array(), 'export' => FALSE),
-         ),
-      ),
-
-      // Note that the styles have their options completely independent.
-      // Like access and cache above, this is a legacy pattern and
-      // should not be repeated.
       'style_plugin' => array(
         'default' => 'default',
-        'export' => 'export_style',
       ),
       'style_options' => array(
         'default' => array(),
-        'export' => FALSE,
       ),
       'row_plugin' => array(
         'default' => 'fields',
-        'export' => 'export_style',
       ),
       'row_options' => array(
         'default' => array(),
-        'export' => FALSE,
       ),
 
       'exposed_block' => array(
         'default' => FALSE,
+      ),
+      'exposed_form' => array(
+        'contains' => array(
+          'type' => array('default' => 'basic'),
+          'options' => array('default' => array()),
+         ),
       ),
     );
 
@@ -534,33 +508,62 @@ class views_plugin_display extends views_plugin {
    * Get the display or row plugin, if it exists.
    */
   function get_plugin($type = 'style', $name = NULL) {
-    switch ($type) {
-      case 'style':
-      case 'row':
-        $option_name = $type . '_plugin';
-        $options = $this->get_option($type . '_options');
-        if (!$name) {
-          $name = $this->get_option($option_name);
-        }
-
-        break;
-      default:
-        $option_name = $type;
-        $options = $this->get_option($type);
-        if (!$name) {
-          $name = $options['type'];
-        }
-
-        // access & cache store their options as siblings with the
-        // type; all others use an 'options' array.
-        if ($type != 'access' && $type != 'cache') {
-          $options = $options['options'];
-        }
+    if (!$name) {
+      $name = $this->get_option($type . '_plugin');
     }
 
     $plugin = views_get_plugin($type, $name);
     if ($plugin) {
+      $options = $this->get_option($type . '_options');
       $plugin->init($this->view, $this->display, $options);
+      return $plugin;
+    }
+  }
+
+  /**
+   * Get the access plugin
+   */
+  function get_access_plugin($name = NULL) {
+    if (!$name) {
+      $access = $this->get_option('access');
+      $name = $access['type'];
+    }
+
+    $plugin = views_get_plugin('access', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display);
+      return $plugin;
+    }
+  }
+
+  /**
+   * Get the cache plugin
+   */
+  function get_cache_plugin($name = NULL) {
+    if (!$name) {
+      $cache = $this->get_option('cache');
+      $name = $cache['type'];
+    }
+
+    $plugin = views_get_plugin('cache', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display);
+      return $plugin;
+    }
+  }
+
+  /**
+   * Get the exposed form plugin
+   */
+  function get_exposed_form_plugin($name = NULL) {
+    if (!$name) {
+      $exposed_form = $this->get_option('exposed_form');
+      $name = $exposed_form['type'];
+    }
+
+    $plugin = views_get_plugin('exposed_form', $name);
+    if ($plugin) {
+      $plugin->init($this->view, $this->display);
       return $plugin;
     }
   }
@@ -787,7 +790,7 @@ class views_plugin_display extends views_plugin {
       );
     }
 
-    $access_plugin = $this->get_plugin('access');
+    $access_plugin = $this->get_access_plugin();
     if (!$access_plugin) {
       // default to the no access control plugin.
       $access_plugin = views_get_plugin('access', 'none');
@@ -806,7 +809,7 @@ class views_plugin_display extends views_plugin {
       $options['access']['links']['access_options'] = t('Change settings for this access type.');
     }
 
-    $cache_plugin = $this->get_plugin('cache');
+    $cache_plugin = $this->get_cache_plugin();
     if (!$cache_plugin) {
       // default to the no cache control plugin.
       $cache_plugin = views_get_plugin('cache', 'none');
@@ -856,7 +859,7 @@ class views_plugin_display extends views_plugin {
       'desc' => t('Allow the exposed form to appear in a block instead of the view.'),
     );
 
-    $exposed_form_plugin = $this->get_plugin('exposed_form');
+    $exposed_form_plugin = $this->get_exposed_form_plugin();
     if (!$exposed_form_plugin) {
       // default to the no cache control plugin.
       $exposed_form_plugin = views_get_plugin('exposed_form', 'basic');
@@ -1057,7 +1060,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'access_options':
         $access = $this->get_option('access');
-        $plugin = $this->get_plugin('access');
+        $plugin = $this->get_access_plugin();
         $form['#title'] .= t('Access options');
         if ($plugin) {
           $form['#help_topic'] = $plugin->definition['help topic'];
@@ -1098,7 +1101,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'cache_options':
         $cache = $this->get_option('cache');
-        $plugin = $this->get_plugin('cache');
+        $plugin = $this->get_cache_plugin();
         $form['#title'] .= t('Caching options');
         if ($plugin) {
           $form['#help_topic'] = $plugin->definition['help topic'];
@@ -1484,7 +1487,8 @@ class views_plugin_display extends views_plugin {
         }
         break;
       case 'exposed_form_options':
-        $plugin = $this->get_plugin('exposed_form');
+        $exposed_form = $this->get_option('exposed_form');
+        $plugin = $this->get_exposed_form_plugin();
         $form['#title'] .= t('Exposed form options');
         if ($plugin) {
           $form['#help_topic'] = $plugin->definition['help topic'];
@@ -1550,19 +1554,19 @@ class views_plugin_display extends views_plugin {
         }
         break;
       case 'access_options':
-        $plugin = $this->get_plugin('access');
+        $plugin = $this->get_access_plugin();
         if ($plugin) {
           $plugin->options_validate($form['access_options'], $form_state);
         }
         break;
       case 'cache_options':
-        $plugin = $this->get_plugin('cache');
+        $plugin = $this->get_cache_plugin();
         if ($plugin) {
           $plugin->options_validate($form['cache_options'], $form_state);
         }
         break;
       case 'exposed_form_options':
-        $plugin = $this->get_plugin('exposed_form');
+        $plugin = $this->get_exposed_form_plugin();
         if ($plugin) {
           $plugin->options_validate($form['exposed_form_options'], $form_state);
         }
@@ -1576,7 +1580,7 @@ class views_plugin_display extends views_plugin {
    */
   function options_submit(&$form, &$form_state) {
     // Not sure I like this being here, but it seems (?) like a logical place.
-    $cache_plugin = $this->get_plugin('cache');
+    $cache_plugin = $this->get_cache_plugin();
     if ($cache_plugin) {
       $cache_plugin->cache_flush();
     }
@@ -1721,7 +1725,7 @@ class views_plugin_display extends views_plugin {
 
         break;
       case 'exposed_form_options':
-        $plugin = $this->get_plugin('exposed_form');
+        $plugin = $this->get_exposed_form_plugin();
         if ($plugin) {
           $exposed_form = $this->get_option('exposed_form');
           $plugin->options_submit($form['exposed_form_options'], $form_state);
@@ -1924,7 +1928,7 @@ class views_plugin_display extends views_plugin {
       return TRUE;
     }
 
-    $plugin = $this->get_plugin('access');
+    $plugin = $this->get_access_plugin();
     if ($plugin) {
       return $plugin->access($account);
     }
@@ -2072,131 +2076,6 @@ class views_plugin_display extends views_plugin {
     }
   }
 
-  /**
-   * Override of export_option()
-   *
-   * Because displays do not want to export options that are NOT overridden from the
-   * default display, we need some special handling during the export process.
-   */
-  function export_option($indent, $prefix, $storage, $option, $definition, $parents) {
-    // The $prefix is wrong because we store our actual options a little differently:
-    $prefix = '$handler->display->display_options';
-    $output = '';
-    if (!$parents && !$this->is_default_display()) {
-      // Do not export items that are not overridden.
-      if ($this->is_defaulted($option)) {
-        return;
-      }
-
-      // If this is not defaulted and is overrideable, flip the switch to say this
-      // is overridden.
-      if ($this->defaultable_sections($option)) {
-        $output .= $indent . $prefix . "['defaults']['$option'] = FALSE;\n";
-      }
-    }
-
-    $output .= parent::export_option($indent, $prefix, $storage, $option, $definition, $parents);
-    return $output;
-  }
-
-  /**
-   * Special method to export items that have handlers.
-   *
-   * This method was specified in the option_definition() as the method to utilize to
-   * export fields, filters, sort criteria, relationships and arguments. This passes
-   * the export off to the individual handlers so that they can export themselves
-   * properly.
-   */
-  function export_item($indent, $prefix, $storage, $option, $definition, $parents) {
-    $output = '';
-
-    // cut the 's' off because the data is stored as the plural form but we need
-    // the singular form. Who designed that anyway? Oh yeah, I did. :(
-    $type = substr($option, 0, -1);
-    foreach ($storage[$option] as $id => $info) {
-      $handler = views_get_handler($info['table'], $info['field'], $type);
-      if ($handler) {
-        $handler->init($this->view, $info);
-        $output .= $indent . $prefix . "['$option']['$id']['id'] = '$id';\n";
-        $output .= $indent . $prefix . "['$option']['$id']['table'] = '$info[table]';\n";
-        $output .= $indent . $prefix . "['$option']['$id']['field'] = '$info[field]';\n";
-        $output .= $handler->export_options($indent, $prefix . "['$option']['$id']");
-      }
-
-      // Prevent reference problems.
-      unset($handler);
-    }
-
-    return $output;
-  }
-
-  /**
-   * Special handling for the style export.
-   *
-   * Styles are stored as style_plugin and style_options or row_plugin and
-   * row_options accordingly. The options are told not to export, and the
-   * export for the plugin should export both.
-   */
-  function export_style($indent, $prefix, $storage, $option, $definition, $parents) {
-    $output = '';
-    $style_plugin = $this->get_plugin();
-    if ($option == 'style_plugin') {
-      $type = 'style';
-      $options_field = 'style_options';
-      $plugin = $style_plugin;
-    }
-    else {
-      if (!$style_plugin || !$style_plugin->uses_row_plugin()) {
-        return;
-      }
-
-      $type = 'row';
-      $options_field = 'row_options';
-      $plugin = $this->get_plugin('row');
-      // If the style plugin doesn't use row plugins, don't even bother.
-    }
-
-    if ($plugin) {
-      // Write which plugin to use.
-      $value = $this->get_option($option);
-      $output .= $indent . $prefix . "['$option'] = '$value';\n";
-
-      // Pass off to the plugin to export itself.
-      $output .= $plugin->export_options($indent, $prefix . "['$options_field']");
-    }
-
-    return $output;
-  }
-
-  /**
-   * Special handling for plugin export
-   *
-   * Plugins other than styles are stored in array with 'type' being the key
-   * to the plugin. For modern plugins, the options are stored in the 'options'
-   * array, but for legacy plugins (access and cache) options are stored as
-   * siblings to the type.
-   */
-  function export_plugin($indent, $prefix, $storage, $option, $definition, $parents) {
-    $output = '';
-    $plugin_type = end($parents);
-    $plugin = $this->get_plugin($plugin_type);
-    if ($plugin) {
-      // Write which plugin to use.
-      $value = $storage[$option];
-      $new_prefix = $prefix . "['$plugin_type']";
-
-      $output .= $indent . $new_prefix . "['$option'] = '$value';\n";
-
-      if ($plugin_type != 'access' && $plugin_type!= 'cache') {
-        $new_prefix .= "['options']";
-      }
-
-      // Pass off to the plugin to export itself.
-      $output .= $plugin->export_options($indent, $new_prefix);
-    }
-
-    return $output;
-  }
 }
 
 

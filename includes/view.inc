@@ -557,7 +557,7 @@ class view extends views_db_object {
     $this->_pre_query();
 
     if ($this->display_handler->uses_exposed()) {
-      $exposed_form = $this->display_handler->get_plugin('exposed_form');
+      $exposed_form = $this->display_handler->get_exposed_form_plugin();
       $this->exposed_widgets = $exposed_form->render_exposed_form();
       if (form_set_error() || !empty($this->build_info['abort'])) {
         $this->built = TRUE;
@@ -687,7 +687,7 @@ class view extends views_db_object {
       $cache = FALSE;
     }
     else {
-      $cache = $this->display_handler->get_plugin('cache');
+      $cache = $this->display_handler->get_cache_plugin();
     }
     if ($cache && $cache->cache_get('results')) {
       vpr('Used cached results');
@@ -720,7 +720,7 @@ class view extends views_db_object {
       $this->start_query_capture();
     }
 
-    $exposed_form = $this->display_handler->get_plugin('exposed_form');
+    $exposed_form = $this->display_handler->get_exposed_form_plugin();
     $exposed_form->pre_render();
 
     // Check for already-cached output.
@@ -728,7 +728,7 @@ class view extends views_db_object {
       $cache = FALSE;
     }
     else {
-      $cache = $this->display_handler->get_plugin('cache');
+      $cache = $this->display_handler->get_cache_plugin();
     }
     if ($cache && $cache->cache_get('output')) {
       vpr('Used cached output');
@@ -1373,8 +1373,6 @@ class view extends views_db_object {
         continue;
       }
 
-      $output .= $display->handler->export_options($indent, '$handler->options');
-/*
       foreach ($display->handler->option_definition() as $option => $definition) {
         // Special handling for some items
         switch ($option) {
@@ -1397,7 +1395,6 @@ class view extends views_db_object {
             }
         }
       }
-*/
     }
 
     return $output;
