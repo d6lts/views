@@ -8,6 +8,7 @@ Views 2.x-dev
     o #550560 by donquixote: Fix unterminated string in views.help.ini that breaks under php 5.3
     o #592476 by Garrett Albright: Remove redundant CSS from views-list.css
     o #366250 by Markus Petrux: Fix glitches with tabledrag and jQuery 1.3.
+    o #581616 by cangeceiro: Defend text color from themes in Views UI.
 
   Other changes:
     o #580320 by chaps2: Allow "always use more link" setting.
