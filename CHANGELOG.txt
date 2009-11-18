@@ -7,6 +7,7 @@ Views 6.x-3.x-dev
     o #535206: Attachment displays repeat exposed filters because exposed filters were left hanging around during cloning.
     o #550560 by donquixote: Fix unterminated string in views.help.ini that breaks under php 5.3
     o #450346 by lefnire: Inherit Exposed Filters sometimes hides part of the parent exposed filters
+    o #592476 by Garrett Albright: Remove redundant CSS from views-list.css
 
 Views 6.x-3.0-alpha1
   Bugs fixed
