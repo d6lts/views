@@ -5,6 +5,7 @@ Views 6.x-3.x-dev
     o #630194 by dereine: Convert access and cache plugins to use the newer option_definition() method of storing options.
     o #633482 by dagmar: pre_execute() method needs to be called on exposed forms.
     o #535206: Attachment displays repeat exposed filters because exposed filters were left hanging around during cloning.
+    o #450346 by lefnire: Inherit Exposed Filters sometimes hides part of the parent exposed filters
 
 Views 6.x-3.0-alpha1
   Bugs fixed
