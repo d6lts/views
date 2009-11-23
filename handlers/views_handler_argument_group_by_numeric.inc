@@ -2,14 +2,9 @@
 // $Id$
 
 /**
- * @defgroup views_argument_handlers Handlers for arguments
- * @{
- */
-
-/**
  * Simple handler for arguments using group by.
  */
-class views_handler_argument extends views_handler {
+class views_handler_argument_group_by_numeric extends views_handler_argument  {
   function query($group_by = FALSE) {
     $this->ensure_my_table();
     $placeholder = empty($this->definition['numeric']) ? "'%s'" : '%d';
