@@ -181,16 +181,18 @@ function views_views_plugins() {
       ),
     ),
     'argument default' => array(
-      // This type of plugin does not conform to the standard and
-      // uses 'fixed' as the parent rather than having a separate parent.
+      'parent' => array(
+        'no ui' => TRUE,
+        'handler' => 'views_plugin_argument_default',
+        'parent' => '',
+      ),
       'fixed' => array(
         'title' => t('Fixed entry'),
-        'handler' => 'views_plugin_argument_default',
+        'handler' => 'views_plugin_argument_default_fixed',
       ),
       'php' => array(
         'title' => t('PHP Code'),
         'handler' => 'views_plugin_argument_default_php',
-        'parent' => 'fixed',
       ),
     ),
     'argument validator' => array(
