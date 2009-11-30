@@ -23,6 +23,7 @@ Views 2.x-dev
     o #584880 by drewish: Wrong base field declarations fixed.
     o #480162 by dereine: Count whitespace fields as empty for hiding labels.
     o #623580 by dagmar: Move can_expose() method to base handler to deal with validation change made in previous commit.
+    o #626422 by vgarvardt: Static caching of validated taxonomy terms to improve taxonomy_term performance.
     
 Views 2.7 (Nov 02, 2009)
   Bug fixes:
