@@ -29,6 +29,7 @@ Views 6.x-3.x-dev
     o #348130 by dereine: "<Any>" should not be translatable since it looks like HTML.
     o #630430 by cafuego: Fix typo in argument text.
     o #635966 by dagmar: Allow the exposed form plugin to actually control the exposed form.
+    o #370651: Make Views AJAX work with mod_security enabled.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

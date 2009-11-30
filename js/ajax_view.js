@@ -29,7 +29,7 @@ Drupal.Views.Ajax.ajaxViewResponse = function(target, response) {
     $view = $newView;
     Drupal.attachBehaviors($view.parent());
   }
- 
+
   if (response.messages) {
     // Show any messages (but first remove old ones, if there are any).
     $view.find('.views-messages').remove().end().prepend(response.messages);
@@ -37,7 +37,7 @@ Drupal.Views.Ajax.ajaxViewResponse = function(target, response) {
 };
 
 /**
- * Ajax behavior for views. 
+ * Ajax behavior for views.
  */
 Drupal.behaviors.ViewsAjaxView = function() {
   if (Drupal.settings && Drupal.settings.views && Drupal.settings.views.ajaxViews) {
@@ -110,7 +110,7 @@ Drupal.behaviors.ViewsAjaxView = function() {
             // Process pager, tablesort, and attachment summary links.
             .find('ul.pager > li > a, th.views-field a, .attachment .views-summary a')
             .each(function () {
-              var viewData = {};
+              var viewData = { 'js': 1 };
               // Construct an object using the settings defaults and then overriding
               // with data specific to the link.
               $.extend(
