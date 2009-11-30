@@ -24,6 +24,7 @@ Views 6.x-3.x-dev
     o #619884: Fix incorrect grouping for styles other than table.
     o #539498: "Comments: Node link" did not work at all. Replaced with "Node: Add comment link" which is what that was supposed to do.
     o #638916 by dereine: views.help.ini strings need quoting to continue to work in PHP 5.3
+    o #636988 by Steve McKenzie: Wrong ajax data could be sent in rare circumstances when using AJAX paging.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

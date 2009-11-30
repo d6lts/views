@@ -115,10 +115,11 @@ Drupal.behaviors.ViewsAjaxView = function() {
               // with data specific to the link.
               $.extend(
                 viewData,
-                settings,
                 Drupal.Views.parseQueryString($(this).attr('href')),
                 // Extract argument data from the URL.
-                Drupal.Views.parseViewArgs($(this).attr('href'), settings.view_base_path)
+                Drupal.Views.parseViewArgs($(this).attr('href'), settings.view_base_path),
+                // Settings must be used last to avoid sending url aliases to the server.
+                settings
               );
               $(this).click(function () {
                 $(this).addClass('views-throbbing');
