@@ -20,6 +20,7 @@ Views 6.x-3.x-dev
     o #503452: Retool exports to properly use option definition, improving translatability and information use.
     o #626422 by vgarvardt: Static caching of validated taxonomy terms to improve taxonomy_term performance.
     o #622608: Allow attachments to inherit pager data.
+    o #495606 by Roi Danton and dereine: Introduce views_get_view_result() as a fast way to get just the results of a view.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
