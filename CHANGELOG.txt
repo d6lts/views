@@ -34,6 +34,7 @@ Views 2.x-dev
     o #626422 by vgarvardt: Static caching of validated taxonomy terms to improve taxonomy_term performance.
     o #622608: Allow attachments to inherit pager data.
     o #495606 by Roi Danton and dereine: Introduce views_get_view_result() as a fast way to get just the results of a view.
+    o #614040 by dereine: Introduce hook_views_plugins_alter()
     
 Views 2.7 (Nov 02, 2009)
   Bug fixes:
