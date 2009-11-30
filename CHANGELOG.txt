@@ -23,6 +23,7 @@ Views 2.x-dev
     o #576386 by jmorahan: Fix book sort help text to be more accurate by not telling you to do something that will not work.
     o #348130 by dereine: "<Any>" should not be translatable since it looks like HTML.
     o #630430 by cafuego: Fix typo in argument text.
+    o #370651: Make Views AJAX work with mod_security enabled.
 
   Other changes:
     o #580320 by chaps2: Allow "always use more link" setting.
