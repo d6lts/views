@@ -17,6 +17,7 @@ Views 2.x-dev
     o #515564: Views UI would fail to rearrange with > 25 fields.
     o #452384: Fix PHP 5.3 compatibility.
     o #619884: Fix incorrect grouping for styles other than table.
+    o #539498: "Comments: Node link" did not work at all. Replaced with "Node: Add comment link" which is what that was supposed to do.
 
   Other changes:
     o #580320 by chaps2: Allow "always use more link" setting.
