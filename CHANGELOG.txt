@@ -25,6 +25,7 @@ Views 6.x-3.x-dev
     o #539498: "Comments: Node link" did not work at all. Replaced with "Node: Add comment link" which is what that was supposed to do.
     o #638916 by dereine: views.help.ini strings need quoting to continue to work in PHP 5.3
     o #636988 by Steve McKenzie: Wrong ajax data could be sent in rare circumstances when using AJAX paging.
+    o #576386 by jmorahan: Fix book sort help text to be more accurate by not telling you to do something that will not work.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
