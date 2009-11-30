@@ -22,6 +22,7 @@ Views 6.x-3.x-dev
     o #622608: Allow attachments to inherit pager data.
     o #495606 by Roi Danton and dereine: Introduce views_get_view_result() as a fast way to get just the results of a view.
     o #619884: Fix incorrect grouping for styles other than table.
+    o #539498: "Comments: Node link" did not work at all. Replaced with "Node: Add comment link" which is what that was supposed to do.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

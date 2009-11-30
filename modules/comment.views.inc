@@ -236,14 +236,6 @@ function comment_views_data() {
     ),
   );
 
-  $data['comments']['node_link'] = array(
-    'field' => array(
-      'title' => t('Node link'),
-      'help' => t('Display the standard comment link used on regular nodes.'),
-      'handler' => 'views_handler_field_comment_node_link',
-    ),
-  );
-
   $data['comments']['thread'] = array(
     'field' => array(
       'title' => t('Depth'),
@@ -390,6 +382,14 @@ function comment_views_data_alter(&$data) {
     'field' => array(
       'handler' => 'views_handler_field_node_new_comments',
       'no group by' => TRUE,
+    ),
+  );
+
+  $data['node']['comments_link'] = array(
+    'field' => array(
+      'title' => t('Add comment link'),
+      'help' => t('Display the standard add comment link used on regular nodes, which will only display if the viewing user has access to add a comment.'),
+      'handler' => 'views_handler_field_comment_node_link',
     ),
   );
 
