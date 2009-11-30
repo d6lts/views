@@ -21,6 +21,7 @@ Views 2.x-dev
     o #638916 by dereine: views.help.ini strings need quoting to continue to work in PHP 5.3
     o #636988 by Steve McKenzie: Wrong ajax data could be sent in rare circumstances when using AJAX paging.
     o #576386 by jmorahan: Fix book sort help text to be more accurate by not telling you to do something that will not work.
+    o #348130 by dereine: "<Any>" should not be translatable since it looks like HTML.
 
   Other changes:
     o #580320 by chaps2: Allow "always use more link" setting.
