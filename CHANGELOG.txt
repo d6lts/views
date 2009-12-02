@@ -24,6 +24,7 @@ Views 2.x-dev
     o #348130 by dereine: "<Any>" should not be translatable since it looks like HTML.
     o #630430 by cafuego: Fix typo in argument text.
     o #370651: Make Views AJAX work with mod_security enabled.
+    o #648438: In rare circumstances, unnecessary term_node tables could be joined in when adding term_data relationships.
     o #639430 by dagmar: theme.inc warning when comments are displayed without links.
 
   Other changes:
