@@ -209,6 +209,12 @@ class views_query {
       'table' => $join->table,
       'base' => $base,
     );
+
+    $this->tables[$this->base_table][$alias] = array(
+      'count' => 1,
+      'alias' => $alias,
+    );
+
     return $alias;
   }
 
