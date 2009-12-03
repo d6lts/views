@@ -1,4 +1,8 @@
 CHANGELOG for Views 2 for Drupal 6
+Views 2.x-dev
+  Bug fixes:
+    o #650152: Book: Top Level Book relationship broken by earlier patch and caused broken query.
+
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
     o #622602: Missing ORDER BY in some views with tables due to incorrect test for default table sorting.
