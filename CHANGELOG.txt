@@ -31,6 +31,7 @@ Views 6.x-3.x-dev
     o #635966 by dagmar: Allow the exposed form plugin to actually control the exposed form.
     o #370651: Make Views AJAX work with mod_security enabled.
     o #614040 by dereine: Introduce hook_views_plugins_alter()
+    o #586668: Pagers turned into plugins to allow all kinds of new fun stuff with paging.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
