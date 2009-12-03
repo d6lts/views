@@ -357,7 +357,6 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
 
       return $items;
     case 'view':
-      $start = views_microtime();
       // if this is 32, this should be an md5 hash.
       if (strlen($delta) == 32) {
         $hashes = variable_get('views_block_hashes', array());
@@ -389,7 +388,6 @@ function views_block($op = 'list', $delta = 0, $edit = array()) {
       if ($view = views_get_view($name)) {
         if ($view->access($display_id)) {
           $output = $view->execute_display($display_id);
-          vpr("Block $view->name execute time: " . (views_microtime() - $start) * 1000 . "ms");
           $view->destroy();
           return $output;
         }

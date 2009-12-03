@@ -807,6 +807,8 @@ class view extends views_db_object {
    * If you simply want to view the display, use view::preview() instead.
    */
   function execute_display($display_id = NULL, $args = array()) {
+    $timer_id = 'execute_display' . $display_id;
+    timer_start($timer_id);
     if (empty($this->current_display) || $this->current_display != $this->choose_display($display_id)) {
       if (!$this->set_display($display_id)) {
         return FALSE;
@@ -819,6 +821,11 @@ class view extends views_db_object {
     $output = $this->display_handler->execute();
 
     $this->post_execute();
+
+    vpr("$this->name execute time: " . timer_read($timer_id) . " ms");
+
+    timer_stop($timer_id);
+
     return $output;
   }
 
@@ -830,6 +837,8 @@ class view extends views_db_object {
    * normalized output.
    */
   function preview($display_id = NULL, $args = array()) {
+    $timer_id = 'preview' . $display_id;
+    timer_start($timer_id);
     if (empty($this->current_display) || $this->current_display != $display_id) {
       if (!$this->set_display($display_id)) {
         return FALSE;
@@ -842,6 +851,11 @@ class view extends views_db_object {
     $output = $this->display_handler->preview();
 
     $this->post_execute();
+
+    vpr("$this->name execute time: " . timer_read($timer_id) . " ms");
+
+    timer_stop($timer_id);
+
     return $output;
   }
 
