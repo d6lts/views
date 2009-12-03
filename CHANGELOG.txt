@@ -36,6 +36,7 @@ Views 6.x-3.x-dev
     o #639430 by dagmar: theme.inc warning when comments are displayed without links.
     o #639094 by dagmar: Exposed forms not working with blocks after exposed plugins.
     o #645146 by dagmar: Some exposed form information not being stored after the plugin retooling.
+    o #645150 by dagmar: Incorrect call to deprecated get_exposed_form_plugin() function fixed.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
