@@ -34,7 +34,8 @@ Views 6.x-3.x-dev
     o #586668: Pagers turned into plugins to allow all kinds of new fun stuff with paging.
     o #650152: Book: Top Level Book relationship broken by earlier patch and caused broken query.
     o #639430 by dagmar: theme.inc warning when comments are displayed without links.
-    o #639094: Exposed forms not working with blocks after exposed plugins.
+    o #639094 by dagmar: Exposed forms not working with blocks after exposed plugins.
+    o #645146 by dagmar: Some exposed form information not being stored after the plugin retooling.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

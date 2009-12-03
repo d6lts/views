@@ -2364,6 +2364,7 @@ function views_ui_config_item_form_submit($form, &$form_state) {
   $handler->options['id'] = $item['id'];
   $handler->options['table'] = $item['table'];
   $handler->options['field'] = $item['field'];
+  $handler->options['exposed'] = $item['exposed'];
 
   // Store the item back on the view
   $form_state['view']->set_item($form_state['display_id'], $form_state['type'], $form_state['id'], $handler->options);
