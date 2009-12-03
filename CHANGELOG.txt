@@ -39,6 +39,7 @@ Views 6.x-3.x-dev
     o #645150 by dagmar: Incorrect call to deprecated get_exposed_form_plugin() function fixed.
     o #631522 by kbahey: Enable devel timing information for all views, not just page views.
     o #324873 by dagmar: Show all paths when listing views, not just the first path.
+    o #99370 by dagmar: Allow a "reset" button as part of the exposed filters.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

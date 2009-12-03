@@ -32,6 +32,7 @@ class views_plugin_exposed_form extends views_plugin {
   function option_definition() {
     $options = parent::option_definition();
     $options['submit_button'] = array('default' => t('Apply'), 'translatable' => TRUE);
+    $options['reset_button'] = array('default' => FALSE, 'bool' => TRUE);
     return $options;
   }
 
@@ -41,6 +42,13 @@ class views_plugin_exposed_form extends views_plugin {
       '#title' => t('Submit button text'),
       '#description' => t('Text to display in the submit button of the exposed form.'),
       '#default_value' => $this->options['submit_button'],
+    );
+
+    $form['reset_button'] = array (
+      '#type' => 'checkbox',
+      '#title' => t('Include reset button'),
+      '#description' => t('If checked the exposed form will provide a button to reset all the applied exposed filters'),
+      '#default_value' => $this->options['reset_button'],
     );
   }
 
@@ -75,6 +83,7 @@ class views_plugin_exposed_form extends views_plugin {
 
     $form_state['exposed_form_plugin'] = $this;
     $output = drupal_build_form('views_exposed_form', $form_state);
+
     if (!empty($form_state['js settings'])) {
       $this->view->js_settings = $form_state['js settings'];
     }
@@ -90,7 +99,14 @@ class views_plugin_exposed_form extends views_plugin {
 
   function pre_execute() { }
 
-  function exposed_form_alter(&$form, &$form_state) { }
+  function exposed_form_alter(&$form, &$form_state) {
+    if (!empty($this->options['reset_button'])) {
+      $form['reset'] = array(
+        '#value' => t('Reset'),
+        '#type' => 'submit',
+      );
+    }
+  }
 
   function exposed_form_validate(&$form, &$form_state) { }
 
@@ -105,5 +121,18 @@ class views_plugin_exposed_form extends views_plugin {
    *   Nested array of keys to exclude of insert into
    *   $view->exposed_raw_input
    */
-  function exposed_form_submit(&$form, &$form_state, &$exclude) { }
+  function exposed_form_submit(&$form, &$form_state, &$exclude) {
+    if (!empty($form_state['values']['op']) && $form_state['values']['op'] == t('Reset')) {
+      $this->reset_form($form, $form_state);
+    }
+  }
+
+  /**
+   * Provide a reset form if one was requested.
+   */
+  function reset_form(&$form, &$form_state) {
+    unset($_SESSION['views'][$this->view->name][$this->view->current_display]);
+    $form_state['no_redirect'] = FALSE;
+    $form_state['redirect'] = !empty($this->view->ajax_path) ? $this->view->ajax_path : $_GET['q'];
+  }
 }

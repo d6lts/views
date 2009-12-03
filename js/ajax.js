@@ -210,7 +210,6 @@ Drupal.Views.updatePreviewFilterForm = function() {
   var url = $(this).attr('action');
   url = url.replace('nojs', 'ajax');
 
-  $('input[type=submit], button', this).after('<span class="views-throbbing">&nbsp</span>');
   $('input[name=q]', this).remove(); // remove 'q' for live preview.
   $(this).ajaxSubmit({
     url: url,
@@ -298,7 +297,13 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
 
   $('div#views-live-preview form:not(.views-processed)')
     .addClass('views-processed')
-    .submit(Drupal.Views.updatePreviewFilterForm);
+    .submit(Drupal.Views.updatePreviewFilterForm)
+    .find('input[type=submit], button').click(function() {
+      $(this).after('<span class="views-throbbing">&nbsp</span>');
+      // We have to actually tell it what button got clicked if we want
+      // anything to be sent:
+      this.form.clk = this;
+    });
 
   $('div#views-live-preview a:not(.views-processed)')
     .addClass('views-processed')

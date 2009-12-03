@@ -138,7 +138,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
           }
           if (empty($view->disabled) && strpos($one_path, '%') === FALSE) {
             $all_paths[] = l($one_path, $one_path);
-          } 
+          }
           else {
             $all_paths[] = check_plain($one_path);
           }
@@ -390,7 +390,8 @@ function views_ui_preview($js, $view) {
     }
 
     // Make view links come back to preview.
-    $view->override_path = 'admin/build/views/nojs/preview/' . $view->name . '/' . $form_state['display_id'];
+    $ajax = $js ? 'ajax' : 'nojs';
+    $view->override_path = "admin/build/views/$ajax/preview/" . $view->name . '/' . $form_state['display_id'];
 
     // also override $_GET['q'] so we get the pager
     $_GET['q'] = $view->override_path;

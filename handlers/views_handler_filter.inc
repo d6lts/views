@@ -57,6 +57,7 @@ class views_handler_filter extends views_handler {
         'identifier' => array('default' => ''),
         'optional' => array('default' => 1),
         'remember' => array('default' => 0),
+        'single' => array('default' => 1),
       ),
     );
 
