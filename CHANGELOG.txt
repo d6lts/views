@@ -2,6 +2,7 @@ CHANGELOG for Views 2 for Drupal 6
 Views 2.x-dev
   Bug fixes:
     o #650152: Book: Top Level Book relationship broken by earlier patch and caused broken query.
+    o #651244 by dagmar: Other instances of <Any> are not translatable and should not be run trhough t().
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
