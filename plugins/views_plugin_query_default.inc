@@ -895,49 +895,8 @@ class views_plugin_query_default extends views_plugin_query{
     return "";
   }
 
-  /**
-   * Generate a query and a countquery from all of the information supplied
-   * to the object.
-   *
-   * @param $get_count
-   *   Provide a countquery if this is true, otherwise provide a normal query.
-   */
-  function query($get_count = FALSE) {
-    // Check query distinct value.
-    if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
-      $base_field_alias = $this->add_field($this->base_table, $this->base_field, NULL, array('distinct' => TRUE));
-      $this->add_groupby($base_field_alias);
-    }
-
-    /**
-     * An optimized count query includes just the base field instead of all the fields.
-     * Determine of this query qualifies by checking for a groupby or distinct.
-     */
-    $fields_array = $this->fields;
-    if ($get_count && !$this->groupby) {
-      foreach ($fields_array as $field) {
-        if (!empty($field['distinct']) || !empty($field['function'])) {
-          $get_count_optimized = FALSE;
-          break;
-        }
-      }
-    }
-    else {
-      $get_count_optimized = FALSE;
-    }
-    if (!isset($get_count_optimized)) {
-      $get_count_optimized = TRUE;
-    }
-
-    $joins = $where = $having = $orderby = $groupby = '';
+  function compile_fields($fields_array) {
     $fields = $distinct = array();
-    // Add all the tables to the query via joins. We assume all LEFT joins.
-    foreach ($this->table_queue as $table) {
-      if (is_object($table['join'])) {
-        $joins .= $table['join']->join($table, $this) . "\n";
-      }
-    }
-
     $has_aggregate = FALSE;
     $non_aggregates = array();
 
@@ -990,8 +949,58 @@ class views_plugin_query_default extends views_plugin_query{
         break;
       }
     }
+    return array(
+      $distinct,
+      $fields,
+      $non_aggregates,
+    );
+  }
 
-   if ($has_aggregate || $this->groupby) {
+  /**
+   * Generate a query and a countquery from all of the information supplied
+   * to the object.
+   *
+   * @param $get_count
+   *   Provide a countquery if this is true, otherwise provide a normal query.
+   */
+  function query($get_count = FALSE) {
+    // Check query distinct value.
+    if (empty($this->no_distinct) && $this->distinct && !empty($this->fields)) {
+      $base_field_alias = $this->add_field($this->base_table, $this->base_field, NULL, array('distinct' => TRUE));
+      $this->add_groupby($base_field_alias);
+    }
+
+    /**
+     * An optimized count query includes just the base field instead of all the fields.
+     * Determine of this query qualifies by checking for a groupby or distinct.
+     */
+    $fields_array = $this->fields;
+    if ($get_count && !$this->groupby) {
+      foreach ($fields_array as $field) {
+        if (!empty($field['distinct']) || !empty($field['function'])) {
+          $get_count_optimized = FALSE;
+          break;
+        }
+      }
+    }
+    else {
+      $get_count_optimized = FALSE;
+    }
+    if (!isset($get_count_optimized)) {
+      $get_count_optimized = TRUE;
+    }
+
+    $joins = $where = $having = $orderby = $groupby = '';
+    // Add all the tables to the query via joins. We assume all LEFT joins.
+    foreach ($this->table_queue as $table) {
+      if (is_object($table['join'])) {
+        $joins .= $table['join']->join($table, $this) . "\n";
+      }
+    }
+
+    list($distinct, $fields, $non_aggregates) = $this->compile_fields($fields_array);
+
+   if ($this->has_aggregate || $this->groupby) {
      $groupby = "GROUP BY " . implode(', ', array_unique(array_merge($this->groupby, $non_aggregates))) . "\n";
       if ($this->having) {
         $having = $this->condition_sql('having');
