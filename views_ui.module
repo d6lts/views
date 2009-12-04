@@ -120,6 +120,10 @@ function views_ui_menu() {
     'page callback' => 'views_ui_analyze_view',
     'page arguments' => array(3, 5),
   );
+  $items['admin/build/views/%views_ui_js/reorder-displays/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_reorder_view',
+    'page arguments' => array(3, 5),
+  );
   $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_details',
     'page arguments' => array(3, 5),
@@ -208,6 +212,11 @@ function views_ui_theme() {
       'arguments' => array('body' => NULL),
       'file' => 'includes/tabs.inc',
     ),
+    'views_ui_reorder_displays_form' => array(
+      'arguments' => array('form' => NULL),
+      'file' => 'includes/admin.inc',
+    ),
+
 
     // On behalf of a plugin
     'views_ui_style_plugin_table' => array(

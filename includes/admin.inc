@@ -999,7 +999,8 @@ function template_preprocess_views_ui_edit_view(&$vars) {
 
   $display_button = drupal_build_form('views_ui_add_display_form', $form_state);
   $analyze_button = drupal_get_form('views_ui_analyze_view_button', $view);
-  $tabs->add_extra($display_button . $analyze_button);
+  $reorder_button = drupal_get_form('views_ui_reorder_displays_button', $view);
+  $tabs->add_extra($display_button . $reorder_button . $analyze_button);
 
   $vars['tabs'] = $tabs->render();
 
@@ -1835,6 +1836,223 @@ function views_ui_analyze_view_form(&$form_state) {
  */
 function views_ui_analyze_view_form_submit($form, &$form_state) {
   $form_state['redirect'] = 'admin/build/views/edit/' . $form_state['view']->name;
+}
+
+/**
+ * Page callback to display analysis information on a view.
+ */
+function views_ui_reorder_view($js, $view) {
+  views_include('ajax');
+  $form_state = array(
+    'view' => &$view,
+    'ajax' => $js,
+  );
+
+  $output = views_ajax_form_wrapper('views_ui_reorder_displays_form', $form_state);
+
+  if ($js) {
+    if(empty($output)) {
+      // I don't want preprocess to modify the views -> no references
+      $vars = array('view' => $view);
+      template_preprocess_views_ui_edit_view($vars);
+      $output = new stdClass();
+      $output->replace['.views-tabset'] = $vars['tabs'];
+      // Not the right place to have html i know !
+      $output->replace['.views-quick-links'] = '<div class="views-quick-links">'. $vars['quick_links'] .'</div>';
+      // Doesn't work yet, maybe we should reload the page dunno
+      //return views_ui_regenerate_tabs($view);
+    }
+    return views_ajax_render($output);
+  }
+
+  return $output;
+}
+
+/**
+ * Form constructor callback to reorder displays on a view
+ */
+function views_ui_reorder_displays_form(&$form_state) {
+  $view = &$form_state['view'];
+
+  $form['view'] = array('#type' => 'value', '#value' => $view);
+
+  $form['#tree'] = TRUE;
+
+  $last_display = end($view->display);
+
+  foreach ($view->display as $display) {
+    $form[$display->id] = array(
+      'title'  => array('#value' => $display->display_title),
+      'weight' => array(
+        '#type' => 'weight',
+        '#value' => $display->position,
+        '#delta' => $last_display->position,
+      ),
+      '#tree' => TRUE,
+      '#display' => $display,
+      'removed' => array(
+        '#type' => 'checkbox',
+        '#id' => 'display-removed-' . $display->id,
+        '#attributes' => array('class' => 'views-remove-checkbox'),
+        '#default_value' => isset($display->deleted),
+      ),
+    );
+
+    if (isset($display->deleted) && $display->deleted) {
+      $form[$display->id]['deleted'] = array('#type' => 'value', '#value' => TRUE);
+    }
+    if ($display->id === 'default') {
+      unset($form[$display->id]['weight']);
+      unset($form[$display->id]['removed']);
+    }
+
+  }
+
+  $form['#title'] = t('Displays Reorder');
+  $form['#section'] = 'reorder';
+
+  // Add javascript settings that will be added via $.extend for tabledragging
+  $form['#js']['tableDrag']['reorder-displays']['weight'][0] = array(
+    'target' => 'weight',
+    'source' => NULL,
+    'relationship' => 'sibling',
+    'action' => 'order',
+    'hidden' => TRUE,
+    'limit' => 0,
+  );
+
+
+  $form['#action'] = url('admin/build/views/nojs/reorder-display/'. $view->name);
+
+  views_ui_standard_form_buttons($form, $form_state, 'views_ui_reorder_displays_form');
+
+  return $form;
+}
+
+
+/**
+ * Display position sorting function
+ */
+function _views_position_sort($display1, $display2) {
+  if ($display1->position != $display2->position) {
+    return $display1->position < $display2->position ? -1 : 1;
+  }
+
+  return 0;
+}
+
+/**
+ * Submit handler for rearranging display form
+ */
+function views_ui_reorder_displays_form_submit($form, &$form_state) {
+  foreach($form_state['input'] as $display => $info) {
+    // add each value that is a field with a weight to our list, but only if
+    // it has had its 'removed' checkbox checked.
+    if (is_array($info) && isset($info['weight']) && empty($info['removed'])) {
+      $order[$display] = $info['weight'];
+    }
+  }
+
+  // Sort the order array
+  asort($order);
+
+  // Fixing up positions
+  $position = 2;
+
+  foreach(array_keys($order) as $display) {
+    $order[$display] = $position++;
+  }
+
+  // Setting up position and removing deleted displays
+  $displays = $form_state['view']->display;
+  foreach($displays as $display_id => $display) {
+    // Don't touch the default !!!
+    if ($display_id === 'default') {
+      continue;
+    }
+    if (isset($order[$display_id])) {
+      $form_state['view']->display[$display_id]->position = $order[$display_id];
+    }
+    else {
+      $form_state['view']->display[$display_id]->deleted = TRUE;
+    }
+  }
+
+  // Sorting back the display array as the position is not enough
+  uasort($form_state['view']->display, '_views_position_sort');
+
+  // Store in cache
+  views_ui_cache_set($form_state['view']);
+  $form_state['redirect'] = array('admin/build/views/edit/' . $form_state['view']->name, NULL, 'views-tab-default');
+}
+
+/**
+ * Turn the reorder form into a proper table
+ */
+function theme_views_ui_reorder_displays_form($form) {
+  $rows = array();
+  foreach (element_children($form) as $key) {
+    if (isset($form[$key]['#display'])) {
+      $display = &$form[$key];
+
+      $row = array();
+      $row[] = drupal_render($display['title']);
+      $form[$key]['weight']['#attributes']['class'] = 'weight';
+      $row[] = drupal_render($form[$key]['weight']);
+      if (isset($display['removed'])) {
+        $row[] = drupal_render($form[$key]['removed']) .
+          l('<span>' . t('Remove') . '</span>',
+            'javascript:void()',
+            array(
+              'attributes' => array(
+                'id' => 'display-remove-link-' . $key,
+                'class' => 'views-button-remove display-remove-link',
+                'alt' => t('Remove this display'),
+                'title' => t('Remove this display')),
+              'html' => TRUE));
+      }
+      else {
+        $row[] = '';
+      }
+      $class = array();
+      $styles = array();
+      if (isset($form[$key]['weight']['#type'])) {
+        $class[] = 'draggable';
+      }
+      if (isset($form[$key]['deleted']['#value']) && $form[$key]['deleted']['#value']) {
+        $styles[] = 'display: none;';
+      }
+      $rows[] = array('data' => $row, 'class' => implode(' ', $class), 'id' => 'display-row-' . $key, 'style' => implode(' ', $styles));
+    }
+  }
+
+  $header = array(t('Display'), t('Weight'), t('Remove'));
+  $output = '';
+  drupal_add_tabledrag('reorder-displays', 'order', 'sibling', 'weight');
+
+  $output = drupal_render($form['override']);
+  $output .= theme('table', $header, $rows, array('id' => 'reorder-displays'));
+  $output .= drupal_render($form);
+
+  return $output;
+}
+
+/**
+ * This form doesn't particularly do much; it's really just providing a link
+ * but a button seems like it would be nicer here.
+ *
+ * It has no submit or anything, as we will never actually submit this form
+ * where the form is placed.
+ */
+function views_ui_reorder_displays_button(&$form_state, $view) {
+  $form['#action'] = url("admin/build/views/nojs/reorder-displays/$view->name");
+  $form['#attributes'] = array('class' => 'views-ajax-form');
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Reorder'),
+  );
+
+  return $form;
 }
 
 /**

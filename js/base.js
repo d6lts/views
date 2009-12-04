@@ -25,6 +25,18 @@ Drupal.behaviors.viewsTabs = function (context) {
       $('#views-removed-' + id).attr('checked', true);
       return false;
     });
+  /**
+   * Here is to handle display deletion 
+   * (checking in the hidden checkbox and hiding out the row) 
+   */
+  $('a.display-remove-link')
+    .addClass('display-processed')
+    .click(function() {
+      var id = $(this).attr('id').replace('display-remove-link-', '');
+      $('#display-row-' + id).hide();
+      $('#display-removed-' + id).attr('checked', true);
+      return false;
+    });
 }
 
 /**
