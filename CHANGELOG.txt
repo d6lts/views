@@ -42,6 +42,7 @@ Views 6.x-3.x-dev
     o #99370 by dagmar: Allow a "reset" button as part of the exposed filters.
     o #619812 by chx: Break up the query() method on the query plugin to have field compilation be separate.
     o #338584 by superbaloo: Allow displays to be re-ordered in the UI.
+    o #651244 by dagmar: Other instances of <Any> are not translatable and should not be run through t().
 
 Views 6.x-3.0-alpha1
   Bugs fixed
