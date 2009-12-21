@@ -4,6 +4,7 @@ Views 2.x-dev
     o #650152: Book: Top Level Book relationship broken by earlier patch and caused broken query.
     o #651244 by dagmar: Other instances of <Any> are not translatable and should not be run trhough t().
     o #653628: init declaration for views_handler_filter_many_to_one() did not match parent init.
+    o #657700: Fixed 'Override normal sorting if click sorting is used' setting on the table style plugin that was broken by #622602.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
