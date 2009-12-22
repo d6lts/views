@@ -1,0 +1,191 @@
+<?php
+// $Id$
+
+module_load_include('inc', 'views', 'tests/views_query');
+
+class ViewsQueryGroupByTest extends ViewsSqlTest {
+  public static function getInfo() {
+    return array(
+      'name' => 'Tests groupby feature of views3',
+      'description' => 'tests aggregate functionality of views3, for example count',
+      'group' => 'Views',
+    );
+  }
+
+  public function setUp() {
+    parent::setUp('views', 'views_test');
+  }
+
+  /**
+   * Test aggregatate count feature.
+   */
+  public function testAggregateCount() {
+    // Create 2 nodes of type1 and 3 nodes of type2
+    $type1 = $this->drupalCreateContentType();
+    $type2 = $this->drupalCreateContentType();
+
+    $node_1 = array(
+      'type' => $type1->type,
+    );
+    $this->drupalCreateNode($node_1);
+    $this->drupalCreateNode($node_1);
+    $this->drupalCreateNode($node_1);
+    $this->drupalCreateNode($node_1);
+
+    $node_2 = array(
+      'type' => $type2->type,
+    );
+    $this->drupalCreateNode($node_2);
+    $this->drupalCreateNode($node_2);
+    $this->drupalCreateNode($node_2);
+
+    $view = $this->viewsAggregateCountView();
+    $view->set_display('default');
+    $output = $view->execute_display();
+
+    foreach ($view->result as $item) {
+      $types[$item->node_type] = $item->node_title;
+    }
+
+    $this->assertEqual($types[$type1->type], 4);
+    $this->assertEqual($types[$type2->type], 3);
+
+    // order by the other way
+    $display = (array) $view->display['default']->handler;
+
+  }
+
+  //public function testAggregateSum() {
+  //}
+
+  public function viewsAggregateCountView() {
+    $view = new view;
+    $view->name = 'group_by_tests';
+    $view->description = '';
+    $view->tag = '';
+    $view->view_php = '';
+    $view->base_table = 'node';
+    $view->is_cacheable = FALSE;
+    $view->api_version = 2;
+    $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+    /* Display: Defaults */
+    $handler = $view->new_display('default', 'Defaults', 'default');
+    $handler->display->display_options['group_by'] = TRUE;
+    $handler->display->display_options['access']['type'] = 'none';
+    $handler->display->display_options['cache']['type'] = 'none';
+    $handler->display->display_options['exposed_form']['type'] = 'basic';
+    $handler->display->display_options['pager']['type'] = 'some';
+    $handler->display->display_options['style_plugin'] = 'default';
+    $handler->display->display_options['row_plugin'] = 'fields';
+    /* Field: Node: Title */
+    $handler->display->display_options['fields']['title']['id'] = 'title';
+    $handler->display->display_options['fields']['title']['table'] = 'node';
+    $handler->display->display_options['fields']['title']['field'] = 'title';
+    $handler->display->display_options['fields']['title']['group_type'] = 'count';
+    $handler->display->display_options['fields']['title']['alter']['alter_text'] = 0;
+    $handler->display->display_options['fields']['title']['alter']['make_link'] = 0;
+    $handler->display->display_options['fields']['title']['alter']['trim'] = 0;
+    $handler->display->display_options['fields']['title']['alter']['word_boundary'] = 1;
+    $handler->display->display_options['fields']['title']['alter']['ellipsis'] = 1;
+    $handler->display->display_options['fields']['title']['alter']['strip_tags'] = 0;
+    $handler->display->display_options['fields']['title']['alter']['html'] = 0;
+    $handler->display->display_options['fields']['title']['hide_empty'] = 0;
+    $handler->display->display_options['fields']['title']['empty_zero'] = 0;
+    $handler->display->display_options['fields']['title']['link_to_node'] = 0;
+    /* Field: Node: Type */
+    $handler->display->display_options['fields']['type']['id'] = 'type';
+    $handler->display->display_options['fields']['type']['table'] = 'node';
+    $handler->display->display_options['fields']['type']['field'] = 'type';
+    $handler->display->display_options['fields']['type']['alter']['alter_text'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['make_link'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['trim'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['word_boundary'] = 1;
+    $handler->display->display_options['fields']['type']['alter']['ellipsis'] = 1;
+    $handler->display->display_options['fields']['type']['alter']['strip_tags'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['html'] = 0;
+    $handler->display->display_options['fields']['type']['hide_empty'] = 0;
+    $handler->display->display_options['fields']['type']['empty_zero'] = 0;
+    $handler->display->display_options['fields']['type']['link_to_node'] = 0;
+    return $view;
+  }
+
+  public function testGroupByCount() {
+    // Create 2 nodes of type1 and 3 nodes of type2
+    $type1 = $this->drupalCreateContentType();
+    $type2 = $this->drupalCreateContentType();
+
+    $node_1 = array(
+      'type' => $type1->type,
+    );
+    $this->drupalCreateNode($node_1);
+    $this->drupalCreateNode($node_1);
+    $node_2 = array(
+      'type' => $type2->type,
+    );
+    $this->drupalCreateNode($node_2);
+    $this->drupalCreateNode($node_2);
+    $this->drupalCreateNode($node_2);
+
+    $view = $this->viewsGroupByCountView();
+    $view->set_display('default');
+    $output = $view->execute_display();
+
+    $this->assertEqual(count($view->result), 2);
+  }
+
+  public function viewsGroupByCountView() {
+    $view = new view;
+    $view->name = 'testgroupby';
+    $view->description = '';
+    $view->tag = '';
+    $view->view_php = '';
+    $view->base_table = 'node';
+    $view->is_cacheable = FALSE;
+    $view->api_version = 2;
+    $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+    /* Display: Defaults */
+    $handler = $view->new_display('default', 'Defaults', 'default');
+    $handler->display->display_options['group_by'] = TRUE;
+    $handler->display->display_options['access']['type'] = 'none';
+    $handler->display->display_options['cache']['type'] = 'none';
+    $handler->display->display_options['exposed_form']['type'] = 'basic';
+    $handler->display->display_options['pager']['type'] = 'some';
+    $handler->display->display_options['style_plugin'] = 'default';
+    $handler->display->display_options['row_plugin'] = 'fields';
+    /* Field: Node: Nid */
+    $handler->display->display_options['fields']['nid']['id'] = 'nid';
+    $handler->display->display_options['fields']['nid']['table'] = 'node';
+    $handler->display->display_options['fields']['nid']['field'] = 'nid';
+    $handler->display->display_options['fields']['nid']['alter']['alter_text'] = 0;
+    $handler->display->display_options['fields']['nid']['alter']['make_link'] = 0;
+    $handler->display->display_options['fields']['nid']['alter']['trim'] = 0;
+    $handler->display->display_options['fields']['nid']['alter']['word_boundary'] = 1;
+    $handler->display->display_options['fields']['nid']['alter']['ellipsis'] = 1;
+    $handler->display->display_options['fields']['nid']['alter']['strip_tags'] = 0;
+    $handler->display->display_options['fields']['nid']['alter']['html'] = 0;
+    $handler->display->display_options['fields']['nid']['hide_empty'] = 0;
+    $handler->display->display_options['fields']['nid']['empty_zero'] = 0;
+    $handler->display->display_options['fields']['nid']['link_to_node'] = 0;
+    /* Field: Node: Type */
+    $handler->display->display_options['fields']['type']['id'] = 'type';
+    $handler->display->display_options['fields']['type']['table'] = 'node';
+    $handler->display->display_options['fields']['type']['field'] = 'type';
+    $handler->display->display_options['fields']['type']['group_type'] = 'count';
+    $handler->display->display_options['fields']['type']['alter']['alter_text'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['make_link'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['trim'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['word_boundary'] = 1;
+    $handler->display->display_options['fields']['type']['alter']['ellipsis'] = 1;
+    $handler->display->display_options['fields']['type']['alter']['strip_tags'] = 0;
+    $handler->display->display_options['fields']['type']['alter']['html'] = 0;
+    $handler->display->display_options['fields']['type']['hide_empty'] = 0;
+    $handler->display->display_options['fields']['type']['empty_zero'] = 0;
+    $handler->display->display_options['fields']['type']['link_to_node'] = 0;
+
+    return $view;
+  }
+
+}
+
