@@ -49,6 +49,7 @@ Views 6.x-3.x-dev
     o #658838 by dereine: Add a few simple simpletests.
     o #664410 by dereine: Tests for the new group by function.
     o #473698 by jrglasgow: Fix error in help text regarding custom theming.
+    o #387448 by joachim: Provide better help text to describe how to use sticky sort.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
