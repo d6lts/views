@@ -43,9 +43,13 @@ class views_plugin_display extends views_plugin {
     $this->unpack_options($this->options, $options);
 
     // Translate changed settings:
-    if ($this->get_option('items_per_page')) {
-      $type = $this->get_option('use_pager');
-      $items_per_page = $this->get_option('items_per_page');
+    // Check if any of the previous values now managed by
+    // pluggable pagers have been changed. 
+    // If yes, perform the conversion
+    $items_per_page = $this->get_option('items_per_page');
+    $offset = $this->get_option('offset');
+    $type = $this->get_option('use_pager');
+    if ((!empty($items_per_page) && $items_per_page != 10) || !empty($offset) || !empty($type)) {
       if (!$type) {
         $type = $items_per_page ? 'some' : 'none';
       }
@@ -57,7 +61,7 @@ class views_plugin_display extends views_plugin {
       $pager = array(
         'type' => $type,
         'options' => array(
-          'offset' => $this->get_option('offset'),
+          'offset' => $offset,
         ),
       );
 
@@ -68,6 +72,11 @@ class views_plugin_display extends views_plugin {
         $pager['options']['id'] = $id;
       }
 
+      // Unset the previous options
+      // After edit and save the view they will be erased
+      $this->set_option('items_per_page', NULL);
+      $this->set_option('offset', NULL);
+      $this->set_option('use_pager', NULL);
       $this->set_option('pager', $pager);
     }
   }
@@ -283,6 +292,7 @@ class views_plugin_display extends views_plugin {
 
           'use_ajax' => TRUE,
           'items_per_page' => TRUE,
+          'use_pager' => TRUE,
           'offset' => TRUE,
           'pager' => TRUE,
           'use_more' => TRUE,
@@ -349,6 +359,10 @@ class views_plugin_display extends views_plugin {
       ),
       'offset' => array(
         'default' => 0,
+      ),
+      'use_pager' => array(
+        'default' => FALSE,
+        'bool' => TRUE,
       ),
       'use_more' => array(
         'default' => FALSE,
@@ -1044,7 +1058,7 @@ class views_plugin_display extends views_plugin {
           '#type' => 'checkbox',
           '#title' => t('Group by'),
           '#description' => t('If enabled, some fields may become unavailable. All fields that are selected for grouping will be collapsed to one record per distinct value. Other fields which are selected for aggregation will have the function run on them. For example, you can group nodes on title and count the number of nids in order to get a list of duplicate titles.'),
-          '#default_value' => $this->get_option('distinct'),
+          '#default_value' => $this->get_option('group_by'),
         );
         break;
       case 'access':
