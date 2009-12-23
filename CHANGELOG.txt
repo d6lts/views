@@ -53,6 +53,7 @@ Views 6.x-3.x-dev
     o #652716 by dagmar: "no single" flag on filter objects not completely respected, causing improper default filters.
     o #648438 by dww: In rare circumstances, unnecessary term_node tables could be joined in when adding term_data relationships.
     o #228510 by dagmar, KarenS and others: Exposed sorts!!!
+    o #621780 by PaulMagrath: Even/Odd classes wrong with grouping due to row numbering no longer being sequential.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
