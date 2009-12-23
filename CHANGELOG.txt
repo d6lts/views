@@ -48,6 +48,7 @@ Views 6.x-3.x-dev
     o #652812 by dagmar: Fix notices in the query object.
     o #658838 by dereine: Add a few simple simpletests.
     o #664410 by dereine: Tests for the new group by function.
+    o #473698 by jrglasgow: Fix error in help text regarding custom theming.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
