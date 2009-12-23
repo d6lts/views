@@ -59,6 +59,7 @@ Views 6.x-3.x-dev
     o #652712 by dagmar: Some pager settings were not getting properly stored with pluggable pagers.
     o #664382 by dagmar: "Exclude" option on fields not properly stored.
     o #664492 by dagmar: "Group by" settings not properly stored due to typo.
+    o #664518 by dagmar: "Group by" settings on items not properly retained during editing process.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
