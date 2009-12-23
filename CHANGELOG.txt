@@ -8,6 +8,7 @@ Views 2.x-dev
     o #473698 by jrglasgow: Fix error in help text regarding custom theming.
     o #387448 by joachim: Provide better help text to describe how to use sticky sort.
     o #652716 by dagmar: "no single" flag on filter objects not completely respected, causing improper default filters.
+    o #621780 by PaulMagrath: Even/Odd classes wrong with grouping due to row numbering no longer being sequential.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
@@ -34,7 +35,7 @@ Views 2.8 (Dec 02, 2009)
     o #348130 by dereine: "<Any>" should not be translatable since it looks like HTML.
     o #630430 by cafuego: Fix typo in argument text.
     o #370651: Make Views AJAX work with mod_security enabled.
-    o #648438: In rare circumstances, unnecessary term_node tables could be joined in when adding term_data relationships.
+    o #648438 by dww: In rare circumstances, unnecessary term_node tables could be joined in when adding term_data relationships.
     o #639430 by dagmar: theme.inc warning when comments are displayed without links.
 
   Other changes:
