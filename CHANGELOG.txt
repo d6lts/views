@@ -52,6 +52,7 @@ Views 6.x-3.x-dev
     o #387448 by joachim: Provide better help text to describe how to use sticky sort.
     o #652716 by dagmar: "no single" flag on filter objects not completely respected, causing improper default filters.
     o #648438 by dww: In rare circumstances, unnecessary term_node tables could be joined in when adding term_data relationships.
+    o #228510 by dagmar, KarenS and others: Exposed sorts!!!
 
 Views 6.x-3.0-alpha1
   Bugs fixed
