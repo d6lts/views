@@ -66,6 +66,7 @@ Views 6.x-3.x-dev
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
     o #373615 by dereine and lonelyrobot: Allow full set of date arguments for comment timestamp.
     o #623392 by dww: Allow the use of synonyms in summaries for taxonomy arguments.
+    o #629840 by fuerst: Search filter caused bad query on PostgreSQL.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
