@@ -122,6 +122,9 @@ function search_views_data() {
     'filter' => array(
       'handler' => 'views_handler_filter_search',
     ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_search',
+    ),
   );
 
   return $data;
@@ -145,6 +148,9 @@ function search_views_handlers() {
       ),
       'views_handler_filter_search' => array(
         'parent' => 'views_handler_filter',
+      ),
+      'views_handler_argument_search' => array(
+        'parent' => 'views_handler_argument',
       ),
     ),
   );
