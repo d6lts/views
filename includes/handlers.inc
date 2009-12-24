@@ -932,13 +932,12 @@ class views_many_to_one_helper {
  * @param $str
  *   The string to parse.
  * @param $filter
- *   The filter object to use as a base. If not specified one will
- *   be created.
+ *   The filter object to use as a base.
  *
  * @return $filter
  *   The new filter object.
  */
-function views_break_phrase($str, $filter = NULL) {
+function views_break_phrase($str, &$filter) {
   if (!$filter) {
     $filter = new stdClass();
   }
