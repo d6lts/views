@@ -64,6 +64,7 @@ Views 6.x-3.x-dev
     o #268023 by dagmar and dereine: Allow a number of pages limit in paging.
     o #557372 by brush: Allow sorting by taxonomy term views by vocabulary ID and vocabulary name.
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
+    o #373615 by dereine and lonelyrobot: Allow full set of date arguments for comment timestamp.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
