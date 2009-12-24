@@ -63,6 +63,7 @@ Views 6.x-3.x-dev
     o #642328 by dboulet: Always include views.css since a site using Views probably uses it in blocks anyway.
     o #268023 by dagmar and dereine: Allow a number of pages limit in paging.
     o #557372 by brush: Allow sorting by taxonomy term views by vocabulary ID and vocabulary name.
+    o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
