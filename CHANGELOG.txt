@@ -73,6 +73,7 @@ Views 6.x-3.x-dev
     o #608246 by dereine: Use default filter on signature rather than XSS filter.
     o #329390: views_break_phrase could break under PHP4 due to reference error.
     o #629984 by dagmar: Ensure that row styles are relationship safe and add fields they need to the query, such as nids and cids.
+    o #669448: items per page override from summary style stopped working with pluggable pagers.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
