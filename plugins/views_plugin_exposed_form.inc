@@ -121,15 +121,14 @@ class views_plugin_exposed_form extends views_plugin {
   function query() {
     $view = $this->view;
     $exposed_data = $view->exposed_data;
-    $sort_by = $exposed_data['sort_by'];
-    if (!empty($sort_by)) {
-      $handler = $view->sort[$sort_by];
+    if (!empty($exposed_data['sort_by'])) {
+      $handler = $view->sort[$exposed_data['sort_by']];
       if (isset($handler)) {
         $view->query->orderby = array();
         if (isset($exposed_data['sort_order']) && in_array($exposed_data['sort_order'], array('asc', 'desc'))) {
           $handler->options['order'] = $exposed_data['sort_order'];
         }
-        $handler->query();  
+        $handler->query();
         foreach ($view->sort as $sort) {
           if (!$sort->is_exposed()) {
             $sort->query();
@@ -161,7 +160,7 @@ class views_plugin_exposed_form extends views_plugin {
         $exposed_sorts[$id] = check_plain($handler->options['expose']['label']);
       }
     }
- 
+
     if (count($exposed_sorts)) {
       $form['sort_by'] = array(
         '#type' => 'select',
