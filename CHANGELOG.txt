@@ -13,6 +13,7 @@ Views 2.x-dev
     o #629840 by fuerst: Search filter caused bad query on PostgreSQL.
     o #329390: views_break_phrase could break under PHP4 due to reference error.
     o #652742: Replacement pattern tokens for multiple fields did not work.
+    o #659510 by Souvent22 and dereine: glossary AJAX broken.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
