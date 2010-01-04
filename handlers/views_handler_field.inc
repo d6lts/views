@@ -272,7 +272,7 @@ class views_handler_field extends views_handler {
           'edit-options-alter-make-link' => array(1)
         ),
       );
-      
+
 
       // Get a list of the available fields and arguments for token replacement.
       $options = array();
@@ -458,7 +458,7 @@ class views_handler_field extends views_handler {
           $this->original_value = $this->last_render;
 
           $alter = $item + $this->options['alter'];
-          $items[] = $this->render_text($alter);       
+          $items[] = $this->render_text($alter);
         }
 
         $value = $this->render_items($items);
@@ -511,7 +511,7 @@ class views_handler_field extends views_handler {
 
     return $value;
   }
-  
+
   /**
    * Render this field as altered text, from a fieldset set by the user.
    */
@@ -662,12 +662,12 @@ class views_handler_field extends views_handler {
       else {
         $tokens["[$field]"] = '';
       }
+      $this->add_self_tokens($tokens, $item);
+
       // We only use fields up to (and including) this one.
       if ($field == $this->options['id']) {
         break;
       }
-
-      $this->add_self_tokens($tokens, $item);
     }
 
     return $tokens;
