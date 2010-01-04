@@ -75,6 +75,7 @@ Views 6.x-3.x-dev
     o #629984 by dagmar: Ensure that row styles are relationship safe and add fields they need to the query, such as nids and cids.
     o #669448: items per page override from summary style stopped working with pluggable pagers.
     o #652742: Replacement pattern tokens for multiple fields did not work.
+    o #659510 by Souvent22 and dereine: glossary AJAX broken.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
