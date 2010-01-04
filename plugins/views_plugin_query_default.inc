@@ -1007,8 +1007,11 @@ class views_plugin_query_default extends views_plugin_query{
 
     list($distinct, $fields, $non_aggregates) = $this->compile_fields($fields_array);
 
-   if ($this->has_aggregate || $this->groupby) {
-     $groupby = "GROUP BY " . implode(', ', array_unique(array_merge($this->groupby, $non_aggregates))) . "\n";
+    if (count($this->having)) {
+      $this->has_aggregate = TRUE;
+    }
+    if ($this->has_aggregate || $this->groupby) {
+      $groupby = "GROUP BY " . implode(', ', array_unique(array_merge($this->groupby, $non_aggregates))) . "\n";
       if ($this->having) {
         $having = $this->condition_sql('having');
       }
