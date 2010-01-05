@@ -18,6 +18,7 @@ Views 2.x-dev
     o #670308 by Mike Wacker: Make views_get_view() properly set disabled flag when retrieving default views.
     o #536910 by dereine: Theme and language should be taken into account during caching.
     o #627402 by dereine: Aggregator description needed more controllable input filtering.
+    o #416264 by bec: Dependency processing could cause exposed forms to disappear if used multiple times on the same page.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
