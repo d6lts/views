@@ -20,6 +20,7 @@ Views 2.x-dev
     o #627402 by dereine: Aggregator description needed more controllable input filtering.
     o #416264 by bec: Dependency processing could cause exposed forms to disappear if used multiple times on the same page.
     o #657442 by nicholasThompson and dagmar: Include "mail" field in user picture so that modules that need this do not break when rendering picture in Views.
+    o #329044 by gordon: Check to see if access plugin exists before using to prevent whitescreens.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
