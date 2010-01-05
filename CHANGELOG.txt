@@ -83,6 +83,7 @@ Views 6.x-3.x-dev
     o #536910 by dereine: Theme and language should be taken into account during caching.
     o #627402 by dereine: Aggregator description needed more controllable input filtering.
     o #652684 by dereine: Search and replace error resulted in invalid function name in nid argument validator.
+    o #416264 by bec: Dependency processing could cause exposed forms to disappear if used multiple times on the same page.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
