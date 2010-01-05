@@ -15,6 +15,7 @@ Views 2.x-dev
     o #652742: Replacement pattern tokens for multiple fields did not work.
     o #659510 by Souvent22 and dereine: glossary AJAX broken.
     o #335599 by miro_dietiker: Remove the 95% width constraint on the admin hover links to be nicer to themes.
+    o #670308 by Mike Wacker: Make views_get_view() properly set disabled flag when retrieving default views.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
