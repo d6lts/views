@@ -79,6 +79,7 @@ Views 6.x-3.x-dev
     o #666720 by dagmar: Fix GROUP BY when only filters are present.
     o #335599 by miro_dietiker: Remove the 95% width constraint on the admin hover links to be nicer to themes.
     o #670308 by Mike Wacker: Make views_get_view() properly set disabled flag when retrieving default views.
+    o #670874 by dereine: Argument validator settings were not getting saved.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
