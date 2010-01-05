@@ -85,6 +85,7 @@ Views 6.x-3.x-dev
     o #652684 by dereine: Search and replace error resulted in invalid function name in nid argument validator.
     o #416264 by bec: Dependency processing could cause exposed forms to disappear if used multiple times on the same page.
     o #657442 by nicholasThompson and dagmar: Include "mail" field in user picture so that modules that need this do not break when rendering picture in Views.
+    o #329044 by gordon: Check to see if access plugin exists before using to prevent whitescreens.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
