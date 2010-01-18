@@ -70,7 +70,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
           data: { 'js': 1 },
           type: 'POST',
           success: Drupal.Views.Ajax.ajaxResponse,
-          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': data.url})); },
+          error: function(xhr) { $('span.views-throbbing').remove(); Drupal.Views.Ajax.handleErrors(xhr, data.url); },
           dataType: 'json'
         });
         return false;
@@ -178,7 +178,7 @@ Drupal.Views.Ajax.previewResponse = function(data) {
           data: { 'js': 1 },
           type: 'POST',
           success: Drupal.Views.Ajax.previewResponse,
-          error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+          error: function(xhr) { $('span.views-throbbing').remove(); Drupal.Views.Ajax.handleErrors(xhr, url); },
           dataType: 'json'
         });
         return false;
@@ -199,7 +199,7 @@ Drupal.Views.updatePreviewForm = function() {
     data: { 'js': 1 },
     type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+    error: function(xhr) { $('span.views-throbbing').remove(); Drupal.Views.Ajax.handleErrors(xhr, url); },
     dataType: 'json'
   });
 
@@ -216,7 +216,7 @@ Drupal.Views.updatePreviewFilterForm = function() {
     data: { 'js': 1 },
     type: 'GET',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+    error: function(xhr) { $('span.views-throbbing').remove(); Drupal.Views.Ajax.handleErrors(xhr, url); },
     dataType: 'json'
   });
 
@@ -236,7 +236,7 @@ Drupal.Views.updatePreviewLink = function() {
     data: 'js=1',
     type: 'POST',
     success: Drupal.Views.Ajax.previewResponse,
-    error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+    error: function(xhr) { $(this).removeClass('views-throbbing'); Drupal.Views.Ajax.handleErrors(xhr, url); },
     dataType: 'json'
   });
 
@@ -263,7 +263,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
       url: url,
       data: 'js=1',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { $(this).removeClass('views-throbbing'); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+      error: function(xhr) { $(this).removeClass('views-throbbing'); Drupal.Views.Ajax.handleErrors(xhr, url); },
       dataType: 'json'
     });
 
@@ -282,7 +282,7 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
       data: { 'js': 1 },
       type: 'POST',
       success: Drupal.Views.Ajax.ajaxResponse,
-      error: function() { $('span.views-throbbing').remove(); alert(Drupal.t("An error occurred at @path.", {'@path': url})); },
+      error: function(xhr) { $('span.views-throbbing').remove(); Drupal.Views.Ajax.handleErrors(xhr, url); },
       dataType: 'json'
     });
 
@@ -315,4 +315,34 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
  */
 Drupal.theme.tableDragChangedWarning = function () {
   return '<div></div>';
+}
+
+/**
+ * Display error in a more fashion way
+ */
+Drupal.Views.Ajax.handleErrors = function (xhr, path) {
+  var error_text = '';
+
+  if ((xhr.status == 500 && xhr.responseText) || xhr.status == 200) {
+    error_text = xhr.responseText;
+
+    // Replace all &lt; and &gt; by < and >
+    error_text = error_text.replace("/&(lt|gt);/g", function (m, p) {
+      return (p == "lt")? "<" : ">";
+    });
+
+    // Now, replace all html tags by empty spaces
+    error_text = error_text.replace(/<("[^"]*"|'[^']*'|[^'">])*>/gi,"");
+
+    // Fix end lines
+    error_text = error_text.replace(/[\n]+\s+/g,"\n");
+  }
+  if (xhr.status == 500) {
+    error_text = xhr.status + ': ' + Drupal.t("Internal server error. Please see server or PHP logs for error information.");
+  }
+  else {
+    error_text = xhr.status + ': ' + xhr.statusText;
+  }
+
+  alert(Drupal.t("An error occurred at @path.\n\nError Description: @error", {'@path': path, '@error': error_text}));
 }
