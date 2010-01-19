@@ -1176,6 +1176,10 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
   $style_plugin = $display->handler->get_plugin();
 
   $vars['fields'] = '';
+  $vars['areas'] = array();
+  foreach (array('header', 'footer', 'empty') as $area) {
+    $vars['areas'][$area] = theme('views_ui_edit_item', $area, $view, $display);
+  }
   $vars['fields'] = theme('views_ui_edit_item', 'field', $view, $display, !($style_plugin && $style_plugin->uses_fields()));
   $vars['relationships'] = theme('views_ui_edit_item', 'relationship', $view, $display);
   $vars['arguments'] = theme('views_ui_edit_item', 'argument', $view, $display);
@@ -2382,6 +2386,11 @@ function views_ui_add_item_form(&$form_state) {
   $display = &$view->display[$display_id];
 
   $types = views_object_types();
+
+  if (!empty($types[$type]['type'])) {
+    $type = $types[$type]['type'];
+  }
+
   $form['#title'] = check_plain($display->display_title) . ': ';
   $form['#title'] .= t('Add @type', array('@type' => $types[$type]['ltitle']));
   $form['#section'] = $display_id . 'add-item';
@@ -2594,10 +2603,16 @@ function views_ui_config_item_form_submit($form, &$form_state) {
   // Run it through the handler's submit function.
   $form_state['handler']->options_submit($form['options'], $form_state);
   $item = $form_state['handler']->options;
+  $types = views_object_types();
+
+  $type = $form_state['type'];
+  if (!empty($types[$type]['type'])) {
+    $type = $types[$type]['type'];
+  }
 
   // Create a new handler and unpack the options from the form onto it. We
   // can use that for storage.
-  $handler = views_get_handler($item['table'], $item['field'], $form_state['type']);
+  $handler = views_get_handler($item['table'], $item['field'], $type);
 
   // This unpacks only options that are in the definition, ensuring random
   // extra stuff on the form is not sent through.
@@ -3221,7 +3236,7 @@ function views_fetch_fields($base, $type, $grouping = FALSE) {
           $bases[] = $table;
           continue;
         }
-        foreach (array('field', 'sort', 'filter', 'argument', 'relationship') as $key) {
+        foreach (array('field', 'sort', 'filter', 'argument', 'relationship', 'area') as $key) {
           if (!empty($info[$key])) {
             if ($grouping && !empty($info[$key]['no group by'])) {
               continue;
