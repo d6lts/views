@@ -181,9 +181,19 @@ class views_plugin_exposed_form extends views_plugin {
         $form['reset']['#weight'] = 10;
       }
     }
+
+    $pager = $this->view->display_handler->get_plugin('pager');
+    if ($pager) {
+      $pager->exposed_form_alter($form, $form_state);
+      $form_state['pager_plugin'] = $pager;
+    }
   }
 
-  function exposed_form_validate(&$form, &$form_state) { }
+  function exposed_form_validate(&$form, &$form_state) {
+    if (isset($form_state['pager_plugin'])) {
+      $form_state['pager_plugin']->exposed_form_validate($form, $form_state);
+    }
+  }
 
   /**
    * This function is executed when exposed form is submited.
@@ -199,6 +209,10 @@ class views_plugin_exposed_form extends views_plugin {
   function exposed_form_submit(&$form, &$form_state, &$exclude) {
     if (!empty($form_state['values']['op']) && $form_state['values']['op'] == t('Reset')) {
       $this->reset_form($form, $form_state);
+    }
+    if (isset($form_state['pager_plugin'])) {
+      $form_state['pager_plugin']->exposed_form_submit($form, $form_state, $exclude);
+      $exclude[] = 'pager_plugin';
     }
   }
 

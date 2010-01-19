@@ -593,6 +593,19 @@ function template_preprocess_views_exposed_form(&$vars) {
   unset($form['form_build_id']);
   unset($form['form_token']);
 
+  if (isset($form['sort_by'])) {
+    $vars['sort_by'] = drupal_render($form['sort_by']);
+    $vars['sort_order'] = drupal_render($form['sort_order']);
+  }
+  if (isset($form['items_per_page'])) {
+    $vars['items_per_page'] = drupal_render($form['items_per_page']);
+  }
+  if (isset($form['offset'])) {
+    $vars['offset'] = drupal_render($form['offset']);
+  }
+  if (isset($form['reset'])) {
+    $vars['reset_button'] = drupal_render($form['reset']);
+  }
   // This includes the submit button.
   $vars['button'] = drupal_render($form);
 }
