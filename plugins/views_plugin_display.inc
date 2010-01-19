@@ -1693,7 +1693,7 @@ class views_plugin_display extends views_plugin {
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     // Not sure I like this being here, but it seems (?) like a logical place.
     $cache_plugin = $this->get_plugin('cache');
     if ($cache_plugin) {

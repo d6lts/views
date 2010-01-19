@@ -53,7 +53,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
     );
   }
 
-  function options_submit(&$form, &$form_state, &$options) {
+  function options_submit($form, &$form_state, &$options) {
     // filter trash out of the options so we don't store giant unnecessary arrays
     $options['vids'] = array_filter($options['vids']);
   }

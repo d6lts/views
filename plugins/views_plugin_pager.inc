@@ -98,7 +98,7 @@ class views_plugin_pager extends views_plugin {
   /**
    * Provide the default form form for submitting options
    */
-  function options_submit(&$form, &$form_state) { }
+  function options_submit($form, &$form_state) { }
 
   /**
    * Return a string to display as the clickable title for the

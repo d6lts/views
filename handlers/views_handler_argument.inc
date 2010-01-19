@@ -46,7 +46,7 @@ class views_handler_argument extends views_handler {
     }
   }
 
-  function init(&$view, &$options) {
+  function init(&$view, $options) {
     parent::init($view, $options);
   }
 
@@ -274,7 +274,7 @@ class views_handler_argument extends views_handler {
 
   }
 
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     if (empty($form_state['values']['options'])) {
       return;
     }

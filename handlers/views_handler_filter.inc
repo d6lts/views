@@ -110,7 +110,7 @@ class views_handler_filter extends views_handler {
   /**
    * Simple submit handler
    */
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     unset($form_state['values']['expose_button']); // don't store this.
     $this->operator_submit($form, $form_state);
     $this->value_submit($form, $form_state);
