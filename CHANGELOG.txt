@@ -89,6 +89,7 @@ Views 6.x-3.x-dev
     o #455364 by sdrycroft: Prevent modules trying to define the same default view name from breaking everything.
     o #661676 by dagmar: Improve error handling during AJAX failures.
     o #324092 by dagmar: Expose "Items per page" and "Offset".
+    o #660196 by dagmar: Allow changing the "Reset" button label in the exposed form settings.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
