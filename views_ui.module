@@ -192,6 +192,10 @@ function views_ui_theme() {
       'arguments' => array('form' => NULL),
       'file' => 'includes/admin.inc',
     ),
+    'views_ui_rearrange_filter_form' => array(
+      'arguments' => array('form' => NULL),
+      'file' => 'includes/admin.inc',
+    ),
 
     // list views
     'views_ui_list_views' => array(

@@ -92,6 +92,7 @@ Views 6.x-3.x-dev
     o #660196 by dagmar: Allow changing the "Reset" button label in the exposed form settings.
     o #653628 by dagmar and dereine: Ensure child method declarations match parent method declarations to prevent notices.
     o #510284 by dagmar: Convert header/footer/empty text to pluggable areas and make them handlers so they can benefit from the settings + rearrange system.
+    o #118672: Allow an OR in filters by adding groups in the filter UI.
 
 Views 6.x-3.0-alpha1
   Bugs fixed

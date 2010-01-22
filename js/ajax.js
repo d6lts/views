@@ -346,3 +346,71 @@ Drupal.Views.Ajax.handleErrors = function (xhr, path) {
 
   alert(Drupal.t("An error occurred at @path.\n\nError Description: @error", {'@path': path, '@error': error_text}));
 }
+
+// $Id$
+
+Drupal.behaviors.ViewsGroupedTableDrag = function(context) {
+  var table_id = 'arrange';
+  var table = $('table#arrange');
+  var tableDrag = Drupal.tableDrag[table_id];
+
+  if (tableDrag) {
+    // Add a handler for when a row is swapped, update empty regions.
+    tableDrag.row.prototype.onSwap = function(swappedRow) {
+      checkEmptyRegions(table, this);
+    };
+
+    $('a.views-groups-remove-link')
+      .addClass('views-processed')
+      .click(function() {
+        var id = $(this).attr('id').replace('views-remove-link-', '');
+        var $row = $('#views-row-' + id);
+        $row.hide().removeClass('draggable');
+        $('#views-removed-' + id).attr('checked', true);
+        tableDrag.rowObject = new tableDrag.row($row.get(0), 'mouse', tableDrag.indentEnabled, tableDrag.maxDepth, true);
+        // If there is a draggable row after the row we just removed, swap us
+        // down by one so that the empty region check does not see this row
+        // and think that the region is empty.
+        if ($row.next('tr').is('.draggable')) {
+          tableDrag.rowObject.swap('after', $row.next('tr').get(0));
+        }
+        checkEmptyRegions(table, tableDrag.rowObject);
+        return false;
+      });
+
+    // Add a handler so when a row is dropped, update fields dropped into new group.
+    tableDrag.onDrop = function() {
+      dragObject = this;
+      // If this occurs row is in an empty group or its is the first of the group
+      if ($(dragObject.rowObject.element).prev('tr').is('.group-message')) {
+        // Get the previous group, this contains the group id
+        var regionRow = $(dragObject.rowObject.element).prev('tr').get(0);
+        var groupId = regionRow.className.replace(/([^ ]+[ ]+)*group-([^ ]+)-message([ ]+[^ ]+)*/, '$2');
+        // Then, update the select group value
+        var selectGroupField = $('select.views-group-select', dragObject.rowObject.element);
+        selectGroupField.val(groupId);
+      }
+    }
+
+    var checkEmptyRegions = function(table, rowObject) {
+      $('tr.group-message', table).each(function() {
+        // If the dragged row is in this region, but above the message row, swap it down one space.
+        if ($(this).prev('tr').get(0) == rowObject.element) {
+          // Prevent a recursion problem when using the keyboard to move rows up.
+          if ((rowObject.method != 'keyboard' || rowObject.direction == 'down')) {
+            rowObject.swap('after', this);
+          }
+        }
+        // This region has become empty
+        if ($(this).next('tr').is(':not(.draggable)') || $(this).next('tr').size() == 0) {
+          $(this).removeClass('group-populated').addClass('group-empty');
+        }
+        // This region has become populated.
+        else if ($(this).is('.group-empty')) {
+          $(this).removeClass('group-empty').addClass('group-populated');
+        }
+      });
+    };
+  }
+}
+
