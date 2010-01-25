@@ -96,6 +96,7 @@ Views 6.x-3.x-dev
     o #646236 by dagmar: User validate plugin did not properly save values.
     o #693882 by dereine: Fix SQL error when no filters.
     o #662174: handlers with an 'extra form' or other option data that was not in the main form could lose that data.
+    o #571548 by dagmar: Prevent aliases longer than 63 characters which pgsql cannot handle.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
