@@ -843,6 +843,10 @@ class views_plugin_query_default extends views_plugin_query{
   function condition_sql($where = 'where') {
     $clauses = array();
     foreach ($this->$where as $group => $info) {
+      if (empty($info['clauses'])) {
+        continue;
+      }
+
       $clause = implode(") " . $info['type'] . " (", $info['clauses']);
       if (count($info['clauses']) > 1) {
         $clause = '(' . $clause . ')';
