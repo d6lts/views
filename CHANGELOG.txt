@@ -100,6 +100,7 @@ Views 6.x-3.x-dev
     o #694980 by dereine: New views should default to limiting to 10 items, to copy previous behavior.
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
     o #699426 by dereine: Tests pluggable pagers.
+    o #679714 by dereine: test: groupby sum. avg, min, max.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
