@@ -58,6 +58,7 @@ class ViewsPagerTest extends DrupalWebTestCase {
       'pager[type]' => 'full',
     );
     $this->drupalPost('admin/build/views/nojs/display/test_store_pager_settings/default/pager', $edit, t('Update'));
+    $this->drupalGet('admin/build/views/edit/test_store_pager_settings');
     $this->assertText('Paged');
 
     $edit = array(
@@ -199,7 +200,6 @@ class ViewsPagerTest extends DrupalWebTestCase {
     $view->display_handler->set_option('pager', $pager);
     $view->execute();
     $this->assertEqual(count($view->result), 3, t('Take sure that only a certain count of items is returned'));
-    debug((string) $view->build_info['query']);
 
     // Check some public functions.
     $this->assertFalse($view->query->pager->use_pager());
