@@ -891,7 +891,7 @@ class views_plugin_query_default extends views_plugin_query{
 
       if (!empty($field['count'])) {
         // Retained for compatibility
-        $field['function'] = 'COUNT';
+        $field['function'] = 'count';
       }
 
       if (!empty($field['function'])) {
