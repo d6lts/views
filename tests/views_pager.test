@@ -1,3 +1,4 @@
+
 <?php
 // $Id$
 /**
@@ -199,6 +200,7 @@ class ViewsPagerTest extends DrupalWebTestCase {
     $view->display_handler->set_option('pager', $pager);
     $view->execute();
     $this->assertEqual(count($view->result), 3, t('Take sure that only a certain count of items is returned'));
+    debug((string) $view->build_info['query']);
 
     // Check some public functions.
     $this->assertFalse($view->query->pager->use_pager());
@@ -233,11 +235,66 @@ class ViewsPagerTest extends DrupalWebTestCase {
    * Test the normal pager.
    */
   public function testNormalPager() {
+    // Create 11 nodes and take sure that everyone is returned.
+    // We create 11 nodes, because the default pager plugin had 10 items per page.
+    for ($i = 0; $i < 11; $i++) {
+      $this->drupalCreateNode();
+    }
+    $view = $this->viewsPagerFull();
+    $view->set_display('default');
+    $view->execute();
+    $this->assertEqual(count($view->result), 5, t('Take sure that only a certain count of items is returned'));
+    $view->destroy();
+
+    // Setup and test a offset.
+    $view = $this->viewsPagerFull();
+    $view->set_display('default');
+
+    $pager = array(
+      'type' => 'full',
+      'options' => array(
+        'offset' => 8,
+        'items_per_page' => 5,
+      ),
+    );
+    $view->display_handler->set_option('pager', $pager);
+    $view->execute();
+    $this->assertEqual(count($view->result), 3, t('Take sure that only a certain count of items is returned'));
+
+    // TODO test number of pages.
   }
+
+  function ViewsPagerFull() {
+    $view = new view;
+    $view->name = 'test_pager_full';
+    $view->description = '';
+    $view->tag = '';
+    $view->view_php = '';
+    $view->base_table = 'node';
+    $view->is_cacheable = FALSE;
+    $view->api_version = 2;
+    $view->disabled = FALSE; /* Edit this to true to make a default view disabled initially */
+
+    /* Display: Defaults */
+    $handler = $view->new_display('default', 'Defaults', 'default');
+    $handler->display->display_options['access']['type'] = 'none';
+    $handler->display->display_options['cache']['type'] = 'none';
+    $handler->display->display_options['exposed_form']['type'] = 'basic';
+    $handler->display->display_options['pager']['type'] = 'full';
+    $handler->display->display_options['pager']['options']['items_per_page'] = '5';
+    $handler->display->display_options['pager']['options']['offset'] = '0';
+    $handler->display->display_options['pager']['options']['id'] = '0';
+    $handler->display->display_options['style_plugin'] = 'default';
+    $handler->display->display_options['row_plugin'] = 'node';
+
+    return $view;
+  }
+
 
   /**
    * Test the minipager.
    */
   public function testMiniPager() {
+    // the functionality is the same as the normal pager, so i don't know what to test here.
   }
 }
