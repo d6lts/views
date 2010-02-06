@@ -1,4 +1,3 @@
-
 <?php
 // $Id$
 /**
@@ -59,7 +58,7 @@ class ViewsPagerTest extends DrupalWebTestCase {
       'pager[type]' => 'full',
     );
     $this->drupalPost('admin/build/views/nojs/display/test_store_pager_settings/default/pager', $edit, t('Update'));
-    $this->assert('Paged');
+    $this->assertText('Paged');
 
     $edit = array(
       'pager_options[items_per_page]' => 20,
