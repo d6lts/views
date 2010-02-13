@@ -103,6 +103,7 @@ Views 6.x-3.x-dev
     o #679714 by dereine: test: groupby sum. avg, min, max.
     o #706464 by dereine: Test full(normal) pager plugin.
     o by dereine: Test pluggable access.
+    o by dereine: Test pluggable default argument.
 
 Views 6.x-3.0-alpha1
   Bugs fixed
