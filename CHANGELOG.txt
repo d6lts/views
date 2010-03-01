@@ -8,6 +8,7 @@ Views 6.x-3.x-dev
     o by dereine: Test pluggable default argument.
     o by dereine: Test exposed forms ui.
     o #681726 by drewish: Allow term edit link field.
+    o Test argument validation plugins.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
