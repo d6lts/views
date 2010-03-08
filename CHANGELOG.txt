@@ -10,6 +10,7 @@ Views 6.x-3.x-dev
     o #681726 by drewish: Allow term edit link field.
     o Test argument validation plugins.
     o #422434 by BWPanda: Correct (NULL) to (NOT NULL) in varios operator descriptions for empty/not empty.
+    o #685622 by dereine: Field to provide link to a node revision.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
