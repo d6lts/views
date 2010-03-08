@@ -13,6 +13,7 @@ Views 6.x-3.x-dev
     o #685622 by dereine: Field to provide link to a node revision.
     o #692428 by Roi Danton: Documentation typo fix.
     o #484600 by dereine: Ability to disable the automatic live preview.
+    o #694094 by yhahn: Allow default views cache to be reset.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
