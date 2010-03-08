@@ -23,6 +23,7 @@ Views 2.x-dev
     o #329044 by gordon: Check to see if access plugin exists before using to prevent whitescreens.
     o #455364 by sdrycroft: Prevent modules trying to define the same default view name from breaking everything.
     o #422434 by BWPanda: Correct (NULL) to (NOT NULL) in varios operator descriptions for empty/not empty.
+    o #692428 by Roi Danton: Documentation typo fix.
   
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
