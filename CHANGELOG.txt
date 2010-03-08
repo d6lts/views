@@ -29,6 +29,7 @@ Views 2.x-dev
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
     o #661676 by dagmar: Improve error handling during AJAX failures.
     o #685622 by dereine: Field to provide link to a node revision.
+    o #484600 by dereine: Ability to disable the automatic live preview.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
