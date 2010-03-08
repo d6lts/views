@@ -15,6 +15,7 @@ Views 6.x-3.x-dev
     o #484600 by dereine: Ability to disable the automatic live preview.
     o #694094 by yhahn: Allow default views cache to be reset.
     o #654738 by Scott Reynolds: Offset date filter missing current time.
+    o #716236 by jmiccolis: Allow default menu tabs to also have menu entries.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
