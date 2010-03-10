@@ -24,6 +24,7 @@ Views 2.x-dev
     o #455364 by sdrycroft: Prevent modules trying to define the same default view name from breaking everything.
     o #422434 by BWPanda: Correct (NULL) to (NOT NULL) in varios operator descriptions for empty/not empty.
     o #692428 by Roi Danton: Documentation typo fix.
+    o #713210 by dereine: Node language settings could persist for subsequent rows if they should not have had a language.
   
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
