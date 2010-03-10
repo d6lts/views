@@ -23,6 +23,7 @@ Views 6.x-3.x-dev
     o #621980 by yhahn: Namespace tabs.js to guarantee no conflicts with jQuery UI.
     o #684656 by yhahn: Prevent Views from performing an unneeded variable_set() during block list.
     o #721358 by dereine: Unable to select "Limit list to selected items." With tests.
+    o #737120 by james.williams: Fix help text for date offsets which gave incorrect information.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
