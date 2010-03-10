@@ -40,6 +40,7 @@ Views 2.x-dev
     o #685622 by dereine: Field to provide link to a node revision.
     o #484600 by dereine: Ability to disable the automatic live preview.
     o #716236 by jmiccolis: Allow default menu tabs to also have menu entries.
+    o #550132 by tha_sun: Allow plugins to better control the callbacks used for page type displays.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
