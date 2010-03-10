@@ -20,6 +20,7 @@ Views 6.x-3.x-dev
     o #674772 by joachim: Unable to distinguish profile.module fields with same name in different profile categories.
     o #704490 by domidc: Remove invalid short tags from template.
     o #727798 by SteveReher: Fix typo in overrides.html documentation.
+    o #621980 by yhahn: Namespace tabs.js to guarantee no conflicts with jQuery UI.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
