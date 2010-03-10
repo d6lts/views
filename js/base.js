@@ -11,11 +11,9 @@ Drupal.Views = {};
  * jQuery UI tabs, Views integration component
  */
 Drupal.behaviors.viewsTabs = function (context) {
-  if ($.ui && $.ui.tabs) {
-    $('#views-tabset:not(.views-processed)').addClass('views-processed').tabs({
-      selectedClass: 'active'
-    });
-  }
+  $('#views-tabset:not(.views-processed)').addClass('views-processed').each(function() {
+    new Drupal.Views.Tabs($(this), {selectedClass: 'active'});
+  });
 
   $('a.views-remove-link')
     .addClass('views-processed')

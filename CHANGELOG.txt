@@ -27,6 +27,7 @@ Views 2.x-dev
     o #713210 by dereine: Node language settings could persist for subsequent rows if they should not have had a language.
     o #674772 by joachim: Unable to distinguish profile.module fields with same name in different profile categories.
     o #727798 by SteveReher: Fix typo in overrides.html documentation.
+    o #621980 by yhahn: Namespace tabs.js to guarantee no conflicts with jQuery UI.
   
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.

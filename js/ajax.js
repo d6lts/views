@@ -109,15 +109,14 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
   // Go through and add any requested tabs
   if (data.tab) {
     for (id in data.tab) {
-      $('#views-tabset').addTab(id, data.tab[id]['title'], 0);
+      // Retrieve the tabset instance by stored ID.
+      var instance = Drupal.Views.Tabs.instances[$('#views-tabset').data('UI_TABS_UUID')];
+      instance.add(id, data.tab[id]['title'], 0);
+      instance.click(instance.$tabs.length);
+
       $(id).html(data.tab[id]['body']);
       $(id).addClass('views-tab');
       Drupal.attachBehaviors(id);
-
-      // This is kind of annoying, but we have to actually to find where the new
-      // tab is.
-      var instance = $.ui.tabs.instances[$('#views-tabset').get(0).UI_TABS_UUID];
-      $('#views-tabset').clickTab(instance.$tabs.length);
     }
   }
 
