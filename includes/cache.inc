@@ -115,7 +115,6 @@ function _views_discover_default_views() {
     // If missing index, rebuild the cache
     else {
       views_include_default_views();
-      $defaults = module_invoke_all('views_default_views');
       $cache = array();
 
       foreach(module_implements('views_default_views') as $module) {
