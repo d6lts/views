@@ -37,6 +37,7 @@ Views 6.x-3.x-dev
     o #658842 by tomgf: Provide a proper ellipsis instead of "...".
     o #662654 by dereine: Do not use query to load/validate a user if the user happens to be the logged in user.
     o #666912 by dereine: Prevent imports of views created by newer, incompatible versions of Views.
+    o #672864 by dereine: Add a column count class to the table style for themers to more easily do generic targeting.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
