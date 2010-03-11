@@ -32,6 +32,7 @@ Views 6.x-3.x-dev
     o #531686 by jweowu: Update process failed to properly track its history, causing errors when updating from really old sites.
     o #548292 by mikeker: Create a "Node: path" field that can be used to display the aliased path to a node.
     o #738608 by dagmar: Footer cannot be overridden.
+    o #638004 by stBorchert and BillyMG: If a field "Output as link" ends up with an empty path, do not actually print an empty link.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
