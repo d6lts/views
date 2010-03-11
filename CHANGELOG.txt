@@ -37,6 +37,7 @@ Views 2.x-dev
     o #651274 by dagmar: Show relationship labels in field lists for style config forms.
     o #531686 by jweowu: Update process failed to properly track its history, causing errors when updating from really old sites.
     o #638004 by stBorchert and BillyMG: If a field "Output as link" ends up with an empty path, do not actually print an empty link.
+    o #657384 by smoothify: Under rare circumstances, date default argument could get wrong value.
   
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
