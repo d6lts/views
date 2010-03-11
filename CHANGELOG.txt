@@ -52,6 +52,7 @@ Views 2.x-dev
     o #666912 by dereine: Prevent imports of views created by newer, incompatible versions of Views.
     o #672864 by dereine: Add a column count class to the table style for themers to more easily do generic targeting.
     o #552498 by dereine: User email as an argument.
+    o #515324 by dereine: Make API documentation easier to find.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
