@@ -40,7 +40,6 @@ Views 2.x-dev
     o #657384 by smoothify: Under rare circumstances, date default argument could get wrong value.
     o #658842 by tomgf: Provide a proper ellipsis instead of "...".
     o #662654 by dereine: Do not use query to load/validate a user if the user happens to be the logged in user.
-  
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
     o #661676 by dagmar: Improve error handling during AJAX failures.
@@ -49,6 +48,7 @@ Views 2.x-dev
     o #716236 by jmiccolis: Allow default menu tabs to also have menu entries.
     o #550132 by tha_sun: Allow plugins to better control the callbacks used for page type displays.
     o #548292 by mikeker: Create a "Node: path" field that can be used to display the aliased path to a node.
+    o #666912 by dereine: Prevent imports of views created by newer, incompatible versions of Views.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
