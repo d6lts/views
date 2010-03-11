@@ -35,6 +35,7 @@ Views 6.x-3.x-dev
     o #638004 by stBorchert and BillyMG: If a field "Output as link" ends up with an empty path, do not actually print an empty link.
     o #657384 by smoothify: Under rare circumstances, date default argument could get wrong value.
     o #658842 by tomgf: Provide a proper ellipsis instead of "...".
+    o #662654 by dereine: Do not use query to load/validate a user if the user happens to be the logged in user.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
