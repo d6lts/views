@@ -30,6 +30,7 @@ Views 6.x-3.x-dev
     o #546586 by jeffschuler: String 0 values were being treated as empty therefore not displayed as fields.
     o #651274 by dagmar: Show relationship labels in field lists for style config forms.
     o #531686 by jweowu: Update process failed to properly track its history, causing errors when updating from really old sites.
+    o #548292 by mikeker: Create a "Node: path" field that can be used to display the aliased path to a node.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!

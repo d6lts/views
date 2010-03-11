@@ -265,6 +265,15 @@ function node_views_data() {
       'handler' => 'views_handler_field_node_link_delete',
     ),
   );
+  
+  $data['node']['path'] = array(
+    'field' => array(
+      'title' => t('Path'),
+      'help' => t('The aliased path to this node.'),
+      'handler' => 'views_handler_field_node_path',
+    ),
+  );
+  
 
   // Bogus fields for aliasing purposes.
 
@@ -657,6 +666,9 @@ function node_views_handlers() {
         'parent' => 'views_handler_field_node',
       ),
       'views_handler_field_node_link' => array(
+        'parent' => 'views_handler_field',
+      ),
+      'views_handler_field_node_path' => array(
         'parent' => 'views_handler_field',
       ),
       'views_handler_field_node_type' => array(
