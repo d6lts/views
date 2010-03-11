@@ -44,6 +44,7 @@ Views 2.x-dev
     o #484600 by dereine: Ability to disable the automatic live preview.
     o #716236 by jmiccolis: Allow default menu tabs to also have menu entries.
     o #550132 by tha_sun: Allow plugins to better control the callbacks used for page type displays.
+    o #548292 by mikeker: Create a "Node: path" field that can be used to display the aliased path to a node.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
