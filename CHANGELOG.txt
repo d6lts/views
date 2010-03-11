@@ -34,6 +34,7 @@ Views 2.x-dev
     o #737118 by DeFr: Allow API calls to delete to not clear the views cache to facilitate batch operations.
     o #673852 by yhahn: Allow access plugins to choose whether or not "access all views" should be used.
     o #546586 by jeffschuler: String 0 values were being treated as empty therefore not displayed as fields.
+    o #651274 by dagmar: Show relationship labels in field lists for style config forms.
   
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
