@@ -40,6 +40,7 @@ Views 2.x-dev
     o #657384 by smoothify: Under rare circumstances, date default argument could get wrong value.
     o #658842 by tomgf: Provide a proper ellipsis instead of "...".
     o #662654 by dereine: Do not use query to load/validate a user if the user happens to be the logged in user.
+    o #640862 by dereine: Properly clear feed icon when cloning a view to prevent duplicate feed icons in attachments.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
