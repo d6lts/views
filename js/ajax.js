@@ -79,7 +79,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
     Drupal.attachBehaviors(ajax_area);
   }
-  else {
+  else if (!data.tab) {
     // If no display, reset the form.
     Drupal.Views.Ajax.setForm('', Drupal.settings.views.ajax.defaultForm);
     //Enable the save button.
@@ -116,6 +116,11 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
       $(id).html(data.tab[id]['body']);
       $(id).addClass('views-tab');
+
+      // Update the preview widget to preview the new tab.
+      var display_id = id.replace('#views-tab-', '');
+      $("#preview-display-id").append('<option selected="selected" value="' + id + '">' + data.tab[id]['title'] + '</option>');
+
       Drupal.attachBehaviors(id);
     }
   }
@@ -309,6 +314,19 @@ Drupal.behaviors.ViewsAjaxLinks = function() {
   $('div#views-live-preview a:not(.views-processed)')
     .addClass('views-processed')
     .click(Drupal.Views.updatePreviewLink);
+}
+
+/**
+ * Sync preview display.
+ */
+Drupal.behaviors.syncPreviewDisplay = function() {
+  $("#views-tabset a").click(function() {
+    var href = $(this).attr('href');
+    // Cut of #views-tabset.
+    var display_id = href.substr(11);
+    // Set the form element.
+    $("#views-live-preview #preview-display-id").val(display_id);
+  });
 }
 
 /**

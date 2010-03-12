@@ -44,6 +44,7 @@ Views 6.x-3.x-dev
     o #672044 by moshebeeri: Right-To-Left for views.css.
     o #488314 by yhahn: Allow relationship to fetch nodes from terms.
     o #677936 by mr.baileys: "views-row-last" class accidentally omitted on grids with just one row.
+    o #685938 by dereine: Sync preview widget to current tab to reduce WTFs when previewing the wrong display.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
