@@ -55,6 +55,7 @@ Views 2.x-dev
     o #672864 by dereine: Add a column count class to the table style for themers to more easily do generic targeting.
     o #552498 by dereine: User email as an argument.
     o #515324 by dereine: Make API documentation easier to find.
+    o #488314 by yhahn: Allow relationship to fetch nodes from terms.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
