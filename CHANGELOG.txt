@@ -41,6 +41,7 @@ Views 2.x-dev
     o #658842 by tomgf: Provide a proper ellipsis instead of "...".
     o #662654 by dereine: Do not use query to load/validate a user if the user happens to be the logged in user.
     o #640862 by dereine: Properly clear feed icon when cloning a view to prevent duplicate feed icons in attachments.
+    o #672044 by moshebeeri: Right-To-Left for views.css.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
