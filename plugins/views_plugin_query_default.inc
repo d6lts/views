@@ -987,7 +987,7 @@ class views_plugin_query_default extends views_plugin_query{
     }
 
     if (!$get_count_optimized) {
-      // we only add the groupby if we're not counting.
+      // We only add the orderby if we're not counting, because of performance reasons.
       if ($this->orderby) {
         $orderby = "ORDER BY " . implode(', ', $this->orderby) . "\n";
       }
