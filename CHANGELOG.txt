@@ -51,6 +51,7 @@ Views 6.x-3.x-dev
     o #739448 by brunodbo: Allow "Jump Menu" to set the "Choose" text in style options.
     o #701588 by dereine: Delete button should say Revert on Overridden views.
     o #704958 by davisbc1982: Fix working in pager exposed form.
+    o #508124 by dereine: "accept_null" should have been "accept null" in boolean filter definitions.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
