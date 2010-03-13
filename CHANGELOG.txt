@@ -47,6 +47,7 @@ Views 2.x-dev
     o #433948 by dereine: "numeric" => FALSE not properly supported in handler definitions.
     o #708618 by thsutton: Friendlier message when a handler is missing.
     o #701588 by dereine: Delete button should say Revert on Overridden views.
+    o #508124 by dereine: "accept_null" should have been "accept null" in boolean filter definitions.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
