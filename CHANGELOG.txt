@@ -48,6 +48,7 @@ Views 6.x-3.x-dev
     o #673184 by markus petrux: Default views not always properly loaded by language.
     o #433948 by dereine: "numeric" => FALSE not properly supported in handler definitions.
     o #708618 by thsutton: Friendlier message when a handler is missing.
+    o #739448 by brunodbo: Allow "Jump Menu" to set the "Choose" text in style options.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
