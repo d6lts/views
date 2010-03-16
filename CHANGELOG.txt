@@ -49,6 +49,7 @@ Views 2.x-dev
     o #701588 by dereine: Delete button should say Revert on Overridden views.
     o #508124 by dereine: "accept_null" should have been "accept null" in boolean filter definitions.
     o #513396 by yhager: Attempt multi-byte safety for "trim at word boundary" setting.
+    o #418230 by Scott Reynolds: Views adds wrong nid with "Node: Has new content".
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
