@@ -51,6 +51,7 @@ Views 2.x-dev
     o #513396 by yhager: Attempt multi-byte safety for "trim at word boundary" setting.
     o #418230 by Scott Reynolds: Views adds wrong nid with "Node: Has new content".
     o #558602 by dboulet and Crashtest_: Summary views should provide "active" class on links properly.
+    o #496634 by dereine: Fix long-standing issue of "0" not being a valid argument for multiple integer CCK types.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
