@@ -67,7 +67,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
   }
 
   function validate_argument($argument) {
-    $vids = $this->options['vids'];
+    $vids = array_filter($this->options['vids']);
     $type = $this->options['type'];
     $transform = $this->options['transform'];
 
