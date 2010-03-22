@@ -67,6 +67,7 @@ Views 6.x-3.x-dev
     o #619642 by dereine: Allow argument for user language.
     o #721168 by infojunkie: Guard against uninstantiated pagers.
     o #675154 by dereine and Crashtest_: Improvements to rendering trim text and tag stripping.
+    o #675264 by peck66: Freeform profile list field did not output properly.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
