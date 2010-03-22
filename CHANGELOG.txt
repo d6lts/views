@@ -56,6 +56,7 @@ Views 2.x-dev
     o #528838 by zzolo: If exposed form is in a block, and the form does not validate, ensure the form does not render twice.
     o #727304 by mariusz.slonina: User edit link was disallowing users from editing themselves.
     o #733142 by dereine: Link path field restricts input to too few characters for long links.
+    o #675264 by peck66: Freeform profile list field did not output properly.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
