@@ -57,6 +57,7 @@ Views 2.x-dev
     o #727304 by mariusz.slonina: User edit link was disallowing users from editing themselves.
     o #733142 by dereine: Link path field restricts input to too few characters for long links.
     o #675264 by peck66: Freeform profile list field did not output properly.
+    o #663372 by dan.nsk: Allow tokens to work in the "target" field during link rewriting.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
