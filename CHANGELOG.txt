@@ -58,6 +58,7 @@ Views 2.x-dev
     o #733142 by dereine: Link path field restricts input to too few characters for long links.
     o #675264 by peck66: Freeform profile list field did not output properly.
     o #663372 by dan.nsk: Allow tokens to work in the "target" field during link rewriting.
+    o #747418 by dereine: Fix taxonomy term ID bug introduced in #496634.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
@@ -79,6 +80,7 @@ Views 2.x-dev
     o #619642 by dereine: Allow argument for user language.
     o #675154 by dereine and Crashtest_: Improvements to rendering trim text and tag stripping.
     o #730810 by alex_b: Add fields for authmap table.
+
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
