@@ -75,6 +75,7 @@ Views 2.x-dev
     o #730454 by stella: Add "translate" link along with view/edit/delete links on nodes.
     o #474174 by dereine: Analyze will now warn about "node/%" not being a valid path for Views.
     o #619642 by dereine: Allow argument for user language.
+    o #675154 by dereine and Crashtest_: Improvements to rendering trim text and tag stripping.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
