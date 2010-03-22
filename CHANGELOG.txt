@@ -71,6 +71,7 @@ Views 6.x-3.x-dev
     o #663372 by dan.nsk: Allow tokens to work in the "target" field during link rewriting.
     o #720874 by dereine: Fix division by zero error in full pager when "items per page" is set to 0.
     o #698270 by dereine, dagmar: Fix pager legacy functions view::set_items_per_page() and view::set_offset().
+    o #730810 by alex_b: Add fields for authmap table.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
