@@ -69,6 +69,7 @@ Views 6.x-3.x-dev
     o #675154 by dereine and Crashtest_: Improvements to rendering trim text and tag stripping.
     o #675264 by peck66: Freeform profile list field did not output properly.
     o #663372 by dan.nsk: Allow tokens to work in the "target" field during link rewriting.
+    o #720874 by dereine: Fix division by zero error in full pager when "items per page" is set to 0.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
