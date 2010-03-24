@@ -59,6 +59,7 @@ Views 2.x-dev
     o #675264 by peck66: Freeform profile list field did not output properly.
     o #663372 by dan.nsk: Allow tokens to work in the "target" field during link rewriting.
     o #747418 by dereine: Fix taxonomy term ID bug introduced in #496634.
+    o #466250 by alex_b and dereine: Enlarge views_display field to prevent heavy displays from losing data.
 
   Other changes:
     o #570558 by yhahn: Segment default views caching to conserve memory used by Views during normal operation.
