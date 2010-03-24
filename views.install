@@ -184,13 +184,14 @@ function views_schema_6000() {
         'description' => 'The order in which this display is loaded.',
       ),
       'display_options' => array(
+        // Type corrected in update 6009
         'type' => 'blob',
         'description' => 'A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type.',
         'serialize' => TRUE,
         'serialized default' => 'a:0:{}',
       ),
     ),
-    'primary key' => array('vid', 'id'),
+    // Added primary keys in views_schema_6008()
     'indexes' => array('vid' => array('vid', 'position')),
   );
 
@@ -337,7 +338,7 @@ function views_schema_6005() {
 }
 function views_update_6005() {
   $ret = array();
-  
+
   $new_field = array(
     'type' => 'varchar',
     'length' => '64',
@@ -361,7 +362,7 @@ function views_schema_6006() {
 }
 function views_update_6006() {
   $ret = array();
-  
+
   $table = drupal_get_schema_unprocessed('system', 'cache');
   $table['description'] = 'Cache table for views to store pre-rendered queries, results, and display output.';
   $table['fields']['serialized']['default'] = 1;
@@ -388,10 +389,44 @@ function views_update_6007() {
 /**
  * Add the primary key to views_display table.
  */
+function views_schema_6008() {
+  $schema = views_schema(__FUNCTION__);
+  $schema['views_display']['primary key'] = array('vid', 'id');
+  return $schema;
+}
+
+/**
+ * Add the primary key to the views_display table.
+ */
 function views_update_6008() {
   $ret = array();
 
   db_add_primary_key($ret, 'views_display', array('vid', 'id'));
+
+  return $ret;
+}
+
+/**
+ * Enlarge the views_display.display_options field to accomodate a larger set
+ * of configurations (e. g. fields, filters, etc.) on a display.
+ */
+function views_schema_6009() {
+  $schema = views_schema(__FUNCTION__);
+  $schema['views_display']['fields']['display_options'] = array(
+    'type' => 'text',
+    'size' => 'big',
+    'description' => 'A serialized array of options for this display; it contains options that are generally only pertinent to that display plugin type.',
+    'serialize' => TRUE,
+    'serialized default' => 'a:0:{}',
+  );
+  return $schema;
+}
+
+function views_update_6009() {
+  $ret = array();
+
+  $schema = views_schema_6009();
+  db_change_field($ret, 'views_display', 'display_options', 'display_options', $schema['views_display']['fields']['display_options']);
 
   return $ret;
 }
