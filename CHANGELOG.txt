@@ -88,6 +88,7 @@ Views 2.x-dev
     o #496840 by dereine: Allow boolean filters to define additional output formats and provide an additional for Node: Sticky.
     o #689260 by dereine: Allow "Node type" field to output the machine name as well as the human readable name.
     o #740686 by jacine: Introduce $classes array in views-view.tpl.php.
+    o #582348 by dagmar: Allow UI setting a CSS class for views-view.tpl.php
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:

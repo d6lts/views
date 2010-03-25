@@ -177,6 +177,7 @@ class views_plugin_display extends views_plugin {
       'access' => array('access'),
       'cache' => array('cache'),
       'title' => array('title'),
+      'css_class' => array('css_class'),
       'header' => array('header', 'header_format', 'header_empty'),
       'footer' => array('footer', 'footer_format', 'footer_empty'),
       'empty' => array('empty', 'empty_format'),
@@ -242,6 +243,7 @@ class views_plugin_display extends views_plugin {
           'access' => TRUE,
           'cache' => TRUE,
           'title' => TRUE,
+          'css_class' => TRUE,
           'header' => TRUE,
           'header_format' => TRUE,
           'header_empty' => TRUE,
@@ -309,6 +311,10 @@ class views_plugin_display extends views_plugin {
       'title' => array(
         'default' => '',
         'translatable' => TRUE,
+      ),
+      'css_class' => array(
+        'default' => '',
+        'translatable' => FALSE,
       ),
       'header' => array(
         'default' => '',
@@ -583,7 +589,7 @@ class views_plugin_display extends views_plugin {
   /**
    * Retrieve a list of fields for the current display with the
    *  relationship associated if it exists.
-   */ 
+   */
   function get_field_labels() {
     $options = array();
     foreach ($this->get_handlers('relationship') as $relationship => $handler) {
@@ -853,6 +859,18 @@ class views_plugin_display extends views_plugin {
       );
     }
 
+    $css_class = check_plain(trim($this->get_option('css_class')));
+    if (!$css_class) {
+      $css_class = t('None');
+    }
+
+    $options['css_class'] = array(
+      'category' => 'style',
+      'title' => t('CSS class'),
+      'value' => $css_class,
+      'desc' => t('Change the CSS class name(s) that will be added to this display.'),
+    );
+
     $options['analyze-theme'] = array(
       'category' => 'basic',
       'title' => t('Theme'),
@@ -896,6 +914,14 @@ class views_plugin_display extends views_plugin {
           '#type' => 'textfield',
           '#description' => t('This title will be displayed with the view, wherever titles are normally displayed; i.e, as the page title, block title, etc.'),
           '#default_value' => $this->get_option('title'),
+        );
+        break;
+      case 'css_class':
+        $form['#title'] .= t('CSS class');
+        $form['css_class'] = array(
+          '#type' => 'textfield',
+          '#description' => t('The CSS class names will be added to the view. This enables you to use specific CSS code for each view. You may define multiples classes separated by spaces.'),
+          '#default_value' => $this->get_option('css_class'),
         );
         break;
       case 'use_ajax':
@@ -1448,6 +1474,12 @@ class views_plugin_display extends views_plugin {
    */
   function options_validate(&$form, &$form_state) {
     switch ($form_state['section']) {
+      case 'css_class':
+        $css_class = $form_state['values']['css_class'];
+        if (preg_match('/[^a-zA-Z0-9- ]/', $css_class)) {
+          form_error($form['css_class'], t('CSS classes must be alphanumeric or dashes only.'));
+        }
+      break;
       case 'style_options':
         $style = TRUE;
       case 'row_options':
@@ -1533,6 +1565,7 @@ class views_plugin_display extends views_plugin {
         }
         break;
       case 'title':
+      case 'css_class':
       case 'link_display':
         $this->set_option($section, $form_state['values'][$section]);
         break;
