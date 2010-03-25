@@ -78,6 +78,7 @@ Views 6.x-3.x-dev
     o #684608 by dereine: Default argument to acquire a taxonomy tid from the URL or a node in the URL.
     o #319991 by dereine: Add a search widget for "Enabled" and "Disabled" in view admin.
     o #466250 by alex_b and dereine: Enlarge views_display field to prevent heavy displays from losing data.
+    o #496840 by dereine: Allow boolean filters to define additional output formats and provide an additional for Node: Sticky.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
