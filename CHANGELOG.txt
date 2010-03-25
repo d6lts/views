@@ -81,6 +81,7 @@ Views 6.x-3.x-dev
     o #496840 by dereine: Allow boolean filters to define additional output formats and provide an additional for Node: Sticky.
     o #689260 by dereine: Allow "Node type" field to output the machine name as well as the human readable name.
     o #689780 by deviantintegral: AJAX scrolling could go to wrong place.
+    o #740686 by jacine: Introduce $classes array in views-view.tpl.php.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
