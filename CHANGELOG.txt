@@ -79,6 +79,7 @@ Views 6.x-3.x-dev
     o #319991 by dereine: Add a search widget for "Enabled" and "Disabled" in view admin.
     o #466250 by alex_b and dereine: Enlarge views_display field to prevent heavy displays from losing data.
     o #496840 by dereine: Allow boolean filters to define additional output formats and provide an additional for Node: Sticky.
+    o #689260 by dereine: Allow "Node type" field to output the machine name as well as the human readable name.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
