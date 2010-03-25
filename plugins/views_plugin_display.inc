@@ -1785,7 +1785,9 @@ class views_plugin_display extends views_plugin {
    * Render this display.
    */
   function render() {
-    return theme($this->theme_functions(), $this->view);
+    if (empty($view->result) && $view->display_handler->render_area('empty')) {
+      return theme($this->theme_functions(), $this->view);
+    }
   }
 
   /**
