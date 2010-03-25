@@ -85,6 +85,7 @@ Views 2.x-dev
     o #689446 by dereine: Allow use of l() in link rewriting to not check for aliases.
     o #684608 by dereine: Default argument to acquire a taxonomy tid from the URL or a node in the URL.
     o #496840 by dereine: Allow boolean filters to define additional output formats and provide an additional for Node: Sticky.
+    o #689260 by dereine: Allow "Node type" field to output the machine name as well as the human readable name.
 
 Views 2.8 (Dec 02, 2009)
   Bug fixes:
