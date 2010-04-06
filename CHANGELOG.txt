@@ -83,6 +83,7 @@ Views 6.x-3.x-dev
     o #689780 by deviantintegral: AJAX scrolling could go to wrong place.
     o #740686 by jacine: Introduce $classes array in views-view.tpl.php.
     o #582348 by dagmar: Allow UI setting a CSS class for views-view.tpl.php
+    o #682030 by killes: Add term relation table integration.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
