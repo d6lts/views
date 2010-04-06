@@ -84,6 +84,7 @@ Views 6.x-3.x-dev
     o #740686 by jacine: Introduce $classes array in views-view.tpl.php.
     o #582348 by dagmar: Allow UI setting a CSS class for views-view.tpl.php
     o #682030 by killes: Add term relation table integration.
+    o #697794 by dagmar: Fix notice issue when convering from 2.x area handlers.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
