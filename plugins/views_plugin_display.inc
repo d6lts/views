@@ -865,7 +865,7 @@ class views_plugin_display extends views_plugin {
     }
 
     $options['css_class'] = array(
-      'category' => 'style',
+      'category' => 'basic',
       'title' => t('CSS class'),
       'value' => $css_class,
       'desc' => t('Change the CSS class name(s) that will be added to this display.'),
