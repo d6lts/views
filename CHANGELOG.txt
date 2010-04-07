@@ -87,6 +87,7 @@ Views 6.x-3.x-dev
     o #697794 by dagmar: Fix notice issue when convering from 2.x area handlers.
     o #339758 by dereine: Better handling for display of set options in multiple choice filters.
     o #330160 by aditya_kristanto: Improve text to make it easier to find where to edit the view description.
+    o #765022: SA-CONTRIB-2010-036: Fix XSS and PHP vulnerabilities.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
