@@ -1,6 +1,6 @@
 CHANGELOG for Views for Drupal 5
 
-Views 5.x-1.x
+Views 5.x-1.7
 -------------
 #177494 by moshe weitzman: Added node author's e-mail as field.
 #142347 by merlinofchaos: Fixed missing taxonomy terms in exposed filter.
@@ -23,7 +23,7 @@ Views 5.x-1.x
 #153714 by majsan: Added Swedish translation.
 #286767 by FrederikVO: Updated Dutch translation.
 by gaele, xeniox, ngommers, Lapino, Xano, sutharsan: Added Dutch translation.
-
+#765022: SA-CONTRIB-2010-036: Fix XSS and PHP vulnerabilities.
 
 Views 5.x-1.6
   Bugs fixed:

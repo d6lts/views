@@ -112,7 +112,7 @@ function views_ui_menu($may_cache) {
     $items[] = array('path' => 'admin/build/views/import',
       'title' => t('Import'),
       'callback' => 'views_ui_admin_import_page',
-      'access' => user_access('administer views'),
+      'access' => user_access('administer views') && user_access('use PHP for block visibility'),
       'type' => MENU_LOCAL_TASK);
     $items[] = array('path' => 'admin/build/views/tools',
       'title' => t('Tools'),
@@ -136,9 +136,9 @@ function views_ui_menu($may_cache) {
       'type' => MENU_CALLBACK);
   }
   else {
-    if (user_access('administer views') && 
-        arg(0) == 'admin' && 
-        arg(1) == 'build' && 
+    if (user_access('administer views') &&
+        arg(0) == 'admin' &&
+        arg(1) == 'build' &&
         arg(2) == 'views') {
       $view = views_load_view(arg(3));
       if ($view) {
@@ -230,14 +230,14 @@ function views_ui_admin_page() {
     }
 
     $items[] = array(
-      $view->name, 
-      filter_xss_admin(views_get_title($view, 'admin')), 
-      $view->description, 
-      implode(', ', $provides), 
-      $url, 
+      $view->name,
+      filter_xss_admin(views_get_title($view, 'admin')),
+      $view->description,
+      implode(', ', $provides),
+      $url,
       theme('links', array(
-        array('title' => t('Edit'), 'href' => "admin/build/views/$view->name/edit"), 
-        array('title' => t('Export'), 'href' => "admin/build/views/$view->name/export"), 
+        array('title' => t('Edit'), 'href' => "admin/build/views/$view->name/edit"),
+        array('title' => t('Export'), 'href' => "admin/build/views/$view->name/export"),
         array('title' => t('Delete'), 'href' => "admin/build/views/delete/$view->vid"),
         array('title' => t('Clone'), 'href' => "admin/build/views/$view->name/clone"),
       ))
@@ -305,12 +305,12 @@ function views_ui_admin_page() {
     }
 
     $items[] = array(
-      $view->name, 
+      $view->name,
       filter_xss_admin(views_get_title($view, 'menu')),
-      $view->description, 
-      implode(', ', $provides), 
-      $url, 
-      $status, 
+      $view->description,
+      implode(', ', $provides),
+      $url,
+      $status,
       theme('links', $links)
     );
   }
