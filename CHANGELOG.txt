@@ -1,5 +1,5 @@
 CHANGELOG for Views 3 for Drupal 6
-Views 6.x-3.x-dev
+Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
     o #699426 by dereine: Tests pluggable pagers.
     o #679714 by dereine: test: groupby sum. avg, min, max.
