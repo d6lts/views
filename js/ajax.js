@@ -119,7 +119,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
       // Update the preview widget to preview the new tab.
       var display_id = id.replace('#views-tab-', '');
-      $("#preview-display-id").append('<option selected="selected" value="' + id + '">' + data.tab[id]['title'] + '</option>');
+      $("#preview-display-id").append('<option selected="selected" value="' + display_id + '">' + data.tab[id]['title'] + '</option>');
 
       Drupal.attachBehaviors(id);
     }
