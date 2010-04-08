@@ -5,6 +5,7 @@ Views 2.10
     o #682888 by jcmarco: With zen and zen subthemes, the new $classes array could fail for row styles.
     o #765340 by dereine: <front> token accidentally removed by html entity stripping from URLs.
     o #765352: Fix for postgress versions prior to 8.3 which caused data loss in update.php. Note: This will not repair lost data. If you experienced this you must restore your views_display table from backup.
+    o #766046: Live preview broken right after adding new display.
 
 Views 2.9 (Apr 07, 2010)
   Bug fixes:
