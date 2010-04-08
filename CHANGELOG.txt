@@ -1,4 +1,8 @@
 CHANGELOG for Views 2 for Drupal 6
+Views 2.10
+  Bug fixes:
+    o #765760 by crea: New setting for raw node type had wrong default.
+
 Views 2.9 (Apr 07, 2010)
   Bug fixes:
     o #650152: Book: Top Level Book relationship broken by earlier patch and caused broken query.
