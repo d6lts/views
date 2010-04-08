@@ -6,6 +6,7 @@ Views 6.x-3.0-dev
     o #765352: Fix for postgress versions prior to 8.3 which caused data loss in update.php. Note: This will not repair lost data. If you experienced this you must restore your views_display table from backup.
     o #766046: Live preview broken right after adding new display.
     o #740130: #561892 not applied correctly, caused the 'rewrite' checkbox to be ignored and rewrite always used.
+    o #765310 by dagmar: area handlers unable to be added.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
