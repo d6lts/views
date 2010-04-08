@@ -2,6 +2,7 @@ CHANGELOG for Views 3 for Drupal 6
 Views 6.x-3.0-dev
     o #765760 by crea: New setting for raw node type had wrong default.
     o #682888 by jcmarco: With zen, the new $classes array could fail for row styles.
+    o #765340 by dereine: <front> token accidentally removed by html entity stripping from URLs.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
