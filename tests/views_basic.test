@@ -1,6 +1,6 @@
 <?php
 // $Id$
-module_load_include('inc', 'views', 'tests/views_query');
+module_load_include('test', 'views', 'tests/views_query');
 
 /**
  * Basic test class for Views query builder tests.
