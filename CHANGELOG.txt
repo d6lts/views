@@ -9,6 +9,7 @@ Views 6.x-3.0-dev
     o #765310 by dagmar: area handlers unable to be added.
     o #765296: field IDs could get out of sync, causing render path to try to render a field that did not exist leading to whitescreens.
     o #769528: Rename tests/views_query.inc to tests/views_query.test
+    o #774366 by Dave Reid: getInfo() in tests needs to be public static functions
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

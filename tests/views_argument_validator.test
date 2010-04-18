@@ -3,7 +3,7 @@
 module_load_include('test', 'views', 'tests/views_query');
 
 class viewsArgumentValidatorTest extends ViewsSqlTest {
-  function getInfo() {
+  public static function getInfo() {
     return array(
       'name' => t('Argument validator tests.'),
       'group' => t('Views'),
