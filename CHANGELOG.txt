@@ -4,6 +4,7 @@ Views 2.x-dev
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
     o #767146 by bangpound: Validation not passed down into row style plugin.
     o #513396 by yhager and jcisio: Views trim was not multibyte safe.
+    o #550420 by blauerberg: Views RSS did not properly pass readmore flag from node to RSS item.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
