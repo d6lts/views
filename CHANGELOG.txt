@@ -6,6 +6,7 @@ Views 2.x-dev
     o #513396 by yhager and jcisio: Views trim was not multibyte safe.
     o #550420 by blauerberg: Views RSS did not properly pass readmore flag from node to RSS item.
     o #781296 by dereine: Node: Type "link to its node" option broken.
+    o #769010 by andrea.gariboldi: Overuse of query substitutions fails on some databases.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
