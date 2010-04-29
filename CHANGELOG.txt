@@ -1,5 +1,9 @@
 CHANGELOG for Views 2 for Drupal 6
-Views 2.10
+Views 2.x-dev 
+  Bug fixes:
+    o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
+
+Views 2.10 (Apr 08, 2010)
   Bug fixes:
     o #765760 by crea: New setting for raw node type had wrong default.
     o #682888 by jcmarco: With zen and zen subthemes, the new $classes array could fail for row styles.
