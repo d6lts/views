@@ -1031,10 +1031,7 @@ class views_plugin_query_default extends views_plugin_query{
    * Builds the necessary info to execute the query.
    */
   function build(&$view) {
-    $this->init_pager($view);
-    if ($this->pager->use_pager()) {
-      $this->pager->set_current_page($view->current_page);
-    }
+    $view->init_pager($view);
 
     // Let the pager modify the query to add limits.
     $this->pager->query();
