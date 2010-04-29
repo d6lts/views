@@ -12,6 +12,7 @@ Views 6.x-3.0-dev
     o #774366 by Dave Reid: getInfo() in tests needs to be public static functions
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
     o #767146 by bangpound: Validation not passed down into row style plugin.
+    o #513396 by yhager and jcisio: Views trim was not multibyte safe.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
