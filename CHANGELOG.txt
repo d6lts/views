@@ -5,6 +5,7 @@ Views 2.x-dev
     o #767146 by bangpound: Validation not passed down into row style plugin.
     o #513396 by yhager and jcisio: Views trim was not multibyte safe.
     o #550420 by blauerberg: Views RSS did not properly pass readmore flag from node to RSS item.
+    o #781296 by dereine: Node: Type "link to its node" option broken.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
