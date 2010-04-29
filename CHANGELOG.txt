@@ -2,6 +2,7 @@ CHANGELOG for Views 2 for Drupal 6
 Views 2.x-dev 
   Bug fixes:
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
+    o #767146 by bangpound: Validation not passed down into row style plugin.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
