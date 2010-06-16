@@ -94,6 +94,11 @@ class views_handler_field extends views_handler {
           else {
             $table_alias = $this->table_alias;
           }
+          if (empty($table_alias)) {
+            vpr(t('Handler @handler tried to add additional_field @identifier but @table could not be added!', array('@handler' => $this->definition['handler'], '@identifier' => $identifier, '@table' => $info['table'])));
+            $this->aliases[$identifier] = 'broken';
+            continue;
+          }
           $this->aliases[$identifier] = $this->query->add_field($table_alias, $info['field']);
         }
         else {

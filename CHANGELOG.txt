@@ -7,6 +7,7 @@ Views 2.x-dev
     o #550420 by blauerberg: Views RSS did not properly pass readmore flag from node to RSS item.
     o #781296 by dereine: Node: Type "link to its node" option broken.
     o #769010 by andrea.gariboldi: Overuse of query substitutions fails on some databases.
+    o #607418: Fix queries broken with "ambiguous nid" due to uncommon relationships.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
