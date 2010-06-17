@@ -2003,7 +2003,7 @@ class views_plugin_display extends views_plugin {
         }
         $theme = views_theme_functions('views_more', $this->view, $this->display);
         $path = check_url(url($path, $url_options));
-        return theme($theme, $path, $this->use_more_text());
+        return theme($theme, $path, check_plain($this->use_more_text()));
       }
     }
   }

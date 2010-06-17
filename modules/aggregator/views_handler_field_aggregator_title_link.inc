@@ -38,7 +38,7 @@ class views_handler_field_aggregator_title_link extends views_handler_field {
       return l(check_plain($value), $link, array('html' => TRUE));
     }
     else {
-      return $value;
+      return check_plain($value);
     }
   }
 }
