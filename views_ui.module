@@ -297,11 +297,14 @@ function views_ui_admin_page() {
 
     $links = array();
     $links[] = array('title' => t('Add'), 'href' => "admin/build/views/add/$view->name");
+
+    $token_enable = drupal_get_token('views-enable');
+    $token_disable = drupal_get_token('views-disable');
     if ($status == t('Enabled')) {
-      $links[] = array('title' => t('Disable'), 'href' => "admin/build/views/disable/$view->name");
+      $links[] = array('title' => t('Disable'), 'href' => "admin/build/views/disable/$view->name", 'query' => 'token=' . $token_disable);
     }
     else if ($status == t('Disabled')) {
-      $links[] = array('title' => t('Enable'), 'href' => "admin/build/views/enable/$view->name");
+      $links[] = array('title' => t('Enable'), 'href' => "admin/build/views/enable/$view->name", 'query' => 'token=' . $token_enable);
     }
 
     $items[] = array(
@@ -349,30 +352,40 @@ function views_ui_admin_tools_submit($form_id, $form) {
  * Page to enable a disabled default view
  */
 function views_ui_admin_enable_page($view = '') {
-  views_load_cache();
+  if (isset($_GET['token']) && drupal_valid_token($_GET['token'], 'views-enable')) {
+    views_load_cache();
 
-  if ($view) {
-    $views_status = variable_get('views_defaults', array());
-    $views_status[$view] = 'enabled';
-    variable_set('views_defaults', $views_status);
-    menu_rebuild();
+    if ($view) {
+      $views_status = variable_get('views_defaults', array());
+      $views_status[$view] = 'enabled';
+      variable_set('views_defaults', $views_status);
+      menu_rebuild();
+    }
+    drupal_goto('admin/build/views');
   }
-  drupal_goto('admin/build/views');
+  else {
+    return drupal_access_denied();
+  }
 }
 
 /*
  * Page to disable an enabled default view
  */
 function views_ui_admin_disable_page($view = '') {
-  views_load_cache();
+  if (isset($_GET['token']) && drupal_valid_token($_GET['token'], 'views-disable')) {
+    views_load_cache();
 
-  if ($view) {
-    $views_status = variable_get('views_defaults', array());
-    $views_status[$view] = 'disabled';
-    variable_set('views_defaults', $views_status);
-    menu_rebuild();
+    if ($view) {
+      $views_status = variable_get('views_defaults', array());
+      $views_status[$view] = 'disabled';
+      variable_set('views_defaults', $views_status);
+      menu_rebuild();
+    }
+    drupal_goto('admin/build/views');
   }
-  drupal_goto('admin/build/views');
+  else {
+    return drupal_access_denied();
+  }
 }
 
 /*
