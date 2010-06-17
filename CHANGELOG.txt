@@ -1,29 +1,33 @@
 CHANGELOG for Views for Drupal 5
+Views 5.x-1.8
+-------------
+    o SA-CONTRIB-2010-067: Fix CSRF vulnerability in Views UI.
 
 Views 5.x-1.7
 -------------
-#177494 by moshe weitzman: Added node author's e-mail as field.
-#142347 by merlinofchaos: Fixed missing taxonomy terms in exposed filter.
-#174044 by douggreen: Fixed coding-style in exported views.
-#193888 by mvc: Fixed select lists options in Views UI are not sorted.
-#247420 and #217015 by smk-ka, webchick: Fixed SQL error when using empty
-  text as argument default.
-#191420 by sun: Fixed missing t() for view import page title.
-#166608: missing ->status setting caused access control on various node
-  links to fail.
-#257004: Ensure cache is loaded for exposed filters so that external stuff
-  can use cached forms for AJAX calls
-#211944: Wildcard substitution for arguments ignored in RSS feeds.
-#171505: Fixed missing closing apostrophe in date sorting.
-#167978: Fixed sort granularity.
-#165611: Cached queries could have their args replaced twice, causing
-  percent signs to get messed up.
-#359558 by remi: Added Wysiwyg API support.
-#201537 by mcvecka, darrenoh: add FALSE filter to search.
-#153714 by majsan: Added Swedish translation.
-#286767 by FrederikVO: Updated Dutch translation.
-by gaele, xeniox, ngommers, Lapino, Xano, sutharsan: Added Dutch translation.
-#765022: SA-CONTRIB-2010-036: Fix XSS and PHP vulnerabilities.
+  Bugs fixed:
+    o #177494 by moshe weitzman: Added node author's e-mail as field.
+    o #142347 by merlinofchaos: Fixed missing taxonomy terms in exposed filter.
+    o #174044 by douggreen: Fixed coding-style in exported views.
+    o #193888 by mvc: Fixed select lists options in Views UI are not sorted.
+    o #247420 and #217015 by smk-ka, webchick: Fixed SQL error when using empty
+      text as argument default.
+    o #191420 by sun: Fixed missing t() for view import page title.
+    o #166608: missing ->status setting caused access control on various node
+      links to fail.
+    o #257004: Ensure cache is loaded for exposed filters so that external stuff
+      can use cached forms for AJAX calls
+    o #211944: Wildcard substitution for arguments ignored in RSS feeds.
+    o #171505: Fixed missing closing apostrophe in date sorting.
+    o #167978: Fixed sort granularity.
+    o #165611: Cached queries could have their args replaced twice, causing
+      percent signs to get messed up.
+    o #359558 by remi: Added Wysiwyg API support.
+    o #201537 by mcvecka, darrenoh: add FALSE filter to search.
+    o #153714 by majsan: Added Swedish translation.
+    o #286767 by FrederikVO: Updated Dutch translation.
+    o by gaele, xeniox, ngommers, Lapino, Xano, sutharsan: Added Dutch translation.
+    o #765022: SA-CONTRIB-2010-036: Fix XSS and PHP vulnerabilities.
 
 Views 5.x-1.6
   Bugs fixed:
