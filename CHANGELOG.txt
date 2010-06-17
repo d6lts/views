@@ -23,6 +23,7 @@ Views 6.x-3.0-dev
     o #768162: Revert inadvertant change to grid style behavior.
     o #815392 by killes and dereine: Incorrect construction of $account caused accidental non-permanent change to $user->roles.
     o #723454 by dereine: Upgrade from 5.0 could cause blocks for views with long names to lose configuration.
+    o SA-CONTRIB-2010-067: Fix CSRF and XSS vulnerabilities.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
