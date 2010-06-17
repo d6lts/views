@@ -1,5 +1,5 @@
 CHANGELOG for Views 2 for Drupal 6
-Views 2.x-dev 
+Views 2.11 (Jun 16, 2010)
   Bug fixes:
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
     o #767146 by bangpound: Validation not passed down into row style plugin.
@@ -11,6 +11,7 @@ Views 2.x-dev
     o #768162: Revert inadvertant change to grid style behavior.
     o #815392 by killes and dereine: Incorrect construction of $account caused accidental non-permanent change to $user->roles.
     o #723454 by dereine: Upgrade from 5.0 could cause blocks for views with long names to lose configuration.
+    o SA-CONTRIB-2010-067: Fix CSRF and XSS vulnerabilities.
 
 Views 2.10 (Apr 08, 2010)
   Bug fixes:
