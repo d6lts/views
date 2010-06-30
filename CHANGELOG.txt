@@ -1,4 +1,9 @@
 CHANGELOG for Views 2 for Drupal 6
+Views 2.x-dev
+
+  New features
+    o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
+
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
