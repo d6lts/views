@@ -36,6 +36,7 @@ Views 6.x-3.0-dev
     o #827188 by dereine: Comment ID field should be numeric, not the generic field handler.
     o #827780 by dereine: Fix RSS feed live preview not getting proper PRE tags.
     o #397252 by thekevinday: Allow "glossary" type views to do case insensitive searches.
+    o #780362 by ericduran: Validate display id when changed.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
