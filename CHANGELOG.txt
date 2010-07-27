@@ -13,6 +13,7 @@ Views 2.x-dev
     o #798764 by setvik: Fix broken AJAX in some IE circumstances due to odd IE behavior.
     o #827300 by dereine: Fix authenticated users showing up as "No role" in role summary view.
     o #611728 by incrn8: Respect db_rewrite_sql when choosing taxonomy terms for taxonomy filter.
+    o #746846 by lavamind: url encoding on options could cause visual problems in jump menu.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
