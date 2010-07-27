@@ -10,6 +10,7 @@ Views 2.x-dev
     o #839214 by AlexisWilke: Improve encoding on help text snippets.
     o #792582 by ducktape: Validate that view names are not purely numeric, which cannot be loaded by views_get_view().
     o #848506 by dereine: Add aggregator item ID as an aggregator field.
+    o #798764 by setvik: Fix broken AJAX in some IE circumstances due to odd IE behavior.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
