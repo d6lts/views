@@ -2,6 +2,7 @@ CHANGELOG for Views 2 for Drupal 6
 Views 2.x-dev
   Bugs fixed:
     o #768060 by EmanueleQuinto: Better empty field replacement that continues to respect other rewriting rules.
+    o #781050 by lewisvance: Performance improvement in unpack_options().
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
