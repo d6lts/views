@@ -12,6 +12,7 @@ Views 2.x-dev
     o #727894 by stella: Give stronger classes on exposed widgets for easier theming.
     o #464490 by dereine: Allow links to specify that they are absolute.
     o #317653 by Steven Jones: Allow singular/plural formatting in numeric fields.
+    o #397252 by thekevinday: Allow "glossary" type views to do case insensitive searches.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
