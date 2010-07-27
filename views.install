@@ -282,7 +282,7 @@ function views_update_6001() {
     if (strlen($new) >= 32) {
       $new = md5($new);
     }
-    update_sql($ret, "UPDATE {blocks} SET delta = '$new' WHERE bid = $block->bid");
+    $ret[] = update_sql("UPDATE {blocks} SET delta = '$new' WHERE bid = $block->bid");
   }
 
   return $ret;
