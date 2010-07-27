@@ -43,6 +43,7 @@ Views 6.x-3.0-dev
     o #846054 by celeritas: Exposed form "Reset" button failed to reset if the name was changed in form options.
     o #848506 by dereine: Add aggregator item ID as an aggregator field.
     o #798764 by setvik: Fix broken AJAX in some IE circumstances due to odd IE behavior.
+    o #827300 by dereine: Fix authenticated users showing up as "No role" in role summary view.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
