@@ -662,9 +662,6 @@ function node_views_handlers() {
       'views_handler_field_node_path' => array(
         'parent' => 'views_handler_field',
       ),
-      'views_handler_field_node_type' => array(
-        'parent' => 'views_handler_field_node',
-      ),
       'views_handler_field_node_link_edit' => array(
         'parent' => 'views_handler_field_node_link',
       ),
