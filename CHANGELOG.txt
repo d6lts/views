@@ -44,6 +44,7 @@ Views 6.x-3.0-dev
     o #848506 by dereine: Add aggregator item ID as an aggregator field.
     o #798764 by setvik: Fix broken AJAX in some IE circumstances due to odd IE behavior.
     o #827300 by dereine: Fix authenticated users showing up as "No role" in role summary view.
+    o #857264 by dereine: Remove unneeded "clone" and "export" hover links.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
