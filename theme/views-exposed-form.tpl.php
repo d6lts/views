@@ -25,7 +25,7 @@
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clear-block">
     <?php foreach($widgets as $id => $widget): ?>
-      <div class="views-exposed-widget">
+      <div class="views-exposed-widget views-widget-<?php print $id ?>">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
             <?php print $widget->label; ?>
