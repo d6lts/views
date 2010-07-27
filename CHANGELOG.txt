@@ -42,6 +42,7 @@ Views 6.x-3.0-dev
     o #792582 by ducktape: Validate that view names are not purely numeric, which cannot be loaded by views_get_view().
     o #846054 by celeritas: Exposed form "Reset" button failed to reset if the name was changed in form options.
     o #848506 by dereine: Add aggregator item ID as an aggregator field.
+    o #798764 by setvik: Fix broken AJAX in some IE circumstances due to odd IE behavior.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
