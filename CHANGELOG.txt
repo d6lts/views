@@ -21,6 +21,7 @@ Views 2.x-dev
     o #703980 by jmiccolis: Custom date needs to better support "r".
     o #692988 by joachim: Eliminate an unnecessary query in taxonomy filter.
     o #812608 by drunken monkey: Views outputs unquoted version in exports.
+    o #402944 by drewish: Cache views block list to reduce overhead when listing blocks.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
