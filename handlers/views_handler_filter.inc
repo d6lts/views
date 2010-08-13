@@ -52,7 +52,7 @@ class views_handler_filter extends views_handler {
       'contains' => array(
         'operator' => array('default' => FALSE),
         'label' => array('default' => '', 'translatable' => TRUE),
-        'use_operator' => array('deafult' => 0),
+        'use_operator' => array('default' => 0),
         'operator' => array('default' => ''),
         'identifier' => array('default' => ''),
         'optional' => array('default' => 1),
