@@ -15,6 +15,7 @@ Views 2.x-dev
     o #611728 by incrn8: Respect db_rewrite_sql when choosing taxonomy terms for taxonomy filter.
     o #746846 by lavamind: url encoding on options could cause visual problems in jump menu.
     o #859368 by dereine: Click sort using wrong add_orderby() line caused some click sorts to fail.
+    o #852854 by bojanz: Grammar fix on taxonomy default argument help text.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).

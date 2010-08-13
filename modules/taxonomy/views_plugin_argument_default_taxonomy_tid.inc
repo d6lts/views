@@ -25,7 +25,7 @@ class views_plugin_argument_default_taxonomy_tid extends views_plugin_argument_d
     );
     $form['node'] = array(
       '#type' => 'checkbox',
-      '#title' => t('Load default argument from node page, thats good for related taxonomy blocks.'),
+      '#title' => t('Load default argument from node page. Good for related taxonomy blocks.'),
       '#default_value' => $this->options['node'],
     );
 
