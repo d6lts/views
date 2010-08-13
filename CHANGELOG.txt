@@ -17,6 +17,7 @@ Views 2.x-dev
     o #859368 by dereine: Click sort using wrong add_orderby() line caused some click sorts to fail.
     o #852854 by bojanz: Grammar fix on taxonomy default argument help text.
     o #526106 by Blackice2999: Fix occasional off-by-one-day problem with date arguments.
+    o #863666 by dereine: Revert button redirects to wrong place after view is reverted.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
