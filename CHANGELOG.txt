@@ -49,6 +49,7 @@ Views 6.x-3.0-dev
     o #746846 by lavamind: url encoding on options could cause visual problems in jump menu.
     o #859368 by dereine: Click sort using wrong add_orderby() line caused some click sorts to fail.
     o #852854 by bojanz: Grammar fix on taxonomy default argument help text.
+    o #526106 by Blackice2999: Fix occasional off-by-one-day problem with date arguments.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
