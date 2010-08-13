@@ -47,6 +47,7 @@ Views 6.x-3.0-dev
     o #857264 by dereine: Remove unneeded "clone" and "export" hover links.
     o #611728 by incrn8: Respect db_rewrite_sql when choosing taxonomy terms for taxonomy filter.
     o #746846 by lavamind: url encoding on options could cause visual problems in jump menu.
+    o #859368 by dereine: Click sort using wrong add_orderby() line caused some click sorts to fail.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
