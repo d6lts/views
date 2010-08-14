@@ -62,6 +62,7 @@ Views 6.x-3.0-dev
     o #402944 by drewish: Cache views block list to reduce overhead when listing blocks.
     o #348975 by dereine: Allow cloning of displays.
     o #792184 by mgriego: Remove unnecessary special handling of option defaulting which actually causes problems in the new world order.
+    o #621142 by dereine and Scott Reynolds: Allow the query plugin to have its own settings.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
