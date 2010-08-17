@@ -1091,7 +1091,9 @@ class view extends views_db_object {
    */
   function build_title() {
     $this->init_display();
-
+    if (empty($this->built)) {   
+      $this->init_query();    
+    }
     $this->init_handlers();
 
     $this->_build_arguments();
