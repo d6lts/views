@@ -154,6 +154,7 @@ Views 6.x-3.0-alpha3
     o #339758 by dereine: Better handling for display of set options in multiple choice filters.
     o #330160 by aditya_kristanto: Improve text to make it easier to find where to edit the view description.
     o #765022: SA-CONTRIB-2010-036: Fix XSS and PHP vulnerabilities.
+    o #832954 by dww: Fixed bug that was modifying global user->roles inside argument_validate_user.
 
 Views 6.x-3.0-alpha2
     o #396380 by merlinofchaos, dereine and dagmar: Initial support for GROUP BY queries!!!!!!!!!!!!
