@@ -78,6 +78,7 @@ Views 6.x-3.0-dev
     o #748222 by dereine: Fix notice with area handlers.
     o #887220 by dereine: Fix fatal error when using GROUP BY.
     o #807540 by gfrenoy: Proper use of db_decode_blob() on serialized fields.
+    o #930714 by brad.bulger: Add aggregator GUID field.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
