@@ -34,6 +34,7 @@ Views 2.x-dev
     o #508832 by nick_vh: Documentation improvement on templates.
     o #807540 by gfrenoy: Proper use of db_decode_blob() on serialized fields.
     o #936828 by xjm: Empty field replacement not quite always working.
+    o #872000 by NaX: Comment edit field needs option to set destination so it can work like comment edit field.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
