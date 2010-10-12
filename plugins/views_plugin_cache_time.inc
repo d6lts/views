@@ -45,4 +45,12 @@ class views_plugin_cache_time extends views_plugin_cache {
     }
   }
 
+  function cache_set_expire() {
+    if ($lifespan = $this->options[$type . '_lifespan']) {
+      return time() + $lifespan;
+    }
+    else {
+      return CACHE_PERMANENT;
+    }
+  }
 }
