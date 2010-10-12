@@ -85,6 +85,7 @@ Views 6.x-3.0-dev
     o #799580 by dereine: api version of views exports should use views_api_version() not hardcoded number.
     o #718832 by dereine: Add file extension as a field available within the File group.
     o #694094 by Ian Ward: Allow more static caches to be resettable.
+    o #884440 by Amitaibu: Improve token encoding to eliminate double html entity encoding.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
