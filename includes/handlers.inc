@@ -1305,7 +1305,7 @@ function views_views_handlers() {
         'parent' => 'views_handler_argument',
       ),
       'views_handler_field_group_by_numeric' => array(
-        'parent' => 'views_handler_field',
+        'parent' => 'views_handler_field_numeric',
       ),
       'views_handler_filter_group_by_numeric' => array(
         'parent' => 'views_handler_filter_numeric',
