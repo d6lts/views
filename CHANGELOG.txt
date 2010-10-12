@@ -39,6 +39,7 @@ Views 2.x-dev
     o #884440 by Amitaibu: Improve token encoding to eliminate double html entity encoding.
     o #870828 by dereine: Typo in ajax form wrapper.
     o #865482 by dereine: RSS options form does not include override.
+    o #366886 by Scott Reynolds: For "last comment time" if "count zero is empty" is set, use empty text for nodes with no comments.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
@@ -50,7 +51,7 @@ Views 2.x-dev
     o #348975 by dereine: Allow cloning of displays.
     o #930714 by brad.bulger: Add aggregator GUID field.
     o #785236 by e_log: Add aggregator field item id as a field.
-
+    
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
