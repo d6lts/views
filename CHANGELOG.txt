@@ -38,6 +38,7 @@ Views 2.x-dev
     o #799580 by dereine: api version of views exports should use views_api_version() not hardcoded number.
     o #884440 by Amitaibu: Improve token encoding to eliminate double html entity encoding.
     o #870828 by dereine: Typo in ajax form wrapper.
+    o #865482 by dereine: RSS options form does not include override.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
