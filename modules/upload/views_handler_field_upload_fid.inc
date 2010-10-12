@@ -70,6 +70,7 @@ class views_handler_field_upload_fid extends views_handler_field_prerender_list 
     $tokens['[' . $this->options['id'] . '-type' . ']'] = t('The MIME type of the attached file.');
     $tokens['[' . $this->options['id'] . '-description' . ']'] = t('The name of the attached file.');
     $tokens['[' . $this->options['id'] . '-path' . ']'] = t('The path of the attached file.');
+    $tokens['[' . $this->options['id'] . '-url' . ']'] = t('The url of the attached file.');
     $tokens['[' . $this->options['id'] . '-size' . ']'] = t('The size of the attached file.');
   }
 
@@ -79,6 +80,7 @@ class views_handler_field_upload_fid extends views_handler_field_prerender_list 
     $tokens['[' . $this->options['id'] . '-type' . ']'] = $item['filemime'];
     $tokens['[' . $this->options['id'] . '-description' . ']'] = $item['description'];
     $tokens['[' . $this->options['id'] . '-path' . ']'] = $item['filepath'];
+    $tokens['[' . $this->options['id'] . '-url' . ']'] = url($item['filepath']);
     $tokens['[' . $this->options['id'] . '-size' . ']'] = $item['filesize'];
   }
 }
