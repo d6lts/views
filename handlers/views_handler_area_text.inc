@@ -17,7 +17,6 @@ class views_handler_area_text extends views_handler_area {
       '#type' => 'textarea',
       '#default_value' => $this->options['content'],
       '#rows' => 6,
-      '#description' => $description,
     );
 
     $form['format'] = filter_form($this->options['format']);
