@@ -48,7 +48,7 @@ class views_handler_area_text extends views_handler_area {
       $formats[$format] = db_result(db_query("SELECT name FROM {filter_formats} WHERE format = %d", $format));
     }
 
-    if (!$formats[$format]) {
+    if (!isset($formats[$format])) {
       return;
     }
 
