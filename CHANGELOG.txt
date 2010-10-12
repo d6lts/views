@@ -31,6 +31,7 @@ Views 2.x-dev
     o #917916 by MyXelf: break delimiter not removed from formatted output.
     o #571234 by dereine: Better handling of invalid exposed filters or other methods that cause a view to abort during the build process.
     o #685554 by MyXelf: Illegal characters in View tag translated improperly when used in theming templates.
+    o #508832 by nick_vh: Documentation improvement on templates.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
