@@ -1704,7 +1704,7 @@ class views_db_object {
         $values[] = $this->$field;
       }
       else {
-        $values[] = serialize($this->$field);
+        $values[] = db_encode_blob(serialize($this->$field));
       }
     }
     $query = '';
