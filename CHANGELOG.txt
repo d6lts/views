@@ -83,6 +83,7 @@ Views 6.x-3.0-dev
     o #936828 by xjm: Empty field replacement not quite always working.
     o #872000 by NaX: Comment edit field needs option to set destination so it can work like comment edit field.
     o #799580 by dereine: api version of views exports should use views_api_version() not hardcoded number.
+    o #718832 by dereine: Add file extension as a field available within the File group.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
