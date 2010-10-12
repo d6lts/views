@@ -64,6 +64,7 @@ Views 6.x-3.0-dev
     o #792184 by mgriego: Remove unnecessary special handling of option defaulting which actually causes problems in the new world order.
     o #621142 by dereine and Scott Reynolds: Allow the query plugin to have its own settings.
     o #910942 by dereine: Fixes views_test.info by specifying core = 6.x
+    o #939296 by chrisns: Include base test in viewsHandlerTest.test.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

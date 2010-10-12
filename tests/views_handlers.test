@@ -1,6 +1,8 @@
 <?php
 // $Id$
 
+module_load_include('test', 'views', 'tests/views_query');
+
 /**
 * @file
 * Test abstract handlers of views
