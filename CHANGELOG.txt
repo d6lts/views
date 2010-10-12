@@ -90,6 +90,7 @@ Views 6.x-3.0-dev
     o #882800 by dereine: Move "Distinct" option to query settings.
     o #870828 by dereine: Typo in ajax form wrapper.
     o #865482 by dereine: RSS options form does not include override.
+    o #785236 by e_log: Add aggregator field item id as a field.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
