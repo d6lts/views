@@ -41,6 +41,7 @@ Views 2.x-dev
     o #865482 by dereine: RSS options form does not include override.
     o #366886 by Scott Reynolds: For "last comment time" if "count zero is empty" is set, use empty text for nodes with no comments.
     o #611086 by dereine: add -url token to files that can fetch proper URLs with private filesystems.
+    o #635336 by dereine: Remove unused fields from views.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
