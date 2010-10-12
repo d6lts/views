@@ -42,6 +42,7 @@ Views 2.x-dev
     o #397252 by thekevinday: Allow "glossary" type views to do case insensitive searches.
     o #843866 by dagmar: Allow summary views to specify their path rather than assuming the view path all the time.
     o #348975 by dereine: Allow cloning of displays.
+    o #930714 by brad.bulger: Add aggregator GUID field.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
