@@ -139,8 +139,13 @@ class views_handler_filter_date extends views_handler_filter_numeric {
     }
     // %s is safe here because strtotime scrubbed the input and we might
     // have a string if using offset.
-    $this->query->add_where($this->options['group'], "$field >= %s", $a);
-    $this->query->add_where($this->options['group'], "$field <= %s", $b);
+    if ($this->operator == 'between') {
+      $this->query->add_where($this->options['group'], "$field >= %s", $a);
+      $this->query->add_where($this->options['group'], "$field <= %s", $b);
+    }
+    else {
+      $this->query->add_where($this->options['group'], "$field >= %s OR $field <= %s", array($a, $b));
+    }
   }
 
   function op_simple($field) {
