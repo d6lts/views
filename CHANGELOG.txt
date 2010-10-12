@@ -36,6 +36,7 @@ Views 2.x-dev
     o #936828 by xjm: Empty field replacement not quite always working.
     o #872000 by NaX: Comment edit field needs option to set destination so it can work like comment edit field.
     o #799580 by dereine: api version of views exports should use views_api_version() not hardcoded number.
+    o #884440 by Amitaibu: Improve token encoding to eliminate double html entity encoding.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
