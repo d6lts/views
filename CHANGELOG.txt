@@ -95,6 +95,7 @@ Views 6.x-3.0-dev
     o #611086 by dereine: add -url token to files that can fetch proper URLs with private filesystems.
     o #635336 by dereine: Remove unused fields from views.
     o #813422 by dereine and killes: Improved time-based caching expiration.
+    o #795270 by dereine: Remove unnecessary links to sections that will have no settings.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
