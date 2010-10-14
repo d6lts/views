@@ -50,6 +50,7 @@ Views 2.x-dev
     o #667014 by dereine: Prevent notice with relationships and node row style if relationship has no endpoint node.
     o #514128 by dylanvaughn: Use of for (i in foo) for arrays in javascript fails if other software is modifying the Array prototype.
     o #755342 by jcmarco: Improve SQL date field handling.
+    o #338893 by dereine: Aggregator argument not always properly converted to title.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).

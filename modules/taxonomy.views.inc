@@ -104,6 +104,7 @@ function taxonomy_views_data() {
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_numeric',
+      'name field' => 'name',
       'skip base' => array('node', 'node_revision'),
       'zero is null' => TRUE,
     ),
