@@ -45,6 +45,7 @@ Views 2.x-dev
     o #813422 by dereine and killes: Improved time-based caching expiration.
     o #795270 by dereine: Remove unnecessary links to sections that will have no settings.
     o #807540 Revert: Proper use of db_decode_blob() on serialized fields.
+    o #829550 by hefox: Better testing of batch form use by exposed filters.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
