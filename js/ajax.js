@@ -92,7 +92,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
   // Go through the 'add' array and add any new content we're instructed to add.
   if (data.add) {
-    for (id in data.add) {
+    for (var id = 0; id < data.add.length; id++) {
       var newContent = $(id).append(data.add[id]);
       Drupal.attachBehaviors(newContent);
     }
@@ -100,7 +100,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
   // Go through the 'replace' array and replace any content we're instructed to.
   if (data.replace) {
-    for (id in data.replace) {
+    for (var id = 0; id < data.replace.length; id++) {
       $(id).html(data.replace[id]);
       Drupal.attachBehaviors(id);
     }
@@ -108,7 +108,7 @@ Drupal.Views.Ajax.ajaxResponse = function(data) {
 
   // Go through and add any requested tabs
   if (data.tab) {
-    for (id in data.tab) {
+    for (var id = 0; id < data.tab.length; id++) {
       // Retrieve the tabset instance by stored ID.
       var instance = Drupal.Views.Tabs.instances[$('#views-tabset').data('UI_TABS_UUID')];
       instance.add(id, data.tab[id]['title'], 0);
