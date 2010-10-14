@@ -62,6 +62,7 @@ Views 2.x-dev
     o #348975 by dereine: Allow cloning of displays.
     o #930714 by brad.bulger: Add aggregator GUID field.
     o #785236 by e_log: Add aggregator field item id as a field.
+    o #835934 by dereine: Provide relationship from files to users.
     
 Views 2.11 (Jun 16, 2010)
   Bug fixes:

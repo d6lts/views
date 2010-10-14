@@ -169,6 +169,18 @@ function system_views_data() {
     ),
   );
 
+  // uid field
+  $data['files']['uid'] = array(
+    'title' => t('User'),
+    'help' => t('The user, who uploaded the file.'),
+    'relationship' => array(
+      'base' => 'users',
+      'base field' => 'uid',
+      'handler' => 'views_handler_relationship',
+      'label' => t('User'),
+    ),
+  );
+
 
   return $data;
 }
