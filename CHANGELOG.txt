@@ -104,6 +104,7 @@ Views 6.x-3.0-dev
     o #755342 by jcmarco: Improve SQL date field handling.
     o #338893 by dereine: Aggregator argument not always properly converted to title.
     o #835934 by dereine: Provide relationship from files to users.
+    o #738172 by dereine: Fields rewritten to be links with just a fragment did not work.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
