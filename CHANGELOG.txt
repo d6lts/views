@@ -51,6 +51,7 @@ Views 2.x-dev
     o #514128 by dylanvaughn: Use of for (i in foo) for arrays in javascript fails if other software is modifying the Array prototype.
     o #755342 by jcmarco: Improve SQL date field handling.
     o #338893 by dereine: Aggregator argument not always properly converted to title.
+    o #738172 by dereine: Fields rewritten to be links with just a fragment did not work.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
@@ -63,7 +64,7 @@ Views 2.x-dev
     o #930714 by brad.bulger: Add aggregator GUID field.
     o #785236 by e_log: Add aggregator field item id as a field.
     o #835934 by dereine: Provide relationship from files to users.
-    
+
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
     o #770006 by macdee: Taxonomy term default plugin mysteriously broken.
