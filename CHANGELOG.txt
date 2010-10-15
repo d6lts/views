@@ -106,6 +106,7 @@ Views 6.x-3.0-dev
     o #835934 by dereine: Provide relationship from files to users.
     o #738172 by dereine: Fields rewritten to be links with just a fragment did not work.
     o #514128 reverted.
+    o #787184 introduce the long awaited "Update and Override" button.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
