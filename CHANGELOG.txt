@@ -52,6 +52,7 @@ Views 2.x-dev
     o #755342 by jcmarco: Improve SQL date field handling.
     o #338893 by dereine: Aggregator argument not always properly converted to title.
     o #738172 by dereine: Fields rewritten to be links with just a fragment did not work.
+    o #514128 reverted.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).

@@ -40,7 +40,7 @@ Drupal.Views.dependent.inArray = function(array, search_term) {
 
 Drupal.Views.dependent.autoAttach = function() {
   // Clear active bindings and triggers.
-  for (var i = 0; i < Drupal.Views.dependent.activeTriggers.length; i++) {
+  for (i in Drupal.Views.dependent.activeTriggers) {
     jQuery(Drupal.Views.dependent.activeTriggers[i]).unbind('change');
   }
   Drupal.Views.dependent.activeTriggers = [];
@@ -52,14 +52,13 @@ Drupal.Views.dependent.autoAttach = function() {
   }
 
   // Iterate through all relationships
-  for (var id = 0; id < Drupal.settings.viewsAjax.formRelationships.length; id++) {
-
+  for (id in Drupal.settings.viewsAjax.formRelationships) {
 
     // Drupal.Views.dependent.activeBindings[id] is a boolean,
     // whether the binding is active or not.  Defaults to no.
     Drupal.Views.dependent.activeBindings[id] = 0;
     // Iterate through all possible values
-    for (var bind_id = 0; bind_id < Drupal.settings.viewsAjax.formRelationships[id].values.length; bind_id++) {
+    for(bind_id in Drupal.settings.viewsAjax.formRelationships[id].values) {
       // This creates a backward relationship.  The bind_id is the ID
       // of the element which needs to change in order for the id to hide or become shown.
       // The id is the ID of the item which will be conditionally hidden or shown.
@@ -115,7 +114,7 @@ Drupal.Views.dependent.autoAttach = function() {
         var changeTrigger = function() {
           var val = getValue(bind_id, trigger_id);
 
-          for (var i = 0; i < Drupal.Views.dependent.bindings[bind_id]; i++) {
+          for (i in Drupal.Views.dependent.bindings[bind_id]) {
             var id = Drupal.Views.dependent.bindings[bind_id][i];
 
             // Fix numerous errors
