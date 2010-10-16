@@ -108,6 +108,7 @@ Views 6.x-3.0-dev
     o #514128 reverted.
     o #787184 introduce the long awaited "Update and Override" button.
     o by dereine: Test for views_handler_filter_date.
+    o #761102 by dereine: test: user default argument.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
