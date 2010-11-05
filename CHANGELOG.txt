@@ -54,6 +54,7 @@ Views 2.x-dev
     o #738172 by dereine: Fields rewritten to be links with just a fragment did not work.
     o #514128 reverted.
     o #787184 introduce the long awaited "Update and Override" button.
+    o #963382 by aidanlis: Fix typo in mathematical expression field help text.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
