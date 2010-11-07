@@ -111,6 +111,8 @@ Views 6.x-3.0-dev
     o #761102 by dereine: test: user default argument.
     o #963382 by aidanlis: Fix typo in mathematical expression field help text.
     o #807614 by dereine: Test filter_numeric.
+    o by eporama: Add a test for views_plugin_argument_validate_user.
+
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
