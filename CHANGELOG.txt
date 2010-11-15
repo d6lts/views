@@ -112,7 +112,7 @@ Views 6.x-3.0-dev
     o #963382 by aidanlis: Fix typo in mathematical expression field help text.
     o #807614 by dereine: Test filter_numeric.
     o by eporama: Add a test for views_plugin_argument_validate_user.
-
+    o #968830 by q0rban: Abstract direct db function calls in query plugins to facilitate plugins that just swap out the actual db interaction.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

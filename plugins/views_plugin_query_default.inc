@@ -1131,10 +1131,10 @@ class views_plugin_query_default extends views_plugin_query{
         // We can't have an offset without a limit, so provide a very large limit instead.
         $limit  = intval(!empty($this->limit) ? $this->limit : 999999);
         $offset = intval(!empty($this->offset) ? $this->offset : 0);
-        $result = db_query_range($query, $args, $offset, $limit);
+        $result = $this->db_query_range($query, $args, $offset, $limit);
       }
       else {
-        $result = db_query($query, $args);
+        $result = $this->db_query($query, $args);
       }
 
       $view->result = array();
@@ -1154,6 +1154,53 @@ class views_plugin_query_default extends views_plugin_query{
     }
     $view->execute_time = views_microtime() - $start;
   }
+
+  /**
+   * Wrapper method for db_query().
+   *
+   * @param $query
+   *   A string containing an SQL query.
+   * @param $args
+   *   An array containing the query arguments.
+   * @return
+   *   A database query result resource, or FALSE if the query was not executed
+   *   correctly.
+   */
+  function db_query($query, $args = array()) {
+    return db_query($query, $args);
+  }
+
+  /**
+   * Wrapper method for db_query_range().
+   *
+   * @param $query
+   *   A string containing an SQL query.
+   * @param $from
+   *   The first result row to return.
+   * @param $count
+   *   The maximum number of result rows to return.
+   * @param $args
+   *   An array containing the query arguments.
+   * @return
+   *   A database query result resource, or FALSE if the query was not executed
+   *   correctly.
+   */
+  function db_query_range($query, $from, $count, $args = array()) {
+    return db_query_range($query, $from, $count, $args);
+  }
+
+  /**
+   * Wrapper method for db_result().
+   *
+   * @param $result
+   *   A database query result resource, as returned from db_query().
+   * @return
+   *   The resulting field or FALSE.
+   */
+  function db_result($result) {
+    return db_result($result);
+  }
+
 
   function add_signature(&$view) {
     $view->query->add_field(NULL, "'" . $view->name . ':' . $view->current_display . "'", 'view_name');
