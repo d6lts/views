@@ -57,6 +57,7 @@ Views 2.x-dev
     o #963382 by aidanlis: Fix typo in mathematical expression field help text.
     o #713078 by achaux: Aggregator not properly using allowed tags from core.
     o #944680 by rvilar: Properly t() untranslated string.
+    o #881680 by brianV and longwave: Avoid unnecessary invoking of view objects for argument validation when no argument validation is necessary.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
