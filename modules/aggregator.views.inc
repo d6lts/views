@@ -122,7 +122,7 @@ function aggregator_views_data() {
     'help' => t('The author of the original imported item.'),
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field_xss',
+      'handler' => 'views_handler_field_aggregator_xss',
       'click sortable' => TRUE,
      ),
     'sort' => array(
@@ -164,7 +164,7 @@ function aggregator_views_data() {
     'help' => t('The actual content of the imported item.'),
      // Information for displaying a title as a field
     'field' => array(
-      'handler' => 'views_handler_field_aggregator_item_description',
+      'handler' => 'views_handler_field_aggregator_xss',
       'click sortable' => FALSE,
      ),
     // Information for accepting a title as a filter
@@ -407,8 +407,8 @@ function aggregator_views_handlers() {
       'views_handler_field_aggregator_category' => array(
         'parent' => 'views_handler_field',
       ),
-      'views_handler_field_aggregator_item_description' => array(
-        'parent' => 'views_handler_field_xss',
+      'views_handler_field_aggregator_xss' => array(
+        'parent' => 'views_handler_field',
       ),
 
       // argument handlers
