@@ -210,7 +210,6 @@ class views_plugin_style extends views_plugin {
       return;
     }
 
-    $start = views_microtime();
     if (isset($this->rendered_fields)) {
       return $this->rendered_fields;
     }
