@@ -127,6 +127,7 @@ Views 6.x-3.0-dev
     o #567918 by iamjon: Improve documentation for token replacement.
     o #881468 by longwave: Improve performance by static caching results of argument validation because menu likes to double validate things.
     o #964266 by dereine: cache_expire() missing $type.
+    o #669636 by dereine and bojanz: Convert the rest of the field handlers that have link options to use the advanced render.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
