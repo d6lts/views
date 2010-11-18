@@ -14,6 +14,7 @@ function views_test_perm() {
 function views_test_views_api() {
   return array(
     'api' => 3.0,
+    'template path' => drupal_get_path('module', 'views_test') .'/templates',
   );
 }
 

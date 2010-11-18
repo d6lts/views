@@ -134,6 +134,7 @@ Views 6.x-3.0-dev
     o #741234 by voxpelli: Arguments should check for NULL along with empty string to find empty values.
     o #768060 by EmmanueleQuinto, xjm, others: Make sure that render alter options do not accidentally get blown up for empty fields.
     o #847724 by dereine: Allow jump menu "Summary" style to customize choose text, just like the regular summary style.
+    o #627378: Allow specifying that your module provides specialized views templates via hook_views_api.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
