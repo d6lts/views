@@ -48,6 +48,9 @@ function template_preprocess_views_ui_list_views(&$vars) {
   $items = array();
   $sorts = array();
 
+  // Add some js for easier gui.
+  views_add_js('view-list');
+
   $views = views_get_all_views();
 
   $token_enable = drupal_get_token('views-enable');
