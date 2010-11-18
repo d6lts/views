@@ -137,6 +137,7 @@ Views 6.x-3.0-dev
     o #627378: Allow specifying that your module provides specialized views templates via hook_views_api.
     o #871578 by dereine: Comment "new" might not work right without a comment count field.
     o #751970 by dereine: View list form auto submit on change.
+    o #494380 by vaish: Problems with ajax and the same view displayed multiple times.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
