@@ -142,7 +142,12 @@ class views_handler_filter_boolean_operator extends views_handler_filter {
       }
     }
     else {
-      $where .= '<> 0';
+      if (!empty($this->definition['use equal'])) {
+        $where .= '= 1';
+      }
+      else {
+        $where .= '<> 0';
+      }
     }
     $this->query->add_where($this->options['group'], $where);
   }
