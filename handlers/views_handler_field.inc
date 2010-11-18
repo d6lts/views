@@ -121,7 +121,7 @@ class views_handler_field extends views_handler {
   function click_sort($order) {
     // Since fields should always have themselves already added, just
     // add a sort on the field.
-    $this->query->add_orderby('', '', $order, $this->field_alias);
+    $this->query->add_orderby(NULL, NULL, $order, $this->field_alias);
   }
 
   /**
