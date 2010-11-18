@@ -4,7 +4,7 @@
  * @file plugins.inc
  * Built in plugins for Views output handling.
  *
- */ 
+ */
 /**
  * Implementation of hook_views_plugins
  */
@@ -65,6 +65,8 @@ function views_views_plugins() {
         'handler' => 'views_plugin_display_attachment',
         'theme' => 'views_view',
         'use ajax' => TRUE,
+        'use pager' => FALSE,
+        'accept attachments' => FALSE,
         'help topic' => 'display-attachment',
       ),
       'feed' => array(
@@ -301,6 +303,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_pager_none',
         'help topic' => 'pager-none',
         'uses options' => TRUE,
+        'type' => 'basic',
       ),
       'some' => array(
         'title' => t('Display a specified number of items'),
@@ -308,6 +311,7 @@ function views_views_plugins() {
         'handler' => 'views_plugin_pager_some',
         'help topic' => 'pager-some',
         'uses options' => TRUE,
+        'type' => 'basic',
       ),
       'full' => array(
         'title' => t('Paged output, full pager'),
