@@ -132,6 +132,7 @@ Views 6.x-3.0-dev
     o #910864 by Bevan, dereine: exposed filter blocks should not be cached by core block caching.
     o #970198 by kbk: Improve bulk export docs for handling PHP files.
     o #741234 by voxpelli: Arguments should check for NULL along with empty string to find empty values.
+    o #768060 by EmmanueleQuinto, xjm, others: Make sure that render alter options do not accidentally get blown up for empty fields.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
