@@ -74,6 +74,7 @@ Views 2.x-dev
     o #847724 by dereine: Allow jump menu "Summary" style to customize choose text, just like the regular summary style.
     o #871578 by dereine: Comment "new" might not work right without a comment count field.
     o #494380 by vaish: Problems with ajax and the same view displayed multiple times.
+    o #835544 by iamjon: export broke if key contained an apostrophe.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
