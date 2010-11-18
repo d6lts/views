@@ -119,6 +119,7 @@ Views 6.x-3.0-dev
     o #881680 by brianV and longwave: Avoid unnecessary invoking of view objects for argument validation when no argument validation is necessary.
     o #767244 by Magnus: Fix some untranslatable strings due to less than and greater than characters.
     o #855280 by dereine: Exposed forms set "Input required" lose exposed sorts.
+    o #881060 by benoit.borrel: Fix incorrect code sample on views_join documentation.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
