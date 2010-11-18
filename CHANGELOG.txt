@@ -86,6 +86,7 @@ Views 2.x-dev
     o #785236 by e_log: Add aggregator field item id as a field.
     o #835934 by dereine: Provide relationship from files to users.
     o #935388 by infojunkie: Add post_build and post_execute hooks similar to post_render.
+    o #751970 by dereine: View list form auto submit on change.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
