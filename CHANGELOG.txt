@@ -70,6 +70,7 @@ Views 2.x-dev
     o #910864 by Bevan, dereine: exposed filter blocks should not be cached by core block caching.
     o #970198 by kbk: Improve bulk export docs for handling PHP files.
     o #741234 by voxpelli: Arguments should check for NULL along with empty string to find empty values.
+    o #768060 by EmmanueleQuinto, xjm, others: Make sure that render alter options do not accidentally get blown up for empty fields.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
