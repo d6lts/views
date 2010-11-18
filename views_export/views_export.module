@@ -224,7 +224,7 @@ function views_export_export_form_submit(&$form, &$form_state) {
   $api = strtr($api, array('@module' => check_plain($form_state['values']['name'])));
 
   $element_api = array(
-    '#title' => t('Put this in @module.module in your modules/@module directory', array('@module' => $form_state['values']['name'])),
+    '#title' => t('Put this in @module.module in your modules/@module directory (place a &lt;?php at the top of the file so the webserver knows that it is PHP code)', array('@module' => $form_state['values']['name'])),
     '#type' => 'textarea',
     '#id' => 'export-api-textarea',
     '#name' => 'export-api-textarea',
@@ -237,7 +237,7 @@ function views_export_export_form_submit(&$form, &$form_state) {
   ) + $types['textarea'];
 
   $element_hook = array(
-    '#title' => t('Put this in @module.views_default.inc in your modules/@module directory or modules/@module/includes directory', array('@module' => $form_state['values']['name'])),
+    '#title' => t('Put this in @module.views_default.inc in your modules/@module directory or modules/@module/includes directory (place a &lt;?php at the top of the file so the webserver knows that it is PHP code)', array('@module' => $form_state['values']['name'])),
     '#type' => 'textarea',
     '#id' => 'export-textarea',
     '#name' => 'export-textarea',

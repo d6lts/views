@@ -130,6 +130,7 @@ Views 6.x-3.0-dev
     o #669636 by dereine and bojanz: Convert the rest of the field handlers that have link options to use the advanced render.
     o #477984 by demeritcowboy, fatstar415, mike dodd, dagmar: Properly handle value for "empty" and "not empty" special operators.
     o #910864 by Bevan, dereine: exposed filter blocks should not be cached by core block caching.
+    o #970198 by kbk: Improve bulk export docs for handling PHP files.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
