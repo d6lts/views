@@ -582,7 +582,7 @@ class view extends views_db_object {
       }
     }
 
-    // Let modules modify the view just prior to executing it.
+    // Let modules modify the view just prior to building it.
     foreach (module_implements('views_pre_build') as $module) {
       $function = $module . '_views_pre_build';
       $function($this);
@@ -698,6 +698,13 @@ class view extends views_db_object {
 
     // Attach displays
     $this->attach_displays();
+
+    // Let modules modify the view just after building it.
+    foreach (module_implements('views_post_build') as $module) {
+      $function = $module . '_views_post_build';
+      $function($this);
+    }
+
     return TRUE;
   }
 
@@ -766,6 +773,12 @@ class view extends views_db_object {
       }
     }
 
+    // Let modules modify the view just after executing it.
+    foreach (module_implements('views_post_execute') as $module) {
+      $function = $module . '_views_post_execute';
+      $function($this);
+    }
+
     $this->executed = TRUE;
   }
 
@@ -810,7 +823,7 @@ class view extends views_db_object {
 
       $this->style_plugin->pre_render($this->result);
 
-      // Let modules modify the view just prior to executing it.
+      // Let modules modify the view just prior to rendering it.
       foreach (module_implements('views_pre_render') as $module) {
         $function = $module . '_views_pre_render';
         $function($this);

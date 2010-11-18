@@ -120,6 +120,7 @@ Views 6.x-3.0-dev
     o #767244 by Magnus: Fix some untranslatable strings due to less than and greater than characters.
     o #855280 by dereine: Exposed forms set "Input required" lose exposed sorts.
     o #881060 by benoit.borrel: Fix incorrect code sample on views_join documentation.
+    o #935388 by infojunkie: Add post_build and post_execute hooks similar to post_render.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
