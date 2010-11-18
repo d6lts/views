@@ -477,3 +477,17 @@ function views_update_6010() {
 
   return $ret;
 }
+
+/**
+ * Correct the cache setting for exposed filter blocks.
+ *
+ * @see http://drupal.org/node/910864
+ */
+function views_update_6011() {
+  $ret = array();
+
+  // There is only one simple query to run.
+  $ret[] = update_sql("UPDATE {blocks} SET cache = " . BLOCK_NO_CACHE . " WHERE module = 'views' AND delta LIKE '-exp-%'");
+  
+  return $ret;
+}
