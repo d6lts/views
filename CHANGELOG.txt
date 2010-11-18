@@ -140,6 +140,7 @@ Views 6.x-3.0-dev
     o #494380 by vaish: Problems with ajax and the same view displayed multiple times.
     o #776830: Fix pager settings on attachments and feeds.
     o #773036: Remove extraneous code from bad patch.
+    o #835544 by iamjon: export broke if key contained an apostrophe.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
