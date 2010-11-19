@@ -1366,9 +1366,6 @@ function views_ui_standard_form_buttons(&$form, &$form_state, $form_id, $name = 
     $name = t('Update');
   }
 
-  // remove default validate handler
-  $form['#validate'] = array();
-
   // Add the override and update button
   if ($name == t('Update default display')) {
     $form['buttons']['override_update'] = array(
