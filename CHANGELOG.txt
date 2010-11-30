@@ -78,6 +78,7 @@ Views 2.x-dev
     o #941990 by master-of-magic: Link to node when using relationships could occasionally lose track and create bad links.
     o #965496 by ayalon: Update and Override broke validation of most views admin forms.
     o #976200 by Bevan: [Edit View] links not always clickable.
+    o #979046 by travist: Fix PHP 5.3 problem in views_access with no arguments.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
