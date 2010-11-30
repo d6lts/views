@@ -149,6 +149,7 @@ Views 6.x-3.0-dev
     o #868990: Fix undefined call to $view->set_use_pager()
     o #976200 by Bevan: [Edit View] links not always clickable.
     o #669636 followup by bojanz: Fix improper use of field_alias by row styles.
+    o #979046 by travist: Fix PHP 5.3 problem in views_access with no arguments.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
