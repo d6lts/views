@@ -152,6 +152,7 @@ Views 6.x-3.0-dev
     o #979046 by travist: Fix PHP 5.3 problem in views_access with no arguments.
     o #978864 by linclark: Fix title bug with area handlers.
     o #983460 by dereine: "Default sort" radio is in wrong column on table style settings.
+    o #783798 by dereine: GROUP BY can cause sort criteria to get incorrectly added to view.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
