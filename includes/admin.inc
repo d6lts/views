@@ -4022,7 +4022,7 @@ function theme_views_ui_style_plugin_table($form) {
   }
 
   // Add the special 'None' row.
-  $rows[] = array(t('None'), '', '', '', '', array('align' => 'center', 'data' => drupal_render($form['default'][-1])));
+  $rows[] = array(t('None'), '', '', '', '', '', array('align' => 'center', 'data' => drupal_render($form['default'][-1])));
 
   $output .= theme('table', $header, $rows);
   $output .= drupal_render($form);
