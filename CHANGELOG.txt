@@ -146,6 +146,7 @@ Views 6.x-3.0-dev
     o #965496 by ayalon: Update and Override broke validation of most views admin forms.
     o #626732 by dereine: Added a test for analyze.
     o #870792 by bojanz, dereine: Test validation features of filter and filter_date handler.
+    o #868990: Fix undefined call to $view->set_use_pager()
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
