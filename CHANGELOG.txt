@@ -155,6 +155,7 @@ Views 6.x-3.0-dev
     o #783798 by dereine: GROUP BY can cause sort criteria to get incorrectly added to view.
     o #983606 by jonathan1055: Breadcrumb disappears on bulk export results.
     o #357529 by nedjo, dddave, dagmar, dereine, yhahn, others: Implement plugin to handle translations of views configuration data.
+    o #740686 by dereine, dagmar: Integrate the functionality of Semantic Views (though it takes a significantly diffrent form).
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
