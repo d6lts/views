@@ -81,6 +81,7 @@ Views 2.x-dev
     o #979046 by travist: Fix PHP 5.3 problem in views_access with no arguments.
     o #983606 by jonathan1055: Breadcrumb disappears on bulk export results.
     o #769458 by anrikun: Fix double encoding of alt/title text on link rewriting.
+    o #318944 by dereine: Prevent warning in table view when user has no permission to view any fields.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).

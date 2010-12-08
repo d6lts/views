@@ -331,6 +331,8 @@ function template_preprocess_views_view_table(&$vars) {
     $query = '&' . $query;
   }
 
+  $header = array();
+
   // Fields must be rendered in order as of Views 2.3, so we will pre-render
   // everything.
   $renders = $handler->render_fields($result);
