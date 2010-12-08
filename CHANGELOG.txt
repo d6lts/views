@@ -158,6 +158,7 @@ Views 6.x-3.0-dev
     o #740686 by dereine, dagmar: Integrate the functionality of Semantic Views (though it takes a significantly diffrent form).
     o #769458 by anrikun: Fix double encoding of alt/title text on link rewriting.
     o #318944 by dereine: Prevent warning in table view when user has no permission to view any fields.
+    o #416178 by dereine: Profile field checkboxes did not properly filter false values.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
