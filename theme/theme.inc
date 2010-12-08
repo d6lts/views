@@ -506,6 +506,11 @@ function template_preprocess_views_view_table(&$vars) {
     $vars['class'] .= " sticky-enabled";
   }
   $vars['class'] .= ' cols-'. count($vars['rows']);
+
+  $vars['attributes'] = '';
+  if (!empty($handler->options['summary'])) {
+    $vars['attributes'] = drupal_attributes(array('summary' => $handler->options['summary']));
+  }
 }
 
 /**
@@ -599,6 +604,10 @@ function template_preprocess_views_view_grid(&$vars) {
     }
   }
   $vars['rows'] = $rows;
+  $vars['attributes'] = '';
+  if (!empty($handler->options['summary'])) {
+    $vars['attributes'] = drupal_attributes(array('summary' => $handler->options['summary']));
+  }
 }
 
 /**
