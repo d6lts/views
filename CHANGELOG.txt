@@ -103,6 +103,7 @@ Views 2.x-dev
     o #751970 by dereine: View list form auto submit on change.
     o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
     o #607942 by dashton: Support "rel" attribute in link rewriting.
+    o #909886: -Any- option shows up on boolean exposed filters even when not optional.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
