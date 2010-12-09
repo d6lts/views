@@ -630,8 +630,7 @@ If you would like to have the characters %5B and %5D please use the html entity 
       $options['attributes']['class'] = $class;
     }
 
-    $rel = strtr($alter['rel'], $tokens);
-    if ($rel) {
+    if (!empty($alter['rel']) && $rel = strtr($alter['rel'], $tokens)) {
       $options['attributes']['rel'] = $rel;
     }
 
