@@ -86,6 +86,7 @@ Views 2.x-dev
     o #738792 by dereine: Delete button should be disabled when ajax form is open, just like save button.
     o #898990 by dereine: Fix bad SQL generated on related terms relationship if no vocabularies selected.
     o #684608 by dagmar: Default tid plugin was not properly backported from 3.x and so did not work.
+    o #468484 by dereine: Filter by unread not relationship safe.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
