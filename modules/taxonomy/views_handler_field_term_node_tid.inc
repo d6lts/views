@@ -78,7 +78,7 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
 
     if ($vids) {
       $voc = '';
-      if (!empty($this->options['limit']) && !empty($this->options['vids'])) {
+      if (!empty($this->options['limit']) && !empty(array_filter($this->options['vids']))) {
         $voc = " AND td.vid IN (" . implode(', ', array_keys(array_filter($this->options['vids']))) . ")";
       }
 
