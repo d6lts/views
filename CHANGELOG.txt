@@ -165,6 +165,7 @@ Views 6.x-3.0-dev
     o #738792 by dereine: Delete button should be disabled when ajax form is open, just like save button.
     o #600742 by dagmar: Allow displays to be disabled.
     o #898990 by dereine: Fix bad SQL generated on related terms relationship if no vocabularies selected.
+    o #468484 by dereine: Filter by unread not relationship safe.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
