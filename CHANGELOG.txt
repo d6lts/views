@@ -102,6 +102,7 @@ Views 2.x-dev
     o #935388 by infojunkie: Add post_build and post_execute hooks similar to post_render.
     o #751970 by dereine: View list form auto submit on change.
     o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
+    o #607942 by dashton: Support "rel" attribute in link rewriting.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
