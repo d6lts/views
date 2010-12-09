@@ -87,6 +87,7 @@ Views 2.x-dev
     o #898990 by dereine: Fix bad SQL generated on related terms relationship if no vocabularies selected.
     o #684608 by dagmar: Default tid plugin was not properly backported from 3.x and so did not work.
     o #468484 by dereine: Filter by unread not relationship safe.
+    o #909886: -Any- option shows up on boolean exposed filters even when not optional.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
@@ -103,7 +104,7 @@ Views 2.x-dev
     o #751970 by dereine: View list form auto submit on change.
     o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
     o #607942 by dashton: Support "rel" attribute in link rewriting.
-    o #909886: -Any- option shows up on boolean exposed filters even when not optional.
+    o #909332 by dereine: Add col-first and col-last classes to grid style.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:

@@ -481,6 +481,19 @@ function template_preprocess_views_view_grid(&$vars) {
       }
     }
   }
+  // Add first/last column class
+  foreach ($rows as $row_number => $row) {
+    foreach ($row as $column_number => $column) {
+      $column_classes[$row_number][$column_number] = 'col-' . ($column_number + 1);
+      if ($column_number == 0) {
+        $column_classes[$row_number][$column_number] .= ' col-first';
+      }
+      elseif (count($rows[$row_number]) == ($column_number + 1)) {
+        $column_classes[$row_number][$column_number] .= ' col-last';
+      }
+    }
+  }
+  $vars['column_classes'] = $column_classes;
   $vars['rows'] = $rows;
   $vars['attributes'] = '';
   if (!empty($handler->options['summary'])) {

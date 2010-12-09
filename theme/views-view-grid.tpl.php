@@ -27,7 +27,7 @@
       ?>
       <tr class="<?php print $row_class; ?>">
         <?php foreach ($columns as $column_number => $item): ?>
-          <td class="<?php print 'col-'. ($column_number + 1); ?>">
+          <td class="<?php print $column_classes[$row_number][$column_number]; ?>">
             <?php print $item; ?>
           </td>
         <?php endforeach; ?>
