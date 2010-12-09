@@ -161,6 +161,7 @@ Views 6.x-3.0-dev
     o #416178 by dereine: Profile field checkboxes did not properly filter false values.
     o #989092 by dereine: Semantic views integration broke grid view a little.
     o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
+    o #768802 by dereine: Allow sort by node language.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
