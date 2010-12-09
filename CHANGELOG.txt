@@ -83,6 +83,7 @@ Views 2.x-dev
     o #769458 by anrikun: Fix double encoding of alt/title text on link rewriting.
     o #318944 by dereine: Prevent warning in table view when user has no permission to view any fields.
     o #416178 by dereine: Profile field checkboxes did not properly filter false values.
+    o #738792 by dereine: Delete button should be disabled when ajax form is open, just like save button.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
@@ -97,6 +98,7 @@ Views 2.x-dev
     o #835934 by dereine: Provide relationship from files to users.
     o #935388 by infojunkie: Add post_build and post_execute hooks similar to post_render.
     o #751970 by dereine: View list form auto submit on change.
+    o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
