@@ -111,12 +111,9 @@ class views_object {
 
         $this->unpack_options($storage[$key], $value, isset($definition[$key]['contains']) ? $definition[$key]['contains'] : array(), $all, FALSE, array_merge($localization_keys, array($key)));
       }
-      else if (!is_array($definition[$key])) {
-        vpr(t('There is some bad views data definition, the code should use options_definition. Some context: key: @key, value: @value', array('@key' => $key, '@value' => $value)));
-      }
-      // Don't localize strings during editing. When editing, we need to work with
-      // the original data, not the translated version.
-      else if (empty($this->view->editing) && !empty($definition[$key]['translatable']) && !empty($value) || !empty($definition['contains'][$key]['translatable']) && !empty($value)) {
+     // Don't localize strings during editing. When editing, we need to work with
+     // the original data, not the translated version.
+     else if (empty($this->view->editing) && !empty($definition[$key]['translatable']) && !empty($value) || !empty($definition['contains'][$key]['translatable']) && !empty($value)) {
         if (!empty($this->view) && $this->view->is_translatable()) {
           // Allow other modules to make changes to the string before it's
           // sent for translation.
