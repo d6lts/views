@@ -90,6 +90,7 @@ Views 2.x-dev
     o #909886: -Any- option shows up on boolean exposed filters even when not optional.
     o #751308 by dereine: Provide an administrator warning when option_definition() data is incorrect.
     o #817360 by John Morahan: Have Analyze button warn if view has no access control.
+    o #833220 by dereine: Properly validate value on date filter.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
