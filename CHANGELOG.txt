@@ -92,6 +92,7 @@ Views 2.x-dev
     o #817360 by John Morahan: Have Analyze button warn if view has no access control.
     o #833220 by dereine: Properly validate value on date filter.
     o #779668 by esteewhy: Fix not technically valid use of break statements.
+    o #751308 Revert: Provide an administrator warning when option_definition() data is incorrect.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
