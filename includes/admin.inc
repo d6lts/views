@@ -2563,7 +2563,6 @@ function views_ui_config_item_extra_form(&$form_state) {
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
-      break;
     }
     else {
       $handler->init($view, $item);
@@ -2631,22 +2630,22 @@ function views_ui_change_style_form(&$form_state) {
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
-      break;
     }
-    $handler->init($view, $item);
-    $types = views_object_types();
-    $form['#title'] = t('Change summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
+    else {
+      $handler->init($view, $item);
+      $types = views_object_types();
+      $form['#title'] = t('Change summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
-    $form['#section'] = $display_id . '-' . $type . '-' . $id . '-style-plugin';
+      $form['#section'] = $display_id . '-' . $type . '-' . $id . '-style-plugin';
 
-    $form['style_plugin'] =  array(
-      '#type' => 'radios',
-      '#options' => views_fetch_plugin_names('style', 'summary'),
-      '#default_value' => $item['style_plugin'],
-    );
+      $form['style_plugin'] =  array(
+        '#type' => 'radios',
+        '#options' => views_fetch_plugin_names('style', 'summary'),
+        '#default_value' => $item['style_plugin'],
+      );
 
-    $form_state['handler'] = &$handler;
-
+      $form_state['handler'] = &$handler;
+    }
     views_ui_standard_form_buttons($form, $form_state, 'views_ui_change_style_form');
   }
   return $form;
@@ -2716,28 +2715,28 @@ function views_ui_config_style_form(&$form_state) {
     $handler = views_get_handler($item['table'], $item['field'], $type);
     if (empty($handler)) {
       $form['markup'] = array('#value' => t("Error: handler for @table > @field doesn't exist!", array('@table' => $item['table'], '@field' => $item['field'])));
-      break;
     }
-    $handler->init($view, $item);
-    $types = views_object_types();
+    else {
+      $handler->init($view, $item);
+      $types = views_object_types();
 
-    $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
-    $form['#title'] .= t('Configure summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
+      $form['#title'] = check_plain($view->display[$display_id]->display_title) . ': ';
+      $form['#title'] .= t('Configure summary style for @type %item', array('@type' => $types[$type]['lstitle'], '%item' => $handler->ui_name()));
 
-    $form['#section'] = $display_id . '-' . $type . '-style-options';
+      $form['#section'] = $display_id . '-' . $type . '-style-options';
 
-    $plugin = views_get_plugin('style', $item['style_plugin']);
-    if ($plugin) {
-      $form['style_options'] = array(
-        '#tree' => TRUE,
-      );
-      $plugin->init($view, $view->display[$display_id], $item['style_options']);
+      $plugin = views_get_plugin('style', $item['style_plugin']);
+      if ($plugin) {
+        $form['style_options'] = array(
+          '#tree' => TRUE,
+        );
+        $plugin->init($view, $view->display[$display_id], $item['style_options']);
 
-      $plugin->options_form($form['style_options'], $form_state);
+        $plugin->options_form($form['style_options'], $form_state);
+      }
+
+      $form_state['handler'] = &$handler;
     }
-
-    $form_state['handler'] = &$handler;
-
     views_ui_standard_form_buttons($form, $form_state, 'views_ui_config_style_form');
   }
   return $form;
