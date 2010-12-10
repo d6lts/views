@@ -125,9 +125,17 @@ function views_ui_menu() {
     'page callback' => 'views_ui_reorder_view',
     'page arguments' => array(3, 5),
   );
-  $items['admin/build/views/%views_ui_js/details/%views_ui_cache'] = $callback + array(
+  $items['admin/build/views/%views_ui_js/human_name/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_edit_details',
-    'page arguments' => array(3, 5),
+    'page arguments' => array('human_name', 3, 5),
+  );
+  $items['admin/build/views/%views_ui_js/tag/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_edit_details',
+    'page arguments' => array('tag', 3, 5),
+  );
+  $items['admin/build/views/%views_ui_js/description/%views_ui_cache'] = $callback + array(
+    'page callback' => 'views_ui_edit_details',
+    'page arguments' => array('description', 3, 5),
   );
   $items['admin/build/views/%views_ui_js/add-display/%views_ui_cache'] = $callback + array(
     'page callback' => 'views_ui_add_display',

@@ -172,6 +172,8 @@ Views 6.x-3.0-dev
     o #909886: -Any- option shows up on boolean exposed filters even when not optional.
     o #909332 by dereine: Add col-first and col-last classes to grid style.
     o #751308 by dereine: Provide an administrator warning when option_definition() data is incorrect.
+    o #522318 by dereine: Provide a "human readable" name for all Views.
+    o #817360 by John Morahan: Have Analyze button warn if view has no access control.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

@@ -320,6 +320,7 @@ class views_plugin_display extends views_plugin {
           'enabled' => TRUE,
           'css_class' => TRUE,
 
+          'display_description' => FALSE,
           'use_ajax' => TRUE,
           'items_per_page' => TRUE,
           'use_pager' => TRUE,
@@ -365,6 +366,10 @@ class views_plugin_display extends views_plugin {
       'css_class' => array(
         'default' => '',
         'translatable' => FALSE,
+      ),
+      'display_description' => array(
+        'default' => '',
+        'translatable' => TRUE,
       ),
       'use_ajax' => array(
         'default' => FALSE,
@@ -1110,11 +1115,18 @@ class views_plugin_display extends views_plugin {
         );
         break;
       case 'display_title':
-        $form['#title'] .= t('The name of this display');
+        $form['#title'] .= t('The name and the description of this display');
         $form['display_title'] = array(
+          '#title' => t('Name'),
           '#type' => 'textfield',
-          '#description' => t('This title will appear only in the administrative interface for the View.'),
+          '#description' => t('This name will appear only in the administrative interface for the View.'),
           '#default_value' => $this->display->display_title,
+        );
+        $form['display_description'] = array(
+          '#title' => t('Description'),
+          '#type' => 'textfield',
+          '#description' => t('This description will appear only in the administrative interface for the View.'),
+          '#default_value' => $this->get_option('display_description'),
         );
         break;
       case 'title':
@@ -1811,6 +1823,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'display_title':
         $this->display->display_title = $form_state['values']['display_title'];
+        $this->set_option('display_description', $form_state['values']['display_description']);
         break;
       case 'access':
         $access = $this->get_option('access');
