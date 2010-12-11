@@ -518,4 +518,6 @@ function views_update_6012() {
   );
 
   db_add_field($ret, 'views_view', 'human_name', $new_field);
+
+  return $ret;
 }
