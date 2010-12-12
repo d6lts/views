@@ -94,6 +94,7 @@ Views 2.x-dev
     o #779668 by esteewhy: Fix not technically valid use of break statements.
     o #751308 Revert: Provide an administrator warning when option_definition() data is incorrect.
     o by dereine: Fix fatal error in the field term_node_tid handler.
+    o #995966 by dereine: Fix taxonomy field handler.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
