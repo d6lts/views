@@ -184,6 +184,7 @@ Views 6.x-3.0-dev
     o #994014 by idflood: Add missing semicolon to node translation link handler.
     o #996634 by das-peter: Add missing rel to option_definition of the field handler.
     o #808016 by dereine: Clarify short/medium/long date formats.
+    o #610418 by joachim: Add handler descriptions to handler edit forms.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
