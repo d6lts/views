@@ -115,6 +115,7 @@ Views 2.x-dev
     o #868972 by dereine: Add a "summary" attribute for accessibility on table and grid styles.
     o #607942 by dashton: Support "rel" attribute in link rewriting.
     o #909332 by dereine: Add col-first and col-last classes to grid style.
+    o #368687 by dereine: Allow a relationship from node revision to master node.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
