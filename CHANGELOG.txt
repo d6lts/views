@@ -97,6 +97,7 @@ Views 2.x-dev
     o #995966 by dereine: Fix taxonomy field handler.
     o #996634 by das-peter: Add missing rel to option_definition of the field handler.
     o #808016 by dereine: Clarify short/medium/long date formats.
+    o #610418 by joachim: Add handler descriptions to handler edit forms.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
