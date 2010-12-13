@@ -183,6 +183,7 @@ Views 6.x-3.0-dev
     o #995966 by dereine: Use voc_ids are variable.
     o #994014 by idflood: Add missing semicolon to node translation link handler.
     o #996634 by das-peter: Add missing rel to option_definition of the field handler.
+    o #808016 by dereine: Clarify short/medium/long date formats.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
