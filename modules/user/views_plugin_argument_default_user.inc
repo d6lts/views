@@ -53,10 +53,12 @@ class views_plugin_argument_default_user extends views_plugin_argument_default {
       return arg(1);
     }
 
-    if (arg(0) == 'node' && is_numeric(arg(1))) {
-      $node = node_load(arg(1));
-      if ($node) {
-        return $node->uid;
+    if (!empty($this->argument->options[$this->option_name])) {
+      if (arg(0) == 'node' && is_numeric(arg(1))) {
+        $node = node_load(arg(1));
+        if ($node) {
+          return $node->uid;
+        }
       }
     }
   }
