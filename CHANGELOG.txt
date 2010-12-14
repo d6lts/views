@@ -187,6 +187,7 @@ Views 6.x-3.0-dev
     o #610418 by joachim: Add handler descriptions to handler edit forms.
     o #368687 by dereine: Allow a relationship from node revision to master node.
     o #759082 by dereine: Prevent invalid argument warning with no relationships.
+    o #946368 by dereine: User argument default ignoring node author checkbox in some cases.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
