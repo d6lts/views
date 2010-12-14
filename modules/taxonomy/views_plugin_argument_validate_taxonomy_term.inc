@@ -48,7 +48,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
       '#title' => t('Transform dashes in URL to spaces in term name arguments'),
       '#default_value' => isset($this->argument->options['validate_argument_transform']) ? $this->argument->options['validate_argument_transform'] : FALSE,
       '#process' => array('views_process_dependency'),
-      '#dependency' => array('edit-options-validate-argument-type' => array('convert')),
+      '#dependency' => array('edit-options-validate-argument-type' => array('convert', 'name')),
     );
   }
 
