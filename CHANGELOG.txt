@@ -189,6 +189,7 @@ Views 6.x-3.0-dev
     o #759082 by dereine: Prevent invalid argument warning with no relationships.
     o #946368 by dereine: User argument default ignoring node author checkbox in some cases.
     o #867636 by chromix: Give jump menu an option to set default value to current path.
+    o #785036 by dereine and bojanz: Properly validate display IDs.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

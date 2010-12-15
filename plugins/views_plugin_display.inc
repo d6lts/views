@@ -1108,7 +1108,7 @@ class views_plugin_display extends views_plugin {
         $form['#title'] .= t('The machine name of this display');
         $form['display_id'] = array(
           '#type' => 'textfield',
-          '#description' => t('This is machine name of the display.'),
+          '#description' => t('This is machine name of the display. It should contain only letters, numbers, and underscores. This name must be unique.'),
           '#default_value' => !empty($this->display->new_id) ? $this->display->new_id : $this->display->id,
           '#required' => TRUE,
           '#size' => 64,
@@ -1919,6 +1919,9 @@ class views_plugin_display extends views_plugin {
             // send ajax form to options page if we use it.
             if (!empty($plugin->definition['uses options'])) {
               views_ui_add_form_to_stack('display', $this->view, $this->display->id, array('style_options'));
+            }
+            if (preg_match('/[^a-zA-Z0-9_]/', $form_state['values']['display_id'])) {
+              form_error($form['display_id'], t('Display name must be letters, numbers, or underscores only.'));
             }
           }
         }
