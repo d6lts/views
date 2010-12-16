@@ -29,7 +29,10 @@ class views_handler_field_date extends views_handler_field {
         'custom' => t('Custom'),
         'raw time ago' => t('Time ago'),
         'time ago' => t('Time ago (with "ago" appended)'),
+        'raw time hence' => t('Time hence'),
+        'time hence' => t('Time hence (with "hence" appended)'),
         'raw time span' => t('Time span (future dates start with - )'),
+        'inverse time span' => t('Time span (past dates start with - )'),
         'time span' => t('Time span (with "ago/hence" appended)'),
       ),
       '#default_value' => isset($this->options['date_format']) ? $this->options['date_format'] : 'small',
@@ -40,14 +43,14 @@ class views_handler_field_date extends views_handler_field {
       '#description' => t('If "Custom", see <a href="http://us.php.net/manual/en/function.date.php" target="_blank">the PHP docs</a> for date formats. If "Time ago" this is the the number of different units to display, which defaults to two.'),
       '#default_value' => isset($this->options['custom_date_format']) ? $this->options['custom_date_format'] : '',
       '#process' => array('views_process_dependency'),
-      '#dependency' => array('edit-options-date-format' => array('custom', 'raw time ago', 'time ago', 'raw time span', 'time span')),
+      '#dependency' => array('edit-options-date-format' => array('custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'inverse time span', 'time span')),
     );
   }
 
   function render($values) {
     $value = $values->{$this->field_alias};
     $format = $this->options['date_format'];
-    if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time span', 'time span'))) {
+    if (in_array($format, array('custom', 'raw time ago', 'time ago', 'raw time hence', 'time hence', 'raw time span', 'inverse time span', 'time span'))) {
       $custom_format = $this->options['custom_date_format'];
     }
     
@@ -58,8 +61,14 @@ class views_handler_field_date extends views_handler_field {
           return format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2);
         case 'time ago':
           return t('%time ago', array('%time' => format_interval($time_diff, is_numeric($custom_format) ? $custom_format : 2)));
+        case 'raw time hence':
+          return format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2);
+        case 'time hence':
+          return t('%time hence', array('%time' => format_interval(-$time_diff, is_numeric($custom_format) ? $custom_format : 2)));
         case 'raw time span':
           return ($time_diff < 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
+        case 'inverse time span':
+          return ($time_diff > 0 ? '-' : '') . format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2);
         case 'time span':
           return t(($time_diff < 0 ? '%time hence' : '%time ago'), array('%time' => format_interval(abs($time_diff), is_numeric($custom_format) ? $custom_format : 2)));
         case 'custom':
