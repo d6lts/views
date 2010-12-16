@@ -191,6 +191,7 @@ Views 6.x-3.0-dev
     o #867636 by chromix: Give jump menu an option to set default value to current path.
     o #785036 by dereine and bojanz: Properly validate display IDs.
     o #829928 by gordon: Allow strip tags to get a list of tags to keep.
+    o #958312 by tim.plunkett: Exports could have extraneous whitespace when exported from other modules like features.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
