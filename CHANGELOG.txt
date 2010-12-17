@@ -122,6 +122,7 @@ Views 2.x-dev
     o #909332 by dereine: Add col-first and col-last classes to grid style.
     o #368687 by dereine: Allow a relationship from node revision to master node.
     o #867636 by chromix: Give jump menu an option to set default value to current path.
+    o #905712 by dagmar: Add Published/Not published as text options to published field.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
