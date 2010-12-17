@@ -196,6 +196,7 @@ Views 6.x-3.0-dev
     o #608926 by Longwave: Remove unused theme("nodate") functionality.
     o #497936: Profile fields with dashes in their names cause bad queries.
     o #972620 by dereine: Add an administrative title field for all handlers to make it more possible to distinguish similar fields from each other in the UI.
+    o #905712 by dagmar: Add Published/Not published as text options to published field.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
