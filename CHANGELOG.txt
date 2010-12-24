@@ -200,6 +200,7 @@ Views 6.x-3.0-dev
     o #816354 by dereine: Provide a field to create administrative comments on displays.
     o #807942, #807982, #809936, #810010, #811294, #811266 by dereine: Backport quite a lot of handler tests.
     o #809970 by dereine: Backport area_text test.
+    o #808044 by dereine: Backport field date test.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
