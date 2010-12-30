@@ -1250,7 +1250,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     // Get relationship labels
     $relationships = array();
     // @todo: get_handlers()
-    $handlers = $display->handler->get_handlers('relationship');
+    $handlers = $display->handler->get_option('relationships');
     if ($handlers) {
       foreach ($handlers as $id => $relationship) {
         $handler = views_get_handler($relationship['table'], $relationship['field'], 'relationship');

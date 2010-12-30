@@ -103,6 +103,7 @@ Views 2.x-dev
     o #777072 by Agileware: Option missing when using argument validator.
     o #608926 by Longwave: Remove unused theme("nodate") functionality.
     o #497936: Profile fields with dashes in their names cause bad queries.
+    o #759082 by dereine: Fix whitescreen due to incorrect relationship loop code.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
