@@ -207,6 +207,7 @@ Views 6.x-3.0-dev
     o #1007730 by bojanz, merlinofchaos, dereine: Add tests for views_handler_filter_string.
     o #759082 by dereine: Fix whitescreen due to incorrect relationship loop code.
     o #1011266 by sime: Fix whitescreen due to changes in #759082.
+    o #1001542 by mikeytown2: view::set_display() has wrong return code when it fails.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
