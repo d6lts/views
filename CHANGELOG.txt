@@ -209,6 +209,7 @@ Views 6.x-3.0-dev
     o #1011266 by sime: Fix whitescreen due to changes in #759082.
     o #1001542 by mikeytown2: view::set_display() has wrong return code when it fails.
     o #996486 by geoffreyr: Improperly written SQL could crash when rewritten by tac_lite.
+    o #953718 by linclark: Register the special "broken" handlers for use with fields without handlers.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
