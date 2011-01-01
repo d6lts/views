@@ -1067,7 +1067,7 @@ class views_plugin_query_default extends views_plugin_query{
    */
   function build(&$view) {
     // Make the query distinct if the option was set.
-    if ($this->options['distinct']) {
+    if (!empty($this->options['distinct'])) {
       $this->set_distinct();
     }
 
