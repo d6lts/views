@@ -105,6 +105,7 @@ Views 2.x-dev
     o #497936: Profile fields with dashes in their names cause bad queries.
     o #759082 by dereine: Fix whitescreen due to incorrect relationship loop code.
     o #1001542 by mikeytown2: view::set_display() has wrong return code when it fails.
+    o #996486 by geoffreyr: Improperly written SQL could crash when rewritten by tac_lite.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
