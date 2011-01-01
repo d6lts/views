@@ -1072,6 +1072,9 @@ function views_views_handlers() {
       'views_handler_argument_null' => array(
         'parent' => 'views_handler_argument',
       ),
+      'views_handler_argument_broken' => array(
+        'parent' => 'views_handler_argument',
+      ),
 
       // field handlers
       'views_handler_field' => array(
@@ -1112,6 +1115,9 @@ function views_views_handlers() {
       'views_handler_field_math' => array(
         'parent' => 'views_handler_field_numeric',
       ),
+      'views_handler_field_broken' => array(
+        'parent' => 'views_handler_field',
+      ),
 
       // filter handlers
       'views_handler_filter' => array(
@@ -1144,10 +1150,16 @@ function views_views_handlers() {
       'views_handler_filter_many_to_one' => array(
         'parent' => 'views_handler_filter_in_operator',
       ),
+      'views_handler_filter_broken' => array(
+        'parent' => 'views_handler_filter',
+      ),
 
       // relationship handlers
       'views_handler_relationship' => array(
         'parent' => 'views_handler',
+      ),
+      'views_handler_relationship_broken' => array(
+        'parent' => 'views_handler_relationship',
       ),
 
 
@@ -1165,6 +1177,9 @@ function views_views_handlers() {
         'parent' => 'views_handler_sort',
       ),
       'views_handler_sort_random' => array(
+        'parent' => 'views_handler_sort',
+      ),
+      'views_handler_sort_broken' => array(
         'parent' => 'views_handler_sort',
       ),
     ),
