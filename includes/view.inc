@@ -948,7 +948,7 @@ class view extends views_db_object {
    * normalized output.
    */
   function preview($display_id = NULL, $args = array()) {
-    if (empty($this->current_display) || $this->current_display != $display_id) {
+    if (empty($this->current_display) || ((!empty($display_id)) && $this->current_display != $display_id)) {
       if (!$this->set_display($display_id)) {
         return FALSE;
       }
