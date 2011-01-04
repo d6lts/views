@@ -214,6 +214,7 @@ Views 6.x-3.0-dev
     o #978874 by StanAngeloff: Use empty() on distinct setting to ensure no notices.
     o #1013170 by das-peter: Fix broken view::preview which was broken on #1001542.
     o #644008 by Cyberwolf and dereine: Allow access plugins access to arguments.
+    o #635990 by voxpelli and dereine: Get caching system to better respect db_rewrite_sql
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
