@@ -212,6 +212,7 @@ Views 6.x-3.0-dev
     o #953718 by linclark: Register the special "broken" handlers for use with fields without handlers.
     o #722330 by dereine: Views should include core version for updates.
     o #978874 by StanAngeloff: Use empty() on distinct setting to ensure no notices.
+    o #1013170 by das-peter: Fix broken view::preview which was broken on #1001542.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

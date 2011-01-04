@@ -931,7 +931,7 @@ class view extends views_db_object {
   function preview($display_id = NULL, $args = array()) {
     $timer_id = 'preview' . $display_id;
     timer_start($timer_id);
-    if (empty($this->current_display) || $this->current_display != $display_id) {
+    if (empty($this->current_display) || ((!empty($display_id)) && $this->current_display != $display_id)) {
       if (!$this->set_display($display_id)) {
         return FALSE;
       }
