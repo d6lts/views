@@ -129,6 +129,7 @@ Views 2.x-dev
     o #368687 by dereine: Allow a relationship from node revision to master node.
     o #867636 by chromix: Give jump menu an option to set default value to current path.
     o #905712 by dagmar: Add Published/Not published as text options to published field.
+    o #970514 by moshe, dereine: Provide basic drush integration for views.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
