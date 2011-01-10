@@ -216,6 +216,7 @@ Views 6.x-3.0-dev
     o #644008 by Cyberwolf and dereine: Allow access plugins access to arguments.
     o #635990 by voxpelli and dereine: Get caching system to better respect db_rewrite_sql
     o #970514 by moshe, dereine: Provide basic drush integration for views.
+    o #1011004 by dereine: Add validation for query plugin option forms.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
