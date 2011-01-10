@@ -220,6 +220,7 @@ Views 6.x-3.0-dev
     o #991202 by helmo: Add option to turn linebreaks into br tags in field rewriting.
     o #1000760 by dereine: Prevent htmlspecialchars() error with string arguments.
     o #452384 by sammys: Another PHP 5.3 fix.
+    o #975400 by bojanz: Improvements to field handlers getting and sanitizing values.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

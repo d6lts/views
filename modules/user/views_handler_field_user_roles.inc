@@ -19,7 +19,7 @@ class views_handler_field_user_roles extends views_handler_field_prerender_list 
     $this->items = array();
 
     foreach ($values as $result) {
-      $uids[] = $result->{$this->aliases['uid']};
+      $uids[] = $this->get_value($values);
     }
 
     if ($uids) {

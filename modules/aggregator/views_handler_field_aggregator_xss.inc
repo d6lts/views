@@ -6,9 +6,11 @@
  */
 
 class views_handler_field_aggregator_xss extends views_handler_field {
-  function render($values) {
-    $value = $values->{$this->field_alias};
+  /**
+   * Override the function used to sanitize the value before output
+   * from the render function.
+   */
+  function sanitize_value($value) {
     return aggregator_filter_xss($value);
   }
-
 }

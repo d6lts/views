@@ -708,14 +708,37 @@ If you would like to have the characters %5B and %5D please use the html entity 
   function pre_render($values) { }
 
   /**
+   * Get the value that's supposed to be rendered.
+   *
+   * @param $values
+   *   The values retrieved from the database.
+   * @param $field
+   *   Optional field where the value is stored.
+   */
+  function get_value($values, $field = NULL) {
+    $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
+    return $values->{$alias};
+  }
+
+  /**
+   * Sanitize the value for output.
+   *
+   * @param $value
+   *   The value being rendered.
+   */
+  function sanitize_value($value) {
+    return check_plain($value);
+  }
+
+  /**
    * Render the field.
    *
    * @param $values
    *   The values retrieved from the database.
    */
   function render($values) {
-    $value = $values->{$this->field_alias};
-    return check_plain($value);
+    $value = $this->get_value($values);
+    return $this->sanitize_value($value);
   }
 
   /**
@@ -1074,13 +1097,14 @@ class views_handler_field_file_size extends views_handler_field {
   }
 
   function render($values) {
-    if ($values->{$this->field_alias}) {
+    $value = $this->get_value($values);
+    if ($value) {
       switch ($this->options['file_size_display']) {
         case 'bytes':
-          return $values->{$this->field_alias};
+          return $value;
         case 'formatted':
         default:
-          return format_size($values->{$this->field_alias});
+          return format_size($value);
       }
     }
     else {
@@ -1093,8 +1117,7 @@ class views_handler_field_file_size extends views_handler_field {
  * A handler to run a field through simple XSS filtering
  */
 class views_handler_field_xss extends views_handler_field {
-  function render($values) {
-    $value = $values->{$this->field_alias};
+  function sanitize_value($value) {
     return filter_xss($value);
   }
 }
@@ -1102,4 +1125,3 @@ class views_handler_field_xss extends views_handler_field {
 /**
  * @}
  */
-
