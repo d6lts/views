@@ -1773,6 +1773,8 @@ function views_ui_ajax_form($js, $key, $view, $display_id) {
       $stack = $view->stack; // copy so the next shift doesn't break the array
       $top = array_shift($stack);
       $top[0] = $js; // change identifier into $js setting
+      $stepview = $top[2]; // Change view into a reference [#452384]
+      $top[2] = &$stepview;
       $form_state = call_user_func_array('views_ui_build_form_state', $top);
       $form_state['input'] = array(); // this is a new form, make sure it
       // doesn't try to inherit $_POST info.
