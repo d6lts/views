@@ -717,7 +717,9 @@ If you would like to have the characters %5B and %5D please use the html entity 
    */
   function get_value($values, $field = NULL) {
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
-    return $values->{$alias};
+    if (isset($values->{$alias})) {
+      return $values->{$alias};
+    }
   }
 
   /**
