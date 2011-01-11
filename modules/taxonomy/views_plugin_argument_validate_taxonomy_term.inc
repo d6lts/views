@@ -150,8 +150,8 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
 
         if ($type == 'convert') {
           $this->argument->argument = $result->tid;
-          $this->argument->validated_title = check_plain($result->name);
         }
+        $this->argument->validated_title = check_plain($result->name);
 
         return TRUE;
     }

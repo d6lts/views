@@ -221,6 +221,7 @@ Views 6.x-3.0-dev
     o #1000760 by dereine: Prevent htmlspecialchars() error with string arguments.
     o #452384 by sammys: Another PHP 5.3 fix.
     o #975400 by bojanz: Improvements to field handlers getting and sanitizing values.
+    o #696550: Taxonomy validator should always set title when it successfully validates.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
