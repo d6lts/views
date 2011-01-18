@@ -66,6 +66,7 @@ function views_views_plugins() {
         'theme' => 'views_view',
         'use ajax' => TRUE,
         'use pager' => FALSE,
+        'use more' => TRUE,
         'accept attachments' => FALSE,
         'help topic' => 'display-attachment',
       ),
