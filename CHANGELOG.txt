@@ -112,6 +112,7 @@ Views 2.x-dev
     o #452384 by sammys: Another PHP 5.3 fix.
     o #696550: Taxonomy validator should always set title when it successfully validates.
     o #839236: Fields named "buttons" would disappear from the rearrange UI due to conflict with the buttons on the form.
+    o #780768 by dereine: lack of clean URLs breaks some preview.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
