@@ -229,6 +229,7 @@ Views 6.x-3.0-dev
     o #1025696 by zengenuity: Bad data in user roles get_value().
     o #862072 by jhedstrom: Allow argument validator to test if user has edit or delete access to a node.
     o #935176 by benoit.borrel: Add "system" table to Views data.
+    o #780768 by dereine: lack of clean URLs breaks some preview.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

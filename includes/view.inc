@@ -1609,6 +1609,7 @@ class view extends views_db_object {
         if (!empty($display->deleted)) {
           continue;
         }
+        $this->set_display($id);
 
         $result = $this->display[$id]->handler->validate();
         if (!empty($result) && is_array($result)) {

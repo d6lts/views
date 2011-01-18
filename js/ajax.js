@@ -233,7 +233,9 @@ Drupal.Views.updatePreviewFilterForm = function() {
 Drupal.Views.updatePreviewLink = function() {
   var url = $(this).attr('href');
   url = url.replace('nojs', 'ajax');
-  if (url.substring(0, 18) != '/admin/build/views') {
+  var intern_url = Drupal.Views.getPath(url);
+
+  if (intern_url.substring(0, 17) != 'admin/build/views') {
     return true;
   }
 
