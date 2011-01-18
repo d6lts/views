@@ -223,6 +223,7 @@ Views 6.x-3.0-dev
     o #975400 by bojanz: Improvements to field handlers getting and sanitizing values.
     o #696550: Taxonomy validator should always set title when it successfully validates.
     o #1001302 by dagmar: Enable attachment displays to have more links.
+    o #869172 by bendiy: Add an "external" parameter to field link rewriting so that external URLs can be formed properly even without a scheme.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
