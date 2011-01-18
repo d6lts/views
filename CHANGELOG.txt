@@ -225,6 +225,7 @@ Views 6.x-3.0-dev
     o #1001302 by dagmar: Enable attachment displays to have more links.
     o #869172 by bendiy: Add an "external" parameter to field link rewriting so that external URLs can be formed properly even without a scheme.
     o #1021784 by tim.plunkett: Extra space added in some classes erroneously.
+    o #839236: Fields named "buttons" would disappear from the rearrange UI due to conflict with the buttons on the form.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
