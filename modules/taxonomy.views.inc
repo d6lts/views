@@ -172,6 +172,9 @@ function taxonomy_views_data() {
       'handler' => 'views_handler_field_markup',
       'format' => FILTER_FORMAT_DEFAULT,
     ),
+    'filter' => array(
+      'handler' => 'views_handler_filter_string',
+    ),
   );
 
   // Term vocabulary
