@@ -6,14 +6,15 @@
  *
  * - $rows contains a nested array of rows. Each row contains an array of
  *   columns.
- *
+ * - $class contains the class of the table.
+ * - $attributes contains other attributes for the table.
  * @ingroup views_templates
  */
 ?>
 <?php if (!empty($title)) : ?>
   <h3><?php print $title; ?></h3>
 <?php endif; ?>
-<table class="views-view-grid"<?php print $attributes; ?>>
+<table class="<?php print $class; ?>"<?php print $attributes; ?>>
   <tbody>
     <?php foreach ($rows as $row_number => $columns): ?>
       <tr class="<?php print $row_classes[$row_number]; ?>">

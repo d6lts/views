@@ -232,6 +232,7 @@ Views 6.x-3.0-dev
     o #780768 by dereine: lack of clean URLs breaks some preview.
     o #1008358: Updated for translation plugin to work properly with i18nviews.
     o #962564 by joshuajabbour: Allow link attributes to be rewritten (internally).
+    o #672864 by dboulet: cols- class incorrect on table, grid.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
