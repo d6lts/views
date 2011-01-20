@@ -234,6 +234,7 @@ Views 6.x-3.0-dev
     o #962564 by joshuajabbour: Allow link attributes to be rewritten (internally).
     o #672864 by dboulet: cols- class incorrect on table, grid.
     o #981872 by infojunkie: Option to hide attachments in summary views.
+    o #839810 by marcp: Get UID from URL argument default plugin should accept uids from Views pages.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
