@@ -25,8 +25,14 @@ class views_plugin_style_summary_jump_menu extends views_plugin_style {
   }
 
   function query() {
-    $this->view->set_items_per_page(0);
-    $this->view->set_use_pager(0);
+    // We can't have an offset without a limit, so provide a very large limit instead.
+    if (!empty($this->display->handler->options['offset'])) {
+      $this->view->set_items_per_page(999999);
+    }
+    else {
+      $this->view->set_items_per_page(0);
+      $this->view->set_use_pager(0);
+    }
   }
 
   function options_form(&$form, &$form_state) {
