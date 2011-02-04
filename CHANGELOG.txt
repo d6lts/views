@@ -242,6 +242,7 @@ Views 6.x-3.0-dev
     o #1012596 by dereine: More inline documentation of class variables.
     o #873872 by dagmar: Allow limiting of exposed operators as well as exposed filter values.
     o #1016814 by eaton: string argument should support name_field.
+    o #1007376 by dereine: Jump menu was not correctly supporting offsets.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
