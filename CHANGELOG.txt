@@ -238,6 +238,7 @@ Views 6.x-3.0-dev
     o #1012584 by dereine: Allow filtering on term descriptions.
     o #1035168 by Ao: Fix strict warning in unread node filter.
     o #1044916 by dagmar: Fix improper use of set_current_page member variable.
+    o #988680 by mikeytown2: Fix Views memory leak with attachments.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

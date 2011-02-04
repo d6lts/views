@@ -193,9 +193,13 @@ class views_plugin_display_feed extends views_plugin_display_page {
       $clone->set_display($this->display->id);
       $clone->build_title();
       $plugin->attach_to($display_id, $this->get_path(), $clone->get_title());
+
+      // Clean up
+      $clone->destroy();
+      unset($clone);
     }
   }
-  
+
   function uses_link_display() {
     return TRUE;
   }
