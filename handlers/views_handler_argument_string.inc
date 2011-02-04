@@ -136,11 +136,11 @@ class views_handler_argument_string extends views_handler_argument {
     if (empty($this->options['glossary'])) {
       // Add the field.
       if (empty($this->options['ignorecase'])){
-        $this->base_alias = $this->name_alias = $this->query->add_field($this->table_alias, $this->real_field);
+        $this->base_alias = $this->query->add_field($this->table_alias, $this->real_field);
         $this->query->set_count_field($this->table_alias, $this->real_field);
       }
       else {
-        $this->base_alias = $this->name_alias = $this->query->add_field($this->table_alias, 'LOWER(' . $this->real_field . ')');
+        $this->base_alias = $this->query->add_field($this->table_alias, 'LOWER(' . $this->real_field . ')');
         $this->query->set_count_field($this->table_alias, 'LOWER(' . $this->real_field . ')');
       }
     }
@@ -148,15 +148,16 @@ class views_handler_argument_string extends views_handler_argument {
       // Add the field.
       $formula = $this->get_formula();
       if (empty($this->options['ignorecase'])){
-        $this->base_alias = $this->name_alias = $this->query->add_field(NULL, $formula, $this->field . '_truncated');
+        $this->base_alias = $this->query->add_field(NULL, $formula, $this->field . '_truncated');
         $this->query->set_count_field(NULL, $formula, $this->field, $this->field . '_truncated');
       }
       else {
-        $this->base_alias = $this->name_alias = $this->query->add_field(NULL, 'LOWER(' . $formula . ')', $this->field . '_truncated');
+        $this->base_alias = $this->query->add_field(NULL, 'LOWER(' . $formula . ')', $this->field . '_truncated');
         $this->query->set_count_field(NULL, $formula, $this->field, $this->field . '_truncated');
       }
     }
 
+    $this->summary_name_field();
     return $this->summary_basics(FALSE);
   }
 
