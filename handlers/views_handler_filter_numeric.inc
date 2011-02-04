@@ -126,23 +126,52 @@ class views_handler_filter_numeric extends views_handler_filter {
     // not rendered, we can't render dependencies; instead we only
     // render the form items we need.
     $which = 'all';
+    $limit_operators = !empty($this->options['expose']['limit_operators']) && (count($this->options['expose']['available_operators']) > 0);
+    $use_value = FALSE;
+    $use_minmax = FALSE;
     if (!empty($form['operator'])) {
       $source = ($form['operator']['#type'] == 'radios') ? 'radio:options[operator]' : 'edit-options-operator';
     }
 
     if (!empty($form_state['exposed'])) {
+      $operator_values_with_1_value = $this->operator_values(1);
+      $operator_values_with_2_values = $this->operator_values(2);
+      if ($limit_operators) {
+        // If limit operators is enabled, check that at least one operator
+        // with two values is enabled to display the min max widgets
+        foreach ($operator_values_with_2_values as $operator) {
+          if (isset($this->options['expose']['available_operators'][$operator])) {
+            $use_minmax = TRUE;
+            break;
+          }
+        }
+        // the same for operators with one value
+        foreach ($operator_values_with_1_value as $operator) {
+          if (isset($this->options['expose']['available_operators'][$operator])) {
+            $use_value = TRUE;
+            break;
+          }
+        }
+      }
+      else {
+        $use_minmax = $use_value = TRUE;
+      }
+
       $identifier = $this->options['expose']['identifier'];
 
       if (empty($this->options['expose']['use_operator']) || empty($this->options['expose']['operator'])) {
         // exposed and locked.
-        $which = in_array($this->operator, $this->operator_values(2)) ? 'minmax' : 'value';
+        $which = in_array($this->operator, $operator_values_with_2_values) ? 'minmax' : 'value';
       }
       else {
         $source = 'edit-' . form_clean_id($this->options['expose']['operator']);
       }
     }
+    else {
+      $use_minmax = $use_value = TRUE;
+    }
 
-    if ($which == 'all') {
+    if ($which == 'all' && $use_value) {
       $form['value']['value'] = array(
         '#type' => 'textfield',
         '#title' => empty($form_state['exposed']) ? t('Value') : '',
@@ -155,7 +184,7 @@ class views_handler_filter_numeric extends views_handler_filter {
         $form_state['input'][$identifier]['value'] = $this->value['value'];
       }
     }
-    else if ($which == 'value') {
+    else if ($which == 'value' && $use_value) {
       // When exposed we drop the value-value and just do value if
       // the operator is locked.
       $form['value'] = array(
@@ -170,30 +199,34 @@ class views_handler_filter_numeric extends views_handler_filter {
     }
 
     if ($which == 'all' || $which == 'minmax') {
-      $form['value']['min'] = array(
-        '#type' => 'textfield',
-        '#title' => empty($form_state['exposed']) ? t('Min') : '',
-        '#size' => 30,
-        '#default_value' => $this->value['min'],
-      );
-      $form['value']['max'] = array(
-        '#type' => 'textfield',
-        '#title' => empty($form_state['exposed']) ? t('And max') : t('And'),
-        '#size' => 30,
-        '#default_value' => $this->value['max'],
-      );
+      if ($use_minmax) {
+        $form['value']['min'] = array(
+          '#type' => 'textfield',
+          '#title' => empty($form_state['exposed']) ? t('Min') : '',
+          '#size' => 30,
+          '#default_value' => $this->value['min'],
+        );
+        $form['value']['max'] = array(
+          '#type' => 'textfield',
+          '#title' => empty($form_state['exposed']) ? t('And max') : t('And'),
+          '#size' => 30,
+          '#default_value' => $this->value['max'],
+        );
+      }
       if ($which == 'all') {
         $dependency = array(
           '#process' => array('views_process_dependency'),
           '#dependency' => array($source => $this->operator_values(2)),
         );
-        $form['value']['min'] += $dependency;
-        $form['value']['max'] += $dependency;
+        if ($use_minmax) {
+          $form['value']['min'] += $dependency;
+          $form['value']['max'] += $dependency;
+        }
       }
-      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['min'])) {
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['min']) && $use_minmax) {
         $form_state['input'][$identifier]['min'] = $this->value['min'];
       }
-      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['max'])) {
+      if (!empty($form_state['exposed']) && !isset($form_state['input'][$identifier]['max']) && $use_minmax) {
         $form_state['input'][$identifier]['max'] = $this->value['max'];
       }
 

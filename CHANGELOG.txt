@@ -240,6 +240,7 @@ Views 6.x-3.0-dev
     o #1044916 by dagmar: Fix improper use of set_current_page member variable.
     o #988680 by mikeytown2: Fix Views memory leak with attachments.
     o #1012596 by dereine: More inline documentation of class variables.
+    o #873872 by dagmar: Allow limiting of exposed operators as well as exposed filter values.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
