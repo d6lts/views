@@ -246,6 +246,7 @@ Views 6.x-3.0-dev
     o #1018160 by zhangtaihao: unpack_translatable could infinitely recurse when options are arrays but not declared as such.
     o #1019826 by penguin25: Respect contact page access overrides when displaying contact link.
     o #776830: Attachments and other displays lost "Items to display" controls.
+    o #534452 by dereine: Remove non-functional "optional" setting on string filters.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
