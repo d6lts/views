@@ -117,7 +117,8 @@ Views 2.x-dev
     o #839810 by marcp: Get UID from URL argument default plugin should accept uids from Views pages.
     o #1035168 by Ao: Fix strict warning in unread node filter.
     o #988680 by mikeytown2: Fix Views memory leak with attachments.
-    o ##1007376 by dereine: Jump menu was not correctly supporting offsets.
+    o #1007376 by dereine: Jump menu was not correctly supporting offsets.
+    o #1019826 by penguin25: Respect contact page access overrides when displaying contact link.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
