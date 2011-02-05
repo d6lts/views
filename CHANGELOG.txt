@@ -119,6 +119,7 @@ Views 2.x-dev
     o #988680 by mikeytown2: Fix Views memory leak with attachments.
     o #1007376 by dereine: Jump menu was not correctly supporting offsets.
     o #1019826 by penguin25: Respect contact page access overrides when displaying contact link.
+    o #534452 by dereine: Remove non-functional "optional" setting on string filters.
 
   New features
     o #841260: Introduce a field to evaluate math expressions. Relies on CTools 1.7 (not yet released).
