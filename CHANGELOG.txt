@@ -249,6 +249,7 @@ Views 6.x-3.0-dev
     o #534452 by dereine: Remove non-functional "optional" setting on string filters.
     o #747782 by dereine: Improve jump menu grouping.
     o #1026014 by dereine and alex_b: Use more always should not ask for the count query to see if we need to show the more link.
+    o #1001304 by dereine: Fix init() declarations to not throw notices on PHP 5.3.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.

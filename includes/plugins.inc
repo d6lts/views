@@ -463,15 +463,6 @@ class views_plugin extends views_object {
   var $display = NULL;
 
   /**
-   * Init will be called after construct, when the plugin is attached to a
-   * view and a display.
-   */
-  function init(&$view, &$display) {
-    $this->view = &$view;
-    $this->display = &$display;
-  }
-
-  /**
    * Provide a form to edit options for this plugin.
    */
   function options_form(&$form, &$form_state) { }
