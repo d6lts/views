@@ -1,5 +1,6 @@
 CHANGELOG for Views 2 for Drupal 6
 Feb-24-2011: Good-bye CVS.
+Feb-24-2011: Hello Git.
 
 Views 2.x-dev
   Bugs fixed:
