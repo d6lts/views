@@ -1,5 +1,4 @@
 <?php
-// $Id$
 /**
  * @file query.inc
  * Defines the query object which is the underlying layer in a View.
