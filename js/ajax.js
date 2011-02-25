@@ -1,4 +1,3 @@
-// $Id$
 /**
  * @file ajax_admin.js
  *
@@ -370,7 +369,6 @@ Drupal.Views.Ajax.handleErrors = function (xhr, path) {
   alert(Drupal.t("An error occurred at @path.\n\nError Description: @error", {'@path': path, '@error': error_text}));
 }
 
-// $Id$
 
 Drupal.behaviors.ViewsGroupedTableDrag = function(context) {
   var table_id = 'arrange';
