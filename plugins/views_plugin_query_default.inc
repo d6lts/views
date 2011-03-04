@@ -1077,6 +1077,9 @@ class views_plugin_query_default extends views_plugin_query{
       $this->set_distinct();
     }
 
+    // Store the view in the object to be able to use it later.
+    $this->view = $view;
+
     $view->init_pager();
 
     // Let the pager modify the query to add limits.
