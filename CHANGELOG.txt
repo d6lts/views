@@ -253,6 +253,7 @@ Views 6.x-3.0-dev
     o #1078738 by dereine: Add a serialized data field handler and set users.data to it.
     o #1080690 by dereine: Store the view object in the query object, so it can be used.
     o #1062506 by dereine: Misnamed parameter for creation of broken handlers.
+    o #975400 follow up by bojanz: Give field::sanitize_value more power and fix some issues with get_value.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
