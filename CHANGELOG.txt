@@ -254,6 +254,7 @@ Views 6.x-3.0-dev
     o #1080690 by dereine: Store the view object in the query object, so it can be used.
     o #1062506 by dereine: Misnamed parameter for creation of broken handlers.
     o #975400 follow up by bojanz: Give field::sanitize_value more power and fix some issues with get_value.
+    o #1090682 by dereine: Write a simpletest for the reset parameter of view::load.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
