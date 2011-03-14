@@ -1374,6 +1374,9 @@ function views_views_handlers() {
       'views_handler_field_math' => array(
         'parent' => 'views_handler_field_numeric',
       ),
+      'views_handler_field_serialized' => array(
+        'parent' => 'views_handler_field',
+      ),
       'views_handler_field_broken' => array(
         'parent' => 'views_handler_field',
       ),

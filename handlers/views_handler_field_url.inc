@@ -32,7 +32,7 @@ class views_handler_field_url extends views_handler_field {
       return l($this->sanitize_value($value), $value, array('html' => TRUE));
     }
     else {
-      return $this->sanitize_value($value);
+      return $this->sanitize_value($value, 'url');
     }
   }
 }

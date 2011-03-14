@@ -721,9 +721,9 @@ If you would like to have the characters %5B and %5D please use the html entity 
    * Get the value that's supposed to be rendered.
    *
    * @param $values
-   *   The values retrieved from the database.
+   *   An object containing all retrieved values.
    * @param $field
-   *   Optional field where the value is stored.
+   *   Optional name of the field where the value is stored.
    */
   function get_value($values, $field = NULL) {
     $alias = isset($field) ? $this->aliases[$field] : $this->field_alias;
@@ -737,9 +737,22 @@ If you would like to have the characters %5B and %5D please use the html entity 
    *
    * @param $value
    *   The value being rendered.
+   * @param $type
+   *   The type of sanitization needed. If not provided, check_plain() is used.
    */
-  function sanitize_value($value) {
-    return check_plain($value);
+  function sanitize_value($value, $type = NULL) {
+    switch ($type) {
+      case 'xss':
+        $value = filter_xss($value);
+        break;
+      case 'url':
+        $value = check_url($value);
+        break;
+      default:
+        $value = check_plain($value);
+        break;
+    }
+    return $value;
   }
 
   /**
@@ -1158,8 +1171,9 @@ class views_handler_field_file_size extends views_handler_field {
  * A handler to run a field through simple XSS filtering
  */
 class views_handler_field_xss extends views_handler_field {
-  function sanitize_value($value) {
-    return filter_xss($value);
+  function render($values) {
+    $value = $this->get_value($values);
+    return $this->sanitize_value($value, 'xss');
   }
 }
 
