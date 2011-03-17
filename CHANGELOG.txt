@@ -144,6 +144,7 @@ Views 2.x-dev
     o #905712 by dagmar: Add Published/Not published as text options to published field.
     o #970514 by moshe, dereine: Provide basic drush integration for views.
     o #962564 by joshuajabbour: Allow link attributes to be rewritten (internally).
+    o #1079178 by Manuel Garcia: Provide a views revert drush command.
 
 Views 2.11 (Jun 16, 2010)
   Bug fixes:
