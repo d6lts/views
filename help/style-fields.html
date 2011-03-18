@@ -4,4 +4,13 @@ By default, each field is put in a &lt;div&gt; unless it is selected to be <em>i
 
 You may define a <i>separator</i> which will be placed between each item. This separator may be html. You can use &amp;nbsp; to print blank space.
 
+If the view's row style is set to "fields", fields must be added to the View. If there are no fields, you may receive validation errors such as:
+
+<i>* Display "Defaults" uses fields but there are none defined for it or all are excluded.
+* Display "Page" uses fields but there are none defined for it or all are excluded.</i>
+
+This is because the row style "fields" expects at least one field for display.
+
+There is also an option to hide empty fields, so empty fields, along with their labels or markup will not be displayed.
+:
 There is also an option to hide empty fields, so empty fields, along with their labels or markup will not be displayed.
