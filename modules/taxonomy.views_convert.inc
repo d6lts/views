@@ -19,6 +19,8 @@ function taxonomy_views_convert($display, $type, &$view, $field, $id = NULL) {
         switch ($field['field']) {
           case 'name':
             $item = $view->get_item($display, 'field', $id);
+            $item['table'] = 'term_node';
+            $item['field'] = 'tid';
             if ($field['options'] != 'nolink') {
               $item['link_to_taxonomy'] = TRUE;
             }

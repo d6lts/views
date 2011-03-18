@@ -256,6 +256,8 @@ Views 6.x-3.0-dev
     o #975400 follow up by bojanz: Give field::sanitize_value more power and fix some issues with get_value.
     o #1090682 by dereine: Write a simpletest for the reset parameter of view::load.
     o #1054272 by dagmar: String filters are non optional anymore.
+    o #1079178 by Manuel Garcia: Provide a views revert drush command.
+    o #1096548 by dww: Fix convert of taxonomy fields.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
