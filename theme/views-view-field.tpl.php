@@ -11,7 +11,7 @@
   * - $row: The raw SQL result that can be used
   * - $output: The processed output that will normally be used.
   *
-  * When fetching output from the $row, this construct should be used:
+  * When fetching output from the $row, copy and paste the following snippet:
   * $data = $row->{$field->field_alias}
   *
   * The above will guarantee that you'll always get the correct data,
