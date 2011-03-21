@@ -262,6 +262,7 @@ Views 6.x-3.0-dev
     o #1096834 by dww: Allow importing views code that starts with '<?php'.
     o by dereine: Move get_value and sanitize_value into views_handler to support it for area handlers.
     o #1096366 by jamsilver: Role access plugin: Replacing array_unshift() with reset().
+    o #1100052 by michielnugter: Fix strict warning of views_handler_argument::get_value.
 
 Views 6.x-3.0-alpha3
     o #705668 by dereine: Fix glossary view, add tests for glossary view.
