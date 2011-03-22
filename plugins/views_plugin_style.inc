@@ -100,12 +100,14 @@ class views_plugin_style extends views_plugin {
    * Return the token replaced row class for the specified row.
    */
   function get_row_class($row_index) {
-    $class = $this->options['row_class'];
-    if ($this->uses_fields() && $this->view->field) {
-      $class = $this->tokenize_value($class, $row_index);
-    }
+    if ($this->uses_row_class()) {
+      $class = $this->options['row_class'];
+      if ($this->uses_fields() && $this->view->field) {
+        $class = $this->tokenize_value($class, $row_index);
+      }
 
-    return views_css_safe($class);
+      return views_css_safe($class);
+    }
   }
 
   /**
