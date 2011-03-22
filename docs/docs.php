@@ -294,13 +294,17 @@ function hook_views_api() {
  * This hook allows modules to provide their own views which can either be used
  * as-is or as a "starter" for users to build from.
  *
- * This hook should be placed in MODULENAME.views_default.inc and it will be
+ * The hook should be placed in MODULENAME.views_default.inc and it will be
  * auto-loaded. This must either be in the same directory as the .module file
  * or in a subdirectory named 'includes'.
  *
+ * This hook requires an array of views, where each array has key/value pair and must 
+ * have $value == $view->name, it is invalid if the keys not match.
+ *  
  * The $view->disabled boolean flag indicates whether the View should be
  * enabled or disabled by default.
- *
+ * 
+ *  
  * @return
  *   An associative array containing the structures of views, as generated from
  *   the Export tab, keyed by the view name. A best practice is to go through
