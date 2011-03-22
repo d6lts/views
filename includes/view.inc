@@ -122,6 +122,34 @@ class view extends views_db_object {
   }
 
   /**
+   * Synchronize views pager with global pager variables
+   *
+   */
+  function synchronize_pager() {
+    if (!empty($this->pager['use_pager'])) {
+    // dump information about what we already know into the globals
+      global $pager_page_array, $pager_total, $pager_total_items;
+      // total rows in query
+      $pager_total_items[$this->pager['element']] = $this->total_rows;
+      // total pages
+      $pager_total[$this->pager['element']] = ceil($pager_total_items[$this->pager['element']] / $this->pager['items_per_page']);
+
+      // What page was requested:
+      $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
+
+      // If the requested page was within range. $this->pager['current_page']
+      // defaults to 0 so we don't need to set it in an out-of-range condition.
+      if (!empty($pager_page_array[$this->pager['element']])) {
+        $page = intval($pager_page_array[$this->pager['element']]);
+        if ($page > 0 && $page < $pager_total[$this->pager['element']]) {
+          $this->pager['current_page'] = $page;
+        }
+      }
+      $pager_page_array[$this->pager['element']] = $this->pager['current_page'];
+    }
+  }
+
+  /**
    * How many records to skip. This does not function if use_pager is
    * set.
    */
@@ -722,6 +750,7 @@ class view extends views_db_object {
       $cache = $this->display_handler->get_cache_plugin();
     }
     if ($cache && $cache->cache_get('results')) {
+      $this->synchronize_pager();
       vpr('Used cached results');
     }
     else {
@@ -753,28 +782,7 @@ class view extends views_db_object {
             $this->total_rows = db_result(db_query($count_query, $args)) - $this->pager['offset'];
           }
 
-          if (!empty($this->pager['use_pager'])) {
-            // dump information about what we already know into the globals
-            global $pager_page_array, $pager_total, $pager_total_items;
-            // total rows in query
-            $pager_total_items[$this->pager['element']] = $this->total_rows;
-            // total pages
-            $pager_total[$this->pager['element']] = ceil($pager_total_items[$this->pager['element']] / $this->pager['items_per_page']);
-
-            // What page was requested:
-            $pager_page_array = isset($_GET['page']) ? explode(',', $_GET['page']) : array();
-
-            // If the requested page was within range. $this->pager['current_page']
-            // defaults to 0 so we don't need to set it in an out-of-range condition.
-            if (!empty($pager_page_array[$this->pager['element']])) {
-              $page = intval($pager_page_array[$this->pager['element']]);
-              if ($page > 0 && $page < $pager_total[$this->pager['element']]) {
-                $this->pager['current_page'] = $page;
-              }
-            }
-            $pager_page_array[$this->pager['element']] = $this->pager['current_page'];
-          }
-
+          $this->synchronize_pager();
           $offset = $this->pager['current_page'] * $this->pager['items_per_page'] + $this->pager['offset'];
           $result = db_query_range($query, $args, $offset, $this->pager['items_per_page']);
 
