@@ -1454,6 +1454,8 @@ class view extends views_db_object {
       $this->_save_rows($key);
     }
 
+    $this->save_locale_strings();
+
     cache_clear_all('views_urls', 'cache_views');
     cache_clear_all(); // clear the page cache as well.
   }
