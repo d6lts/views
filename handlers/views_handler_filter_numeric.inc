@@ -15,6 +15,8 @@ class views_handler_filter_numeric extends views_handler_filter {
         'value' => array('default' => ''),
       ),
     );
+    
+    $options['allow_null'] = array('default' => TRUE);
 
     return $options;
   }
@@ -114,6 +116,18 @@ class views_handler_filter_numeric extends views_handler_filter {
 
     return $options;
   }
+  
+  function options_form(&$form, &$form_state) {
+    parent::options_form($form, $form_state);
+    $form['allow_null'] = array(
+      '#type' => 'checkbox',
+      '#title' => t('Include NULL rows'),
+      '#default_value' => $this->options['allow_null'],
+      '#description' => t('Treats NULL as zero (0).'),
+    );
+  }
+  
+  
   /**
    * Provide a simple textfield for equality
    */
@@ -250,17 +264,34 @@ class views_handler_filter_numeric extends views_handler_filter {
   }
 
   function op_between($field) {
+    $is_null = $this->check_for_null($field);
     if ($this->operator == 'between') {
-      $this->query->add_where($this->options['group'], "$field >= %d", $this->value['min']);
-      $this->query->add_where($this->options['group'], "$field <= %d", $this->value['max']);
+      $this->query->add_where($this->options['group'], "$field >= %d $is_null", $this->value['min']);
+      $this->query->add_where($this->options['group'], "$field <= %d $is_null", $this->value['max']);
     }
     else {
-      $this->query->add_where($this->options['group'], "$field <= %d OR $field >= %d", $this->value['min'], $this->value['max']);
+      $this->query->add_where($this->options['group'], "$field <= %d OR $field >= %d $is_null", $this->value['min'], $this->value['max']);
     }
+  }
+  
+  function check_for_null($field) {
+    $is_null = $this->options['allow_null'] ? "OR $field IS NULL" : FALSE;
+    switch ($this->operator) {
+      case '>':
+        $is_null = FALSE;
+      case '>=':
+      case '=':
+        if ($this->value['value'] > 0) {
+          $is_null = FALSE;
+        }
+    }
+    
+    return $is_null;
   }
 
   function op_simple($field) {
-    $this->query->add_where($this->options['group'], "$field $this->operator %d", $this->value['value']);
+    $is_null = $this->check_for_null($field);
+    $this->query->add_where($this->options['group'], "$field $this->operator %d $is_null", $this->value['value'] );
   }
 
   function op_empty($field) {
