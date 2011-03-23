@@ -467,7 +467,7 @@ function template_preprocess_views_view_table(&$vars) {
 
         $vars['field_classes'][$field][$num] .= $classes;
       }
-      $vars['field_attributes'][$num][$column] = array();
+      $vars['field_attributes'][$field][$num] = array();
 
       if (!empty($fields[$field]) && empty($fields[$field]->options['exclude'])) {
         $field_output = $renders[$num][$field];
