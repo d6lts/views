@@ -403,6 +403,18 @@ function node_views_data() {
     ),
   );
 
+  $data['node']['uid_revision'] = array(
+    'title' => t('User has a revision'),
+    'help' => t('All nodes where a certain user has a revision'),
+    'real field' => 'nid',
+    'filter' => array(
+      'handler' => 'views_handler_filter_node_uid_revision',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_node_uid_revision',
+    ),
+  );
+
   // ----------------------------------------------------------------------
   // Node revisions table
 
@@ -742,6 +754,9 @@ function node_views_handlers() {
         'file' => 'views_handler_argument_dates_various.inc',
         'parent' => 'views_handler_argument_date',
       ),
+      'views_handler_argument_node_uid_revision' => array(
+        'parent' => 'views_handler_argument_comment_user_uid',
+      ),
 
       // filters
       'views_handler_filter_node_type' => array(
@@ -755,6 +770,9 @@ function node_views_handlers() {
       ),
       'views_handler_filter_node_access' => array(
         'parent' => 'views_handler_filter',
+      ),
+      'views_handler_filter_node_uid_revision' => array(
+        'parent' => 'views_handler_filter_user_name',
       ),
     ),
   );
