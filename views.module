@@ -228,6 +228,20 @@ function views_preprocess_comment(&$vars) {
   }
 }
 
+/**
+ * A theme preprocess function to automatically allow blocks with view-based
+ * block templates if called from a view.
+ */
+function views_preprocess_block($vars) {
+  if (!empty($vars['block']->view)) {
+    $vars['view'] = &$vars['block']->view;
+    $vars['template_files'][] = 'block-view-' . $vars['view']->name;
+    if(!empty($vars['view']->current_display)) {
+      $vars['template_files'][] = 'block-view-' . $vars['view']->name . '-' . $vars['view']->current_display;
+    }
+  }
+}
+
 /*
  * Implementation of hook_perm()
  */
