@@ -250,7 +250,7 @@ function views_get_table_join($table, $base_table) {
 class views_handler extends views_object {
   /**
    * The top object of a view.
-   * 
+   *
    * @var view
    */
   var $view = NULL;
@@ -659,7 +659,10 @@ class views_handler extends views_object {
    */
   function ensure_my_table() {
     if (!isset($this->table_alias)) {
-      if (!method_exists($this->query, 'ensure_table')) { vpr_trace(); exit; }
+      if (!method_exists($this->query, 'ensure_table')) {
+        vpr(t('Ensure my table called but query has no ensure_table method.'));
+        return;
+      }
       $this->table_alias = $this->query->ensure_table($this->table, $this->relationship);
     }
     return $this->table_alias;
