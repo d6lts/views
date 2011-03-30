@@ -415,7 +415,7 @@ class views_plugin_display extends views_plugin {
       ),
       'use_more_always' => array(
         'default' => FALSE,
-        'bool' => TRUE,
+        'bool' => FALSE,
       ),
       'use_more_text' => array(
         'default' => 'more',
@@ -1243,9 +1243,9 @@ class views_plugin_display extends views_plugin {
         );
         $form['use_more_always'] = array(
           '#type' => 'checkbox',
-          '#title' => t('Always display more link'),
+          '#title' => t('Do not display more link unless there is more content'),
           '#description' => t("This will display the more link even if there are no more items to display."),
-          '#default_value' => $this->get_option('use_more_always'),
+          '#default_value' => !$this->get_option('use_more_always'),
         );
         $form['use_more_text'] = array(
           '#type' => 'textfield',
@@ -1953,7 +1953,7 @@ class views_plugin_display extends views_plugin {
         break;
       case 'use_more':
         $this->set_option($section, intval($form_state['values'][$section]));
-        $this->set_option('use_more_always', intval($form_state['values']['use_more_always']));
+        $this->set_option('use_more_always', !intval($form_state['values']['use_more_always']));
         $this->set_option('use_more_text', $form_state['values']['use_more_text']);
         break;
       case 'group_by':
