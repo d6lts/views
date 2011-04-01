@@ -49,6 +49,7 @@ class views_plugin_display_block extends views_plugin_display {
     // display, and arguments should be set on the view.
     $info['content'] = $this->view->render();
     $info['subject'] = filter_xss_admin($this->view->get_title());
+    $info['view'] = $this->view;
     if (!empty($this->view->result) || $this->get_option('empty') || !empty($this->view->style_plugin->definition['even empty'])) {
       return $info;
     }
@@ -73,7 +74,7 @@ class views_plugin_display_block extends views_plugin_display {
     }
 
     if (strlen($block_description) > 16) {
-      $block_description = substr($block_description, 0, 16) . '...';
+      $block_description = drupal_substr($block_description, 0, 16) . '...';
     }
 
     $options['block_description'] = array(

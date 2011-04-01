@@ -79,7 +79,7 @@ Drupal.Views.parseQueryString = function (query) {
       var pair = pairs[i].split('=');
       // Ignore the 'q' path argument, if present.
       if (pair[0] != 'q' && pair[1]) {
-        args[pair[0]] = decodeURIComponent(pair[1].replace(/\+/g, ' '));
+        args[decodeURIComponent(pair[0].replace(/\+/g, ' '))] = decodeURIComponent(pair[1].replace(/\+/g, ' '));
       }
     }
   }

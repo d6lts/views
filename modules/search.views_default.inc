@@ -13,6 +13,7 @@ function search_views_default_views() {
   $view->description = 'Displays a list of nodes that link to the node, using the search backlinks table.';
   $view->tag = 'default';
   $view->base_table = 'node';
+  $view->human_name = 'Backlinks';
   $view->api_version = 2;
   $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');

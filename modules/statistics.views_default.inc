@@ -13,6 +13,7 @@ function statistics_views_default_views() {
   $view->description = 'Shows the most-viewed nodes on the site. This requires the statistics to be enabled at administer >> reports >> access log settings.';
   $view->tag = 'default';
   $view->base_table = 'node';
+  $view->human_name = 'Popular content';
   $view->api_version = 2;
   $view->disabled = TRUE; /* Edit this to true to make a default view disabled initially */
   $handler = $view->new_display('default', 'Defaults', 'default');
