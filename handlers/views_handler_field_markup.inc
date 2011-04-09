@@ -27,7 +27,7 @@ class views_handler_field_markup extends views_handler_field {
 
   function render($values) {
     $value = $this->get_value($values);
-    if (is_array($this->format)) {
+    if (!is_numeric($this->format)) {
       $format = $this->get_value($values, 'format');
     }
     else {
