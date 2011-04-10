@@ -9,8 +9,8 @@
 /**
  * Load views files on behalf of modules.
  */
-function _views_include_handlers() {
-  views_module_include('views.inc');
+function _views_include_handlers($reset) {
+  views_module_include('views.inc', $reset);
 }
 
 /**
