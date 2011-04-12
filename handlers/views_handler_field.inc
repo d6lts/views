@@ -300,6 +300,7 @@ class views_handler_field extends views_handler {
   function element_wrapper_classes($row_index = NULL) {
     $classes = $this->tokenize_value($this->options['element_wrapper_class'], $row_index);
     return views_css_safe($classes);
+  }
 
   function option_definition() {
     $options = parent::option_definition();
