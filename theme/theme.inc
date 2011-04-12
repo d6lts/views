@@ -90,7 +90,7 @@ function template_preprocess_views_view(&$vars) {
 
   $vars['pager']      = '';
 
-  $exposed_input = isset($view->exposed_data_raw) ? $view->exposed_data_raw : NULL;
+  $exposed_input = isset($view->exposed_raw_input) ? $view->exposed_raw_input: NULL;
   if ($view->display_handler->render_pager()) {
     $pager_type = ($view->pager['use_pager'] === 'mini' ? 'views_mini_pager' : 'pager');
     $pager_theme = views_theme_functions($pager_type, $view, $view->display_handler->display);
@@ -328,6 +328,9 @@ function template_preprocess_views_view_table(&$vars) {
   $query    = tablesort_get_querystring();
   if ($query) {
     $query = '&' . $query;
+  }
+  if (isset($view->exposed_raw_input)) {
+    $query .= implode('&', $view->exposed_raw_input);
   }
 
   $header = array();
