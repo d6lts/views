@@ -289,16 +289,17 @@ class views_handler_field extends views_handler {
   /**
    * Return the class of the field's label.
    */
-  function element_label_classes() {
-    return views_css_safe($this->options['element_label_class']);
+  function element_label_classes($row_index = NULL) {
+    $classes = $this->tokenize_value($this->options['element_label_class'], $row_index);
+    return views_css_safe($classes);
   }
 
   /**
    * Return the class of the field's wrapper.
    */
-  function element_wrapper_classes() {
-    return views_css_safe($this->options['element_wrapper_class']);
-  }
+  function element_wrapper_classes($row_index = NULL) {
+    $classes = $this->tokenize_value($this->options['element_wrapper_class'], $row_index);
+    return views_css_safe($classes);
 
   function option_definition() {
     $options = parent::option_definition();
