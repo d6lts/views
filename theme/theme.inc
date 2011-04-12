@@ -153,7 +153,7 @@ function template_preprocess_views_view_fields(&$vars) {
   $view = $vars['view'];
 
   // Loop through the fields for this view.
-  $inline = FALSE;
+  $previous_inline = FALSE;
   $vars['fields'] = array(); // ensure it's at least an empty array.
   foreach ($view->field as $id => $field) {
     // render this even if set to exclude so it can be used elsewhere.
@@ -162,8 +162,9 @@ function template_preprocess_views_view_fields(&$vars) {
     if (empty($field->options['exclude']) && (!$empty || (empty($field->options['hide_empty']) && empty($vars['options']['hide_empty'])))) {
       $object = new stdClass();
       $object->handler = &$view->field[$id];
+      $object->inline = !empty($vars['options']['inline'][$id]);
 
-      $object->element_type = $object->handler->element_type(TRUE);
+      $object->element_type = $object->handler->element_type(TRUE, !$vars['options']['default_field_elements'], $object->inline);
       if ($object->element_type) {
         $class = '';
         if ($object->handler->options['element_default_classes']) {
@@ -198,17 +199,15 @@ function template_preprocess_views_view_fields(&$vars) {
         $object->raw = NULL; // make sure it exists to reduce NOTICE
       }
 
-      $object->inline = !empty($vars['options']['inline'][$id]);
-
-      if (!empty($vars['options']['separator']) && $inline && $object->inline && $object->content) {
+      if (!empty($vars['options']['separator']) && $previous_inline && $object->inline && $object->content) {
         $object->separator = filter_xss_admin($vars['options']['separator']);
       }
 
       $object->class = views_css_safe($id);
-      $inline = $object->inline;
-      $object->inline_html = $object->handler->element_wrapper_type(TRUE, TRUE);
 
-      if ($object->inline_html === '') {
+      $previous_inline = $object->inline;
+      $object->inline_html = $object->handler->element_wrapper_type(TRUE, TRUE);
+      if ($object->inline_html === '' && $vars['options']['default_field_elements']) {
         $object->inline_html = $object->inline ? 'span' : 'div';
       }
 
@@ -247,7 +246,7 @@ function template_preprocess_views_view_fields(&$vars) {
           $object->label_html .= ': ';
         }
 
-        $object->element_label_type = $object->handler->element_label_type(TRUE);
+        $object->element_label_type = $object->handler->element_label_type(TRUE, !$vars['options']['default_field_elements']);
         if ($object->element_label_type) {
           $class = '';
           if ($object->handler->options['element_default_classes']) {
@@ -518,14 +517,14 @@ function template_preprocess_views_view_table(&$vars) {
 
   $vars['row_classes'][0][] = 'views-row-first';
   $vars['row_classes'][count($vars['row_classes']) - 1][] = 'views-row-last';
-  
+
   if (empty($vars['rows']) && !empty($options['empty_table'])) {
     $vars['rows'][0][0] = $view->display_handler->render_area('empty');
     // Calculate the amounts of rows with output.
     $vars['field_attributes'][0][0]['colspan'] = count($vars['header']);
   }
 
-  
+
   $vars['class'] = 'views-table';
   if (!empty($options['sticky'])) {
     drupal_add_js('misc/tableheader.js');
