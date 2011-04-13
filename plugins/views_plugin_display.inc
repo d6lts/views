@@ -337,8 +337,6 @@ class views_plugin_display extends views_plugin {
           'cache' => TRUE,
           'query' => TRUE,
           'title' => TRUE,
-          'display_comment' => FALSE,
-          'enabled' => TRUE,
           'css_class' => TRUE,
 
           'display_description' => FALSE,

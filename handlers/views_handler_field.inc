@@ -145,7 +145,7 @@ class views_handler_field extends views_handler {
   /**
    * Return an HTML element based upon the field's element type.
    */
-  function element_type($none_supported = FALSE, $default_empty = FALSE) {
+  function element_type($none_supported = FALSE, $default_empty = FALSE, $inline = FALSE) {
     if ($none_supported) {
       if ($this->options['element_type'] === '0') {
         return '';
@@ -157,6 +157,10 @@ class views_handler_field extends views_handler {
 
     if ($default_empty) {
       return '';
+    }
+
+    if ($inline) {
+      return 'span';
     }
 
     if (isset($this->definition['element type'])) {
@@ -285,15 +289,17 @@ class views_handler_field extends views_handler {
   /**
    * Return the class of the field's label.
    */
-  function element_label_classes() {
-    return views_css_safe($this->options['element_label_class']);
+  function element_label_classes($row_index = NULL) {
+    $classes = $this->tokenize_value($this->options['element_label_class'], $row_index);
+    return views_css_safe($classes);
   }
 
   /**
    * Return the class of the field's wrapper.
    */
-  function element_wrapper_classes() {
-    return views_css_safe($this->options['element_wrapper_class']);
+  function element_wrapper_classes($row_index = NULL) {
+    $classes = $this->tokenize_value($this->options['element_wrapper_class'], $row_index);
+    return views_css_safe($classes);
   }
 
   function option_definition() {

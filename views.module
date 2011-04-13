@@ -743,7 +743,7 @@ function views_include_handlers($reset = FALSE) {
   views_include('handlers');
   views_include('cache');
   views_include('plugins');
-  _views_include_handlers();
+  _views_include_handlers($reset);
   $finished = TRUE;
 }
 

@@ -1108,6 +1108,24 @@ class view extends views_db_object {
   }
 
   /**
+   * Return the human readable name for a view.
+   *
+   * When a certain view doesn't have a human readable name return the machine readable name.
+   */
+  function get_human_name() {
+    if (!empty($this->human_name)) {
+      $human_name = $this->human_name;
+    }
+    else {
+      $human_name = $this->get_title();
+      if (empty($human_name)) {
+        $human_name = $this->name;
+      }
+    }
+    return $human_name;
+  }
+
+  /**
    * Get the view's current title. This can change depending upon how it
    * was built.
    */
