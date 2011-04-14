@@ -206,7 +206,7 @@ class views_handler_argument_string extends views_handler_argument {
 
     if (count($this->value) > 1) {
       $operator = 'IN';
-      $placeholders = implode(', ', array_fill(0, sizeof($this->value), "'%s'"));
+      $placeholders = '(' . implode(', ', array_fill(0, sizeof($this->value), "'%s'")) . ')';
       $argument = $this->value;
     }
     else {
