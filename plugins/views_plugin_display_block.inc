@@ -30,7 +30,12 @@ class views_plugin_display_block extends views_plugin_display {
       $desc = $this->get_option('block_description');
 
       if (empty($desc)) {
-        $desc = t('@view: @display', array('@view' => $this->view->get_human_name(), '@display' => $this->display->display_title));
+        if ($this->display->display_title == $this->definition['title']) {
+          $desc = t('View: @view', array('@view' => $this->view->get_human_name()));
+        }
+        else {
+          $desc = t('View: @view: @display', array('@view' => $this->view->get_human_name(), '@display' => $this->display->display_title));
+        }
       }
       return array(
         $delta => array(
@@ -180,9 +185,9 @@ class views_plugin_display_block extends views_plugin_display {
 
     return FALSE;
   }
-  
+
   /**
-   * Save the block cache setting in the blocks table if this block allready 
+   * Save the block cache setting in the blocks table if this block allready
    * exists in the blocks table. Dirty fix untill http://drupal.org/node/235673 gets in.
    */
   function save_block_cache($delta, $cache_setting) {
