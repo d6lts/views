@@ -94,7 +94,7 @@ function search_views_default_views() {
     'title' => '',
     'weight' => 0,
   ));
-  $handler = $view->new_display('block', 'Block', 'block');
+  $handler = $view->new_display('block', 'What links here', 'block');
   $handler->override_option('arguments', array(
     'nid' => array(
       'id' => 'nid',
@@ -143,7 +143,6 @@ function search_views_default_views() {
   $handler->override_option('style_options', array(
     'type' => 'ul',
   ));
-  $handler->override_option('block_description', 'What links here');
   $views[$view->name] = $view;
 
   return $views;

@@ -373,7 +373,6 @@ function node_views_default_views() {
       'default_argument_type' => 'fixed',
     ),
   ));
-  $handler->override_option('block_description', 'Archive list');
   $views[$view->name] = $view;
 
   return $views;

@@ -139,7 +139,6 @@ function comment_views_default_views() {
     'weight' => 0,
   ));
   $handler = $view->new_display('block', 'Block', 'block');
-  $handler->override_option('block_description', 'Recent comments view');
   $views[$view->name] = $view;
 
   $view = new view;

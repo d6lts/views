@@ -248,7 +248,6 @@ function statistics_views_default_views() {
     ),
     'separator' => '',
   ));
-  $handler->override_option('block_description', 'Popular content');
   $handler = $view->new_display('block', 'Today (block)', 'block_1');
   $handler->override_option('fields', array(
     'title' => array(
@@ -296,7 +295,6 @@ function statistics_views_default_views() {
     ),
     'separator' => '',
   ));
-  $handler->override_option('block_description', 'Today\'s popular content');
   $views[$view->name] = $view;
 
   return $views;
