@@ -36,12 +36,6 @@ class views_handler_filter extends views_handler {
     $this->operator = $this->options['operator'];
     $this->value = $this->options['value'];
 
-    // Compatibility: Set use_operator to true if the old way of using
-    // the operator is set and use_operator is NULL (was never set).
-    if (!empty($options['exposed']) && !empty($options['expose']['operator']) && !isset($options['expose']['use_operator'])) {
-      $this->options['expose']['use_operator'] = TRUE;
-    }
-
     // If there are relationships in the view, allow empty should be true
     // so that we can do IS NULL checks on items. Not all filters respect
     // allow empty, but string and numeric do and that covers enough.
