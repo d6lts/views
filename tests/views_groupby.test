@@ -251,6 +251,7 @@ class ViewsQueryGroupByTest extends ViewsSqlTest {
     $view->set_display('default');
     $output = $view->execute_display();
 
+    $view->init_query();
     $cache_info = $view->query->get_cache_info();
 
     $this->assertTrue(strpos($cache_info['final_query'], 'GROUP BY'), t('Make sure that GROUP BY is in the query'));
