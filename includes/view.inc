@@ -1672,6 +1672,7 @@ class view extends views_db_object {
 
     $errors = array();
 
+    $current_display = $this->current_display;
     foreach ($this->display as $id => $display) {
       if ($display->handler) {
         if (!empty($display->deleted)) {
@@ -1686,6 +1687,7 @@ class view extends views_db_object {
       }
     }
 
+    $this->set_display($current_display);
     return $errors ? $errors : TRUE;
   }
 
