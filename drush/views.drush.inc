@@ -34,7 +34,7 @@ function views_drush_command() {
   $items['views-revert'] = array(
     'callback' => 'views_drush_revert_views',
     'drupal dependencies' => array('views'),
-    'description' => dt('Revert overridden views to their default state. Make sure to backup first.'),
+    'description' => 'Revert overridden views to their default state. Make sure to backup first.',
     'arguments' => array(
       'views' => 'A space delimited list of view names.',
     ),
