@@ -49,6 +49,12 @@ class view extends views_db_object {
   // Used to store views that were previously running if we recurse.
   var $old_view = array();
 
+  // Stores the next steps of form items to handle.
+  // It's an array of stack items, which contain the form id, the type of form,
+  // the view, the display and some additional arguments.
+  // @see views_ui_add_form_to_stack().
+  var $stack;
+
   /**
    * Where the $query object will reside:
    *
