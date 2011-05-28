@@ -50,6 +50,13 @@ class view extends views_db_object {
 
   // Used to store views that were previously running if we recurse.
   var $old_view = array();
+   * Identifier of the current display.
+   *
+   * @var string
+   */
+  var $current_display;
+  
+  /**
   /**
    * Constructor
    */
