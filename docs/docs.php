@@ -286,7 +286,7 @@ function hook_views_handlers() {
 function hook_views_api() {
   return array(
     'api' => 2,
-    'path' => drupal_get_path('module', 'example') . '/includes/views', 
+    'path' => drupal_get_path('module', 'example') . '/includes/views',
   );
 }
 
@@ -298,13 +298,13 @@ function hook_views_api() {
  * auto-loaded. This must either be in the same directory as the .module file
  * or in a subdirectory named 'includes'.
  *
- * This hook requires an array of views, where each array has key/value pair and must 
+ * This hook requires an array of views, where each array has key/value pair and must
  * have $value == $view->name, it is invalid if the keys not match.
- *  
+ *
  * The $view->disabled boolean flag indicates whether the View should be
  * enabled or disabled by default.
- * 
- *  
+ *
+ *
  * @return
  *   An associative array containing the structures of views, as generated from
  *   the Export tab, keyed by the view name. A best practice is to go through
@@ -574,6 +574,32 @@ function hook_views_convert() {
  * Stub hook documentation
  */
 function hook_views_query_substitutions() {
+  // example code here
+}
+
+/**
+ * This hook is called to get a list of placeholders and their substitutions,
+ * used when preprocessing a View with form elements.
+ */
+function hook_views_form_substitutions() {
+  return array(
+    '<!--views-form-example-substitutions-->' => 'Example Substitution',
+  );
+}
+
+/**
+ * Views form (View with form elements) validate handler.
+ * Called for all steps ($form_state['storage']['step']) of the multistep form.
+ */
+function hook_views_form_validate($form, &$form_state) {
+  // example code here
+}
+
+/**
+ * Views form (View with form elements) submit handler.
+ * Called for all steps ($form_state['storage']['step']) of the multistep form.
+ */
+function hook_views_form_submit($form, &$form_state) {
   // example code here
 }
 
