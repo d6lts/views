@@ -816,7 +816,7 @@ function views_include_default_views($reset = FALSE) {
  *   aggregation when the handler is redirected to the aggregation
  *   handler.
  *
- * @return
+ * @return views_handler
  *   An instance of a handler object. May be views_handler_broken.
  */
 function views_get_handler($table, $field, $key, $override = NULL) {
@@ -871,6 +871,10 @@ function views_fetch_plugin_data($type = NULL, $plugin = NULL, $reset = FALSE) {
 
 /**
  * Get a handler for a plugin
+ *
+ * @return views_plugin
+ *
+ * The created plugin object.
  */
 function views_get_plugin($type, $plugin, $reset = FALSE) {
   $definition = views_fetch_plugin_data($type, $plugin, $reset);
@@ -936,7 +940,7 @@ function &views_get_default_view($view_name, $reset = FALSE) {
 /**
  * Create an empty view to work with.
  *
- * @return
+ * @return view
  *   A fully formed, empty $view object. This object must be populated before
  *   it can be successfully saved.
  */
