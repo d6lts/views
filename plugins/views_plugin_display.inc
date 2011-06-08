@@ -1255,6 +1255,7 @@ class views_plugin_display extends views_plugin {
             '#dependency' => array(
               'edit-use-more' => array(TRUE),
             ),
+          '#process' => array('views_process_dependency'),
         );
         $form['use_more_text'] = array(
           '#type' => 'textfield',
@@ -1264,6 +1265,7 @@ class views_plugin_display extends views_plugin {
           '#dependency' => array(
             'edit-use-more' => array(TRUE),
           ),
+          '#process' => array('views_process_dependency'),
         );
         break;
       case 'group_by':
