@@ -23,8 +23,8 @@
 <?php endif; ?>
 <div class="views-exposed-form">
   <div class="views-exposed-widgets clear-block">
-    <?php foreach($widgets as $id => $widget): ?>
-      <div class="views-exposed-widget views-widget-<?php print $id ?>">
+    <?php foreach ($widgets as $id => $widget): ?>
+      <div class="views-exposed-widget views-widget-<?php print $id; ?>">
         <?php if (!empty($widget->label)): ?>
           <label for="<?php print $widget->id; ?>">
             <?php print $widget->label; ?>
@@ -40,8 +40,8 @@
         </div>
       </div>
     <?php endforeach; ?>
-    <div class="views-exposed-widget">
-      <?php print $button ?>
+    <div class="views-exposed-widget views-submit-button">
+      <?php print $button; ?>
     </div>
   </div>
 </div>
