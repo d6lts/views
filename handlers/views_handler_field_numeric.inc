@@ -120,6 +120,6 @@ class views_handler_field_numeric extends views_handler_field {
       $value = format_plural($value, $this->options['format_plural_singular'], $this->options['format_plural_plural']);
     }
 
-    return check_plain($this->options['prefix'] . $value . $this->options['suffix']);
+    return filter_xss($this->options['prefix']) . check_plain($value) . filter_xss($this->options['suffix']);
   }
 }
