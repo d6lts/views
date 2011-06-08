@@ -677,7 +677,7 @@ function views_include_default_views() {
  * @param $key
  *   The type of handler. i.e, sort, field, argument, filter, relationship
  *
- * @return
+ * @return views_handler
  *   An instance of a handler object. May be views_handler_broken.
  */
 function views_get_handler($table, $field, $key) {
@@ -721,6 +721,10 @@ function views_fetch_plugin_data($type = NULL, $plugin = NULL) {
 
 /**
  * Get a handler for a plugin
+ *
+ * @return views_plugin
+ *
+ * The created plugin object.
  */
 function views_get_plugin($type, $plugin) {
   $definition = views_fetch_plugin_data($type, $plugin);
@@ -764,7 +768,7 @@ function &views_get_default_view($view_name) {
 /**
  * Create an empty view to work with.
  *
- * @return
+ * @return view
  *   A fully formed, empty $view object. This object must be populated before
  *   it can be successfully saved.
  */
