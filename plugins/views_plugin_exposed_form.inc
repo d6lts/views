@@ -238,7 +238,7 @@ class views_plugin_exposed_form extends views_plugin {
       ctools_add_js('auto-submit');
 
       if (!empty($this->options['autosubmit_hide'])) {
-        $form['submit']['#attributes']['class'] = 'js-hide';
+        $form['submit']['#attributes']['class'] .= ' js-hide';
       }
     }
   }
