@@ -799,7 +799,7 @@ class views_many_to_one_helper {
    */
   function add_table($join = NULL, $alias = NULL) {
     // This is used for lookups in the many_to_one table.
-    $field = $this->handler->table . '.' . $this->handler->field;
+    $field = $this->handler->relationship . '_' . $this->handler->table . '.' . $this->handler->field;
 
     if (empty($join)) {
       $join = $this->get_join();
@@ -852,7 +852,7 @@ class views_many_to_one_helper {
    * it will cooperate with other arguments if possible.
    */
   function summary_join() {
-    $field = $this->handler->table . '.' . $this->handler->field;
+    $field = $this->handler->relationship . '_' . $this->handler->table . '.' . $this->handler->field;
     $join = $this->get_join();
 
     // shortcuts
@@ -891,7 +891,7 @@ class views_many_to_one_helper {
   function ensure_my_table() {
     if (!isset($this->handler->table_alias)) {
       // For 'or' if we're not reducing duplicates, we get the absolute simplest:
-      $field = $this->handler->table . '.' . $this->handler->field;
+      $field = $this->handler->relationship . '_' . $this->handler->table . '.' . $this->handler->field;
       if ($this->handler->operator == 'or' && empty($this->handler->options['reduce_duplicates'])) {
         if (empty($this->handler->options['add_table']) && empty($this->handler->view->many_to_one_tables[$field])) {
           // query optimization, INNER joins are slightly faster, so use them
