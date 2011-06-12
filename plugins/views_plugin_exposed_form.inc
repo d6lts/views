@@ -36,6 +36,10 @@ class views_plugin_exposed_form extends views_plugin {
     $options['exposed_sorts_label'] = array('default' => 'Sort by', 'translatable' => TRUE);
     $options['sort_asc_label'] = array('default' => 'Asc', 'translatable' => TRUE);
     $options['sort_desc_label'] = array('default' => 'Desc', 'translatable' => TRUE);
+    if (module_exists('ctools')) {
+      $options['autosubmit'] = array('default' => FALSE);
+      $options['autosubmit_hide'] = array('default' => FALSE);
+    }
     return $options;
   }
 
@@ -90,6 +94,25 @@ class views_plugin_exposed_form extends views_plugin {
       '#default_value' => $this->options['sort_desc_label'],
       '#required' => TRUE,
     );
+
+    if (module_exists('ctools')) {
+      $form['autosubmit'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Autosubmit'),
+        '#description' => t('Automatically submit the form once an element is changed.'),
+        '#default_value' => $this->options['autosubmit'],
+      );
+
+      $form['autosubmit_hide'] = array(
+        '#type' => 'checkbox',
+        '#title' => t('Hide submit button'),
+        '#description' => t('Hide submit button if javascript is enabled.'),
+        '#default_value' => $this->options['autosubmit_hide'],
+        '#dependency' => array(
+          'edit-exposed-form-options-autosubmit' => array(1),
+        ),
+      );
+    }
   }
 
   /**
@@ -205,6 +228,18 @@ class views_plugin_exposed_form extends views_plugin {
     if ($pager) {
       $pager->exposed_form_alter($form, $form_state);
       $form_state['pager_plugin'] = $pager;
+    }
+
+
+    // Apply autosubmit values.
+    if (!empty($this->options['autosubmit'])) {
+      $form['#attributes']['class'] .= ' ctools-auto-submit-full-form';
+      $form['submit']['#attributes']['class'] = 'ctools-use-ajax ctools-auto-submit-click';
+      ctools_add_js('auto-submit');
+
+      if (!empty($this->options['autosubmit_hide'])) {
+        $form['submit']['#attributes']['class'] = 'js-hide';
+      }
     }
   }
 
