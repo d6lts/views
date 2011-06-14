@@ -1863,7 +1863,7 @@ class views_plugin_display extends views_plugin {
     $this->view->set_pager_element($this->get_option('pager_element'));
     $this->view->set_items_per_page($this->get_option('items_per_page'));
     $this->view->set_offset($this->get_option('offset'));
-    if ($this->use_more()) {
+    if ($this->use_more() && !$this->use_more_always()) {
       $this->view->get_total_rows = TRUE;
     }
   }
