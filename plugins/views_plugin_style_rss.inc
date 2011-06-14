@@ -96,10 +96,14 @@ class views_plugin_style_rss extends views_plugin_style {
       }
     }
 
-    foreach ($this->view->result as $row) {
+    foreach ($this->view->result as $row_index => $row) {
+      $this->view->row_index = $row_index;
       $rows .= $this->row_plugin->render($row);
     }
 
-    return theme($this->theme_functions(), $this->view, $this->options, $rows);
+    $output = theme($this->theme_functions(), $this->view, $this->options, $rows);
+    unset($this->view->row_index);
+
+    return $output;
   }
 }
