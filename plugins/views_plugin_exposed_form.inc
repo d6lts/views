@@ -274,7 +274,12 @@ class views_plugin_exposed_form extends views_plugin {
    * Provide a reset form if one was requested.
    */
   function reset_form(&$form, &$form_state) {
-    unset($_SESSION['views'][$this->view->name][$this->view->current_display]);
+    // If filters are not overridden, store the 'remember' settings on the
+    // default display. If they are, store them on this display. This way,
+    // multiple displays in the same view can share the same filters and
+    // remember settings.
+    $display_id = ($this->view->display_handler->is_defaulted('filters')) ? 'default' : $this->current_display;
+    unset($_SESSION['views'][$this->view->name][$display_id]);
     $form_state['no_redirect'] = FALSE;
     $form_state['redirect'] = !empty($this->view->ajax_path) ? $this->view->ajax_path : $_GET['q'];
   }
