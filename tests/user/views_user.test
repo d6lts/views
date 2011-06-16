@@ -5,6 +5,8 @@
  * Tests basic user module integration into views.
  */
 
+module_load_include('test', 'views', 'tests/views_query');
+
 class viewsUserTestCase extends ViewsSqlTest {
   public static function getInfo() {
     return array(
