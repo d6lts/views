@@ -141,7 +141,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
     $item->name = $view->name;
 
     if (!empty($view->tag)) {
-      $item->tag = $view->tag;
+      $item->tag = check_plain($view->tag);
     }
 
     $item->title = $view->get_title();
