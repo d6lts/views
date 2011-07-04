@@ -172,7 +172,7 @@ function views_export_export_form_apply(&$form, &$form_state) {
 }
 
 function views_export_export_form_submit(&$form, &$form_state) {
-  $code = '';
+  $code = "<?php \n";
   if (empty($form_state['values']['name'])) {
     $form_state['values']['name'] = 'foo';
   }
@@ -210,7 +210,8 @@ function views_export_export_form_submit(&$form, &$form_state) {
     '#required' => FALSE,
   ) + $types['textarea'];
 
-  $api  = "/**\n";
+  $api  = "<?php\n";
+  $api .= "/**\n";
   $api .= " * Implementation of hook_views_api().\n";
   $api .= " */\n";
   $api .= "function @module_views_api() {\n";
