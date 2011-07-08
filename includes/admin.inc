@@ -134,6 +134,7 @@ function template_preprocess_views_ui_list_views(&$vars) {
     }
 
     $item->ops = implode(' | ', $item->ops);
+    $item->path = '';
     if (empty($view->display)) {
       $item->path = t('Warning! Broken view!');
     }
