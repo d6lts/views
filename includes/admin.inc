@@ -858,18 +858,13 @@ function views_ui_import_validate($form, &$form_state) {
     form_set_error('', t('A view by that name already exists; please choose a different name'));
   }
 
-  $broken = FALSE;
   views_include('analyze');
   if ($messages = views_analyze_view($view)) {
     foreach ($messages as $message) {
       if ($message['type'] == 'error') {
-        $broken = TRUE;
+        drupal_set_message($message['message'], 'error');
       }
     }
-  }
-
-  if ($broken) {
-    form_set_error('', t('Unable to import view.'));
   }
 
   $form_state['view'] = &$view;
