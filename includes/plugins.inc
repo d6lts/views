@@ -466,6 +466,11 @@ class views_plugin extends views_object {
   var $display = NULL;
 
   /**
+   * The plugin type of this plugin, for example style or query.
+   */
+  var $plugin_type = NULL;
+
+  /**
    * Provide a form to edit options for this plugin.
    */
   function options_form(&$form, &$form_state) { }
