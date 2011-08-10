@@ -437,10 +437,10 @@ function taxonomy_views_handlers() {
         'parent' => 'views_handler_argument',
       ),
       'views_handler_argument_taxonomy' => array(
-        'parent' => 'views_handler_argument',
+        'parent' => 'views_handler_argument_numeric',
       ),
       'views_handler_argument_vocabulary_vid' => array(
-        'parent' => 'views_handler_argument',
+        'parent' => 'views_handler_argument_numeric',
       ),
       'views_handler_argument_term_node_tid' => array(
         'parent' => 'views_handler_argument_many_to_one',
