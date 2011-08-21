@@ -3,14 +3,10 @@
 /**
  * @file
  * Drush integration of views.
+ *
+ * * drush cache-clear views - Clears the views specific caches.
+ * * views-revert - Drush command to revert views overridden in the system.
  */
-
-/**
- * Adds a cache clear option for views.
- */
-function views_drush_cache_clear(&$types) {
-  $types['views'] = 'views_invalidate_cache';
-}
 
 /**
  * Implement hook_drush_help().
@@ -380,4 +376,11 @@ function drush_views_analyze() {
     }
   }
   drush_log(dt('A total of @total views were analyzed and @messages problems were found.', array('@total' => $total, '@messages' => $messages_count)), 'ok');
+}
+
+/**
+ * Adds a cache clear option for views.
+ */
+function views_drush_cache_clear(&$types) {
+  $types['views'] = 'views_invalidate_cache';
 }
