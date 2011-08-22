@@ -88,4 +88,4 @@
     </div>
   <?php endif; ?>
 
-</div> <?php /* class view */ ?>
+</div><?php /* class view */ ?>
