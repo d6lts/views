@@ -407,13 +407,11 @@ function template_preprocess_views_view_table(&$vars) {
   $active   = !empty($handler->active) ? $handler->active : '';
   $order    = !empty($handler->order) ? $handler->order : 'asc';
 
-  $query    = tablesort_get_querystring();
-  if ($query) {
-    $query = '&' . $query;
-  }
+  parse_str(tablesort_get_querystring(), $query);
   if (isset($view->exposed_raw_input)) {
-    $query .= implode('&', $view->exposed_raw_input);
+    $query += $view->exposed_raw_input;
   }
+  $query = empty($query) ? '' : '&' . http_build_query($query, '', '&');
 
   $header = array();
 
