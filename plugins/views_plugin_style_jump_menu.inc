@@ -120,11 +120,12 @@ class views_plugin_style_jump_menu extends views_plugin_style {
 
         $path = url($path, $url_options);
         $field = strip_tags($this->row_plugin->render($row));
+        $key = md5($path . $field) . "::" . $path;
         if ($title) {
-          $options[$title][$path] = $field;
+          $options[$title][$key] = $field;
         }
         else {
-          $options[$path] = $field;
+          $options[$key] = $field;
         }
         $paths[$path] = $path;
         $this->view->row_index++;
