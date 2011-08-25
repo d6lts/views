@@ -299,13 +299,18 @@ class views_plugin_style extends views_plugin {
     if (!isset($this->rendered_fields)) {
       $this->view->row_index = 0;
       $keys = array_keys($this->view->field);
-      foreach ($result as $count => $row) {
-        $this->view->row_index = $count;
-        foreach ($keys as $id) {
-          $this->rendered_fields[$count][$id] = $this->view->field[$id]->theme($row);
-        }
 
-        $this->row_tokens[$count] = $this->view->field[$id]->get_render_tokens(array());
+      // If all fields have a field::access FALSE there might be no fields, so
+      // there is no reason to execute this code.
+      if (!empty($keys)) {
+        foreach ($result as $count => $row) {
+          $this->view->row_index = $count;
+          foreach ($keys as $id) {
+            $this->rendered_fields[$count][$id] = $this->view->field[$id]->theme($row);
+          }
+
+          $this->row_tokens[$count] = $this->view->field[$id]->get_render_tokens(array());
+        }
       }
       unset($this->view->row_index);
     }
