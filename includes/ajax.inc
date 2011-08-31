@@ -62,8 +62,10 @@ function views_ajax() {
         $errors = $view->validate();
         if ($errors === TRUE) {
           $object->status = TRUE;
-          $object->title = $view->get_title();
           $object->display .= $view->preview($display_id, $args);
+          // Get the title after the preview call, to let it set
+          // up both the view's current display and arguments
+          $object->title = $view->get_title();
         }
         else {
           foreach ($errors as $error) {
