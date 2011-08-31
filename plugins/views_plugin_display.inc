@@ -33,6 +33,11 @@ class views_plugin_display extends views_plugin {
 
   var $handlers = array();
 
+  /**
+   * Stores all availible display extenders.
+   */
+  var $extender = array();
+
   function init(&$view, &$display, $options = NULL) {
     $this->view = &$view;
     $this->display = &$display;
@@ -45,7 +50,6 @@ class views_plugin_display extends views_plugin {
     if ($this->is_default_display() && isset($options['defaults'])) {
       unset($options['defaults']);
     }
-
     $this->unpack_options($this->options, $options);
 
     // Translate changed settings:
@@ -132,6 +136,17 @@ class views_plugin_display extends views_plugin {
     }
   }
 
+  function construct() {
+    // Load extenders as soon as possible
+    $this->extender = array();
+    foreach (array_filter(variable_get('views_display_extenders', array())) as $extender) {
+      $data = views_fetch_plugin_data('display_extender', $extender);
+      views_include_handler($data['handler'], $data, 'display_extender');
+      $this->extender[$extender] = new $data['handler']($view, $this);
+    }
+    parent::construct();
+  }
+
   function destroy() {
     parent::destroy();
 
@@ -145,6 +160,10 @@ class views_plugin_display extends views_plugin {
 
     if (isset($this->default_display)) {
       unset($this->default_display);
+    }
+
+    foreach ($this->extender as $extender) {
+      $extender->destroy();
     }
   }
 
@@ -318,6 +337,10 @@ class views_plugin_display extends views_plugin {
     if (empty($this->definition['use pager'])) {
       unset($sections['pager']);
       unset($sections['items_per_page']);
+    }
+
+    foreach ($this->extender as $extender) {
+      $extender->defaultable_sections($sections, $section);
     }
 
     if ($section) {
@@ -561,6 +584,11 @@ class views_plugin_display extends views_plugin {
     if ($this->is_default_display()) {
       unset($options['defaults']);
     }
+
+    foreach ($this->extender as $extender) {
+      $extender->option_definition($options);
+    }
+
     return $options;
   }
 
@@ -1147,6 +1175,10 @@ class views_plugin_display extends views_plugin {
       'value' => t('Information'),
       'desc' => t('Get information on how to theme this display'),
     );
+
+    foreach ($this->extender as $extender) {
+      $extender->options_summary($categories, $options);
+    }
   }
 
   /**
@@ -1788,6 +1820,9 @@ class views_plugin_display extends views_plugin {
         break;
     }
 
+    foreach ($this->extender as $extender) {
+      $extender->options_form($form, $form_state);
+    }
   }
 
   /**
@@ -1894,6 +1929,10 @@ class views_plugin_display extends views_plugin {
           $plugin->options_validate($form['pager_options'], $form_state);
         }
         break;
+    }
+
+    foreach ($this->extender as $extender) {
+      $extender->options_validate($form, $form_state);
     }
   }
 
@@ -2083,6 +2122,10 @@ class views_plugin_display extends views_plugin {
         }
         break;
     }
+
+    foreach ($this->extender as $extender) {
+      $extender->options_submit($form, $form_state);
+    }
   }
 
   /**
@@ -2169,7 +2212,11 @@ class views_plugin_display extends views_plugin {
   /**
    * Inject anything into the query that the display handler needs.
    */
-  function query() {  }
+  function query() {
+    foreach ($this->extender as $extender) {
+      $extender->query();
+    }
+  }
 
   /**
    * Not all display plugins will support filtering
@@ -2281,6 +2328,10 @@ class views_plugin_display extends views_plugin {
     if ($this->uses_exposed()) {
       $exposed_form = $this->get_plugin('exposed_form');
       $exposed_form->pre_execute();
+    }
+
+    foreach ($this->extender as $extender) {
+      $extender->pre_execute();
     }
   }
 
