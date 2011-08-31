@@ -83,6 +83,11 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         return empty($vids) || !empty($vids[$result->vid]);
 
       case 'tids':
+        // An empty argument is not a term so doesn't pass.
+        if (empty($argument)) {
+          return FALSE;
+        }
+
         $tids = new stdClass();
         $tids->value = $argument;
         $tids = views_break_phrase($argument, $tids);
