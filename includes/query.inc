@@ -252,11 +252,9 @@ class views_query {
       return FALSE;
     }
 
-    if (!$join) {
-      $join = $this->get_join_data($table, $this->relationships[$relationship]['base']);
+    if ($join && $relationship) {
+      $join = $this->adjust_join($join, $relationship);
     }
-
-    $join = $this->adjust_join($join, $relationship);
 
     return $this->queue_table($table, $relationship, $join, $alias);
   }
