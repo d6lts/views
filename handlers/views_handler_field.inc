@@ -712,10 +712,10 @@ If you would like to have the characters %5B and %5D please use the html entity 
     );
 
     $form['empty'] = array(
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => t('Empty text'),
       '#default_value' => $this->options['empty'],
-      '#description' => t('If the field is empty, display this text instead.'),
+      '#description' => t('Provide text to display if this field returns no results. You may include HTML. You may enter data from this view as per the "Replacement patterns" in the "Rewrite Results" section below.'),
     );
 
     $form['empty_zero'] = array(
