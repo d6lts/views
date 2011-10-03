@@ -324,31 +324,49 @@ function views1_import($imported) {
   }
   $actions = array('ignore', 'not found', 'ignore', 'summary asc', 'summary asc', 'summary desc', 'summary asc', 'empty');
   foreach ($imported->argument as $id => $field) {
-    if (!empty($imported->view_args_php)) {
-      $field['argoptions']['default_action'] = 'default';
-      $field['argoptions']['default_argument_type'] = 'php';
-      $field['argoptions']['default_argument_php'] = '$args = eval(\''. str_replace("'", "\\'", $imported->view_args_php) .'\');'."\n";
-      $field['argoptions']['default_argument_php'] .= 'if (isset($args['. $field['position'] .'])) {'."\n";
-      $field['argoptions']['default_argument_php'] .= '  return $args['. $field['position'] .'];'."\n";
-      $field['argoptions']['default_argument_php'] .= '}';
-      $field['argoptions']['validate_fail'] = $actions[$field['argdefault']];
+    if ($field['type'] == 'rss_feed') {
+      $feed_display = $view->new_display('feed');
+      $feed_display->set_option('style_plugin', 'rss');
+      $feed_display->set_option('row_plugin', 'node_rss');
+      $feed_display->set_option('path', $view->display[$page_display]->handler->get_option('path') .'/feed');
+      $feed_display->set_option('page', $view->display[$page_display]->handler->get_option('pager'));
+
+      $displays = array();
+      if (!empty($page_display)) {
+        $displays[$page_display] = $page_display;
+      }
+      if (!empty($block_display)) {
+        $displays[$block_display] = $block_display;
+      }
+      $feed_display->set_option('displays', $displays);
     }
     else {
-      $field['argoptions']['default_action'] = $actions[$field['argdefault']];
-    }
-    if (!empty($field['title'])) {
-      $field['argoptions']['title'] = $field['title'];
-    }
-    if (!empty($field['wildcard'])) {
-      $field['argoptions']['wildcard'] = $field['wildcard'];
-    }
-    if (!empty($field['wildcard_substitution'])) {
-      $field['argoptions']['wildcard_substitution'] = $field['wildcard_substitution'];
-    }
-    // Arguments didn't used to be identified by table.name so we just have to
-    // leave that out.
-    foreach (module_implements('views_convert') as $module) {
-      module_invoke($module, 'views_convert', 'default', 'argument', $view, $field, NULL);
+      if (!empty($imported->view_args_php)) {
+        $field['argoptions']['default_action'] = 'default';
+        $field['argoptions']['default_argument_type'] = 'php';
+        $field['argoptions']['default_argument_php'] = '$args = eval(\''. str_replace("'", "\\'", $imported->view_args_php) .'\');'."\n";
+        $field['argoptions']['default_argument_php'] .= 'if (isset($args['. $field['position'] .'])) {'."\n";
+        $field['argoptions']['default_argument_php'] .= '  return $args['. $field['position'] .'];'."\n";
+        $field['argoptions']['default_argument_php'] .= '}';
+        $field['argoptions']['validate_fail'] = $actions[$field['argdefault']];
+      }
+      else {
+        $field['argoptions']['default_action'] = $actions[$field['argdefault']];
+      }
+      if (!empty($field['title'])) {
+        $field['argoptions']['title'] = $field['title'];
+      }
+      if (!empty($field['wildcard'])) {
+        $field['argoptions']['wildcard'] = $field['wildcard'];
+      }
+      if (!empty($field['wildcard_substitution'])) {
+        $field['argoptions']['wildcard_substitution'] = $field['wildcard_substitution'];
+      }
+      // Arguments didn't used to be identified by table.name so we just have to
+      // leave that out.
+      foreach (module_implements('views_convert') as $module) {
+        module_invoke($module, 'views_convert', 'default', 'argument', $view, $field, NULL);
+      }
     }
   }
   foreach ($imported->filter as $key => $field) {
@@ -414,6 +432,14 @@ function views1_convert_style(&$view, &$handler, $type) {
 
       $handler->set_option('style_plugin', 'table');
       $handler->set_option('style_options', $options);
+      break;
+    case 'views_rss':
+      $feed_display = $view->add_display('feed');
+      $feed_display->set_option('style_plugin', 'rss');
+      $feed_display->set_option('row_plugin', 'node_rss');
+      $feed_display->set_option('path', $handler->get_option('path'));
+      $feed_display->set_options('displays', array($handler->id));
+      $feed_display->set_option('page', $handler->get_option('pager'));
       break;
     default:
       // Ask around if anybody else knows.
