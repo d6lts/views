@@ -1135,7 +1135,7 @@ function template_preprocess_views_ui_edit_tab(&$vars) {
         $title = t('Description');
         break;
     }
-    $value = empty($view->{$property}) ? t('None') : check_plain($view->{$property});
+    $value = empty($view->{$property}) ? t('None') : $view->{$property};
     $vars['details'][$property] = $title . ': ' . l($value, "admin/build/views/nojs/$property/$view->name", array('attributes' => array('class' => 'views-ajax-link')));
   }
 
