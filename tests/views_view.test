@@ -1,4 +1,6 @@
 <?php
+module_load_include('test', 'views', 'tests/views_query');
+
 /**
  * Test the view class.
  */
@@ -60,7 +62,7 @@ class viewsViewTest extends ViewsSqlTest {
   }
 
   function testValidate() {
-    // Test a view with multiple displays. 
+    // Test a view with multiple displays.
     // Validating a view shouldn't change the active display.
     // @todo: Create an extra validation view.
     $view = $this->view_test_destroy();

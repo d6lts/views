@@ -1,10 +1,12 @@
 <?php
+module_load_include('test', 'views', 'tests/views_query');
+
 /**
  * @file
  * Tests the views analyse system.
  */
 
-class ViewsAnalyzeTest extends viewsSqlTest {
+class ViewsAnalyzeTest extends ViewsSqlTest {
   public static function getInfo() {
     return array(
       'name' => 'Views Analyze',

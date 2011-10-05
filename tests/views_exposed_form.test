@@ -1,4 +1,6 @@
 <?php
+module_load_include('test', 'views', 'tests/views_query');
+
 /**
  * @file
  * Test exposed forms.
@@ -60,14 +62,14 @@ class ViewsExposedFormTest extends ViewsSqlTest {
     $this->drupalGet('admin/build/views/nojs/config-item/test_exposed_admin_ui/default/filter/type');
     // Be sure that the button is called exposed
     $this->helperButtonHasLabel('edit-options-expose-button-button', t('Expose'));
-    
-    
+
+
     // Check the validations of the filter handler.
     $edit = array();
     $edit['options[expose][identifier]'] = '';
     $this->drupalPost(NULL, $edit, t('Update'));
     $this->assertText(t('The identifier is required if the filter is exposed.'));
-    
+
     $edit = array();
     $edit['options[expose][identifier]'] = 'value';
     $this->drupalPost(NULL, $edit, t('Update'));
@@ -90,4 +92,3 @@ class ViewsExposedFormTest extends ViewsSqlTest {
     $this->assertFieldById('edit-options-expose-label', '', t('Take sure a label field is shown'));
   }
 }
-
