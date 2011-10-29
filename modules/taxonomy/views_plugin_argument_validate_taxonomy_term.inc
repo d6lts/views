@@ -80,6 +80,8 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         if (!$result) {
           return FALSE;
         }
+        $this->argument->validated_title = check_plain($result->name);
+
         return empty($vids) || !empty($vids[$result->vid]);
 
       case 'tids':
