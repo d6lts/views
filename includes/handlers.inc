@@ -1145,7 +1145,7 @@ function views_get_timezone() {
       elseif ($GLOBALS['db_type'] == 'mysqli') {
         db_query("SET @@session.time_zone = '$offset'");
       }
-      elseif ($GLOBALS['db_type'] == 'mysql' && version_compare(db_version, '4.1.3', '>=')) {
+      elseif ($GLOBALS['db_type'] == 'mysql' && version_compare(db_version(), '4.1.3', '>=')) {
         db_query("SET @@session.time_zone = '$offset'");
       }
 
