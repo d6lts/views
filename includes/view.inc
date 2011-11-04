@@ -52,6 +52,11 @@ class view extends views_db_object {
   // Used to store views that were previously running if we recurse.
   var $old_view = array();
   /**
+   * Stores all the views substitutions.
+   */
+  var $substitutions = array();
+
+  /**
    * Constructor
    */
   function view() {
@@ -357,6 +362,16 @@ class view extends views_db_object {
         $position++;
       }
     }
+  }
+
+  /**
+   * Get's all the substitutions and store them.
+   */
+  function substitutions($reset = FALSE) {
+    if ($reset || empty($this->substitutions)) {
+      $this->substitutions = module_invoke_all('views_query_substitutions', $this);
+    }
+    return $this->substitutions;
   }
 
   /**
@@ -719,7 +734,7 @@ class view extends views_db_object {
     else {
       $items = array();
       if ($query) {
-        $replacements = module_invoke_all('views_query_substitutions', $this);
+        $replacements = $this->substitutions();
         $query = str_replace(array_keys($replacements), $replacements, $query);
         $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
 
