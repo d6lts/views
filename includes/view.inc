@@ -91,6 +91,11 @@ class view extends views_db_object {
   var $override_path = NULL;
 
   /**
+   * Stores all the views substitutions.
+   */
+  var $substitutions = array();
+
+  /**
    * Constructor
    */
   function __construct() {
@@ -449,6 +454,16 @@ class view extends views_db_object {
         $position++;
       }
     }
+  }
+
+  /**
+   * Get's all the substitutions and store them.
+   */
+  function substitutions($reset = FALSE) {
+    if ($reset || empty($this->substitutions)) {
+      $this->substitutions = module_invoke_all('views_query_substitutions', $this);
+    }
+    return $this->substitutions;
   }
 
   /**

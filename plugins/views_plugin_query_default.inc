@@ -1118,7 +1118,7 @@ class views_plugin_query_default extends views_plugin_query{
 
     $items = array();
     if ($query) {
-      $replacements = module_invoke_all('views_query_substitutions', $view);
+      $replacements = $this->view->substitutions();
       $query = str_replace(array_keys($replacements), $replacements, $query);
       $count_query = 'SELECT COUNT(*) FROM (' . str_replace(array_keys($replacements), $replacements, $count_query) . ') count_alias';
 
