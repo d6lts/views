@@ -16,6 +16,17 @@ class views_plugin_argument_default_taxonomy_tid extends views_plugin_argument_d
     return $options;
   }
 
+  function convert_options(&$options) {
+    $names = array_keys($this->option_definition());
+    $old_prefix = 'default_taxonomy_tid';
+    foreach ($names as $name) {
+      if (!isset($options[$name]) && isset($this->argument->options[$old_prefix . '_' . $name])) {
+        $options[$name] = $this->argument->options[$old_prefix . '_' . $name];
+      }
+    }
+  }
+
+
   function options_form(&$form, &$form_state) {
     $form['term_page'] = array(
       '#type' => 'checkbox',
