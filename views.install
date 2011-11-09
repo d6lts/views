@@ -547,3 +547,22 @@ function views_update_6013() {
   return $ret;
 }
 
+function views_schema_6300() {
+  return views_schema_6013();
+}
+/**
+ * Take sure the human_name field is added to the views_view table.
+ *
+ * If you updated from 6.x-2.x-dev to 6.x-3.x you had already schema
+ * version 6013, so the update 6012 isn't runned, and never was.
+ * As a result the human_name field is missing in the database.
+ *
+ * Add the human_name field if it doesn't exist before.
+ */
+function views_update_6300() {
+  $ret = array();
+  if (!db_column_exists('views_view', 'human_name')) {
+    $ret += views_update_6012();
+  }
+  return $ret;
+}
