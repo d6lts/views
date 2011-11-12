@@ -1196,6 +1196,16 @@ class view extends views_db_object {
   }
 
   /**
+   * Override the view's current title.
+   *
+   * The tokens in the title get's replaced before rendering.
+   */
+  function set_title($title) {
+     $this->build_info['title'] = $title;
+     return TRUE;
+   }
+
+  /**
    * Force the view to build a title.
    */
   function build_title() {
