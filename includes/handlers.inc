@@ -1298,7 +1298,13 @@ class views_join {
 
     // Load query tokens replacements.
     $view = views_get_current_view();
-    $replacements = $view->substitutions();
+    $replacements = array();
+    if (!empty($view)) {
+      $replacements = $view->substitutions();
+    }
+    else {
+      vpr('The current view is not set, maybe some code missed to execute $view->pre_execute()');
+    }
 
     // Tack on the extra.
     if (isset($this->extra)) {
