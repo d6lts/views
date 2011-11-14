@@ -1621,7 +1621,13 @@ class views_join {
     $output = " $this->type JOIN $right_table $table[alias] ON $left_field = $table[alias].$this->field";
     // Load query tokens replacements.
     $view = views_get_current_view();
-    $replacements = $view->substitutions();
+    $replacements = array();
+    if (!empty($view)) {
+      $replacements = $view->substitutions();
+    }
+    else {
+      vpr('The current view is not set, maybe some code missed to execute $view->pre_execute()');
+    }
 
     // Tack on the extra.
     if (isset($this->extra)) {
