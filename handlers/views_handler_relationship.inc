@@ -88,6 +88,7 @@ class views_handler_relationship extends views_handler {
       '#title' => t('Label'),
       '#default_value' => isset($this->options['label']) ? $this->options['label'] : '',
       '#description' => t('The label for this relationship that will be displayed only administratively.'),
+      '#required' => TRUE,
     );
 
     $form['required'] = array(
