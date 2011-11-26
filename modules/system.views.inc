@@ -53,7 +53,9 @@ function system_views_data() {
     ),
     'argument' => array(
       'handler' => 'views_handler_argument_file_fid',
+      'parent' => 'views_handler_argument_numeric', // make sure parent is included
       'name field' => 'filename', // the field to display in the summary.
+      'numeric' => TRUE,
     ),
     'filter' => array(
       'handler' => 'views_handler_filter_numeric',
