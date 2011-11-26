@@ -890,6 +890,16 @@ class view extends views_db_object {
       // Initialize the style plugin.
       $this->init_style();
 
+      // Give field handlers the opportunity to perform additional queries
+      // using the entire resultset prior to rendering.
+      if ($this->style_plugin->uses_fields()) {
+        foreach ($this->field as $id => $handler) {
+          if (!empty($this->field[$id])) {
+            $this->field[$id]->pre_render($this->result);
+          }
+        }
+      }
+
       $this->style_plugin->pre_render($this->result);
 
       // Let modules modify the view just prior to rendering it.
@@ -904,15 +914,6 @@ class view extends views_db_object {
         $function($this);
       }
 
-      // Give field handlers the opportunity to perform additional queries
-      // using the entire resultset prior to rendering.
-      if ($this->style_plugin->uses_fields()) {
-        foreach ($this->field as $id => $handler) {
-          if (!empty($this->field[$id])) {
-            $this->field[$id]->pre_render($this->result);
-          }
-        }
-      }
       $this->display_handler->output = $this->display_handler->render();
       if ($cache) {
         $cache->cache_set('output');
