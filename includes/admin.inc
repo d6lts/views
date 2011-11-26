@@ -1820,7 +1820,7 @@ function views_ui_add_display_form(&$form_state) {
 
   $form['display']['display'] = array(
     '#type' => 'select',
-    '#options' => views_fetch_plugin_names('display'),
+    '#options' => views_fetch_plugin_names('display', NULL, array($view->base_table)),
     '#default_value' => 'page',
   );
 
