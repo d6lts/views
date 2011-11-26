@@ -41,6 +41,7 @@ function views_views_plugins() {
         'uses hook menu' => TRUE,
         'use ajax' => TRUE,
         'use pager' => TRUE,
+        'use more' => TRUE,
         'accept attachments' => TRUE,
         'admin' => t('Page'),
         'help topic' => 'display-page',
