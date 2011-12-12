@@ -147,7 +147,6 @@ class viewsHandlerFilterStringTest extends ViewsSqlTest {
   }
 
   function testFilterStringWord() {
-    return;
     $view = $this->getBasicView();
 
     // Change the filtering
