@@ -155,7 +155,7 @@ class views_plugin_display extends views_plugin {
     foreach (array_filter(variable_get('views_display_extenders', array())) as $extender) {
       $data = views_fetch_plugin_data('display_extender', $extender);
       views_include_handler($data['handler'], $data, 'display_extender');
-      $this->extender[$extender] = new $data['handler']($view, $this);
+      $this->extender[$extender] = new $data['handler']($this->view, $this);
     }
     parent::construct();
   }
