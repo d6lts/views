@@ -1130,7 +1130,7 @@ class views_plugin_query_default extends views_plugin_query{
 
       // Detect an external database.
       if (isset($view->base_database)) {
-        db_set_active($view->base_database);
+        $this->db_set_active($view->base_database);
         $external = TRUE;
       }
 
@@ -1165,7 +1165,7 @@ class views_plugin_query_default extends views_plugin_query{
       }
 
       if ($external) {
-        db_set_active();
+        $this->db_set_active();
       }
     }
     $view->execute_time = views_microtime() - $start;
@@ -1225,6 +1225,16 @@ class views_plugin_query_default extends views_plugin_query{
    */
   function db_fetch_object($result) {
     return db_fetch_object($result);
+  }
+
+  /**
+   * Wrapper method for db_set_active().
+   *
+   * @param $name
+   *   The database name you want to activate.
+   */
+  function db_set_active($name = 'default') {
+    return db_set_active($name);
   }
 
 
