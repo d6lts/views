@@ -1154,7 +1154,7 @@ class views_plugin_query_default extends views_plugin_query{
       }
 
       $view->result = array();
-      while ($item = db_fetch_object($result)) {
+      while ($item = $this->db_fetch_object($result)) {
         $view->result[] = $item;
       }
 
@@ -1215,6 +1215,16 @@ class views_plugin_query_default extends views_plugin_query{
    */
   function db_result($result) {
     return db_result($result);
+  }
+
+  /**
+   * Wrapper method for db_fetch_object().
+   *
+   * @param $result
+   *   A database result used for db_fetch_object().
+   */
+  function db_fetch_object($result) {
+    return db_fetch_object($result);
   }
 
 
