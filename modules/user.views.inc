@@ -180,7 +180,7 @@ function user_views_data() {
 
   $data['users']['created_fulldate'] = array(
     'title' => t('Created date'),
-    'help' => t('In the form of CCYYMMDD.'),
+    'help' => t('Date in the form of CCYYMMDD.'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_fulldate',
@@ -189,7 +189,7 @@ function user_views_data() {
 
   $data['users']['created_year_month'] = array(
     'title' => t('Created year + month'),
-    'help' => t('In the form of YYYYMM.'),
+    'help' => t('Date in the form of YYYYMM.'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year_month',
@@ -198,7 +198,7 @@ function user_views_data() {
 
   $data['users']['timestamp_year'] = array(
     'title' => t('Created year'),
-    'help' => t('In the form of YYYY.'),
+    'help' => t('Date in the form of YYYY.'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_year',
@@ -207,7 +207,7 @@ function user_views_data() {
 
   $data['users']['created_month'] = array(
     'title' => t('Created month'),
-    'help' => t('In the form of MM (01 - 12).'),
+    'help' => t('Date in the form of MM (01 - 12).'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_month',
@@ -216,7 +216,7 @@ function user_views_data() {
 
   $data['users']['created_day'] = array(
     'title' => t('Created day'),
-    'help' => t('In the form of DD (01 - 31).'),
+    'help' => t('Date in the form of DD (01 - 31).'),
     'argument' => array(
       'field' => 'created',
       'handler' => 'views_handler_argument_node_created_day',
@@ -225,7 +225,7 @@ function user_views_data() {
 
   $data['users']['created_week'] = array(
     'title' => t('Created week'),
-    'help' => t('In the form of WW (01 - 53).'),
+    'help' => t('Date in the form of WW (01 - 53).'),
     'argument' => array(
       'field' => 'timestamp',
       'handler' => 'views_handler_argument_node_created_week',
