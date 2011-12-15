@@ -418,6 +418,14 @@ class views_handler extends views_object {
   function options_submit($form, &$form_state) { }
 
   /**
+   * Provides the handler some groupby.
+   */
+  function use_group_by() {
+    return TRUE;
+  }
+
+
+  /**
    * If a handler has 'extra options' it will get a little settings widget and
    * another form called extra_options.
    */

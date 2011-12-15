@@ -1362,7 +1362,7 @@ function template_preprocess_views_ui_edit_item(&$vars) {
     }
     $fields[$id]['info'] = $handler->admin_summary();
 
-    if ($display->handler->use_group_by()) {
+    if ($display->handler->use_group_by() && $handler->use_group_by()) {
       $fields[$id]['links'] = l('<span>' . t('Group settings') . '</span>', "admin/build/views/nojs/config-item-group/$view->name/$display->id/$type/$id", array('attributes' => array('class' => 'views-button-configure views-ajax-link', 'title' => t('Group settings')), 'html' => true));
     }
     if ($handler->has_extra_options()) {
