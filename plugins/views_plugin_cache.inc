@@ -52,7 +52,7 @@ class views_plugin_cache extends views_plugin {
    *   The cache type, either 'query', 'result' or 'output'.
    */
    function cache_expire($type) { }
-   
+
    /**
     * Determine expiration time in the cache table of the cache type
     * or CACHE_PERMANENT if item shouldn't be removed automatically from cache.

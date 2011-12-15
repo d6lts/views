@@ -40,4 +40,3 @@ class views_plugin_argument_default_fixed extends views_plugin_argument_default 
 /**
  * @}
  */
-

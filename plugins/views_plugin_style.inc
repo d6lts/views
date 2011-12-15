@@ -365,4 +365,3 @@ class views_plugin_style extends views_plugin {
 /**
  * @}
  */
-

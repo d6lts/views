@@ -23,8 +23,8 @@ Drupal.behaviors.viewsTabs = function (context) {
       return false;
     });
   /**
-   * Here is to handle display deletion 
-   * (checking in the hidden checkbox and hiding out the row) 
+   * Here is to handle display deletion
+   * (checking in the hidden checkbox and hiding out the row)
    */
   $('a.display-remove-link')
     .addClass('display-processed')
@@ -132,5 +132,3 @@ Drupal.Views.getPath = function (href) {
   }
   return href;
 };
-
-

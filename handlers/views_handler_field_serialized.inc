@@ -1,7 +1,7 @@
 <?php
 
 class views_handler_field_serialized extends views_handler_field {
-  
+
   function option_definition() {
     $options = parent::option_definition();
     $options['format'] = array('default' => 'unserialized');

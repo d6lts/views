@@ -180,7 +180,7 @@ function comment_views_data() {
       'handler' => 'views_handler_filter_date',
     ),
   );
-  
+
   $data['comments']['timestamp_fulldate'] = array(
     'title' => t('Created date'),
     'help' => t('Date in the form of CCYYMMDD.'),

@@ -230,7 +230,7 @@ function user_views_data() {
       'field' => 'timestamp',
       'handler' => 'views_handler_argument_node_created_week',
     ),
-  );  
+  );
 
   // access field
   $data['users']['access'] = array(

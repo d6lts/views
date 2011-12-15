@@ -138,4 +138,3 @@ class views_plugin_row_node_rss extends views_plugin_row {
     return theme($this->theme_functions(), $this->view, $this->options, $item);
   }
 }
-

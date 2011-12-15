@@ -45,7 +45,7 @@ class ViewsHandlersTest extends ViewsSqlTest {
     $empty_stdclass = new stdClass();
     $empty_stdclass->operator = 'or';
     $empty_stdclass->value = array();
-    
+
     $null = NULL;
     // check defaults
     $this->assertEqual($empty_stdclass, views_break_phrase_string('', $null));

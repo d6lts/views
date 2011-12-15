@@ -59,4 +59,3 @@ class views_handler_field_node_revision extends views_handler_field_node {
     return $data;
   }
 }
-

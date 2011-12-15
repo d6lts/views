@@ -111,7 +111,7 @@ class views_handler_argument_string extends views_handler_argument {
         '#default_value' => !empty($this->options['require_value']),
       );
     }
- 
+
     // allow + for or, , for and
     $form['break_phrase'] = array(
       '#type' => 'checkbox',
@@ -232,7 +232,7 @@ class views_handler_argument_string extends views_handler_argument {
 
   function case_transform($string, $option) {
 		global $multibyte;
-		
+
     switch ($this->options[$option]) {
       default:
         return $string;
@@ -275,7 +275,7 @@ class views_handler_argument_string extends views_handler_argument {
 
     return implode($this->operator == 'or' ? ' + ' : ', ', $this->title_query());
   }
-  
+
   /**
    * Override for specific title lookups.
    */
@@ -288,4 +288,3 @@ class views_handler_argument_string extends views_handler_argument {
   }
 
 }
-

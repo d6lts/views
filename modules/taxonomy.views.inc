@@ -307,7 +307,7 @@ function taxonomy_views_data() {
     'argument' => array(
       'help' => t('A related term of the term.'),
       'handler' => 'views_handler_argument_numeric',
-    ),    
+    ),
   );
 
   // ----------------------------------------------------------------------

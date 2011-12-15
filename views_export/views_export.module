@@ -254,4 +254,3 @@ function views_export_export_form_submit(&$form, &$form_state) {
   $form_state['output'] .= theme('textarea', $element_api);
   $form_state['output'] .= theme('textarea', $element_hook);
 }
-

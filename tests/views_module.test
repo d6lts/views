@@ -63,7 +63,7 @@ class viewsModuleTest extends ViewsSqlTest {
       $this->assertEqual($result_text, $expect[$key]);
     }
   }
-  
+
   /**
    * Tests the dynamic includes of templates via module feature.
    */
@@ -71,7 +71,7 @@ class viewsModuleTest extends ViewsSqlTest {
     $views_status = variable_get('views_defaults', array());
     $views_status['frontpage'] = FALSE; // false is enabled
     variable_set('views_defaults', $views_status);
-    
+
     $registry = theme_get_registry();
     $this->assertTrue(isset($registry['views_view__frontpage']));
   }

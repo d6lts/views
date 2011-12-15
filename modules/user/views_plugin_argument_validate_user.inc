@@ -121,4 +121,3 @@ class views_plugin_argument_validate_user extends views_plugin_argument_validate
     return TRUE;
   }
 }
-

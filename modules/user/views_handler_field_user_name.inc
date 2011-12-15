@@ -59,4 +59,3 @@ class views_handler_field_user_name extends views_handler_field_user {
     return $data;
   }
 }
-

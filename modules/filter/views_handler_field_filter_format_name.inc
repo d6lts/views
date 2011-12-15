@@ -13,7 +13,7 @@ class views_handler_field_filter_format_name extends views_handler_field {
     $this->ensure_my_table();
     $this->add_additional_fields();
   }
-  
+
   function render($values) {
     $format_name = $this->get_value($values, 'name');
     if (!$format_name) {

@@ -143,4 +143,3 @@ class ViewsCacheTest extends ViewsSqlTest {
     $this->assertEqual(6, count($view->result), t('The number of returned rows match.'));
   }
 }
-

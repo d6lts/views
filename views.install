@@ -487,7 +487,7 @@ function views_update_6011() {
 
   // There is only one simple query to run.
   $ret[] = update_sql("UPDATE {blocks} SET cache = " . BLOCK_NO_CACHE . " WHERE module = 'views' AND delta LIKE '-exp-%'");
-  
+
   return $ret;
 }
 

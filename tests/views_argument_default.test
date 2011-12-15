@@ -105,4 +105,3 @@ class ViewsArgumentDefaultTest extends ViewsSqlTest {
     return $view;
   }
 }
-

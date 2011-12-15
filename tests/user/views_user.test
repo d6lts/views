@@ -25,7 +25,7 @@ class viewsUserTestCase extends ViewsSqlTest {
     $this->nodes[] = $this->drupalCreateNode(array('uid' => $this->users[0]->uid));
     $this->nodes[] = $this->drupalCreateNode(array('uid' => 1));
   }
-  
+
   /**
    * Add a view which has no explicit relationship to the author and check the result.
    *

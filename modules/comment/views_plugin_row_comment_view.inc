@@ -49,4 +49,3 @@ class views_plugin_row_comment_view extends views_plugin_row {
     }
   }
 }
-

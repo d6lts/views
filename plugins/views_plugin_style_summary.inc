@@ -66,4 +66,3 @@ class views_plugin_style_summary extends views_plugin_style {
     return theme($this->theme_functions(), $this->view, $this->options, $rows);
   }
 }
-

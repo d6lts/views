@@ -44,7 +44,7 @@ class views_handler_argument_date extends views_handler_argument_formula {
           continue;
         }
       }
-  
+
       if (arg(0) == 'node' && is_numeric(arg(1))) {
         $node = node_load(arg(1));
       }

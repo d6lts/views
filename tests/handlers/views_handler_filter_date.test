@@ -178,7 +178,7 @@ class ViewsHandlerFilterDateTest extends ViewsSqlTest {
 
     return $view;
   }
-  
+
   function views_test_offset() {
     $view = $this->views_test_between();
     return $view;

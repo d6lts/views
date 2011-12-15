@@ -297,4 +297,3 @@ function views_process_check_options($element, $edit, &$form_state, &$form) {
   }
   return $element;
 }
-

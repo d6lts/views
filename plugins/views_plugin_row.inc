@@ -138,4 +138,3 @@ class views_plugin_row extends views_plugin {
 /**
  * @}
  */
-

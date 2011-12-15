@@ -7,7 +7,7 @@
  * - numeric: If true, the field will be considered numeric. Probably should
  *   always be set TRUE as views_handler_argument_string has many to one
  *   capabilities.
- * - zero is null: If true, a 0 will be handled as empty, so for example 
+ * - zero is null: If true, a 0 will be handled as empty, so for example
  *   a default argument can be provided or a summary can be shown.
  *
  * @ingroup views_argument_handlers
@@ -167,4 +167,3 @@ class views_handler_argument_many_to_one extends views_handler_argument {
     return $this->value;
   }
 }
-

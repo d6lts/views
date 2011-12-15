@@ -275,7 +275,7 @@ function node_views_data() {
       'handler' => 'views_handler_field_node_link_delete',
     ),
   );
-  
+
   $data['node']['path'] = array(
     'field' => array(
       'title' => t('Path'),
@@ -283,7 +283,7 @@ function node_views_data() {
       'handler' => 'views_handler_field_node_path',
     ),
   );
-  
+
 
   // Bogus fields for aliasing purposes.
 

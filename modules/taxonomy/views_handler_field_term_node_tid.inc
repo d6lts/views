@@ -90,7 +90,7 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
         $this->items[$term->node_vid][$term->tid]['tid'] = $term->tid;
         $this->items[$term->node_vid][$term->tid]['vid'] = $term->vid;
         $this->items[$term->node_vid][$term->tid]['vocabulary'] = check_plain($term->vocabulary);
-        
+
         if (!empty($this->options['link_to_taxonomy'])) {
           $this->items[$term->node_vid][$term->tid]['make_link'] = TRUE;
           $this->items[$term->node_vid][$term->tid]['path'] = taxonomy_term_path($term);
@@ -117,4 +117,3 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
     $tokens['[' . $this->options['id'] . '-vocabulary' . ']'] = $item['vocabulary'];
   }
 }
-

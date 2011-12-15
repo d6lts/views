@@ -12,4 +12,3 @@ class views_handler_filter_node_language extends views_handler_filter_in_operato
     }
   }
 }
-

@@ -7,7 +7,7 @@
 /**
  * @defgroup views_filter_module filter.module handlers
  *
- * Only includes the table 'filter_formats'. 
+ * Only includes the table 'filter_formats'.
  * @{
  */
 
@@ -17,7 +17,7 @@
 function filter_views_data() {
   // ----------------------------------------------------------------------
   // filter_formats table
-  
+
   // Have not defined $data['filter_formats']['table']['group'] since
   // no fields are defined here yet.
   $data['filter_formats']['table']['join'] = array(

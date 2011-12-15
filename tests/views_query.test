@@ -113,7 +113,7 @@ abstract class ViewsSqlTest extends ViewsTestCase {
 
   /**
    * This function allows to enable views ui from a higher class which can't change the setup function anymore.
-   * 
+   *
    * @TODO
    *   Convert existing setUp functions.
    */
@@ -378,4 +378,3 @@ abstract class ViewsSqlTest extends ViewsTestCase {
     $this->verbose('<pre>Executed view: ' . print_r($view->build_info, TRUE) . '</pre>');
   }
 }
-

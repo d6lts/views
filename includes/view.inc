@@ -61,7 +61,7 @@ class view extends views_db_object {
    * @var string
    */
   var $current_display;
-  
+
   /**
    * Where the $query object will reside:
    *

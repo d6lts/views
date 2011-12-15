@@ -2759,4 +2759,3 @@ class views_plugin_display extends views_plugin {
 /**
  * @}
  */
-

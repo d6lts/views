@@ -571,4 +571,3 @@ function views1_delete($arg) {
   $result = db_query("DELETE FROM {view_exposed_filter} WHERE vid = $view->vid");
   $result = db_query("DELETE FROM {view_view} WHERE vid = $view->vid");
 }
-

@@ -132,4 +132,3 @@ class views_plugin_argument_validate_node extends views_plugin_argument_validate
     }
   }
 }
-

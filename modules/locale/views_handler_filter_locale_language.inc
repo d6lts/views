@@ -13,4 +13,3 @@ class views_handler_filter_locale_language extends views_handler_filter_in_opera
     }
   }
 }
-

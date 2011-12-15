@@ -143,4 +143,3 @@ function views_ui_views_analyze($view) {
 
   return $ret;
 }
-

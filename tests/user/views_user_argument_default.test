@@ -19,7 +19,7 @@ class viewsUserArgumentDefault extends ViewsSqlTest {
     // Create a user to test.
     $account = $this->drupalCreateUser();
 
-    // Switch the user, we have to check the global user too, because drupalLogin is only for the simpletest browser. 
+    // Switch the user, we have to check the global user too, because drupalLogin is only for the simpletest browser.
     $this->drupalLogin($account);
     global $user;
     $admin = $user;

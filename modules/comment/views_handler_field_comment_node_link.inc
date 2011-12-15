@@ -56,4 +56,3 @@ class views_handler_field_comment_node_link extends views_handler_field {
     return !empty($links) ? theme('links', $links, array('class' => 'links inline')) : '';
   }
 }
-

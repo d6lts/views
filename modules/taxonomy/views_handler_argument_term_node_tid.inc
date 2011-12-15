@@ -56,4 +56,3 @@ class views_handler_argument_term_node_tid extends views_handler_argument_many_t
   }
 
 }
-

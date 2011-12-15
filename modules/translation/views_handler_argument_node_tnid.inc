@@ -22,4 +22,3 @@ class views_handler_argument_node_tnid extends views_handler_argument_numeric {
     return $titles;
   }
 }
-

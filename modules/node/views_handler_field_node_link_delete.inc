@@ -30,4 +30,3 @@ class views_handler_field_node_link_delete extends views_handler_field_node_link
     return $text;
   }
 }
-

@@ -30,4 +30,3 @@ class views_handler_field_node_link_edit extends views_handler_field_node_link {
     return $text;
   }
 }
-

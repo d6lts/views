@@ -434,4 +434,3 @@ Drupal.behaviors.ViewsGroupedTableDrag = function(context) {
     };
   }
 }
-

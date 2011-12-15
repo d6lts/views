@@ -4098,4 +4098,3 @@ function theme_views_ui_style_plugin_table($form) {
   $output .= drupal_render($form);
   return $output;
 }
-

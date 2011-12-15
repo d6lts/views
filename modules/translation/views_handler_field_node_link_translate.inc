@@ -28,4 +28,3 @@ class views_handler_field_node_link_translate extends views_handler_field_node_l
     return l($text, "node/$node->nid/translate", array('query' => drupal_get_destination()));
   }
 }
-

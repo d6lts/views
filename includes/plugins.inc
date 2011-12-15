@@ -463,11 +463,11 @@ function views_discover_plugins() {
 class views_plugin extends views_object {
   /**
    * The top object of a view.
-   * 
+   *
    * @var view
    */
   var $view = NULL;
-  
+
   /**
    * The current used display plugin.
    *
@@ -529,4 +529,3 @@ class views_plugin extends views_object {
    */
   function validate() { return array(); }
 }
-
