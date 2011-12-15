@@ -2095,12 +2095,12 @@ class views_plugin_display extends views_plugin {
         }
         break;
 
+      case 'link_display':
+        $this->set_option('link_url', $form_state['values']['link_url']);
       case 'title':
       case 'css_class':
-      case 'link_display':
       case 'display_comment':
         $this->set_option($section, $form_state['values'][$section]);
-        $this->set_option('link_url', $form_state['values']['link_url']);
         break;
       case 'enabled':
       case 'use_ajax':
