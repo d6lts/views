@@ -86,7 +86,7 @@ class views_handler_area_text extends views_handler_area {
   }
 
   function render($empty = FALSE) {
-    $format = isset($this->options['format']) ? $this->options['format'] : filter_default_format();
+    $format = isset($this->options['format']) ? $this->options['format'] : FILTER_FORMAT_DEFAULT;
     if (!$empty || !empty($this->options['empty'])) {
       return $this->render_textarea($this->options['content'], $format);
     }
