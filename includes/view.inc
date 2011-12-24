@@ -19,6 +19,13 @@ class view extends views_db_object {
   var $db_table = 'views_view';
   var $base_table = 'node';
 
+  /**
+   * The id of the view, which is used only for views in the database.
+   *
+   * @var number
+   */
+  var $vid;
+
   // State variables
   var $built = FALSE;
   var $executed = FALSE;
