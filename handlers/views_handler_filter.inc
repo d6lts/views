@@ -25,6 +25,17 @@
  */
 class views_handler_filter extends views_handler {
   /**
+   * Contains the actual value of the field,either configured in the views ui
+   * or entered in the exposed filters.
+   */
+  var $value = NULL;
+
+  /**
+   * Contains the operator which is used on the query.
+   */
+  var $operator = '=';
+
+  /**
    * Provide some extra help to get the operator/value easier to use.
    *
    * This likely has to be overridden by filters which are more complex
