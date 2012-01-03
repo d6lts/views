@@ -111,9 +111,8 @@ class views_handler_field_term_node_tid extends views_handler_field_prerender_li
   }
 
   function add_self_tokens(&$tokens, $item) {
-    $tokens['[' . $this->options['id'] . '-tid' . ']'] = $item['tid'];
-    $tokens['[' . $this->options['id'] . '-name' . ']'] = $item['name'];
-    $tokens['[' . $this->options['id'] . '-vid' . ']'] = $item['vid'];
-    $tokens['[' . $this->options['id'] . '-vocabulary' . ']'] = $item['vocabulary'];
+    foreach (array('tid', 'name', 'vid', 'vocabulary') as $token) {
+      $tokens['[' . $this->options['id'] . '-' . $token . ']'] = isset($item[$token]) ? $item[$token] : '';
+    }
   }
 }
