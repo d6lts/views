@@ -580,6 +580,8 @@ class views_handler_filter extends views_handler {
    * with OR groups. Some filters must also use HAVING which also makes
    * them not groupable. These filters will end up in a special group
    * if OR grouping is in use.
+   *
+   * @return bool
    */
    function can_group() {
      return TRUE;
