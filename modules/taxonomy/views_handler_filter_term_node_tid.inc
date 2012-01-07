@@ -1,7 +1,9 @@
 <?php
 
 /**
- * Filter by term id
+ * Filter by term id.
+ *
+ * @ingroup views_filter_handlers
  */
 class views_handler_filter_term_node_tid extends views_handler_filter_many_to_one {
   function can_group() { return FALSE; }
