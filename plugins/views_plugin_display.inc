@@ -1003,7 +1003,7 @@ class views_plugin_display extends views_plugin {
       'desc' => t('Change the name of this display.'),
     );
 
-    $display_comment = drupal_substr($this->get_option('display_comment'), 0, 10);
+    $display_comment = check_plain(drupal_substr($this->get_option('display_comment'), 0, 10));
     $options['display_comment'] = array(
       'category' => 'basic',
       'title' => t('Comment'),
