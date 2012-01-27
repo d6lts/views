@@ -1,6 +1,8 @@
 <?php
 /**
  * Field handler to display the marker for new content.
+ *
+ * @ingroup views_field_handlers
  */
 class views_handler_field_history_user_timestamp extends views_handler_field_node {
   function init(&$view, $options) {

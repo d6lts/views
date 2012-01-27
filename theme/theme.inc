@@ -413,8 +413,6 @@ function template_preprocess_views_view_table(&$vars) {
   }
   $query = empty($query) ? '' : '&' . http_build_query($query, '', '&');
 
-  $header = array();
-
   // Fields must be rendered in order as of Views 2.3, so we will pre-render
   // everything.
   $renders = $handler->render_fields($result);
@@ -817,7 +815,7 @@ function template_preprocess_views_exposed_form(&$vars) {
     // set up defaults so that there's always something there.
     $widget->label = $widget->operator = $widget->widget = NULL;
 
-    $widget->id = $form[$info['value']]['#id'];
+    $widget->id = isset($form[$info['value']]['#id']) ? $form[$info['value']]['#id'] : '';
     if (!empty($info['label'])) {
       $widget->label = $info['label'];
     }
@@ -833,6 +831,7 @@ function template_preprocess_views_exposed_form(&$vars) {
     $widget = new stdClass;
     // set up defaults so that there's always something there.
     $widget->label = $widget->operator = $widget->widget = NULL;
+    $widget->id = 'checkboxes';
     $widget->widget = $checkboxes;
     $vars['widgets']['checkboxes'] = $widget;
   }

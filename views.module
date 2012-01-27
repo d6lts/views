@@ -857,6 +857,7 @@ function views_include_default_views($reset = FALSE) {
 function views_get_handler($table, $field, $key, $override = NULL) {
   $data = views_fetch_data($table);
   $handler = NULL;
+  views_include('handlers');
 
   if (isset($data[$field][$key])) {
     // Set up a default handler:
@@ -1743,7 +1744,7 @@ function views_microtime() {
  * @param $alter
  *   - max_length: Maximum lenght of the string, the rest gets truncated.
  *   - word_boundary: Trim only on a word boundary.
- *   - ellipsis: Trim only on a word boundary.
+ *   - ellipsis: Show an ellipsis (...) at the end of the trimmed string.
  *   - html: Take sure that the html is correct.
  */
 function views_trim_text($alter, $value) {

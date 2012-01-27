@@ -1003,7 +1003,7 @@ class views_plugin_display extends views_plugin {
       'desc' => t('Change the name of this display.'),
     );
 
-    $display_comment = drupal_substr($this->get_option('display_comment'), 0, 10);
+    $display_comment = check_plain(drupal_substr($this->get_option('display_comment'), 0, 10));
     $options['display_comment'] = array(
       'category' => 'basic',
       'title' => t('Comment'),
@@ -1578,6 +1578,7 @@ class views_plugin_display extends views_plugin {
 
         // Default text.
         // We have some options, so make a list.
+        $output = '';
         if (!empty($options)) {
           $output = t('<p>The following tokens are available for this link.</p>');
           foreach (array_keys($options) as $type) {
