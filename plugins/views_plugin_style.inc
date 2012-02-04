@@ -297,6 +297,7 @@ class views_plugin_style extends views_plugin {
     }
 
     if (!isset($this->rendered_fields)) {
+      $this->rendered_fields = array();
       $this->view->row_index = 0;
       $keys = array_keys($this->view->field);
 
