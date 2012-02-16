@@ -26,6 +26,13 @@ class view extends views_db_object {
    */
   var $vid;
 
+  /**
+   * The description of the view, which is used only in the interface.
+   *
+   * @var string
+   */
+  var $description;
+
   // State variables
   var $built = FALSE;
   var $executed = FALSE;
