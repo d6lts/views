@@ -111,7 +111,22 @@ class view extends views_db_object {
    *
    * @var views_plugin_style
    */
-   var $style_plugin;
+  var $style_plugin;
+
+  /**
+   * Stored the changed options of the style plugin.
+   *
+   * @deprecated Better use $view->style_plugin->options
+   * @var array
+   */
+  var $style_options;
+
+  /**
+   * Stores the current active row while rendering.
+   *
+   * @var int
+   */
+  var $row_index;
 
   /**
    * Allow to override the path used for generated urls.
