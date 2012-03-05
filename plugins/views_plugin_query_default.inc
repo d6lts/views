@@ -1168,6 +1168,9 @@ class views_plugin_query_default extends views_plugin_query{
         $this->db_set_active();
       }
     }
+    else {
+      $start = views_microtime();
+    }
     $view->execute_time = views_microtime() - $start;
   }
 
