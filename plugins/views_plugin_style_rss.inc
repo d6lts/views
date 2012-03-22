@@ -63,6 +63,7 @@ class views_plugin_style_rss extends views_plugin_style {
       '#description' => t('This will appear in the RSS feed itself.'),
       '#process' => array('views_process_dependency'),
       '#dependency' => array('edit-style-options-override' => array(FALSE)),
+      '#maxlength' => 1024,
     );
   }
 
