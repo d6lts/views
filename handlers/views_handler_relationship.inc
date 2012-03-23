@@ -122,7 +122,7 @@ class views_handler_relationship extends views_handler {
       $def['extra'] = $this->definition['extra'];
     }
 
-    if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
+    if (!empty($def['join_handler']) && class_exists($def['join_handler'], FALSE)) {
       $join = new $def['join_handler'];
     }
     else {

@@ -79,7 +79,7 @@ class views_handler_relationship_translation extends views_handler_relationship 
       }
     }
 
-    if (!empty($def['join_handler']) && class_exists($def['join_handler'])) {
+    if (!empty($def['join_handler']) && class_exists($def['join_handler'], FALSE)) {
       $join = new $def['join_handler'];
     }
     else {

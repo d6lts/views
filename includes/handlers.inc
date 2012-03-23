@@ -14,12 +14,12 @@ function _views_create_handler($definition, $type = 'handler', $handler_type = N
   }
 
   if (!empty($definition['override handler']) &&
-      !class_exists($definition['override handler']) &&
+      !class_exists($definition['override handler'], FALSE) &&
       !views_include_handler($definition['override handler'], $definition, $type)) {
     return;
   }
 
-  if (!class_exists($definition['handler']) &&
+  if (!class_exists($definition['handler'], FALSE) &&
       !views_include_handler($definition['handler'], $definition, $type)) {
     return;
   }
@@ -55,7 +55,7 @@ function _views_create_handler($definition, $type = 'handler', $handler_type = N
  */
 function views_include_handler($handler, $definition, $type, $count = 0) {
   // Do not proceed if the class already exists.
-  if (isset($handler) && class_exists($handler)) {
+  if (isset($handler) && class_exists($handler, FALSE)) {
     return TRUE;
   }
 
@@ -99,7 +99,7 @@ function views_include_handler($handler, $definition, $type, $count = 0) {
     }
   }
 
-  return class_exists($handler);
+  return class_exists($handler, FALSE);
 }
 
 /**
@@ -191,7 +191,7 @@ function views_get_table_join($table, $base_table) {
   $data = views_fetch_data($table);
   if (isset($data['table']['join'][$base_table])) {
     $h = $data['table']['join'][$base_table];
-    if (!empty($h['handler']) && class_exists($h['handler'])) {
+    if (!empty($h['handler']) && class_exists($h['handler'], FALSE)) {
       $handler = new $h['handler'];
     }
     else {
