@@ -49,6 +49,8 @@ function template_preprocess_views_view(&$vars) {
   $vars['display_id'] = $view->current_display;
 
   // Basic classes
+  $vars['css_class'] = '';
+
   $vars['classes_array'] = array();
   $vars['classes_array'][] = 'view';
   $vars['classes_array'][] = 'view-' . views_css_safe($vars['name']);
