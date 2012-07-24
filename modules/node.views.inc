@@ -720,7 +720,7 @@ function node_views_handlers() {
       ),
       // argument handlers
       'views_handler_argument_node_type' => array(
-        'parent' => 'views_handler_argument',
+        'parent' => 'views_handler_argument_string',
       ),
       'views_handler_argument_node_nid' => array(
         'parent' => 'views_handler_argument_numeric',
