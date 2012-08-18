@@ -48,7 +48,8 @@ class views_handler_relationship_node_term_data extends views_handler_relationsh
     $def['table'] = 'term_data';
 
     if (!empty($this->options['required']) || !array_filter($this->options['vids'])) {
-      $def['left_table'] = 'term_node';
+      $term_node = $this->query->add_table('term_node', $this->relationship);
+      $def['left_table'] = $term_node;
       $def['left_field'] = 'tid';
       $def['field'] = 'tid';
       if (!empty($this->options['required'])) {
