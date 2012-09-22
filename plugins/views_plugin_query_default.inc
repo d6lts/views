@@ -895,11 +895,21 @@ class views_plugin_query_default extends views_plugin_query{
   /**
    * Construct the "WHERE" or "HAVING" part of the query.
    *
+   * As views has to wrap the conditions from arguments with AND, a special
+   * group is wrapped around all conditions. This special group has the ID 0.
+   * There is other code in filters which makes sure that the group IDs are
+   * higher than zero.
+   *
    * @param $where
    *   'where' or 'having'.
    */
   function condition_sql($where = 'where') {
     $clauses = array();
+    // Respekt the special group, which is always AND.
+    $has_arguments = FALSE;
+    $clauses_main = array();
+    $has_filter = FALSE;
+
     foreach ($this->$where as $group => $info) {
       if (empty($info['clauses'])) {
         continue;
@@ -909,18 +919,39 @@ class views_plugin_query_default extends views_plugin_query{
       if (count($info['clauses']) > 1) {
         $clause = '(' . $clause . ')';
       }
-      $clauses[] = $clause;
-    }
 
-    if ($clauses) {
-      $keyword = drupal_strtoupper($where);
-      if (count($clauses) > 1) {
-        return "$keyword (" . implode(")\n    " . $this->group_operator . ' (', array_filter($clauses)) . ")\n";
+      if ($group == 0) {
+        $has_arguments = TRUE;
+        $clauses_main[] = $clause;
       }
       else {
-        return "$keyword " . array_shift($clauses) . "\n";
+        $has_filter = TRUE;
+        $clauses[] = $clause;
+      }
+
+    }
+
+    $keyword = drupal_strtoupper($where);
+
+    if ($has_filter) {
+      if (count($clauses) > 1) {
+        $filter_group = "(" . implode(")\n    " . $this->group_operator . ' (', array_filter($clauses)) . ")\n";
+      }
+      else {
+        $filter_group = array_shift($clauses) . "\n";
+      }
+      $clauses_main[] = $filter_group;
+    }
+
+    if ($clauses_main) {
+      if (count($clauses_main) > 1) {
+        return "$keyword " . "(" . implode(")\n    " . 'AND' . ' (', array_filter($clauses_main)) . ")\n";
+      }
+      else {
+        return "$keyword " . array_shift($clauses_main) . "\n";
       }
     }
+
     return "";
   }
 
@@ -1060,6 +1091,9 @@ class views_plugin_query_default extends views_plugin_query{
    */
   function get_where_args() {
     $args = array();
+    // Sort the groups by key, so the args are sorted right.
+    ksort($this->where);
+    ksort($this->having);
     foreach ($this->where as $group => $where) {
       $args = array_merge($args, $where['args']);
     }

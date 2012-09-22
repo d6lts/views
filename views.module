@@ -1781,3 +1781,19 @@ function views_trim_text($alter, $value) {
 
   return $value;
 }
+
+/**
+ * Adds one to each key of the array.
+ *
+ * For example array(0 => 'foo') would be array(1 => 'foo').
+ */
+function views_array_key_plus($array) {
+  $keys = array_keys($array);
+  rsort($keys);
+  foreach ($keys as $key) {
+    $array[$key + 1] = $array[$key];
+    unset($array[$key]);
+  }
+  asort($array);
+  return $array;
+}
