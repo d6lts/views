@@ -125,9 +125,9 @@ function _views_prepare_handler($definition, $data, $field, $type) {
 /**
  * Fetch the handler data from cache.
  */
-function views_fetch_handler_data($handler = NULL) {
+function views_fetch_handler_data($handler = NULL, $reset = NULL) {
   static $cache = NULL;
-  if (!isset($cache)) {
+  if (!isset($cache) || $reset) {
     $start = views_microtime();
 
     $cache = views_discover_handlers();
