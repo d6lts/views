@@ -242,7 +242,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     $rc = parent::accept_exposed_input($input);
     if ($rc) {
       // If we have previously validated input, override.
-      if (isset($this->validated_exposed_input)) {
+      if (!$this->is_a_group() && isset($this->validated_exposed_input)) {
         $this->value = $this->validated_exposed_input;
       }
     }
