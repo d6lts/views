@@ -81,6 +81,14 @@ function views_views_data() {
     ),
   );
 
+  $data['views']['messages'] = array(
+    'title' => t('Messages'),
+    'help' => t('Displays messages in the area.'),
+    'area' => array(
+      'handler' => 'views_handler_area_messages',
+    ),
+  );
+
   if (module_exists('contextual')) {
     $data['views']['contextual_links'] = array(
       'title' => t('Contextual Links'),
