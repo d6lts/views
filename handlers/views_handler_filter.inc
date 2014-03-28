@@ -770,6 +770,7 @@ class views_handler_filter extends views_handler {
       $this->operator_form($form, $form_state);
       $form[$operator] = $form['operator'];
       $form[$operator]['#title'] =  $this->options['expose']['operator_label'];
+      $form[$operator]['#title_display'] = 'invisible';
 
       $this->exposed_translate($form[$operator], 'operator');
 
