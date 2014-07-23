@@ -2964,7 +2964,7 @@ function views_ui_ajax_form($js, $key, $view, $display_id = '') {
     else {
       $output = array();
       $output[] = views_ajax_command_dismiss_form();
-      $output[] = views_ajax_command_show_buttons();
+      $output[] = views_ajax_command_show_buttons($view->changed);
       $output[] = views_ajax_command_trigger_preview();
       if (!empty($form_state['#page_title'])) {
         $output[] = views_ajax_command_replace_title($form_state['#page_title']);
