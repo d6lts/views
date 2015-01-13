@@ -67,6 +67,12 @@ Drupal.views.ajaxView = function(settings) {
     .filter(jQuery.proxy(this.filterNestedViews, this))
     .once(jQuery.proxy(this.attachPagerAjax, this));
 
+  // Add a trigger to update this view specifically. In order to trigger a
+  // refresh use the following code.
+  //
+  // @code
+  // jQuery('.view-name').trigger('RefreshView');
+  // @endcode
   // Add a trigger to update this view specifically.
   var self_settings = this.element_settings;
   self_settings.event = 'RefreshView';
