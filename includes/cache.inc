@@ -25,38 +25,71 @@ function _views_include_default_views() {
  */
 function _views_fetch_data($table = NULL, $reset = FALSE) {
   static $cache = NULL;
-  if (!isset($cache) || $reset) {
-    $start = views_microtime();
-    // NOTE: This happens whether we retrieve them from cache or otherwise.
-    views_include_handlers();
+  static $fully_loaded = FALSE;
 
-    $data = views_cache_get('views_data', TRUE);
-    if (!empty($data->data)) {
-      $cache = $data->data;
-    }
-
-    if (empty($cache)) {
-      $cache = module_invoke_all('views_data');
-      foreach (module_implements('views_data_alter') as $module) {
-        $function = $module . '_views_data_alter';
-        $function($cache);
-      }
-
-      views_cache_set('views_data', $cache, TRUE);
-    }
-
-    vpr('Views data build time: ' . (views_microtime() - $start) * 1000 . ' ms');
+  if ($reset) {
+    $cache = NULL;
+    $fully_loaded = FALSE;
   }
 
-  if (!$table) {
+  // Include handlers the first time the function is called.
+  if (!isset($cache)) {
+    views_include_handlers();
+  }
+
+  if (isset($table)) {
+    if (!isset($cache[$table])) {
+      $cid = 'views_data:' . $table;
+      $data = views_cache_get($cid, TRUE);
+      if (!empty($data->data)) {
+        $cache[$table] = $data->data;
+      }
+      else {
+        $cache = _views_fetch_data_build();
+        $fully_loaded = TRUE;
+      }
+    }
+    if (isset($cache[$table])) {
+      return $cache[$table];
+    }
+  }
+  else {
+    if (!$fully_loaded) {
+      $data = views_cache_get('views_data', TRUE);
+      if (!empty($data->data)) {
+        $cache = $data->data;
+      }
+      else {
+        $cache = _views_fetch_data_build();
+      }
+    }
     return $cache;
   }
-  if (isset($cache[$table])) {
-    return $cache[$table];
-  }
-
   // Return an empty array if there is no match.
   return array();
+}
+
+/**
+ * Helper for _views_fetch_data(), builds and sets the views data cache.
+ */
+function _views_fetch_data_build() {
+  $start = views_microtime();
+
+  $cache = module_invoke_all('views_data');
+  foreach (module_implements('views_data_alter') as $module) {
+    $function = $module . '_views_data_alter';
+    $function($cache);
+  }
+
+  views_cache_set('views_data', $cache, TRUE);
+  // Also store a separate cache entry for each item.
+  foreach ($cache as $key => $data) {
+    $cid = 'views_data:' . $key;
+    views_cache_set($cid, $data, TRUE);
+  }
+  vpr('Views data build time: ' . (views_microtime() - $start) * 1000 . ' ms');
+
+  return $cache;
 }
 
 /**
