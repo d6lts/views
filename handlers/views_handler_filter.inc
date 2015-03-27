@@ -115,7 +115,7 @@ class views_handler_filter extends views_handler {
   /**
    * Simple validate handler
    */
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     $this->operator_validate($form, $form_state);
     $this->value_validate($form, $form_state);
     if (!empty($this->options['exposed'])) {
