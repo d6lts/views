@@ -8,7 +8,7 @@
  * @ingroup views_filter_handlers
  */
 class views_handler_filter_term_node_tid_depth extends views_handler_filter_term_node_tid {
-  function operator_options() {
+  function operator_options($which = 'title') {
     return array(
       'or' => t('Is one of'),
     );
