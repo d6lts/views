@@ -67,12 +67,11 @@ function _views_fetch_data($table = NULL, $move = TRUE, $reset = FALSE) {
   }
   else {
     if (!$fully_loaded) {
-      $data = views_cache_get('views_data', TRUE);
-      if (!empty($data->data)) {
+      if ($data = views_cache_get('views_data', TRUE)) {
         $cache = $data->data;
       }
-
-      if (empty($cache)) {
+      else {
+        // No cache entry, rebuild.
         $cache = _views_fetch_data_build();
       }
       $fully_loaded = TRUE;
