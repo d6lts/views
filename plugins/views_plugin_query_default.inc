@@ -1620,7 +1620,8 @@ class views_plugin_query_default extends views_plugin_query {
     }
     $entity_type = $table_data['table']['entity type'];
     $info = entity_get_info($entity_type);
-    $id_alias = $this->get_field_alias($base_table_alias, $info['entity keys']['id']);
+    $is_revision = !empty($table_data['table']['revision']);
+    $id_alias = $this->get_field_alias($base_table_alias, $info['entity keys'][$is_revision ? 'revision' : 'id']);
 
     // Assemble the ids of the entities to load.
     $ids = array();
@@ -1630,12 +1631,34 @@ class views_plugin_query_default extends views_plugin_query {
       }
     }
 
-    $entities = entity_load($entity_type, $ids);
-    // Re-key the array by row-index.
-    $result = array();
-    foreach ($ids as $key => $id) {
-      $result[$key] = isset($entities[$id]) ? $entities[$id] : FALSE;
+    if (!$is_revision) {
+      $entities = entity_load($entity_type, $ids);
+
+      // Re-key the array by row-index.
+      $result = array();
+      foreach ($ids as $key => $id) {
+        $result[$key] = isset($entities[$id]) ? $entities[$id] : FALSE;
+      }
     }
+    else {
+      // There's no way in core to load revisions in bulk.
+      $result = array();
+      foreach ($ids as $key => $id) {
+        // Nodes can be dealt with in core.
+        if ($entity_type == 'node') {
+          $result[$key] = node_load(NULL, $id);
+        }
+        // Otherwise see if entity is enabled.
+        elseif (module_exists('entity')) {
+          $result[$key] = entity_revision_load($entity_type, $id);
+        }
+        else {
+          // Otherwise this isn't supported.
+          watchdog('views', 'Attempt to load a revision on an unsupported entity type @entity_type.', array('@entity_type' => $entity_type), WATCHDOG_WARNING);
+        }
+      }
+    }
+
     return array($entity_type, $result);
   }
 }
