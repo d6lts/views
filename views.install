@@ -402,7 +402,7 @@ function views_update_6008() {
 }
 
 /**
- * Enlarge the views_display.display_options field to accomodate a larger set
+ * Enlarge the views_display.display_options field to accommodate a larger set
  * of configurations (e. g. fields, filters, etc.) on a display.
  */
 function views_schema_6009() {
