@@ -1604,7 +1604,7 @@ class view extends views_db_object {
    */
   function destroy() {
     foreach (array_keys($this->display) as $display_id) {
-      if (isset($this->display[$display_id]->handler)) {
+      if (isset($this->display[$display_id]->handler) && is_object($this->display[$display_id]->handler)) {
         $this->display[$display_id]->handler->destroy();
         unset($this->display[$display_id]->handler);
       }
