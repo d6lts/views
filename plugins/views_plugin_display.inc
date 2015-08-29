@@ -1150,7 +1150,7 @@ class views_plugin_display extends views_plugin {
       );
     }
 
-    $display_comment = check_plain(drupal_substr($this->get_option('display_comment'), 0, 10));
+    $display_comment = check_plain(views_ui_truncate($this->get_option('display_comment'), 80));
     $options['display_comment'] = array(
       'category' => 'other',
       'title' => t('Comment'),
