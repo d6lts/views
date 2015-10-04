@@ -2570,7 +2570,7 @@ class views_display extends views_db_object {
   var $display_options;
 
   var $db_table = 'views_display';
-  function views_display($init = TRUE) {
+  function __construct($init = TRUE) {
     parent::init($init);
   }
 
