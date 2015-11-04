@@ -631,3 +631,17 @@ function views_update_7301() {
   );
   db_change_field('views_view', 'name', 'name', $new_field);
 }
+
+/**
+ * Remove headers field from cache tables
+ *
+ * @see system_update_7054().
+ */
+function views_update_7302() {
+  if (db_field_exists('cache_views', 'headers')) {
+    db_drop_field('cache_views', 'headers');
+  }
+  if (db_field_exists('cache_views_data', 'headers')) {
+    db_drop_field('cache_views_data', 'headers');
+  }
+}
