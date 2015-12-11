@@ -1818,6 +1818,9 @@ class view extends views_db_object {
       $this->vid = $vid ? $vid : NULL;
     }
 
+    // Let modules modify the view just prior to saving it.
+    module_invoke_all('views_view_presave', $this);
+
     $transaction = db_transaction();
 
     try {
@@ -1848,6 +1851,9 @@ class view extends views_db_object {
 
     // Clear caches.
     views_invalidate_cache();
+
+    // Notify modules that this view has been saved.
+    module_invoke_all('views_view_save', $this);
   }
 
   /**
@@ -1887,6 +1893,9 @@ class view extends views_db_object {
       // Clear caches.
       views_invalidate_cache();
     }
+
+    // Notify modules that this view has been deleted.
+    module_invoke_all('views_view_delete', $this);
   }
 
   /**
