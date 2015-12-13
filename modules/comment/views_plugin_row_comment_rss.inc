@@ -38,7 +38,7 @@ class views_plugin_row_comment_rss extends views_plugin_row {
   }
 
 
-  function pre_render($result) {
+  function pre_render(&$result) {
     $cids = array();
     $nids = array();
 

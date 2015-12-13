@@ -75,7 +75,7 @@ class views_plugin_row_node_rss extends views_plugin_row {
   }
 
 
-  function pre_render($values) {
+  function pre_render(&$values) {
     $nids = array();
     foreach ($values as $row) {
       $nids[] = $row->{$this->field_alias};
