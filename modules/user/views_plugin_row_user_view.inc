@@ -63,7 +63,7 @@ class views_plugin_row_user_view extends views_plugin_row {
       return check_plain($options[$this->options['view_mode']]);
     }
 
-  function pre_render(&$values) {
+  function pre_render($values) {
     $uids = array();
     foreach ($values as $row) {
       $uids[] = $row->{$this->field_alias};

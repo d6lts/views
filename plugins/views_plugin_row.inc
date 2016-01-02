@@ -124,7 +124,7 @@ class views_plugin_row extends views_plugin {
    * @param $result
    *   The full array of results from the query.
    */
-  function pre_render(&$result) { }
+  function pre_render($result) { }
 
   /**
    * Render a row object. This usually passes through to a theme template

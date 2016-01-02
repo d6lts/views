@@ -90,7 +90,7 @@ class views_plugin_row_node_view extends views_plugin_row {
     return check_plain($options[$this->options['view_mode']]);
   }
 
-  function pre_render(&$values) {
+  function pre_render($values) {
     $nids = array();
     foreach ($values as $row) {
       $nids[] = $row->{$this->field_alias};
