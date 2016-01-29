@@ -812,8 +812,6 @@ class view extends views_db_object {
           if (isset($arg)) {
             $this->args[$position] = $arg;
           }
-          // remember that this argument was computed, not passed on the URL.
-          $argument->is_default = TRUE;
         }
 
         // Set the argument, which will also validate that the argument can be set.
@@ -1593,7 +1591,7 @@ class view extends views_db_object {
       $position = 0;
       if (!empty($this->argument)) {
         foreach ($this->argument as $argument_id => $argument) {
-          if (!empty($argument->is_default) && !empty($argument->options['default_argument_skip_url'])) {
+          if (!empty($argument->options['default_argument_skip_url'])) {
             unset($args[$position]);
           }
           $position++;
