@@ -118,6 +118,7 @@ files[] = modules/locale/views_handler_field_locale_link_edit.inc
 files[] = modules/locale/views_handler_filter_locale_group.inc
 files[] = modules/locale/views_handler_filter_locale_language.inc
 files[] = modules/locale/views_handler_filter_locale_version.inc
+files[] = modules/locale/views_handler_sort_node_language.inc
 files[] = modules/node/views_handler_argument_dates_various.inc
 files[] = modules/node/views_handler_argument_node_language.inc
 files[] = modules/node/views_handler_argument_node_nid.inc
