@@ -53,7 +53,7 @@ class views_plugin_display extends views_plugin {
           $this->extender[$extender] = $plugin;
         }
         else {
-          vpr('Invalid display extender @extender', array('@handler' => $extender));
+          vpr('Invalid display extender @extender', array('@extender' => $extender));
         }
       }
     }
