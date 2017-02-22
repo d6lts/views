@@ -76,7 +76,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
           return FALSE;
         }
 
-        $result = db_fetch_object(db_query("SELECT * FROM {term_data} WHERE tid = %d", $argument));
+        $result = db_fetch_object(db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE tid = %d", 'td', 'tid'),  $argument));
         if (!$result) {
           return FALSE;
         }
@@ -119,7 +119,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         if (count($test)) {
           $placeholders = implode(', ', array_fill(0, count($test), '%d'));
 
-          $result = db_query("SELECT * FROM {term_data} WHERE tid IN ($placeholders)", $test);
+          $result = db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE tid IN ($placeholders)", 'td', 'tid'), $test);
           while ($term = db_fetch_object($result)) {
             if ($vids && empty($vids[$term->vid])) {
               $validated_cache[$term->tid] = FALSE;
@@ -145,10 +145,10 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
           $and = " AND td.vid IN(" . implode(', ', $vids) . ')';
         }
         if ($transform) {
-          $result = db_fetch_object(db_query("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE (replace(td.name, ' ', '-') = '%s' OR replace(ts.name, ' ', '-') = '%s')$and", $argument, $argument));
+          $result = db_fetch_object(db_query(db_rewrite_sql("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE (replace(td.name, ' ', '-') = '%s' OR replace(ts.name, ' ', '-') = '%s')$and", 'td', 'tid'), $argument, $argument));
         }
         else {
-          $result = db_fetch_object(db_query("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE (td.name = '%s' OR ts.name = '%s')$and", $argument, $argument));
+          $result = db_fetch_object(db_query(db_rewrite_sql("SELECT td.* FROM {term_data} td LEFT JOIN {term_synonym} ts ON ts.tid = td.tid WHERE (td.name = '%s' OR ts.name = '%s')$and", 'td', 'tid'), $argument, $argument));
         }
         if (!$result) {
           return FALSE;
