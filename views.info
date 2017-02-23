@@ -2,9 +2,3 @@ name = Views
 description = Create customized lists and queries from your database.
 package = Views
 core = 6.x
-
-; Information added by Drupal 6 LTS vendors on 2017-02-23
-version = "6.x-2.22"
-core = "6.x"
-project = "views"
-datestamp = "1487863122"
