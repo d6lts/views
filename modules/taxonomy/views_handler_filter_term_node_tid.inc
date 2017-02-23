@@ -262,7 +262,7 @@ class views_handler_filter_term_node_tid extends views_handler_filter_many_to_on
     // add the taxonomy vid to the argument list.
     $args[] = $this->options['vid'];
 
-    $result = db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE td.name IN (" . implode(', ', $placeholders) . ") AND td.vid = %d", 'td', 'tid'), $args);
+    $result = db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE td.name IN (" . implode(', ', $placeholders) . ") AND td.vid = %d", 'td', 'tid', $args), $args);
     while ($term = db_fetch_object($result)) {
       unset($missing[strtolower($term->name)]);
       $tids[] = $term->tid;
