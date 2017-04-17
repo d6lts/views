@@ -76,7 +76,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
           return FALSE;
         }
 
-        $result = db_fetch_object(db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE td.tid = %d", 'td', 'tid', array($argument)),  $argument));
+        $result = db_fetch_object(db_query(db_rewrite_sql("SELECT td.* FROM {term_data} td WHERE td.tid = %d", 'td', 'tid', array($argument)),  $argument));
         if (!$result) {
           return FALSE;
         }
@@ -119,7 +119,7 @@ class views_plugin_argument_validate_taxonomy_term extends views_plugin_argument
         if (count($test)) {
           $placeholders = implode(', ', array_fill(0, count($test), '%d'));
 
-          $result = db_query(db_rewrite_sql("SELECT * FROM {term_data} td WHERE td.tid IN ($placeholders)", 'td', 'tid', array($test)), $test);
+          $result = db_query(db_rewrite_sql("SELECT td.* FROM {term_data} td WHERE td.tid IN ($placeholders)", 'td', 'tid', array($test)), $test);
           while ($term = db_fetch_object($result)) {
             if ($vids && empty($vids[$term->vid])) {
               $validated_cache[$term->tid] = FALSE;
