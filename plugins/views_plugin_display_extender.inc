@@ -22,12 +22,12 @@ class views_plugin_display_extender extends views_plugin {
   /**
    * Validate the options form.
    */
-  function options_validate(&$form, &$form_state) { }
+  function options_validate($form, &$form_state) { }
 
   /**
    * Handle any special handling on the validate form.
    */
-  function options_submit(&$form, &$form_state) { }
+  function options_submit($form, &$form_state) { }
 
   /**
    * Set up any variables on the view prior to execution.

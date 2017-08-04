@@ -1203,7 +1203,7 @@ class view extends views_db_object {
   /**
    * Unset the current view, mostly.
    */
-  function post_execute() {
+  function post_execute(&$result = array()) {
     // unset current view so we can be properly destructed later on.
     // Return the previous value in case we're an attachment.
 

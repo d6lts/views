@@ -45,13 +45,13 @@ class views_plugin_access_role extends views_plugin_access {
     );
   }
 
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     if (!array_filter($form_state['values']['access_options']['role'])) {
       form_error($form['role'], t('You must select at least one role if type is "by role"'));
     }
   }
 
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     // I hate checkboxes.
     $form_state['values']['access_options']['role'] = array_filter($form_state['values']['access_options']['role']);
   }

@@ -1975,7 +1975,7 @@ class views_plugin_display extends views_plugin {
   /**
    * Validate the options form.
    */
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     switch ($form_state['section']) {
       case 'display_title':
         if (empty($form_state['values']['display_title'])) {

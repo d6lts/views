@@ -38,7 +38,7 @@ class views_handler_field_serialized extends views_handler_field {
     );
   }
 
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     // Require a key if the format is key.
     if ($form_state['values']['options']['format'] == 'key' && $form_state['values']['options']['key'] == '') {
       form_error($form['key'], t('You have to enter a key if you want to display a key of the data.'));

@@ -80,7 +80,7 @@ class views_handler_area_text extends views_handler_area {
     }
   }
 
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     $form_state['values']['options']['format'] = $form_state['values']['format'];
     parent::options_submit($form, $form_state);
   }

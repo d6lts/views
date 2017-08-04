@@ -14,7 +14,7 @@
  * @ingroup views_display_plugins
  */
 class views_plugin_display_attachment extends views_plugin_display {
-  function option_definition () {
+  function option_definition() {
     $options = parent::option_definition();
 
     $options['attachment_position'] = array('default' => 'before');

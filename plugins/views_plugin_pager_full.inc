@@ -146,7 +146,7 @@ class views_plugin_pager_full extends views_plugin_pager {
     );
   }
 
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     // Only accept integer values.
     $error = FALSE;
     $exposed_options = $form_state['values']['pager_options']['expose']['items_per_page_options'];

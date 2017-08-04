@@ -218,7 +218,7 @@ class views_plugin_style extends views_plugin {
    * @param $result
    *   The full array of results from the query.
    */
-  function pre_render($result) {
+  function pre_render(&$result) {
     if (!empty($this->row_plugin)) {
       $this->row_plugin->pre_render($result);
     }

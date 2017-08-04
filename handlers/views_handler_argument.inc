@@ -255,7 +255,7 @@ class views_handler_argument extends views_handler {
     );
   }
 
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     if (empty($form_state['values']['options'])) {
       return;
     }

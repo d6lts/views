@@ -98,13 +98,13 @@ class views_plugin_row extends views_plugin {
   /**
    * Validate the options form.
    */
-  function options_validate(&$form, &$form_state) { }
+  function options_validate($form, &$form_state) { }
 
   /**
    * Perform any necessary changes to the form values prior to storage.
    * There is no need for this function to actually store the data.
    */
-  function options_submit(&$form, &$form_state) { }
+  function options_submit($form, &$form_state) { }
 
   function query() {
     if (isset($this->base_table)) {
@@ -124,7 +124,7 @@ class views_plugin_row extends views_plugin {
    * @param $result
    *   The full array of results from the query.
    */
-  function pre_render($result) { }
+  function pre_render(&$result) { }
 
   /**
    * Render a row object. This usually passes through to a theme template

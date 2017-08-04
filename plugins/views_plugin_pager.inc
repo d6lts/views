@@ -99,7 +99,7 @@ class views_plugin_pager extends views_plugin {
   /**
    * Provide the default form form for validating options
    */
-  function options_validate(&$form, &$form_state) { }
+  function options_validate($form, &$form_state) { }
 
   /**
    * Provide the default form form for submitting options
@@ -170,7 +170,7 @@ class views_plugin_pager extends views_plugin {
   /**
    * Perform any needed actions just after the query executing.
    */
-  function post_execute(&$result) { }
+  function post_execute(&$result = array()) { }
 
   /**
    * Perform any needed actions just before rendering.

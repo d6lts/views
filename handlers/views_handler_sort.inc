@@ -76,7 +76,7 @@ class views_handler_sort extends views_handler {
   /**
    * Simple validate handler
    */
-  function options_validate(&$form, &$form_state) {
+  function options_validate($form, &$form_state) {
     $this->sort_validate($form, $form_state);
     if (!empty($this->options['exposed'])) {
       $this->expose_validate($form, $form_state);
@@ -87,7 +87,7 @@ class views_handler_sort extends views_handler {
   /**
    * Simple submit handler
    */
-  function options_submit(&$form, &$form_state) {
+  function options_submit($form, &$form_state) {
     unset($form_state['values']['expose_button']); // don't store this.
     $this->sort_submit($form, $form_state);
     if (!empty($this->options['exposed'])) {

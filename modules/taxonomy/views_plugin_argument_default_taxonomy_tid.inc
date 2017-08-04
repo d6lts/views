@@ -70,7 +70,7 @@ class views_plugin_argument_default_taxonomy_tid extends views_plugin_argument_d
     );
   }
 
-  function options_submit(&$form, &$form_state, &$options) {
+  function options_submit($form, &$form_state, &$options = array()) {
     // Clear checkbox values.
     $options['vids'] = array_filter($options['vids']);
   }

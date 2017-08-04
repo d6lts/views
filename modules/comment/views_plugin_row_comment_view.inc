@@ -25,7 +25,7 @@ class views_plugin_row_comment_view extends views_plugin_row {
     );
   }
 
-  function pre_render($result) {
+  function pre_render(&$result) {
     $cids = array();
     $this->comments = array();
 
