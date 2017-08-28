@@ -29,6 +29,7 @@ class views_handler_field_comment_username extends views_handler_field {
 
   function render_link($data, $values) {
     if (!empty($this->options['link_to_user'])) {
+      $account = new stdClass();
       $account->uid = $values->{$this->aliases['uid']};
       $account->name = $values->{$this->field_alias};
       $account->homepage = $values->{$this->aliases['homepage']};
