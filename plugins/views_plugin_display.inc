@@ -71,7 +71,7 @@ class views_plugin_display extends views_plugin {
   function uses_exposed() {
     if (!isset($this->has_exposed)) {
       foreach (array('field', 'filter') as $type) {
-        foreach ($this->view->$type as $key => $handler) {
+        foreach ($this->view->{$type} as $key => $handler) {
           if ($handler->is_exposed()) {
             // one is all we need; if we find it, return true.
             $this->has_exposed = TRUE;

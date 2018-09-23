@@ -1064,7 +1064,7 @@ function views_exposed_form(&$form_state) {
  */
 function views_exposed_form_validate(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $handlers = &$form_state['view']->$type;
+    $handlers = &$form_state['view']->{$type};
     foreach ($handlers as $key => $handler) {
       $handlers[$key]->exposed_validate($form, $form_state);
     }
@@ -1076,7 +1076,7 @@ function views_exposed_form_validate(&$form, &$form_state) {
  */
 function views_exposed_form_submit(&$form, &$form_state) {
   foreach (array('field', 'filter') as $type) {
-    $handlers = &$form_state['view']->$type;
+    $handlers = &$form_state['view']->{$type};
     foreach ($handlers as $key => $info) {
       $handlers[$key]->exposed_submit($form, $form_state);
     }

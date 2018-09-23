@@ -386,7 +386,7 @@ class view extends views_db_object {
    */
   function _pre_query() {
     foreach (views_object_types() as $key => $info) {
-      $handlers = &$this->$key;
+      $handlers = &$this->{$key};
       $position = 0;
       foreach ($handlers as $id => $handler) {
         $handlers[$id]->position = $position;
@@ -416,10 +416,10 @@ class view extends views_db_object {
    */
   function _init_handler($key, $info) {
     // Load the requested items from the display onto the object.
-    $this->$key = &$this->display_handler->get_handlers($key);
+    $this->{$key} = &$this->display_handler->get_handlers($key);
 
     // This reference deals with difficult PHP indirection.
-    $handlers = &$this->$key;
+    $handlers = &$this->{$key};
 
     // Run through and test for accessibility.
     foreach ($handlers as $id => $handler) {
@@ -717,7 +717,7 @@ class view extends views_db_object {
    * Internal method to build an individual set of handlers.
    */
   function _build($key) {
-    $handlers = &$this->$key;
+    $handlers = &$this->{$key};
     foreach ($handlers as $id => $data) {
       if (!empty($handlers[$id]) && is_object($handlers[$id])) {
         // Give this handler access to the exposed filter input.
@@ -1361,7 +1361,7 @@ class view extends views_db_object {
 
             // Because it can get complicated with this much indirection,
             // make a shortcut reference.
-            $location = &$view->$key;
+            $location = &$view->{$key};
 
             // If we have a basic id field, load the item onto the view based on
             // this ID, otherwise push it on.
@@ -1421,7 +1421,7 @@ class view extends views_db_object {
 
         // Because it can get complicated with this much indirection,
         // make a shortcut reference.
-        $location = &$views[$names[$object->vid]]->$key;
+        $location = &$views[$names[$object->vid]]->{$key};
 
         // If we have a basic id field, load the item onto the view based on
         // this ID, otherwise push it on.
@@ -1470,7 +1470,7 @@ class view extends views_db_object {
    */
   function _save_rows($key) {
     $count = 0;
-    foreach ($this->$key as $position => $object) {
+    foreach ($this->{$key} as $position => $object) {
       $object->position = ++$count;
       $object->vid = $this->vid;
       $object->save_row();
@@ -1574,8 +1574,8 @@ class view extends views_db_object {
 
     $keys = array('current_display', 'display_handler', 'build_info', 'built', 'executed', 'attachment_before', 'attachment_after', 'field', 'argument', 'filter', 'sort', 'relationship', 'query', 'inited', 'style_plugin', 'plugin_name', 'exposed_data', 'exposed_input', 'exposed_widgets', 'many_to_one_tables', 'feed_icon');
     foreach ($keys as $key) {
-      if (isset($clone->$key)) {
-        unset($clone->$key);
+      if (isset($clone->{$key})) {
+        unset($clone->{$key});
       }
     }
     $clone->built = $clone->executed = FALSE;
@@ -1611,8 +1611,8 @@ class view extends views_db_object {
     }
 
     foreach (views_object_types() as $type => $info) {
-      if (isset($this->$type)) {
-        $handlers = &$this->$type;
+      if (isset($this->{$type})) {
+        $handlers = &$this->{$type};
         foreach ($handlers as $id => $item) {
           $handlers[$id]->destroy();
         }
@@ -1700,17 +1700,17 @@ class views_db_object {
     // Go through our schema and build correlations.
     foreach ($schema['fields'] as $field => $info) {
       if ($info['type'] == 'serial') {
-        $this->$field = NULL;
+        $this->{$field} = NULL;
       }
-      if (!isset($this->$field)) {
+      if (!isset($this->{$field})) {
         if (!empty($info['serialize']) && isset($info['serialized default'])) {
-          $this->$field = unserialize($info['serialized default']);
+          $this->{$field} = unserialize($info['serialized default']);
         }
         else if (isset($info['default'])) {
-          $this->$field = $info['default'];
+          $this->{$field} = $info['default'];
         }
         else {
-          $this->$field = '';
+          $this->{$field} = '';
         }
       }
     }
@@ -1749,10 +1749,10 @@ class views_db_object {
           $defs[] = "'%s'";
       }
       if (empty($info['serialize'])) {
-        $values[] = $this->$field;
+        $values[] = $this->{$field};
       }
       else {
-        $values[] = serialize($this->$field);
+        $values[] = serialize($this->{$field});
       }
     }
     $query = '';
@@ -1767,14 +1767,14 @@ class views_db_object {
         }
         $query .= $field . ' = ' . $defs[$id];
       }
-      $query = "UPDATE {" . $this->db_table . "} SET " . $query . " WHERE $update = " . $this->$update;
+      $query = "UPDATE {" . $this->db_table . "} SET " . $query . " WHERE $update = " . $this->{$update};
     }
     db_query($query, $values);
 
     if ($serials && !$update) {
       // get last insert ids and fill them in.
       foreach ($serials as $field) {
-        $this->$field = db_last_insert_id($this->db_table, $field);
+        $this->{$field} = db_last_insert_id($this->db_table, $field);
       }
     }
   }
@@ -1795,7 +1795,7 @@ class views_db_object {
 
     // Go through our schema and build correlations.
     foreach ($schema['fields'] as $field => $info) {
-      $this->$field = empty($info['serialize']) ? $data->$field : unserialize(db_decode_blob($data->$field));
+      $this->{$field} = empty($info['serialize']) ? $data->{$field} : unserialize(db_decode_blob($data->{$field}));
     }
   }
 
@@ -1819,20 +1819,20 @@ class views_db_object {
       if (!empty($info['no export'])) {
         continue;
       }
-      if (!isset($this->$field)) {
+      if (!isset($this->{$field})) {
         if (isset($info['default'])) {
-          $this->$field = $info['default'];
+          $this->{$field} = $info['default'];
         }
         else {
-          $this->$field = '';
+          $this->{$field} = '';
         }
 
         // serialized defaults must be set as serialized.
         if (isset($info['serialize'])) {
-          $this->$field = unserialize(db_decode_blob($this->$field));
+          $this->{$field} = unserialize(db_decode_blob($this->{$field}));
         }
       }
-      $value = $this->$field;
+      $value = $this->{$field};
       if ($info['type'] == 'int') {
         $value = ($info['size'] == 'tiny') ? (bool) $value : (int) $value;
       }

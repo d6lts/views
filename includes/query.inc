@@ -680,7 +680,7 @@ class views_query {
    */
   function set_where_group($type = 'AND', $group = NULL, $where = 'where') {
     // Set an alias.
-    $groups = &$this->$where;
+    $groups = &$this->{$where};
 
     if (!isset($group)) {
       $group = empty($groups) ? 1 : max(array_keys($groups)) + 1;
@@ -863,7 +863,7 @@ class views_query {
    */
   function condition_sql($where = 'where') {
     $clauses = array();
-    foreach ($this->$where as $group => $info) {
+    foreach ($this->{$where} as $group => $info) {
       $clause = implode(") " . $info['type'] . " (", $info['clauses']);
       if (count($info['clauses']) > 1) {
         $clause = '(' . $clause . ')';
