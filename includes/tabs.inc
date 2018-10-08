@@ -146,7 +146,7 @@ class views_tab {
   /**
    * Construct a new tab.
    */
-  function views_tab($name, $title, $body = NULL) {
+  function __construct($name, $title, $body = NULL) {
     $this->name = $name;
     $this->title = $title;
     $this->body = $body;

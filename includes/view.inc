@@ -1535,7 +1535,7 @@ class view extends views_db_object {
     // Scroll through the queries until we get to our last query key.
     // Unset anything in our temp array.
     if (isset($this->last_query_key)) {
-      while (list($id, $query) = each($queries)) {
+      foreach ($queries as $id => $query) {
         if ($id == $this->last_query_key) {
           break;
         }
@@ -1903,7 +1903,7 @@ class view extends views_db_object {
    * Find and initialize the localizer plugin.
    */
   function init_localization() {
-    if (isset($this->localization_plugin) && is_object($this->localization_plugin)) {
+    if (isset($this->localization_plugin) && is_object($this->localization_plugin) && get_class($this->localization_plugin) != '__PHP_Incomplete_Class') {
       return TRUE;
     }
 
@@ -2377,8 +2377,8 @@ class views_display extends views_db_object {
   var $display_options;
 
   var $db_table = 'views_display';
-  function views_display($init = TRUE) {
-    parent::init($init);
+  function __construct($init = TRUE) {
+    $this->init($init);
   }
 
   function options($type, $id, $title) {
