@@ -66,7 +66,7 @@ class view extends views_db_object {
   /**
    * Constructor
    */
-  function view() {
+  function __construct() {
     parent::init();
     // Make sure all of our sub objects are arrays.
     foreach ($this->db_objects() as $object) {
@@ -1312,7 +1312,7 @@ class view extends views_db_object {
     // Scroll through the queries until we get to our last query key.
     // Unset anything in our temp array.
     if (isset($this->last_query_key)) {
-      while (list($id, $query) = each($queries)) {
+      foreach ($queries as $id => $query) {
         if ($id == $this->last_query_key) {
           break;
         }
@@ -2055,7 +2055,7 @@ class views_db_object {
  */
 class views_display extends views_db_object {
   var $db_table = 'views_display';
-  function views_display($init = TRUE) {
+  function __construct($init = TRUE) {
     parent::init($init);
   }
 
