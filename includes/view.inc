@@ -57,7 +57,7 @@ class view extends views_db_object {
    * @var string
    */
   var $current_display;
-  
+
   /**
    * Stores all the views substitutions.
    */
@@ -1834,7 +1834,7 @@ class views_db_object {
       }
       $value = $this->$field;
       if ($info['type'] == 'int') {
-        $value = ($info['size'] == 'tiny') ? (bool) $value : (int) $value;
+        $value = (isset($info['size']) && $info['size'] == 'tiny') ? (bool) $value : (int) $value;
       }
 
       $output .= $indent . '$' . $identifier . '->' . $field . ' = ' . views_var_export($value, $indent) . ";\n";
