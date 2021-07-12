@@ -4,3 +4,9 @@ description = Allows exporting multiple views at once.
 package = "Views"
 dependencies[] = views
 core = 6.x
+
+; Information added by Drupal 6 LTS vendors on 2021-07-12
+version = "6.x-2.27"
+core = "6.x"
+project = "views"
+datestamp = "1626116668"
