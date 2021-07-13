@@ -101,12 +101,13 @@ class views_handler_field_numeric extends views_handler_field {
       $value = number_format($value, $this->options['precision'], $this->options['decimal'], $this->options['separator']);
     }
     else {
-      $remainder = abs($value) - intval(abs($value));
+      $point_position = strpos($value, '.');
+      $remainder = ($point_position === FALSE) ? '' : substr($value, $point_position + 1);
       $value = $value > 0 ? floor($value) : ceil($value);
       $value = number_format($value, 0, '', $this->options['separator']);
       if ($remainder) {
         // The substr may not be locale safe.
-        $value .= $this->options['decimal'] . substr($remainder, 2);
+        $value .= $this->options['decimal'] . $remainder;
       }
     }
 
